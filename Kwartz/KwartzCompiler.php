@@ -38,6 +38,7 @@ class KwartzCompiler {
     protected $translator_classnames = array(
         'php'    => 'KwartzPhpTranslator',
         'eruby'  => 'KwartzErubyTranslator',
+        'erb'    => 'KwartzErbTranslator',
         'jstl11' => 'KwartzJstl11Translator',
         'jstl10' => 'KwartzJstl10Translator',
         'plphp'  => 'KwartzPlphpTranslator',

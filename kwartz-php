@@ -144,6 +144,7 @@ class KwartzCommand {
     static $translator_classnames = array(
         'php'    => 'KwartzPhpTranslator',
         'eruby'  => 'KwartzErubyTranslator',
+        'erb'    => 'KwartzErbTranslator',
         'jstl11' => 'KwartzJstl11Translator',
         'jstl10' => 'KwartzJstl10Translator',
         'plphp'  => 'KwartzPlphpTranslator',
@@ -341,7 +342,7 @@ Usage: {$this->command_name} [-p file.plogic] [..options..] file.html
   -h, --help     : help
   -v             : version
   -p file.plogic : presentation logic file
-  -l lang        : php/eruby/jstl11/jstl10 (default 'php')
+  -l lang        : php/eruby/erb/jstl11/jstl10 (default 'php')
   -a action      : compile/parse/translate/convert/analyze (default 'compile')
   -e, -s         : escape(sanitize) (this is equivarent to '--escape=true')
   --escape=true  : escape(sanitize)

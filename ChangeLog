@@ -1,5 +1,8 @@
 .=title:	ChangeLog
 
+.: 2005-01-09 rev.54 (ver 0.3.1)
+	.- [enhance] new class KwartzErbTranslator added
+	
 .: 2005-01-09 rev.53
 	.- [bug:1098862] KwartzParser#parse_block_stmt() fratten the block-statement which is returned by parse_load_stmt().
 	

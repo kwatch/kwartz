@@ -7,6 +7,7 @@
 require_once('PHPUnit.php');
 require_once('Kwartz/KwartzTranslator.php');
 require_once('Kwartz/KwartzErubyTranslator.php');
+require_once('Kwartz/KwartzErbTranslator.php');
 require_once('Kwartz/KwartzJstlTranslator.php');
 require_once('Kwartz/KwartzParser.php');
 require_once('Kwartz/KwartzUtility.php');
@@ -16,47 +17,48 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	function __construct($name) {
 		$this->PHPUnit_TestCase($name);
 	}
-
+        
+        private $dispatcher = array(
+            'php'    => 'KwartzPhpTranslator',
+            'eruby'  => 'KwartzErubyTranslator',
+            'erb'    => 'KwartzErbTranslator',
+            'jstl11' => 'KwartzJstl11Translator',
+            'jstl10' => 'KwartzJstl10Translator',
+            );
 
 	function _test($input, $expected, $lang, $flag_test=true, $flag_escape=FALSE, $toppings=NULL) {
-		$input    = preg_replace('/^\t\t/m',  '',  $input);
-		$input    = preg_replace('/^\n/',     '',  $input);
-		$expected = preg_replace('/^\t\t/m',  '',  $expected);
-		$expected = preg_replace('/^\n/',     '',  $expected);
-		$parser   = new KwartzParser($input, $toppings);
-		$block    = $parser->parse();
-		if ($toppings == NULL) {
-			$toppings = array();
-		}
-		$toppings['indent-width'] = 2;
-		if ($lang == 'php') {
-			$translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
-		} elseif ($lang == 'eruby') {
-			$translator = new KwartzErubyTranslator($block, $flag_escape, $toppings);
-		} elseif ($lang == 'jstl11') {
-			$translator = new KwartzJstl11Translator($block, $flag_escape, $toppings);
-		} elseif ($lang == 'jstl10') {
-			$translator = new KwartzJstl10Translator($block, $flag_escape, $toppings);
-		} else {
-			assert(false);
-		}
-		$code = $translator->translate();
-		$actual = $code;
-		if ($flag_test) {
-			if ($expected != $actual) {
-				$f = fopen('.tmp.expected', "w");
-				fwrite($f, $expected);
-				fclose($f);
-				$f = fopen('.tmp.actual', "w");
-				fwrite($f, $actual);
-				fclose($f);
-				system('diff -u .tmp.expected .tmp.actual');
-				unlink('.tmp.expected');
-				unlink('.tmp.actual');
-			}
-			$this->assertEquals($expected, $actual);
-		}
-		return $translator;
+            $input    = preg_replace('/^\t\t/m',  '',  $input);
+            $input    = preg_replace('/^\n/',     '',  $input);
+            $expected = preg_replace('/^\t\t/m',  '',  $expected);
+            $expected = preg_replace('/^\n/',     '',  $expected);
+            $parser   = new KwartzParser($input, $toppings);
+            $block    = $parser->parse();
+            if ($toppings == NULL) {
+                $toppings = array();
+            }
+            $toppings['indent-width'] = 2;
+            if (! array_key_exists($lang, $this->dispatcher)) {
+                assert(false);
+            }
+            $classname = $this->dispatcher[$lang];
+            $translator = new $classname($block, $flag_escape, $toppings);
+            $code = $translator->translate();
+            $actual = $code;
+            if ($flag_test) {
+                if ($expected != $actual) {
+                    $f = fopen('.tmp.expected', "w");
+                    fwrite($f, $expected);
+                    fclose($f);
+                    $f = fopen('.tmp.actual', "w");
+                    fwrite($f, $actual);
+                    fclose($f);
+                    system('diff -u .tmp.expected .tmp.actual');
+                    unlink('.tmp.expected');
+                    unlink('.tmp.actual');
+                }
+                $this->assertEquals($expected, $actual);
+            }
+            return $translator;
 	}
 	
 	function _test_escape($input, $expected, $lang, $flag_test=TRUE, $flag_escape=TRUE) {
@@ -997,6 +999,15 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'eruby');
 	}
 
+	function test_erb_escape1() {
+		$expected = '
+		<%= h(data) %>
+		aaa<%= h(array[i]) %><%= h(x + y) %>bbb
+		<%= h(x > y ? x : y) %>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'erb');
+	}
+
 	function test_jstl11_escape1() {
 		$expected = '
 		<c:out value="${data}"/>
@@ -1048,6 +1059,15 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'eruby');
 	}
 
+	function test_erb_escape2() {
+		$expected = '
+		<%= data %>
+		aaa<%= h(array[i]) %><%= x + y %>bbb
+		<%= x > y ? x : y %>
+		';
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'erb');
+	}
+
 	function test_jstl11_escape2() {
 		$expected = '
 		<c:out value="${data}" escapeXml="false"/>
@@ -1095,6 +1115,15 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<%= CGI::escapeHTML((x > y ? x : y).to_s) %>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'eruby');
+	}
+
+	function test_erb_escape3() {
+		$expected = '
+		<%= h(data) %>
+		aaa<%= h(array[i]) %><%= x + y %>bbb
+		<%= h(x > y ? x : y) %>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'erb');
 	}
 
 	function test_jstl11_escape3() {
@@ -1156,6 +1185,17 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'eruby');
+	}
+
+	function test_erb_escape4() {
+		$expected = '
+		<%= h(a > b ? a : b) %>
+		<%= x > y ? true : false %>
+		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
+		<input type="checkbox"<%= h(gender == "M" ? " checked=\"checked\"" : "") %>/>
+		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'erb');
 	}
 
 	function test_jstl11_escape4() {

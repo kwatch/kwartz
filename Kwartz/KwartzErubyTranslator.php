@@ -11,7 +11,7 @@ require_once('Kwartz/KwartzTranslator.php');
  *  translate node tree into eRuby code
  */
 class KwartzErubyTranslator extends KwartzBaseTranslator {
-    private $keywords = array(
+    protected $keywords = array(
         ':prefix'     => '<% ',
         ':postfix'    => ' %>',
         
@@ -67,7 +67,7 @@ class KwartzErubyTranslator extends KwartzBaseTranslator {
     }
     
     
-    private $method_names = array(
+    protected $method_names = array(
         'list_new'    => '[]',
         'list_length' => 'length',
         'list_empty'  => 'empty?',
