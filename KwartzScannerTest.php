@@ -11,6 +11,11 @@ require_once('KwartzScanner.inc');
 
 class KwartzScannerTest extends PHPUnit_TestCase {
 
+	function __construct($name) {
+		$this->PHPUnit_TestCase($name);
+	}
+
+
 	###
 	### test string
 	###

@@ -11,6 +11,11 @@ require_once('KwartzParser.inc');
 
 class KwartzParserTest extends PHPUnit_TestCase {
 
+	function __construct($name) {
+		$this->PHPUnit_TestCase($name);
+	}
+
+
 	###
 	### expression
 	###

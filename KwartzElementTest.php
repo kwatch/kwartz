@@ -30,8 +30,8 @@ class KwartzElementTest extends PHPUnit_TestCase {
 	var $rawcode_stmt;
 
 
-	function KwartzElementTest($mesg) {
-		$this->PHPUnit_TestCase($mesg);
+	function __construct($name) {
+		$this->PHPUnit_TestCase($name);
 	}
 
 
