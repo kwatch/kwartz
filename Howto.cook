@@ -1,7 +1,7 @@
 /*
  *  release number
  */
-release = '0.3.0';
+release = '0.2.1';
 
 
 
@@ -42,7 +42,7 @@ all: tgz;
 
 /*
  *  ex.
- *    [generate 'users-guide', 'en', 'kuwata-lab', '-s -b -n', true ];
+ *    [generate 'users-guide' 'en' 'kuwata-lab' '-s -b -n' true ];
  */
 function generate =
 {
@@ -89,14 +89,14 @@ reference.%.01.html: reference.txt
 users-guide.%.html:  users-guide.txt
 {
 	local lang = %;
-	[generate 'users-guide' [lang] 'html-css', ''];
+	[generate 'users-guide' [lang] 'html-css' ''];
 	mv guide.d/design.html guide.d/design.css .;
 }
 
 reference.%.html: reference.txt
 {
 	local lang = %;
-	[generate 'reference' [lang] 'html-css', ''];
+	[generate 'reference' [lang] 'html-css' ''];
 }
 
 README.ja.txt README.en.txt: README.txt

@@ -443,6 +443,8 @@ class KwartzParser {
         '@'	    => 'parse_expand_stmt',
         ':::'	    => 'parse_rawcode_stmt',
         ':rawcode'  => 'parse_rawcode_stmt',
+        ':load'     => 'parse_load_stmt',
+        'load'      => 'parse_load_stmt',
         );
     
     

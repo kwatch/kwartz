@@ -932,6 +932,7 @@ END;
 
 END;
 		$this->_test_stmt($input, $expected, 'parse_load_stmt');
+		$this->_test_stmt($input, $expected, 'parse_statement');
 		unlink($filename);
 	}
 
@@ -1317,6 +1318,7 @@ END;
 
 END;
 		$this->_test_stmt($input, $expected, 'parse_load_stmt');
+		$this->_test_stmt($input, $expected, 'parse_statement');
 		unlink($filename);
 	}
 
