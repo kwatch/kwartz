@@ -393,22 +393,22 @@ require_once('KwartzUtility.inc');
 
 	class KwartzPrintStatement extends KwartzStatement {
 		## instance vars
-		private $expressions;		// array
+		private $arglist;		// array of expression
 
 		function __construct($expr_list) {
 			parent::__construct(':print');
-			$this->expressions = $expr_list;
+			$this->arglist = $expr_list;
 		}
 
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
-			foreach ($this->expressions as $expr) {
+			foreach ($this->arglist as $expr) {
 				$s .= $expr->inspect($depth + 1);
 			}
 			return $s;
 		}
 		
-		function expressions() { return $this->expressions; }
+		function arglist() { return $this->arglist; }
 		
 		function accept($visitor) {
 			return $visitor->visit_print_stmt($this);

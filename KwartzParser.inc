@@ -40,8 +40,7 @@ require_once('KwartzScanner.inc');
 	##
 	## ex.
 	##   $input   = "if ($foo > 0) { echo $foo; }";
-	##   $scanner = new KwartzScanner($input);
-	##   $parser  = new KwartzParser($scanner);
+	##   $parser  = new KwartzParser($input);
 	##   $block_stmt = $parser.parse();
 	##
 	class KwartzParser {
@@ -50,12 +49,22 @@ require_once('KwartzScanner.inc');
 		private $element_name_stack;
 		private $current_element_name;
 
-		function __construct($scanner) {
-			$this->scanner = $scanner;
-			$this->scan();
-			$this->element_name_stack = array();
+		function __construct($input) {
+			$this->scanner = new KwartzScanner($input);
+			$this->_initialize();
 		}
-
+		
+		function reset($input) {
+			$this->scanner->reset($input);
+			$this->_initialize();
+		}
+		
+		private function _initialize() {
+			$this->scan();
+			$this->element_name_stack   = array();
+			$this->current_element_name = NULL;
+		}
+		
 		protected function token() {
 			return $this->scanner->token();
 		}
@@ -744,8 +753,7 @@ require_once('KwartzScanner.inc');
 				$this->semantic_error("load file '$filename' is not exist.");
 			}
 			$input	 = file_get_contents($filename);
-			$scanner = new KwartzScanner($input);
-			$parser	 = new KwartzParser($scanner);
+			$parser	 = new KwartzParser($input);
 			$block	 = $parser->parse();
 			return $block;
 		}

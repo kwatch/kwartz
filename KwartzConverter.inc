@@ -6,7 +6,6 @@
 
 require_once('KwartzException.inc');
 require_once('KwartzNode.inc');
-require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 require_once('KwartzUtility.inc');
 
@@ -25,6 +24,8 @@ require_once('KwartzUtility.inc');
 
 	class KwartzConverter {
 		private $input;		// string
+		private $parser;
+		
 		private $before_text;
 		private $before_space;
 		private $after_space;
@@ -41,6 +42,7 @@ require_once('KwartzUtility.inc');
 		function __construct($input) {
 			$this->input = $input;
 			$this->macro_stmt_list = array();
+			$this->parser = new KwartzParser(' ');
 		}
 
 
@@ -603,9 +605,8 @@ require_once('KwartzUtility.inc');
 
 
 		private function parse_expression($str, $flag_php_mode=FALSE) {
-			$scanner = new KwartzScanner($str);
-			$parser	 = new KwartzParser($scanner);
-			$expr	 = $parser->parse_expression_strictly($flag_php_mode);
+			$this->parser->reset($str);
+			$expr = $this->parser->parse_expression_strictly($flag_php_mode);
 			return $expr;
 		}
 	}

@@ -7,7 +7,6 @@
 require_once('KwartzException.inc');
 require_once('KwartzNode.inc');
 require_once('KwartzUtility.inc');
-require_once('KwartzVisitor.inc');
 
 
 // namespace Kwartz {
@@ -35,6 +34,7 @@ require_once('KwartzVisitor.inc');
 		protected $code = "";
 		protected $block;
 		protected $macro_stmt_hash = array();
+		protected $nl = "\n";			// newline char ("\n" or "\r\n")
 		protected $priorities = array(
 				'variable' => 100,
 				'number'   => 100,
@@ -127,6 +127,10 @@ require_once('KwartzVisitor.inc');
 		}
 		
 		function code() { return $this->code; }
+		
+		function set_newline_char($newline) { $this->nl = $newline; }
+		function newline_char() { return $this->nl; }
+		function nl()           { return $this->nl; }
 
 		//function translate_node($expr_or_stmt, $depth) {
 		//	$class_name = get_class($expr_or_stmt);
@@ -323,7 +327,7 @@ require_once('KwartzVisitor.inc');
 		}
 
 		protected function translate_print_statement($stmt, $depth) {
-			foreach ($stmt->expressions() as $expr) {
+			foreach ($stmt->arglist() as $expr) {
 				if (($t = $expr->token()) == 'string') {
 					$this->code .= $expr->value();
 				} else {
@@ -340,7 +344,7 @@ require_once('KwartzVisitor.inc');
 			$this->code .= $this->keyword(':set');
 			$this->translate_expression($expr);
 			$this->code .= $this->keyword(':endset');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 		protected function translate_if_statement($stmt, $depth) {
@@ -348,7 +352,7 @@ require_once('KwartzVisitor.inc');
 			$this->code .= $this->keyword(':if');
 			$this->translate_expression($stmt->condition());
 			$this->code .= $this->keyword(':then');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 			$this->translate_statement($stmt->then_block(), $depth+1);
 			$st = $stmt;
 			while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
@@ -356,19 +360,19 @@ require_once('KwartzVisitor.inc');
 				$this->code .= $this->keyword(':elseif');
 				$this->translate_expression($st->condition());
 				$this->code .= $this->keyword(':then');
-				$this->code .= "\n";
+				$this->code .= $this->nl;
 				$this->translate_statement($st->then_block(), $depth+1);
 			}
 			if ($st) {
 				//assert($st.token() == '<<block>>');
 				$this->add_indent($depth);
 				$this->code .= $this->keyword(':else');
-				$this->code .= "\n";
+				$this->code .= $this->nl;
 				$this->translate_statement($st, $depth+1);
 			}
 			$this->add_indent($depth);
 			$this->code .= $this->keyword(':endif');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 		protected function translate_foreach_statement($stmt, $depth) {
@@ -378,11 +382,11 @@ require_once('KwartzVisitor.inc');
 			$this->code .= $this->keyword(':in');
 			$this->translate_expression($stmt->list_expr());
 			$this->code .= $this->keyword(':doforeach');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 			$this->translate_statement($stmt->body_block(), $depth+1);
 			$this->add_indent($depth);
 			$this->code .= $this->keyword(':endforeach');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 		protected function translate_while_statement($stmt, $depth) {
@@ -390,11 +394,11 @@ require_once('KwartzVisitor.inc');
 			$this->code .= $this->keyword(':while');
 			$this->translate_expression($stmt->condition());
 			$this->code .= $this->keyword(':dowhile');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 			$this->translate_statement($stmt->body_block(), $depth+1);
 			$this->add_indent($depth);
 			$this->code .= $this->keyword(':endwhile');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 		protected function translate_macro_statement($stmt, $depth) {
@@ -421,7 +425,7 @@ require_once('KwartzVisitor.inc');
 		protected function translate_rawcode_statement($stmt, $depth) {
 			$this->add_indent($depth);
 			$this->code .= $stmt->rawcode();
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 		
 	}
@@ -474,7 +478,7 @@ require_once('KwartzVisitor.inc');
 			'E('   => 'htmlspecialchars(',
 			'E)'   => ')',
 		);
-
+		
 		function __construct($block) {
 			parent::__construct($block);
 		}
@@ -494,11 +498,11 @@ require_once('KwartzVisitor.inc');
 			$this->code .= $this->keyword(':in');
 			$this->translate_expression($stmt->loopvar_expr());
 			$this->code .= $this->keyword(':doforeach');
-			$this->code .= "\n";
+			$this->code .= $this->nl();
 			$this->translate_statement($stmt->body_block(), $depth+1);
 			$this->add_indent($depth);
 			$this->code .= $this->keyword(':endforeach');
-			$this->code .= "\n";
+			$this->code .= $this->nl();
 		}
 
 	}

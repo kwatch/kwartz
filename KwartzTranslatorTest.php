@@ -8,7 +8,6 @@ require_once('PHPUnit.php');
 require_once('KwartzTranslator.inc');
 require_once('KwartzErubyTranslator.inc');
 require_once('KwartzJspTranslator.inc');
-require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 
 class KwartzTranslatorTest extends PHPUnit_TestCase {
@@ -23,8 +22,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$input    = preg_replace('/^\n/',     '',  $input);
 		$expected = preg_replace('/^\t\t/m',  '',  $expected);
 		$expected = preg_replace('/^\n/',     '',  $expected);
-		$scanner = new KwartzScanner($input);
-		$parser  = new KwartzParser($scanner);
+		$parser  = new KwartzParser($input);
 		$block   = $parser->parse();
 		if ($lang == 'php') {
 			$translator = new KwartzPhpTranslator($block);

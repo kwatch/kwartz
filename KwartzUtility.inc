@@ -17,5 +17,12 @@
 		return $str;
 	}
 
+	function kwartz_detect_newline_char(&$str) {
+		if (!$str || ($pos = strpos($str, "\n")) == NULL) {
+			return NULL;
+		}
+		return $str{$pos-1} == "\r" ? "\r\n" : "\n";
+	}
+
 //} // end of namespace Kwartz
 ?>

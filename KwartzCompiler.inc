@@ -5,12 +5,12 @@
 ###
 
 require_once('KwartzException.inc');
-require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 require_once('KwartzConverter.inc');
 require_once('KwartzTranslator.inc');
 require_once('KwartzErubyTranslator.inc');
 require_once('KwartzJspTranslator.inc');
+require_once('KwartzUtility.inc');
 
 
 //namespace Kwartz {
@@ -25,13 +25,17 @@ require_once('KwartzJspTranslator.inc');
 	
 
 	class KwartzCompiler {
-		private $pdata_str;
-		private $plogic_cde;
+		private $pdata;
+		private $plogic;
 		private $lang;
 		
+		private $converter;
+		private $parser;
+		private $translator;
+		
 		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php') {
-			$this->pdata_str = $pdata_str;
-			$this->plogic_code = $plogic_code;
+			$this->pdata = $pdata_str;
+			$this->plogic = $plogic_code;
 			switch ($lang) {
 			case 'php':
 			case 'eruby':
@@ -48,16 +52,17 @@ require_once('KwartzJspTranslator.inc');
 		function compile() {
 			## convert presentation data into block
 			$pdata_block = NULL;
-			if ($this->pdata_str) {
-				$converter = new KwartzConverter($this->pdata_str);
+			$newline_char = NULL;
+			if ($this->pdata) {
+				$newline_char = kwartz_detect_newline_char($this->pdata);
+				$converter = new KwartzConverter($this->pdata);
 				$pdata_block = $converter->convert();
 			}
 			
 			## convert presentation logic code into block
 			$plogic_block = NULL;
-			if ($this->plogic_code) {
-				$scanner = new KwartzScanner($this->plogic_code);
-				$parser  = new KwartzParser($scanner);
+			if ($this->plogic) {
+				$parser = new KwartzParser($this->plogic);
 				$plogic_block = $parser->parse();
 			}
 			
@@ -86,14 +91,16 @@ require_once('KwartzJspTranslator.inc');
 			default:
 				assert(false);
 			}
+			if ($newline_char) {
+				$translator->set_newline_char($newline_char);
+			}
 			$code = $translator->translate();
 			
 			return $code;
 		}
-	
+
 	}
 
 //}  // end of namespace Kwartz
-
 
 ?>

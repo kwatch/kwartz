@@ -130,7 +130,7 @@ require_once('KwartzNode.inc');
 		##
 		function visit_print_stmt($stmt) {
 			$exprlist = array();
-			foreach ($stmt->expressions() as $expr) {
+			foreach ($stmt->arglist() as $expr) {
 				$exprlist[] = $expr->accept($this);
 			}
 			return new KwartzPrintStatement($exprlist);

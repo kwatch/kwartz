@@ -22,8 +22,7 @@ class KwartzParserTest extends PHPUnit_TestCase {
 	    //try {
 		$input    = preg_replace('/^\t\t/m', '', $input);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
-		$scanner = new KwartzScanner($input);
-		$parser	 = new KwartzParser($scanner);
+		$parser	 = new KwartzParser($input);
 		$expr	 = $parser->$method_name();
 		$actual	 = $expr->inspect();
 		if ($flag_test) {
@@ -490,8 +489,7 @@ END;
 	    //try {
 		$input    = preg_replace('/^\t\t/m', '', $input);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
-		$scanner = new KwartzScanner($input);
-		$parser  = new KwartzParser($scanner);
+		$parser  = new KwartzParser($input);
 		$stmt = $parser->$method_name();
 		$actual = $stmt->inspect();
 		if ($flag_test) {

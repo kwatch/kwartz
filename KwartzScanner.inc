@@ -92,12 +92,28 @@ require_once('KwartzUtility.inc');
 
 
 		function __construct($input) {
-			$this->input  = $input;
-			$this->length = strlen($input);
-			$this->index  = -1;
-			$this->read();
+			$this->input = $input;
+			$this->_initialize();
+		}
+		
+		function reset($input) {
+			$this->input = $input;
+			$this->_initialize();
 		}
 
+		function _initialize() {
+			$this->length  = strlen($this->input);
+			$this->index   = -1;
+			$this->char    = NULL;
+			$this->linenum = 1;
+			$this->token          = NULL;
+			$this->token_str      = NULL;
+			$this->next_token     = NULL;
+			$this->next_token_str = NULL;
+			
+			$this->read();
+		}
+		
 		function token() {
 			return $this->token;
 		}

@@ -15,24 +15,23 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 
 
 	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
+		//if (! $flag_test) { return; }
 		$pdata    = preg_replace('/^\t\t/m', '', $pdata);
 		$pdata    = preg_replace('/^\n/',    '', $pdata);
 		$plogic   = preg_replace('/^\t\t/m', '', $plogic);
 		$plogic   = preg_replace('/^\n/',    '', $plogic);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$expected = preg_replace('/^\n/',    '', $expected);
-		//echo "*** debug: pdata=$pdata\n";
-		//echo "*** debug: plogic=$plogic\n";
 		$compiler = new KwartzCompiler($pdata, $plogic, $lang);
 		$code = $compiler->compile();
 		$actual = $code;
 		if ($flag_test) {
 			$this->assertEquals($expected, $actual);
 		} else {
-			echo "\n------\n";
-			echo kwartz_inspect_str($expected);
-			echo "\n------\n";
-			echo kwartz_inspect_str($actual);
+			#echo "\n------\n";
+			#echo kwartz_inspect_str($expected);
+			#echo "\n------\n";
+			#echo kwartz_inspect_str($actual);
 		}
 		return $compiler;
 	}
@@ -631,6 +630,30 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	#function test_compile3_jsp() {
 	#	# translation error
 	#}
+
+
+
+	## --------------------
+	## newline char
+	## --------------------
+	function test_newline1_php() {
+		$pdata    = preg_replace('/\n/', "\r\n", KwartzCompilerTest::pdata_compile1);
+		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
+		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_php);
+		$this->_test($pdata, $plogic, $expected, 'php');
+	}
+	function test_newline1_eruby() {
+		$pdata    = preg_replace('/\n/', "\r\n", KwartzCompilerTest::pdata_compile1);
+		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
+		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_eruby);
+		$this->_test($pdata, $plogic, $expected, 'eruby');
+	}
+	function test_newline1_jsp() {
+		$pdata    = preg_replace('/\n/', "\r\n", KwartzCompilerTest::pdata_compile1);
+		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
+		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_jsp);
+		$this->_test($pdata, $plogic, $expected, 'jsp');
+	}
 
 }
 

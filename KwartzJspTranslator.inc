@@ -113,7 +113,7 @@ require_once('KwartzNode.inc');
 			$this->code .= $this->keyword(':if');
 			$this->translate_expression($stmt->condition());
 			$this->code .= $this->keyword(':then');
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 			$this->translate_statement($stmt->then_block(), $depth+1);
 			$st = $stmt;
 			while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
@@ -121,14 +121,14 @@ require_once('KwartzNode.inc');
 				$this->code .= $this->keyword(':elseif');
 				$this->translate_expression($st->condition());
 				$this->code .= $this->keyword(':then');
-				$this->code .= "\n";
+				$this->code .= $this->nl;
 				$this->translate_statement($st->then_block(), $depth+1);
 			}
 			if ($st) {
 				//assert($st.token() == '<<block>>');
 				$this->add_indent($depth);
 				$this->code .= $this->keyword(':else');
-				$this->code .= "\n";
+				$this->code .= $this->nl;
 				$this->translate_statement($st, $depth+1);
 				$this->add_indent($depth);				#
 				$this->code .= '</c:otherwise></c:choose>';		#
@@ -136,7 +136,7 @@ require_once('KwartzNode.inc');
 				$this->add_indent($depth);				#
 				$this->code .= '</c:when></c:choose>';			#
 			}								#
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 
@@ -162,7 +162,7 @@ require_once('KwartzNode.inc');
 				$this->translate_expression($r);
 				$this->code .= $this->keyword(':endset');
 			}
-			$this->code .= "\n";
+			$this->code .= $this->nl;
 		}
 
 		function translate_while_statement($stmt) {
@@ -288,7 +288,7 @@ require_once('KwartzNode.inc');
 		}
 
 		function visit_print_stmt($stmt) {
-			$arglist = $stmt->expressions();
+			$arglist = $stmt->arglist();
 			foreach($arglist as $expr) {
 				if ($ret = $expr->accept($this)) {
 					return $ret;
