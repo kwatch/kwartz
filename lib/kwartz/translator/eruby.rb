@@ -128,18 +128,18 @@ module Kwartz
 
 
       @@func_names = {
-        'list_new'    => '[]',
-        'list_length' => '.length',
-        'list_empty'  => '.empty?',
-        'hash_new'    => '{}',
-        'hash_keys'   => '.keys',
-        'hash_empty'  => '.empty?',
-        'str_length'  => '.length',
-        'str_trim'    => '.trim',
-        'str_tolower' => '.downcase',
-        'str_toupper' => '.upcase',
-        'str_index'   => '.index',
-        'str_empty'   => '.empty?',
+         'list_new'    => '[]',
+         'list_length' => '.length',
+         'list_empty'  => '.empty?',
+         'hash_new'    => '{}',
+         'hash_keys'   => '.keys',
+         'hash_empty'  => '.empty?',
+         'str_length'  => '.length',
+         'str_trim'    => '.trim',
+         'str_tolower' => '.downcase',
+         'str_toupper' => '.upcase',
+         'str_index'   => '.index',
+         'str_empty'   => '.empty?',
       }
 
       

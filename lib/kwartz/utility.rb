@@ -1,4 +1,6 @@
 ###
+### copyright(c) 2005 kuwata-lab all rights reserved
+###
 ### $Id$
 ###
 
@@ -6,10 +8,9 @@ require 'kwartz/exception'
 
 module Kwartz
 
-   class Util
-      ###
-      ### dump string
-      ###
+   module Util
+
+      ## dump string
       def self.dump_str(str)
          str = str.dup
          str.gsub!(/\\/, '\\\\\\\\')		# wow!
@@ -20,27 +21,7 @@ module Kwartz
          #str.gsub!(/\#/, '\\#')
          return "\"#{str}\""
       end
-
+      
    end
 
-
-   ##
-   ## exception class for assertion
-   ##
-   class AssertionError < KwartzError
-      def initialize(msg)
-         super(msg)
-      end
-   end
-
-
-   ##
-   ## assertion
-   ##
-   def self.assert(condition, message='')
-      unless condition
-	 raise AssertionError.new(message)
-      end
-   end
-
-end  # end of module Kwartz
+end

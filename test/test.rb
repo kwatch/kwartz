@@ -34,4 +34,7 @@ suite << TranslatorTest.suite()
 require 'compiler-test'
 suite << CompilerTest.suite()
 
+require 'analyzer-test'
+suite << AnalyzerTest.suite()
+
 Test::Unit::UI::Console::TestRunner.run(suite)

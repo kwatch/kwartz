@@ -1,3 +1,9 @@
+###
+### copyright(c) 2005 kuwata-lab all rights reserved
+###
+### $Id$
+###
+
 module Kwartz
 
    ##
@@ -37,6 +43,21 @@ module Kwartz
        
        attr_reader :errmsg, :linenum, :filename
        
+   end
+
+
+   ## exception class for assertion
+   class AssertionError < KwartzError
+      def initialize(msg)
+         super(msg)
+      end
+   end
+   
+   ## assertion
+   def self.assert(condition, message='')
+      unless condition
+         raise AssertionError.new(message)
+      end
    end
 
 end

@@ -1,5 +1,5 @@
 ###
-### converter.rb
+### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
 ###
@@ -193,7 +193,7 @@ module Kwartz
          end # of while
             
          if etagname
-            raise ConvertionError.new("'<#{etagname}>' is not closed by end-tag.", start_line, @filename)
+            raise ConvertionError.new("'<#{etagname}>' is not closed by end-tag.", start_linenum, @filename)
          end
          if !@input.empty?
             stmt_list << create_print_node(@input, @linenum)

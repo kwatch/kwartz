@@ -1,5 +1,5 @@
 ###
-### parser.rb
+### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
 ###

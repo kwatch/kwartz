@@ -2,6 +2,12 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-27 rev.23
+	.- [enhance] new file: analyzer.rb, analyzer-test.rb
+	.- [refactor] Visitor class rewrited
+	.- [enhance] setup.rb added
+	.- [enhance] new file: util/optparse.rb, util/orderedhash.rb
+
 .: 2004-01-26 rev.22
 	.- [enhance] new file: translator/eruby.rb
 	.- [enhance] new file: translator/php.rb

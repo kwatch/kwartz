@@ -1,5 +1,5 @@
 ###
-### visitor.rb
+### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
 ###
@@ -11,7 +11,7 @@ module Kwartz
    module Visitor
 
       ## don't override the method!
-      def visit(node, depth=nil)
+      def visit(node, depth=0)
          return node.accept(self, depth)
       end
       
@@ -22,39 +22,39 @@ module Kwartz
       end
       
       def visit_unary_expression(expr, depth=0)
-         visit(expr.child, depth)
+         expr.child.accept(self, depth+1)
       end
 
       def visit_empty_expression(expr, depth=0)
-         visit(expr.child, depth)
+         expr.child.accept(self, depth+1)
       end
 
       def visit_binary_expression(expr, depth=0)
-         visit(expr.left, depth+1)
-         visit(expr.right, depth+1)
+         expr.left.accept(self, depth+1)
+         expr.right.accept(self, depth+1)
       end
 
       def visit_funtion_expression(expr, depth=0)
-         expr.arguments.each do |expr|
-            visit(expr, depth+1)
+         expr.arguments.each do |arg|
+            arg.accept(self, depth+1)
          end
       end
 
       def visit_property_expression(expr, depth=0)
-         visit(expr.object, depth+1)
-         expr.arguments.each do |expr|
-            visit(expr, depth+1)
+         expr.object.accept(self, depth+1)
+         expr.arguments.each do |arg|
+            arg.accept(self, depth+1)
          end if expr.arguments
       end
 
       def visit_conditional_expression(expr, depth=0)
-         visit(expr.condition)
-         visit(expr.left)
-         visit(expr.right)
+         expr.condition.accept(self, depth+1)
+         expr.left.accept(self, depth+1)
+         expr.right.accept(self, depth+1)
       end
 
       def visit_literal_expression(expr, depth=0)
-         return visit_expression(expr, depth)
+         # nothing
       end
 
       def visit_variable_expression(expr, depth=0)
@@ -78,48 +78,43 @@ module Kwartz
       end
 
 
-      #####################
+      ## ----------------------------------------
       
       def visit_statement(stmt, depth=0)
          # nothing
       end
       
       def visit_print_statement(stmt, depth=0)
-         stmt.arguments().each do |expr|
-            visit(expr, depth)
+         stmt.arguments.each do |expr|
+            expr.accept(self, depth+1)
          end
       end
       
       def visit_expr_statement(stmt, depth=0)
-         visit(stmt.expression())
+         stmt.expression.accept(self, depth+1)
       end
       
       def visit_block_statement(stmt, depth=0)
-         block_stmt = stmt
-         block_stmt.statements().each do |st|
-            visit(st)
+         stmt.statements.each do |st|
+            st.accept(self, depth+1)
          end
       end
       
       def visit_if_statement(stmt, depth=0)
-         visit(stmt.condition())
-         visit(stmt.then_block())
-         visit(stmt.else_stmt()) if stmt.else_stmt()
+         stmt.condition.accept(self, depth+1)
+         stmt.then_stmt.accept(self, depth+1)
+         stmt.else_stmt.accept(self, depth+1)
       end
       
       def visit_foreach_statement(stmt, depth=0)
-         visit(stmt.loopvar())
-         visit(stmt.list())
-         visit(stmt.body())
+         stmt.list_expr.accept(self, depth+1)
+         stmt.loopvar_expr.accept(self, depth+1)
+         stmt.body_stmt.accept(self, depth+1)
       end
       
       def visit_while_statement(stmt, depth=0)
-         visit(stmt.condition())
-         visit(stmt.body())
-      end
-      
-      def visit_macro_statement(stmt, depth=0)
-         visit(stmt.body())
+         stmt.condition.accept(self, depth+1)
+         stmt.body_stmt.accept(self, depth+1)
       end
       
       def visit_expand_statement(stmt, depth=0)

@@ -1,7 +1,8 @@
 #!/usr/bin/ruby
 
 ###
-### kwartz -- a template system which can separate presentation logic from template
+### kwartz -- a template system which realized the concept of
+###    'Separation of Presentation Logic from Presentation Data'(SoPL/PD).
 ###
 ### Copyright (C) 2004-2005 kuwata-lab
 ### All rights reserved.
@@ -25,17 +26,18 @@
 ### You should have received a copy of the GNU General Public License
 ### along with this program; if not, write to the Free Software
 ### Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+###
 
 require 'kwartz'
+require 'kwartz/util/optparse'
 
 module Kwartz
 
    class CommandOptionError < KwartzError
-      def initialize(errmsg)
-         super(errmsg)
+      def initialize(msg)
+         super(msg)
       end
    end
-
 
    class MainCommand
 
@@ -45,44 +47,67 @@ module Kwartz
       def initialize(argv=ARGV)
          @argv = ARGV
          @command = File::basename($0)
-         @options    = {}
-         @properties = {}
       end
-      
-      
+
+      @@actions = {
+         'scan'          => :scan,
+         'convert'       => :convert,
+         'parse'         => :parse_program,
+         'parse-program' => :parse_program,
+         'parse_program' => :parse_program,
+         'parse-plogic'  => :parse_plogic,
+         'parse_plogic ' => :parse_plogic,
+         'expand'        => :expand,
+         'translate'     => :translate,
+         'compile'       => :compile,
+         'analyze'       => :analyze,
+      }
+
       def main()
-         parse_argv()
-         
-         flag_exit = false
-         if @options['-v']
-            print "Rev.#{VERSION} (#{LAST_UPDATE})\n"
-            flag_exit = true
+         ## parse command-line options
+         begin
+            options, properties = Kwartz::Util::optparse(@argv, "hves", "alp", nil, true)
+         rescue Kwartz::Util::OptparseError => ex
+            case ex.type
+            when :invalid_option
+               msg = "-#{ex.optchar.chr}: invalid option."
+            when :invalid_property
+               msg = "--#{ex.propstr.to_s}: invalid property."
+            when :argument_required
+               case ex.optchar
+               when ?a
+                  msg = "-#{ex.optchar.chr}: action required."
+               when ?l
+                  msg = "-#{ex.optchar.chr}: lang requried."
+               when ?p
+                  msg = "-#{ex.optchar.chr}: presentation logic file requried."
+               else
+                  Kwartz::assert(false, "ex.optchar=#{ex.optchar}")
+               end
+            end
+            raise CommandOptionError.new(msg)
          end
-         if @options['-h']
-            print usage()
-            flag_exit = true
-         end
-         if flag_exit
+
+         if options[?h] || options[?v]
+            $stderr.puts "kwartz: Rev.#{VERSION} (#{LAST_UPDATE})" if options[?v]
+            $stderr.puts usage() if options[?h]
             return 0
          end
-         
-         action = @options['-a'] || 'compile'
-         case action
-         when 'compile', 'convert', 'parse', 'translate', 'scan'
-            # nothing
-         else
-            raise CommandOptionError.new("#{action}: invalid action.")
+
+         action = @@actions[ options[?a] || 'compile' ]
+         unless action
+            raise CommandOptionError.new("-a #{options[?a]}: invalid action.")
          end
-         
-         if @options['-s'] || @options['-e']
-            @properties[:escape] = true
+
+         if options[?s] || options[?e]
+            properties[:escape] = true
          end
-         
-         lang = @options['-l'] || 'eruby'
-         
-         compiler = Kwartz::Compiler.new(@properties)
-         
-         plogic_filenames = @options['-p'] ? @options['-p'].split(/,/) : []
+
+         lang = (options[?l] || 'eruby')
+
+         ## parse presentation logic file
+         compiler = Kwartz::Compiler.new(properties)
+         plogic_filenames = options[?p] ? options[?p].split(/,/) : []
          element_decl_list = []
          plogic_filenames.each do |filename|
             unless test(?f, filename)
@@ -95,7 +120,8 @@ module Kwartz
             end
          end
 
-         output = ''
+         ## perform action ang get output
+         output = nil
          if @argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
@@ -105,6 +131,7 @@ module Kwartz
                unless test(?f, filename)
                   raise CommandOptionError.new("'#{filename}': not found.")
                end
+               output = ''
                File.open(filename) do |file|
                   input = file.read()
                   output << perform(action, compiler, input, filename, element_decl_list, lang)
@@ -114,18 +141,16 @@ module Kwartz
          print output
          return 0
       end
-      
-      
+
       private
-      
-      
+
       def usage()
          s = <<END
 Usage: #{@command} [..options..] file1 [file2...]
   -h, --help : help
   -v         : version
-  -a action  : compile/parse/translate/convert (default 'compile')
-  -l lang    : eruby//php/jstl10/jstl11 (default 'eruby')
+  -a action  : compile/parse/translate/convert/analyze (default 'compile')
+  -l lang    : eruby/php/jstl10/jstl11 (default 'eruby')
   -p file    : presentation logic filename
   -s, -e     : sanitize(escape)
   --odd_value=value      : odd  value in FOREACH or LIST (default "'odd'")
@@ -135,85 +160,49 @@ END
          return s
       end
 
-      
-      def parse_argv()
-         argv = @argv
-         while !argv.empty? && argv[0][0] == ?-
-            opt = argv.shift
-            case opt
-            when '-h', '-v', '-s', '-e'
-               @options[opt] = true
-            when '-a', '-l', '-p'
-               if argv.empty?
-                  raise CommandOptionError.new("'#{opt}' requires argument.")
-               end
-               @options[opt] = argv.shift
-            when '--help'
-               @options['-h'] = true
-            when /^--([-\w]+)(?:=(.*))?$/
-               value = $2
-               name  = $1.gsub(/-/, '_')
-               case value
-               when 'true', 'yes'
-                  value = true
-               when 'false', 'no'
-                  value = false
-               when 'null', 'nil'
-                  value = nil
-               when /^\d+$/
-                  value = value.to_i
-               when /^\d+\.\d+$/
-                  value = value.to_f
-               when /^\/.*\/$/
-                  value = eval value
-               when /^'.*'$/
-                  value = eval value
-               when /^".*"$/
-                  value = eval value
-               end
-               @properties[name.intern] = value
-            else
-               raise CommandOptionError.new("'#{opt}': invalid option.")
-            end
-         end
-      end
-      
-      
       def perform(action, compiler, input, filename, elem_decl_list, lang)
          case action
-         when 'convert'
+         when :scan
+            scanner = Scanner.new(input)
+            output = scanner.scan_all()
+         when :convert
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
             output = block_stmt._inspect()
-         when 'parse-plogic', 'parse_plogic'
+         when :parse_plogic
             plogic_str = input
             elem_decl_list = compiler.parse_plogic(plogic_str, filename)
             output = elem_decl_list.collect { |decl| decl._inspect() }.join
-         when 'parse-program', 'parse_program', 'parse'
+         when :parse_program
             program_str = input
             block_stmt = compiler.parse_program(program_str, filename)
             output = block_stmt._inspect()
-         when 'expand'
+         when :expand
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
             element_table = compiler.merge(element_list, elem_decl_list)
             compiler.expand(block_stmt, element_table)
             output = block_stmt._inspect()
-         when 'translate'
+         when :translate
             program_str = input
             block_stmt = compiler.parse_program(program_str, filename)
             code = compiler.translate(block_stmt, lang)
             output = code
-         when 'compile'
+         when :compile, :analyze
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
             element_table = compiler.merge(element_list, elem_decl_list)
             compiler.expand(block_stmt, element_table)
-            code = compiler.translate(block_stmt, lang)
-            output = code
-         when 'scan'
-            scanner = Scanner.new(input)
-            output = scanner.scan_all()
+            if action == :compile
+               code = compiler.translate(block_stmt, lang)
+               output = code
+            elsif action == :analyze
+               analyzer = Kwartz::Analyzer.create('scope', {})
+               analyzer.analyze(block_stmt)
+               output = analyzer.result()
+            else
+               Kwartz::assert(false)
+            end
          else
             raise CommandOptionError.new("#{action}: not supported yet.")
          end
@@ -230,7 +219,7 @@ if __FILE__ == $0
       main_command = Kwartz::MainCommand.new(ARGV)
       main_command.main()
    rescue Kwartz::KwartzError => ex
-      $stderr.print ex.message, "\n"
+      $stderr.puts ex.message
       exit 1
    end
 end

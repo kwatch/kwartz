@@ -1,6 +1,10 @@
 
   ### $Id$
 
+  ###
+  ### Notice: this is imcomprete.
+  ###
+  
 
   ###
   ### expression
@@ -77,43 +81,15 @@
 
   statement    ::=  print-stmt | expr-stmt | if-stmt | foreach-stmt | while-stmt | block-stmt | ';'
 
-/****** obsolete
-  print-stmt   ::=  ':print' '(' arguments ')'
-  
-  set-stmt     ::=  ':set' '(' expression ')'
-  
-  if-stmt      ::=  ':if' '(' expression ')' block ':end'
-                  | ':if' '(' expression ')' block ':else' block ':end'
-                  | ':if' '(' expression ')' block ':elseif' '(' expression ')' block ':end'
-               ::=  ':if' '(' expression ')' block
-                    { ':elseif' '(' expression ')' block }
-                    [ ':else' block ]
-                    :end
-
-  foreach-stmt ::= ':foreach' '(' variable '=' expression ')' block ':end'
-  
-  while-stmt   ::= ':while' '(' expression ')' block ':end'
-  
-  macro-stmt   ::= ':macro' '(' name ')' block ':end'
-  
-  expand-stmt  ::= ':expand' '(' name ')' | '@' name
-  
-  rawcode-stmt ::= ':::' rawcode-str '\n'
-  
-  statement    ::=  print-stmt | set-stmt | if-stmt | foreach-stmt | while-stmt
-                  | macro-stmt | expand-stmt | rawcode-stmt
-
-  block        ::=  statement | block statement | e
-               ::=  { statement }
-
- ****************/
 
 
   ##
-  ## definition
+  ## presentation logic declaration
   ##
-
-  element-def  ::=  'element' name '{' [ decl-list ] '}'
+  
+  presentation-logic ::= { element-decl }
+  
+  element-decl ::=  'element' name '{' [ decl-list ] '}'
   
   decl-list    ::=  declaration | decl-list declaration
   

@@ -1,6 +1,8 @@
 ###
 ### compiler.rb
 ###
+### copyright(c) 2005 kuwata-lab all rights reserved
+###
 ### $Id$
 ###
 
@@ -89,12 +91,13 @@ module Kwartz
 
       ## ex.
       ##   lang='eruby'
-      ##   code = translate(block_stmt, lang)
+      ##   code = compiler.translate(block_stmt, lang)
       def translate(node, lang)
          translator = Kwartz::Translator.create(lang, @properties)
          code = translator.translate(node)
          return code
       end
+      
       
       ## facade method
       def compile(lang='eruby', pdata_str='', plogic_str='', pdata_filename=nil, plogic_filename=nil)
@@ -109,6 +112,22 @@ module Kwartz
          ## translate
          code = translate(block_stmt, lang)
          return code
+      end
+
+      ## facade method
+      def analyze(pdata_str='', plogic_str='', pdata_filename=nil, plogic_filename=nil)
+         ## convert
+         block_stmt, elem_list = convert(pdata_str, pdata_filename)
+         ## parse plogic
+         elem_decl_list = parse_plogic(plogic_str, plogic_filename)
+         ## merge
+         element_table = merge(elem_list, elem_decl_list)
+         ## expand
+         expand(block_stmt, element_table)
+         ## analye
+         analyzer = Analyzer.new(properties)
+         analyzer.analyze(block_stmt)
+         return analyzer.result()
       end
 
    end
