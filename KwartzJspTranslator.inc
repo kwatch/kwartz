@@ -59,6 +59,7 @@ require_once('KwartzNode.inc');
 			'}'    => ']',
 			'[:'   => "['",
 			':]'   => "']",
+			','    => ", ",
 
 			'!'    => 'not ',
 			'&&'   => 'and',
@@ -78,12 +79,12 @@ require_once('KwartzNode.inc');
 			return array_key_exists($token, $this->keywords) ? $this->keywords[$token] : $token;
 		}
 
-		function translate_string_expression($expr) {
+		protected function translate_string_expression($expr) {
 			$value = $expr->value();
 			$this->code .= "'" . addcslashes($value, "'\\") . "'";
 		}
 		
-		function translate_unary_expression($expr) {
+		protected function translate_unary_expression($expr) {
 			$t = $expr->token();
 			switch ($t) {
 			case ':empty':
@@ -101,14 +102,25 @@ require_once('KwartzNode.inc');
 			}
 		}
 
-		function translate_function_expression($expr) {
+		protected function translate_function_expression($expr) {
 			$funcname = $expr->funcname();
 			$msg = "'$funcname()': JSP doesn't support function call expression.";
 			throw new KwartzTranslationError($msg, $this);
 		}
 
+		protected function translate_property_expression($expr) {
+			if ($expr->arglist() !== NULL && count($expr->arglist()) > 0) {
+				$msg = "JSTL doesn't support property with arguments.";
+				throw new KwartzTranslationError($msg, $this);
+			}
+			$t = $expr->token();
+			$op = $this->keyword($t);
+			$this->translate_expr($expr->object(), $t, $expr->object()->token());
+			$this->code .= $op;
+			$this->code .= $expr->property();
+		}
 
-		function translate_if_statement($stmt, $depth) {
+		protected function translate_if_statement($stmt, $depth) {
 			$this->add_indent($depth);
 			$this->code .= $this->keyword(':if');
 			$this->translate_expression($stmt->condition());
@@ -140,7 +152,7 @@ require_once('KwartzNode.inc');
 		}
 
 
-		function translate_set_statement($stmt, $depth) {
+		protected function translate_set_statement($stmt, $depth) {
 			$this->normalize_set_stmt($stmt);
 			$this->add_indent($depth);
 			$expr = $stmt->assign_expr();			# assign expression
@@ -165,13 +177,13 @@ require_once('KwartzNode.inc');
 			$this->code .= $this->nl;
 		}
 
-		function translate_while_statement($stmt) {
+		protected function translate_while_statement($stmt) {
 			$error_msg = "JSP doesn't support 'while' statement.";
 			throw new KwartzTranslationError($error_msg, $this);
 		}
 
 
-		function translate_block_statement($block, $depth) {
+		protected function translate_block_statement($block, $depth) {
 			$i = 0;
 			foreach($block->statements() as $stmt) {
 				$i++;
@@ -269,7 +281,17 @@ require_once('KwartzNode.inc');
 			return $ret;
 		}
 		function visit_property_expr($expr) {
-			return $expr->object()->accept($this);
+			if ($ret = $expr->object()->accept($this)) {
+				return $ret;
+			}
+			if ($expr->arglist() != NULL && count($expr->arglist()) > 0) {
+				foreach ($expr->arglist() as $arg) {
+					if ($ret = $arg->accept($this)) {
+						return $ret;
+					}
+				}
+			}
+			return NULL;
 		}
 		function visit_function_expr($expr) {
 			$arglist = $expr->arglist();

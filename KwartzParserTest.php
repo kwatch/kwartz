@@ -463,6 +463,21 @@ END;
 	}
 
 
+	function test_parse_property3() {
+		$input = "obj.prop(x,y,z)";
+		$expected = <<<END
+		.
+		  obj
+		  'prop'
+		    x
+		    y
+		    z
+
+END;
+		$this->_test_expr($input, $expected, 'parse_array');
+	}
+
+
 	function test_parse_function1() {
 		$input = "f(10, x+1, (3+4))";
 		$expected = <<<END
@@ -1333,6 +1348,48 @@ END;
 	}
 
 
+	function test_php_concat1() {
+		$input = '
+		echo $a.$b.$c->d->e;
+		';
+		$expected = 
+		'<<block>>
+		  :print
+		    .+
+		      .+
+		        a
+		        b
+		      .
+		        .
+		          c
+		          \'d\'
+		        \'e\'
+		';
+		$this->_test_stmt($input, $expected, 'parse');
+	}
+
+
+	function test_php_property1() {
+		$input = '
+		echo $obj->prop1->prop2()->prop3($a,$b,$c);
+		';
+		$expected = <<<END
+		<<block>>
+		  :print
+		    .
+		      .
+		        .
+		          obj
+		          'prop1'
+		        'prop2'
+		      'prop3'
+		        a
+		        b
+		        c
+
+END;
+		$this->_test_stmt($input, $expected, 'parse');
+	}
 
 }
 

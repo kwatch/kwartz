@@ -169,6 +169,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
+
 	const input_property1 = '
 		:print(obj.child.name)
 		:print("\n")
@@ -193,6 +194,63 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_property1, $expected);
 	}
+
+
+
+	const input_property2 = '
+		echo $obj->child()->name(), "\n";
+		';
+	function test_php_property2() {
+		$expected = '
+		<?php echo $obj->child()->name(); ?>
+		';
+		$this->_test_php(KwartzTranslatorTest::input_property2, $expected);
+	}
+
+	function test_eruby_property2() {
+		$expected = '
+		<%= obj.child.name %>
+		';
+		$this->_test_eruby(KwartzTranslatorTest::input_property2, $expected);
+	}
+
+	function test_jsp_property2() {
+		$expected = '
+		<c:out value="${obj.child.name}" escapeXml="false"/>
+		';
+		$this->_test_jsp(KwartzTranslatorTest::input_property2, $expected);
+	}
+
+
+
+	const input_property3 = '
+		$v = $obj->prop1($a[0].$b[0], $x/$y)->prop2()->prop3();
+		';
+	function test_php_property3() {
+		$expected = '
+		<?php $v = $obj->prop1($a[0] . $b[0], $x / $y)->prop2()->prop3(); ?>
+		';
+		$this->_test_php(KwartzTranslatorTest::input_property3, $expected);
+	}
+
+	function test_eruby_property3() {
+		$expected = '
+		<% v = obj.prop1(a[0] + b[0], x / y).prop2.prop3 %>
+		';
+		$this->_test_eruby(KwartzTranslatorTest::input_property3, $expected);
+	}
+
+	function test_jsp_property3() {
+		$expected = '';
+		try {
+			$this->_test_jsp(KwartzTranslatorTest::input_property3, $expected);
+		} catch (KwartzTranslationError $ex) {
+			# OK
+			return;
+		}
+		$this->fail("KwartzTranslationError should happen.");
+	}
+
 
 
 	const input_function1 = '

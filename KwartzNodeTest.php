@@ -304,6 +304,80 @@ END;
 		//echo kwartz_inspect_str($actual), "\n";
 		$this->assertEquals($expected, $actual);
 	}
+	
+	
+	
+	###
+	### BlockStatement#merge($block)
+	###
+	function test_block_merge1() {
+		$list1 = array();
+		$list1[] = new KwartzPrintStatement(array(new KwartzStringExpression('foo')));
+		$list1[] = new KwartzPrintStatement(array(new KwartzStringExpression('bar')));
+		$list1[] = new KwartzPrintStatement(array(new KwartzStringExpression('baz')));
+		$block1 = new KwartzBlockStatement($list1);
+		$list2 = array();
+		$list2[] = new KwartzPrintStatement(array(new KwartzNumericExpression(1)));
+		$list2[] = new KwartzPrintStatement(array(new KwartzNumericExpression(2)));
+		$list2[] = new KwartzPrintStatement(array(new KwartzNumericExpression(3)));
+		$block2 = new KwartzBlockStatement($list2);
+		
+		$block = $block1->merge($block2);
+		$actual = $block->inspect();
+		$expected = 
+		'<<block>>
+		  :print
+		    "foo"
+		  :print
+		    "bar"
+		  :print
+		    "baz"
+		  :print
+		    1
+		  :print
+		    2
+		  :print
+		    3
+		';
+		$expected = preg_replace('/^\t\t/m', '', $expected);
+		$this->assertEquals($expected, $actual);
+	}
+
+
+	###
+	### BlockStatement#rearrange()
+	###
+	function test_block_rearrange1() {
+		$list1 = array();
+		$list1[] = new KwartzPrintStatement(array(new KwartzStringExpression('foo')));
+		$list1[] = new KwartzPrintStatement(array(new KwartzStringExpression('bar')));
+		$block1  = new KwartzBlockStatement($list1);
+		
+		$list2 = array();
+		$list2[] = new KwartzPrintStatement(array(new KwartzNumericExpression(1)));
+		$list2[] = new KwartzPrintStatement(array(new KwartzNumericExpression(2)));
+		$list2[] = new KwartzMacroStatement('foo', $block1);
+		$block2  = new KwartzBlockStatement($list2);
+		
+		$block = $block2->rearrange();
+		$actual = $block->inspect();
+		$expected = 
+		'<<block>>
+		  :macro
+		    \'foo\'
+		    <<block>>
+		      :print
+		        "foo"
+		      :print
+		        "bar"
+		  :print
+		    1
+		  :print
+		    2
+		';
+		$expected = preg_replace('/^\t\t/m', '', $expected);
+		$this->assertEquals($expected, $actual);
+	}
 
 
 }

@@ -175,21 +175,29 @@ require_once('KwartzUtility.inc');
 		## constructor
 		private $object;		// expression
 		private $property;		// string
+		private $arglist;		// array of expressions
 
-		function __construct($token, $object_expr, $property_name) {
+		function __construct($token, $object_expr, $property_name, $arglist=NULL) {
 			parent::__construct($token);
 			$this->object = $object_expr;
 			$this->property = $property_name;
+			$this->arglist = $arglist;
 		}
 
 		function object()   { return $this->object; }
 		function property() { return $this->property; }
+		function arglist()  { return $this->arglist; }
 
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->object->inspect($depth+1);
 			$s .= $this->indent($depth+1);
 			$s .= "'{$this->property}'\n";
+			if ($this->arglist) {
+				foreach ($this->arglist as $expr) {
+					$s .= $expr->inspect($depth+2);
+				}
+			}
 			return $s;
 		}
 		
@@ -388,6 +396,29 @@ require_once('KwartzUtility.inc');
 		
 		function accept($visitor) {
 			return $visitor->visit_block_stmt($this);
+		}
+		
+		function merge($block) {
+			$new_list = array_merge($this->statements, $block->statements());
+			//$this->statements = $new_list;
+			//return $this;
+			return new KwartzBlockStatement($new_list);
+		}
+		
+		function rearrange() {
+			$macro_stmts = array();
+			$other_stmts = array();
+			foreach ($this->statements as $stmt) {
+				if ($stmt->token() == ':macro') {
+					$macro_stmts[] = $stmt;
+				} else {
+					$other_stmts[] = $stmt;
+				}
+			}
+			$new_list = array_merge($macro_stmts, $other_stmts);
+			//$this->statements = $new_list;
+			//return $this;
+			return new KwartzBlockStatement($new_list);
 		}
 	}
 

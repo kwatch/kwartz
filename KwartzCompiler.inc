@@ -69,8 +69,7 @@ require_once('KwartzUtility.inc');
 				return NULL;
 			}
 			if ($pdata_block && $plogic_block) {
-				$stmt_list = array_merge($pdata_block->statements(), $plogic_block->statements());
-				$block = new KwartzBlockStatement($stmt_list);
+				$block = $pdata_block->merge($plogic_block);
 			} else {
 				$block = $pdata_block ? $pdata_block : $plogic_block;
 			}

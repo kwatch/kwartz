@@ -91,7 +91,15 @@ require_once('KwartzNode.inc');
 		}
 		function visit_property_expr($expr) {
 			$object = $expr->object->accept($this);
-			return new KwartzPropertyExpression($expr->token(), $object, $expr->property());
+			if ($expr->arglist) {
+				$arglist = array();
+				foreach ($arglist as $arg) {
+					$arglist[] = $arg->accept($this);
+				}
+			} else {
+				$arglist = NULL;
+			}
+			return new KwartzPropertyExpression($expr->token(), $object, $expr->property(), $arglist);
 		}
 		function visit_function_expr($expr) {
 			$list = array();
@@ -142,7 +150,7 @@ require_once('KwartzNode.inc');
 		function visit_if_stmt($stmt) {
 			$cond_expr = $stmt->condition()->accept($this);
 			$then_block = $stmt->then_block()->accept($this);
-			$else_stmt  = $stmt->else_stmt()->accept($this);
+			$else_stmt  = $stmt->else_stmt() ? $stmt->else_stmt()->accept($this) : NULL;
 			return new KwartzIfStatement($cond_expr, $then_block, $else_stmt);
 		}
 		function visit_while_stmt($stmt) {

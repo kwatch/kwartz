@@ -129,16 +129,17 @@ require_once('KwartzScanner.inc');
 				}
 				## function
 				$this->scan();
-				$arglist = array();
-				if ($this->token() != ')') {
-					$arg_expr = $this->parse_expression($flag_php_mode);
-					$arglist[] = $arg_expr;
-					while ($this->token() == ',') {
-						$this->scan();
-						$arg_expr = $this->parse_expression($flag_php_mode);
-						$arglist[] = $arg_expr;
-					}
-				}
+				//$arglist = array();
+				//if ($this->token() != ')') {
+				//	$arg_expr = $this->parse_expression($flag_php_mode);
+				//	$arglist[] = $arg_expr;
+				//	while ($this->token() == ',') {
+				//		$this->scan();
+				//		$arg_expr = $this->parse_expression($flag_php_mode);
+				//		$arglist[] = $arg_expr;
+				//	}
+				//}
+				$arglist = $this->parse_arglist();
 				$this->token_check2(')', "function '$name(' is not closed by ')'.");
 				return new KwartzFunctionExpression($name, $arglist);
 
@@ -157,6 +158,8 @@ require_once('KwartzScanner.inc');
 		##    array ::= item | post '[' expr ']' | post '{' expr '}' | post '[:' name ']'
 		##                   | post '.' property | post '->' property
 		##	    ::= item { '[' expr ']' | '{' expr '}' | '[:' name ']' | '.' propperty | '->' propperty }
+		##    property ::= property_name | property_name arglist
+		##             ::= property_name [ arglist ]
 		function parse_array($flag_php_mode=FALSE) {
 			$expr = $this->parse_item($flag_php_mode);
 			$property_op = $flag_php_mode ? '->' : '.';
@@ -183,14 +186,37 @@ require_once('KwartzScanner.inc');
 				} elseif ($t == $property_op) {
 					$this->scan();
 					$this->token_check('name', "invalid property name.");
-					$property = $this->value();
+					$property_name = $this->value();
 					$this->scan();
-					$expr = new KwartzPropertyExpression('.', $expr, $property);
+					if ($this->token() == '(') {
+						$this->scan();
+						$arglist = $this->parse_arglist($flag_php_mode);
+						$this->token_check2(')', "'{$property_name}(' is not closed by ')'.");
+					} else {
+						$arglist = NULL;
+					}
+					$expr = new KwartzPropertyExpression('.', $expr, $property_name, $arglist);
 				} else {
 					break;
 				}
 			}
 			return $expr;
+		}
+		
+		## * BNF:
+		##    arglist ::= e | expr | expr ',' args
+		##            ::= [ expr { ',' expr } ]
+		function parse_arglist($flag_php_mode=FALSE) {
+			$list = array();
+			if ($this->token() == ')') { return $list; }
+			$expr = $this->parse_expression($flag_php_mode);
+			$list[] = $expr;
+			while ($this->token() == ',') {
+				$this->scan();
+				$expr = $this->parse_expression($flag_php_mode);
+				$list[] = $expr;
+			}
+			return $list;
 		}
 
 
@@ -279,7 +305,7 @@ require_once('KwartzScanner.inc');
 				if (  $flag_php_mode && $t == '.+') { break; }
 				$this->scan();
 				$expr2 = $this->parse_term($flag_php_mode);
-				$expr = new KwartzBinaryExpression($t, $expr, $expr2);
+				$expr = new KwartzBinaryExpression($t == '.' ? '.+' : $t, $expr, $expr2);
 				$t = $this->token();
 			}
 			return $expr;

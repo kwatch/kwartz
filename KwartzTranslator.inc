@@ -11,7 +11,6 @@ require_once('KwartzUtility.inc');
 
 // namespace Kwartz {
 
-
 	class KwartzTranslationError extends KwartzException {
 		private $translator;
 
@@ -124,7 +123,7 @@ require_once('KwartzUtility.inc');
 
 
 		function __construct($block, $flag_escape=FALSE) {
-			$this->block       = $block;
+			$this->block       = $block->rearrange();
 			$this->flag_escape = $flag_escape;
 			if ($flag_escape) {
 				$this->print_key    = ':eprint';
@@ -268,6 +267,7 @@ require_once('KwartzUtility.inc');
 				break;
 
 			default:
+				echo "*** assert(false): t=$t\n";
 				assert(false);
 			}
 		}
@@ -278,6 +278,18 @@ require_once('KwartzUtility.inc');
 			$this->translate_expr($expr->object(), $t, $expr->object()->token());
 			$this->code .= $op;
 			$this->code .= $expr->property();
+			if ($expr->arglist() !== NULL) {
+				$this->code .= $this->keyword('(');
+				$ctr = 0;
+				foreach ($expr->arglist() as $arg) {
+					if ($ctr > 0) {
+						$this->code .= $this->keyword(',');
+					}
+					$ctr += 1;
+					$this->translate_expression($arg);
+				}
+				$this->code .= $this->keyword(')');
+			}
 		}
 
 		protected function translate_function_expression($expr) {
@@ -503,6 +515,7 @@ require_once('KwartzUtility.inc');
 			'}'    => ']',
 			'[:'   => "['",
 			':]'   => "']",
+			','    => ", ",
 			
 			'E('   => 'htmlspecialchars(',
 			'E)'   => ')',

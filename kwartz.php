@@ -16,6 +16,7 @@ require_once('KwartzTranslator.inc');
 require_once('KwartzErubyTranslator.inc');
 require_once('KwartzJspTranslator.inc');
 require_once('KwartzCompiler.inc');
+require_once('KwartzAnalyzer.inc');
 
 
 //namespace Kwartz {
@@ -30,6 +31,10 @@ require_once('KwartzCompiler.inc');
 		private $command_name;
 		private $options = array();
 		private $properties = array();
+		
+		function __construct($command_name) {
+			$this->command_name = $command_name;
+		}
 
 		function main(&$argv) {
 			## parse $argv and set $command_name, $options and $properties
@@ -77,6 +82,7 @@ require_once('KwartzCompiler.inc');
 				case 'convert':
 				case 'translate':
 				case 'compile':
+				case 'analyze':
 					# OK
 					break;
 				default:
@@ -170,6 +176,19 @@ require_once('KwartzCompiler.inc');
 				$output = $block->inspect();
 				break;
 
+			case 'analyze':
+				$converter = new KwartzConverter($input);
+				$block = $converter->convert();
+				if ($plogic_code) {
+					$parser = new KwartzParser($plogic_code);
+					$plogic_block = $parser->parse();
+					$block = $block->merge($plogic_block);
+				}
+				$analyzer = new KwartzAnalyzer($block);
+				$analyzer->analyze();
+				$output = $analyzer->result();
+				break;
+
 			default:
 				assert(false);
 			}
@@ -201,11 +220,11 @@ require_once('KwartzCompiler.inc');
 
 		function usage() {
 			$usage = <<<END
-Usage: php {$this->command_name} [..options..] filename
+Usage: {$this->command_name} [..options..] [filenames...]
    -h		  : help
    -v		  : version
    -l lang	  : php/eruby (default 'php')
-   -a action	  : compile/parse/translate/convert (default 'compile')
+   -a action	  : compile/parse/translate/convert/analyze (default 'compile')
    -p file.plogic : presentation logic file
    --name=value	  : property name and value
 
@@ -298,7 +317,7 @@ END;
 ## main program
 ##
 try {
-	$kwartz = new KwartzCommand();
+	$kwartz = new KwartzCommand($argv[0]);
 	$kwartz->main($argv);
 } catch (KwartzException $ex) {
 	fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
