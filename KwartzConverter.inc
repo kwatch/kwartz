@@ -214,7 +214,7 @@ require_once('KwartzUtility.inc');
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
 					case 'replace':
-					case 'if':   case 'elsif': case 'else': case 'unless':
+					case 'if':  case 'elsif':  case 'elseif':  case 'else':  case 'unless':
 					case 'while':
 					case 'include':
 					case 'dummy':
@@ -269,7 +269,7 @@ require_once('KwartzUtility.inc');
 			$directive = NULL;
 			foreach ($strs as $s) {
 				if (preg_match('/^\w+$/', $s)) {
-					$directive = array('mark', $s);
+					$directive = $s == 'else' ? array('else', NULL) : array('mark', $s);
 				} elseif (preg_match('/^(\w+)\((.*)\)$/', $s, $matches = array())) {
 					$name  = $matches[1];
 					$value = trim($matches[2]);
@@ -312,7 +312,7 @@ require_once('KwartzUtility.inc');
 						throw new KwartzConvertionError($msg, $this);
 					}
 				} else {
-					$directive = array('set', $s);
+					$directive = array('set', $s);		## regard as assign statement
 				}
 			}
 			if ($directive) {
@@ -440,7 +440,7 @@ require_once('KwartzUtility.inc');
 				} else {				# start tag
 					if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str)) != NULL) { # directive specifed
 						$flag_remove_span = ($tag_name == 'span' && ! $this->attr_str);
-						$block = $this->_convert($tag_name);
+						$block = $this->_convert($tag_name);			# call recursively
 						if ($flag_remove_span) {
 							# ignore first and last statement
 							$first_stmt = $block->shift(); //array_shift($block->statements());
@@ -449,7 +449,7 @@ require_once('KwartzUtility.inc');
 						$this->store_stmt_for_directive($directive, $block, $stmt_list, $flag_remove_span);
 					} else {										# directive not specified
 						if ($tag_name == $end_tag_name) {
-							$block = $this->_convert($tag_name);
+							$block = $this->_convert($tag_name);		# call recursively
 							foreach ($block->statements() as $stmt) {
 								$stmt_list[] = $stmt;
 							}
@@ -605,6 +605,30 @@ require_once('KwartzUtility.inc');
 				$expr = new KwartzUnaryExpression('!', $expr);
 				$stmt = new KwartzIfStatement($expr, $block, NULL);
 				$stmt_list[] = $stmt;
+				break;
+
+			case 'elseif':
+			case 'else':
+				$last_stmt = end($stmt_list);
+				if ($last_stmt->token() != ':if') {
+					$msg = "'$directive_name' directive should be placed just after 'if' statement.";
+					throw new KwartzConvertionError($msg, $this);
+				}
+				if ($directive_name == 'else') {
+					$stmt = $block;
+				} else {
+					$expr = $this->parse_expression($directive_arg, $flag_php_mode);
+					$stmt = new KwartzIfStatement($expr, $block, NULL);
+				}
+				$st = $last_stmt;
+				while ($st->token() == ':if' && $st->else_stmt() != NULL) {
+					$st = $st->else_stmt();
+				}
+				if ($st->token() != ':if') {
+					$msg = "'$directive_name' directive cannot find corresponding if-statement.";
+					throw new KwartzConvertionError($msg, $this);
+				}
+				$st->set_else_stmt($stmt);
 				break;
 
 			case 'while':

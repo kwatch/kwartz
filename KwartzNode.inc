@@ -496,6 +496,7 @@ require_once('KwartzUtility.inc');
 		function condition()  { return $this->condition; }
 		function then_block() { return $this->then_block; }
 		function else_stmt()  { return $this->else_stmt; }
+		function set_else_stmt($stmt) { $this->else_stmt = $stmt; }
 		
 		function accept($visitor) {
 			return $visitor->visit_if_stmt($this);

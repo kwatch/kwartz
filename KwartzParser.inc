@@ -137,17 +137,7 @@ require_once('KwartzScanner.inc');
 				}
 				## function
 				$this->scan();
-				//$arglist = array();
-				//if ($this->token() != ')') {
-				//	$arg_expr = $this->parse_expression($flag_php_mode);
-				//	$arglist[] = $arg_expr;
-				//	while ($this->token() == ',') {
-				//		$this->scan();
-				//		$arg_expr = $this->parse_expression($flag_php_mode);
-				//		$arglist[] = $arg_expr;
-				//	}
-				//}
-				$arglist = $this->parse_arglist();
+				$arglist = $this->parse_arglist($flag_php_mode);
 				$this->token_check2(')', "function '$name(' is not closed by ')'.");
 				return new KwartzFunctionExpression($name, $arglist);
 
@@ -234,6 +224,7 @@ require_once('KwartzScanner.inc');
 			switch ($t = $this->token()) {
 			case '$':
 				if (! $flag_php_mode) {
+					$this->scan();
 					$this->syntax_error("'$': invalid character.");
 				}
 				$expr = $this->parse_array($flag_php_mode);

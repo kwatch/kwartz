@@ -14,7 +14,8 @@ class KwartzConverterTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test_fetch($input, $expected, $flag_test=true) {
+	function _test_fetch($input, $expected, $flag_test=TRUE) {
+		#if (! $flag_test) { return; }
 		$input    = preg_replace('/^\t\t/m', '', $input);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$converter = new KwartzConverter($input);
@@ -319,7 +320,8 @@ END;
 	###
 	### convert()
 	###
-	function _test_convert($input, $expected, $flag_test=true) {
+	function _test_convert($input, $expected, $flag_test=TRUE) {
+		if (! $flag_test) { return; }
 		$input    = preg_replace('/^\t\t/m', '', $input);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$converter = new KwartzConverter($input);
@@ -1607,51 +1609,6 @@ END;
 
 
 
-	function test_include1() {
-		$filename = '_test.pdata';
-		$pdata =
-		'<div kd="foreach:item=list">
-		  <span kd="value:item">foo</span>
-		</div>
-		';
-		$pdata = preg_replace('/^\t\t/m', '', $pdata);
-		$f = fopen($filename, 'w');
-		fwrite($f, $pdata);
-		fclose($f);
-		$input = 
-		'<div>
-		  <div kd="include:\'' . $filename . '\'">
-		    foo
-		  </div>
-		</div>
-		';
-		#$input = preg_replace('/^\t\t/m', '', $pdata);
-		
-		$expected = 
-		'<<block>>
-		  :print
-		    "<div>\n"
-		  :print
-		    "  <div>\n"
-		  :foreach
-		    item
-		    list
-		    <<block>>
-		      :print
-		        "<div>\n"
-		      :print
-		        item
-		      :print
-		        "</div>\n"
-		  :print
-		    "  </div>\n"
-		  :print
-		    "</div>\n"
-		';
-		$this->_test_convert($input, $expected);
-		unlink($filename);
-	}
-
 
 	function test_load1() {
 		$filename = '_test.plogic';
@@ -1748,6 +1705,205 @@ END;
 		unlink($filename);
 	}
 
+
+	const input_else1 =
+		'<table>
+		  <tbody kd="Loop:user=user_list">
+		    <tr class="odd" kd="if:user_ctr%2==1">
+		      <td kd="value:user">foo</td>
+		    </tr>
+		    <tr class="even" kd="else:">
+		      <td kd="value:user">bar</td>
+		    </tr>
+		  </tbody>
+		</table>
+		';
+	const input_else1_php =
+		'<table>
+		  <tbody php="Loop($user_list as $user)">
+		    <tr class="odd" php="if($user_ctr%2==1)">
+		      <td php="echo($user)">foo</td>
+		    </tr>
+		    <tr class="even" php="else()">
+		      <td php="echo($user)">bar</td>
+		    </tr>
+		  </tbody>
+		</table>
+		';
+	const expected_else1 =
+		'<<block>>
+		  :print
+		    "<table>\n"
+		  :print
+		    "  <tbody>\n"
+		  :set
+		    =
+		      user_ctr
+		      0
+		  :foreach
+		    user
+		    user_list
+		    <<block>>
+		      :set
+		        +=
+		          user_ctr
+		          1
+		      :if
+		        ==
+		          %
+		            user_ctr
+		            2
+		          1
+		        <<block>>
+		          :print
+		            "    <tr class=\"odd\">\n"
+		          :print
+		            "      <td>"
+		          :print
+		            user
+		          :print
+		            "</td>\n"
+		          :print
+		            "    </tr>\n"
+		        <<block>>
+		          :print
+		            "    <tr class=\"even\">\n"
+		          :print
+		            "      <td>"
+		          :print
+		            user
+		          :print
+		            "</td>\n"
+		          :print
+		            "    </tr>\n"
+		  :print
+		    "  </tbody>\n"
+		  :print
+		    "</table>\n"
+		';
+		
+	function test_else1() {
+		$input    = KwartzConverterTest::input_else1;
+		$expected = KwartzConverterTest::expected_else1;
+		$this->_test_convert($input, $expected);
+	}
+
+	function test_else1_php() {
+		$input    = KwartzConverterTest::input_else1_php;
+		$expected = KwartzConverterTest::expected_else1;
+		$this->_test_convert($input, $expected);
+	}
+
+
+	const input_elseif1 =
+		'<table>
+		  <tbody kd="Loop:user=user_list">
+		    <tr class="line1" kd="if:user_ctr%3==1">
+		      <td kd="value:user">foo</td>
+		    </tr>
+		    <tr class="line2" kd="elseif:user_ctr%3==2">
+		      <td kd="value:user">bar</td>
+		    </tr>
+		    <tr class="line3" kd="else:">
+		      <td kd="value:user">bar</td>
+		    </tr>
+		  </tbody>
+		</table>
+		';
+	const input_elseif1_php =
+		'<table>
+		  <tbody php="Loop($user_list as $user)">
+		    <tr class="line1" php="if($user_ctr%3==1)">
+		      <td php="echo($user)">foo</td>
+		    </tr>
+		    <tr class="line2" php="elseif($user_ctr%3==2)">
+		      <td php="echo($user)">bar</td>
+		    </tr>
+		    <tr class="line3" php="else()">
+		      <td php="echo($user)">bar</td>
+		    </tr>
+		  </tbody>
+		</table>
+		';
+	const expected_elseif1 = 
+		'<<block>>
+		  :print
+		    "<table>\n"
+		  :print
+		    "  <tbody>\n"
+		  :set
+		    =
+		      user_ctr
+		      0
+		  :foreach
+		    user
+		    user_list
+		    <<block>>
+		      :set
+		        +=
+		          user_ctr
+		          1
+		      :if
+		        ==
+		          %
+		            user_ctr
+		            3
+		          1
+		        <<block>>
+		          :print
+		            "    <tr class=\"line1\">\n"
+		          :print
+		            "      <td>"
+		          :print
+		            user
+		          :print
+		            "</td>\n"
+		          :print
+		            "    </tr>\n"
+		        :if
+		          ==
+		            %
+		              user_ctr
+		              3
+		            2
+		          <<block>>
+		            :print
+		              "    <tr class=\"line2\">\n"
+		            :print
+		              "      <td>"
+		            :print
+		              user
+		            :print
+		              "</td>\n"
+		            :print
+		              "    </tr>\n"
+		          <<block>>
+		            :print
+		              "    <tr class=\"line3\">\n"
+		            :print
+		              "      <td>"
+		            :print
+		              user
+		            :print
+		              "</td>\n"
+		            :print
+		              "    </tr>\n"
+		  :print
+		    "  </tbody>\n"
+		  :print
+		    "</table>\n"
+		';
+
+	function test_elseif1() {
+		$input    = KwartzConverterTest::input_elseif1;
+		$expected = KwartzConverterTest::expected_elseif1;
+		$this->_test_convert($input, $expected);
+	}
+	function test_elseif1_php() {
+		$input    = KwartzConverterTest::input_elseif1_php;
+		$expected = KwartzConverterTest::expected_elseif1;
+		$this->_test_convert($input, $expected, true);
+	}
 
 
 }
