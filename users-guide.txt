@@ -1,5 +1,5 @@
-.JA	.=title:	Kwartz-php チュートリアル
-.EN	.=title:	Kwartz-php Tutorial
+.JA	.=title:	Kwartz-phpユーザーズガイド
+.EN	.=title:	Kwartz-php Users' Guide
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
 .	.?lastupdate:	$Date$
 .	.?version:	$Rev$
@@ -9,8 +9,10 @@
 .EN	.$ Preface | preface*
 .	
 .	
-.JA	このドキュメントでは、テンプレートシステムKwartz-phpのチュートリアルです。
-.EN	This is the Tutorial of Kwartz-php, a template system for web designers and web programmers.
+.JA	このドキュメントでは、テンプレートシステムKwartz-php{{(Kwartz-phpの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けています。)}}のユーザーズガイドです。
+.EN	This is the user's guide to Kwartz-php{{(Development of Kwartz-php is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
+.EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data.'
+.
 .	
 .	
 .	
@@ -27,7 +29,7 @@
 .JA	◎更新履歴		| changelog*
 .EN	.$$ Changelog		| changelog*
 .	
-.	.: 2004-09-18
+.	.: 2004-09-19
 .JA		.- public release
 .EN		.- public release
 .	
@@ -42,12 +44,12 @@
 .EN	.$$ What's Kwartz-php?	| intro-whatis
 .	
 .	
-.JA	Kwartz-php{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、次のような特徴をもつテンプレートシステムです。
-.JA	.#Kwartz-php{{(Kwartzは'Quartz'と同じように発音してください。)}}とはPHPで実装されたテンプレートシステムです。
-.JA	.#次のような特徴を持ちます。
-.EN	Kwartz-php{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system which has the following features:
-.EN	.#Kwartz-php{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system implemented in PHP.
-.EN	.#It has the following features:
+.JA	Kwartz-php{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、
+.JA	『プレゼンテーションロジックとプレゼンテーションデータの分離(SoPL/PD)』という概念を実現したテンプレートシステムです。
+.JA	次のような特徴があります。
+.EN	Kwartz-php{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
+.EN	which realized the concept of 'Separation of Presentation Logic and Presentaion Data'(SoPL/PD).
+.EN	It has the following features:
 .	
 .	
 .JA	.%  プレゼンテーションデータとプレゼンテーションロジックとが分離可能
@@ -1121,11 +1123,11 @@
 .	
 .JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を実現した初めてのテンプレートシステムです。
 .JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するためのテクニックが存在します。
-.JA	これは「プレゼンテーションパターン」と呼ばれます。
+.JA	これは「プレゼンテーションパターン」と呼ばれます{{(「プレゼンテーションパターン」という名前がついていますが、これらのテクニックはプレゼンテーション層だけに限定されるわけではありません。しかし最もよく使われるのはプレゼンテーション層においてであるため、このような名前にしています。)}}。
 .JA	この章では、プレゼンテーションパターンをいくつか紹介します。
 .EN	Kwartz-php is the first template system which realized the concept of 'Separation of Presentation Data and Presentation Logic.'
 .EN	There are several techniques to help you to separate presentation logic and presentation data excellently.
-.EN	These techniques are called 'Presentation Patterns.'
+.EN	These techniques are called 'Presentation Patterns.'{{('Presentation Patterns' are not limited in Presentation Layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.')}}
 .EN	This section shows several Presentation Patterns.
 .JA	.#この章では、プレゼンテーションデータとプレゼンテーションロジックをうまく分離するための、便利なパターンを紹介します。
 .JA	.#この章ではそれらを紹介します。
@@ -2042,9 +2044,9 @@
 .	.-------------------- topics-append2.pdata
 .	Do you like Kwartz-php?
 .	<input type="radio" name="ans" value="Y"
-.	       {{*kd:php="append($ans=='Y'?' checked':'')"*}}>Yes
+.	       {{*kd:php="append($ans=='Y'?' checked':'')"*}}/>Yes
 .	<input type="radio" name="ans" value="N"
-.	       {{*kd:php="append($ans=='N'?' checked':'')"*}}>No
+.	       {{*kd:php="append($ans=='N'?' checked':'')"*}}/>No
 .	.--------------------
 .	
 .JA	出力用スクリプト：
@@ -2065,8 +2067,8 @@
 .EN	Presentation Data:
 .	.-------------------- topics-append3.pdata
 .	Do you like Kwartz-php?
-.	<input type="radio" name="ans" value="Y" {{*kd:php="append(@C($ans=='Y'))"*}}>Yes
-.	<input type="radio" name="ans" value="N" {{*kd:php="append(@C($ans=='N'))"*}}>No
+.	<input type="radio" name="ans" value="Y" {{*kd:php="append(@C($ans=='Y'))"*}}/>Yes
+.	<input type="radio" name="ans" value="N" {{*kd:php="append(@C($ans=='N'))"*}}/>No
 .	.--------------------
 .	
 .JA	出力用スクリプト：
@@ -2101,14 +2103,14 @@
 .	.--------------------
 .JA	$pdata  = 'example.html';      # プレゼンテーションデータ
 .JA	$plogic = 'example.plogic';    # プレゼンテーションロジック
-.JA	$view   = 'example.php';       # 出力用スクリプトファイル
+.JA	$view   = 'example.view';       # 出力用スクリプトファイル
 .JA	$flag_escape = TRUE;           # サニタイズをする/しない
 .EN	$pdata  = 'example.html';      # presentation data file
 .EN	$plogic = 'example.plogic';    # presentation logic file
-.EN	$view   = 'example.php';       # output script file
+.EN	$view   = 'example.view';       # output script file
 .EN	$flag_escape = TRUE;           # flag of sanitizing
 .	
-.	{{*require_once('Kwartz/KwartzHelper');*}}
+.	{{*require_once('Kwartz.php');*}}   ## or Kwartz/KwartzHelper.php
 .	{{*Kwartz-php::compile($pdata, $plogic, $view, $flag_escape)*}}
 .	
 .	include($view);

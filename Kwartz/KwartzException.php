@@ -1,15 +1,17 @@
 <?php
+// vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
-###
-### KwartzException.php
-###
+// $Id$
 
 
 //namespace Kwartz {
 
-	class KwartzException extends exception {
-
-	}
+/**
+ *  base exception class of KwartzPHP
+ */
+abstract class KwartzException extends exception {
+    
+}
 
 //} // end of namespace Kwartz
 

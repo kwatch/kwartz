@@ -1,8 +1,7 @@
 <?php
+// vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
-###
-### KwartzTranslator.php
-###
+// $Id$
 
 require_once('Kwartz/KwartzException.php');
 require_once('Kwartz/KwartzNode.php');
@@ -11,575 +10,586 @@ require_once('Kwartz/KwartzUtility.php');
 
 // namespace Kwartz {
 
-	class KwartzTranslationError extends KwartzException {
-		private $translator;
-
-		function __construct($msg, $translator) {
-			parent::__construct($msg);
-			$this->translator = $translator;
-		}
-	}
-
-	abstract class KwartzTranslator {
-		## should return code string
-		abstract function translate_expression($expr);
-		abstract function translate_statement($stmt, $depth);
-
-		## should return code string
-		abstract function translate();
-	}
-
-	abstract class KwartzBaseTranslator extends KwartzTranslator {
-		protected $code = "";
-		protected $block;
-		protected $flag_escape = false;
-		protected $macro_stmt_hash = array();
-		protected $nl = "\n";			// newline char ("\n" or "\r\n")
-		protected $indent_spaces;
-		protected $max_depth;
-		protected $priorities = array(
-				'variable' => 100,
-				'number'   => 100,
-				'boolean'  => 100,
-				'string'   => 100,
-				'null'	   => 100,
-
-				'[]'	   =>  90,
-				'{}'	   =>  90,
-				'[:]'	   =>  90,
-				'.'	   =>  90,
-
-				'-.'	   =>  80,
-				'!'	   =>  80,
-				'empty'    =>  80,
-				'notempty' =>  80,
-
-				'*'	   =>  70,
-				'/'	   =>  70,
-				'%'	   =>  70,
-				'^'	   =>  70,
-
-				'+'	   =>  60,
-				'-'	   =>  60,
-				'.+'	   =>  60,
-
-				'=='	   =>  50,
-				'!='	   =>  50,
-				'<'	   =>  50,
-				'<='	   =>  50,
-				'>'	   =>  50,
-				'>='	   =>  50,
-
-				'&&'	   =>  40,
-
-				'||'	   =>  30,
-
-				'?'	   =>  20,
-
-				'='	   =>  10,
-				'+='	   =>  10,
-				'-='	   =>  10,
-				'*='	   =>  10,
-				'/='	   =>  10,
-				'%='	   =>  10,
-				'^='	   =>  10,
-				'.+='	   =>  10,
-			);
-
-		protected $dispatcher = array(
-				## expression
-				'KwartzUnaryExpression'	      => 'translate_unary_expression',
-				'KwartzBinaryExpression'      => 'translate_binary_expression',
-				'KwartzFunctionExpression'    => 'translate_function_expression',
-				'KwartzPropertyExpression'    => 'translate_property_expression',
-				'KwartzConditionalExpression' => 'translate_conditional_expression',
-				'KwartzVariableExpression'    => 'translate_variable_expression',
-				'KwartzStringExpression'      => 'translate_string_expression',
-				'KwartzNumericExpression'     => 'translate_numeric_expression',
-				'KwartzBooleanExpression'     => 'translate_boolean_expression',
-				'KwartzNullExpression'	      => 'translate_null_expression',
-
-				## statement
-				'KwartzPrintStatement'	      => 'translate_print_statement',
-				'KwartzSetStatement'	      => 'translate_set_statement',
-				'KwartzIfStatement'	      => 'translate_if_statement',
-				'KwartzForeachStatement'      => 'translate_foreach_statement',
-				'KwartzWhileStatement'	      => 'translate_while_statement',
-				'KwartzMacroStatement'	      => 'translate_macro_statement',
-				'KwartzExpandStatement'	      => 'translate_expand_statement',
-				'KwartzBlockStatement'	      => 'translate_block_statement',
-				'KwartzRawcodeStatement'      => 'translate_rawcode_statement',
-			);
-
-		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
-			$this->block       = $block->rearrange();
-			$this->flag_escape = $flag_escape;
-			$this->toppings    = $toppings ? $toppings : array();
-			if ($flag_escape) {
-				$this->print_key    = ':eprint';
-				$this->endprint_key = ':endeprint';
-			} else {
-				$this->print_key    = ':print';
-				$this->endprint_key = ':endprint';
-			}
-			$indent_width = $this->topping('indent_width');
-			$indent_space = '';
-			for ($i = 0; $i < $indent_width; $i++) {
-				$indent_space .= ' ';
-			}
-			//$this->indent_width = $indent_width;
-			$this->indent_space = $indent_space;
-			$this->max_depth = 10;
-			$this->_init_indent_spaces($indent_space, $this->max_depth);
-		}
-
-
-		### --------------------
-		### utility funcitions
-		### --------------------
-
-		function topping($name) {
-			if (array_key_exists($name, $this->toppings)) {
-				return $this->toppings[$name];
-			}
-			return NULL;
-		}
-
-		function code() { return $this->code; }
-		function flag_escape() { return $this->flag_escape; }
-		
-		function set_newline_char($newline) { $this->nl = $newline; }
-		function newline_char() { return $this->nl; }
-		function nl()           { return $this->nl; }
-
-		//function translate_node($expr_or_stmt, $depth) {
-		//	$class_name = get_class($expr_or_stmt);
-		//	$method_name = $this->dispatcher[$class_name];
-		//	return $this->$method_name($expr_or_stmt, $depth);
-		//}
-
-		protected function add_macro($macro_name, $block) {
-			$this->macro_stmt_hash[$macro_name] = $block;
-		}
-
-		protected function macro($macro_name) {
-			if (array_key_exists($macro_name, $this->macro_stmt_hash)) {
-				return $this->macro_stmt_hash[$macro_name];
-			}
-			return NULL;
-		}
-		
-		function _init_indent_spaces($indent_space, $max_depth) {
-			$this->_indent_spaces = array();
-			$s = '';
-			for ($i = 0; $i < $max_depth; $i++) {
-				$this->_indent_spaces[] = $s;
-				$s .= $indent_space;
-			}
-		}
-
-		protected function indent($depth) {
-			if ($depth <= $this->max_depth) {
-				return $this->_indent_spaces[$depth];
-			}
-			$s = '';
-			for ($i = 0; $i < $depth; $i++) {
-				$s .= $this->indent_space;
-			}
-			return $s;
-		}
-		
-		protected function add_indent($depth) {
-			if ($this->code && $this->code[strlen($this->code)-1] == "\n") {
-				$this->code .= $this->indent($depth);
-			}
-		}
-		
-
-
-		### --------------------
-		### translate expression
-		### --------------------
-
-		abstract protected function keyword($token);
-
-		function translate() {
-			$statements = $this->block->statements();
-			foreach ($statements as $stmt) {
-				if ($stmt->token() == ':macro') {
-					$this->add_macro($stmt->macro_name(), $stmt->body_block());
-				}
-			}
-			if (! $this->flag_supress_begin && $this->macro('BEGIN')) {
-				$this->translate_statement($this->macro('BEGIN'), 0);
-			}
-			$this->translate_statement($this->block, 0);
-			if (! $this->flag_supress_end && $this->macro('END')) {
-				$this->translate_statement($this->macro('END'), 0);
-			}
-			return $this->code;
-		}
-
-
-
-		### --------------------
-		### translate expression
-		### --------------------
-
-		function translate_expression($expr) {
-			$class_name = get_class($expr);
-			$method_name = $this->dispatcher[$class_name];
-			$this->$method_name($expr);
-		}
-
-		protected function translate_expr($expr, $parent_token, $child_token) {
-			if ($this->priorities[$parent_token] > $this->priorities[$child_token]) {
-				$this->code .= '(';
-				$this->translate_expression($expr);
-				$this->code .= ')';
-			} else {
-				$this->translate_expression($expr);
-			}
-		}
-
-		
-		protected function translate_unary_expression($expr) {
-			$t = $expr->token();
-			$this->code .= $this->keyword($t);
-			$this->translate_expr($expr->child(), $t, $expr->child()->token());
-		}
-
-		protected function translate_binary_expression($expr) {
-			$t = $expr->token();
-			$op = $this->keyword($t);
-
-			switch ($t) {
-			case '=':  case '+=': case '-=': case '*=': case '/=': case '%=':  case '^=':  case '.+=':
-			case '+':  case '-':  case '*':	 case '/':  case '%':  case '^':   case '.+':
-			case '==': case '!=': case '>':	 case '>=': case '<':  case '<=':
-			case '&&': case '||':
-				$this->translate_expr($expr->left(), $t, $expr->left()->token());
-				$this->code .= " $op ";
-				$this->translate_expr($expr->right(), $t, $expr->right()->token());
-				break;
-
-			case '[]': case '{}':
-				if ($t == '[]') {
-					$t1 = '[';  $t2 = ']';
-				} else {
-					$t1 = '{';  $t2 = '}';
-				}
-				$this->translate_expr($expr->left(), $t, $expr->left()->token());
-				$this->code .= $this->keyword($t1);
-				$this->translate_expression($expr->right());
-				$this->code .= $this->keyword($t2);
-				break;
-
-			case '[:]':
-				$this->translate_expr($expr->left(), $t, $expr->left()->token());
-				$this->code .= $this->keyword('[:');
-				$this->code .= $expr->right()->value();
-				$this->code .= $this->keyword(':]');
-				break;
-
-			default:
-				echo "*** assert(false): t=$t\n";
-				assert(false);
-			}
-		}
-
-		protected function translate_property_expression($expr) {
-			$t = $expr->token();
-			$op = $this->keyword($t);
-			$this->translate_expr($expr->object(), $t, $expr->object()->token());
-			$this->code .= $op;
-			$this->code .= $expr->property();
-			if ($expr->arglist() !== NULL) {
-				$this->code .= $this->keyword('(');
-				$ctr = 0;
-				foreach ($expr->arglist() as $arg) {
-					if ($ctr > 0) {
-						$this->code .= $this->keyword(',');
-					}
-					$ctr += 1;
-					$this->translate_expression($arg);
-				}
-				$this->code .= $this->keyword(')');
-			}
-		}
-
-		protected function translate_function_expression($expr) {
-			$t = $expr->token();
-			$op = $this->keyword($t);
-			$this->code .= $expr->funcname() . $this->keyword('(');
-			$comma = '';
-			foreach($expr->arglist() as $arg_expr) {
-				$this->code .= $comma;
-				$comma = ', ';
-				$this->translate_expression($arg_expr);
-			}
-			$this->code .= $this->keyword(')');
-		}
-
-
-		protected function translate_conditional_expression($expr) {
-			$t = $expr->token();
-			$op = $this->keyword($t);
-			$this->translate_expr($expr->condition(), $t, $expr->condition()->token());
-			$this->code .= ' ? ';
-			$this->translate_expr($expr->left(), $t, $expr->left()->token());
-			$this->code .= ' : ';
-			$this->translate_expr($expr->right(), $t, $expr->right()->token());
-		}
-
-
-		protected function translate_variable_expression($expr) {
-			$this->code .= $expr->value();
-		}
-
-		protected function translate_string_expression($expr) {
-			$this->code .= kwartz_inspect_str($expr->value());
-		}
-
-		protected function translate_numeric_expression($expr) {
-			$this->code .= $expr->value();
-		}
-
-		protected function translate_boolean_expression($expr) {
-			$this->code .= $this->keyword($expr->value());
-		}
-
-		protected function translate_null_expression($expr) {
-			$this->code .= $this->keyword($expr->value());
-		}
-
-
-		### --------------------
-		### translate statement
-		### --------------------
-
-		function translate_statement($stmt, $depth) {
-			$class_name = get_class($stmt);
-			$method_name = $this->dispatcher[$class_name];
-			if (! is_string($method_name)) {
-				throw new exception();
-			}
-			$this->$method_name($stmt, $depth);
-		}
-
-		protected function translate_print_statement($stmt, $depth) {
-			foreach ($stmt->arglist() as $expr) {
-				if (($t = $expr->token()) == 'string') {
-					$this->code .= $expr->value();
-				} else {
-					$startkey = $endkey = NULL;
-					if ($expr->token() == 'function') {
-						$fname = $expr->funcname();
-						if ($fname == 'E') {
-							$startkey = ':eprint';
-							$endkey   = ':endeprint';
-							$arglist = $expr->arglist();
-							$expr = $arglist[0];
-						} elseif ($fname == 'X') {
-							$startkey = ':print';
-							$endkey   = ':endprint';
-							$arglist = $expr->arglist();
-							$expr = $arglist[0];
-						}
-					}
-					if (! $startkey) {
-						$startkey = $this->print_key;
-						$endkey   = $this->endprint_key;
-					}
-					$this->code .= $this->keyword($startkey);	# 'print' or 'eprint'
-					$this->translate_expression($expr);
-					$this->code .= $this->keyword($endkey);		# 'endprint' or 'endeprint'
-				}
-			}
-		}
-
-		protected function translate_set_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$expr = $stmt->assign_expr();
-			$this->code .= $this->keyword(':set');
-			$this->translate_expression($expr);
-			$this->code .= $this->keyword(':endset');
-			$this->code .= $this->nl;
-		}
-
-		protected function translate_if_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':if');
-			$this->translate_expression($stmt->condition());
-			$this->code .= $this->keyword(':then');
-			$this->code .= $this->nl;
-			$this->translate_statement($stmt->then_block(), $depth+1);
-			$st = $stmt;
-			while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
-				$this->add_indent($depth);
-				$this->code .= $this->keyword(':elseif');
-				$this->translate_expression($st->condition());
-				$this->code .= $this->keyword(':then');
-				$this->code .= $this->nl;
-				$this->translate_statement($st->then_block(), $depth+1);
-			}
-			if ($st) {
-				//assert($st.token() == '<<block>>');
-				$this->add_indent($depth);
-				$this->code .= $this->keyword(':else');
-				$this->code .= $this->nl;
-				$this->translate_statement($st, $depth+1);
-			}
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':endif');
-			$this->code .= $this->nl;
-		}
-
-		protected function translate_foreach_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':foreach');
-			$this->translate_expression($stmt->loopvar_expr());
-			$this->code .= $this->keyword(':in');
-			$this->translate_expression($stmt->list_expr());
-			$this->code .= $this->keyword(':doforeach');
-			$this->code .= $this->nl;
-			$this->translate_statement($stmt->body_block(), $depth+1);
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':endforeach');
-			$this->code .= $this->nl;
-		}
-
-		protected function translate_while_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':while');
-			$this->translate_expression($stmt->condition());
-			$this->code .= $this->keyword(':dowhile');
-			$this->code .= $this->nl;
-			$this->translate_statement($stmt->body_block(), $depth+1);
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':endwhile');
-			$this->code .= $this->nl;
-		}
-
-		protected function translate_macro_statement($stmt, $depth) {
-			//$this->add_indent($depth);
-			//$this->add_macro($stmt->macro_name(), $stmt->body_block());
-			# do nothing
-		}
-
-		protected function translate_expand_statement($stmt, $depth) {
-			$block = $this->macro($stmt->macro_name());
-			if (! $block) {
-				$msg = "macro '{$stmt->macro_name()}' not defined.";
-				throw new KwartzTranslationError($msg, $this);
-			}
-			$this->translate_statement($block, $depth);
-		}
-
-		protected function translate_block_statement($block_stmt, $depth) {
-			foreach ($block_stmt->statements() as $stmt) {
-				$this->translate_statement($stmt, $depth);
-			}
-		}
-
-		protected function translate_rawcode_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $stmt->rawcode();
-			$this->code .= $this->nl;
-		}
-		
-	}
-
-
-	class KwartzPhpTranslator extends KwartzBaseTranslator {
-		private	$keywords = array(
-			':if'         => '<?php if (',
-			':then'       => ') { ?>',
-			':else'       => '<?php } else { ?>',
-			':elseif'     => '<?php } elseif (',
-			':endif'      => '<?php } ?>',
-			
-			':while'      => '<?php while (',
-			':dowhile'    => ') { ?>',
-			':endwhile'   => '<?php } ?>',
-			
-			':foreach'    => '<?php foreach (',
-			':in'         => ' as ',
-			':doforeach'  => ') { ?>',
-			':endforeach' => '<?php } ?>',
-			
-			':set'        => '<?php ',
-			':endset'     => '; ?>',
-			
-			':print'      => '<?php echo ',
-			':endprint'   => '; ?>',
-
-			':print'      => '<?php echo ',
-			':endprint'   => '; ?>',
-			':eprint'     => '<?php echo htmlspecialchars(',
-			':endeprint'  => '); ?>',
-			
-			':include'    => '<?php include(',
-			':endinclude' => '); ?>',
-			
-			'true'        => 'TRUE',
-			'false'       => 'FALSE',
-			'null'        => 'NULL',
-
-			'-.'   => '-',
-			'.+'   => '.',
-			'.+='  => '.=',
-			'.'    => '->',
-			'{'    => '[',
-			'}'    => ']',
-			'[:'   => "['",
-			':]'   => "']",
-			','    => ", ",
-			
-			'E('   => 'htmlspecialchars(',
-			'E)'   => ')',
-		);
-		
-		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
-			parent::__construct($block, $flag_escape, $toppings);
-		}
-
-		protected function keyword($token) {
-			return array_key_exists($token, $this->keywords) ? $this->keywords[$token] : $token;
-		}
-
-		protected function translate_variable_expression($expr) {
-			$this->code .= '$' . $expr->value();
-		}
-
-		protected function translate_unary_expression($expr) {
-			$t = $expr->token();
-			if ($t == 'empty' || $t == 'notempty') {
-				$op = $t == 'empty' ? '==' : '!=';
-				$expr = new KwartzBinaryExpression($op, $expr->child(), new KwartzStringExpression(""));
-				$this->code .= '(';
-				$this->translate_binary_expression($expr);
-				$this->code .= ')';
-				return;
-			}
-			parent::translate_unary_expression($expr);
-		}
-
-		protected function translate_foreach_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':foreach');
-			$this->translate_expression($stmt->list_expr());
-			$this->code .= $this->keyword(':in');
-			$this->translate_expression($stmt->loopvar_expr());
-			$this->code .= $this->keyword(':doforeach');
-			$this->code .= $this->nl();
-			$this->translate_statement($stmt->body_block(), $depth+1);
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':endforeach');
-			$this->code .= $this->nl();
-		}
-
-	}
+class KwartzTranslationError extends KwartzException {
+    private $translator;
+    
+    function __construct($msg, $translator) {
+        parent::__construct($msg);
+        $this->translator = $translator;
+    }
+}
+
+
+/**
+ *  translate node tree into a certain language code
+ */
+abstract class KwartzTranslator {
+    // should return code string
+    abstract function translate_expression($expr);
+    abstract function translate_statement($stmt, $depth);
+    
+    // should return code string
+    abstract function translate();
+}
+
+
+/**
+ *  base class of translator which is a kind of PHP, eRuby, JSP, ...
+ */
+abstract class KwartzBaseTranslator extends KwartzTranslator {
+    protected $code = "";
+    protected $block;
+    protected $flag_escape = false;
+    protected $macro_stmt_hash = array();
+    protected $nl = "\n";			// newline char ("\n" or "\r\n")
+    protected $indent_spaces;
+    protected $max_depth;
+    protected $priorities = array(
+        'variable' => 100,
+        'number'   => 100,
+        'boolean'  => 100,
+        'string'   => 100,
+        'null'	   => 100,
+        
+        '[]'	   =>  90,
+        '{}'	   =>  90,
+        '[:]'	   =>  90,
+        '.'	   =>  90,
+        
+        '-.'	   =>  80,
+        '!'	   =>  80,
+        'empty'    =>  80,
+        'notempty' =>  80,
+        
+        '*'	   =>  70,
+        '/'	   =>  70,
+        '%'	   =>  70,
+        '^'	   =>  70,
+        
+        '+'	   =>  60,
+        '-'	   =>  60,
+        '.+'	   =>  60,
+        
+        '=='	   =>  50,
+        '!='	   =>  50,
+        '<'	   =>  50,
+        '<='	   =>  50,
+        '>'	   =>  50,
+        '>='	   =>  50,
+        
+        '&&'	   =>  40,
+        
+        '||'	   =>  30,
+        
+        '?'	   =>  20,
+        
+        '='	   =>  10,
+        '+='	   =>  10,
+        '-='	   =>  10,
+        '*='	   =>  10,
+        '/='	   =>  10,
+        '%='	   =>  10,
+        '^='	   =>  10,
+        '.+='	   =>  10,
+        );
+    
+    protected $dispatcher = array(
+        // expression
+        'KwartzUnaryExpression'	      => 'translate_unary_expression',
+        'KwartzBinaryExpression'      => 'translate_binary_expression',
+        'KwartzFunctionExpression'    => 'translate_function_expression',
+        'KwartzPropertyExpression'    => 'translate_property_expression',
+        'KwartzConditionalExpression' => 'translate_conditional_expression',
+        'KwartzVariableExpression'    => 'translate_variable_expression',
+        'KwartzStringExpression'      => 'translate_string_expression',
+        'KwartzNumericExpression'     => 'translate_numeric_expression',
+        'KwartzBooleanExpression'     => 'translate_boolean_expression',
+        'KwartzNullExpression'	      => 'translate_null_expression',
+        
+        // statement
+        'KwartzPrintStatement'	      => 'translate_print_statement',
+        'KwartzSetStatement'	      => 'translate_set_statement',
+        'KwartzIfStatement'	      => 'translate_if_statement',
+        'KwartzForeachStatement'      => 'translate_foreach_statement',
+        'KwartzWhileStatement'	      => 'translate_while_statement',
+        'KwartzMacroStatement'	      => 'translate_macro_statement',
+        'KwartzExpandStatement'	      => 'translate_expand_statement',
+        'KwartzBlockStatement'	      => 'translate_block_statement',
+        'KwartzRawcodeStatement'      => 'translate_rawcode_statement',
+        );
+    
+    function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+        $this->block       = $block->rearrange();
+        $this->flag_escape = $flag_escape;
+        $this->toppings    = $toppings ? $toppings : array();
+        if ($flag_escape) {
+            $this->print_key    = ':eprint';
+            $this->endprint_key = ':endeprint';
+        } else {
+            $this->print_key    = ':print';
+            $this->endprint_key = ':endprint';
+        }
+        $indent_width = $this->topping('indent_width');
+        $indent_space = '';
+        for ($i = 0; $i < $indent_width; $i++) {
+            $indent_space .= ' ';
+        }
+        //$this->indent_width = $indent_width;
+        $this->indent_space = $indent_space;
+        $this->max_depth = 10;
+        $this->_init_indent_spaces($indent_space, $this->max_depth);
+    }
+    
+    
+    // --------------------
+    // utility funcitions
+    // --------------------
+    
+    function topping($name) {
+        if (array_key_exists($name, $this->toppings)) {
+            return $this->toppings[$name];
+        }
+        return NULL;
+    }
+    
+    function code() { return $this->code; }
+    function flag_escape() { return $this->flag_escape; }
+    
+    function set_newline_char($newline) { $this->nl = $newline; }
+    function newline_char() { return $this->nl; }
+    function nl()           { return $this->nl; }
+    
+    //function translate_node($expr_or_stmt, $depth) {
+    //	$class_name = get_class($expr_or_stmt);
+    //	$method_name = $this->dispatcher[$class_name];
+    //	return $this->$method_name($expr_or_stmt, $depth);
+    //}
+    
+    protected function add_macro($macro_name, $block) {
+        $this->macro_stmt_hash[$macro_name] = $block;
+    }
+    
+    protected function macro($macro_name) {
+        if (array_key_exists($macro_name, $this->macro_stmt_hash)) {
+            return $this->macro_stmt_hash[$macro_name];
+        }
+        return NULL;
+    }
+    
+    function _init_indent_spaces($indent_space, $max_depth) {
+        $this->_indent_spaces = array();
+        $s = '';
+        for ($i = 0; $i < $max_depth; $i++) {
+            $this->_indent_spaces[] = $s;
+            $s .= $indent_space;
+        }
+    }
+    
+    protected function indent($depth) {
+        if ($depth <= $this->max_depth) {
+            return $this->_indent_spaces[$depth];
+        }
+        $s = '';
+        for ($i = 0; $i < $depth; $i++) {
+            $s .= $this->indent_space;
+        }
+        return $s;
+    }
+    
+    protected function add_indent($depth) {
+        if ($this->code && $this->code[strlen($this->code)-1] == "\n") {
+            $this->code .= $this->indent($depth);
+        }
+    }
+    
+    
+    
+    // --------------------
+    // translate expression
+    // --------------------
+    
+    abstract protected function keyword($token);
+    
+    function translate() {
+        $statements = $this->block->statements();
+        foreach ($statements as $stmt) {
+            if ($stmt->token() == ':macro') {
+                $this->add_macro($stmt->macro_name(), $stmt->body_block());
+            }
+        }
+        if (! $this->flag_supress_begin && $this->macro('BEGIN')) {
+            $this->translate_statement($this->macro('BEGIN'), 0);
+        }
+        $this->translate_statement($this->block, 0);
+        if (! $this->flag_supress_end && $this->macro('END')) {
+            $this->translate_statement($this->macro('END'), 0);
+        }
+        return $this->code;
+    }
+    
+    
+    
+    // --------------------
+    // translate expression
+    // --------------------
+    
+    function translate_expression($expr) {
+        $class_name = get_class($expr);
+        $method_name = $this->dispatcher[$class_name];
+        $this->$method_name($expr);
+    }
+    
+    protected function translate_expr($expr, $parent_token, $child_token) {
+        if ($this->priorities[$parent_token] > $this->priorities[$child_token]) {
+            $this->code .= '(';
+            $this->translate_expression($expr);
+            $this->code .= ')';
+        } else {
+            $this->translate_expression($expr);
+        }
+    }
+    
+    
+    protected function translate_unary_expression($expr) {
+        $t = $expr->token();
+        $this->code .= $this->keyword($t);
+        $this->translate_expr($expr->child(), $t, $expr->child()->token());
+    }
+    
+    protected function translate_binary_expression($expr) {
+        $t = $expr->token();
+        $op = $this->keyword($t);
+        
+        switch ($t) {
+          case '=':  case '+=': case '-=': case '*=': case '/=': case '%=':  case '^=':  case '.+=':
+          case '+':  case '-':  case '*':	 case '/':  case '%':  case '^':   case '.+':
+          case '==': case '!=': case '>':	 case '>=': case '<':  case '<=':
+          case '&&': case '||':
+            $this->translate_expr($expr->left(), $t, $expr->left()->token());
+            $this->code .= " $op ";
+            $this->translate_expr($expr->right(), $t, $expr->right()->token());
+            break;
+            
+          case '[]': case '{}':
+            if ($t == '[]') {
+                $t1 = '[';  $t2 = ']';
+            } else {
+                $t1 = '{';  $t2 = '}';
+            }
+            $this->translate_expr($expr->left(), $t, $expr->left()->token());
+            $this->code .= $this->keyword($t1);
+            $this->translate_expression($expr->right());
+            $this->code .= $this->keyword($t2);
+            break;
+            
+          case '[:]':
+            $this->translate_expr($expr->left(), $t, $expr->left()->token());
+            $this->code .= $this->keyword('[:');
+            $this->code .= $expr->right()->value();
+            $this->code .= $this->keyword(':]');
+            break;
+            
+          default:
+            echo "*** assert(false): t=$t\n";
+            assert(false);
+        }
+    }
+    
+    protected function translate_property_expression($expr) {
+        $t = $expr->token();
+        $op = $this->keyword($t);
+        $this->translate_expr($expr->object(), $t, $expr->object()->token());
+        $this->code .= $op;
+        $this->code .= $expr->property();
+        if ($expr->arglist() !== NULL) {
+            $this->code .= $this->keyword('(');
+            $ctr = 0;
+            foreach ($expr->arglist() as $arg) {
+                if ($ctr > 0) {
+                    $this->code .= $this->keyword(',');
+                }
+                $ctr += 1;
+                $this->translate_expression($arg);
+            }
+            $this->code .= $this->keyword(')');
+        }
+    }
+    
+    protected function translate_function_expression($expr) {
+        $t = $expr->token();
+        $op = $this->keyword($t);
+        $this->code .= $expr->funcname() . $this->keyword('(');
+        $comma = '';
+        foreach($expr->arglist() as $arg_expr) {
+            $this->code .= $comma;
+            $comma = ', ';
+            $this->translate_expression($arg_expr);
+        }
+        $this->code .= $this->keyword(')');
+    }
+    
+    
+    protected function translate_conditional_expression($expr) {
+        $t = $expr->token();
+        $op = $this->keyword($t);
+        $this->translate_expr($expr->condition(), $t, $expr->condition()->token());
+        $this->code .= ' ? ';
+        $this->translate_expr($expr->left(), $t, $expr->left()->token());
+        $this->code .= ' : ';
+        $this->translate_expr($expr->right(), $t, $expr->right()->token());
+    }
+    
+    
+    protected function translate_variable_expression($expr) {
+        $this->code .= $expr->value();
+    }
+    
+    protected function translate_string_expression($expr) {
+        $this->code .= kwartz_inspect_str($expr->value());
+    }
+    
+    protected function translate_numeric_expression($expr) {
+        $this->code .= $expr->value();
+    }
+    
+    protected function translate_boolean_expression($expr) {
+        $this->code .= $this->keyword($expr->value());
+    }
+    
+    protected function translate_null_expression($expr) {
+        $this->code .= $this->keyword($expr->value());
+    }
+    
+    
+    // --------------------
+    // translate statement
+    // --------------------
+    
+    function translate_statement($stmt, $depth) {
+        $class_name = get_class($stmt);
+        $method_name = $this->dispatcher[$class_name];
+        if (! is_string($method_name)) {
+            throw new exception();
+        }
+        $this->$method_name($stmt, $depth);
+    }
+    
+    protected function translate_print_statement($stmt, $depth) {
+        foreach ($stmt->arglist() as $expr) {
+            if (($t = $expr->token()) == 'string') {
+                $this->code .= $expr->value();
+            } else {
+                $startkey = $endkey = NULL;
+                if ($expr->token() == 'function') {
+                    $fname = $expr->funcname();
+                    if ($fname == 'E') {
+                        $startkey = ':eprint';
+                        $endkey   = ':endeprint';
+                        $arglist = $expr->arglist();
+                        $expr = $arglist[0];
+                    } elseif ($fname == 'X') {
+                        $startkey = ':print';
+                        $endkey   = ':endprint';
+                        $arglist = $expr->arglist();
+                        $expr = $arglist[0];
+                    }
+                }
+                if (! $startkey) {
+                    $startkey = $this->print_key;
+                    $endkey   = $this->endprint_key;
+                }
+                $this->code .= $this->keyword($startkey);	// 'print' or 'eprint'
+                $this->translate_expression($expr);
+                $this->code .= $this->keyword($endkey);		// 'endprint' or 'endeprint'
+            }
+        }
+    }
+    
+    protected function translate_set_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $expr = $stmt->assign_expr();
+        $this->code .= $this->keyword(':set');
+        $this->translate_expression($expr);
+        $this->code .= $this->keyword(':endset');
+        $this->code .= $this->nl;
+    }
+    
+    protected function translate_if_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':if');
+        $this->translate_expression($stmt->condition());
+        $this->code .= $this->keyword(':then');
+        $this->code .= $this->nl;
+        $this->translate_statement($stmt->then_block(), $depth+1);
+        $st = $stmt;
+        while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
+            $this->add_indent($depth);
+            $this->code .= $this->keyword(':elseif');
+            $this->translate_expression($st->condition());
+            $this->code .= $this->keyword(':then');
+            $this->code .= $this->nl;
+            $this->translate_statement($st->then_block(), $depth+1);
+        }
+        if ($st) {
+            //assert($st.token() == '<<block>>');
+            $this->add_indent($depth);
+            $this->code .= $this->keyword(':else');
+            $this->code .= $this->nl;
+            $this->translate_statement($st, $depth+1);
+        }
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':endif');
+        $this->code .= $this->nl;
+    }
+    
+    protected function translate_foreach_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':foreach');
+        $this->translate_expression($stmt->loopvar_expr());
+        $this->code .= $this->keyword(':in');
+        $this->translate_expression($stmt->list_expr());
+        $this->code .= $this->keyword(':doforeach');
+        $this->code .= $this->nl;
+        $this->translate_statement($stmt->body_block(), $depth+1);
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':endforeach');
+        $this->code .= $this->nl;
+    }
+    
+    protected function translate_while_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':while');
+        $this->translate_expression($stmt->condition());
+        $this->code .= $this->keyword(':dowhile');
+        $this->code .= $this->nl;
+        $this->translate_statement($stmt->body_block(), $depth+1);
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':endwhile');
+        $this->code .= $this->nl;
+    }
+    
+    protected function translate_macro_statement($stmt, $depth) {
+        //$this->add_indent($depth);
+        //$this->add_macro($stmt->macro_name(), $stmt->body_block());
+        // do nothing
+    }
+    
+    protected function translate_expand_statement($stmt, $depth) {
+        $block = $this->macro($stmt->macro_name());
+        if (! $block) {
+            $msg = "macro '{$stmt->macro_name()}' not defined.";
+            throw new KwartzTranslationError($msg, $this);
+        }
+        $this->translate_statement($block, $depth);
+    }
+    
+    protected function translate_block_statement($block_stmt, $depth) {
+        foreach ($block_stmt->statements() as $stmt) {
+            $this->translate_statement($stmt, $depth);
+        }
+    }
+    
+    protected function translate_rawcode_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $this->code .= $stmt->rawcode();
+        $this->code .= $this->nl;
+    }
+    
+}
+
+
+/**
+ *  translate node tree into PHP code
+ */
+class KwartzPhpTranslator extends KwartzBaseTranslator {
+    private	$keywords = array(
+        ':if'         => '<?php if (',
+        ':then'       => ') { ?>',
+        ':else'       => '<?php } else { ?>',
+        ':elseif'     => '<?php } elseif (',
+        ':endif'      => '<?php } ?>',
+        
+        ':while'      => '<?php while (',
+        ':dowhile'    => ') { ?>',
+        ':endwhile'   => '<?php } ?>',
+        
+        ':foreach'    => '<?php foreach (',
+        ':in'         => ' as ',
+        ':doforeach'  => ') { ?>',
+        ':endforeach' => '<?php } ?>',
+        
+        ':set'        => '<?php ',
+        ':endset'     => '; ?>',
+        
+        ':print'      => '<?php echo ',
+        ':endprint'   => '; ?>',
+        
+        ':print'      => '<?php echo ',
+        ':endprint'   => '; ?>',
+        ':eprint'     => '<?php echo htmlspecialchars(',
+        ':endeprint'  => '); ?>',
+        
+        ':include'    => '<?php include(',
+        ':endinclude' => '); ?>',
+        
+        'true'        => 'TRUE',
+        'false'       => 'FALSE',
+        'null'        => 'NULL',
+        
+        '-.'   => '-',
+        '.+'   => '.',
+        '.+='  => '.=',
+        '.'    => '->',
+        '{'    => '[',
+        '}'    => ']',
+        '[:'   => "['",
+        ':]'   => "']",
+        ','    => ", ",
+        
+        'E('   => 'htmlspecialchars(',
+        'E)'   => ')',
+        );
+    
+    function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+        parent::__construct($block, $flag_escape, $toppings);
+    }
+    
+    protected function keyword($token) {
+        return array_key_exists($token, $this->keywords) ? $this->keywords[$token] : $token;
+    }
+    
+    protected function translate_variable_expression($expr) {
+        $this->code .= '$' . $expr->value();
+    }
+    
+    protected function translate_unary_expression($expr) {
+        $t = $expr->token();
+        if ($t == 'empty' || $t == 'notempty') {
+            $op = $t == 'empty' ? '==' : '!=';
+            $expr = new KwartzBinaryExpression($op, $expr->child(), new KwartzStringExpression(""));
+            $this->code .= '(';
+            $this->translate_binary_expression($expr);
+            $this->code .= ')';
+            return;
+        }
+        parent::translate_unary_expression($expr);
+    }
+    
+    protected function translate_foreach_statement($stmt, $depth) {
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':foreach');
+        $this->translate_expression($stmt->list_expr());
+        $this->code .= $this->keyword(':in');
+        $this->translate_expression($stmt->loopvar_expr());
+        $this->code .= $this->keyword(':doforeach');
+        $this->code .= $this->nl();
+        $this->translate_statement($stmt->body_block(), $depth+1);
+        $this->add_indent($depth);
+        $this->code .= $this->keyword(':endforeach');
+        $this->code .= $this->nl();
+    }
+    
+}
 
 // }  // end of namespace Kwartz
 ?>
