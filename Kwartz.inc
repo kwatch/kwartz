@@ -13,8 +13,10 @@
 	
 //} // end of namespace Kwartz
 
-require('KwartzException.inc');
-require('kwartzElement.inc');
-require('KwartzScanner.inc');
+require_once('KwartzException.inc');
+require_once('kwartzElement.inc');
+require_once('KwartzScanner.inc');
+require_once('KwartzConverter.inc');
+require_once('KwartzTranslator.inc');
 
 ?>

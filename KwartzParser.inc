@@ -363,6 +363,18 @@ require_once('KwartzScanner.inc');
 			return $this->parse_assignment();
 		}
 
+		##
+		##
+		function parse_expression_strictly() {
+			//$expr = $this->parse_assignment();
+			$expr = $this->parse_expression();
+			if ($this->token() != NULL) {
+				$msg = "invalid expression (token='{$this->token()}').";
+				throw new KwartzSyntaxError($msg, $this->scanner);
+			}
+			return $expr;
+		}
+
 		## * BNF:
 		##    stmt	::= set-stmt | if-stmt | while-stmt | foreach-stmt
 		##		   | print-stmt | macro-stmt | expand-stmt | rawcode-stmt
@@ -381,6 +393,9 @@ require_once('KwartzScanner.inc');
 			case ':foreach':
 				$stmt = $this->parse_foreach_stmt();
 				break;
+			case ':while':
+				$stmt = $this->parse_while_stmt();
+				break;
 			case ':macro':
 				$stmt = $this->parse_macro_stmt();
 				break;
@@ -393,7 +408,7 @@ require_once('KwartzScanner.inc');
 			case ':elem':
 				$stmt = $this->parse_elem_stmt();
 				break;
-			case ':rawcode':
+			case ':::':	#case ':rawcode':
 				$stmt = $this->parse_rawcode_stmt();
 				break;
 			default:
@@ -584,7 +599,6 @@ require_once('KwartzScanner.inc');
 				}
 				$this->scan();
 				if ($this->token() != 'name') {
-					echo "*** debug: thos->token() = {$this->token()}\n";
 					$msg = "'$t' should take a name.";
 					throw new KwartzSyntaxError($msg, $this->scanner);
 				}
@@ -675,9 +689,9 @@ require_once('KwartzScanner.inc');
 		}
 
 		## * BNF:
-		##    rawcode ::= ':::' raw-string | ':rawcode' '(' string ')'
+		##    rawcode ::= ':::' raw-string
 		function parse_rawcode_stmt() {
-			if ($this->token() == ':rawcode' || $this->token() == ':::') {
+			if ($this->token() == ':::' || $this->token() == ':rawcode') {
 				$rawcode = $this->value();
 				$this->scan();
 				return new KwartzRawcodeStatement($rawcode);

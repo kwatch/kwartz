@@ -273,8 +273,10 @@ require_once('KwartzUtility.inc');
 
 		function convert() {
 			$block = $this->_convert(NULL);
-			foreach ($this->macro_stmt_list as $macro_stmt) {
-				array_push($block->statements(), $macro_stmt);
+			$revlist = array_reverse($this->macro_stmt_list);
+			foreach ($revlist as $macro_stmt) {
+				//array_push($statements, $macro_stmt);
+				$block->unshift($macro_stmt);
 			}
 			return $block;
 		}

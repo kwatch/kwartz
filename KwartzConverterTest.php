@@ -249,8 +249,6 @@ hoge
 END;
 		$expected = <<<END
 <<block>>
-  :expand
-    'elem_foo'
   :macro
     'stag_foo'
     <<block>>
@@ -275,6 +273,8 @@ END;
         'cont_foo'
       :expand
         'etag_foo'
+  :expand
+    'elem_foo'
 
 END;
 		$this->_test_convert($input, $expected);
@@ -703,8 +703,6 @@ END;
 END;
 		$expected = <<<END
 <<block>>
-  :expand
-    'elem_foo'
   :macro
     'stag_baz'
     <<block>>
@@ -777,6 +775,8 @@ END;
         'cont_foo'
       :expand
         'etag_foo'
+  :expand
+    'elem_foo'
 
 END;
 		$this->_test_convert($input, $expected);

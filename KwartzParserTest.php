@@ -500,7 +500,8 @@ END;
     1
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_set_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_set_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -515,7 +516,8 @@ END;
   z
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_print_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_print_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -535,6 +537,7 @@ END;
 
 END;
 		$this->_test_stmt($input, $expected, 'parse_block_stmt');
+		//$this->_test_stmt($input, $expected);		# NG
 	}
 
 
@@ -550,7 +553,8 @@ END;
       x
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -573,7 +577,8 @@ END;
         y
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -612,7 +617,8 @@ END;
           "C"
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -656,7 +662,8 @@ END;
           "X"
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_if_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -679,7 +686,8 @@ END;
       "</td>\\n"
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_foreach_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_foreach_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -705,7 +713,8 @@ END;
       "</td>\\n"
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_while_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_while_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -723,7 +732,8 @@ END;
       "<td>\\n"
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_macro_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_macro_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
@@ -734,7 +744,8 @@ END;
   'elem_foo'
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_expand_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_expand_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 	function test_expand2_stmt1() {
@@ -744,7 +755,8 @@ END;
   'elem_foo'
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_expand2_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_expand2_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 	function test_expand2_stmt2() {
@@ -780,7 +792,8 @@ END;
       'etag_foo'
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_elem_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_elem_stmt');
+		$this->_test_stmt($input, $expected);
 	}
 
 
