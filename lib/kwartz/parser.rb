@@ -15,7 +15,7 @@ module Kwartz
          super(message, linenum, filename)
       end
    end
-   
+
    class SyntaxError < ParseError
       def initialize(message, linenum, filename)
          super(message, linenum, filename)
@@ -28,21 +28,21 @@ module Kwartz
       end
    end
 
-   
+
    class Parser
-   
+
       def initialize(input, properties={})
          @scanner = Scanner.new(input, properties)
          @properties = properties
          _init()
       end
       attr_reader :properties
-      
+
       def reset(input, linenum=nil)
          @scanner.reset(input, linenum)
          _init()
       end
-      
+
       def _init()
          @scanner.scan()
          @element_name_stack = []
@@ -53,19 +53,19 @@ module Kwartz
       def scan()
          return @scanner.scan()
       end
-      
+
       def token()
          return @scanner.token()
       end
-      
+
       def token_str()
          return @scanner.value()
       end
-      
+
       def value()
          return @scanner.value()
       end
-      
+
       def syntax_error(msg)
          raise SyntaxError.new(msg, @scanner.linenum, @scanner.filename)
       end
@@ -73,7 +73,7 @@ module Kwartz
       def semantic_error(msg)
          raise SemanticError.new(msg, @scanner.linenum, @scanner.filename)
       end
-      
+
       def check_token(tkn, msg)
          syntax_error(msg) unless tkn == token()
       end
@@ -87,13 +87,13 @@ module Kwartz
       ###
       ### expression
       ###
-      
+
       ##
       ## BNF:
       ##  arguments    ::=  expression | arguments ',' expression | e
       ##               ::=  [ expression { ',' expression } ]
-      ## 
-      def parse_arguments_expr
+      ##
+      def parse_arguments
          arglist = []
          return arglist if token() == ')'
          expr = parse_expression()
@@ -105,26 +105,25 @@ module Kwartz
          end
          return arglist
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  item         ::=  variable | function '(' arguments ')' | '(' expression ')'
-      ## 
+      ##
       def parse_item_expr
          tkn = token()
          if tkn == :name
             name = value()
-            scan()
-            if token() == '('
+            tkn = scan()
+            if tkn == '('
                scan()
-               arglist = parse_arguments_expr()
-               check_token(')', "missing ')' of '#{name}()'.")
+               arglist = parse_arguments()
+               check_token(')', "missing ')' of '#{name}()' (current token='#{tkn}').")
                scan()
                scan()
                return FunctionExpression.new(name, arglist)
             else
-               scan()
                return VariableExpression.new(name)
             end
          elsif tkn == '('
@@ -135,17 +134,16 @@ module Kwartz
             scan()
             return expr
          else
-            Kwartz::assert("tkn == #{tkn}")
+            Kwartz::assert(false, "tkn == #{tkn}")
          end
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty'
-      ## 
+      ##
       def parse_literal_expr
-         p @scanner
          tkn = token()
          case tkn
          when :numeric
@@ -163,14 +161,14 @@ module Kwartz
          when :empty
             syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
          end
-         Kwartz::assert("tkn = #{token}")
+         Kwartz::assert(false, "tkn = #{token}")
       end
-      
+
 
       ##
       ## BNF:
       ##  factor       ::=  literal | item | item '[' expression ']' | item '[:' name ']' | item '.' property
-      ## 
+      ##
       def parse_factor_expr
          tkn = token()
          case tkn
@@ -197,7 +195,7 @@ module Kwartz
                scan()
                if token() == '('
                   scan()
-                  arglist = parse_arguments_expr()
+                  arglist = parse_arguments()
                   check_token(')', "')' expected (property '#{prop_name}()' is not closed by ')').")
                   scan()
                else
@@ -210,16 +208,17 @@ module Kwartz
          when :numeric, :string, :true, :false, :null, :empty
             expr = parse_literal_expr()
             return expr
+         else
+            syntax_error("'#{tkn}': unexpected token.")
          end
-         Kwartz::assert("tkn = #{tkn}")
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  term         ::=  factor | term * factor | term '/' factor | term '%' factor
       ##               ::=  factor { ('*' | '/' | '%') factor }
-      ## 
+      ##
       def parse_term_expr
          expr = parse_factor_expr()
          while (tkn = token()) == '*' || tkn == '/' || tkn == '%'
@@ -229,30 +228,31 @@ module Kwartz
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  unary        ::=  term | '+' term | '-' term | '!' term
       ##               ::=  [ '+' | '-' | '!' ] term
-      ## 
+      ##
       def parse_unary_expr
          if (tkn = token()) == '+' || tkn == '-' || tkn == '!'
             scan()
             expr2 = parse_term_expr()
-            expr = UnaryExpression.new(tkn, expr2)
+            op = tkn == '!' ? tkn : tkn + '.'
+            expr = UnaryExpression.new(op, expr2)
          else
             expr = parse_term_expr()
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  arith        ::=  unary | arith '+' term | arith '-' term | arith '.+' term
       ##               ::=  unary { ('+' | '-' | '.+') term }
-      ## 
+      ##
       def parse_arith_expr
          expr = parse_unary_expr()
          while (tkn = token()) == '+' || tkn == '-' || tkn == '.+'
@@ -262,23 +262,23 @@ module Kwartz
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  compare-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
       ##  compare      ::=  arith | arith compare-op arith | arith '==' 'empty' | arith '!=' 'empty'
       ##               ::=  arith [ compare-op arith ] | arith ('==' | '!=') 'empty'
-      ## 
+      ##
       def parse_compare_expr
          expr = parse_arith_expr()
-         while (tkn = token()) == '==' || tkn == '!=' || tkn == '>' || tkn == '>=' || tkn == '<' || tkn == '<='
+         while (op = token()) == '==' || op == '!=' || op == '>' || op == '>=' || op == '<' || op == '<='
             scan()
             if token() == :empty
-               if tkn == '=='
+               if op == '=='
                   scan()
                   expr = UnaryExpression.new(:empty, expr)
-               elsif tkn == '!='
+               elsif op == '!='
                   scan()
                   expr = UnaryExpression.new(:notempty, expr)
                else
@@ -286,50 +286,50 @@ module Kwartz
                end
             else
                expr2 = parse_arith_expr()
-               expr = BinaryExpression.new(tkn, expr, expr2)
+               expr = BinaryExpression.new(op, expr, expr2)
             end
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  logical-and  ::=  compare | logical-and '&&' compare
       ##               ::=  compare { '&&' compare }
-      ## 
+      ##
       def parse_logical_and_expr
          expr = parse_compare_expr()
-         while (tkn = token()) == '&&'
+         while (op = token()) == '&&'
             scan()
             expr2 = parse_compare_expr()
-            expr = BinaryExpression.new(tkn, expr, expr2)
+            expr = BinaryExpression.new(op, expr, expr2)
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  logical-or   ::=  logical-and | logical-or '||' logical-and
       ##               ::=  logical-and { '||' logical-and }
-      ## 
+      ##
       def parse_logical_or_expr
          expr = parse_logical_and_expr()
-         while (tkn = token()) == '||'
+         while (op = token()) == '||'
             scan()
             expr2 = parse_logical_and_expr()
-            expr = BinaryExpression.new(tkn, expr, expr2)
+            expr = BinaryExpression.new(op, expr, expr2)
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  conditional  ::=  logical-or | logical-or '?' expression ':' conditional
       ##               ::=  logical-or [ '?' expression ':' conditional ]
-      ## 
+      ##
       def parse_conditional_expr
          expr = parse_logical_or_expr()
          if token() == '?'
@@ -342,34 +342,34 @@ module Kwartz
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  assign-op    ::=  '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '.+='
       ##  assignment   ::=  conditional | assign-op assignment
-      ## 
+      ##
       def parse_assignment_expr
          expr = parse_conditional_expr()
          while (op = token()) == '=' || op == '+=' || op == '-=' || op == '*=' || op == '/=' || op == '%=' || op == '.+='
             scan()
             expr2 = parse_assignment_expr()
-            expr = BinaryExpression(op, expr, expr2)
+            expr = BinaryExpression.new(op, expr, expr2)
          end
          return expr
       end
-      
-      
-      ## 
+
+
+      ##
       ## BNF:
       ##  expression   ::=  assignment
-      ## 
+      ##
       def parse_expression
          return parse_assignment_expr()
       end
 
 
-      
+
 
       ##
 
@@ -378,15 +378,15 @@ module Kwartz
          token_check(nil, "EOF expected but '#{token()}'.")
          return block
       end
-      
+
       def parse()
          #return parse_program()
-         s 
+         s
          while tkn = @scanner.scan()
-            
+
          end
       end
-      
+
       def _scan_all()
          s = ''
          s << @scanner.token.to_s << "\n"

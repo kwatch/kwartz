@@ -1,5 +1,9 @@
 #!/usr/bin/ruby
 
+###
+### $Id$
+###
+
 $: << 'test'
 
 require 'test/unit'
@@ -11,5 +15,13 @@ suite << ConverterTest.suite()
 
 require 'scanner-test'
 suite << ScannerTest.suite()
+
+require 'node-test'
+suite << ExpressionTest.suite()
+suite << StatementTest.suite()
+
+require 'parser-test'
+suite << ParseExpressionTest.suite()
+#suite << ParseStatementTest.suite()
 
 Test::Unit::UI::Console::TestRunner.run(suite)

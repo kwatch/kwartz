@@ -1,3 +1,13 @@
+.: 2005-01-20  rev.13
+	.- [enhance] new class Parser
+	.- [enhance] Parser#parse_expression() support
+
+.: 2005-01-19  rev.9
+	.- [enhance] new class Statement and it's subclasses
+
+.: 2005-01-19  rev.8
+	.- [enhance] new class Node and Expression
+
 .: 2004-09-23
 	.- [enhance] support reporting linenum and filename when error occured
 	.- [enhance] support marking with empty tag

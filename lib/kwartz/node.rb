@@ -62,10 +62,10 @@ module Kwartz
    class Expression < Node
       def _inspect(depth=0, s='')
          indent(depth, s)
-         s << @token << "\n"
+         s << @token.to_s << "\n"
          return s
       end
-      
+
       def accept(visitor)
          return visitor.visit_expression(self)
       end

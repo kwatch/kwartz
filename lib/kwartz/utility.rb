@@ -1,3 +1,7 @@
+###
+### $Id$
+###
+
 require 'kwartz/exception'
 
 module Kwartz
@@ -16,7 +20,7 @@ module Kwartz
          #str.gsub!(/\#/, '\\#')
          return "\"#{str}\""
       end
-      
+
    end
 
 
@@ -26,13 +30,13 @@ module Kwartz
    class AssertionError < KwartzError
    end
 
-   
+
    ##
    ## assertion
    ##
    def self.assert(condition, message=nil)
       unless condition
-	 throw AssertionError.new(message)
+	 raise AssertionError.new(message)
       end
    end
 

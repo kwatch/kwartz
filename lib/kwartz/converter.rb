@@ -1,6 +1,8 @@
 ###
 ### converter.rb
 ###
+### $Id$
+###
 
 require 'kwartz/exception'
 require 'kwartz/utility'
@@ -22,9 +24,9 @@ module Kwartz
    ##  converter = Kwartz::Converter.new(input)
    ##  plogic = converter.convert()
    ##  print plogic
-   ##  
+   ##
    class Converter
-     
+
       def initialize(input, properties={})
 	 @input = input
 	 @macro_codes = []
@@ -46,7 +48,7 @@ module Kwartz
 	    @linenum += @delta
 	    return @tag_name = nil
 	 end
-	 
+
 	 @before_text  = $`
 	 @before_space = $1
 	 @slash_etag   = $2		# "" or "/"
@@ -80,7 +82,7 @@ module Kwartz
 	 s <<    "linenum:       #{@linenum}\n"
 	 return s
       end
-     
+
       def convert
 	 newline = "\n"
 	 codes = _convert(nil, 0)
@@ -93,11 +95,11 @@ module Kwartz
 	 code << newline
 	 return code
       end
-     
+
       ## 0 for :set and :value, 1 for other
       @@depths = { :set => 0, :value => 0, :Value => 0, :VALUE => 0 }
       @@depths.default = 1
-      
+
       ## :value and :loop cannot be used with empty tag
       @@empty_denied = {
 	 :value => true, :Value => true, :VALUE => true,
@@ -106,7 +108,7 @@ module Kwartz
       }
 
       private
-      
+
       def _convert(etag_name, depth)
          current_linenum = start_linenum = @linenum
 	 codes = []
@@ -176,7 +178,7 @@ module Kwartz
 	 return codes;
       end
 
-      
+
       def parse_attr_str()
 	 attr_list = []
 	 attr_hash = {}
@@ -208,7 +210,7 @@ module Kwartz
 	    if dname;  directive_name = dname; directive_arg = darg;  end
 	    flag_rebuild = true
 	 end
-	 
+
 	 if flag_rebuild
 	    str = ''
 	    attr_list.each do |attr|
@@ -231,9 +233,9 @@ module Kwartz
 	    end
 	    @attr_str = str
 	 end
-	 
+
 	 @attr_str << append_str if ! append_str.empty?
-	 
+
 	 return directive_name, directive_arg
       end
 
@@ -249,7 +251,7 @@ module Kwartz
 	 return parse_attr_kdvalue(attr_value, attr_hash, append_str)
       end
 
-      
+
       def parse_attr_kdvalue(attr_value, attr_hash, append_str)
 	 directive_name = directive_arg = nil
 	 attr_value.split(/;/).each do |str|
@@ -291,18 +293,18 @@ module Kwartz
 	 return directive_name, directive_arg
       end
 
-      
+
       def parse_attr_rubyvalue(attr_value, attr_hash, append_str)
 	 return nil
       end
 
-      
+
       def create_print_code(str, linenum, depth)
 	 s = ''
 	 s << indent(depth)
 	 s << ":print("
 	 flag = false
-	 while str =~ /\#{(.*?)}\#/
+	 while str =~ /\#\{(.*?)\}\#/
 	    expr_str = $1
 	    before_text = $`
 	    after_text = $'
@@ -326,7 +328,7 @@ module Kwartz
 	 return s
       end
 
-      
+
       def create_print_codes(str, linenum, depth)
 	 list = []
 	 idx = 0
@@ -337,12 +339,12 @@ module Kwartz
 	 return list
       end
 
-      
+
       def build_tag_str
 	 return "#{@before_space}<#{@slash_etag}#{@tag_name}#{@attr_str}#{@extra_space}#{@slash_empty}>#{@after_space}"
       end
-      
-     
+
+
       def indent(depth)
 	 s = ''
 	 depth.times { s << '  ' }
@@ -362,7 +364,7 @@ module Kwartz
 	 :List    => [ true,  true,  false],
 	 :LIST    => [ true,  true,  true ],
       }
-      
+
       @@escape_matrix = {
 	 :attr   => [ '',   ''  ],
 	 :Attr   => [ 'E(', ')' ],
@@ -383,7 +385,7 @@ module Kwartz
 	    e1, e2 = @@escape_matrix[directive_name]
 	    codes << "#{s}:print(#{e1}#{directive_arg}#{e2})"
 	    codes << body_codes.pop
-	    
+
 	 when :mark
 	    name = directive_arg
 	    stag_code  = body_codes.shift
@@ -422,7 +424,7 @@ module Kwartz
 	    else
 	       first_code = last_code = nil
 	    end
-	    
+
 	    codes << first_code.sub(/\A  /, '')			if first_code
 	    codes << "#{s}:set(#{counter} = 0)"			if flag_counter
 	    codes << "#{s}:foreach(#{loopvar}=#{listexpr})"
@@ -431,12 +433,12 @@ module Kwartz
 	    codes.concat(body_codes)
 	    codes << "#{s}:end"
 	    codes << last_code.sub(/\A  /, '')			if last_code
-	    
+
 	 when :if
 	    codes << "#{s}:if(#{directive_arg})"
 	    codes.concat(body_codes)
 	    codes << "#{s}:end"
-	    
+
 	 when :elsif, :elseif, :else
 	    d = just_before_dname
 	    unless d == :if || d == :elseif || d == :elsif
@@ -451,12 +453,12 @@ module Kwartz
 	    end
 	    codes.concat(body_codes)
 	    codes << "#{s}:end"
-	    
+
 	 when :while
 	    codes << "#{s}:while(#{directive_arg})"
 	    codes.concat(body_codes)
 	    codes << "#{s}:end"
-	    
+
 	 when :set
 	    if directive_arg =~ /\A(\w+):(.*)\z/
 	       codes << "#{s}:set(#{$1} = #{$2})"
@@ -464,22 +466,22 @@ module Kwartz
 	       codes << "#{s}:set(#{directive_arg})"
 	    end
 	    codes.concat(body_codes)
-	    
+
 	 when :replace
 	    name = directive_arg
 	    codes << "#{s}:expand(element_#{name})"
 
 	 when :dummy
 	    # nothing
-	    
+
 	 else
 	    msg = "'#{directive_name}': invalid directive name."
 	    raise ConvertionError.new(msg, linenum, @filename)
 	 end
-	 
+
 	 return codes
       end
-     
+
    end # class Convertion
 
 end # module Kwartz

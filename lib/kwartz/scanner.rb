@@ -17,7 +17,7 @@ module Kwartz
 
 
    module CharType
-   
+
       ## return true if ch is white char
       def is_white(ch)
          case ch
@@ -26,22 +26,22 @@ module Kwartz
          end
          return false
       end
-      
+
       ## return true if ch is alphabet
       def is_alpha(ch)
          return ?a <= ch && ch <= ?z || ?A <= ch && ch <= ?Z
       end
-      
+
       ## return true if ch is numeric
       def is_digit(ch)
          return ?0 <= ch && ch <= ?9
       end
-      
+
       ## return true if ch is alphabet, number or underbar
       def is_word(ch)
          return ?a <= ch && ch <= ?z || ?A <= ch && ch <= ?Z || ?0 <= ch && ch <= ?9 || ch == ?_
       end
-      
+
    end
 
 
@@ -54,7 +54,7 @@ module Kwartz
          @filename = @properties[:filename]
          @keywords = @@keywords
       end
-      
+
       def reset(input, linenum=1)
          @input = input
          @lines = input.split(/\r?\n/)
@@ -65,18 +65,18 @@ module Kwartz
          @index = -1
          #@ch = nil
       end
-      
+
       attr_reader :token, :value, :linenum, :filename, :keywords
-      
-      
+
+
       @@keywords = {
          ':end'	     =>	   :end,
-         
+
          ':macro'    =>	   :macro,
          ':expand'   =>	   :expand,
          ':elem'     =>	   :elem,
          ':element'  =>	   :element,
-         
+
          ':print'    =>	   :print,
          ':set'	     =>	   :set,
          ':while'    =>	   :while,
@@ -84,47 +84,48 @@ module Kwartz
          ':load'     =>	   :load,
          ':rawcode'  =>	   :rawcode,
          ':rubycode' =>	   :rubycode,
-         
+
          ':if'	     =>	   :if,
          ':else'     =>	   :else,
          ':elsif'    =>	   :elsif,
          ':elseif'   =>	   :elseif,
-         
+
          'true'	     =>	   :true,
          'false'     =>	   :false,
          'null'	     =>	   :null,
          'nil'	     =>	   :null,
          'empty'     =>	   :empty,
       }
-      
-      
+
+
       def scan()
 
          while true
             unless @line
                @line = getline()
             end
-            return nil unless @line
-            
+            return @token = nil unless @line
+
             while @line && @line =~ /\A\s*\#/
                @line = getline()
             end
-            return nil unless @line
-            
-            token = scan_line()
+            return @token = nil unless @line
+
+            @token = scan_line()
             #$stderr.puts "*** debug: token=#{token.to_s}, @line=#{@line.inspect}"
-            
-            if token == ?\n
+
+            if @token == ?\n
                @line = nil
                redo
             end
-            return token
+
+            return @token
          end
-         
+
          Kwartz::assert(false)
       end
 
-      
+
       def scan_all()
          s = ''
          while (token = scan()) != nil
@@ -140,7 +141,7 @@ module Kwartz
                case token
                when :string
                   s << Kwartz::Util::dump_str(@value)
-               when :number
+               when :numeric
                   s << @value
                when :name
                   s << @value
@@ -158,11 +159,11 @@ module Kwartz
          end
          return s
       end
-      
-      
+
+
       private
-      
-      
+
+
       def getline()
          @line = @lines[@linenum]
          @linenum += 1
@@ -179,42 +180,42 @@ module Kwartz
       #   return line
       #end
 
-      
+
       #def reset_line()
       #   @index = -1
       #   @ch = getchar()
       #end
-      
-      
+
+
       def getchar()
          @index += 1
          return @line[@index]
       end
-      
-      
+
+
       def current_char()
          return @line[@index]
       end
-      
-      
+
+
       def scan_line()
          Kwartz::assert(@line != nil)
-         
+
          ch = current_char()
          if ch == nil
             return ?\n		# end of line
          end
-         
+
          ## ignore white space
          while (is_white(ch))
             ch = getchar()
          end
-         
+
          ## ignore comment
          if ch == ?\#
             return ?\n		# end of line
          end
-         
+
          ##
          if ch == ?:
             ch = getchar()
@@ -239,7 +240,7 @@ module Kwartz
             end
             return ':'
          end
-         
+
          ##
          if is_alpha(ch) || ch == ?_
             s = ch.chr
@@ -250,7 +251,7 @@ module Kwartz
             @token = (w = @@keywords[s]) != nil ? w : :name
             return @token
          end
-         
+
          ##
          if is_digit(ch)
             s = ch.chr
@@ -264,9 +265,9 @@ module Kwartz
                end
             end
             @value = s
-            return @token = :number
+            return @token = :numeric
          end
-         
+
          ##
          if ch == ?.
             ch = getchar()
@@ -284,7 +285,7 @@ module Kwartz
             end
             return '.'
          end
-         
+
          ## string
          if ch == ?'					#'
             s = ""
@@ -312,7 +313,7 @@ module Kwartz
             #print "*** debug: dump_str(@value)=#{Kwartz::Util::dump_str(@value)}\n"
             return @token = :string
          end
-         
+
          ## string
          if ch == ?"					#"
             s = ""
@@ -342,7 +343,7 @@ module Kwartz
             @value = s
             return @token = :string
          end
-         
+
          ##
          if ch == ?+ || ch == ?- || ch == ?* || ch == ?/ || ch == ?% || ch == ?^
             if (ch2 = getchar()) != nil && ch2 == ?=
@@ -352,7 +353,7 @@ module Kwartz
                return @token = ch.chr		# +  -	*  /  %	 ^
             end
          end
-         
+
          ##
          if ch == ?= || ch == ?! || ch == ?< || ch == ?>
             if (ch2 = getchar()) != nil && ch2 == ?=
@@ -362,7 +363,7 @@ module Kwartz
                return @token = ch.chr		# =  !	<  >
             end
          end
-         
+
          ##
          if ch == ?& || ch == ?|
             if (ch2 = getchar()) != nil && ch2 == ch
@@ -373,7 +374,7 @@ module Kwartz
                raise ScanError(msg, @linenum, @filename)
             end
          end
-         
+
          ## @macro
          if ch == ?@
             s = ''
@@ -387,7 +388,7 @@ module Kwartz
             @value = s
             return @token = '@'
          end
-         
+
          ##
          if ch == ?[
             if (ch = getchar()) != nil && ch == ?:
@@ -397,20 +398,20 @@ module Kwartz
                return @token = '['
             end
          end
-         
+
          case ch
          when ?] , ?, , ?(, ?), ??, ?{, ?}, ?;
             getchar()
             return ch.chr
          end
-         
+
          msg = "'#{ch.chr}': invalid char."
          raise ScanError.new(msg, @linenum, @filename)
       end
 
    end	# end of class Scanner
-   
-   
+
+
    class RubyScanner < Scanner
       def scan()
          while true
@@ -463,8 +464,8 @@ module Kwartz
          end
          Kwartz::assert(false)
       end
-      
+
    end  # end of class RubyScanner
-   
+
 
 end   # end of module Kwartz

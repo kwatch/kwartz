@@ -70,7 +70,6 @@ class ScannerTest < Test::Unit::TestCase
    end
 
 
-
     def test_scan_plogic2	# element, macro, end
 	input = <<-END
 		macro cont_foo {
@@ -142,7 +141,7 @@ class ScannerTest < Test::Unit::TestCase
 	_test(input, expected)
     end
 
-   
+
 end
 
 
@@ -164,7 +163,7 @@ class RubyScannerTest < Test::Unit::TestCase
 	assert_equal_with_diff(expected, actual)
     end
 
-    
+
     def test_scan1	# plogic
 	input = <<-'END'
 		:macro(foo)
@@ -204,8 +203,8 @@ class RubyScannerTest < Test::Unit::TestCase
 	END
 	_test(input, expected)
     end
-    
-    
+
+
     def test_scan2	# element, macro, end
 	input = <<-END
 		macro cont_foo
@@ -274,7 +273,7 @@ class RubyScannerTest < Test::Unit::TestCase
 	END
 	_test(input, expected)
     end
-    
+
 
     def test_scan5	# unclosed string '...
 	input = <<-END
