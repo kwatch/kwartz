@@ -1,0 +1,52 @@
+:element(release)
+  ##:set(version = '0.1.0')
+  ##:set(date    = '2004-09-18')
+  ##:set(license = 'GPL ver.2')
+  ##:set(state   = 'beta')
+  ##:set(notes   = 'First public beta version.')
+  :set(version = release[:version])
+  :set(date    = release[:date])
+  :set(license = release[:license])
+  :set(state   = release[:state])
+  :set(notes   = release[:notes])
+  @stag
+  @cont
+  @etag
+:end
+
+:element(script)
+  :foreach(script = script_list)
+    :set(name   = script[:name])
+    :set(md5sum = script[:md5sum])
+    @stag
+    @cont
+    @etag
+  :end
+:end
+
+:element(file)
+  :set(default_role = 'php')
+  :set(default_dir  = 'Kwartz')
+  ##:set(default_dir  = 'HTML/Template/Kwartz')
+  :foreach(file = file_list)
+    :set(role    = file[:role]   != null ? file[:role]   : default_role)
+    :set(dir     = file[:dir]    != null ? file[:dir]    : default_dir)
+    :set(md5sum  = file[:md5sum])
+    :set(name    = file[:name])
+    @stag
+    @cont
+    @etag
+  :end
+:end
+
+:element(changelog)
+  :foreach(changelog = changelog_list)
+    :set(version = changelog[:version])
+    :set(date    = changelog[:date])
+    :set(state   = changelog[:state])
+    :set(notes   = changelog[:notes])
+    @stag
+    @cont
+    @etag
+  :end
+:end

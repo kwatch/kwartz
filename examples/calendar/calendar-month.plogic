@@ -1,0 +1,50 @@
+element document {
+  @element_calendar_month;
+}
+
+element week {
+
+  $day = '&nbsp';
+  $wday = 1;
+  while ($wday < $first_weekday) {
+    if($wday == 1) {
+      @stag;
+    }
+    @cont;
+    $wday += 1;
+  }
+
+  $day = 0;
+  $wday -= 1;
+  while ($day < $num_days) {
+    $day += 1;
+    $wday = $wday % 7 + 1;
+    if ($wday == 1) {
+      @stag;
+    }
+    @cont;
+    if($wday == 7) {
+      @etag;
+    }
+  }
+
+  if ($wday != 7) {
+    $day = '&nbsp;';
+    while ($wday != 6) {
+      @cont;
+      $wday += 1;
+    }
+    @etag;
+  }
+
+}
+
+element day {
+  if ($wday == 1) {
+    @stag;
+    echo $day;
+    @etag
+  } else {
+    echo $day;
+  }
+}

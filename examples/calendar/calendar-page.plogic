@@ -1,0 +1,27 @@
+element calendar_list {
+  $calendar_ctr = 0;
+  foreach ($calendar_list as $calendar) {
+    $calendar_ctr += 1;
+    if ($calendar_ctr % $colnum == 1) {
+      @stag;
+    }
+    @cont;
+    if ($calendar_ctr % $colnum == 0) {
+      @etag;
+    }
+  }
+  if ($calendar_ctr % $colnum != 0) {
+    $calendar = '';
+    while ($calendar_ctr % $colnum != 0) {
+      @cont;
+      $calendar_ctr += 1;
+    }
+    @etag;
+  }
+}
+
+element calendar {
+  @stag;
+  echo $calendar;
+  @etag;
+}

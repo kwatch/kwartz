@@ -1,0 +1,14 @@
+element user_list {	## element named 'user_list'
+  $i = 0;
+  foreach($user_list as $user) {
+    $i += 1;
+    if ($i % 2 == 0) {
+      $color = '#FFCCCC';
+    } else {
+      $color = '#CCCCFF';
+    }
+    @stag;		## start tag
+    @cont;		## cotnent
+    @etag;		## end tag
+  }
+}

@@ -9,7 +9,7 @@ tagfile = 'html-css,euc';
 /*
  * default target
  */
-all: users-guide.ja.html users-guide.en.html;
+all: tgz;
 
 
 
@@ -52,8 +52,8 @@ examples.%.html: examples.txt
 	kwaser -t [tagfile]    examples.%.txt > examples.%.html;
 	rm examples.%.toc.html;
 
-	kwartz.php -l php -p [gdir]/calendar-month.plogic [gdir]/calendar-month.html > [gdir]/calendar-month.view ;
-	kwartz.php -l php -p [gdir]/calendar-page.plogic  [gdir]/calendar-page.html  > [gdir]/calendar-page.view ;
+	kwartz-php -l php -p [gdir]/calendar-month.plogic [gdir]/calendar-month.html > [gdir]/calendar-month.view ;
+	kwartz-php -l php -p [gdir]/calendar-page.plogic  [gdir]/calendar-page.html  > [gdir]/calendar-page.view ;
 	php -q -d 'include_path='[gdir] [gdir]/calendar.php > calendar.html ;
 }
 
@@ -77,8 +77,18 @@ clean:
 		reference.*.txt reference.*.html
 		examples.*.txt  examples.*.html
 		calendar.html guide.d/'*'
-		README.*.txt;
+		README.*.txt
+		package.view
 		;
+
+	cd examples/border1 \;     make clean ;
+	cd examples/border2 \;     make clean ;
+	cd examples/border3 \;     make clean ;
+	cd examples/breadcrumbs \; make clean ;
+	cd examples/calendar \;    make clean ;
+	cd examples/form1 \;       make clean ;
+	cd examples/thumbnail \;   make clean ;
+
 }
 
 
@@ -92,22 +102,50 @@ package.xml:  package.php package.view
 
 package.view: package.pdata package.plogic
 {
-	kwartz.php -p package.plogic package.pdata > package.view;
+	kwartz-php -p package.plogic package.pdata > package.view;
 }
  
+
+
+/*
+ *  
+ */
+
+examples = 
+	examples/border1
+	examples/border2
+	examples/border3
+	examples/breadcrumbs
+	examples/calendar
+	examples/form1
+	examples/thumbnail
+	;
+
+
+exam:
+{
+	cd examples/border1 \;     make clean ;
+	cd examples/border2 \;     make clean ;
+	cd examples/border3 \;     make clean ;
+	cd examples/breadcrumbs \; make clean ;
+	cd examples/calendar \;    make clean ;
+	cd examples/form1 \;       make clean ;
+	cd examples/thumbnail \;   make clean ;
+}
+
+
 
 /*
  *  archive
  */
 /*date = '2004-09-15';*/
 /*mydir = 'kwartz-php_'[date];*/
-mydir = KwartzPHP_0.1.0;
-
+mydir = KwartzPHP-0.1.0;
 
 manuals = users-guide.en.html users-guide.ja.html reference.en.html reference.ja.html;
-texts   = README.en.txt README.en.txt COPYING ChangeLog;
+texts   = README.en.txt README.ja.txt COPYING ChangeLog;
 
-tgz: [manuals] [docs_misc]
+tgz: [manuals] [texts] package.xml
 {
 	rm -rf [mydir];
 	mkdir [mydir];
@@ -115,22 +153,22 @@ tgz: [manuals] [docs_misc]
 	mkdir -p [mydir]/Kwartz;
 	cp Kwartz.php [mydir];
 	cp Kwartz/'*'.php [mydir]/Kwartz;
-	chmod 644 [mydir]/Kwartz.php [mydir]/Kwartz/'*'.php;
 
 	cp kwartz-php [mydir];
-	chmod 755 [mydir]/kwartz-php;
 
 	mkdir [mydir]/doc;
 	cp [manuals] [mydir]/doc;
+	cp design.html design.css html-css.css [mydir]/doc;
 
 	cp -a examples [mydir];
 
 	cp -a test [mydir];
 	rm -rf [mydir]/.svn;
-	chmod 644 [mydir]/test/'*';
 
-	chmod 644 [texts];
 	cp [texts] [mydir];
 
-	tar cjf [mydir].tgz [mydir];
+	find [mydir] -type f | xargs chmod -R 644;
+	chmod 755 [mydir]/kwartz-php;
+
+	tar czf [mydir].tgz package.xml [mydir];
 }
