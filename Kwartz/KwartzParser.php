@@ -489,7 +489,18 @@ class KwartzParser {
     function parse_block_stmt() {
         $list = array();
         while (($stmt = $this->parse_statement()) != NULL) {
-            $list[] = $stmt;
+            // [bug:1098862]
+            // :load() statment returns the block statements.
+            // it means that block statment may include (and doesn't allowed to do)
+            // other block statemtn as it's element.
+            if ($stmt->token() == '<<block>>') {
+                $block =& $stmt;
+                foreach ($block->statements() as $stmt) {
+                    $list[] = $stmt;
+                }
+            } else {
+                $list[] = $stmt;
+            }
         }
         return new KwartzBlockStatement($list);
     }
@@ -787,9 +798,9 @@ class KwartzParser {
         if (! file_exists($filename)) {
             $this->semantic_error("load file '$filename' is not exist.");
         }
-        $input	 = file_get_contents($filename);
-        $parser	 = new KwartzParser($input);
-        $block	 = $parser->parse();
+        $input  = file_get_contents($filename);
+        $parser = new KwartzParser($input);
+        $block  = $parser->parse();
         return $block;
     }
     

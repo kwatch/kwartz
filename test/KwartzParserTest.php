@@ -933,6 +933,7 @@ END;
 END;
 		$this->_test_stmt($input, $expected, 'parse_load_stmt');
 		$this->_test_stmt($input, $expected, 'parse_statement');
+		$this->_test_stmt($input, $expected, 'parse_block_stmt');
 		unlink($filename);
 	}
 

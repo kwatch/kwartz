@@ -13,14 +13,15 @@ release = '0.3.0';
 help:
 {
 	[print '  Help:'];
-	[print '     * cook help'];
-	[print '     * cook all'];
-	[print '     * cook clean'];
-	[print '     * cook exam'];
-	[print '     * cook users-guide.{en,ja}.01.html'];
-	[print '     * cook reference.{en,ja}.01.html'];
-	[print '     * cook index.html'];
-	[print '     * cook package.xml'];
+	[print '     cook help'];
+	[print '     cook all'];
+	[print '     cook clean'];
+	[print '     cook exam'];
+	[print '     cook users-guide.{en,ja}.01.html'];
+	[print '     cook reference.{en,ja}.01.html'];
+	[print '     cook index.html'];
+	[print '     cook kuwata-lab'];
+	[print '     cook package.xml'];
 	[print '  -------------------------------------'];
 	[print '  Notice:']
 	[print '     * type \'. .bashrc.local\' for setting environment variables'];
@@ -76,14 +77,14 @@ function generate =
 users-guide.%.01.html:  users-guide.txt
 {
 	local lang = %;
-	[generate 'users-guide' [lang] 'kuwata-lab' '-b -s -n' true];
+	[generate 'users-guide' [lang] 'kuwata-lab' '-bsn' true];
 	mv guide.d/design.html guide.d/design.css .;
 }
 
 reference.%.01.html: reference.txt
 {
 	local lang = %;
-	[generate 'reference' [lang] 'kuwata-lab' '-b -s -n' true];
+	[generate 'reference' [lang] 'kuwata-lab' '-bsn' true];
 }
 
 users-guide.%.html:  users-guide.txt
@@ -105,10 +106,39 @@ README.ja.txt README.en.txt: README.txt
 	ruby m18n.rb -l JA README.txt > README.ja.txt;
 }
 
+
+/*
+ *  recipes for kuwata-lab.com
+ */
+
+klab_products = index.html README.en.html README.ja.html ChangeLog.html
+                users-guide.en.01.html users-guide.ja.01.html
+                reference.en.01.html reference.ja.01.html;
+kuwata-lab: [klab_products];
+
 index.html:	index.txt
 {
 	kwaser -t kuwata-lab -b [need] > [target];
 }
+
+%.en.html: %.en.txt
+{
+	kwaser -t kuwata-lab -b [need] > [target];
+}
+
+%.ja.html: %.ja.txt
+{
+	kwaser -t kuwata-lab,euc -b [need] > [target];
+}
+
+ChangeLog.html: ChangeLog
+{
+	kwaser -t kuwata-lab -b [need] > [target];
+}
+
+
+
+
 
 /*
  *examples.%.html: examples.txt
@@ -150,6 +180,8 @@ clean:
 		calendar.html
 		guide.d
 		package.view package.xml
+		[klab_products]
+		Howto.list
 		;
 	loop d = [examples]
 	{
