@@ -1,0 +1,120 @@
+
+/*
+ *  variables
+ */
+tagfile = 'html-css,euc';
+
+
+
+/*
+ * default target
+ */
+all: tutorial.ja.html tutorial.en.html;
+
+
+
+/*
+ *  documents
+ */
+users-guide.%.html:  users-guide.txt
+{
+	ruby m18n.rb -l [upcase %] users-guide.txt > users-guide.%.txt;
+	mkdir -p guide.d;
+	rm -rf 'guide.d/*';
+	retrieve -d guide.d users-guide.%.txt;
+	kwaser -t [tagfile] -T users-guide.%.txt > users-guide.%.toc.html;
+	kwaser -t [tagfile]    users-guide.%.txt > users-guide.%.html;
+	rm users-guide.%.toc.html;
+	mv guide.d/design.html guide.d/design.css .;
+}
+
+reference.%.html: reference.txt
+{
+	ruby m18n.rb -l [upcase %] reference.txt > reference.%.txt;
+	mkdir -p guide.d;
+	rm -rf 'guide.d/*';
+	retrieve -d guide.d reference.%.txt;
+	kwaser -t [tagfile] -T reference.%.txt > reference.%.toc.html;
+	kwaser -t [tagfile]    reference.%.txt > reference.%.html;
+	rm reference.%.toc.html;
+}
+
+
+gdir = 'guide.d';
+
+examples.%.html: examples.txt
+{
+	ruby m18n.rb -l [upcase %] examples.txt > examples.%.txt;
+	mkdir -p [gdir];
+	rm -rf [gdir]/'*';
+	retrieve -d [gdir] examples.%.txt;
+	kwaser -t [tagfile] -T examples.%.txt > examples.%.toc.html;
+	kwaser -t [tagfile]    examples.%.txt > examples.%.html;
+	rm examples.%.toc.html;
+
+	kwartz.php -l php -p [gdir]/calendar-month.plogic [gdir]/calendar-month.html > [gdir]/calendar-month.view ;
+	kwartz.php -l php -p [gdir]/calendar-page.plogic  [gdir]/calendar-page.html  > [gdir]/calendar-page.view ;
+	php -q -d 'include_path='[gdir] [gdir]/calendar.php > calendar.html ;
+}
+
+
+
+/*
+ *  clean
+ */
+clean:
+{
+	rm -f	users-guide.*.txt  users-guide.*.html
+		reference.*.txt reference.*.html
+		examples.*.txt  examples.*.html
+		calendar.html guide.d/'*';
+}
+
+
+/*
+ *  package.xml
+ */
+package.xml:  package.php package.view
+{
+	php -q package.php > package.xml;
+}
+
+package.view: package.pdata package.plogic
+{
+	kwartz.php -p package.plogic package.pdata > package.view;
+}
+ 
+
+/*
+ *  archive
+ */
+date = '2004-09-15';
+mydir = 'kwartz-php_'[date];
+
+tar.bz2:
+{
+	rm -rf [mydir];
+	mkdir [mydir];
+
+	mkdir -p [mydir]/lib/kwartz;
+	cp Kwartz*.inc [mydir]/lib/kwartz;
+	chmod 644 [mydir]/lib/kwartz/'*';
+	mv [mydir]/lib/kwartz/Kwartz.inc [mydir]/lib;
+
+	mkdir [mydir]/bin;
+	cp kwartz.php [mydir]/bin;
+	chmod 755 [mydir]/bin/'*';
+
+	mkdir [mydir]/documents;
+	cp users-guide.*.html reference.*.html examples.*.html [mydir]/documents;
+
+	cp -a examples [mydir];
+
+	mkdir [mydir]/test;
+	cp Kwartz*.Test.php test.php [mydir]/test;
+	chmod 644 [mydir]/test/'*';
+
+	cp README.txt MANIFEST ChangeLog [mydir];
+
+	tar cf - [mydir] | bzip2 > [mydir].tar.bz2;
+}
