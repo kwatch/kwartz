@@ -550,7 +550,7 @@ END;
 
 
 
-	function test_convert_value() {
+	function test_convert_value1() {
 		$input = <<<END
 		<td kd="value:hash['key']">hoge</td>
 END;
@@ -572,7 +572,6 @@ END;
 		$this->_test_convert($input,  $expected);
 		$this->_test_convert($input2, $expected);
 	}
-
 
 
 
@@ -2278,8 +2277,171 @@ END;
 		$this->_test_convert($input, $expected, true, $toppings);
 	}
 
-}
 
+
+	function test_convert_empty1() {
+		$input = '<div kd="value:var"/>';
+		$expected = '';
+		try {
+			$this->_test_convert($input,  $expected);
+		} catch(KwartzConvertionError $ex) {
+			return;	## OK
+		}
+		$this->fail("KwartzConvertionError expected.");
+	}
+
+	function test_convert_empty2() {
+		$input = '<div kd:php="value($var)"/>';
+		$expected = '';
+		try {
+			$this->_test_convert($input,  $expected);
+		} catch(KwartzConvertionError $ex) {
+			return;	## OK
+		}
+		$this->fail("KwartzConvertionError expected.");
+	}
+
+	function test_convert_empty3() {
+		$input = '<div kd="loop:item=list" />';
+		$expected = '';
+		try {
+			$this->_test_convert($input,  $expected);
+		} catch(KwartzConvertionError $ex) {
+			return;	## OK
+		}
+		$this->fail("KwartzConvertionError expected.");
+	}
+
+	function test_convert_empty4() {
+		$input = '<div kd:php="LOOP($list as $item)"/>';
+		$expected = '';
+		try {
+			$this->_test_convert($input,  $expected);
+		} catch(KwartzConvertionError $ex) {
+			return;	## OK
+		}
+		$this->fail("KwartzConvertionError expected.");
+	}
+
+	function test_convert_empty5() {
+		$input1 = '<div kd="mark:foo"/>';
+		$input2 = '<div kd:php="mark(foo)"/>';
+		$expected = <<<END
+		<<block>>
+		  :macro
+		    'stag_foo'
+		    <<block>>
+		      :print
+		        "<div/>"
+		  :macro
+		    'cont_foo'
+		    <<block>>
+		  :macro
+		    'etag_foo'
+		    <<block>>
+		  :macro
+		    'element_foo'
+		    <<block>>
+		      :expand
+		        'stag_foo'
+		      :expand
+		        'cont_foo'
+		      :expand
+		        'etag_foo'
+		  :expand
+		    'element_foo'
+
+END;
+		$this->_test_convert($input1, $expected);
+		$this->_test_convert($input2, $expected);
+	}
+	
+	function test_convert_empty6() {
+		$input = <<<END
+		<input type="radio" name="gender" id="male" kd="append:@C(gender=='M')"/>
+		<label for="male" accessKey="M">Male</label>
+		<input type="radio" name="gender" id="female" kd="append:@C(gender=='F')"/>
+		<label for="female" accessKey="F">Female</label>
+END;
+		$expected = <<<END
+		<<block>>
+		  :macro
+		    'stag_male'
+		    <<block>>
+		      :print
+		        "<input type=\"radio\" name=\"gender\" id=\"male\""
+		        ?
+		          ==
+		            gender
+		            "M"
+		          " checked=\"checked\""
+		          ""
+		        "/>\\n"
+		  :macro
+		    'cont_male'
+		    <<block>>
+		  :macro
+		    'etag_male'
+		    <<block>>
+		  :macro
+		    'element_male'
+		    <<block>>
+		      :expand
+		        'stag_male'
+		      :expand
+		        'cont_male'
+		      :expand
+		        'etag_male'
+		  :macro
+		    'stag_female'
+		    <<block>>
+		      :print
+		        "<input type=\"radio\" name=\"gender\" id=\"female\""
+		        ?
+		          ==
+		            gender
+		            "F"
+		          " checked=\"checked\""
+		          ""
+		        "/>\\n"
+		  :macro
+		    'cont_female'
+		    <<block>>
+		  :macro
+		    'etag_female'
+		    <<block>>
+		  :macro
+		    'element_female'
+		    <<block>>
+		      :expand
+		        'stag_female'
+		      :expand
+		        'cont_female'
+		      :expand
+		        'etag_female'
+		  :expand
+		    'element_male'
+		  :print
+		    "<label for=\"male\" accessKey=\"M\">"
+		  :print
+		    "Male"
+		  :print
+		    "</label>\\n"
+		  :expand
+		    'element_female'
+		  :print
+		    "<label for=\"female\" accessKey=\"F\">"
+		  :print
+		    "Female"
+		  :print
+		    "</label>"
+
+END;
+		$this->_test_convert($input, $expected);
+	}
+
+
+}
 
 ###
 ### execute test

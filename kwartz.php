@@ -139,7 +139,7 @@ require_once('KwartzAnalyzer.inc');
 				//}
 				$input_filename = $this->args[0];	## read only the first file
 				if (! file_exists($input_filename)) {
-					$mg = "$input_filename: file not found.";
+					$msg = "$input_filename: file not found.";
 					throw new KwartzCommandOptionError($msg);
 				}
 				$input = file_get_contents($input_filename);
