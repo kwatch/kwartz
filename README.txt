@@ -5,13 +5,13 @@
 .	
 .	
 .	
-.EN	.$ About KwartzPHP
-.JA	●KwartzPHPについて
+.EN	.$ About Kwartz-php
+.JA	●Kwartz-phpについて
 .	
-.EN	  KwartzPHP is a template system which realized the concept
+.EN	  Kwartz-php is a template system which realized the concept
 .EN	  'Separation of Presentation Data and Presentation Logic'.
 .EN	  It has the following features:
-.JA	  KwartzPHPとは、『プレゼンテーションデータとプレゼンテーション
+.JA	  Kwartz-phpとは、『プレゼンテーションデータとプレゼンテーション
 .JA	  ロジックの分離』という概念を実現したテンプレートシステムです。
 .JA	  次のような特徴があります。
 .	
@@ -36,12 +36,12 @@
 .EN	.$ Installation
 .JA	●インストール
 .	
-.EN	  KwartzPHP requires PHP 5.
-.EN	  You have to install PHP 5 to use KwartzPHP.
-.JA	  KwartzPHPは、PHP 5を必要とします。
-.JA	  KwartzPHPを使う前にPHP 5をインストールしてください。
+.EN	  Kwartz-php requires PHP 5.
+.EN	  You have to install PHP 5 to use Kwartz-php.
+.JA	  Kwartz-phpは、PHP 5を必要とします。
+.JA	  Kwartz-phpを使う前にPHP 5をインストールしてください。
 .	
-.EN	  The following shows how to install KwartzPHP.
+.EN	  The following shows how to install Kwartz-php.
 .JA	  インストール手順は次のとおりです。
 .	
 .EN	  .% Installation with PEAR Installer:
@@ -86,14 +86,14 @@
 .JA	      http://www.ipa.go.jp/jinzai/esp/ をご覧ください。
 .	
 .EN	  .* If you have any questions or reports, send a e-mail to 
-.EN	     <kwa(at)kuwata-lab.com> with a title starting with '[KwartzPHP]'.
+.EN	     <kwa(at)kuwata-lab.com> with a title starting with '[Kwartz-php]'.
 .JA	  .* 質問やレポートは <kwa(at)kuwata-lab.com> までお知らせください。
-.JA	     その際、タイトルに '[KwartzPHP]' と入れてください。
+.JA	     その際、タイトルに '[Kwartz-php]' と入れてください。
 .	
-.EN	  .* GPL is applied to KwartzPHP Software, but not applied to files
-.EN	     which are genereated by KwartzPHP.
-.JA	  .* ライセンスにはGPLを使用していますが、GPLが適用されるのはKwartzPHP
-.JA	     ソフトウェアに対してであり、KwartzPHPから生成されたファイルには
+.EN	  .* GPL is applied to Kwartz-php Software, but not applied to files
+.EN	     which are genereated by Kwartz-php.
+.JA	  .* ライセンスにはGPLを使用していますが、GPLが適用されるのはKwartz-php
+.JA	     ソフトウェアに対してであり、Kwartz-phpから生成されたファイルには
 .JA	     適用されません。
 .	
 .	
@@ -113,13 +113,9 @@
 .EN		Library files.
 .JA		ライブラリファイル
 .		
-.	  .% ChangeLog.en.html, ChangeLog.ja.html
-.EN		Change log (in English/Japanese).
-.JA		変更履歴（英語、日本語）
-.		
-.	  .% test/
-.EN		UnitTest
-.JA		UnitTest
+.	  .% ChangeLog
+.EN		Change log
+.JA		変更履歴
 .		
 .	  .% doc/users-guide.*.html
 .EN		Users' Guide
@@ -128,6 +124,14 @@
 .	  .% doc/reference.*.html
 .EN		Reference Manual
 .JA		リファレンスマニュアル
+.		
+.	  .% examples/
+.EN		Examples
+.JA		サンプル
+.		
+.	  .% test/
+.EN		UnitTest Programs
+.JA		ユニットテストプログラム
 .		
 .	
 .	

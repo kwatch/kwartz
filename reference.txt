@@ -1,8 +1,8 @@
 .JA	.=title:	Kwartz-phpリファレンスマニュアル
 .EN	.=title:	Kwartz-php Reference Manual
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.	lastupdate:	$Date$
-.	version:	$Rev$
+.	.?lastupdate:	$Date$
+.	.?version:	$Rev$
 .	
 .	
 .JA	●はじめに
