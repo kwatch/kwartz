@@ -130,6 +130,34 @@ END
       #print element._inspect
    end
 
+
+   def test_element2	# Kwartz::Config::EMPTY_TAGS
+      marking = 'foo'
+      tagname = 'input'
+      content = Kwartz::BlockStatement.new([])
+      attr    = { "id" => StringExpression.new("foo"), "value" => VariableExpression.new("value") }
+      append  = []
+      is_empty = false
+      element = Kwartz::Element.new(marking, tagname, content, attr, append)
+      
+      expected1 = <<'END'
+:print
+  "<input"
+  " id=\""
+  "foo"
+  "\""
+  " value=\""
+  value
+  "\""
+  ">"
+END
+      expected2 = <<'END'
+:block
+END
+      assert_equal_with_diff(expected1, element.stag_stmt._inspect)
+      assert_equal_with_diff(expected2, element.etag_stmt._inspect)
+   end
+   
 end
 
 if $0 == __FILE__

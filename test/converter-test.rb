@@ -1776,7 +1776,7 @@ END
 #    end
 
 
-    def test_convert_properties3	# attr_name
+    def test_convert_properties3	# dattr
 	input = <<-'END'
 		<td kd:kwartz="value:item">foo</td>
 	END
@@ -1825,6 +1825,79 @@ END
 	properties = {}
 	_test_convert(input, expected, properties)
 	assert_equal("\r\n", properties[:newline])
+    end
+
+
+    def test_convert_properties5	# empty_tags
+	input = <<-'END'
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF8" id="mark:meta">
+		<form>
+		 <label for="username">User Name:</label>
+		 <input type="text" name="username" id="username">
+		</form>
+		<img id="mark:image">
+	END
+	expected = <<-'END'
+		:block
+		  @element(meta)
+		  :print
+		    "<form>\n"
+		  :print
+		    " <label for=\"username\">"
+		  :print
+		    "User Name:"
+		  :print
+		    "</label>\n"
+		  @element(username)
+		  :print
+		    "</form>\n"
+		  @element(image)
+		===== marking=meta =====
+		[tagname]
+		meta
+		[attrs]
+		http-equiv="Content-Type"
+		content="text/html; charset=UTF8"
+		[content]
+		:block
+		[spaces]
+		["", "\n", "", ""]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=username =====
+		[tagname]
+		input
+		[attrs]
+		type="text"
+		name="username"
+		id="username"
+		[content]
+		:block
+		[spaces]
+		[" ", "\n", "", ""]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=image =====
+		[tagname]
+		img
+		[attrs]
+		[content]
+		:block
+		[spaces]
+		["", "\n", "", ""]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+	END
+	_test_convert(input, expected, {:empty_tags => %w(meta input img)})
     end
 
 

@@ -620,6 +620,48 @@ END
 
 
 
+   ## -------------------- Kwartz::Config::EMPTY_TAGS
+   
+   @@pdata10 = <<'END'
+<meta http-equiv="Content-Type" content="text/html; charset=UTF8" id="mark:meta">
+<form>
+ <label for="username">User Name:</label>
+ <input type="text" name="username" id="username">
+</form>
+<img id="mark:image">
+END
+   @@plogic10 = <<'END'
+#username {
+        attr: "value" username, "size" 60;
+}
+
+#image {
+    attr: "src" image.url, "alt" image.desc;
+    plogic: {
+	foreach (image in image_list) {
+	    @stag;
+	    @cont;
+	    @etag;
+	}
+    }
+}
+END
+
+   def test_compile10_eruby	# Kwartz::Config::EMPTY_TAGS
+      expected = <<END
+<meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+<form>
+ <label for="username">User Name:</label>
+ <input type="text" name="username" id="username" value="<%= username %>" size="60">
+</form>
+<% for image in image_list do %>
+<img src="<%= image.url %>" alt="<%= image.desc %>">
+<% end %>
+END
+      _test(@@pdata10, @@plogic10, expected)
+   end
+
+
 end
 
 

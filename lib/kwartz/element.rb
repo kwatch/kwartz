@@ -103,7 +103,9 @@ module Kwartz
 
       def etag_stmt(properties={})
          #return nil if @is_empty
-         return BlockStatement.new([]) if @is_empty   # for bug 1110250
+         #return BlockStatement.new([]) if @is_empty   # for bug 1110250
+         empty_tags = properties[:empty_tags] || Kwartz::Config::EMPTY_TAGS
+         return BlockStatement.new([]) if @is_empty || empty_tags.include?(@tagname)
          arguments = []
          if @tagname == 'span' && @attrs.empty? && @append.empty?
             s = @etag_whole_line ? '' : spaces[2] + spaces[3]

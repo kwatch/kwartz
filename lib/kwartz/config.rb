@@ -21,6 +21,9 @@ module Kwartz
       EVEN            = "'even'"
       DATTR           = "kd"
       
+      ## converter & element
+      EMPTY_TAGS      = [ "input", "br", "meta", "img", "hr" ]
+      
       ## kwartz command
       HEADER_JSTL11   = <<END
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

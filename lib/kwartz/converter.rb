@@ -37,8 +37,9 @@ module Kwartz
          @kd_attr    = properties[:dattr] || Kwartz::Config::DATTR    # 'kd:kd'
          #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
          #@delete_id_attr = properties[:delete_id_attr] || false
-         @even       = properties[:even] || Kwartz::Config::EVEN     # "'even'"
-         @odd        = properties[:odd]  || Kwartz::Config::ODD      # "'odd'"
+         @even       = properties[:even]  || Kwartz::Config::EVEN     # "'even'"
+         @odd        = properties[:odd]   || Kwartz::Config::ODD      # "'odd'"
+         @empty_tags = properties[:empty_tags] || Kwartz::Config::EMPTY_TAGS  # %w(input br meta img hr)
          @filename   = properties[:filename]
          @parser = Parser.new('', properties)
       end
@@ -230,7 +231,7 @@ module Kwartz
                else
                   stmt_list << create_print_node(@tag_str, @linenum)
                end
-            elsif @slash_empty == '/'		# empty-tag
+            elsif @slash_empty == '/' || @empty_tags.include?(@tagname)		# empty-tag
                directive_name, directive_arg = parse_attr_str(@attr_str)
                if directive_name
                   if directive_name == :mark
@@ -243,8 +244,9 @@ module Kwartz
                      body_stmt = build_print_node()
                      body_stmt_list = [ body_stmt ]
                   end
-                  taginfo = save_taginfo()
-                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, @linenum, taginfo, nil)
+                  staginfo = save_taginfo()
+                  etaginfo = nil
+                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, @linenum, staginfo, etaginfo)
                else
                   stmt_list << build_print_node()
                end

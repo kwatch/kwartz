@@ -2,7 +2,7 @@
 .- [_] rename class names 'StringExpression' to 'StringLiteral', 'BooleanExpression' to 'BooleanLiteral', ...
 .- [_] Parser#initialize(input, property) => Parser#initialize(property)
 .- [v] Converter#initialize(input, property) => Converter#initialize(property)
-.- [_] regard <input>, <br>, <img>, <meta>, <hr> as empty tag
+.- [v] regard <input>, <br>, <img>, <meta>, <hr> as empty tag
 .- [x] create 'kwartz/default.rb' and 'kwartz/config.rb' and module Kwartz::Default'
 .- [v] kwartz/config.rb
 .- [_] kwartz/messages.rb
@@ -34,3 +34,5 @@
 .- [_] /* comment */
 .- [_] parse type appropriately in 'vartype { type var; }'
 .- [_] ruby gems
+.- [_] load library path
+.- [_] include file path

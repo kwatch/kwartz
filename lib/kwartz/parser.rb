@@ -462,12 +462,12 @@ module Kwartz
          Kwartz::assert unless token() == :foreach
          tkn = scan()
          syntax_error("foreach-statement requires '('.") unless tkn == '('
-         scan()
-         loopvar_expr = parse_expression()
-         unless loopvar_expr.token() == :variable
-            raise syntax_error("foreach-statement requires loop-variable but got '#{tkn}'.")
-         end
-         syntax_error("foreach-statement requires 'in' but got '#{tkn}'.") unless token() == :in
+         t = scan()
+         syntax_error("foreach-statement requires loop-variable but got '#{t}'.") unless t == :name
+         varname = value()
+         loopvar_expr = VariableExpression.new(varname)
+         t = scan()
+         syntax_error("foreach-statement requires 'in' but got '#{t}'.") unless t == :in || t == '='
          scan()
          list_expr = parse_expression()
          syntax_error("foreach-statement requires ')'.") unless token() == ')'

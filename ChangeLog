@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2004-02-06 rev.37
+	.- [enhance] property 'empty_tags' and Config::EMPTY_TAGS support
+
 .: 2004-02-06 rev.36
 	.- [change] add '$Release$' tag for all files.
 	.- [bugfix] [bug:1117151] inline expression in the attribute of the marked tag is not converted
