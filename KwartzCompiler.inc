@@ -4,6 +4,7 @@
 ### KwartzCompiler.inc
 ###
 
+require_once('KwartzException.inc');
 require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 require_once('KwartzConverter.inc');
@@ -12,13 +13,33 @@ require_once('KwartzTranslator.inc');
 
 //namespace Kwartz {
 
+	class KwartzCompilationError extends KwartzException {
+		private $compiler;
+		function __construct($msg, $compiler) {
+			parent::__construct($msg);
+			$this->compiler = $compiler;
+		}
+	}
+	
+
 	class KwartzCompiler {
 		private $pdata_str;
 		private $plogic_cde;
+		private $lang;
 		
-		function __construct($pdata_str=NULL, $plogic_code=NULL) {
+		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php') {
 			$this->pdata_str = $pdata_str;
 			$this->plogic_code = $plogic_code;
+			switch ($lang) {
+			case 'php':
+			case 'eruby':
+				# OK
+				break;
+			default:
+				$msg = "language '{$lang}' not supported.";
+				throw new KwartzCompilationError($msg, $this);
+			}
+			$this->lang = $lang;
 		}
 		
 		function compile() {
@@ -49,7 +70,16 @@ require_once('KwartzTranslator.inc');
 			}
 			
 			## translate block into PHP code
-			$translator = new KwartzPhpTranslator($block);
+			switch ($this->lang) {
+			case 'php':
+				$translator = new KwartzPhpTranslator($block);
+				break;
+			case 'eruby':
+				$translator = new KwartzErubyTranslator($block);
+				break;
+			default:
+				assert(false);
+			}
 			$code = $translator->translate();
 			
 			return $code;

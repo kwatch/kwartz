@@ -14,30 +14,38 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test($pdata, $plogic, $expected, $flag_test=TRUE) {
+	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
 		$pdata    = preg_replace('/^\t\t/m', '', $pdata);
+		$pdata    = preg_replace('/^\n/',    '', $pdata);
 		$plogic   = preg_replace('/^\t\t/m', '', $plogic);
+		$plogic   = preg_replace('/^\n/',    '', $plogic);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
+		$expected = preg_replace('/^\n/',    '', $expected);
 		//echo "*** debug: pdata=$pdata\n";
 		//echo "*** debug: plogic=$plogic\n";
-		$compiler = new KwartzCompiler($pdata, $plogic);
+		$compiler = new KwartzCompiler($pdata, $plogic, $lang);
 		$code = $compiler->compile();
 		$actual = $code;
 		if ($flag_test) {
-			$this->assertEquals($expected, $code);
+			$this->assertEquals($expected, $actual);
+		} else {
+			echo "\n------\n";
+			echo kwartz_inspect_str($expected);
+			echo "\n------\n";
+			echo kwartz_inspect_str($actual);
 		}
 		return $compiler;
 	}
 
 	
-	function test_compile1() {
-		$pdata = <<<END
+	
+	const pdata_compile1 = '
 		<html>
 		 <body>
 		  <table>
 		   <tr class="odd" id="mark:user" kd="attr:class:klass">
-		    <td id="value:user['name']">foo</td>
-		    <td id="value:user['mail']">foo@mail.com</td>
+		    <td id="value:user[\'name\']">foo</td>
+		    <td id="value:user[\'mail\']">foo@mail.com</td>
 		   </tr>
 		   <tr class="even" id="dummy:d1">
 		    <td>bar</td>
@@ -46,15 +54,15 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		  </table>
 		 </body>
 		</html>
-END;
+		';
 
-		$pdata_php = <<<END
+	const pdata_compile1_php = '
 		<html>
 		 <body>
 		  <table>
-		   <tr class="odd" php="mark(user);attr('class'=>\$klass)">
-		    <td php="echo(\$user['name'])">foo</td>
-		    <td php="echo(\$user['mail'])">foo@mail.com</td>
+		   <tr class="odd" php="mark(user);attr(\'class\'=>$klass)">
+		    <td php="echo($user[\'name\'])">foo</td>
+		    <td php="echo($user[\'mail\'])">foo@mail.com</td>
 		   </tr>
 		   <tr class="even" php="dummy(d1)">
 		    <td>bar</td>
@@ -63,69 +71,112 @@ END;
 		  </table>
 		 </body>
 		</html>
-END;
+		';
 
-		$plogic = <<<END
+	const plogic_compile1 = '
 		:elem(user)
 		  :set(i = 0)
 		  :foreach(user = user_list)
 		    :set(i += 1)
-		    :set(klass = i%2==0 ? 'even' : 'odd')
+		    :set(klass = i%2==0 ? \'even\' : \'odd\')
 		    @stag
 		    @cont
 		    @etag
 		  :end
 		:end
-END;
+	';
 
-
-		$plogic_php = <<<END
+	const plogic_compile1_php = '
 		element user {
-		  \$i = 0;
-		  foreach (\$user_list as \$user) {
-		    \$i += 1;
-		    \$klass = \$i % 2 == 0 ? 'even' : 'odd';
+		  $i = 0;
+		  foreach ($user_list as $user) {
+		    $i += 1;
+		    $klass = $i % 2 == 0 ? \'even\' : \'odd\';
 		    @stag;
 		    @cont;
 		    @etag;
 		  }
 		}
-END;
-		$expected = <<<END
+		';
+	
+	const expected_compile1_php = '
 		<html>
 		 <body>
 		  <table>
-		<?php \$i = 0; ?>
-		<?php foreach (\$user_list as \$user) { ?>
-		  <?php \$i += 1; ?>
-		  <?php \$klass = \$i % 2 == 0 ? "even" : "odd"; ?>
-		   <tr class="<?php echo \$klass; ?>">
-		    <td><?php echo \$user["name"]; ?></td>
-		    <td><?php echo \$user["mail"]; ?></td>
+		<?php $i = 0; ?>
+		<?php foreach ($user_list as $user) { ?>
+		  <?php $i += 1; ?>
+		  <?php $klass = $i % 2 == 0 ? "even" : "odd"; ?>
+		   <tr class="<?php echo $klass; ?>">
+		    <td><?php echo $user["name"]; ?></td>
+		    <td><?php echo $user["mail"]; ?></td>
 		   </tr>
 		<?php } ?>
 		  </table>
 		 </body>
 		</html>
-END;
+		';
 
-		$this->_test($pdata,     $plogic,     $expected);
-		$this->_test($pdata,     $plogic_php, $expected);
-		$this->_test($pdata_php, $plogic,     $expected);
-		$this->_test($pdata_php, $plogic_php, $expected);
+	const expected_compile1_eruby = '
+		<html>
+		 <body>
+		  <table>
+		<% i = 0 %>
+		<% for user in user_list do %>
+		  <% i += 1 %>
+		  <% klass = i % 2 == 0 ? "even" : "odd" %>
+		   <tr class="<%= klass %>">
+		    <td><%= user["name"] %></td>
+		    <td><%= user["mail"] %></td>
+		   </tr>
+		<% end %>
+		  </table>
+		 </body>
+		</html>
+		';
+
+
+	function test_compile1_php() {
+		$pdata      = KwartzCompilerTest::pdata_compile1;
+		$pdata_php  = KwartzCompilerTest::pdata_compile1_php;
+		$plogic     = KwartzCompilerTest::plogic_compile1;
+		$plogic_php = KwartzCompilerTest::plogic_compile1_php;
+		$expected_php   = KwartzCompilerTest::expected_compile1_php;
+
+		$this->_test($pdata,     $plogic,     $expected_php, 'php');
+		$this->_test($pdata,     $plogic_php, $expected_php, 'php');
+		$this->_test($pdata_php, $plogic,     $expected_php, 'php');
+		$this->_test($pdata_php, $plogic_php, $expected_php, 'php');
 	}
 
 
-	function test_compile2() {
-		$pdata = <<<END
+	function test_compile1_eruby() {
+		$pdata      = KwartzCompilerTest::pdata_compile1;
+		$pdata_php  = KwartzCompilerTest::pdata_compile1_php;
+		$plogic     = KwartzCompilerTest::plogic_compile1;
+		$plogic_php = KwartzCompilerTest::plogic_compile1_php;
+		$expected_eruby   = KwartzCompilerTest::expected_compile1_eruby;
+
+		$this->_test($pdata,     $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata,     $plogic_php, $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
+	}
+
+
+
+	## --------------------
+
+
+	const pdata_compile2 = '
 		<a href="#{url}#" id="mark:link">next page</a>
+		';
 
-END;
-		$pdata_php = <<<END
-		<a href="#{url}#" php="mark(link)">next page</a>
+	const pdata_compile2_php = '
+		<a href="@{$url}@" php="mark(link)">next page</a>
+		';
 
-END;
-		$plogic = <<<END
+	const plogic_compile2 = '
 		:elem(link)
 		  :if (url != null)
 		    @stag
@@ -135,11 +186,11 @@ END;
 		    @cont
 		  :end
 		:end
-END;
+		';
 
-		$plogic_php = <<<END
+	const plogic_compile2_php = '
 		element link {
-		  if (\$url != NULL) {
+		  if ($url != NULL) {
 		    @stag;
 		    @cont;
 		    @etag;
@@ -147,25 +198,53 @@ END;
 		    @cont;
 		  }
 		}
-END;
+		';
 
-		$expected = <<<END
-		<?php if (\$url != NULL) { ?>
-		<a href="<?php echo \$url; ?>">next page</a>
+	const expected_compile2_php = '
+		<?php if ($url != NULL) { ?>
+		<a href="<?php echo $url; ?>">next page</a>
 		<?php } else { ?>
 		next page<?php } ?>
+		';
 
-END;
-		$this->_test($pdata, $plogic,     $expected);
-		$this->_test($pdata, $plogic_php, $expected);
-		$this->_test($pdata_php, $plogic,     $expected);
-		$this->_test($pdata_php, $plogic_php, $expected);
+	const expected_compile2_eruby = '
+		<% if url != nil then %>
+		<a href="<%= url %>">next page</a>
+		<% else %>
+		next page<% end %>
+		';
+
+	function test_compile2_php() {
+		$pdata      = KwartzCompilerTest::pdata_compile2;
+		$pdata_php  = KwartzCompilerTest::pdata_compile2_php;
+		$plogic     = KwartzCompilerTest::plogic_compile2;
+		$plogic_php = KwartzCompilerTest::plogic_compile2_php;
+		$expected_php = KwartzCompilerTest::expected_compile2_php;
+
+		$this->_test($pdata,     $plogic,     $expected_php, 'php');
+		$this->_test($pdata,     $plogic_php, $expected_php, 'php');
+		$this->_test($pdata_php, $plogic,     $expected_php, 'php');
+		$this->_test($pdata_php, $plogic_php, $expected_php, 'php');
+	}
+
+	function test_compile2_eruby() {
+		$pdata      = KwartzCompilerTest::pdata_compile2;
+		$pdata_php  = KwartzCompilerTest::pdata_compile2_php;
+		$plogic     = KwartzCompilerTest::plogic_compile2;
+		$plogic_php = KwartzCompilerTest::plogic_compile2_php;
+		$expected_eruby = KwartzCompilerTest::expected_compile2_eruby;
+
+		$this->_test($pdata,     $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata,     $plogic_php, $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
 	}
 
 
 
-	function test_compile3() {
-		$pdata = <<<END
+	## --------------------
+
+	const pdata_compile3 = '
 		<table cellpadding="2" summary="">
 		  <caption>
 		    <i id="value:month">Jan</i>&nbsp;<i id="value:year">20XX</i>
@@ -209,13 +288,61 @@ END;
 		  </tbody>
 		</table>
 		&nbsp;
+		';
 
-END;
+	const plogic_compile3 = '
+		:elem(week)
+		
+		  :set(day = \'&nbsp;\')
+		  :set(wday = 1)
+		  :while(wday < first_weekday)
+		    :if(wday == 1)
+		      @stag
+		    :end
+		    @cont
+		    :set(wday += 1)
+		  :end
+		
+		  :set(day = 0)
+		  :set(wday -= 1)
+		  :while(day < num_days)
+		    :set(day += 1)
+		    :set(wday = wday % 7 + 1)
+		    :if(wday == 1)
+		      @stag
+		    :end
+		    @cont
+		    :if(wday == 7)
+		      @etag
+		    :end
+		  :end
+		
+		  :if(wday != 7)
+		    :set(day = \'&nbsp;\')
+		    :while(wday != 6)
+		      :set(wday += 1)
+		      @cont
+		    :end
+		    @etag
+		  :end
+		
+		:end
+		
+		:elem(day)
+		  :if(wday == 1)
+		    @stag
+		    :print(day)
+		    @etag
+		  :else
+		    :print(day)
+		  :end
+		:end
+		';
 
-		$pdata_php = <<<END
+	const pdata_compile3_php = '
 		<table cellpadding="2" summary="">
 		  <caption>
-		    <i php="echo(\$month)">Jan</i>&nbsp;<i php="echo(\$year)">20XX</i>
+		    <i php="echo($month)">Jan</i>&nbsp;<i php="echo($year)">20XX</i>
 		  </caption>
 		  <thead>
 		    <tr bgcolor="#CCCCCC">
@@ -256,91 +383,39 @@ END;
 		  </tbody>
 		</table>
 		&nbsp;
+		';
 
-END;
-
-
-		$plogic = <<<END
-		:elem(week)
-		
-		  :set(day = '&nbsp;')
-		  :set(wday = 1)
-		  :while(wday < first_weekday)
-		    :if(wday == 1)
-		      @stag
-		    :end
-		    @cont
-		    :set(wday += 1)
-		  :end
-		
-		  :set(day = 0)
-		  :set(wday -= 1)
-		  :while(day < num_days)
-		    :set(day += 1)
-		    :set(wday = wday % 7 + 1)
-		    :if(wday == 1)
-		      @stag
-		    :end
-		    @cont
-		    :if(wday == 7)
-		      @etag
-		    :end
-		  :end
-		
-		  :if(wday != 7)
-		    :set(day = '&nbsp;')
-		    :while(wday != 6)
-		      :set(wday += 1)
-		      @cont
-		    :end
-		    @etag
-		  :end
-		
-		:end
-		
-		:elem(day)
-		  :if(wday == 1)
-		    @stag
-		    :print(day)
-		    @etag
-		  :else
-		    :print(day)
-		  :end
-		:end
-
-END;
-
-		$plogic_php = <<<END
+	const plogic_compile3_php = '
 		element week {
 		
-		    \$day = '&nbsp;';
-		    \$wday = 1;
-		    while (\$wday < \$first_weekday) {
-		        if (\$wday == 1) {
+		    $day = \'&nbsp;\';
+		    $wday = 1;
+		    while ($wday < $first_weekday) {
+		        if ($wday == 1) {
 		            @stag;
 		        }
 		        @cont;
-		        \$wday += 1;
+		        $wday += 1;
 		    }
 		
-		    \$day = 0;
-		    \$wday -= 1;
-		    while (\$day < \$num_days) {
-		        \$day += 1;
-		        \$wday = \$wday % 7 + 1;
-		        if (\$wday == 1) {
+		    $day = 0;
+		    $wday -= 1;
+		    while ($day < $num_days) {
+		        $day += 1;
+		        $wday = $wday % 7 + 1;
+		        if ($wday == 1) {
 		            @stag;
 		        }
 		        @cont;
-		        if (\$wday == 7) {
+		        if ($wday == 7) {
 		            @etag;
 		        }
 		    }
 		
-		    if (\$wday != 7) {
-		        \$day = '&nbsp;';
-		        while (\$wday != 6) {
-		            \$wday += 1;
+		    if ($wday != 7) {
+		        $day = \'&nbsp;\';
+		        while ($wday != 6) {
+		            $wday += 1;
 		            @cont;
 		        }
 		        @etag;
@@ -349,22 +424,20 @@ END;
 		}
 		
 		element day {
-		    if (\$wday == 1) {
+		    if ($wday == 1) {
 			@stag
-			echo \$day;
+			echo $day;
 			@etag;
 		    } else {
-			echo \$day;
+			echo $day;
 		    }
 		}
+		';
 
-END;
-
-
-		$expected = <<<END
+	const expected_compile3_php = '
 		<table cellpadding="2" summary="">
 		  <caption>
-		    <i><?php echo \$month; ?></i>&nbsp;<i><?php echo \$year; ?></i>
+		    <i><?php echo $month; ?></i>&nbsp;<i><?php echo $year; ?></i>
 		  </caption>
 		  <thead>
 		    <tr bgcolor="#CCCCCC">
@@ -373,41 +446,41 @@ END;
 		    </tr>
 		  </thead>
 		  <tbody>
-		<?php \$day = "&nbsp;"; ?>
-		<?php \$wday = 1; ?>
-		<?php while (\$wday < \$first_weekday) { ?>
-		  <?php if (\$wday == 1) { ?>
+		<?php $day = "&nbsp;"; ?>
+		<?php $wday = 1; ?>
+		<?php while ($wday < $first_weekday) { ?>
+		  <?php if ($wday == 1) { ?>
 		    <tr>
 		  <?php } ?>
-		      <td><?php if (\$wday == 1) { ?>
-		<span class="holiday"><?php echo \$day; ?></span><?php } else { ?>
-		<?php echo \$day; ?><?php } ?>
+		      <td><?php if ($wday == 1) { ?>
+		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
+		<?php echo $day; ?><?php } ?>
 		</td>
-		  <?php \$wday += 1; ?>
+		  <?php $wday += 1; ?>
 		<?php } ?>
-		<?php \$day = 0; ?>
-		<?php \$wday -= 1; ?>
-		<?php while (\$day < \$num_days) { ?>
-		  <?php \$day += 1; ?>
-		  <?php \$wday = \$wday % 7 + 1; ?>
-		  <?php if (\$wday == 1) { ?>
+		<?php $day = 0; ?>
+		<?php $wday -= 1; ?>
+		<?php while ($day < $num_days) { ?>
+		  <?php $day += 1; ?>
+		  <?php $wday = $wday % 7 + 1; ?>
+		  <?php if ($wday == 1) { ?>
 		    <tr>
 		  <?php } ?>
-		      <td><?php if (\$wday == 1) { ?>
-		<span class="holiday"><?php echo \$day; ?></span><?php } else { ?>
-		<?php echo \$day; ?><?php } ?>
+		      <td><?php if ($wday == 1) { ?>
+		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
+		<?php echo $day; ?><?php } ?>
 		</td>
-		  <?php if (\$wday == 7) { ?>
+		  <?php if ($wday == 7) { ?>
 		    </tr>
 		  <?php } ?>
 		<?php } ?>
-		<?php if (\$wday != 7) { ?>
-		  <?php \$day = "&nbsp;"; ?>
-		  <?php while (\$wday != 6) { ?>
-		    <?php \$wday += 1; ?>
-		      <td><?php if (\$wday == 1) { ?>
-		<span class="holiday"><?php echo \$day; ?></span><?php } else { ?>
-		<?php echo \$day; ?><?php } ?>
+		<?php if ($wday != 7) { ?>
+		  <?php $day = "&nbsp;"; ?>
+		  <?php while ($wday != 6) { ?>
+		    <?php $wday += 1; ?>
+		      <td><?php if ($wday == 1) { ?>
+		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
+		<?php echo $day; ?><?php } ?>
 		</td>
 		  <?php } ?>
 		    </tr>
@@ -415,14 +488,89 @@ END;
 		  </tbody>
 		</table>
 		&nbsp;
+		';
 
-END;
-		$this->_test($pdata,     $plogic,     $expected);
-		$this->_test($pdata,     $plogic_php, $expected);
-		$this->_test($pdata_php, $plogic,     $expected);
-		$this->_test($pdata_php, $plogic_php, $expected);
+	const expected_compile3_eruby = '
+		<table cellpadding="2" summary="">
+		  <caption>
+		    <i><%= month %></i>&nbsp;<i><%= year %></i>
+		  </caption>
+		  <thead>
+		    <tr bgcolor="#CCCCCC">
+		      <th><span class="holiday">S</span></th>
+		      <th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		<% day = "&nbsp;" %>
+		<% wday = 1 %>
+		<% while wday < first_weekday do %>
+		  <% if wday == 1 then %>
+		    <tr>
+		  <% end %>
+		      <td><% if wday == 1 then %>
+		<span class="holiday"><%= day %></span><% else %>
+		<%= day %><% end %>
+		</td>
+		  <% wday += 1 %>
+		<% end %>
+		<% day = 0 %>
+		<% wday -= 1 %>
+		<% while day < num_days do %>
+		  <% day += 1 %>
+		  <% wday = wday % 7 + 1 %>
+		  <% if wday == 1 then %>
+		    <tr>
+		  <% end %>
+		      <td><% if wday == 1 then %>
+		<span class="holiday"><%= day %></span><% else %>
+		<%= day %><% end %>
+		</td>
+		  <% if wday == 7 then %>
+		    </tr>
+		  <% end %>
+		<% end %>
+		<% if wday != 7 then %>
+		  <% day = "&nbsp;" %>
+		  <% while wday != 6 do %>
+		    <% wday += 1 %>
+		      <td><% if wday == 1 then %>
+		<span class="holiday"><%= day %></span><% else %>
+		<%= day %><% end %>
+		</td>
+		  <% end %>
+		    </tr>
+		<% end %>
+		  </tbody>
+		</table>
+		&nbsp;
+		';
+
+	function test_compile3_php() {
+		$pdata        = KwartzCompilerTest::pdata_compile3;
+		$plogic       = KwartzCompilerTest::plogic_compile3;
+		$pdata_php    = KwartzCompilerTest::pdata_compile3_php;
+		$plogic_php   = KwartzCompilerTest::plogic_compile3_php;
+		$expected_php = KwartzCompilerTest::expected_compile3_php;
+
+		$this->_test($pdata,     $plogic,     $expected_php, 'php');
+		$this->_test($pdata,     $plogic_php, $expected_php, 'php');
+		$this->_test($pdata_php, $plogic,     $expected_php, 'php');
+		$this->_test($pdata_php, $plogic_php, $expected_php, 'php');
 	}
 
+	function test_compile3_eruby() {
+		$pdata          = KwartzCompilerTest::pdata_compile3;
+		$plogic         = KwartzCompilerTest::plogic_compile3;
+		$pdata_php      = KwartzCompilerTest::pdata_compile3_php;
+		$plogic_php     = KwartzCompilerTest::plogic_compile3_php;
+		$expected_eruby = KwartzCompilerTest::expected_compile3_eruby;
+
+		$this->_test($pdata,     $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata,     $plogic_php, $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
+		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
+	}
 
 }
 
