@@ -20,8 +20,8 @@
 ##	     Null
 ##	Statement
 ##	   Print
-##	   Set
-##         Block
+##	   Expr
+##	   Block
 ##	   If
 ##	   Foreach
 ##	   Macro
@@ -318,9 +318,9 @@ module Kwartz
 
 
    ##
-   class SetStatement < Statement
+   class ExprStatement < Statement
       def initialize(assign_expr)
-         super(:set)
+         super(:expr)
          @expr = assign_expr
       end
       attr_accessor :expr
@@ -332,7 +332,7 @@ module Kwartz
       end
 
       def accept(visitor)
-         return visitor.visit_set_statement(self)
+         return visitor.visit_expr_statement(self)
       end
    end
 
@@ -458,15 +458,20 @@ module Kwartz
 
    ##
    class ExpandStatement < Statement
-      def initialize(macro_name)
+      def initialize(type, name=nil)
          super(:expand)
-         @macro_name = macro_name
+         @type = type		# :stag :etag :cont :element
+         @name = name           # required only when :element
       end
-      attr_accessor :macro_name, :body
+      attr_accessor :type, :name
 
       def _inspect(depth=0, s='')
          indent(depth, s)
-         s << ':expand(' << @macro_name << ")\n"
+         if @type == :element
+            s << '@element(' << @name << ")\n"
+         else
+            s << "@#{type}\n"
+         end
          return s
       end
 

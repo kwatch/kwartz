@@ -207,11 +207,21 @@ module Kwartz
          ## ignore white space
          while (is_white(ch))
             ch = getchar()
+            return ?\n unless ch
          end
 
          ## ignore comment
-         if ch == ?\#
-            return ?\n		# end of line
+         #if ch == ?\#
+         #   return ?\n		# end of line
+         #end
+         if ch == ?/
+            if (ch = getchar()) == ?/
+               return ?\n		# end of line
+            elsif ch == ?=
+               getchar()
+               return @value = @token = '/='
+            end
+            return @value = @token = '/'
          end
 
          ##
@@ -465,3 +475,9 @@ module Kwartz
 
 
 end   # end of module Kwartz
+
+if __FILE__ == $0
+   input = ARGF.read()
+   scanner = Kwartz::Scanner.new(input)
+   print scanner.scan_all()
+end

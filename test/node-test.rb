@@ -177,9 +177,9 @@ END
    ##
    def test_set_stmt1
       assign_expr = BinaryExpression.new('=', VariableExpression.new('i'), NumericExpression.new('10'))
-      stmt = SetStatement.new(assign_expr)
+      stmt = ExprStatement.new(assign_expr)
       expected = <<'END'
-:set
+:expr
   =
     i
     10
@@ -191,14 +191,14 @@ END
    ##
    def test_block_stmt1
       stmt1 = PrintStatement.new([ StringExpression.new("<div>") ])
-      stmt2 = SetStatement.new(BinaryExpression.new('=', VariableExpression.new('i'), NumericExpression.new('10')))
+      stmt2 = ExprStatement.new(BinaryExpression.new('=', VariableExpression.new('i'), NumericExpression.new('10')))
       stmt3 = PrintStatement.new([ StringExpression.new("</div>\n") ])
       stmt = BlockStatement.new( [ stmt1, stmt2, stmt3, ] )
       expected = <<'END'
 :block
   :print
     "<div>"
-  :set
+  :expr
     =
       i
       10
@@ -332,9 +332,19 @@ END
 
    ##
    def test_expand_stmt1
-      stmt = ExpandStatement.new('foo')
+      stmt = ExpandStatement.new(:stag)
       expected = <<'END'
-:expand(foo)
+@stag
+END
+      _test(stmt, expected)
+   end
+
+   
+   ##
+   def test_expand_stmt2
+      stmt = ExpandStatement.new(:element, 'name')
+      expected = <<'END'
+@element(name)
 END
       _test(stmt, expected)
    end

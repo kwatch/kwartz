@@ -1,3 +1,8 @@
+.: 2005-01-24  rev.17
+	.- [enhance] parser.rb: statement support
+.: 2005-01-23  rev.16
+	.- [enhance] scanner.rb rewrited
+
 .: 2005-01-20  rev.13
 	.- [enhance] new class Parser
 	.- [enhance] Parser#parse_expression() support

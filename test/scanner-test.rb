@@ -302,6 +302,13 @@ class ScannerTest < Test::Unit::TestCase
           _test(input, expected)
        end
     end
+    
+    
+    def test_scan_space1  # bug: empty text
+       input = "   "
+       expected = ''
+       _test(input, expected)
+    end
 
 end
 

@@ -393,7 +393,7 @@ module Kwartz
          expr = parse_expression()
          check_token(';', "expression-statement requires ';'.") unless token() != ';'
          scan()
-         return ExpressionStatement.new(expr)
+         return ExprStatement.new(expr)
       end
       
       
@@ -437,20 +437,21 @@ module Kwartz
       ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
       ##  
       def parse_foreach_stmt()
-         Kwartz::assert(token() == 'foreach')
+         Kwartz::assert(token() == :foreach)
          tkn = scan()
          check_token('(', "foreach-statement requires '('.") unless tkn == '('
-         tkn = scan()
-         check_token(:variable, "foreach-statement requires loop-variable but got '#{tkn}'.") unless tkn == :variable
-         loopvar_name = value()
-         tkn = scan()
-         check_token(:in, "foreach-statement requires 'in' but got '#{tkn}'.") unless tkn == :in
+         scan()
+         loopvar_expr = parse_expression()
+         unless loopvar_expr.token() == :variable
+            raise syntax_error("foreach-statement requires loop-variable but got '#{tkn}'.")
+         end
+         check_token(:in, "foreach-statement requires 'in' but got '#{tkn}'.") unless token() == :in
          scan()
          list_expr = parse_expression()
          check_token(')', "foreach-statement requires ')'.") unless tkn == ')'
          scan()
          body_stmt = parse_statement()
-         return ForeachStatement(loopvar_name, list_expr, body_stmt)
+         return ForeachStatement.new(loopvar_expr, list_expr, body_stmt)
       end
       
       
@@ -463,13 +464,40 @@ module Kwartz
          check_token('(', "while-statement requires '('") unless tkn == '('
          scan()
          cond_expr = parse_expression()
-         tkn = scan()
-         check_token(')', "while-statement requires ')'") unless tkn == ')'
+         check_token(')', "while-statement requires ')'") unless token() == ')'
          scan()
          body_stmt = parse_statement()
          return WhileStatement.new(cond_expr, body_stmt)
       end
       
+
+      ##
+      ##  @stag,  @cont,  @etag,  @element(name)
+      ##
+      def parse_expand_stmt()
+         Kwartz::assert(token() == '@')
+         type = value()
+         stmt = nil
+         case type
+         when 'stag', 'cont', 'etag'
+            name = nil
+         when 'element'
+            tkn = scan()
+            check_token('(', "@element() requires '('.") unless tkn == '('
+            tkn = scan()
+            check_token(:name, "@element() requires an element name.") unless tkn == :name
+            name = value()
+            tkn = scan()
+            check_token(')', "@element() requires ')'.") unless tkn == ')'
+         else
+            syntax_error("'@' should be '@stag', '@cont', '@etag', or '@element(name)'.")
+         end
+         tkn = scan()
+         check_token(';', "@#{type} requires ';'.") unless tkn == ';'
+         scan()
+         return ExpandStatement.new(type.intern, name)
+      end
+
       
       ##  
       ##
@@ -493,15 +521,18 @@ module Kwartz
          stmt_list = parse_stmt_list()
          check_token('}', "block-statement requires '}'.") unless token() != '}'
          scan()
-         return BlockStatement(stmt_list)
+         return BlockStatement.new(stmt_list)
       end
 
-      
+
       ##
-      ##  statement    ::=  print-stmt | expr-stmt | if-stmt | foreach-stmt | while-stmt | block-stmt | ';'
+      ##  statement    ::=  print-stmt | if-stmt | foreach-stmt | while-stmt 
+      ##                  | expr-stmt | block-stmt | expand-stmt | ';'
       ##
       def parse_statement()
          case token()
+         when '}'
+            return nil
          when '{'
             return parse_block_stmt()
          when :print
@@ -514,32 +545,33 @@ module Kwartz
             return parse_while_stmt()
          when :element
             return parse_element_stmt()
-         when :expand
+         when '@', :expand
             return parse_expand_stmt()
          when ';'
             scan()
             return ';'
-         else
+         when nil:
+            return;
+         when :name
             return parse_expr_stmt()
+         else
+            #return parse_expr_stmt()
+            syntax_error("statement expected but got '#{token()}'")
          end
       end
-      
 
 
       ##
 
       def parse_program()
-         block = parse_block_statement()
-         token_check(nil, "EOF expected but '#{token()}'.")
-         return block
+         stmt_list = parse_stmt_list()
+         token_check(nil, "EOF expected but '#{token()}'.") unless token() == nil
+         #return stmt_list
+         return BlockStatement.new(stmt_list)
       end
 
       def parse()
-         #return parse_program()
-         s
-         while tkn = @scanner.scan()
-
-         end
+         return parse_program()
       end
 
       def _scan_all()
@@ -552,4 +584,16 @@ module Kwartz
       end
 
    end
+end
+
+
+if __FILE__ == $0
+   input = ARGF.read()
+   parser = Kwartz::Parser.new(input)
+   expr = parser.parse_expression()
+   print expr._inspect()
+   #stmt_list = parser.parse_stmt_list()
+   #stmt_list.each do |stmt|
+   #   print stmt._inspect()
+   #end
 end
