@@ -119,6 +119,8 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         'KwartzRawcodeStatement'      => 'translate_rawcode_statement',
         );
     
+    // toppings:
+    //   - indent-width
     function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
         $this->block       = $block->rearrange();
         $this->flag_escape = $flag_escape;
@@ -130,7 +132,8 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
             $this->print_key    = ':print';
             $this->endprint_key = ':endprint';
         }
-        $indent_width = $this->topping('indent_width');
+        $indent_width = $this->topping('indent-width');
+        if ($indent_width === NULL) $indent_width = 2;    // default
         $indent_space = '';
         for ($i = 0; $i < $indent_width; $i++) {
             $indent_space .= ' ';

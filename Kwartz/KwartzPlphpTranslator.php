@@ -67,9 +67,9 @@ class KwartzPlphpTranslator extends KwartzBaseTranslator {
         if ($toppings == NULL) {
             $toppings = array();
         }
-        if (!array_key_exists('indent_width', $toppings)
-            || $toppings['indent_width'] == 0) {
-            $toppings['indent_width'] = 2;
+        if (!array_key_exists('indent-width', $toppings)
+            || $toppings['indent-width'] == 0) {
+            $toppings['indent-width'] = 2;
         }
         parent::__construct($block, $flag_escape, $toppings);
         $this->flag_supress_begin = TRUE;
@@ -82,6 +82,10 @@ class KwartzPlphpTranslator extends KwartzBaseTranslator {
     
     protected function translate_variable_expression($expr) {
         $this->code .= '$' . $expr->value();
+    }
+    
+    protected function function_name($function_name) {
+        return $function_name;
     }
     
     protected function translate_print_statement($stmt, $depth) {

@@ -68,7 +68,7 @@ class KwartzCompiler {
         $newline_char = NULL;
         if ($this->pdata) {
             $newline_char = kwartz_detect_newline_char($this->pdata);
-            if ($filename = $this->topping('pdata_filename')) {
+            if ($filename = $this->topping('pdata-filename')) {
                 $this->toppings['filename'] = $filename;
             }
             $converter = new KwartzConverter($this->pdata, $this->toppings);
@@ -78,7 +78,7 @@ class KwartzCompiler {
         // convert presentation logic code into block
         $plogic_block = NULL;
         if ($this->plogic) {
-            if ($filename = $this->topping('plogic_filename')) {
+            if ($filename = $this->topping('plogic-filename')) {
                 $this->toppings['filename'] = $filename;
             }
             $parser = new KwartzParser($this->plogic, $this->toppings);

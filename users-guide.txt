@@ -29,6 +29,10 @@
 .JA	◎更新履歴		| changelog*
 .EN	.$$ Changelog		| changelog*
 .	
+.	.: 2004-12-31
+.JA		.- 0.3.0の新機能（関数のサポート、インデントの変更、JSTL1.1のサポート）について説明を追加
+.EN		.- add description about the new features in 0.3.0 (new functions, indent format, JSTL1.1 supprot, etc)
+.	
 .	.: 2004-09-23
 .JA		.- 条件演算子を含む式のサニタイズについての説明を追加
 .EN		.- add description about sanitizing of conditional expresssions
@@ -87,8 +91,8 @@
 .JA		Kwartz-phpは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
 .JA		つまり、ひとつのHTMLテンプレートを様々な言語から使用することができるのです。
 .JA		また使用する言語を変えたとしても、プレゼンテーション層は何も変更する必要がありません。
-.JA		現在のところ、PHP、Ruby(eRuby)、JSPに対応しています。
-.EN		Kwartz-php can create output scripts for PHP, Ruby(eRuby), and JSP from a template file,
+.JA		現在のところ、PHP、Ruby(eRuby)、JSTLに対応しています。
+.EN		Kwartz-php can create output scripts for PHP, Ruby(eRuby), and JSTL from a template file,
 .EN		because Kwartz-php uses an internal intermediate language.
 .EN		You don't have to change the presentation layer at all, even if you changed programming language.
 .		
@@ -201,10 +205,10 @@
 .	.--------------------
 .	
 .	
-.JA	Kwartz-phpはこの2つから各言語(PHP, eRuby, JSP)用の出力用スクリプトを自動生成します。
+.JA	Kwartz-phpはこの2つから各言語(PHP, eRuby, JSTL1.1&1.0)用の出力用スクリプトを自動生成します。
 .JA	これをコンパイルといいます。
 .JA	コンパイルするにはコマンドラインで次のようにします。
-.EN	Kwartz-php creates output scripts automatically for PHP, eRuby, and JSP from the above two files.
+.EN	Kwartz-php creates output scripts automatically for PHP, eRuby, and JSTL(1.1&1.0) from the above two files.
 .EN	This action is called 'compiling'.
 .EN	To compile, enter one of the following commands:
 .	.====================
@@ -214,8 +218,11 @@
 .	### for eRuby
 .	$ kwartz-php -l eruby -p example.plogic example.html > example.rhtml
 .	
-.	### for JSP
-.	$ kwartz-php -l jsp  -p example.plogic example.html > example.jsp
+.	### for JSTL1.1
+.	$ kwartz-php -l jstl11  -p example.plogic example.html > example.jsp
+.	
+.	### for JSTL1.0
+.	$ kwartz-php -l jstl10  -p example.plogic example.html > example.jsp
 .	.====================
 .	
 .	
@@ -235,18 +242,18 @@
 .		.<<<:! kwartz-php -l eruby -p guide.d/example.plogic guide.d/example.html
 .		.--------------------
 .		
-.JA	出力用スクリプト for JSP用{{(コマンドラインオプションとして「--charset={{/CHARSET/}}」をつけると、JSP用出力スクリプトでは「{{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}}」をつけてくれます。)}}(example.jsp):
-.EN	Output Script for JSP{{(if you specify the command-line option '--charset={{/CHARSET/}}', Kwartz-php will output {{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}} when the language is JSP.)}}(example.jsp):
+.JA	出力用スクリプト for JSTL用{{(コマンドラインオプションとして「--charset={{/CHARSET/}}」をつけると、JSTL用出力スクリプトでは「{{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}}」をつけてくれます。)}}(example.jsp):
+.EN	Output Script for JSP(JSTL){{(if you specify the command-line option '--charset={{/CHARSET/}}', Kwartz-php will output {{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}} when the language is JSTL.)}}(example.jsp):
 .		.--------------------
-.		.<<<:! kwartz-php -l jsp -p guide.d/example.plogic guide.d/example.html
+.		.<<<:! kwartz-php -l jstl10 -p guide.d/example.plogic guide.d/example.html
 .		.--------------------
 .		
 .	
 .	
 .JA	またコンパイル時にコマンドオプション -s をつけると、サニタイズされた出力用スクリプトが生成されます。
-.JA	サニタイズには、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSPでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
+.JA	サニタイズには、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
 .EN	Using the command-line option {{,-s,}} or {{,-e,}} when compiling, Kwartz-php will output sanitized scripts.
-.EN	For sanitizing, {{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSP.
+.EN	For sanitizing, {{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSTL.
 .	
 .	
 .JA	これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
@@ -270,8 +277,8 @@
 .		ERuby::import('example.rhtml')
 .		.--------------------
 .		
-.JA	メインプログラム(JSP)：
-.EN	Main Program (JSP) :
+.JA	メインプログラム(JSTL)：
+.EN	Main Program (JSTL) :
 .		.--------------------
 .		public void doGet(HttpServletRequest request,
 .		                  HttpServletResponse response)
@@ -305,12 +312,12 @@
 .	
 .	
 .JA	この出力結果をみると、属性{{,id="values",}}が残っているのが気になります。
-.JA	これを消す場合は、{{,id="mark:values",}}と記述するか、コマンドラインオプション{{,--delete_idattr=true,}}をつけてください。
+.JA	これを消す場合は、{{,id="mark:values",}}と記述するか、コマンドラインオプション{{,--delete-idattr=true,}}をつけてください。
 .JA	id属性が出力されないようになります。
 .EN	You may not prefere that id attributes appear in each <tr></tr>.
 .EN	You can remove then from the output with {{,id="mark:values",}},
 .EN	which is equivalent to {{,id="values",}}, but with auto-removal of the id attributes themselves.
-.EN	The command-line option {{,--delete_idattr=true,}} also removes the id attributes.
+.EN	The command-line option {{,--delete-idattr=true,}} also removes the id attributes.
 .	
 .	
 .	
@@ -418,16 +425,16 @@
 .EN	Notice that you cannot write {{,$ctr++,}} because incremental operator ({{,++,}}) is not supported.
 .	
 .	
-.JA	コンパイル（コマンドラインオプション '{{,-i,}}' つき{{(コマンドラインオプション '{{,-i,}}' は、出力スクリプトをインデントします。)}}）：
-.EN	Compile (with the command-line option '{{,-i,}}'{{('{{,-i,}}' is the command-line option to indent the output script.)}}):
+.JA	コンパイル：
+.EN	Compile:
 .	.====================
-.	$ kwartz-php -i -p table1.plogic table1.html > table1.php
+.	$ kwartz-php -p table1.plogic table1.html > table1.php
 .	.====================
 .	
 .JA	出力用スクリプト(table1.php)：
 .EN	Output Script (table1.php):
 .	.--------------------
-.	.<<<:! kwartz-php -i -p guide.d/table1.plogic guide.d/table1.html
+.	.<<<:! kwartz-php -p guide.d/table1.plogic guide.d/table1.html
 .	.--------------------
 .	
 .	
@@ -442,7 +449,7 @@
 .	  <tbody id="user_list">
 .	    <tr bgcolor="#CCCCFF" {{*kd:php="attr('bgcolor'=>$color)"*}}>
 .	      <td {{*kd:php="value($name)"*}}>Sumire</td>
-.	      <td><a href="ametyst@mail.com"
+.	      <td><a href="amethyst@mail.com"
 .	        {{*kd:php="attr('href'=>$mail);value($mail)"*}}>amethyst@mail.com</a></td>
 .	    </tr>
 .	    <tr bgcolor="#FFCCCC" {{*kd:php="dummy"*}}>
@@ -504,7 +511,7 @@
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz-php -i -p table2.plogic table2.html > table2.php
+.	$ kwartz-php -p table2.plogic table2.html > table2.php
 .	.====================
 .	
 .JA	出力用スクリプト(table2.php)：
@@ -552,11 +559,11 @@
 .	
 .JA	この、プレゼンテーションデータに対して「目印」をつけることをマーキングと呼んでいます。
 .JA	Kwartz-phpでは、マーキングはid属性を用いて「{{,id={{/name/}},}}」または「{{,id=mark:{{/name/}},}}」のように記述します。
-.JA	.#{{('kd'という名前は'Kwartz-php Directive'に由来します。属性名はコマンドラインオプション --attr_name を使って変更できます。)}}）
+.JA	.#{{('kd'という名前は'Kwartz-php Directive'に由来します。属性名はコマンドラインオプション --attr-name を使って変更できます。)}}）
 .EN	To mark a region which you want to change or replace in presentation data is called 'marking'.
 .EN	.#It is called 'marking' to mark a region which you want to change or replace in the presentation data.
 .EN	You can mark with the attributes 'id', like {{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}}.
-.EN	.#{{(The attribute name is derived from 'Kwartz-php Directive'. You can change the name of attribute with the command-line option {{,--attr_name={{/name/}},}}.)}}.
+.EN	.#{{(The attribute name is derived from 'Kwartz-php Directive'. You can change the name of attribute with the command-line option {{,--attr-name={{/name/}},}}.)}}.
 .	
 .	
 .JA	マーキングの例：
@@ -660,9 +667,9 @@
 .	
 .	
 .JA	この例ではマーキングとして「{{,id="list",}}」を用いたので、id属性が残ったままになっています。
-.JA	これを「{{,id="mark:list",}}」または「{{,kd:php="mark(list)",}}」とするか、コマンドラインオプションに {{,--delete_idattr=true,}}をつけると、中間コード変換時にid属性が取り除かれます。
+.JA	これを「{{,id="mark:list",}}」または「{{,kd:php="mark(list)",}}」とするか、コマンドラインオプションに {{,--delete-idattr=true,}}をつけると、中間コード変換時にid属性が取り除かれます。
 .EN	{{,id="list",}} will be left in intermediate code.
-.EN	If you want to delete it, use {{,id="mark:list",}} or {{,kd:php="mark(list)",}} instead, or add the command-line option {{,--delete_idattr=true,}}.
+.EN	If you want to delete it, use {{,id="mark:list",}} or {{,kd:php="mark(list)",}} instead, or add the command-line option {{,--delete-idattr=true,}}.
 .	
 .	
 .JA	なお、この中間言語は「PL-php」といいます（PLはPresentation Languageの意味です）。
@@ -798,7 +805,7 @@
 .	   <% end %>
 .	   </table>
 .	
-.	   ### for JSP
+.	   ### for JSTL
 .	   <table>
 .	   <c:forEach var="item" items="${itemlist}">
 .	    <tr id="list">
@@ -847,8 +854,8 @@
 .		ERuby::import('example.rhtml')
 .		.--------------------
 .	
-.JA	.%  JSP(Servlet)の場合：
-.EN	.%  in JSP (Servlet):
+.JA	.%  JSTLの場合：
+.EN	.%  in JSTL (with Servlet):
 .JA		ServletからJSPを呼び出す場合は、RequestDispatcherを用いてください。
 .EN		Use RequestDispatcher#forward() or RequestDispatcher#include().
 .		.--------------------
@@ -1840,9 +1847,9 @@
 .EN	.$$ Automatic Sanitizing | sanitizing-auto
 .	
 .JA	コマンドラインオプション {{,-s,}} または {{,-e,}} をつけると、出力スクリプトをサニタイズします。
-.JA	サニタイズでは、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSPでは{{,escapeXml="false",}}なしの{{,<c:out>,}}がそれぞれ使用されます。
+.JA	サニタイズでは、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out>,}}がそれぞれ使用されます。
 .EN	{{,-s,}} and {{,-e,}} are the command-line optin to generate output script with sanitizing.
-.EN	{{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out>,}} tag without {{,escapeXml="false",}} in JSP.
+.EN	{{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out>,}} tag without {{,escapeXml="false",}} in JSTL.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data (sanitize1.html):

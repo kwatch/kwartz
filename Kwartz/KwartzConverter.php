@@ -90,11 +90,11 @@ class KwartzConverter {
         $this->parser = new KwartzParser(' ', $this->toppings);
         //
         $this->filename      = $this->topping('filename');
-        $this->kd_attr_name  = $this->topping('attr_name',     'kd');
-        $this->php_attr_name = $this->topping('php_attr_name', 'kd:php');
-        $this->even_value    = $this->topping('even_value',    'even');
-        $this->odd_value     = $this->topping('odd_value',     'odd');
-        $this->delete_idattr = $this->topping('delete_idattr', FALSE);
+        $this->kd_attr_name  = $this->topping('attr-name',     'kd');
+        $this->php_attr_name = $this->topping('php-attr-name', 'kd:php');
+        $this->even_value    = $this->topping('even-value',    'even');
+        $this->odd_value     = $this->topping('odd-value',     'odd');
+        $this->delete_idattr = $this->topping('delete-idattr', FALSE);
     }
     
     function topping($name, $default_value=NULL) {
@@ -765,7 +765,7 @@ class KwartzConverter {
             throw KwartzConvertionError($msg, $linenum, $this->filename);
         }
         $filename = $expr->value();
-        $topping_name = $directive_name == 'include' ? 'include_path' : 'load_path';
+        $topping_name = $directive_name == 'include' ? 'include-path' : 'load-path';
         if ($this->topping($topping_name)) {
             foreach ($this->topping($topping_name) as $dir) {
                 if (file_exists("$dir/$filename")) {

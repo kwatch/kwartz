@@ -16,7 +16,7 @@
 .- [v] Parser#clear($input)
 .- [v] indent
 .- [_] ':elseif' and ':elsif'
-.- [v] analyse
+.- [v] analyze
 .- [v] rename ':elem' to ':element'
 .- [v] rename 'elem_' to 'element_'
 .- [_] constant, which is 'FOO', not '$FOO'

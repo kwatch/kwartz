@@ -250,12 +250,30 @@
 .EN	  Conditional operators ., {{,?:,}}		
 .EN	.+--------------------
 .	
+.JA	文字列の連結演算子「{{,.,}}」は、PHPでは「{{,.,}}」に、eRubyでは「{{,+,}}」に、
+.JA	JSTL1.1では関数{{,fn:join(),}}に変換されます。
+.JA	JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
+.EN	String concatenation operator ("{{,.,}}") is converted into "{{,.,}}" in PHP, "{{,+,}}" in eRuby,
+.EN	a function "{{,fn:join(),}}" in JSTL1.1.
+.EN	There is no concatenation operator in JSTL1.0, so Kwartz-php converts it into a little tricky code.
 .	
-.JA	条件演算子（3項演算子）はPHPやeRubyでは使用できますが、JSP（厳密にいうとJSTLの式言語）では使用できません。
-.JA	そのため条件演算子を含む式は、JSPではif文（に相当する<c:choose>）に変換されます。
-.EN	Conditional Operators are available in PHP and eRuby.
-.EN	However, it is not available in JSP (to be exact, in the expression language of JSTL).
-.EN	Therefore, conditional operators will be translated to if statements in JSP.
+.JA	PLプログラム(PL-php)：
+.EN	PL Program (PL-php):
+.	.-------------------- pl-concatop.plogic
+.	$filename = $basename . '.plogic';
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-concatop.plogic
+.	.____________________
+.	
+.JA	条件演算子（3項演算子）はPHPやeRubyやJSTL1.1では使用できますが、JSTL1.0では使用できません。
+.JA	そのため条件演算子を含む式は、JSTL1.0ではif文（に相当する<c:choose>）に変換されます。
+.EN	Conditional Operators are available in PHP, eRuby, and JSTL1.1.
+.EN	However, it is not available in JSTL1.1.
+.EN	Therefore, conditional operators will be translated to if statements in JSTL1.0.
 .	
 .JA	PLプログラム(PL-php)：
 .EN	PL Program (PL-php):
@@ -267,7 +285,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! output.php -a translate guide.d/pl-condop.plogic
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-condop.plogic
 .	.____________________
 .	
 .	
@@ -373,7 +391,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! output.php -a translate guide.d/pl-set.plogic
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-set.plogic
 .	.____________________
 .	
 .	
@@ -438,7 +456,7 @@
 .	.---------------------
 .	   PHP			., {{,$hash['key'],}}
 .	   eRuby		., {{,hash[:key],}}
-.	   JSP			., {{,hash['key'],}}
+.	   JSTL			., {{,hash['key'],}}
 .	.# Velocity		., {{,hash.key,}}
 .	.+--------------------
 .	
@@ -464,11 +482,11 @@
 .	
 .JA	オブジェクトのプロパティは、「{{,{{/object/}}->{{/property/}},}}」の形式で参照します。
 .JA	また「{{,{{/object/}}->{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}」のように引数をつけてメソッドを呼ぶこともできます。
-.JA	ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSPへの変換時にはエラーになります。
+.JA	ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSTLへの変換時にはエラーになります。
 .JA	.#プロパティはメソッド呼び出しではないので、引数をとることはできません。
 .EN	You can reference a property of an object as '{{,{{/object/}}->{{/property/}},}}'.
 .EN	You can also call a method with arguments such as '{{,{{/object/}}->{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}'.
-.EN	Translation of method call into JSP will raise an error because JSTL's Expression Language doesn't support method call.
+.EN	Translation of method call into JSTL will raise an error because JSTL's Expression Language doesn't support method call.
 .EN	.#Properties are not methods, so properties cannot accept any arguments.
 .	
 .	
@@ -532,10 +550,10 @@
 .	
 .	
 .JA	またwhile文も使用できます。
-.JA	ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSPへ変換しようとするとエラーになります。
+.JA	ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSTLへ変換しようとするとエラーになります。
 .JA	.#またVelocityもwhile文に相当するVelocityディレクティブがないため、変換時にエラーとなります。
 .EN	You can also use a while statment.
-.EN	Kwartz-php will raise an error if you try to translate a while statement into a JSP script,
+.EN	Kwartz-php will raise an error if you try to translate a while statement into a JSTL script,
 .EN	because there is no JSTL tag which is equivalent to the while statment.
 .	
 .	
@@ -773,19 +791,67 @@
 .JA	PL-phpでは、以下の関数を使用することができます。
 .EN	You can use the following two functions in PL-php.
 .	.: E({{/expr/}})
-.JA		式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
-.EN		Sanitizes the expression {{/expr/}}. Using this function sanitizes even when the command-line option for sanitizing is not specified.
+.JA		  式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+.EN		  Sanitizes the expression {{/expr/}}. Using this function sanitizes even when the command-line option for sanitizing is not specified.
 .	.: X({{/expr/}})
-.JA		式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X({{/expr/}})で指定された式はサニタイズされません。
-.EN		Don't sanitize expression {{/expr/}}, even when the command-line option for sanitizing is specified.
+.JA		  式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X({{/expr/}})で指定された式はサニタイズされません。
+.EN		  Don't sanitize expression {{/expr/}}, even when the command-line option for sanitizing is specified.
+.	.: list_new()
+.JA		  新しいリストを作成します。
+.EN		  Create a new list. 
+.	.: list_length({{/list/}})
+.JA		  リスト{{/list/}}の長さを返します。JSTL1.0では
+.EN		  Return the length of the {{/list/}}.
+.	.: hash_new()
+.JA		  新しいハッシュを作成します。
+.EN		  Create a new hash. 
+.	.: hash_keys({{/hash/}})
+.JA		  ハッシュの全キーをリストで返します。
+.EN		  Return a list which contains all keys of the {{/hash/}}.
+.	.: str_length({{/string/}})
+.JA		  文字列{{/string/}}の長さを返します。
+.EN		  Return the length of the {{/string/}}.
+.	.: str_tolower({{/string/}})
+.JA		  文字列{{/string/}}を小文字にして返します。
+.EN		  Make a {{/string/}} to lowercase and return it.
+.	.: str_toupper({{/string/}})
+.JA		  文字列{{/string/}}を大文字にして返します。
+.EN		  Make a {{/string/}} to uppercase an return it.
+.	.: str_trim({{/string/}})
+.JA		  文字列{{/string/}}の前後から空白を取り除いた文字列を返します。
+.EN		  Strip whitespace from the beginning and end of a {{/string/}} and return it.
+.	.: str_index({{/string/}}, {{/char/}})
+.JA		  文字列{{/string/}}において文字{{/char/}}のある場所を返します。
+.EN		  Return the first positin a {{/char/}} occurs in a {{/string/}}.
 .	
 .JA	.#現在のところ、これら以外の関数をユーザが自由に定義することはできません。
 .EN	.#Currently, you cannot define or use any functions except the above two.
 .	
-.JA	E()とX()以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
-.JA	JSP（のExpression Language）では関数が使用できませんので、JSPへの変換はエラーになります。
-.EN	All functions except E() and X() are printed "as is" when translating into PHP or eRuby script.
-.EN	Translating into JSP script will be error because Exrepssion Language of JSP doesn't support functions.
+.JA	ただし、JSTL1.0では関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+.JA	JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
+.EN	JSTL1.0 doesn't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
+.EN	JSTL1.1 supports some functions but it is limited.
+.EN	In fact, list_new(), hash_new(), and hash_keys() are not supported.
+.	
+.	.+------------------------------------------------------------
+.JA	  関数名                            ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
+.EN	  Functions                         ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
+.	.------------------------------------------------------------                                              
+.	{{,list_new(),}}                    ., {{,array(),}}                    ., {{,[],}}                        ., -   ., -
+.	{{,list_length({{/list/}}),}}       ., {{,array_length({{/list/}}),}}   ., {{,{{/list/}}.length,}}         ., {{,fn:length({{/list/}}),}}  .,  -
+.	{{,hash_new(),}}                    ., {{,array(),}}                    ., {{,{},}}                        ., -  ., -
+.	{{,hash_keys({{/hash/}}),}}         ., {{,array_keys({{/hash/}}),}}     ., {{,{{/hash/}}.keys,}}           ., -  ., -
+.	{{,str_length({{/str/}}),}}         ., {{,strlen({{/str/}}),}}          ., {{,{{/str/}}.lenth,}}           ., {{,fn:length({{/str/}}),}} ., -
+.	{{,str_tolower({{/str/}}),}}        ., {{,strtolower({{/str/}}),}}      ., {{,{{/str/}}.downcase,}}        ., {{,fn:toLowerCase({{/str/}}),}} ., -
+.	{{,str_toupper({{/str/}}),}}        ., {{,strtoupper({{/str/}}),}}      ., {{,{{/str/}}.upcase,}}          ., {{,fn:toUpperCase({{/str/}}),}} ., -
+.	{{,str_index({{/str/}},{{/ch/}}),}} ., {{,strchr({{/str/}},{{/ch/}}),}} ., {{,{{/str/}}.index({{/ch/}}),}} ., {{,fn:indexOf({{/str/}},{{/ch/}}),}} ., -
+.	.+------------------------------------------------------------
+.	
+.	
+.JA	これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
+.JA	JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+.EN	All functions except above are printed "as is" when translating into PHP or eRuby script.
+.EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support user-defined functions.
 .	
 .	
 .	
@@ -820,9 +886,9 @@
 .	
 .	
 .JA	「{{,load('{{/filename/}}');,}}」で他のプレゼンテーションロジックファイルを読み込みます。
-.JA	またコマンドラインオプション {{,--load_path={{/dir1/}},{{/dir2/}},...,}} で、読み込むファイルがあるディレクトリを指定できます。
+.JA	またコマンドラインオプション {{,--load-path={{/dir1/}},{{/dir2/}},...,}} で、読み込むファイルがあるディレクトリを指定できます。
 .EN	{{,load('{{/filename/}}');,}} loads other presentation logic files.
-.EN	You can specify directories from where to load by the command-line option {{,--load_path={{/dir1/}},{{/dir2/}},...,}}.
+.EN	You can specify directories from where to load by the command-line option {{,--load-path={{/dir1/}},{{/dir2/}},...,}}.
 .	
 .	
 .JA	PLプログラム：
@@ -1185,12 +1251,12 @@
 .JA	.* ユーザ定義関数
 .JA	.#.* メソッド呼び出し
 .JA	.* 引数つきマクロ
-.JA	.* 配列やハッシュの作成
+.JA	.* JSTLにおける配列やハッシュの作成
 .EN	.* break, continue
 .EN	.* user-defined functions/procedures
 .EN	.#.* method calls (with arguments)
 .EN	.* macros with arguments
-.EN	.* creating arrays and hashes
+.EN	.* creating arrays and hashes in JSTL
 .	
 .	
 .	
@@ -1561,7 +1627,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! output.php guide.d/directive-append.pdata
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 guide.d/directive-append.pdata
 .	.--------------------
 .	
 .	
@@ -1771,12 +1837,12 @@
 .JA	「{{,kd:php="FOREACH({{/array-expr/}} as ${{/var/}})",}}」または「{{,kd:php="LOOP({{/array-expr/}} as ${{/list/}})",}}」とすると、トグルつきの繰り返しを行うことができます。
 .JA	トグルは、繰り返し回数が奇数回か偶数回かによって、値が入れ替わります。
 .JA	トグル変数の名前は{{,${{/var/}}_tgl,}}です。
-.JA	トグルの値はデフォルトで「{{,'odd',}}」と「{{,'even',}}」が使われますが、コマンドオプション --odd_value と --even_value で指定できます。
+.JA	トグルの値はデフォルトで「{{,'odd',}}」と「{{,'even',}}」が使われますが、コマンドオプション --odd-value と --even-value で指定できます。
 .EN	{{,kd:php="FOREACH({{/array-expr/}} as ${{/var/}})",}} and {{,kd:php="LOOP({{/array-expr/}} as ${{/var/}})",}} are directives for iteration with toggle switching.
 .EN	The toggle switch's value changes depending on whether loop counter is odd or even.
 .EN	The toggle switch is named ${{,{{/var/}}_tgl,}}.
 .EN	The value of the toggle switch is {{,'odd',}} or {{,'even',}} by default.
-.EN	You can change them with the command-line option {{,--odd_value={{/value/}},}} and {{,--even_value={{/value/}},}}.
+.EN	You can change them with the command-line option {{,--odd-value={{/value/}},}} and {{,--even-value={{/value/}},}}.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -1966,19 +2032,19 @@
 .JA	中間コード：
 .EN	Intermediate Code:
 .	.____________________
-.	.<<<:! kwartz-php -a convert --include_path=guide.d guide.d/tab-main.html
+.	.<<<:! kwartz-php -a convert --include-path=guide.d guide.d/tab-main.html
 .	.____________________
 .	
 .	
 .JA	{{,include,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
-.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--include_path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
+.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--include-path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
 .EN	When presentation data files to be included are placed in other directories,
-.EN	you can specify those directories with the command-line option {{,--include_path={{/dir1/}},{{/dir2/}},...,}}.
+.EN	you can specify those directories with the command-line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
 .EN	.#Presentation data files included are to be placed in other directory.
-.EN	.#You can specify directories with a command line option {{,--include_path={{/dir1/}},{{/dir2/}},...,}}.
+.EN	.#You can specify directories with a command line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
 .	
 .	.====================
-.	$ kwartz-php --include_path=dir1,dir2 tab-main.html
+.	$ kwartz-php --include-path=dir1,dir2 tab-main.html
 .	.====================
 .	
 .	
@@ -2066,23 +2132,23 @@
 .JA	中間コード：
 .EN	Intermediate Code:
 .	.____________________
-.	.<<<:! kwartz-php -a convert --load_path=guide.d guide.d/load-main.html
+.	.<<<:! kwartz-php -a convert --load-path=guide.d guide.d/load-main.html
 .	.____________________
 .	
 .JA	出力用プログラム：
 .EN	Output Program:
 .	.____________________
-.	.<<<:! output.php --load_path=guide.d guide.d/load-main.html
+.	.<<<:! output.php --load-path=guide.d guide.d/load-main.html
 .	.____________________
 .	
 .	
 .JA	{{,load,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
-.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--load_path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
+.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--load-path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
 .EN	If presentation logic files to be loaded are placed in another directory,
-.EN	you can specify those directories with the command-line option {{,--load_path={{/dir1/}},{{/dir2/}},...,}}.
+.EN	you can specify those directories with the command-line option {{,--load-path={{/dir1/}},{{/dir2/}},...,}}.
 .	
 .	.====================
-.	$ kwartz --load_path=dir1,dir2 load-main.html
+.	$ kwartz-php --load-path=dir1,dir2 load-main.html
 .	.====================
 .	
 .	
@@ -2142,10 +2208,10 @@
 .EN	.#   They are included in the Kwartz-php archive, and is available at {{<here|<http://www.kuwata-ab.com/kwartz/validator.php>}}.
 .	.#
 .	.#
-.JA	.#.* kd属性の名前は、コマンドラインオプション {{,--attr_name={{/xxx/}},}} で変更することができます。
-.JA	.#   例えばkd属性のかわりにstyle属性を使う場合は、 --attr_name=style としてください。
-.EN	.#.* You can change the kd attribte name with the command-line option {{,--attr_name={{/xxx/}},}}.
-.EN	.#   For example, {{,--attr_name=style,}} make Kwartz-php to use 'style' attributes instead of 'kd' attributes.
+.JA	.#.* kd属性の名前は、コマンドラインオプション {{,--attr-name={{/xxx/}},}} で変更することができます。
+.JA	.#   例えばkd属性のかわりにstyle属性を使う場合は、 --attr-name=style としてください。
+.EN	.#.* You can change the kd attribte name with the command-line option {{,--attr-name={{/xxx/}},}}.
+.EN	.#   For example, {{,--attr-name=style,}} make Kwartz-php to use 'style' attributes instead of 'kd' attributes.
 .	.#
 .	
 .	
@@ -2344,7 +2410,7 @@
 .	
 .JA	使い方：
 .EN	Usage:
-.	.% {{,kwartz [options...] [-p {{/plogic-file/}}] file.html > file.output,}}
+.	.% {{,kwartz-php [options...] [-p {{/plogic-file/}}] file.html > file.output,}}
 .JA		ファイルをひとつずつ指定して処理します。
 .EN		Process one file.
 .	
@@ -2379,23 +2445,23 @@
 .JA		サニタイズを行う。{{,--escape=true,}}と同じ。
 .EN		Enable auto-sanitizing. This option is equal to {{,--escape=true,}}.
 .	
-.	.[-i[{{/N/}}]]
-.JA		出力用スクリプトをインデントする。{{/N/}}はインデント幅。省略時は2。
-.EN		Indent output script. You can specify the indent width {{/N/}} (default 2).
+.	.#.[-i[{{/N/}}]]
+.JA	.#	出力用スクリプトのインデント幅{{/N/}}を指定する。省略時は2。
+.EN	.#	Specifies the indent width ({{/N/}}) of a output script (default 2).
 .	
 .	.[-p {{/plogic-file/}}]
 .JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。
 .EN		Filename of the presentation logics. It is possible to specify several filename using '{{,,,}}' as a separator.
 .	
-.	.[--attr_name={{/name/}}]
+.	.[--attr-name={{/name/}}]
 .JA		ディレクティブで使用する属性名。デフォルトは 'kd'。
 .EN		Attribute name used as a directive. Default is 'kd'.
 .	
 .	.[--charset={{/charset/}}]
 .JA		文字コード。JSPにおいて '{{,<%@ page contentType="text/html; charset={{/charset/}} "%>,}}' を出力する。
-.EN		Character set. kwartz will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSP.
+.EN		Character set. Kwartz-php will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSP.
 .	
-.	.[--delete_idattr={{/true/}}|{{/false/}}]
+.	.[--delete-idattr={{/true/}}|{{/false/}}]
 .JA		プレゼンテーションデータから {{,id="name",}} を取り除く。
 .EN		Delete {{,id="name",}} from presentation data.
 .	
@@ -2403,7 +2469,7 @@
 .JA		式をサニタイズして出力する。
 .EN		Auto-sanitizing.
 .	
-.	.[--even_value={{/value/}}]
+.	.[--even-value={{/value/}}]
 .JA		偶数のときの値。デフォルトは「{{,'even',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Even value. Default is {{,'even',}}. Directives FOREACH and LIST will use this value.
 .	
@@ -2420,19 +2486,23 @@
 .EN		'{{,<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>,}}' is used as default in JSP.
 .EN		If you don't want to print any header text, use {{,--header='',}}.
 .	
-.	.[--include_path={{/dir1/}},{{/dir2/}}],...
+.	.[--indent-width={{/N/}}]
+.JA		出力用スクリプトのインデント幅{{/N/}}を指定する。
+.EN		Specifies the indent width ({{/N/}}) of a output script.
+.	
+.	.[--include-path={{/dir1/}},{{/dir2/}}],...
 .JA		{{,include,}}ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
 .EN		Specify directories from which '{{,include,}}' directive includes.
 .	
-.	.[--load_path={{/dir1/}},{{/dir2/}}],...
+.	.[--load-path={{/dir1/}},{{/dir2/}}],...
 .JA		{{,load,}}ディレクティブや{{,:load(),}}文で読み込むファイル（プレゼンテーションロジックファイル）のディレクトリを指定する。
 .EN		Specify directories from which '{{,load,}}' directive or {{,:load(),}} statement loads.
 .	
-.	.[--odd_value={{/value/}}]
+.	.[--odd-value={{/value/}}]
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
 .	
-.	.[--php_attr_name={{/name/}}]
+.	.[--php-attr-name={{/name/}}]
 .JA		ディレクティブで使用する属性名。デフォルトは 'kd:php'。
 .EN		Attribute name used as a directive. Default is 'kd:php'.
 .	

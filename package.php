@@ -18,7 +18,7 @@ $files = array(
 	'Kwartz/KwartzConverter.php',
 	'Kwartz/KwartzErubyTranslator.php',
 	'Kwartz/KwartzException.php',
-	'Kwartz/KwartzJspTranslator.php',
+	'Kwartz/KwartzJstlTranslator.php',
 	'Kwartz/KwartzNode.php',
 	'Kwartz/KwartzParser.php',
 	'Kwartz/KwartzPlphpTranslator.php',

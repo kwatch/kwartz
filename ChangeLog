@@ -1,4 +1,10 @@
-.: 2004-12-30 rev.51
+.: 2005-01-01 rev.52 (ver 0.3.0)
+	.- [change] users-guide and reference manual are updated
+	.- [change] topping names are changed from 'xxx_xxx_xxx' to 'xxx-xxx-xxx'
+	.- [change] command line option '-iN' is now deprecated
+	.- [bugfix] mkmethod-php: command option '-v' prints revision and date correctly
+	
+.: 2004-12-31 rev.51
 	.- [bugfix] KwartzAnalyzeVisitor aborts with the error 'Fatal error: Cannot access private property'
 	
 .: 2004-12-30 rev.50

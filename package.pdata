@@ -18,8 +18,8 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.2.0</version>
-    <date>2004-09-23</date>
+    <version>0.3.0</version>
+    <date>2005-01-01</date>
     <license>GPL ver.2</license>
     <state>beta</state>
     <notes>public beta</notes>
@@ -34,6 +34,22 @@
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>0.3.0</version>
+      <date>2005-01-01</date>
+      <state>beta</state>
+      <notes>
+- [change] users-guide and reference manual are updated
+- [bugfix] KwartzAnalyzeVisitor aborts with the error 'Fatal error: Cannot access private property'
+- [change] indent format out output script is changed
+- [bugfix] command-line option '-i0' is now recognized
+- [enhance] class KwartzJstlTranslator is divided into JSTL1.1 and JSTL1.0
+- [enhance] common functions support for JSTL1.1 except list_new() and has_new() and hash_keys()
+- [enhance] kwartz-php supports new directives of JSTL1.1
+- [enhance] common functions support for PHP and eRuby.
+- [bugfix] KwartzParser#parse_statement() calls parse_load_stmt()
+      </notes>
+    </release>
     <release>
       <version>0.2.0</version>
       <date>2004-09-23</date>

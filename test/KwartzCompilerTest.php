@@ -25,8 +25,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		if ($toppings == NULL) {
 			$toppings = array();
 		}
-		if (!array_key_exists('indent_width', $toppings)) {
-			$toppings['indent_width'] = 2;
+		if (!array_key_exists('indent-width', $toppings)) {
+			$toppings['indent-width'] = 2;
 		}
 		$compiler = new KwartzCompiler($pdata, $plogic, $lang, $flag_escape, $toppings);
 		$code = $compiler->compile();

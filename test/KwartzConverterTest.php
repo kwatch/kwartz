@@ -890,7 +890,7 @@ END;
 		        "</b>"
 
 END;
-		$toppings = array('even_value'=>'#FFCCCC', 'odd_value'=>'#CCCCFF');
+		$toppings = array('even-value'=>'#FFCCCC', 'odd-value'=>'#CCCCFF');
 		$this->_test_convert($input, $expected, true, $toppings);
 		$this->_test_convert($input2, $expected, true, $toppings);
 	}
@@ -1069,7 +1069,7 @@ END;
 		    "</b>"
 
 END;
-		$toppings = array('even_value'=>'#FFCCCC', 'odd_value'=>'#CCCCFF');
+		$toppings = array('even-value'=>'#FFCCCC', 'odd-value'=>'#CCCCFF');
 		$this->_test_convert($input,  $expected, true, $toppings);
 		$this->_test_convert($input2, $expected, true, $toppings);
 		$this->_test_convert($input3, $expected, true, $toppings);
@@ -2289,7 +2289,7 @@ END;
 		    'element_user'
 
 END;
-		$toppings = array('delete_idattr'=>TRUE);
+		$toppings = array('delete-idattr'=>TRUE);
 		$this->_test_convert($input, $expected, true, $toppings);
 	}
 

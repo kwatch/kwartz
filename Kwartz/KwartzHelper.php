@@ -51,10 +51,10 @@ class KwartzHelper {
         if ($toppings === NULL) {
             $toppings = array();
         }
-        if (! array_key_exists('pdata_filename', $toppings)) {
+        if (! array_key_exists('pdata-filename', $toppings)) {
             $toppings['pdata_filename'] = $pdata_filename;
         }
-        if (! array_key_exists('plogic_filename', $toppings)) {
+        if (! array_key_exists('plogic-filename', $toppings)) {
             $toppings['plogic_filename'] = $plogic_filename;
         }
         

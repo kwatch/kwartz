@@ -24,7 +24,7 @@ Usage: {$command} [-svh] [-p file] [-M module] [-m method] file.html
   -m method          : method name (default 'expand_' + file)
   -a arg1,arg2,...   : method arguments (default none)
   -s, -e             : sanitize(escape) (equals to '--escape=true')
-  --optname=value    : options for kwartz
+  --key=value        : properties for kwartz-php
 
 END;
     return $usage;
@@ -54,23 +54,20 @@ class KwartzCommandOptionError extends KwartzException {
 }
 
 
-function parse_args(&$args=NULL, $noarg, $argrequired=NULL, $argoptional=NULL, &$toppings=NULL) {
+function parse_args(&$args=NULL, $noarg=NULL, $argrequired=NULL, $argoptional=NULL) {
     if (count($args) == 0) {
         return NULL;
     }
     
-    
     $options = array();		// hash
-    if ($toppings == NULL) {
-        $toppings = array();	// hash
-    }
+    $toppings = array();	// hash
     $error_msg = NULL;
     while (count($args) > 0 && $args[0][0] == '-') {
         $optstr = substr(array_shift($args), 1);
         
         // parse toppings
         if ($optstr[0] == '-') {
-            if (preg_match('/^-([-\w]+)(?:=(.*))/', $optstr, $m = array())) {
+            if (preg_match('/^-([-\w]+)(?:=(.*))?/', $optstr, $m = array())) {
                 $key   = $m[1];
                 $value = $m[2];
                 if ($value === NULL) {
@@ -83,6 +80,7 @@ function parse_args(&$args=NULL, $noarg, $argrequired=NULL, $argoptional=NULL, &
                       default:
                     }
                 }
+                $key = preg_replace('/_/', '-', $key);
                 $toppings[$key] = $value;
             } else {
                 $error_msg = "'-${optstr}': invalid option.";
@@ -118,7 +116,7 @@ function parse_args(&$args=NULL, $noarg, $argrequired=NULL, $argoptional=NULL, &
         }
     }
     
-    return $options;
+    return array($options, $toppings);
 }
 
 
@@ -242,15 +240,18 @@ function main($args) {
     $method_args     = NULL;
     $flag_ob         = true;
 
-    $commad = basename(array_shift($args));
+    $command = basename(array_shift($args));
     try {
-        $toppings = array();	// hash
-        $options = parse_args($args, "hvse", "plmca", "i", $toppings);
+        $tuple    = parse_args($args, "hvse", "plmca", "i");
+        $options  = $tuple[0];
+        $toppings = $tuple[1];
     } catch (KwartzCommandOptionError $ex) {
         $msg = "{$command}: {$ex->getMessage()}\n";
         fwrite(STDERR, $msg);
+        exit(1);
     }
 
+    //echo "*** debug: args=", var_dump($args);
     //echo "*** debug: options=", var_dump($options);
     //echo "*** debug: toppings=", var_dump($toppings);
     //exit(0);
@@ -267,7 +268,7 @@ function main($args) {
         if (array_value('h', $options)) {
             fwrite(STDERR, usage($command));
         }
-	exit(0);
+        exit(0);
     }
 
     // options
@@ -318,17 +319,17 @@ function main($args) {
     // set values
     if (!$method_name) {
         $basename = preg_replace('/\..+/', '', basename($pdata_filename));
-	$method_name = "expand_${basename}";
+        $method_name = "expand_${basename}";
     }
     $method_body = $output;
 
     $hash = array(
-	'method_name' => $method_name,
-	'method_body' => $method_body,
-	'method_args' => $method_args,
-	'global_vars' => $global_vars,
-	'class_name'  => $class_name,
-	'flag_escape' => $flag_escape,
+        'method_name' => $method_name,
+        'method_body' => $method_body,
+        'method_args' => $method_args,
+        'global_vars' => $global_vars,
+        'class_name'  => $class_name,
+        'flag_escape' => $flag_escape,
     );
     //echo "*** debug: hash="; print_r($hash);
     //exit(0);
@@ -338,8 +339,6 @@ function main($args) {
     echo $definition;
 }
 
-
 main($argv);
-
 
 ?>

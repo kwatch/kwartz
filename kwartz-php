@@ -317,44 +317,45 @@ class KwartzCommand {
     
     function handle_toppings() {
         // inclde_path, load_path
-        if ($s = $this->topping('include_path')) {
-            $this->set_topping('include_path', preg_split('/,/', $s));
+        if ($s = $this->topping('include-path')) {
+            $this->set_topping('include-path', preg_split('/,/', $s));
         }
-        if ($s = $this->topping('load_path')) {
-            $this->set_topping('load_path', preg_split('/,/', $s));
+        if ($s = $this->topping('load-path')) {
+            $this->set_topping('load-path', preg_split('/,/', $s));
         }
         
         // indent width
-        $indent_width = $this->option('i');
-        if ($indent_width === NULL || $indent_width === TRUE) {
-            $indent_width = 2;		# default
-        } else {
-            $indent_width = 0 + $indent_width;
+        if (! $this->has_topping('indent-width')) {
+            $indent_width = $this->option('i');
+            if ($indent_width !== NULL && $indent_width !== TRUE) {
+                $indent_width = 0 + $indent_width;
+                $this->set_topping('indent-width', $indent_width);
+            }
         }
-        $this->set_topping('indent_width', $indent_width);
     }
     
     
     function usage() {
         $usage = <<<END
 Usage: {$this->command_name} [-p file.plogic] [..options..] file.html
-  -h, --help	 : help
-  -v		 : version
+  -h, --help     : help
+  -v             : version
   -p file.plogic : presentation logic file
-  -l lang	 : php/eruby/jstl11/jstl10 (default 'php')
-  -a action	 : compile/parse/translate/convert/analyze (default 'compile')
+  -l lang        : php/eruby/jstl11/jstl10 (default 'php')
+  -a action      : compile/parse/translate/convert/analyze (default 'compile')
   -e, -s         : escape(sanitize) (this is equivarent to '--escape=true')
-  -i[N]          : indent width (default N=2)
   --escape=true  : escape(sanitize)
-  --header=text  : header text (default '<%@ taglib ...>' when jstl/jstl10)
+  --header=text  : header text (default '<%@ taglib ...>' when jstl11/jstl10)
   --footer=text  : footer text
-  --even_value=str  : even value of toggle in FOREACH & LOOP directive
-  --odd_value=str   : odd value of toggle in FOREACH & LOOP directive
-  --include_path=dir1,dir2,... : path list for 'include' directive
-  --load_path=dir1,dir2,...    : path list for 'load' directive
-  --delete_idattr=true         : delete or leave id attributes
-  --attr_name=name             : attribute name of directive (default 'kd')
-  --php_attr_name=name         : attribute name of directive (default 'kd:php')
+  --charset=name : add '<%@ page contenType="text/html; charset=name" %>'
+  --indent-width=N  : indent width
+  --even-value=str  : even value of toggle in FOREACH & LOOP directive
+  --odd-value=str   : odd value of toggle in FOREACH & LOOP directive
+  --include-path=dir1,dir2,... : path list for 'include' directive
+  --load-path=dir1,dir2,...    : path list for 'load' directive
+  --delete-idattr=true         : delete or leave id attributes
+  --attr-name=name             : attribute name of directive (default 'kd')
+  --php-attr-name=name         : attribute name of directive (default 'kd:php')
 
 END;
     return $usage;
@@ -397,7 +398,7 @@ END;
             if ($optstr[0] == '-') {
                 if ($optstr == '-help') {	# --help
                     $this->options['h'] = TRUE;
-                } elseif (preg_match('/^-([-\w]+)(?:=(.*))/', $optstr, $m = array())) {
+                } elseif (preg_match('/^-([-\w]+)(?:=(.*))?/', $optstr, $m = array())) {
                     $key   = $m[1];
                     $value = $m[2];
                     if ($value === NULL) {
@@ -410,6 +411,7 @@ END;
                           default:
                         }
                     }
+                    $key = preg_replace('/_/', '-', $key);
                     $this->toppings[$key] = $value;
                 } else {
                     $error_msg = "'-${optstr}': invalid option.";

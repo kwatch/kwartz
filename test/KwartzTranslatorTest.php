@@ -28,7 +28,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		if ($toppings == NULL) {
 			$toppings = array();
 		}
-		$toppings['indent_width'] = 2;
+		$toppings['indent-width'] = 2;
 		if ($lang == 'php') {
 			$translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
 		} elseif ($lang == 'eruby') {
