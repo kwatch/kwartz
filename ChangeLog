@@ -2,6 +2,9 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-31 rev.29
+	.- [enhance] new file: lib/kwartz/config.rb
+
 .: 2004-01-31 rev.28
 	.- [enhance] auto-detect newline ("\r\n" or "\n")
 
