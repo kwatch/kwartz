@@ -14,10 +14,11 @@
 .- [v] analyzer
 .- [v] php
 .- [_] ruby
+.- [v] erb
 .- [v] jstl10
 .- [v] jstl11
 .- [_] velocity
 .- [_] pl
 .- [_] mkmethod
-.- [_] C() S() D()
+.- [v] C() S() D()
 .- [v] eol auto-detect

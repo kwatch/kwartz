@@ -30,6 +30,7 @@
 
 require 'kwartz'
 require 'kwartz/translator/eruby'
+require 'kwartz/translator/erb'
 require 'kwartz/translator/php'
 require 'kwartz/translator/jstl'
 require 'kwartz/util/optparse'
@@ -153,12 +154,13 @@ Usage: #{@command} [..options..] file1 [file2...]
   -h, --help : help
   -v         : version
   -a action  : compile/parse/translate/convert/analyze (default 'compile')
-  -l lang    : eruby/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
+  -l lang    : eruby/erb/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
   -p file    : presentation logic filename
-  -s, -e     : sanitize(escape)
+  -s, -e     : sanitize(escape) (= --escape)
+  --escape               : sanitize(escape)
   --odd_value=value      : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD_VALUE}")
   --even_value=value     : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN_VALUE}")
-  --attr_name=attr       : use attribute name as marking (default '#{Kwartz::Config::ATTR_NAME}')
+  --attr_name=attr       : use attribute name as marking (default "#{Kwartz::Config::ATTR_NAME}")
 END
          return s
       end

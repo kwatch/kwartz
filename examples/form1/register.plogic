@@ -3,9 +3,11 @@
 }
 
 #gender_m {
-	append: gender == 'M' ? ' checked="checked"' : '';
+	//append: gender == 'M' ? ' checked="checked"' : '';
+	append: C(gender=='M');
 }
 
 #gender_w {
-	append: gender == 'W' ? ' checked="checked"' : '';
+	//append: gender == 'W' ? ' checked="checked"' : '';
+	append: C(gender=='M');
 }

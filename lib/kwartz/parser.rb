@@ -108,15 +108,24 @@ module Kwartz
          if tkn == :name
             name = value()
             tkn = scan()
-            if tkn == '('
-               scan()
-               arguments = parse_arguments()
-               syntax_error("missing ')' of function '#{name}()'.") unless token() == ')'
-               scan()
-               return FunctionExpression.new(name, arguments)
-            else
+            if tkn != '('
                return VariableExpression.new(name)
             end
+            scan()
+            arguments = parse_arguments()
+            syntax_error("missing ')' of function '#{name}()'.") unless token() == ')'
+            scan()
+            if ! (name == 'C' || name == 'S' || name == 'D')
+               return FunctionExpression.new(name, arguments)
+            end
+            semantic_error("#{name}(): should take only one argument.") unless arguments.length == 1
+            condition = arguments.first
+            case name
+            when 'C';  s = ' checked="checked"'
+            when 'S';  s = ' selected="selected"'
+            when 'D';  s = ' disabled="disabled"'
+            end
+            return ConditionalExpression.new(condition, StringExpression.new(s), StringExpression.new(''))
          elsif tkn == '('
             scan()
             expr = parse_expression()

@@ -380,7 +380,8 @@ END
    @@plogic6 = <<'END'
 #chkbox {
 	remove: "checked";
-	append: flag ? ' checked="checked"' : '';
+	//append: flag ? ' checked="checked"' : '';
+	append: C(flag);
 }
 END
 
@@ -485,6 +486,7 @@ END
 
 end
 
+## ========================================
 
 class SpanTest < Test::Unit::TestCase
 

@@ -98,7 +98,60 @@ END
       expected = "+\n  x\n  y\n"
       _test(input, expected, ArithmeticExpression)
    end
+
+   def test_parse_item_expr4	# macro C(), S(), D()
+      input = "C(flag)"
+      expected = <<'END'
+?:
+  flag
+  " checked=\"checked\""
+  ""
+END
+      _test(input, expected, ConditionalExpression)
+
+      input = "S(gender=='M')"
+      expected = <<'END'
+?:
+  ==
+    gender
+    "M"
+  " selected=\"selected\""
+  ""
+END
+      _test(input, expected, ConditionalExpression)
+
+      input = "D(gender=='M')"
+      expected = <<'END'
+?:
+  ==
+    gender
+    "M"
+  " disabled=\"disabled\""
+  ""
+END
+      _test(input, expected, ConditionalExpression)
+   end
    
+
+   def test_parse_item_expr5	# arity check of macro C() S() D() 
+      input = "C()"
+      expected = ''
+      assert_raise(Kwartz::SemanticError) do
+         _test(input, expected, ConditionalExpression)
+      end
+      input = "S(foo, bar)"
+      expected = ''
+      assert_raise(Kwartz::SemanticError) do
+         _test(input, expected, ConditionalExpression)
+      end
+      input = "D(1, 2)"
+      expected = ''
+      assert_raise(Kwartz::SemanticError) do
+         _test(input, expected, ConditionalExpression)
+      end
+   end
+
+
    ##
    def test_parse_literal_expr1
       input = "123"
