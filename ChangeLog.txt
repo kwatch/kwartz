@@ -1,0 +1,49 @@
+$Release$
+$Id$
+
+2.0.0 (2005-03-19)
+	* [enhance] New action 'defun' support.
+		It is equivalent to 'mkmethod' script of Kwartz1.0, and
+		it generates Ruby/PHP function from templates.
+		See:
+		- doc/users-guide.en.html#defun
+	* [enhance] RubyGem support
+		If you have installed rubygem, type 'gem install kwartz-ruby'.
+
+2.0.0-beta3 (2005-03-07)
+	* [change] 'kd' attribute is renamed to 'kw:d'.
+		'kw:d' attribute name is more suitable for XHTML than 'kd'.
+		Sorry, this change forces you to modify many files.
+		If you don't like this, change it by constant DATTR in configuration file.
+	* [enhance] Auto-renaming of local variables support.
+		This feature avoids confliction of variable names in main program and templates.
+		See:
+		- doc/users-guide.en.html#rename
+	* [enhance] New directive 'include' support.
+		This directive includes other presentation data file in the presentation data file.
+		See:
+		- doc/reference.en.html#kd-include
+	* [change] bin/kwartz is renamed to bin/kwartz-ruby, and new script bin/kwartz invokes bin/kwartz-ruby.
+		This change is for other implementation of Kwartz (kwartz-php and kwartz-java).
+
+
+2.0.0-beta2 (2005-02-19)
+	* [enhance] Raw-code supported. 
+		Raw-code enables you to write presentation logics in Ruby, PHP, or Java.
+		See:
+		- doc/users-guide.en.html#topics-rawcode
+		- doc/reference.en.html#pl-rawcode
+	* [enhance] New directive 'praceholder' supported.
+		Placeholder directive replaces content of the element by other element.
+		See:
+		- doc/reference.en.html#directive-placefolder
+		- doc/p-pattern.en.html#replace-cont-by-elem
+	* [enhance] New command-line option '-i file,file2,...' supported.
+		This option includes elements defined in other files.
+		See:
+		- doc/reference.en.html#directive-placefolder
+		- doc/p-pattern.en.html#replace-cont-by-elem
+
+
+2.0.0-beta1 (2005-02-14)
+	* beta1 released

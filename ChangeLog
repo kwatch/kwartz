@@ -3,7 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2005-03-06 rev.51
+.: 2005-03-19 rev.53
+	.- [enhance] new action 'defun' support; which is equvalent to 'mkmethod' script
+	.- [enhance] new command-line option '-C', '-F', '-A' support
+
+.: 2005-03-06 rev.52
 	.- [change] --include-dirs is renamed to --incdirs
 	.- [change] users' guide and reference manual updated
 

@@ -29,6 +29,7 @@ module Kwartz
       NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]
       
       ## kwartz command
+      CHARSET         = nil		# ex. UTF-8, EUC-JP
       HEADER_JSTL11   = <<END
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -39,7 +40,7 @@ END
       HEADER_JSP_CHARSET = <<END
 <%@ page contentType="text/html; charset=__CHARSET__" %>
 END
-      CHARSET         = nil		# ex. UTF-8, EUC-JP
+      DEFUN_FORMAT    = 'view_%s'       # or 'expand_%s' for compatible
 
    end
 end

@@ -21,7 +21,8 @@
 .- [_] translator/pl.rb
 .- [_] translator/template-toolkit.rb
 .- [_] translator/dtml.rb
-.- [_] mkmethod
+.- [x] mkmethod
+.- [v] action 'defun'
 .- [v] macro C() S() D()
 .- [v] eol auto-detect
 .- [v] #DOCUMENT
