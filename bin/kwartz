@@ -103,8 +103,12 @@ module Kwartz
             raise CommandOptionError.new("-a #{options[?a]}: invalid action.")
          end
 
-         if options[?s] || options[?e]
-            properties[:escape] = true
+         if properties.key?(:escape)
+            # nothing
+         elsif options.key?(?s)
+            properties[:escape] = options[?s]
+         elsif options.key?(?e)
+            properties[:escape] = options[?e]
          end
 
          lang = (options[?l] || Kwartz::Config::LANG)
@@ -135,7 +139,7 @@ module Kwartz
             end
          end
 
-         ## perform action ang get output
+         ## perform action and get output
          if @argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
@@ -165,11 +169,12 @@ Usage: #{@command} [..options..] file1 [file2...]
   -a action  : compile/parse/translate/convert/analyze (default 'compile')
   -l lang    : eruby/erb/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
   -p file    : presentation logic filename
-  -s, -e     : sanitize(escape) (= --escape)
-  --escape               : sanitize(escape)
-  --odd_value=value      : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD_VALUE}")
-  --even_value=value     : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN_VALUE}")
-  --attr_name=attr       : use attribute name as marking (default "#{Kwartz::Config::ATTR_NAME}")
+  -s, -e     : sanitize(escape) (equvarent to --escape=true)
+  --escape=true   : sanitize(escape)
+  --charset=name  : add '<%@ page contenType="text/html; charset=name" %>'
+  --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
+  --even=value    : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN}")
+  --attr=name     : use attribute name as marking (default "#{Kwartz::Config::ATTR}")
 END
          return s
       end

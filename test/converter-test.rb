@@ -1661,7 +1661,7 @@ END
 	#	:end
 	#	:print("</tbody>\n")
 	#END
-	_test_convert(input, expected, {:even_value=>'"#FFCCCC"', :odd_value=>'"#CCCCFF"'})
+	_test_convert(input, expected, {:even=>'"#FFCCCC"', :odd=>'"#CCCCFF"'})
     end
 
 
@@ -1737,7 +1737,7 @@ END
 	#	:print(item)
 	#	:print("</td>\n")
 	#END
-	_test_convert(input, expected, {:attr_name=>'kd:kwartz'})
+	_test_convert(input, expected, {:attr=>'kd:kwartz'})
     end
 
 

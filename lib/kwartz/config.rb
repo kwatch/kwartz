@@ -8,6 +8,7 @@ module Kwartz
    module Config
       
       ## translator
+      ESCAPE          = false
       NEWLINE         = "\n"
       INDENT          = "  "
       
@@ -15,9 +16,9 @@ module Kwartz
       LANG            = "eruby"
       
       ## converter
-      ODD_VALUE       = "'odd'"
-      EVEN_VALUE      = "'even'"
-      ATTR_NAME       = "kd"
+      ODD             = "'odd'"
+      EVEN            = "'even'"
+      ATTR            = "kd"
       
       ## kwartz command
       HEADER_JSTL11   = <<END

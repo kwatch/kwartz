@@ -12,19 +12,21 @@
 .- [v] delete <span>
 .- [_] is_instance_of()
 .- [v] analyzer
-.- [v] php
-.- [_] ruby
-.- [v] erb
-.- [v] jstl10
-.- [v] jstl11
-.- [_] velocity
-.- [_] pl
+.- [v] translator/php.rb
+.- [_] translatro/ruby.rb
+.- [v] translator/erb.rb
+.- [v] translator/jstl10.rb
+.- [v] translator/jstl11.rb
+.- [_] translator/velocity.rb
+.- [_] translator/pl.rb
 .- [_] mkmethod
-.- [v] C() S() D()
+.- [v] macro C() S() D()
 .- [v] eol auto-detect
-.- [_] load
-.- [_] include
+.- [_] load statement
+.- [_] include directive
 .- [_] #DOCUMENT
 .- [_] begin: end:
 .- [v] jsp header
 .- [_] --header, --footer
+.- [_] auto-compile
+.- [_] retrieve or extract (-r name)

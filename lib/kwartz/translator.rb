@@ -53,6 +53,9 @@ module Kwartz
 
       def initialize(properties={})
          @properties = properties
+         if !@properties.key?(:escape)
+            @properties[:escape] = Kwartz::Config::ESCAPE
+         end
          #
          if properties[:escape]
             @default_print     = :eprint

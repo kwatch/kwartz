@@ -33,11 +33,11 @@ module Kwartz
 
       def initialize(properties={})
          @properties = properties
-         @kd_attr    = properties[:attr_name]  || Kwartz::Config::ATTR_NAME      # 'kd'
+         @kd_attr    = properties[:attr] || Kwartz::Config::ATTR      # 'kd'
          #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
          #@delete_id_attr = properties[:delete_id_attr] || false
-         @even_value = properties[:even_value] || Kwartz::Config::EVEN_VALUE     # "'even'"
-         @odd_value  = properties[:odd_value]  || Kwartz::Config::ODD_VALUE      # "'odd'"
+         @even       = properties[:even] || Kwartz::Config::EVEN     # "'even'"
+         @odd        = properties[:odd]  || Kwartz::Config::ODD      # "'odd'"
          @filename   = properties[:filename]
          @parser = Parser.new('', properties)
       end
@@ -311,7 +311,7 @@ module Kwartz
                ctr_name = $1 + "_ctr"
                tgl_name = $1 + "_tgl"
                stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
-               body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even_value} : #{@odd_value};"))
+               body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even} : #{@odd};"))
                body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
                stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
             end
