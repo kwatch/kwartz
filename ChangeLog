@@ -2,6 +2,10 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-02-06 rev.35
+	.- [enhance] support 'require:' part
+	.- [change] property '--attr' is renamed to '--dattr'
+
 .: 2004-02-06 rev.34
 	.- [enhance] Compiler#compile() and Compiler#analyze() supports #DOCUMENT declaration
 

@@ -213,6 +213,7 @@ module Kwartz
          s << "  end:\n"     << h[:end]._inspect(2)     if h[:end]
          s << "  global: "   << h[:global].join(', ') << ";\n" if h[:global]
          s << "  local: "    << h[:local].join(', ')  << ";\n" if h[:local]
+         s << "  require: "  << h[:require].collect{|f| "\"#{f}\""}.join(', ') << ";\n" if h[:require]
          s << "}\n"
          return s
       end

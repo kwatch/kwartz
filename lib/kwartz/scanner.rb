@@ -78,12 +78,6 @@ module Kwartz
          'expand'   =>   :expand,
          'element'  =>   :element,
          'macro'    =>   :macro,
-         'value:'   =>   :value,
-         'attr:'    =>   :attr,
-         'append:'  =>   :append,
-         'remove:'  =>   :remove,
-         'tagname:' =>   :tagname,
-         'plogic:'  =>   :plogic,
 
          'print'    =>   :print,
          'while'    =>   :while,
@@ -93,7 +87,7 @@ module Kwartz
          'if'       =>   :if,
          'else'     =>   :else,
          'elseif'   =>   :elseif,
-         'require'  =>   :require,
+         #'require'  =>   :require,
 
          'true'	    =>   :true,
          'false'    =>   :false,

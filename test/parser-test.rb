@@ -1478,6 +1478,18 @@ END
 
 
    ##
+   def test_parse_require_part1
+      input = <<'END'
+require: 'foo', "bar";
+END
+      expected = <<'END'
+"foo","bar"
+END
+      _test(input, expected, Array)
+   end
+
+
+   ##
    def test_parse_vartype_part1
       input = <<'END'
 vartype: {
@@ -1512,6 +1524,7 @@ DOCUMENT {
       print("<!-- copyright(c) 2004-2005 ", copyright, " rights reserved -->\n");
    }
    global: args, copyright;
+   require: 'foo', 'bar';
 }
 END
       expected = <<'END'
@@ -1539,6 +1552,7 @@ END
         copyright
         " rights reserved -->\n"
   global: args, copyright;
+  require: "foo", "bar";
 }
 END
       _test(input, expected, Declaration)

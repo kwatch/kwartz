@@ -13,6 +13,13 @@ require 'kwartz/translator'
 
 module Kwartz
 
+   class CompileError < BaseError
+      def initialize(message)
+         super(message)
+      end
+   end
+
+
    ## ex.
    ##  ## create comiler
    ##  properties = { :escape => true}
@@ -78,20 +85,42 @@ module Kwartz
       end
 
 
-      ## ex.
-      ##  element_table = compiler.merge(element_list, decl_list)
-      def merge(element_list, decl_list=[])
-         return Kwartz::Element.merge(element_list, decl_list)
-      end
-      
-      
       ##
-      def handle_doc_decl(block_stmt, doc_decl)
+      def handle_doc_decl(block_stmt, decl_list)
+         ## find document declaration
+         doc_decl = decl_list.find { |decl| decl.name == 'DOCUMENT' }
+         return unless doc_decl
+         ## 'begin:' and 'end:' part
          begin_block = doc_decl.part[:begin]
          end_block   = doc_decl.part[:end]
          block_stmt.statements.unshift(begin_block) if begin_block
          block_stmt.statements.push(end_block)      if end_block
+         ## 'require:' part
+         required_list = doc_decl.part[:require]
+         if required_list
+            required_list.each do |filename|
+               if test(?f, filename)
+                  #
+               elsif test(?f, "#{filename}.plogic")
+                  filename = "#{filename}.plogic"
+               else
+                  raise CompileError.new("require: '#{filename}' or '#{filename}.plogic' not found.")
+               end
+               plogic_str = File.open(filename) { |f| f.read() }
+               decl_list2 = parse_plogic(plogic_str, filename)
+               decl_list2.reverse.each do |decl|
+                  decl_list.unshift(decl)
+               end
+            end
+         end
          return block_stmt
+      end
+
+
+      ## ex.
+      ##  element_table = compiler.merge(element_list, decl_list)
+      def merge(element_list, decl_list=[])
+         return Kwartz::Element.merge(element_list, decl_list)
       end
 
 
@@ -120,11 +149,10 @@ module Kwartz
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic
          decl_list = parse_plogic(plogic_str, plogic_filename)
+         ## handle 'begin:' and 'end:'
+         handle_doc_decl(block_stmt, decl_list)
          ## merge
          element_table = merge(elem_list, decl_list)
-         ## handle 'begin:' and 'end:'
-         doc_decl = decl_list.find { |decl| decl.name == 'DOCUMENT' }
-         handle_doc_decl(block_stmt, doc_decl) if doc_decl
          ## expand
          expand(block_stmt, element_table)
          ## translate
@@ -139,11 +167,10 @@ module Kwartz
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic
          decl_list = parse_plogic(plogic_str, plogic_filename)
+         ## handle 'begin:' and 'end:'
+         handle_doc_decl(block_stmt, decl_list)
          ## merge
          element_table = merge(elem_list, decl_list)
-         ## handle 'begin:' and 'end:'
-         doc_decl = decl_list.find { |decl| decl.name == 'DOCUMENT' }
-         handle_doc_decl(block_stmt, doc_decl) if doc_decl
          ## expand
          expand(block_stmt, element_table)
          ## analye

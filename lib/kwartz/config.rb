@@ -18,7 +18,7 @@ module Kwartz
       ## converter
       ODD             = "'odd'"
       EVEN            = "'even'"
-      ATTR            = "kd"
+      DATTR           = "kd"
       
       ## kwartz command
       HEADER_JSTL11   = <<END

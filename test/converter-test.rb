@@ -1737,7 +1737,7 @@ END
 	#	:print(item)
 	#	:print("</td>\n")
 	#END
-	_test_convert(input, expected, {:attr=>'kd:kwartz'})
+	_test_convert(input, expected, {:dattr=>'kd:kwartz'})
     end
 
 

@@ -673,6 +673,7 @@ module Kwartz
          when 'end'             ;   obj = parse_end_part()
          when 'global'          ;   obj = parse_global_part()
          when 'local'           ;   obj = parse_local_part()
+         when 'require'         ;   obj = parse_require_part()
          when 'vartype'         ;   obj = parse_vartype_part()
          when 'global_vartype'  ;   obj = parse_globalvartype_part()
          when 'local_vartype'   ;   obj = parse_localvartype_part()
@@ -885,6 +886,19 @@ module Kwartz
          return list
       end
       private :_parse_part_names
+
+
+      ##
+      ## EBNF:
+      ##   require-part    ::= 'require' ':'  [ filename-str { ',' filename-str } ] ';'
+      ##   filename-str    ::= '"' filename '"'
+      ##
+      def parse_require_part()
+         #Kwartz::assert unless token() == :name && value() == 'require'
+         Kwartz::assert unless value() == 'require'
+         list = _parse_part_strs('require')
+         return list
+      end
 
 
       ##

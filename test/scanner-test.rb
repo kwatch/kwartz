@@ -164,7 +164,7 @@ class ScannerTest < Test::Unit::TestCase
 		:if
 		:else
 		:elseif
-		:require
+		require
 		:true
 		:false
 		:null

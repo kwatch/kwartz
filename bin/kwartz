@@ -171,10 +171,10 @@ Usage: #{@command} [..options..] file1 [file2...]
   -p file    : presentation logic filename
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   --escape=true   : sanitize(escape)
-  --charset=name  : add '<%@ page contenType="text/html; charset=name" %>'
+  --charset=name  : add '<%@ page contentType="text/html; charset=name" %>'
   --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
   --even=value    : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN}")
-  --attr=name     : use attribute name as marking (default "#{Kwartz::Config::ATTR}")
+  --dattr=name    : use attribute name as directive (default "#{Kwartz::Config::DATTR}")
 END
          return s
       end

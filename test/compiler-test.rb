@@ -485,6 +485,7 @@ END
 
 
    ## -------------------- #DOCUMENT
+   
    @@pdata8 = <<'END'
 <tr kd="mark:list">
   <td kd="value:item">foo</td>
@@ -567,6 +568,57 @@ END
 END
       _test(@@pdata8, @@plogic8, expected)
    end
+
+
+
+   ## -------------------- require:
+
+   @@pdata9 = <<'END'
+<tr kd="mark:list">
+  <td kd="mark:item">foo</td>
+</tr>
+END
+   @@plogic9 = <<'END'
+#DOCUMENT {
+   require: 'test-plogic9a.plogic', 'test-plogic9b';
+}
+#item {
+   value: item['user'];
+}
+END
+
+   def test_compile9_eruby	# require:
+      plogic9a = <<'END'
+#list {
+   plogic: {
+      foreach (item in list) {
+         @stag;
+         @cont;
+         @etag;
+      }
+   }
+}
+END
+      plogic9b = <<'END'
+#item {
+   value: item.val;
+}
+END
+      File.open('test-plogic9a.plogic', 'w') { |f| f.write(plogic9a) }
+      File.open('test-plogic9b.plogic', 'w') { |f| f.write(plogic9b) }
+      expected = <<END
+<% for item in list do %>
+<tr>
+  <td><%= item["user"] %></td>
+</tr>
+<% end %>
+END
+      _test(@@pdata9, @@plogic9, expected)
+      File.unlink('test-plogic9a.plogic')
+      File.unlink('test-plogic9b.plogic')
+   end
+
+
 
 end
 

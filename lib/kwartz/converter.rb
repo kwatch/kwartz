@@ -33,7 +33,7 @@ module Kwartz
 
       def initialize(properties={})
          @properties = properties
-         @kd_attr    = properties[:attr] || Kwartz::Config::ATTR      # 'kd'
+         @kd_attr    = properties[:dattr] || Kwartz::Config::DATTR    # 'kd:kd'
          #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
          #@delete_id_attr = properties[:delete_id_attr] || false
          @even       = properties[:even] || Kwartz::Config::EVEN     # "'even'"
