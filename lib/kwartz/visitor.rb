@@ -25,6 +25,10 @@ module Kwartz
          visit(expr.child, depth)
       end
 
+      def visit_empty_expression(expr, depth=0)
+         visit(expr.child, depth)
+      end
+
       def visit_binary_expression(expr, depth=0)
          visit(expr.left, depth+1)
          visit(expr.right, depth+1)

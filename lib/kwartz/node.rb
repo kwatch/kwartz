@@ -93,6 +93,18 @@ module Kwartz
 
 
    ##
+   class EmptyExpression < UnaryExpression
+      def initialize(tkn, expr)
+         super(tkn, expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_empty_expression(self, depth)
+      end
+   end
+
+
+   ##
    class BinaryExpression < Expression
       def initialize(token, left_expr, right_expr)
          super(token)
@@ -211,6 +223,7 @@ module Kwartz
    end
 
 
+
    ## ----------------------------------------
 
 
@@ -224,7 +237,7 @@ module Kwartz
 
       def _inspect(depth=0, s='')
          indent(depth, s)
-         s << @value << "\n"
+         s << @value.to_s << "\n"
          return s
       end
 
@@ -266,8 +279,8 @@ module Kwartz
 
    ##
    class BooleanExpression < LiteralExpression
-      def initialize(value)
-         super(:boolean, value)
+      def initialize(flag)
+         super(:boolean, flag)
       end
 
       def accept(visitor, depth=0)
@@ -278,8 +291,14 @@ module Kwartz
 
    ##
    class NullExpression < LiteralExpression
-      def initialize(value='null')
-         super(:null, value)
+      def initialize(null=nil)
+         super(:null, nil)
+      end
+
+      def _inspect(depth=0, s='')
+         indent(depth, s)
+         s << "null\n"
+         return s
       end
 
       def accept(visitor, depth=0)

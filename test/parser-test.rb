@@ -294,10 +294,10 @@ END
    def test_parse_compare_expr3
       input = "x == empty"
       expected = "empty\n  x\n"
-      _test(input, expected, UnaryExpression)
+      _test(input, expected, EmptyExpression)
       input = "x != empty"
       expected = "notempty\n  x\n"
-      _test(input, expected, UnaryExpression)
+      _test(input, expected, EmptyExpression)
    end
 
    def test_parse_compare_expr4

@@ -2,6 +2,13 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-26 rev.22
+	.- [enhance] new file: translator/eruby.rb
+	.- [enhance] new file: translator/php.rb
+	.- [change] new class: EmptyExpression
+	.- [change] BooleanExpression takes a boolean value
+	.- [change] NullExpression takes no value
+	.- [bugfix] [bug:110250] cannot compile an empty tag
 
 .: 2004-01-25 rev.21
 	.- [enhance] new file: expander.rb, expander-test.rb

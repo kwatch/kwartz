@@ -13,68 +13,67 @@ module Kwartz
    class TranslationError < BaseError
    end
 
+   ## abstract class
    class Translator
 
-      def translate_expression(expr)
+      def translate_expression(expr, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate_expression() is not implemented.")
       end
-      def translate_statement(stmt, depth)
+      def translate_statement(stmt, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate_statement() is not implemented.")
       end
-      def translate_element(element)
-         raise NotImplementedError.new("#{self.class.name}#translate_element() is not implemented.")
-      end
-
-      def translate(node)
+      def translate(node, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate() is not implemented.")
+      end
+      
+      @@subclasses = {}
+      def self.register(lang, klass)
+         @@subclasses[lang] = klass
+      end
+      
+      def self.translator_class(lang)
+         return @@subclasses[lang]
+      end
+      
+      def self.create(lang, properties)
+         klass = @@subclasses[lang]
+         unless klass
+            raise TranslationError.new("lang '#{lang}' is not registered.")
+         end
+         return klass.new(properties)
       end
 
    end
 
 
+   ## abstract class
    class BaseTranslator < Translator
       include Visitor
 
-      def initialize(block_stmt, properties={})
-         @block_stmt = block_stmt
+      def initialize(properties={})
          @properties = properties
          #
          if properties[:escape]
-            @print_key     = :eprint
-            @endprint_key  = :endeprint
+            @default_print     = :eprint
+            @default_endprint  = :endeprint
          else
-            @print_key     = :print
-            @endprint_key  = :endprint
+            @default_print     = :print
+            @default_endprint  = :endprint
          end
          #
-         @code = ''
          @flag_escape = false
-         @nl = "\n"
-         @indent = '  '
+         @nl          = properties[:newline] || "\n"
+         @indent      = properties[:indent] || '  '
+         @code = ''
       end
 
-
-      def add_indent(depth)
-         @code << @indent * depth
-      end
 
       def indent(depth)
          @indent * depth
       end
 
-      def add_prefix(depth)
-         flag = @code[-1] == ?\n
-         @code << keyword(:prefix)
-         add_indent(depth) if flag
-      end
-
       def prefix(depth)
          return @code[-1] == ?\n ? keyword(:prefix) + indent(depth) : keyword(:prefix)
-      end
-
-      def add_postfix(flag_add_newline=true)
-         @code << keyword(:postfix)
-         @code << @nl if flag_add_newline
       end
 
       def postfix(flag_add_newline=true)
@@ -82,83 +81,16 @@ module Kwartz
       end
 
 
-      @@keywords = {
-
-        :prefix     => '<% ',         ## statement prefix
-        :postfix    => ' %>',         ## statement postfix
-
-        :if         => 'if ',
-        :then       => ' then',
-        :else       => 'else',
-        :elseif     => 'elsif ',
-        :endif      => 'end',
-
-        :while      => 'while ',
-        :dowhile    => ' do',
-        :endwhile   => 'end',
-
-        :foreach    => 'for ',
-        :in         => ' in ',
-        :doforeach  => ' do',
-        :endforeach => 'end',
-
-        :expr        => '',
-        :endexpr     => '',
-
-        ## ':print' statement doesn't print prefix and suffix,
-        ## so you should include prefix and suffix in ':print'/':endprint' keywords
-        :print      => '<%= ',
-        :endprint   => ' %>',
-        :eprint     => '<%= CGI::escapeHTML((',
-        :endeprint  => ').to_s) %>',
-
-        :include    => 'include ',
-        :endinclude => '',
-
-        :true        => 'true',
-        :false       => 'false',
-        :null        => 'nil',
-
-        '-.'   => '-',
-        '.+'   => '+',
-        '.+='  => '+=',
-        '.'    => '.',
-        '['    => '[',
-        ']'    => ']',
-        '[:'   => '[:',
-        ':]'   => ']',
-        ','    => ', ',
-
-        'E('   => 'CGI::escapeHTML((',
-        'E)'   => ').to_s)',
-      }
-
-      ## should be abstract
+      ## abstract method
       def keyword(key)
-         return @@keywords[key] || key
+         raise Kwartz::NotImplementedError.new("#{self.class.name}#keyword(): not implemented.")
       end
 
 
-      @@func_names = {
-        'list_new'    => 'array',
-        'list_length' => 'count',
-        'list_empty'  => nil,
-        'hash_new'    => 'array',
-        'hash_keys'   => 'array_keys',
-        'hash_empty'  => nil,
-        'str_length'  => 'strlen',
-        'str_trim'    => 'trim',
-        'str_tolower' => 'strtolower',
-        'str_toupper' => 'strtoupper',
-        'str_index'   => 'strchr',
-        'str_empty'   => nil,
-      }
-
-      ## should be abstract
+      ## abstract method
       def function_name(name)
-         return @@func_names[name]
+         raise Kwartz::NotImplementedError.new("#{self.class.name}#keyword(): not implemented.")
       end
-
 
 
       @@priorities = {
@@ -167,6 +99,8 @@ module Kwartz
         :boolean   => 100,
         :string    => 100,
         :null      => 100,
+        :function  => 100,
+        :property  => 100,
 
         '[]'       =>  90,
         '{}'       =>  90,
@@ -214,8 +148,8 @@ module Kwartz
       ## --------------------
 
       ##
-      def translate()
-         return @block_stmt.accept(self, 0)
+      def translate(node, depth=0)
+         return node.accept(self, depth)
       end
 
       ##
@@ -223,32 +157,54 @@ module Kwartz
          return expr.accept(self, depth)
       end
 
-      def _translate_expr(child_expr, parent_token)
-         child_token = child_expr.token
-         if @@priorities[parent_token] > @@priorities[child_token]
-            @code << '('
-            translate_expression(child_expr)
-            @code << ')'
+      ##
+      def translate_statement(stmt, depth)
+         return stmt.accept(self, depth)
+      end
+
+      ## --------------------
+      
+      ##
+      def _translate_expr(expr, parent_token)
+         if @@priorities[parent_token] > @@priorities[expr.token]
+            @code << keyword('(')
+            translate_expression(expr)
+            @code << keyword(')')
          else
-            translate_expression(child_expr)
+            translate_expression(expr)
          end
          return @code
       end
 
-
       ##
       def visit_unary_expression(expr, depth=0)
          t = expr.token
-         @code << keyword(t)
+         op = keyword(t)
+         @code << op
          _translate_expr(expr.child, t)
+         return @code
+      end
+
+      ##
+      def visit_empty_expression(expr, depth=0)
+         t = expr.token
+         if t == :empty
+            left  = BinaryExpression.new('==',  expr, NullExpression.new())
+            right = BinaryExpression.new('==', expr, StringExpression.new(""))
+            expr  = BinaryExpression.new('||',  left, right)
+         elsif t == :notempty
+            left  = BinaryExpression.new('!=',  expr, NullExpression.new())
+            right = BinaryExpression.new('!=', expr, StringExpression.new(""))
+            expr  = BinaryExpression.new('&&',  left, right)
+         end
+         translate_expr(expr)
          return @code
       end
 
       ##
       def visit_binary_expression(expr, depth=0)
          t = expr.token
-         op = keyword(t)
-         case op
+         case t
          when '[]'
             _translate_expr(expr.left, t)
             @code << keyword('[')
@@ -261,7 +217,8 @@ module Kwartz
             @code << keyword(':]')
          else
             _translate_expr(expr.left, t)
-            @code << ' ' << op << ' '
+            op = keyword(t)
+            @code << op
             _translate_expr(expr.right, t)
          end
          return @code
@@ -270,8 +227,8 @@ module Kwartz
       ##
       def visit_property_expression(expr, depth=0)
          t = expr.token
-         op = keyword(t)
          _translate_expr(expr.object, t)
+         op = keyword(t)
          @code << op
          @code << expr.propname
          if expr.arguments
@@ -290,16 +247,13 @@ module Kwartz
       ##
       def visit_funtion_expression(expr, depth=0)
          t = expr.token
-         op = keyword(t)
          funcname = function_name(expr.funcname)
          if !funcname
             funcname = expr.funcname
          end
-         @code << keyword('(')
-         sep = nil
-         expr.arguments.each do |arg|
-            @code << keyword(sep) if sep
-            sep = ','
+         @code << funcname << keyword('(')
+         expr.arguments.each_with_index do |arg, i|
+            @code << keyword(',') if i > 0
             translate_expression(arg)
          end
          @code << keyword(')')
@@ -309,18 +263,12 @@ module Kwartz
       ##
       def visit_conditional_expression(expr, depth=0)
          t = expr.token
-         op = keyword(t)
          _translate_expr(expr.condition, t)
-         @code << ' ' << keyword('?') << ' '
+         @code << keyword('?')
          _translate_expr(expr.left, t)
-         @code << ' ' << keyword(':') << ' '
+         @code << keyword(':')
          _translate_expr(expr.right, t)
          return @code
-      end
-
-      ##
-      def visit_literal_expression(expr, depth=0)
-         Kwartz::asset(false)
       end
 
       ##
@@ -329,8 +277,13 @@ module Kwartz
       end
 
       ##
+      def visit_literal_expression(expr, depth=0)
+         Kwartz::asset(false)
+      end
+
+      ##
       def visit_numeric_expression(expr, depth=0)
-         @code << expr.value
+         @code << expr.value.to_s
       end
 
       ##
@@ -340,7 +293,7 @@ module Kwartz
 
       ##
       def visit_boolean_expression(expr, depth=0)
-         @code << keyword(expr.value)
+         @code << keyword(expr.value ? :true : :false)
       end
 
       ##
@@ -349,11 +302,6 @@ module Kwartz
       end
 
       ## --------------------
-
-      ##
-      def translate_statement(stmt, depth)
-         return stmt.accept(self, depth)
-      end
 
       ##
       def visit_print_statement(stmt, depth)
@@ -385,8 +333,8 @@ module Kwartz
                      startkey = :print
                      endkey   = :endprint
                   else
-                     startkey = @print_key
-                     endkey   = @endprint_key
+                     startkey = @default_print
+                     endkey   = @default_endprint
                   end
                end
                @code << keyword(startkey)
@@ -400,39 +348,39 @@ module Kwartz
 
       ##
       def visit_expr_statement(stmt, depth)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:expr)
          translate_expression(stmt.expression)
          @code << keyword(:endexpr)
-         add_postfix()
+         @code << postfix()
       end
 
       ##
       def visit_if_statement(stmt, depth)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:if)
          translate_expression(stmt.condition)
          @code << keyword(:then)
-         add_postfix()
+         @code << postfix()
          translate_statement(stmt.then_stmt, depth+1)
          st = stmt
          while (st = st.else_stmt) != nil && st.token == :if
-            add_prefix(depth)
+            @code << prefix(depth)
             @code << keyword(:elseif)
             translate_expression(st.condition)
             @code << keyword(:then)
-            add_postfix()
+            @code << postfix()
             translate_statement(st.then_stmt, depth+1)
          end
          if st != nil
-            add_prefix(depth)
+            @code << prefix(depth)
             @code << keyword(:else)
-            add_postfix()
+            @code << postfix()
             translate_statement(st, depth+1)
          end
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:endif)
-         add_postfix()
+         @code << postfix()
          return @code
       end
 
@@ -446,31 +394,31 @@ module Kwartz
 
       ##
       def visit_foreach_statement(stmt, depth)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:foreach)
          translate_expression(stmt.loopvar_expr)
          @code << keyword(:in)
          translate_expression(stmt.list_expr)
          @code << keyword(:doforeach)
-         add_postfix()
+         @code << postfix()
          translate_statement(stmt.body_stmt, depth+1)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:endforeach)
-         add_postfix()
+         @code << postfix()
          return @code
       end
 
       ##
       def visit_while_statement(stmt, depth)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:while)
          translate_expression(stmt.condition)
          @code << keyword(:dowhile)
-         add_postfix()
+         @code << postfix()
          translate_statement(stmt.body_stmt, depth+1)
-         add_prefix(depth)
+         @code << prefix(depth)
          @code << keyword(:endwhile)
-         add_postfix
+         @code << postfix()
          return @code
       end
 
@@ -481,12 +429,12 @@ module Kwartz
 
       ##
       def visit_expand_statement(stmt, depth)
-         raise TranslationError.new("invalid statement.")
+         raise TranslationError.new("invalid statement. (type=#{stmt.type})")
       end
 
       ##
       def visit_rawcode_statement(stmt, depth)
-         add_indent(depth)
+         @code << indent(depth)
          @code << stmt.rawcode
          @code << @nl unless stmt.rawcode[-1] == ?\n
          return @code
@@ -510,28 +458,10 @@ module Kwartz
       end
 
 
-
       alias   :visit				:translate
       alias   :visit_expression			:translate_expression
       alias   :visit_statement			:translate_statement
 
    end
 
-
-
-end
-
-
-if __FILE__ == $0
-   require 'kwartz/parser'
-   include Kwartz
-
-   input = ARGF.read()
-   properties = {}
-   parser = Parser.new(input, properties)
-   block = parser.parse()
-   print block._inspect()
-   translator = BaseTranslator.new(block, {}, properties)
-   code = translator.translate()
-   print code
 end

@@ -15,14 +15,14 @@
  
   factor       ::=  literal | item | item '[' expression ']' | item '[:' name ']' | item '.' property
  
-  term         ::=  factor | term * factor | term '/' factor | term '%' factor
-               ::=  factor { ('*' | '/' | '%') factor }
+  unary        ::=  factor | '+' factor | '-' factor | '!' factor
+               ::=  [ '+' | '-' | '!' ] factor
  
-  unary        ::=  term | '+' term | '-' term | '!' term
-               ::=  [ '+' | '-' | '!' ] term
+  term         ::=  unary | term * factor | term '/' factor | term '%' factor
+               ::=  unary { ('*' | '/' | '%') factor }
  
-  arith        ::=  unary | arith '+' term | arith '-' term | arith '.+' term
-               ::=  unary { ('+' | '-' | '.+') term }
+  arith        ::=  arith | arith '+' term | arith '-' term | arith '.+' term
+               ::=  arith { ('+' | '-' | '.+') term }
  
   compare-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
   compare      ::=  arith | arith compare-op arith | arith '==' 'empty' | arith '!=' 'empty'

@@ -78,7 +78,7 @@ module Kwartz
             @properties[:escape] = true
          end
          
-         lang = @options['-l'] || 'ruby'
+         lang = @options['-l'] || 'eruby'
          
          compiler = Kwartz::Compiler.new(@properties)
          
@@ -125,7 +125,7 @@ Usage: #{@command} [..options..] file1 [file2...]
   -h, --help : help
   -v         : version
   -a action  : compile/parse/translate/convert (default 'compile')
-  -l lang    : ruby/ruby2/eruby/erb/php/jsp (default 'ruby')
+  -l lang    : eruby//php/jstl10/jstl11 (default 'eruby')
   -p file    : presentation logic filename
   -s, -e     : sanitize(escape)
   --odd_value=value      : odd  value in FOREACH or LIST (default "'odd'")

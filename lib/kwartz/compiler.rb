@@ -67,7 +67,7 @@ module Kwartz
       ##  block_stmt = compiler.parse_program(str, filename)
       def parse_program(program_str, filename=nil)
          @properties[:filename] = filename if filename
-         parser = Kwartz::Parser.new(plogic_str, @properties)
+         parser = Kwartz::Parser.new(program_str, @properties)
          block_stmt = parser.parse_program()
          @properties.delete(:filename) if filename
          return block_stmt
@@ -81,18 +81,18 @@ module Kwartz
 
       ## ex.
       ##  compiler.expand(block_stmt, element_table)
-      def expand(block_stmt, element_table={})
+      def expand(stmt, element_table={})
          expander = Kwartz::Expander.new(element_table, @properties)
-         expander.expand(block_stmt)
-         return block_stmt
+         expander.expand(stmt)
+         return stmt
       end
 
       ## ex.
       ##   lang='eruby'
       ##   code = translate(block_stmt, lang)
-      def translate(block_stmt, lang)
-         translator = Kwartz::BaseTranslator.new(block_stmt, @properties)
-         code = translator.translate()
+      def translate(node, lang)
+         translator = Kwartz::Translator.create(lang, @properties)
+         code = translator.translate(node)
          return code
       end
       
@@ -116,6 +116,9 @@ end
 
 
 if __FILE__ == $0
+
+   require 'kwartz/translator/eruby'
+   require 'kwartz/translator/php'
 
    plogic_filename = nil
    plogic_str = ''

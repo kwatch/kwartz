@@ -46,6 +46,8 @@ module Kwartz
                            etaginfo ? etaginfo[:before_space] : '',
                            etaginfo ? etaginfo[:after_space]  : '',
                         ]
+         stag_begend  = [ staginfo[:is_begline], staginfo[:is_endline ], ]
+         etag_begend  = etaginfo ? [ etaginfo[:is_begline], etaginfo[:is_endline ], ] : nil
          return Element.new(name, tagname, content, attrs, append_expr, is_empty, spaces)
       end
       
@@ -72,21 +74,22 @@ module Kwartz
                Kwartz::assert(false)
             end
          end
-         s = (@is_empty && properties[:html] != true) ? ' /' : ''
-         arguments << StringExpression.new("#{s}>#{spaces[1]}")
          @append.each do |expr|
             arguments << expr
          end if @append
+         s = (@is_empty && properties[:html] != true) ? ' /' : ''
+         arguments << StringExpression.new("#{s}>#{spaces[1]}")
          return PrintStatement.new(arguments)
       end
       
       def cont_stmt(properties={})
-         Kwartz::assert(! (@is_empty && @content))
+         #Kwartz::assert(! (@is_empty && @content), @content.inspect)
          return @content
       end
          
       def etag_stmt(properties={})
-         return nil if @is_empty
+         #return nil if @is_empty
+         return BlockStatement.new([]) if @is_empty   # for bug 1110250
          arguments = []
          if @tagname.is_a?(String)
             arguments << StringExpression.new("#{@spaces[2]}</#{@tagname}>#{@spaces[3]}")

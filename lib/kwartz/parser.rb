@@ -122,7 +122,6 @@ module Kwartz
                arguments = parse_arguments()
                check_token(')', "missing ')' of '#{name}()' (current token='#{tkn}').")
                scan()
-               scan()
                return FunctionExpression.new(name, arguments)
             else
                return VariableExpression.new(name)
@@ -131,7 +130,6 @@ module Kwartz
             scan()
             expr = parse_expression()
             check_token(')', "')' expected ('(' is not closed by ')').")
-            scan()
             scan()
             return expr
          else
@@ -152,17 +150,17 @@ module Kwartz
             scan()
             return NumericExpression.new(val)
          when :string
-            val = value()
+            str = value()
             scan()
-            return StringExpression.new(val)
+            return StringExpression.new(str)
          when :true, :false
             val = value()
             scan()
-            return BooleanExpression.new(val)
+            return BooleanExpression.new(tkn == :true)
          when :null
             val = value()
             scan()
-            return NullExpression.new(val)
+            return NullExpression.new()
          when :empty
             syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
          end
@@ -221,11 +219,29 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  term         ::=  factor | term * factor | term '/' factor | term '%' factor
-      ##               ::=  factor { ('*' | '/' | '%') factor }
+      ##  unary        ::=  factor | '+' factor | '-' factor | '!' factor
+      ##               ::=  [ '+' | '-' | '!' ] factor
+      ##
+      def parse_unary_expr
+         if (tkn = token()) == '+' || tkn == '-' || tkn == '!'
+            scan()
+            expr2 = parse_factor_expr()
+            op = tkn == '!' ? tkn : tkn + '.'
+            expr = UnaryExpression.new(op, expr2)
+         else
+            expr = parse_factor_expr()
+         end
+         return expr
+      end
+
+
+      ##
+      ## BNF:
+      ##  term         ::=  unary | term * factor | term '/' factor | term '%' factor
+      ##               ::=  unary { ('*' | '/' | '%') factor }
       ##
       def parse_term_expr
-         expr = parse_factor_expr()
+         expr = parse_unary_expr()
          while (tkn = token()) == '*' || tkn == '/' || tkn == '%'
             scan()
             expr2 = parse_factor_expr()
@@ -237,29 +253,11 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  unary        ::=  term | '+' term | '-' term | '!' term
-      ##               ::=  [ '+' | '-' | '!' ] term
-      ##
-      def parse_unary_expr
-         if (tkn = token()) == '+' || tkn == '-' || tkn == '!'
-            scan()
-            expr2 = parse_term_expr()
-            op = tkn == '!' ? tkn : tkn + '.'
-            expr = UnaryExpression.new(op, expr2)
-         else
-            expr = parse_term_expr()
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  arith        ::=  unary | arith '+' term | arith '-' term | arith '.+' term
-      ##               ::=  unary { ('+' | '-' | '.+') term }
+      ##  arith        ::=  term | arith '+' term | arith '-' term | arith '.+' term
+      ##               ::=  term { ('+' | '-' | '.+') term }
       ##
       def parse_arith_expr
-         expr = parse_unary_expr()
+         expr = parse_term_expr()
          while (tkn = token()) == '+' || tkn == '-' || tkn == '.+'
             scan()
             expr2 = parse_term_expr()
@@ -282,10 +280,10 @@ module Kwartz
             if token() == :empty
                if op == '=='
                   scan()
-                  expr = UnaryExpression.new(:empty, expr)
+                  expr = EmptyExpression.new(:empty, expr)
                elsif op == '!='
                   scan()
-                  expr = UnaryExpression.new(:notempty, expr)
+                  expr = EmptyExpression.new(:notempty, expr)
                else
                   syntax_error("'empty' is allowed only at the right-side of '==' or '!='.")
                end
@@ -774,7 +772,7 @@ if __FILE__ == $0
    decl_list.each do |elem_decl|
       print elem_decl._inspect()
    end
-   
+   #--
    #expr = parser.parse_expression()
    #print expr._inspect()
    #--

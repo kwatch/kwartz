@@ -210,10 +210,10 @@ END
 
 
    ## --------------------
-   def test_compile4
+   def test_expand4
       pdata = <<'END'
-<table id="table" border="0">
- <tr id="user_list" bgcolor="#FFCCCC">
+<table id="table">
+ <tr id="user_list">
   <td id="name">foo</td>
   <td id="email">foo@email</td>
  </tr>
@@ -233,8 +233,13 @@ END
 }
 #user_list {
 	remove: "id";
+        attr: "bgcolor" color;
 	plogic: {
+          i = 0;
 	  foreach(user in user_list) {
+            i += 1;
+            if (i % 2 == 0) color = '#FFCCCC';
+            else            color = '#CCCCFF';
 	    @stag;
 	    @cont;
 	    @etag;
@@ -247,7 +252,6 @@ END
   :block
     :print
       "<table"
-      " border=\"0\""
       " id=\"table\""
       " summary=\""
       title
@@ -255,13 +259,37 @@ END
       ">\n"
     :block
       :block
+        :expr
+          =
+            i
+            0
         :foreach
           user
           user_list
           :block
+            :expr
+              +=
+                i
+                1
+            :if
+              ==
+                %
+                  i
+                  2
+                0
+              :expr
+                =
+                  color
+                  "#FFCCCC"
+              :expr
+                =
+                  color
+                  "#CCCCFF"
             :print
               " <tr"
-              " bgcolor=\"#FFCCCC\""
+              " bgcolor=\""
+              color
+              "\""
               ">\n"
             :block
               :block
@@ -288,6 +316,73 @@ END
               " </tr>\n"
     :print
       "</table>\n"
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+
+   ## --------------------
+   def test_expand5	# empty tag
+      pdata = <<'END'
+<input type="text" size="30" name="username" id="username" />
+END
+      plogic = <<'END'
+#username {
+	attr: "value" user.name;
+}
+END
+      expected = <<'END'
+:block
+  :block
+    :print
+      "<input"
+      " name=\"username\""
+      " size=\"30\""
+      " type=\"text\""
+      " id=\"username\""
+      " value=\""
+      .
+        user
+        name
+      "\""
+      " />\n"
+    :block
+    :block
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+   ## --------------------
+   def test_expand6	# empty tag and append
+      pdata = <<'END'
+checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox" checked="checked"/>
+END
+      plogic = <<'END'
+#chkbox {
+	remove: "checked";
+	append: flag ? ' checked="checked"' : '';
+}
+END
+      expected = <<'END'
+:block
+  :print
+    "checkbox:"
+  :block
+    :print
+      "  <input"
+      " name=\"chkbox\""
+      " size=\"30\""
+      " type=\"checkbox\""
+      " id=\"chkbox\""
+      ?:
+        flag
+        " checked=\"checked\""
+        ""
+      " />\n"
+    :block
+    :block
 END
       _test(pdata, plogic, expected)
    end

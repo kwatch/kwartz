@@ -125,7 +125,7 @@ module Kwartz
 
       def save_taginfo()
          hash = {
-            :tagname      => @tagname,
+            :tagname       => @tagname,
             :is_empty      => (@slash_empty == '/'),
             :attr_names    => @attr_names,
             :attr_values   => @attr_values,
@@ -135,6 +135,8 @@ module Kwartz
             :after_space   => @after_space,
             :extra_space   => @extra_space,
             :linenum       => @linenum,
+            :is_begline    => (@before_text || @before_text[-1] == ?\n),
+            :is_endline    => (@after_space && @after_space[-1] == ?\n),
          }
          return hash
       end
@@ -308,76 +310,6 @@ module Kwartz
             raise ConvertionError.new("'#{directive_name}': invalid directive", linenum, @filename)
          end
       end
-
-
-#      def _convert(etagname, depth)
-#         current_linenum = start_linenum = @linenum
-#	 codes = []
-#	 if etagname
-#	    current_linenum = @linenum
-#	    codes << create_print_code(build_tag_str(), start_linenum, depth)
-#	 end
-#	 just_before_dname = nil		# just before directive name
-#	 while tagname = fetch()
-#	    current_linenum = @linenum
-#	    if !@before_text.empty?
-#	       print_codes = create_print_codes(@before_text, current_linenum, depth)
-#	       codes.concat(print_codes)
-#	       just_before_dname = nil
-#	    end
-#	    directive_name, directive_arg = parse_attr_str()
-#	    last_dname = nil
-#	    if @slash_empty == '/'		# empty tag
-#	       if directive_name
-#		  if @@empty_denied[directive_name]
-#		     msg = "'#{directive_name}' directive cannot use in empty element."
-#		     raise ConvertionError.new(msg, current_linenum, @filename)
-#		  end
-#		  incr = @@depths[directive_name]  # if 'set' or 'value' then 0 else 1
-#		  code = create_print_code(build_tag_str(), current_linenum, depth + incr)
-#		  if tagname == 'span' && @attr_str == ''
-#		     code.sub!(/\A([ ]*)/, '\1##')
-#		  end
-#		  body_codes = [ code ]
-#		  handle_directive(directive_name, directive_arg, codes, body_codes, current_linenum, depth, just_before_dname)
-#		  last_dname = directive_name
-#	       else
-#		  codes << create_print_code(build_tag_str(), current_linenum, depth)
-#	       end
-#	    elsif @slash_etag == '/'		# end tag
-#	       codes << create_print_code(build_tag_str(), current_linenum, depth)
-#	       if tagname == etagname
-#		  return codes		# return
-#	       end
-#	    else				# start tag
-#	       if directive_name
-#		  incr = @@depths[directive_name]  # if 'set' or 'value' then 0 else 1
-#		  body_codes = _convert(tagname, depth + incr)	# call recursively
-#		  if tagname == 'span' && @attr_str == ''
-#		     ## comment out ':print("<span>")' and ':print("</span>")'
-#		     body_codes[0].sub!(/\A([ ]*)/, '\1##')
-#		     body_codes[-1].sub!(/\A([ ]*)/, '\1##')
-#		  end
-#		  handle_directive(directive_name, directive_arg, codes, body_codes, current_linenum, depth, just_before_dname)
-#		  last_dname = directive_name
-#	       elsif tagname == etagname
-#		  codes2 = _convert(tagname, depth)		# call recursively
-#		  codes.concat(codes2)
-#	       else
-#		  codes << create_print_code(build_tag_str(), current_linenum, depth)
-#	       end
-#	    end
-#	    just_before_dname = last_dname
-#	 end
-#	 if etagname
-#	    raise ConvertionError.new("'<#{etagname}>' is not closed by end-tag.", start_line, @filename)
-#	 end
-#	 if !@input.empty?
-#	    print_codes = create_print_codes(@input, current_linenum, depth)
-#	    codes.concat(print_codes)
-#	 end
-#	 return codes;
-#      end
 
 
       def parse_attr_str(str=@attr_str)
