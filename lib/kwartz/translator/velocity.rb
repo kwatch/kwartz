@@ -239,7 +239,10 @@ module Kwartz
       end
 
       ##
+      alias :_visit_variable_expression :visit_variable_expression
       def visit_variable_expression(expr, depth=0)
+         #@code << "<*** debug: expr.name=#{expr.name.inspect}>" if defined?($test_compile13_velocity) && $test_compile13_velocity
+
          @code << '$'
          return super(expr, depth)
       end
@@ -256,7 +259,7 @@ module Kwartz
             translate_expression(expr)
          when :variable
             @code << '$' if flag_escape
-            @code << expr.name
+            _visit_variable_expression(expr)
          when '[]'
             _translate_expression_for_print(expr.left, flag_escape)
             @code << keyword('[')

@@ -32,6 +32,7 @@ kwartz-ruby_%:  [text_files] [doc_files]
 	cp -a [doc_files] [archive_dir]/doc;
 	cd examples \; make -s clean;
 	cp -a examples [archive_dir];
+	rm -rf [archive_dir]'/'*/.expected;
 	find [archive_dir] -name '.svn' | xargs rm -rf ;
 	find [archive_dir] -type f | xargs ruby -pi -e '\'gsub(/\\$Release.*?\\$/, "$Release: '[release]'$")\''; 
 	find [archive_dir] -type f | xargs chmod 644;

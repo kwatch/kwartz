@@ -12,8 +12,8 @@ module Kwartz
       ESCAPE          = false
       NEWLINE         = "\n"
       INDENT          = "  "
-      RENAME          = false		# rename local var or not
-      RENAME_PREFIX   = '_'		# ex. var => _var
+      LOCALVAR_PREFIX = nil		# or set '_'
+      GLOBALVAR_PREFIX = nil		# set '@' if you are Rails user
 
       ## compiler
       LANG            = "eruby"

@@ -8,6 +8,12 @@ $: << 'test'
 
 require 'test/unit'
 
+flag_quick = false
+if ARGV[0] && ARGV[0] == '-q'
+   flag_quick = true
+   ARGV.shift
+end
+
 suite = Test::Unit::TestSuite.new()
 
 require 'converter-test'
@@ -38,7 +44,9 @@ suite << SpanTest.suite()
 require 'analyzer-test'
 suite << AnalyzerTest.suite()
 
-require 'examples-test'
-suite << ExamplesTest.suite()
+unless flag_quick
+   require 'examples-test'
+   suite << ExamplesTest.suite()
+end
 
 Test::Unit::UI::Console::TestRunner.run(suite)

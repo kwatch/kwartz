@@ -145,12 +145,13 @@ module Kwartz
          if translator.rename?
             analyzer = Kwartz::Analyzer.create('scope', @properties)
             analyzer.analyze(node)
-            translator.local_vars = analyzer.local_vars
+            translator.local_vars  = analyzer.local_vars
+            translator.global_vars = analyzer.global_vars
          end
          code = translator.translate(node)
          if translator.rename?
-            #translator.local_vars.clear()
-            translator.local_vars = []
+            translator.local_vars  = []
+            translator.global_vars = []
          end
          return code
       end

@@ -30,7 +30,7 @@ class CompilerTest < Test::Unit::TestCase
          s = caller().first
          s =~ /in `(.*)'/          #'
          testmethod = $1
-         if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
+         if testmethod =~ /_(eruby|php|jstl11|jstl10|velocity)$/
             lang = $1
          else
             raise "invalid testmethod name (='#{testmethod}')"
@@ -782,7 +782,7 @@ END
 <% end %>
 </table>
 END
-      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+      _test(@@pdata12, @@plogic12, expected, { :localvar_prefix => '_' })
    end
 
    def test_compile12_php	# rename local var
@@ -798,7 +798,7 @@ END
 <?php } ?>
 </table>
 END
-      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+      _test(@@pdata12, @@plogic12, expected, { :localvar_prefix => '_' })
    end
 
    def test_compile12_jstl11	# rename local var
@@ -814,7 +814,7 @@ END
 </c:forEach>
 </table>
 END
-      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+      _test(@@pdata12, @@plogic12, expected, { :localvar_prefix => '_' })
    end
 
    def test_compile12_jstl10	# rename local var
@@ -834,11 +834,152 @@ END
 </c:forEach>
 </table>
 END
-      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+      _test(@@pdata12, @@plogic12, expected, { :localvar_prefix => '_' })
+   end
+
+   def test_compile12_velocity	# rename local var
+      expected = <<'END'
+<table>
+#set($_i = 0)
+#foreach($_item in $list)
+  #set($_i = $_i + 1)
+  #if($_i % 2 == 0)
+    #set($_klass = "even")
+  #else
+    #set($_klass = "odd")
+  #end
+  <tr class="$!{_klass}">
+    <td>$!{_item[$_klass]}</td>
+  </tr>
+#end
+</table>
+END
+      _test(@@pdata12, @@plogic12, expected, { :localvar_prefix => '_' })
    end
 
 
-   ## --------------------
+
+   ## -------------------- rename global var
+
+   @@pdata13 = <<'END'
+Hello @{user[name]}@!
+<table>
+  <tr id="mark:items" class="@{klass}@">
+    <td id="mark:item">foo</td>
+  </tr>
+</table>
+END
+   @@plogic13 = <<'END'
+#items {
+  plogic: {
+    i = 0;
+    foreach (item in list) {
+      i += 1;
+      klass = i % 2 == 0 ? 'even' : 'odd';
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+#item {
+  value: item[klass];
+}
+END
+
+   def test_compile13_eruby	# rename global var
+      expected = <<'END'
+Hello <%= @user[@name] %>!
+<table>
+<% i = 0 %>
+<% for item in @list do %>
+<%   i += 1 %>
+<%   klass = i % 2 == 0 ? "even" : "odd" %>
+  <tr class="<%= klass %>">
+    <td><%= item[klass] %></td>
+  </tr>
+<% end %>
+</table>
+END
+      _test(@@pdata13, @@plogic13, expected, { :globalvar_prefix => '@' })
+   end
+
+   def test_compile13_php	# rename global var
+      expected = <<'END'
+Hello <?php echo $_user[$_name]; ?>!
+<table>
+<?php $i = 0; ?>
+<?php foreach ($_list as $item) { ?>
+<?php   $i += 1; ?>
+<?php   $klass = $i % 2 == 0 ? "even" : "odd"; ?>
+  <tr class="<?php echo $klass; ?>">
+    <td><?php echo $item[$klass]; ?></td>
+  </tr>
+<?php } ?>
+</table>
+END
+      _test(@@pdata13, @@plogic13, expected, { :globalvar_prefix => "_" })
+   end
+
+   def test_compile13_jstl11	# rename global var
+      expected = <<'END'
+Hello <c:out value="${_user[_name]}" escapeXml="false"/>!
+<table>
+<c:set var="i" value="0"/>
+<c:forEach var="item" items="${_list}">
+  <c:set var="i" value="${i + 1}"/>
+  <c:set var="klass" value="${i % 2 eq 0 ? 'even' : 'odd'}"/>
+  <tr class="<c:out value="${klass}" escapeXml="false"/>">
+    <td><c:out value="${item[klass]}" escapeXml="false"/></td>
+  </tr>
+</c:forEach>
+</table>
+END
+      _test(@@pdata13, @@plogic13, expected, { :globalvar_prefix => '_' })
+   end
+
+   def test_compile13_jstl10	# rename global var
+      expected = <<'END'
+Hello <c:out value="${_user[_name]}" escapeXml="false"/>!
+<table>
+<c:set var="i" value="0"/>
+<c:forEach var="item" items="${_list}">
+  <c:set var="i" value="${i + 1}"/>
+  <c:choose><c:when test="${i % 2 eq 0}">
+    <c:set var="klass" value="even"/>
+  </c:when><c:otherwise>
+    <c:set var="klass" value="odd"/>
+  </c:otherwise></c:choose>
+  <tr class="<c:out value="${klass}" escapeXml="false"/>">
+    <td><c:out value="${item[klass]}" escapeXml="false"/></td>
+  </tr>
+</c:forEach>
+</table>
+END
+      _test(@@pdata13, @@plogic13, expected, { :globalvar_prefix => '_' })
+   end
+
+   def test_compile13_velocity	# rename global var
+      $test_compile13_velocity = true
+      expected = <<'END'
+Hello $!{_user[$_name]}!
+<table>
+#set($i = 0)
+#foreach($item in $_list)
+  #set($i = $i + 1)
+  #if($i % 2 == 0)
+    #set($klass = "even")
+  #else
+    #set($klass = "odd")
+  #end
+  <tr class="$!{klass}">
+    <td>$!{item[$klass]}</td>
+  </tr>
+#end
+</table>
+END
+      _test(@@pdata13, @@plogic13, expected, { :globalvar_prefix => '_' })
+   end
 
 
 end

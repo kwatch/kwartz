@@ -60,20 +60,19 @@ module Kwartz
          #
          @default_flag_escape = properties[:escape] ? true : false
          #
-         @rename = properties[:rename] || Kwartz::Config::RENAME
-         if @rename
-            @rename_prefix = properties[:rename_prefix] || Kwartz::Config::RENAME_PREFIX || '_'
-            @local_vars = []
-         end
+         @localvar_prefix  = properties[:localvar_prefix]  || Kwartz::Config::LOCALVAR_PREFIX
+         @globalvar_prefix = properties[:globalvar_prefix] || Kwartz::Config::GLOBALVAR_PREFIX
+         @local_vars = []
+         @global_vars = []
          #
          @nl     = properties[:newline] || Kwartz::Config::NEWLINE     # "\n"
          @indent = properties[:indent]  || Kwartz::Config::INDENT      # '  '
          @code   = ''
       end
-      attr_accessor :local_vars
+      attr_accessor :local_vars, :global_vars
 
       def rename?
-         return @rename
+         return @localvar_prefix != nil || @globalvar_prefix != nil
       end
 
       def indent(depth)
@@ -316,7 +315,8 @@ module Kwartz
 
       ##
       def visit_variable_expression(expr, depth=0)
-         @code << @rename_prefix if @rename && @local_vars.include?(expr.name)
+         @code << @localvar_prefix  if @localvar_prefix  && @local_vars.include?(expr.name)
+         @code << @globalvar_prefix if @globalvar_prefix && @global_vars.include?(expr.name)
          @code << expr.name
       end
 

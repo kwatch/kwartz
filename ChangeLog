@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-05 rev.61
+	.- [enhance] supprt --globalvar-prefix and Config::GLOBALVAR_PREFIX
+	.- [change] remove --rename and Config::RENAME
+
 .: 2005-03-30 rev.60
 	.- [bugfix] Visitor#visit_if_statement() fails when else_stmt is null
 	.- [bugfix] MainCommand#execute() returns extra 0 when -h or -v is specified
