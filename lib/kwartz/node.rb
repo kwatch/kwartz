@@ -44,13 +44,7 @@ module Kwartz
       attr_accessor :token
 
       def _inspect(depth=0, s='')
-         indent(depth, s)
-         if @token.is_a?(Symbol)
-            s << ':' << @token.id2name << "\n"
-         else
-            s << @token << "\n"
-         end
-         return s
+         raise Kwartz::NotImplemenetedError("#{self.class.name}#accept(): not implemented yet.")
       end
 
       def indent(depth=0, s='')
@@ -66,6 +60,12 @@ module Kwartz
 
    ## abstract class
    class Expression < Node
+      def _inspect(depth=0, s='')
+         indent(depth, s)
+         s << @token << "\n"
+         return s
+      end
+      
       def accept(visitor)
          return visitor.visit_expression(self)
       end
@@ -290,12 +290,7 @@ module Kwartz
 
       def _inspect(depth=0, s='')
          indent(depth, s)
-         if token().is_a?(Symbol)
-            s << ':' << token().id2name()
-         else
-            s << token().id2name()
-         end
-         s << "\n"
+         s << ':' << token().id2name() << "\n"
          return s
       end
    end

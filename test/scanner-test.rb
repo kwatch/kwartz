@@ -3,6 +3,8 @@
 ###
 ### unit test for Converter
 ###
+### $Id$
+###
 
 $: << 'lib'
 $: << '../lib'
@@ -14,7 +16,137 @@ require 'assert-diff.rb'
 require 'kwartz/scanner'
 
 
+
 class ScannerTest < Test::Unit::TestCase
+
+   def _test(input, expected, flag_test=true)
+      return unless flag_test
+      input.gsub!(/^\t\t/, '')
+      expected.gsub!(/^\t\t/, '')
+      scanner = Kwartz::Scanner.new(input)
+      actual = scanner.scan_all()
+      #assert_equal(expected, actual)
+      assert_equal_with_diff(expected, actual)
+   end
+
+   def test_scan_plogic1	# plogic
+      input = <<-'END'
+		:macro(foo)
+		  @stag
+		  :foreach(user=user_list)
+		    :print("<td>", user[:name], "</td>\n")
+		  :end
+		  @etag
+		:end
+	END
+      expected = <<-'END'
+		:macro
+		(
+		foo
+		)
+		@stag
+		:foreach
+		(
+		user
+		=
+		user_list
+		)
+		:print
+		(
+		"<td>"
+		,
+		user
+		[:
+		name
+		]
+		,
+		"</td>\n"
+		)
+		:end
+		@etag
+		:end
+	END
+      _test(input, expected)
+   end
+
+
+
+    def test_scan_plogic2	# element, macro, end
+	input = <<-END
+		macro cont_foo {
+		  print('<td class="', klass, '">', value, '</td>');
+		}
+		element foo {
+		  i = 0;
+		  foreach (user in list) {
+		    klass = i % 2 == 0 ? 'odd' : 'even';
+		    @stag;
+		    @cont;
+		    @etag;
+		  }
+		}
+	END
+	expected = <<-'END'
+		macro
+		cont_foo
+		{
+		print
+		(
+		"<td class=\""
+		,
+		klass
+		,
+		"\">"
+		,
+		value
+		,
+		"</td>"
+		)
+		;
+		}
+		element
+		foo
+		{
+		i
+		=
+		0
+		;
+		foreach
+		(
+		user
+		in
+		list
+		)
+		{
+		klass
+		=
+		i
+		%
+		2
+		==
+		0
+		?
+		"odd"
+		:
+		"even"
+		;
+		@stag
+		;
+		@cont
+		;
+		@etag
+		;
+		}
+		}
+	END
+	_test(input, expected)
+    end
+
+   
+end
+
+
+class RubyScannerTest < Test::Unit::TestCase
 
     $flag_test = true		# do test or not
 
@@ -26,7 +158,7 @@ class ScannerTest < Test::Unit::TestCase
 	return unless flag_test
 	input.gsub!(/^\t\t/, '')
 	expected.gsub!(/^\t\t/, '')
-	scanner = Kwartz::Scanner.new(input)
+	scanner = Kwartz::RubyScanner.new(input)
 	actual = scanner.scan_all()
 	#assert_equal(expected, actual)
 	assert_equal_with_diff(expected, actual)
@@ -149,6 +281,7 @@ class ScannerTest < Test::Unit::TestCase
 		:print('fooo)
 		:set(v=1)
 	END
+        #'
 	expected = ""
 	assert_raise(Kwartz::ScanError) {
 	    _test(input, expected)
@@ -161,6 +294,7 @@ class ScannerTest < Test::Unit::TestCase
 		:print("fooo)
 		:set(v=1)
 	END
+        #"
 	expected = ""
 	assert_raise(Kwartz::ScanError) {
 	    _test(input, expected)
@@ -325,6 +459,7 @@ end
 
 if $0 == __FILE__
     Test::Unit::UI::Console::TestRunner.run(ScannerTest)
+    Test::Unit::UI::Console::TestRunner.run(RubyScannerTest)
     #suite = Test::Unit::TestSuite.new()
     #suite << ScannerTest.suite()
     #Test::Unit::UI::Console::TestRunner.run(suite)
