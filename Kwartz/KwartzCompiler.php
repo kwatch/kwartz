@@ -8,7 +8,7 @@ require_once('Kwartz/KwartzParser.php');
 require_once('Kwartz/KwartzConverter.php');
 require_once('Kwartz/KwartzTranslator.php');
 require_once('Kwartz/KwartzErubyTranslator.php');
-require_once('Kwartz/KwartzJspTranslator.php');
+require_once('Kwartz/KwartzJstlTranslator.php');
 require_once('Kwartz/KwartzPlphpTranslator.php');
 require_once('Kwartz/KwartzUtility.php');
 
@@ -35,18 +35,19 @@ class KwartzCompiler {
     private $toppings;
     private $flag_escape;
     
+    protected $translator_classnames = array(
+        'php'    => 'KwartzPhpTranslator',
+        'eruby'  => 'KwartzErubyTranslator',
+        'jstl11' => 'KwartzJstl11Translator',
+        'jstl10' => 'KwartzJstl10Translator',
+        'plphp'  => 'KwartzPlphpTranslator',
+        );
+    
     function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php', $flag_escape=FALSE, $toppings=NULL) {
         $this->pdata = $pdata_str;
         $this->plogic = $plogic_code;
         $this->toppings = $toppings ? $toppings : array();
-        switch ($lang) {
-          case 'php':
-          case 'eruby':
-          case 'jsp':
-          case 'plphp':
-            // OK
-            break;
-          default:
+        if (! array_key_exists($lang, $this->translator_classnames)) {
             $msg = "language '{$lang}' not supported.";
             throw new KwartzCompilationError($msg, $this);
         }
@@ -95,22 +96,11 @@ class KwartzCompiler {
         }
         
         // translate block into PHP code
-        switch ($this->lang) {
-          case 'php':
-            $translator = new KwartzPhpTranslator($block, $this->flag_escape, $this->toppings);
-            break;
-          case 'eruby':
-            $translator = new KwartzErubyTranslator($block, $this->flag_escape, $this->toppings);
-            break;
-          case 'jsp':
-            $translator = new KwartzJspTranslator($block, $this->flag_escape, $this->toppings);
-            break;
-          case 'plphp':
-            $translator = new KwartzPlphpTranslator($block, $this->flag_escape, $this->toppings);
-            break;
-          default:
+        if (!array_key_exists($this->lang, $this->translator_classnames)) {
             assert(false);
         }
+        $klass = $this->translator_classnames[$this->lang];
+        $translator = new $klass($block, $this->flag_escape, $this->toppings);
         if ($newline_char) {
             $translator->set_newline_char($newline_char);
         }

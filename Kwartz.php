@@ -49,7 +49,7 @@ require_once('Kwartz/KwartzParser.php');
 require_once('Kwartz/KwartzConverter.php');
 require_once('Kwartz/KwartzTranslator.php');
 require_once('Kwartz/KwartzErubyTranslator.php');
-require_once('Kwartz/KwartzJspTranslator.php');
+require_once('Kwartz/KwartzJstlTranslator.php');
 require_once('Kwartz/KwartzPlphpTranslator.php');
 require_once('Kwartz/KwartzCompiler.php');
 require_once('Kwartz/KwartzAnalyzer.php');

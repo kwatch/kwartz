@@ -32,6 +32,17 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$code = $compiler->compile();
 		$actual = $code;
 		if ($flag_test) {
+			if ($expected != $actual) {
+				$f = fopen('.tmp.expected', "w");
+				fwrite($f, $expected);
+				fclose($f);
+				$f = fopen('.tmp.actual', "w");
+				fwrite($f, $actual);
+				fclose($f);
+				system('diff -u .tmp.expected .tmp.actual');
+				unlink('.tmp.expected');
+				unlink('.tmp.actual');
+			}
 			$this->assertEquals($expected, $actual);
 		} else {
 			#echo "\n------\n";
@@ -148,7 +159,25 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		</html>
 		';
 
-	const expected_compile1_jsp = '
+	const expected_compile1_jstl11 = '
+		<html>
+		 <body>
+		  <table>
+		<c:set var="i" value="0"/>
+		<c:forEach var="user" items="${user_list}">
+		  <c:set var="i" value="${i + 1}"/>
+		  <c:set var="klass" value="${i % 2 == 0 ? \'even\' : \'odd\'}"/>
+		   <tr class="<c:out value="${klass}" escapeXml="false"/>">
+		    <td><c:out value="${user[\'name\']}" escapeXml="false"/></td>
+		    <td><c:out value="${user[\'mail\']}" escapeXml="false"/></td>
+		   </tr>
+		</c:forEach>
+		  </table>
+		 </body>
+		</html>
+		';
+
+	const expected_compile1_jstl10 = '
 		<html>
 		 <body>
 		  <table>
@@ -201,17 +230,30 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
 	}
 
-	function test_compile1_jsp() {
+	function test_compile1_jstl11() {
 		$pdata          = KwartzCompilerTest::pdata_compile1;
 		$pdata_php      = KwartzCompilerTest::pdata_compile1_php;
 		$plogic         = KwartzCompilerTest::plogic_compile1;
 		$plogic_php     = KwartzCompilerTest::plogic_compile1_php;
-		$expected_jsp   = KwartzCompilerTest::expected_compile1_jsp;
+		$expected_jstl11  = KwartzCompilerTest::expected_compile1_jstl11;
 
-		$this->_test($pdata,     $plogic,     $expected_jsp, 'jsp');
-		$this->_test($pdata,     $plogic_php, $expected_jsp, 'jsp');
-		$this->_test($pdata_php, $plogic,     $expected_jsp, 'jsp');
-		$this->_test($pdata_php, $plogic_php, $expected_jsp, 'jsp');
+		$this->_test($pdata,     $plogic,     $expected_jstl11, 'jstl11');
+		$this->_test($pdata,     $plogic_php, $expected_jstl11, 'jstl11');
+		$this->_test($pdata_php, $plogic,     $expected_jstl11, 'jstl11');
+		$this->_test($pdata_php, $plogic_php, $expected_jstl11, 'jstl11');
+	}
+
+	function test_compile1_jstl10() {
+		$pdata          = KwartzCompilerTest::pdata_compile1;
+		$pdata_php      = KwartzCompilerTest::pdata_compile1_php;
+		$plogic         = KwartzCompilerTest::plogic_compile1;
+		$plogic_php     = KwartzCompilerTest::plogic_compile1_php;
+		$expected_jstl10 = KwartzCompilerTest::expected_compile1_jstl10;
+
+		$this->_test($pdata,     $plogic,     $expected_jstl10, 'jstl10');
+		$this->_test($pdata,     $plogic_php, $expected_jstl10, 'jstl10');
+		$this->_test($pdata_php, $plogic,     $expected_jstl10, 'jstl10');
+		$this->_test($pdata_php, $plogic_php, $expected_jstl10, 'jstl10');
 	}
 
 
@@ -265,7 +307,18 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		next page<% end %>
 		';
 
-	const expected_compile2_jsp = '
+	const expected_compile2_jstl11 = '
+		<c:choose>
+		  <c:when test="${url != null}">
+		<a href="<c:out value="${url}" escapeXml="false"/>">next page</a>
+		  </c:when>
+		  <c:otherwise>
+		next page</c:otherwise>
+		</c:choose>
+		';
+
+	const expected_compile2_jstl10 =	// equals to expected_compile2_jstl11
+		'
 		<c:choose>
 		  <c:when test="${url != null}">
 		<a href="<c:out value="${url}" escapeXml="false"/>">next page</a>
@@ -301,17 +354,30 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
 	}
 
-	function test_compile2_jsp() {
+	function test_compile2_jstl11() {
 		$pdata          = KwartzCompilerTest::pdata_compile2;
 		$pdata_php      = KwartzCompilerTest::pdata_compile2_php;
 		$plogic         = KwartzCompilerTest::plogic_compile2;
 		$plogic_php     = KwartzCompilerTest::plogic_compile2_php;
-		$expected_jsp   = KwartzCompilerTest::expected_compile2_jsp;
+		$expected_jstl11  = KwartzCompilerTest::expected_compile2_jstl11;
 
-		$this->_test($pdata,     $plogic,     $expected_jsp, 'jsp');
-		$this->_test($pdata,     $plogic_php, $expected_jsp, 'jsp');
-		$this->_test($pdata_php, $plogic,     $expected_jsp, 'jsp');
-		$this->_test($pdata_php, $plogic_php, $expected_jsp, 'jsp');
+		$this->_test($pdata,     $plogic,     $expected_jstl11, 'jstl11');
+		$this->_test($pdata,     $plogic_php, $expected_jstl11, 'jstl11');
+		$this->_test($pdata_php, $plogic,     $expected_jstl11, 'jstl11');
+		$this->_test($pdata_php, $plogic_php, $expected_jstl11, 'jstl11');
+	}
+
+	function test_compile2_jstl10() {
+		$pdata          = KwartzCompilerTest::pdata_compile2;
+		$pdata_php      = KwartzCompilerTest::pdata_compile2_php;
+		$plogic         = KwartzCompilerTest::plogic_compile2;
+		$plogic_php     = KwartzCompilerTest::plogic_compile2_php;
+		$expected_jstl10 = KwartzCompilerTest::expected_compile2_jstl10;
+
+		$this->_test($pdata,     $plogic,     $expected_jstl10, 'jstl10');
+		$this->_test($pdata,     $plogic_php, $expected_jstl10, 'jstl10');
+		$this->_test($pdata_php, $plogic,     $expected_jstl10, 'jstl10');
+		$this->_test($pdata_php, $plogic_php, $expected_jstl10, 'jstl10');
 	}
 
 
@@ -647,7 +713,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
 	}
 
-	#function test_compile3_jsp() {
+	#function test_compile3_jstl11() {
 	#	# translation error
 	#}
 
@@ -668,11 +734,17 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_eruby);
 		$this->_test($pdata, $plogic, $expected, 'eruby');
 	}
-	function test_newline1_jsp() {
+	function test_newline1_jstl11() {
 		$pdata    = preg_replace('/\n/', "\r\n", KwartzCompilerTest::pdata_compile1);
 		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
-		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_jsp);
-		$this->_test($pdata, $plogic, $expected, 'jsp');
+		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_jstl11);
+		$this->_test($pdata, $plogic, $expected, 'jstl11');
+	}
+	function test_newline1_jstl10() {
+		$pdata    = preg_replace('/\n/', "\r\n", KwartzCompilerTest::pdata_compile1);
+		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
+		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_jstl10);
+		$this->_test($pdata, $plogic, $expected, 'jstl10');
 	}
 
 
@@ -761,8 +833,35 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		</html>
 		';
 
+	const expected_escape1_jstl11 = '
+		<html>
+		  <body>
+		<c:choose>
+		  <c:when test="${flag_error}">
+		      <div class="error">
+		<c:out value="${error_msg}"/>      </div>
+		  </c:when>
+		  <c:otherwise>
+		      <table>
+		        <tbody>
+		    <c:set var="user_ctr" value="0"/>
+		    <c:forEach var="user" items="${user_list}">
+		      <c:set var="user_ctr" value="${user_ctr + 1}"/>
+		      <c:set var="user_tgl" value="${user_ctr % 2 == 0 ? \'even\' : \'odd\'}"/>
+		          <tr class="<c:out value="${user_tgl}"/>">
+		            <td><c:out value="${user[\'name\']}"/></td>
+		          </tr>
+		    </c:forEach>
+		        </tbody>
+		      </table>
+		      <p>total:<c:out value="${user_ctr}"/></p>
+		  </c:otherwise>
+		</c:choose>
+		  </body>
+		</html>
+		';
 
-	const expected_escape1_jsp = '
+	const expected_escape1_jstl10 = '
 		<html>
 		  <body>
 		<c:choose>
@@ -796,7 +895,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		  </body>
 		</html>
 		';
-	
+
 	function test_escape1_php() {
 		$pdata    = KwartzCompilerTest::pdata_escape1;
 		$plogic   = KwartzCompilerTest::plogic_escape1;
@@ -811,13 +910,19 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test_escape($pdata, $plogic, $expected, 'eruby');
 	}
 
-	function test_escape1_jsp() {
+	function test_escape1_jstl11() {
 		$pdata    = KwartzCompilerTest::pdata_escape1;
 		$plogic   = KwartzCompilerTest::plogic_escape1;
-		$expected = KwartzCompilerTest::expected_escape1_jsp;
-		$this->_test_escape($pdata, $plogic, $expected, 'jsp');
+		$expected = KwartzCompilerTest::expected_escape1_jstl11;
+		$this->_test_escape($pdata, $plogic, $expected, 'jstl11');
 	}
 
+	function test_escape1_jstl10() {
+		$pdata    = KwartzCompilerTest::pdata_escape1;
+		$plogic   = KwartzCompilerTest::plogic_escape1;
+		$expected = KwartzCompilerTest::expected_escape1_jstl10;
+		$this->_test_escape($pdata, $plogic, $expected, 'jstl10');
+	}
 
 
 
@@ -844,13 +949,20 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<li><%= x %></li>
 		';
 
-	const expected_escape2_jsp = '
+	const expected_escape2_jstl11 = '
 		<li><c:out value="${x}"/></li>
 		<li><c:out value="${x}" escapeXml="false"/></li>
 		<li><c:out value="${x}"/></li>
 		<li><c:out value="${x}" escapeXml="false"/></li>
 		';
-	
+
+	const expected_escape2_jstl10 = '
+		<li><c:out value="${x}"/></li>
+		<li><c:out value="${x}" escapeXml="false"/></li>
+		<li><c:out value="${x}"/></li>
+		<li><c:out value="${x}" escapeXml="false"/></li>
+		';
+
 	function test_escape2_php() {
 		$pdata    = KwartzCompilerTest::pdata_escape2;
 		$plogic   = KwartzCompilerTest::plogic_escape2;
@@ -867,12 +979,20 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test_escape($pdata, $plogic, $expected, 'eruby');
 	}
 
-	function test_escape2_jsp() {
+	function test_escape2_jstl11() {
 		$pdata    = KwartzCompilerTest::pdata_escape2;
 		$plogic   = KwartzCompilerTest::plogic_escape2;
-		$expected = KwartzCompilerTest::expected_escape2_jsp;
-		$this->_test($pdata, $plogic, $expected, 'jsp');
-		$this->_test_escape($pdata, $plogic, $expected, 'jsp');
+		$expected = KwartzCompilerTest::expected_escape2_jstl11;
+		$this->_test($pdata, $plogic, $expected, 'jstl11');
+		$this->_test_escape($pdata, $plogic, $expected, 'jstl11');
+	}
+
+	function test_escape2_jstl10() {
+		$pdata    = KwartzCompilerTest::pdata_escape2;
+		$plogic   = KwartzCompilerTest::plogic_escape2;
+		$expected = KwartzCompilerTest::expected_escape2_jstl10;
+		$this->_test($pdata, $plogic, $expected, 'jstl10');
+		$this->_test_escape($pdata, $plogic, $expected, 'jstl10');
 	}
 
 }

@@ -138,7 +138,56 @@ class KwartzCommandTest extends PHPUnit_TestCase {
 </html>
 ';
 
-	const output_jsp =
+	const output_jstl11 =
+'<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<html>
+ <body>
+  <table>
+<c:set var="i" value="0"/>
+   <tbody>
+<c:forEach var="user" items="${user_list}">
+  <c:set var="i" value="${i + 1}"/>
+  <c:set var="klass" value="${i % 2 == 0 ? \'even\' : \'odd\'}"/>
+  <c:set var="name" value="${user.name}"/>
+  <c:set var="mail" value="${user.mail}"/>
+    <tr class="<c:out value="${klass}" escapeXml="false"/>">
+     <td><c:out value="${name}" escapeXml="false"/></td>
+     <td><a href="<c:out value="${mail}" escapeXml="false"/>"><c:out value="${mail}" escapeXml="false"/></a></td>
+    </tr>
+</c:forEach>
+   </tbody>
+  </table>
+ </body>
+</html>
+';
+
+	const output_jstl11_escaped =
+'<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<html>
+ <body>
+  <table>
+<c:set var="i" value="0"/>
+   <tbody>
+<c:forEach var="user" items="${user_list}">
+  <c:set var="i" value="${i + 1}"/>
+  <c:set var="klass" value="${i % 2 == 0 ? \'even\' : \'odd\'}"/>
+  <c:set var="name" value="${user.name}"/>
+  <c:set var="mail" value="${user.mail}"/>
+    <tr class="<c:out value="${klass}"/>">
+     <td><c:out value="${name}"/></td>
+     <td><a href="<c:out value="${mail}"/>"><c:out value="${mail}"/></a></td>
+    </tr>
+</c:forEach>
+   </tbody>
+  </table>
+ </body>
+</html>
+';
+
+
+	const output_jstl10 =
 '<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <html>
  <body>
@@ -168,7 +217,7 @@ class KwartzCommandTest extends PHPUnit_TestCase {
 </html>
 ';
 
-	const output_jsp_escaped =
+	const output_jstl10_escaped =
 '<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <html>
  <body>
@@ -217,9 +266,11 @@ class KwartzCommandTest extends PHPUnit_TestCase {
 
 
 	## ----------------------------------------
+	
+	const kwartz_path = '/usr/local/bin/';
 
 	function test_parse_args() {
-		$cmdstr = "/usr/local/bin/kwartz-php -hvaconvert -si6 file1 file2";
+		$cmdstr = "${kwartz_path}kwartz-php -hvaconvert -si6 file1 file2";
 		$args = split(' ', $cmdstr);
 		$command = new KwartzCommand($args);
 		//echo var_dump($command);
@@ -238,21 +289,34 @@ class KwartzCommandTest extends PHPUnit_TestCase {
 	
 	# ----------------------------------------
 	
-	function _test_compile($command_str, $expected) {
+	function _test_compile($command_str, $expected, $flag_test=true) {
 		$this->_fcreate($this->pdata);
 		$this->_fcreate($this->plogic);
 		$args = split(' ', $command_str);
 		$command = new KwartzCommand($args);
-		$output = $command->main();
-		//echo $output;
+		$actual = $command->main();
+		//echo $actual;
 		$this->_fremove($this->pdata);
 		$this->_fremove($this->plogic);
-		$this->assertEquals($expected, $output);
+		if ($flag_test) {
+			if ($expected != $actual) {
+				$f = fopen('.tmp.expected', "w");
+				fwrite($f, $expected);
+				fclose($f);
+				$f = fopen('.tmp.actual', "w");
+				fwrite($f, $actual);
+				fclose($f);
+				system('diff -u .tmp.expected .tmp.actual');
+				unlink('.tmp.expected');
+				unlink('.tmp.actual');
+			}
+			$this->assertEquals($expected, $actual);
+		}
 		//echo $expected;
 	}
 
 	function test_compile1() {	# without plogic file
-		$command_str = "/usr/local/bin/kwartz-php {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php {$this->pdata}";
 		$expected = 
 		'<html>
 		 <body>
@@ -273,60 +337,78 @@ class KwartzCommandTest extends PHPUnit_TestCase {
 
 	function test_compile2() {	# -p file.plogic
 		## php
-		$command_str = "/usr/local/bin/kwartz-php -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_php;
 		$expected = preg_replace('/^\s*<\?php/m', '<?php', $expected);
 		$this->_test_compile($command_str, $expected);
 
 		## eruby
-		$command_str = "/usr/local/bin/kwartz-php -l eruby -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -l eruby -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_eruby;
 		$expected = preg_replace('/^\s*<%/m', '<%', $expected);
 		$this->_test_compile($command_str, $expected);
 
-		## jsp
-		$command_str = "/usr/local/bin/kwartz-php -ljsp --escape=false -p {$this->plogic} {$this->pdata}";
-		$expected = KwartzCommandTest::output_jsp;
+		## jstl11
+		$command_str = "${kwartz_path}kwartz-php -ljstl11 --escape=false -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl11;
+		$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
+		$this->_test_compile($command_str, $expected);
+
+		## jstl10
+		$command_str = "${kwartz_path}kwartz-php -ljstl10 --escape=false -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl10;
 		$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
 		$this->_test_compile($command_str, $expected);
 	}
 	
 	function test_compile3() {	# -s, -e, --escape=true
 		## php
-		$command_str = "/usr/local/bin/kwartz-php -e -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -e -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_php_escaped;
 		$expected = preg_replace('/^\s*<\?php/m', '<?php', $expected);
 		$this->_test_compile($command_str, $expected);
 
 		## eruby
-		$command_str = "/usr/local/bin/kwartz-php -sleruby -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -sleruby -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_eruby_escaped;
 		$expected = preg_replace('/^\s*<%/m', '<%', $expected);
 		$this->_test_compile($command_str, $expected);
 
-		## jsp
-		$command_str = "/usr/local/bin/kwartz-php -ljsp --escape=true -p {$this->plogic} {$this->pdata}";
-		$expected = KwartzCommandTest::output_jsp_escaped;
+		## jstl11
+		$command_str = "${kwartz_path}kwartz-php -ljstl11 --escape=true -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl11_escaped;
+		$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
+		$this->_test_compile($command_str, $expected);
+
+		## jstl10
+		$command_str = "${kwartz_path}kwartz-php -ljstl10 --escape=true -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl10_escaped;
 		$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
 		$this->_test_compile($command_str, $expected);
 	}
 	
 	function test_compile4() {	# -i
 		## php
-		$command_str = "/usr/local/bin/kwartz-php -ei3 -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -ei3 -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_php_escaped;
 		//$expected = preg_replace('/^\s*<\?php/m', '<?php', $expected);
 		$this->_test_compile($command_str, $expected);
 
 		## eruby
-		$command_str = "/usr/local/bin/kwartz-php -l eruby -i -p {$this->plogic} {$this->pdata}";
+		$command_str = "${kwartz_path}kwartz-php -l eruby -i -p {$this->plogic} {$this->pdata}";
 		$expected = KwartzCommandTest::output_eruby;
 		//$expected = preg_replace('/^\s*<%/m', '<%', $expected);
 		$this->_test_compile($command_str, $expected);
 		
-		## jsp
-		$command_str = "/usr/local/bin/kwartz-php -ljsp --escape=true -i2 -p {$this->plogic} {$this->pdata}";
-		$expected = KwartzCommandTest::output_jsp_escaped;
+		## jstl11
+		$command_str = "${kwartz_path}kwartz-php -ljstl11 --escape=true -i2 -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl11_escaped;
+		//$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
+		$this->_test_compile($command_str, $expected);
+
+		## jstl10
+		$command_str = "${kwartz_path}kwartz-php -ljstl10 --escape=true -i2 -p {$this->plogic} {$this->pdata}";
+		$expected = KwartzCommandTest::output_jstl10_escaped;
 		//$expected = preg_replace('/^\s*<(\/?)c:/m', '<\1c:', $expected);
 		$this->_test_compile($command_str, $expected);
 	}

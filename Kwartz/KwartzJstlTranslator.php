@@ -9,10 +9,10 @@ require_once('Kwartz/KwartzNode.php');
 
 // namespace Kwartz {
 
-class KwartzJspTranslator extends KwartzBaseTranslator {
+abstract class KwartzJstlTranslator extends KwartzBaseTranslator {
     protected $condfind_visitor;
     protected $deepcopy_visitor;
-    private	$keywords = array(
+    private   $keywords = array(
         //':if'         => '<c:choose><c:when test="${',
         //':then'       => '}">',
         //':elseif'     => '</c:when><c:when test="${',
@@ -107,16 +107,39 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
         }
     }
     
+    private $function_names = array(
+        'list_new'    => NULL,
+        'list_length' => 'fn:length',
+        'list_empty'  => NULL,
+        'hash_new'    => NULL,
+        'hash_length' => 'fn:length',
+        'hash_empty'  => NULL,
+        'str_length'  => 'fn:length',
+        'str_trim'    => 'fn:trim',
+        'str_tolower' => 'fn:toLowerCase',
+        'str_toupper' => 'fn:toUpperCase',
+        'str_index'   => 'fn:indexOf',
+        'str_empty'   => NULL,
+        );
+        
     protected function function_name($func_name) {
+        if (array_key_exists($func_name, $this->function_names)) {
+            return $this->function_names[$func_name];
+        }
         return NULL;
     }
     
     protected function translate_function_expression($expr) {
-        $funcname = $expr->funcname();
-        $msg = "'$funcname()': JSP doesn't support function call expression.";
-        throw new KwartzTranslationError($msg);
+        $funcname = $this->function_name($expr->funcname());
+        if ($funcname) {
+            parent::translate_function_expression($expr);
+        } else {
+            $funcname = $expr->funcname();
+            $msg = "'$funcname()': No corresponding method in JSTL.";
+            throw new KwartzTranslationError($msg);
+        }
     }
-    
+
     protected function translate_property_expression($expr) {
         if ($expr->arglist() !== NULL && count($expr->arglist()) > 0) {
             $msg = "JSTL doesn't support method-call with arguments.";
@@ -231,19 +254,19 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
     }
     
     protected function translate_while_statement($stmt) {
-        $error_msg = "JSP doesn't support 'while' statement.";
+        $error_msg = "JSTL doesn't support 'while' statement.";
         throw new KwartzTranslationError($error_msg);
     }
     
     
-    protected function translate_block_statement($block, $depth) {
-        $i = 0;
-        foreach($block->statements() as $stmt) {
-            $i++;
-            $new_stmt = $this->expand_conditional_expr($stmt);
-            $this->translate_statement($new_stmt, $depth);
-        }
-    }
+    //protected function translate_block_statement($block, $depth) {
+    //    $i = 0;
+    //    foreach($block->statements() as $stmt) {
+    //        $i++;
+    //        $new_stmt = $this->expand_conditional_expr($stmt);
+    //        $this->translate_statement($new_stmt, $depth);
+    //    }
+    //}
     
     
     protected function normalize_assign_expr($assign_expr) {
@@ -279,7 +302,61 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
         }
     }
     
+}
+
+
+class KwartzJstl11Translator extends KwartzJstlTranslator {
+
+    protected function translate_binary_expression($expr) {
+        $t = $expr->token();
+        if ($t == '.+') {
+            $this->code .= 'fn:join(';
+            //$this->translate_expr($expr->left(), $t, $expr->left()->token());
+            //$this->code .= " $op ";
+            //$this->translate_expr($expr->right(), $t, $expr->right()->token());
+            $this->translate_expression($expr->left());
+            $this->code .= ',';
+            $this->translate_expression($expr->right());
+            $this->code .= ')';
+        } else {
+            parent::translate_binary_expression($expr);
+        }
+    }
+
+}
+
+
+class KwartzJstl10Translator extends KwartzJstlTranslator {
+
+    protected function translate_function_expression($expr) {
+        $funcname = $expr->funcname();
+        $msg = "'$funcname()': JSTL1.0 doesn't support function call.";
+        throw new KwartzTranslationError($msg);
+    }
     
+    //protected function translate_binary_expression($expr) {
+    //    $t = $expr->token();
+    //    if ($t == '.+') {
+    //        //$this->translate_expr($expr->left(), $t, $expr->left()->token());
+    //        //$this->code .= " $op ";
+    //        //$this->translate_expr($expr->right(), $t, $expr->right()->token());
+    //        $this->translate_expression($expr->left());
+    //        $this->code .= '}${';
+    //        $this->translate_expression($expr->right());
+    //    } else {
+    //        parent::translate_binary_expression($expr);
+    //    }
+    //}
+
+    protected function translate_block_statement($block, $depth) {
+        $i = 0;
+        foreach($block->statements() as $stmt) {
+            $i++;
+            $new_stmt = $this->expand_conditional_expr($stmt);
+            $this->translate_statement($new_stmt, $depth);
+        }
+    }
+
     protected function expand_conditional_expr($stmt) {
         // find conditional expression
         $cond_expr = $stmt->accept($this->condfind_visitor);
@@ -299,7 +376,9 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
         // return if-statement
         return new KwartzIfStatement($cond_expr->condition(), $then_block, $this->expand_conditional_expr($else_stmt));
     }
+    
 }
+
 
 
 class KwartzConditionalDeepCopyVisitor extends KwartzDeepCopyVisitor {
@@ -400,6 +479,7 @@ class KwartzConditionalExpressionFindVisitor extends KwartzVisitor {
         return NULL;
     }
 }
+
 
 // }  // end of namespace Kwartz
 ?>

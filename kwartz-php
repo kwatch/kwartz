@@ -55,6 +55,19 @@ class KwartzCommand {
     private $options = array();
     private $toppings = array();
     
+    // headers
+    public $headers = array(
+        // jstl 1.1
+        'jstl11' => 
+'<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+',
+        // jstl 1.0
+        'jstl10' =>
+'<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+',
+        );
+    
     // for test
     function _args() { return $this->args; }
     function _command_name() { return $this->command_name; }
@@ -92,14 +105,7 @@ class KwartzCommand {
         
         // check language
         if ($lang = $this->option('l')) {
-            switch ($lang) {
-              case 'php':
-              case 'eruby':
-              case 'jsp':
-              case 'plphp':
-                // OK
-                break;
-              default:
+            if (!array_key_exists($lang, KwartzCommand::$translator_classnames)) {
                 $msg = "'$lang': unsupported language name.";
                 throw new KwartzCommandOptionError($msg);
             }
@@ -117,12 +123,12 @@ class KwartzCommand {
         $action = $this->option('a') ? $this->option('a') : 'compile';
         
         // presentation logic filenames
-	$plogic_filenames = NULL;
-	if ($this->option('p')) {
-	    $plogic_filenames = preg_split('/,/', $this->option('p'));
-	}
-	
-	// input filenames
+        $plogic_filenames = NULL;
+        if ($this->option('p')) {
+            $plogic_filenames = preg_split('/,/', $this->option('p'));
+        }
+        
+        // input filenames
         if (count($this->args) == 0) {
             $input_filenames = NULL;		// read stdin
         } else {
@@ -136,10 +142,11 @@ class KwartzCommand {
     
 
     static $translator_classnames = array(
-        'php'   => 'KwartzPhpTranslator',
-        'eruby' => 'KwartzErubyTranslator',
-        'jsp'   => 'KwartzJspTranslator',
-        'plphp' => 'KwartzPlphpTranslator',
+        'php'    => 'KwartzPhpTranslator',
+        'eruby'  => 'KwartzErubyTranslator',
+        'jstl11' => 'KwartzJstl11Translator',
+        'jstl10' => 'KwartzJstl10Translator',
+        'plphp'  => 'KwartzPlphpTranslator',
         );
     
     function do_action(&$action, &$input_filenames, &$plogic_filenames, $lang, $flag_escape=FALSE, $toppings=NULL) {
@@ -254,7 +261,7 @@ class KwartzCommand {
                 break;
             }
             // compile
-            if ($lang == 'jsp') {
+            if (preg_match('/^jstl\d?\d?/', $lang)) {
                 $newline = kwartz_detect_newline_char($input);
                 if (! $newline) {
                     $newline = "\n";
@@ -265,7 +272,8 @@ class KwartzCommand {
                 if ($this->has_topping('header')) {
                     $output .= $this->topping('header');
                 } else {
-                    $output .= "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jstl/core\" %>$newline";
+                    //assert(array_key_exists($lang, $this->headers));
+                    $output .= preg_replace('/\n/', $newline, $this->headers[$lang]);
                 }
             } else {
                 if ($this->has_topping('header')) {
@@ -333,12 +341,12 @@ Usage: {$this->command_name} [-p file.plogic] [..options..] file.html
   -h, --help	 : help
   -v		 : version
   -p file.plogic : presentation logic file
-  -l lang	 : php/eruby/jsp (default 'php')
+  -l lang	 : php/eruby/jstl/jstl10 (default 'php')
   -a action	 : compile/parse/translate/convert/analyze (default 'compile')
   -e, -s         : escape(sanitize)
   -i[N]          : indent (default N=2)
   --escape=true  : escape(sanitize)
-  --header=text  : header text (default '<%@ taglib ...>' when jsp)
+  --header=text  : header text (default '<%@ taglib ...>' when jstl/jstl10)
   --footer=text  : footer text
   --even_value=str  : even value of toggle in FOREACH & LOOP directive
   --odd_value=str   : odd value of toggle in FOREACH & LOOP directive

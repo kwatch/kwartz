@@ -1,14 +1,19 @@
+.: 2004-12-30 rev.49
+	.- [enhance] class KwartzJstlTranslator is divided into JSTL1.1 and JSTL1.0
+	.- [enhance] common functions support for JSTL11
+	.- [enhance] kwartz-php supports new directives of JSTL1.1
+	
 .: 2004-12-30 rev.48
 	.- [enhance] common functions support for PHP and eRuby.
-
+	
 .: 2004-12-30 rev.47
 	.- [bugfix] KwartzParser#parse_statement() calls parse_load_stmt()
-
+	
 .: 2004-09-23 rev.44 (ver 0.2.0) 
 	.- [enhance] error reporting enhanced
 	.- [enhance] @C(expr) is not escaped even when the command-line option '-s' or '-e' is specified
 	.- [bugfix] 'flag?true:false' was recognized as ':' + name
 	.- [bugfix] several conditional expression is correctly translated when lang is 'jsp'
-
+	
 .: 2004-09-19 (ver 0.1.0)
 	.- Public Beta Release

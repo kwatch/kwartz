@@ -7,7 +7,7 @@
 require_once('PHPUnit.php');
 require_once('Kwartz/KwartzTranslator.php');
 require_once('Kwartz/KwartzErubyTranslator.php');
-require_once('Kwartz/KwartzJspTranslator.php');
+require_once('Kwartz/KwartzJstlTranslator.php');
 require_once('Kwartz/KwartzParser.php');
 require_once('Kwartz/KwartzUtility.php');
 
@@ -33,20 +33,29 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 			$translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
 		} elseif ($lang == 'eruby') {
 			$translator = new KwartzErubyTranslator($block, $flag_escape, $toppings);
-		} elseif ($lang == 'jsp') {
-			$translator = new KwartzJspTranslator($block, $flag_escape, $toppings);
+		} elseif ($lang == 'jstl11') {
+			$translator = new KwartzJstl11Translator($block, $flag_escape, $toppings);
+		} elseif ($lang == 'jstl10') {
+			$translator = new KwartzJstl10Translator($block, $flag_escape, $toppings);
 		} else {
 			assert(false);
 		}
 		$code = $translator->translate();
 		$actual = $code;
 		if ($flag_test) {
+			if ($expected != $actual) {
+				$f = fopen('.tmp.expected', "w");
+				fwrite($f, $expected);
+				fclose($f);
+				$f = fopen('.tmp.actual', "w");
+				fwrite($f, $actual);
+				fclose($f);
+				system('diff -u .tmp.expected .tmp.actual');
+				unlink('.tmp.expected');
+				unlink('.tmp.actual');
+			}
 			$this->assertEquals($expected, $actual);
 		}
-		//if ($expected != $actual) {
-		//	echo "*** debug: ---\n", kwartz_inspect_str($expected), "\n----\n";
-		//	echo "*** debug: ---\n", kwartz_inspect_str($actual), "\n----\n";
-		//}
 		return $translator;
 	}
 	
@@ -62,8 +71,12 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test($input, $expected, 'eruby', $flag_test);
 	}
 
-	function _test_jsp($input, $expected, $flag_test=true) {
-		$this->_test($input, $expected, 'jsp', $flag_test);
+	function _test_jstl11($input, $expected, $flag_test=true) {
+		$this->_test($input, $expected, 'jstl11', $flag_test);
+	}
+
+	function _test_jstl10($input, $expected, $flag_test=true) {
+		$this->_test($input, $expected, 'jstl10', $flag_test);
 	}
 
 
@@ -85,11 +98,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_array1, $expected);
 	}
 
-	function test_jsp_array1() {
+	function test_jstl11_array1() {
 		$expected = '
 		<c:out value="${var}" escapeXml="false"/><c:out value="${array[0]}" escapeXml="false"/><c:out value="${hash1[\'key1\']}" escapeXml="false"/><c:out value="${hash2[\'key2\']}" escapeXml="false"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_array1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_array1, $expected);
 	}
 
 
@@ -107,9 +120,9 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<%= -(x + y) * (x - y) % z %>';
 		$this->_test_eruby(KwartzTranslatorTest::input_arith1, $expected);
 	}
-	function test_jsp_arith1() {
+	function test_jstl11_arith1() {
 		$expected = '<c:out value="${-(x + y) * (x - y) % z}" escapeXml="false"/>';
-		$this->_test_jsp(KwartzTranslatorTest::input_arith1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_arith1, $expected);
 	}
 
 
@@ -132,7 +145,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_condop1, $expected);
 	}
 
-	function test_jsp_condop1() {
+	function test_jstl11_condop1() {
+		$expected =
+		'<c:set var="hash[\'key\']" value="${x > y ? x + 1 : y - 1}"/>
+		';
+		$this->_test_jstl11(KwartzTranslatorTest::input_condop1, $expected);
+	}
+
+	function test_jstl10_condop1() {
 		$expected = '
 		<c:choose>
 		  <c:when test="${x > y}">
@@ -143,7 +163,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_condop1, $expected);
+		$this->_test_jstl10(KwartzTranslatorTest::input_condop1, $expected);
 	}
 
 
@@ -168,7 +188,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		';
 		$this->_test_eruby(KwartzTranslatorTest::input_arith2, $expected);
 	}
-	function test_jsp_arigh3() {
+	function test_jstl11_arigh3() {
+		$expected = '
+		<c:out value="${-(x + y) * (x - y) % z}" escapeXml="false"/>
+		<c:set var="a[i + 1]" value="${a[i] > 0 ? (x - 1) * 2 : y * 2}"/>
+		';
+		$this->_test_jstl11(KwartzTranslatorTest::input_arith2, $expected);
+	}
+	function test_jstl10_arigh3() {
 		$expected = '
 		<c:out value="${-(x + y) * (x - y) % z}" escapeXml="false"/>
 		<c:choose>
@@ -180,7 +207,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_arith2, $expected);
+		$this->_test_jstl10(KwartzTranslatorTest::input_arith2, $expected);
 	}
 
 
@@ -203,11 +230,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_property1, $expected);
 	}
 
-	function test_jsp_property1() {
+	function test_jstl11_property1() {
 		$expected = '
 		<c:out value="${obj.child.name}" escapeXml="false"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_property1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_property1, $expected);
 	}
 
 
@@ -229,11 +256,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_property2, $expected);
 	}
 
-	function test_jsp_property2() {
+	function test_jstl11_property2() {
 		$expected = '
 		<c:out value="${obj.child.name}" escapeXml="false"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_property2, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_property2, $expected);
 	}
 
 
@@ -255,10 +282,10 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_property3, $expected);
 	}
 
-	function test_jsp_property3() {
+	function test_jstl11_property3() {
 		$expected = '';
 		try {
-			$this->_test_jsp(KwartzTranslatorTest::input_property3, $expected);
+			$this->_test_jstl11(KwartzTranslatorTest::input_property3, $expected);
 		} catch (KwartzTranslationError $ex) {
 			# OK
 			return;
@@ -287,11 +314,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_function1, $expected);
 	}
 
-	function test_jsp_function1() {
+	function test_jstl11_function1() {
 		$expected = '
 		';
 		try {
-			$this->_test_jsp(KwartzTranslatorTest::input_function1, $expected);
+			$this->_test_jstl11(KwartzTranslatorTest::input_function1, $expected);
 		} catch (KwartzTranslationError $ex) {
 			# OK
 			return;
@@ -318,7 +345,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_boolean1, $expected);
 	}
 
-	function test_jsp_boolean1() {
+	function test_jstl11_boolean1() {
+		$expected = '
+		<c:set var="x" value="${(a or b) and c ? true : false}"/>
+		';
+		$this->_test_jstl11(KwartzTranslatorTest::input_boolean1, $expected);
+	}
+
+	function test_jstl10_boolean1() {
 		$expected = '
 		<c:choose>
 		  <c:when test="${(a or b) and c}">
@@ -329,7 +363,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_boolean1, $expected);
+		$this->_test_jstl10(KwartzTranslatorTest::input_boolean1, $expected);
 	}
 
 
@@ -344,15 +378,19 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		';
 		$this->_test_php(KwartzTranslatorTest::input_null1, $expected);
 	}
-	
 	function test_eruby_null1() {
 		$expected = '
 		<%= x == nil ? "" : x %>
 		';
 		$this->_test_eruby(KwartzTranslatorTest::input_null1, $expected);
 	}
-
-	function test_jsp_null1() {
+	function test_jstl11_null1() {
+		$expected = 
+		'<c:out value="${x == null ? \'\' : x}" escapeXml="false"/>
+		';
+		$this->_test_jstl11(KwartzTranslatorTest::input_null1, $expected);
+	}
+	function test_jstl10_null1() {
 		$expected = 
 		'<c:choose>
 		  <c:when test="${x == null}">
@@ -362,7 +400,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		</c:choose>
 		
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_null1, $expected, true);
+		$this->_test_jstl10(KwartzTranslatorTest::input_null1, $expected);
 	}
 
 
@@ -385,11 +423,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_print1, $expected);
 	}
 
-	function test_jsp_print1() {
+	function test_jstl11_print1() {
 		$expected = '
 		hoge
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_print1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_print1, $expected);
 	}
 
 
@@ -412,11 +450,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_print2, $expected);
 	}
 
-	function test_jsp_print2() {
+	function test_jstl11_print2() {
 		$expected = '
 		aaa<c:out value="${x + y}" escapeXml="false"/><c:out value="${hash[\'key\']}" escapeXml="false"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_print2, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_print2, $expected);
 	}
 
 
@@ -439,11 +477,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_set1, $expected);
 	}
 
-	function test_jsp_set1() {
+	function test_jstl11_set1() {
 		$expected = '
 		<c:set var="x" value="1"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_set1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_set1, $expected);
 	}
 
 
@@ -466,11 +504,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_set2, $expected);
 	}
 
-	function test_jsp_set2() {		## normalize
+	function test_jstl11_set2() {		## normalize
 		$expected = '
 		<c:set var="hash[\'key\']" value="${hash[\'key\'] * (a + b)}"/>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_set2, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_set2, $expected);
 	}
 
 
@@ -498,13 +536,13 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_foreach1, $expected);
 	}
 
-	function test_jsp_foreach1() {
+	function test_jstl11_foreach1() {
 		$expected =
 		'<c:forEach var="item" items="${list}">
 		<td><c:out value="${item}" escapeXml="false"/></td>
 		</c:forEach>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_foreach1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_foreach1, $expected);
 	}
 
 
@@ -531,10 +569,10 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_while1, $expected);
 	}
 	
-	function test_jsp_while1() {
+	function test_jstl11_while1() {
 		$expected = NULL;
 		try {
-			$this->_test_jsp(KwartzTranslatorTest::input_while1, $expected);
+			$this->_test_jstl11(KwartzTranslatorTest::input_while1, $expected);
 		} catch (KwartzTranslationError $ex) {
 			# OK
 			return;
@@ -567,13 +605,13 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_if1, $expected);
 	}
 
-	function test_jsp_if1() {
+	function test_jstl11_if1() {
 		$expected = 
 		'<c:if test="${cond1}">
 		cond1
 		</c:if>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_if1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_if1, $expected);
 	}
 
 
@@ -608,7 +646,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_if2, $expected);
 	}
 
-	function test_jsp_if2() {
+	function test_jstl11_if2() {
 		$expected = 
 		'<c:choose>
 		  <c:when test="${cond1}">
@@ -619,7 +657,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_if2, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_if2, $expected);
 	}
 
 
@@ -664,7 +702,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_if3, $expected);
 	}
 
-	function test_jsp_if3() {
+	function test_jstl11_if3() {
 		$expected = '
 		<c:choose>
 		  <c:when test="${cond1}">
@@ -681,7 +719,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_if3, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_if3, $expected);
 	}
 
 
@@ -706,11 +744,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_macro1, $expected);
 	}
 
-	function test_jsp_macro1() {
+	function test_jstl11_macro1() {
 		$expected = '
 		OK
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_macro1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_macro1, $expected);
 	}
 
 
@@ -758,13 +796,13 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_eruby(KwartzTranslatorTest::input_macro2, $expected);
 	}
 
-	function test_jsp_macro2() {
+	function test_jstl11_macro2() {
 		$expected = '
 		<c:forEach var="foo" items="${bar}">
 		<span><c:out value="${foo}" escapeXml="false"/></span>
 		</c:forEach>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_macro2, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_macro2, $expected);
 	}
 
 
@@ -908,7 +946,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
-	function test_jsp_indent1() {
+	function test_jstl11_indent1() {
 		$expected = '
 		<table>
 		<c:set var="ctr" value="0"/>
@@ -931,7 +969,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		</c:forEach>
 		</table>
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_indent1, $expected);
+		$this->_test_jstl11(KwartzTranslatorTest::input_indent1, $expected);
 	}
 
 
@@ -960,7 +998,16 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'eruby');
 	}
 
-	function test_jsp_escape1() {
+	function test_jstl11_escape1() {
+		$expected = '
+		<c:out value="${data}"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}"/>bbb
+		<c:out value="${x > y ? x : y}"/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jstl11');
+	}
+	
+	function test_jstl10_escape1() {
 		$expected = '
 		<c:out value="${data}"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}"/>bbb
@@ -973,7 +1020,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jsp');
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jstl10');
 	}
 
 
@@ -1002,7 +1049,15 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'eruby');
 	}
 
-	function test_jsp_escape2() {
+	function test_jstl11_escape2() {
+		$expected = '
+		<c:out value="${data}" escapeXml="false"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
+		<c:out value="${x > y ? x : y}" escapeXml="false"/>
+		';
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'jstl11');
+	}
+	function test_jstl10_escape2() {
 		$expected = '
 		<c:out value="${data}" escapeXml="false"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
@@ -1015,9 +1070,8 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'jsp');
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'jstl10');
 	}
-
 
 
 	const input_escape3 = '
@@ -1044,7 +1098,16 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'eruby');
 	}
 
-	function test_jsp_escape3() {
+	function test_jstl11_escape3() {
+		$expected = '
+		<c:out value="${data}"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
+		<c:out value="${x > y ? x : y}"/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jstl11');
+	}
+
+	function test_jstl10_escape3() {
 		$expected = '
 		<c:out value="${data}"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
@@ -1057,7 +1120,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jsp');
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jstl10');
 	}
 
 	const input_escape4 = '
@@ -1096,7 +1159,18 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'eruby');
 	}
 
-	function test_jsp_escape4() {
+	function test_jstl11_escape4() {
+		$expected = '
+		<c:out value="${a > b ? a : b}"/>
+		<c:out value="${x > y ? true : false}" escapeXml="false"/>
+		<input type="checkbox"<c:out value="${gender == \'M\' ? \' checked="checked"\' : \'\'}" escapeXml="false"/>/>
+		<input type="checkbox"<c:out value="${gender == \'M\' ? \' checked="checked"\' : \'\'}"/>/>
+		<input type="checkbox"<c:out value="${gender == \'M\' ? \' checked="checked"\' : \'\'}" escapeXml="false"/>/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'jstl11');
+	}
+
+	function test_jstl10_escape4() {
 		$expected = '
 		<c:choose>
 		  <c:when test="${a > b}">
@@ -1145,7 +1219,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
-		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'jsp');
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'jstl10');
 	}
 
 
@@ -1179,7 +1253,17 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$input = KwartzTranslatorTest::input_empty1_php;
 		$this->_test($input, $expected, 'eruby');
 	}
-	function test_empty1_jsp() {
+	function test_empty1_jstl11() {
+		$expected =
+		'<c:set var="v" value="${(empty s) ? \'checked\' : \'\'}"/>
+		<c:out value="${!(empty s) ? \'aaa\' : \'bbb\'}" escapeXml="false"/>
+		';
+		$input = KwartzTranslatorTest::input_empty1;
+		$this->_test($input, $expected, 'jstl11');
+		$input = KwartzTranslatorTest::input_empty1_php;
+		$this->_test($input, $expected, 'jstl11');
+	}
+	function test_empty1_jstl10() {
 		$expected =
 		'<c:choose>
 		  <c:when test="${(empty s)}">
@@ -1199,74 +1283,115 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		</c:choose>
 		';
 		$input = KwartzTranslatorTest::input_empty1;
-		$this->_test($input, $expected, 'jsp');
+		$this->_test($input, $expected, 'jstl10');
 		$input = KwartzTranslatorTest::input_empty1_php;
-		$this->_test($input, $expected, 'jsp');
+		$this->_test($input, $expected, 'jstl10');
 	}
 
 
-        
 	const input_func1 = '
 		:set(a = list_new())
-		:if (list_empty(a))
+		##:if (list_empty(a))
 		  :print("list_length(a) == ", list_length(a), "\n");
-		:end
+		##:end
 		
 		:set(h = hash_new())
-		:if (hash_empty(h))
+		##:if (hash_empty(h))
 		  :print("hash_keys(h) == ", hash_keys(h), "\n");
-		:end
+		##:end
 		
 		:set(len = str_length(s))
 		:print(str_trim(s), str_tolower(s), str_toupper(s), "\n")
-		:if (!str_empty(s))
+		##:if (!str_empty(s))
 		  :set(i = str_index(s, "."))
-		:end
+		##:end
 		:set(slen = str_length(s1 .+ s2))
 		';
 	function test_php_func1() {
 		$expected = '
 		<?php $a = (array()); ?>
-		<?php if ((!($a) || count($a)==0)) { ?>
+		##<?php if ((!($a) || count($a)==0)) { ?>
 		list_length(a) == <?php echo count($a); ?>
-		<?php } ?>
+		##<?php } ?>
 		<?php $h = (array()); ?>
-		<?php if ((!($h) || count($h)==0)) { ?>
+		##<?php if ((!($h) || count($h)==0)) { ?>
 		hash_keys(h) == <?php echo array_keys($h); ?>
-		<?php } ?>
+		##<?php } ?>
 		<?php $len = (strlen($s)); ?>
 		<?php echo trim($s); ?><?php echo strtolower($s); ?><?php echo strtoupper($s); ?>
-		<?php if (!(!$s)) { ?>
-		  <?php $i = (strchr($s, ".")); ?>
-		<?php } ?>
+		##<?php if (!(!$s)) { ?>
+		<?php $i = (strchr($s, ".")); ?>
+		##<?php } ?>
 		<?php $slen = (strlen($s1 . $s2)); ?>
 		';
+		$expected = preg_replace('/^[ \t]*##.*\n/m', '', $expected);
 		$this->_test_php(KwartzTranslatorTest::input_func1, $expected);
 	}
 	function test_eruby_func1() {
 		$expected = '
 		<% a = ([]) %>
-		<% if a.empty? then %>
+		##<% if a.empty? then %>
 		list_length(a) == <%= a.length %>
-		<% end %>
+		##<% end %>
 		<% h = ({}) %>
-		<% if hash_empty(h) then %>
+		##<% if hash_empty(h) then %>
 		hash_keys(h) == <%= h.keys %>
-		<% end %>
+		##<% end %>
 		<% len = (s.length) %>
 		<%= s.trim %><%= s.downcase %><%= s.upcase %>
-		<% if !(s.empty?) then %>
-		  <% i = (s.index(".")) %>
-		<% end %>
+		##<% if !(s.empty?) then %>
+		<% i = (s.index(".")) %>
+		##<% end %>
 		<% slen = ((s1 + s2).length) %>
 		';
+		$expected = preg_replace('/^[ \t]*##.*\n/m', '', $expected);
 		$this->_test_eruby(KwartzTranslatorTest::input_func1, $expected);
 	}
-	function test_jsp_func1() {
+	
+	function test_jstl11_func1() {
+		$input = '
+		:print("list_length(a) == ", list_length(a), "\n")
+		:print("str_length(s) == ", list_length(s), "\n")
+		:print(str_trim(s), str_tolower(s), str_toupper(s), "\n")
+		:set (i = str_index(s, "."))
+		:print("slen = ", str_length(s1 .+ s2), "\n")
+		';
+		$expected = '
+		list_length(a) == <c:out value="${fn:length(a)}" escapeXml="false"/>
+		str_length(s) == <c:out value="${fn:length(s)}" escapeXml="false"/>
+		<c:out value="${fn:trim(s)}"/><c:out value="${fn:toLowerCase(s)}"/><c:out value="${fn:toUpperCase(s)}"/>
+		<c:set var="i" value="${fn:indexOf(s, '.')}"/>
+		slen = <c:out value="${fn:length(fn:join(s1,s2))}" escapeXml="false"/>
+		';
+		try {
+			$this->_test_jstl11(KwartzTranslatorTest::input_func1, $expected);
+			$this->fail("KwartzTranslationError should be happened.");
+		} catch (KwartzTranslationError $ex) {
+			// ok
+		}
+		
+		$expected = '';
+		$input = ':set (a = list_new())';
+		try {
+			$this->_test_jstl11($input, $expected);
+			$this->fail("KwartzTranslationError should be happened.");
+		} catch (KwartzTranslationError $ex) {
+			// ok
+		}
+		$input = ':set (a = hash_new())';
+		try {
+			$this->_test_jstl11($input, $expected);
+			$this->fail("KwartzTranslationError should be happened.");
+		} catch (KwartzTranslationError $ex) {
+			// ok
+		}
+	}
+
+	function test_jstl10_func1() {
 		$expected = '
 		';
 		try {
-			$this->_test_jsp(KwartzTranslatorTest::input_func1, $expected);
+			$this->_test_jstl10(KwartzTranslatorTest::input_func1, $expected);
 			$this->fail("KwartzTranslationError should be happened.");
 		} catch (KwartzTranslationError $ex) {
 			// ok
