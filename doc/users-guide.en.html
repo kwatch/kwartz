@@ -348,7 +348,7 @@ Can handle any text file</dt>
 Auto-Sanitizing and Partial-Sanitizing Support</dt>
 <dd class="dd2">
 <p>	Kwartz can do sanitizing automatically.
-	You don't need to write '<code>CGI::escapeHTML(var)</code>' or '<code>htmlspecialchars($var)</code>'.
+	You don't need to write '<code>CGI.escapeHTML(var)</code>' or '<code>htmlspecialchars($var)</code>'.
 	You are free to turn sanitizing on/off, as well specifying which parts of the template to sanitize.
 </p>
 </dd>
@@ -828,7 +828,7 @@ In Kwartz, 'id' and 'kd' attributes are used to describe directives.
 <li>Directive '<code>id="dummy:<i>str</i>"</code>' means that the element is a dummy and is not printed out.
    (<i>Str</i> is a string only to keep unique value of id attribute.)
 </li>
-<li>'<code>#{<i>expression</i>}#</code>' is also a directive to print out expression value.
+<li>'<code>@{<i>expression</i>}@</code>'<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> is also a directive to print out expression value.
 </li>
 </ul>
 <p>Presentation Data(example3.html):
@@ -837,8 +837,8 @@ In Kwartz, 'id' and 'kd' attributes are used to describe directives.
 <pre class="program">&lt;table&gt;
   &lt;tr <b>id="foreach:member=member_list"</b>&gt;
     &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
-    &lt;td&gt;&lt;a href="mailto:<b>#{member['email']}#</b>"&gt;
-         <b>#{member['email']}#</b>&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<b>@{member['email']}@</b>"&gt;
+         <b>@{member['email']}@</b>&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr <b>id="dummy:d1"</b>&gt;
     &lt;td&gt;bar&lt;/td&gt;
@@ -899,6 +899,12 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 <p>There are several directives such as conditional branching.
 See reference manual for details.
 </p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:4" href="#fnlink:4">*4</a>)</dt>
+  <dd>This pattern is editable with a constant EMBED_PATTERN in configuration file(kwartz/config.rb).</dd>
+ </dl>
+</div>
 <br>
 
 
@@ -914,7 +920,7 @@ See reference manual for details.
 <p>Presentation Data (sanitize1.html):
 </p>
 <a name="sanitize1.html"></a>
-<pre class="program">&lt;tr bgcolor="#{color}#"&gt;
+<pre class="program">&lt;tr bgcolor="@{color}@"&gt;
   &lt;td id="value:str"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -969,7 +975,7 @@ The function <code>X(<i>expr</i>)</code> doesn't sanitize expression <code><i>ex
 </p>
 <a name="sanitize-partial1.pdata"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="<b>#{X(color)}#</b>"&gt;
+ &lt;tr bgcolor="<b>@{X(color)}@</b>"&gt;
    &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;

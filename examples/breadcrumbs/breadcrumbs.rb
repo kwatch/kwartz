@@ -3,9 +3,9 @@
 ## set breadcrumbs
 breadcrumbs = [
    { :name => 'HOME',        :path => '/', },
-   { :name => 'Kwartz-ruby', :path => '/kwartz-ruby/', },
-   { :name => 'Examples',    :path => '/kwartz-ruby/examples/', },
-   { :name => 'Breadcrumbs', :path => '/kwartz-ruby/examples/breadcrumbs/', },
+   { :name => 'Kwartz',      :path => '/kwartz/', },
+   { :name => 'Examples',    :path => '/kwartz/examples/', },
+   { :name => 'Breadcrumbs', :path => '/kwartz/examples/breadcrumbs/', },
 ]
 
 ## set title

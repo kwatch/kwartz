@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-14 rev.42
+	.- [enhance] Kwartz::Config::EMBED_PATTERN
+	.- [change] embedded expression pattern is changed to '@{...}@'
+
 .: 2005-02-13 rev.41
 	.- [enhance] new property --extract=name
 	.- [change] documents updated

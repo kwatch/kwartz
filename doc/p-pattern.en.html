@@ -212,37 +212,37 @@ These patterns are called 'Presentation Patterns.'
   </li>
   <li><a href="#replacement">Replacement</a>
   <ul>
-    <li><a href="#replace-elem-by-value">Replace Element by Value pattern</a>
+    <li><a href="#replace-elem-by-value">Replace Element by Value Pattern</a>
     </li>
-    <li><a href="#replace-cont-by-value">Replace Content by Value pattern</a>
+    <li><a href="#replace-cont-by-value">Replace Content by Value Pattern</a>
     </li>
-    <li><a href="#replace-elem-by-elem">Replace Element by Element pattern</a>
+    <li><a href="#replace-elem-by-elem">Replace Element by Element Pattern</a>
     </li>
   </ul>
   </li>
   <li><a href="#dummy">Dummy</a>
   <ul>
-    <li><a href="#dummy-elem">Dummy Element pattern</a>
+    <li><a href="#dummy-elem">Dummy Element Pattern</a>
     </li>
-    <li><a href="#dummy-tag">Dummy Tag pattern</a>
+    <li><a href="#dummy-tag">Dummy Tag Pattern</a>
     </li>
   </ul>
   </li>
   <li><a href="#iteration">Iteration</a>
   <ul>
-    <li><a href="#iterate-elem">Iterate Element pattern</a>
+    <li><a href="#iterate-elem">Iterate Element Pattern</a>
     </li>
-    <li><a href="#iterate-cont">Iterate Content pattern</a>
+    <li><a href="#iterate-cont">Iterate Content Pattern</a>
     </li>
   </ul>
   </li>
   <li><a href="#selection">Selection</a>
   <ul>
-    <li><a href="#select-elem">Select Element pattern</a>
+    <li><a href="#select-elem">Select Element Pattern</a>
     </li>
-    <li><a href="#pickup-elem">Pick-up Element pattern</a>
+    <li><a href="#pickup-elem">Pick-up Element Pattern</a>
     </li>
-    <li><a href="#extract-elem">Extract Element pattern</a>
+    <li><a href="#extract-elem">Extract Element Pattern</a>
     </li>
   </ul>
   </li>
@@ -271,9 +271,9 @@ These patterns are called 'Presentation Patterns.'
 <a name="replacement"></a>
 <h2 class="section1">Replacement</h2>
 <a name="replace-elem-by-value"></a>
-<h3 class="section2">Replace Element by Value pattern</h3>
+<h3 class="section2">Replace Element by Value Pattern</h3>
 <p>You can replace the element with the value of a variable or an expression.
-This pattern is named 'Replace Element by Value.'
+This is named 'Replace Element by Value' pattern.
 </p>
 <p>Presentation Data:
 </p>
@@ -304,9 +304,9 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 
 
 <a name="replace-cont-by-value"></a>
-<h3 class="section2">Replace Content by Value pattern</h3>
+<h3 class="section2">Replace Content by Value Pattern</h3>
 <p>You can also replace only the content of the element in the same way.
-This pattern is named 'Replace Content by Value.'
+This is named 'Replace Content by Value' pattern.
 </p>
 <p>Presentation Data:
 </p>
@@ -335,7 +335,7 @@ This pattern is named 'Replace Content by Value.'
 ### for JSTL
 &lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
 </pre>
-<p>The 'Replace content by value' pattern is described as the following in Kwartz.
+<p>The 'Replace Content by Value' pattern is to be described as the following in Kwartz.
 </p>
 <p>Presentation Logic:
 </p>
@@ -347,9 +347,9 @@ This pattern is named 'Replace Content by Value.'
 
 
 <a name="replace-elem-by-elem"></a>
-<h3 class="section2">Replace Element by Element pattern</h3>
+<h3 class="section2">Replace Element by Element Pattern</h3>
 <p>You can replace the element by other element.
-This pattern is named 'Replace Element by Element.'
+This pattern is named 'Replace Element by Element' pattern.
 </p>
 <p>This pattern is very useful to reuse the element in other place.
 </p>
@@ -421,9 +421,9 @@ This pattern is named 'Replace Element by Element.'
 <a name="dummy"></a>
 <h2 class="section1">Dummy</h2>
 <a name="dummy-elem"></a>
-<h3 class="section2">Dummy Element pattern</h3>
+<h3 class="section2">Dummy Element Pattern</h3>
 <p>If presentation logic is empty, the element is not printed out.
-This pattern is named 'Dummy Element'.
+This pattern is named 'Dummy Element' pattern.
 </p>
 <p>This pattern enables you to use dummy data in presentation data.
 </p>
@@ -465,17 +465,17 @@ This pattern is named 'Dummy Element'.
 
 
 <a name="dummy-tag"></a>
-<h3 class="section2">Dummy Tag pattern</h3>
+<h3 class="section2">Dummy Tag Pattern</h3>
 <p>If you use only <code>@cont</code> and don't use <code>@stag</code> and <code>@cont</code>,
 you can remove start and end tags of the element.
-This pattern is named 'Dummy Tag'.
+This pattern is named 'Dummy Tag' pattern.
 </p>
 <p>This pattern is very useful if you want to print tags according to condition.
 </p>
 <p>Presentation Data:
 </p>
 <a name="dummy-tag.pdata"></a>
-<pre class="program">&lt;a href="#{url}#" <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
+<pre class="program">&lt;a href="@{url}@" <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
 </pre>
 <p>Presentation Logic:
 </p>
@@ -521,16 +521,16 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <a name="iteration"></a>
 <h2 class="section1">Iteration</h2>
 <a name="iterate-elem"></a>
-<h3 class="section2">Iterate Element pattern</h3>
+<h3 class="section2">Iterate Element Pattern</h3>
 <p>Iteration which contains <code>@stag</code>, <code>@cont</code>, and <code>@etag</code> represents to iterate the element.
-This pattern is named 'Iterate Element'.
+This pattern is named 'Iterate Element' pattern.
 </p>
 <p>Presentation Data:
 </p>
 <a name="iterate-elem.pdata"></a>
 <pre class="program">&lt;table&gt;
   &lt;tr <b>id="mark:items"</b>&gt;
-   &lt;td&gt;#{item}#&lt;/td&gt;
+   &lt;td&gt;@{item}@&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -578,9 +578,9 @@ This pattern is named 'Iterate Element'.
 
 
 <a name="iterate-cont"></a>
-<h3 class="section2">Iterate Content pattern</h3>
+<h3 class="section2">Iterate Content Pattern</h3>
 <p>Iteration which contains only <code>@cont</code> represents to iterate the content.
-This pattern is named 'Iterate Content'.
+This pattern is named 'Iterate Content' pattern.
 </p>
 <p>This pattern is very useful when creating &lt;dl&gt;&lt;/dl&gt; list.
 </p>
@@ -588,8 +588,8 @@ This pattern is named 'Iterate Content'.
 </p>
 <a name="iterate-elem.pdata"></a>
 <pre class="program">&lt;ul <b>id="mark:items"</b>&gt;
-  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
-  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+  &lt;dt&gt;@{item.text}@&lt;/dt&gt;
+  &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/ul&gt;
 </pre>
 <p>Presentation Logic:
@@ -641,9 +641,9 @@ This pattern is named 'Iterate Content'.
 <a name="selection"></a>
 <h2 class="section1">Selection</h2>
 <a name="select-elem"></a>
-<h3 class="section2">Select Element pattern</h3>
+<h3 class="section2">Select Element Pattern</h3>
 <p>The following is an example to choose a certain element from some elements.
-This pattern is named 'Select Element.'
+This pattern is named 'Select Element' pattern.
 </p>
 <p>Presentation Data:
 </p>
@@ -702,10 +702,10 @@ This pattern is named 'Select Element.'
 
 
 <a name="pickup-elem"></a>
-<h3 class="section2">Pick-up Element pattern</h3>
+<h3 class="section2">Pick-up Element Pattern</h3>
 <p>If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
 Elements which are not marked are ignored and not printed.
-This pattern is named 'Pick-up Element.'
+This pattern is named 'Pick-up Element' pattern.
 </p>
 <p>'Pick-up Element' pattern is opposite of 'Dummy Element' pattern.
 In 'Dummy Element' pattern, dummy elements are marked and removed so that necessary elements are leaved.
@@ -717,12 +717,12 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <b>id="breadcrumbs"</b>&gt;
-      &lt;a href="#{item['path']}#" <b>id="mark:crumb"</b>&gt;#{item['name']}#&lt;/a&gt;
+      &lt;a href="@{item['path']}@" <b>id="mark:crumb"</b>&gt;@{item['name']}@&lt;/a&gt;
       &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
       &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
       &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
       &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <b>id="mark:title"</b>&gt;#{title}#&lt;/b&gt;
+      &lt;b <b>id="mark:title"</b>&gt;@{title}@&lt;/b&gt;
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -817,10 +817,10 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 
 
 <a name="extract-elem"></a>
-<h3 class="section2">Extract Element pattern</h3>
+<h3 class="section2">Extract Element Pattern</h3>
 <p>It is able to extract a certain element form the whole presentation data.
 Other element and text strings are not printed.
-This pattern is named 'Extract Element.'
+This pattern is named 'Extract Element' pattern.
 </p>
 <p>This pattern is very useful to extract HTML fragments and make them libraries.
 The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.

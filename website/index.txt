@@ -1,0 +1,53 @@
+.=title:	Kwartz
+.#.?author:	kwa(at)kuwata-lab.com
+.#.?keywords:	kwartz,html,xml,template,Ruby,PHP,JSP,Velocity,eRuby,ERB,erbscan
+
+Welcome to the Kwartz home page.
+
+Kwartz is a template system which realized the concept of 
+{{*'Separation of Presentation Logic and Presentaion data' (SoPL/PD)*}}.
+
+It is available to separate the presentation layer from the
+main program with any template system. In addition, Kwartz
+enables you to separate the presentation logic (such as iteration or 
+conditional branching) from the presentation data (HTML file).
+
+.#See {{<Brief Overview|kwartz-overview/index.php?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
+
+
+.% Features:
+	.* Separates presentation logic from presentation data.
+	.* Runs very fast
+	.* Supports multiple programing languages: Ruby(eRuby), PHP, Java(JSP)
+	.* Doesn't break HTML design at all
+	.* Handle any text file
+	.* Supports auto-sanitizing and partial-sanitizing
+
+.% Download
+	.* {{<kwartz-ruby_2.0.0-beta1.tar.bz2|download.html>}} (sourceforge.net) (2005-02-14 released)
+
+.% Documents
+	.* README           ({{<English|README.en.html>}}      | {{<Japanese|README.ja.html>}})
+	.* Users' Guide     ({{<English|users-guide.en.html>}} | {{<Japanese|users-guide.ja.html>}})
+	.* Reference Manual ({{<English|reference.en.html>}}   | {{<Japanese|reference.ja.html>}})
+	.* Presentation Pattern Catalog ({{<English|p-pattern.en.html>}} | {{<Japanese|p-pattern.ja.html>}})
+	.* {{<ChangeLog|ChangeLog.html>}}
+
+.% License
+	.* {{<GNU General Public License|http://www.gnu.org/copyleft/gpl.html>}}
+
+.% Author
+	.* Makoto Kuwata <kwa(at)kuwata-lab.com>.^
+	   (If you send me a mail, please make it's title starting with '[Kwartz]'.)
+	   .# If not, I may miss your mail.)
+
+.% Other
+	.* {{<Bug reports|http://sourceforge.net/tracker/?group_id=127304&atid=708267>}} and
+	   {{<enhance requests|http://sourceforge.net/tracker/?group_id=127304&atid=708270>}} are welcome.
+	.* This project was subsidized by Exploratory Software Project of
+	   {{<IPA|http://www.ipa.go.jp/about/english/index.html>}}
+	   (Information-Technology Promotion Agency Japan).
+
+.#.% ChangeLog
+.#	See ChangeLog ({{<English|ChangeLog.en.html>}}/{{<Japanese|ChangeLog.ja.html>}}) for detail.
+

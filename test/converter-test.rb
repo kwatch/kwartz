@@ -225,7 +225,7 @@ class ConverterTest < Test::Unit::TestCase
 		<tr id="foo" kd="attr:bgcolor=color;attr:class:klass" class="even">
 		</tr>
 	END
-	#expected = ' id="foo" class="#{klass}#" bgcolor="#{color}#"'
+	#expected = ' id="foo" class="@{klass}@" bgcolor="@{color}@"'
         expected = "bgcolor=color\nclass=klass\nid=\"foo\"\n"
 	_test_attr(input, expected)
     end
@@ -236,7 +236,7 @@ class ConverterTest < Test::Unit::TestCase
 		<tr id="foo" kd="Attr:bgcolor=color;ATTR:class:klass" class="even">
 		</tr>
 	END
-	#expected = ' id="foo" class="#{X(klass)}#" bgcolor="#{E(color)}#"'
+	#expected = ' id="foo" class="@{X(klass)}@" bgcolor="@{E(color)}@"'
         expected = <<'END'
 bgcolor=E()
   color
@@ -253,7 +253,7 @@ END
 		<tr id="foo" kd="append:foo;Append:bar;APPEND:baz"  class="even">
 		</tr>
 	END
-	#expected = ' id="foo"  class="even" #{foo}# #{E(bar)}# #{X(baz)}#'
+	#expected = ' id="foo"  class="even" @{foo}@ @{E(bar)}@ @{X(baz)}@'
         expected = <<'END'
 class="even"
 id="foo"
@@ -300,10 +300,10 @@ END
     end
 
 
-    def test_convert_text2	# '#{...}#'
+    def test_convert_text2	# '@{...}@'
 	input = <<-'END'
-		aaa#{expr1}##{expr2}#bbb
-		<foo #{checked}#>
+		aaa@{expr1}@@{expr2}@bbb
+		<foo @{checked}@>
 	END
 	expected = <<-'END'
 		:block
@@ -344,8 +344,8 @@ END
 
     def test_convert_text4	# [bug:1112279] expr in attr
 	input = <<-'END'
-		<a href="#{url}#">#{url}#</a>
-		<a href="mailto:#{email}#">#{email}#</a>
+		<a href="@{url}@">@{url}@</a>
+		<a href="mailto:@{email}@">@{email}@</a>
 	END
 	expected = <<-'END'
 		:block
@@ -530,7 +530,7 @@ END
     def test_convert_foreach1	# foreach
     	input = <<-'END'
 		<tr kd="foreach:user:list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -566,7 +566,7 @@ END
     def test_convert_foreach2	# Foreach
     	input = <<-'END'
 		<tr kd="Foreach:user=list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -612,7 +612,7 @@ END
     def test_convert_foreach3	# FOREACH
     	input = <<-'END'
 		<tr kd="FOREACH:user:list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -670,7 +670,7 @@ END
     def test_convert_foreach4	# invalid foreach
     	input = <<-'END'
 		<tr kd="foreach:user in list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = ''
@@ -683,7 +683,7 @@ END
     def test_convert_loop1	# loop
     	input = <<-'END'
 		<tr kd="loop:user=list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -721,7 +721,7 @@ END
     def test_convert_loop2	# Loop
     	input = <<-'END'
 		<tr kd="Loop:user=list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -769,7 +769,7 @@ END
     def test_convert_loop3	# LOOP
     	input = <<-'END'
 		<tr kd="LOOP:user:list">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -829,7 +829,7 @@ END
     def test_convert_loop4	# invalid loop
     	input = <<-'END'
 		<tr kd="loop:user">
-		  <td>#{user}#</td>
+		  <td>@{user}@</td>
 		</tr>
 	END
 	expected = ''
@@ -857,7 +857,7 @@ END
     def test_convert_if1	# if
     	input = <<-'END'
 		<font color="red" kd="if:error_msg!=null">
-		  #{error_msg}#
+		  @{error_msg}@
 		</font>
 	END
 	expected = <<-'END'
@@ -890,10 +890,10 @@ END
     def test_convert_if2	# else
     	input = <<-'END'
 		<tr class="odd" kd="if:ctr%2==1">
-		  <td>#{data}#</td>
+		  <td>@{data}@</td>
 		</tr>
 		<tr class="even" kd="else:">
-		  <td>#{data}#</td>
+		  <td>@{data}@</td>
 		</tr>
 	END
 	expected = <<-'END'
@@ -948,10 +948,10 @@ END
 
     def test_convert_if3	# elseif
     	input = <<-'END'
-		<div class="typeA" kd="if:type=='A'">#{message}#</div>
-		<div class="typeB" kd="elseif:type=='B'">#{message}#</div>
-		<div class="typeC" kd="elseif:type=='C'">#{message}#</div>
-		<div class="typeD" kd="else:">#{message}#</div>
+		<div class="typeA" kd="if:type=='A'">@{message}@</div>
+		<div class="typeB" kd="elseif:type=='B'">@{message}@</div>
+		<div class="typeC" kd="elseif:type=='C'">@{message}@</div>
+		<div class="typeD" kd="else:">@{message}@</div>
 	END
 	expected = <<-'END'
 		:block
@@ -1022,11 +1022,11 @@ END
     def test_convert_if4	# invalid else
     	input = <<-'END'
 		<tr class="odd" kd="if:ctr%2==1">
-		  <td>#{data}#</td>
+		  <td>@{data}@</td>
 		</tr>
 
 		<tr class="even" kd="else:">
-		  <td>#{data}#</td>
+		  <td>@{data}@</td>
 		</tr>
 	END
 	expected = ""
@@ -1040,10 +1040,10 @@ END
     	input = <<-'END'
 		<ul kd="if:type=='A'">
 		  <ol kd="if:type=='B'">
-		    <li kd="if:type=='C'">#{message}#</li>
+		    <li kd="if:type=='C'">@{message}@</li>
 		  </ol>
 		</ul>
-		<ul kd="else:">#{message}#</ul>
+		<ul kd="else:">@{message}@</ul>
 	END
 	expected = <<-'END'
 		:block
@@ -1464,8 +1464,8 @@ END
     def test_convert_mark7	# marking and inline expr in attr
 	input = <<-'END'
 		<table>
-		  <tr bgcolor="#{color}#" id="mark:users">
-		   <td><a href="mailto:#{email}#" id="mark:user">#{name}#</a></td>
+		  <tr bgcolor="@{color}@" id="mark:users">
+		   <td><a href="mailto:@{email}@" id="mark:user">@{name}@</a></td>
 		  </tr>
 		</table>
 	END
@@ -1521,7 +1521,7 @@ END
     def test_convert_while1	# while
     	input = <<-'END'
 		<div kd="while:data=d.fetch">
-		  #{data}#
+		  @{data}@
 		</div>
 	END
 	expected = <<-'END'
@@ -1658,7 +1658,7 @@ END
 	input = <<-'END'
 		<tbody kd="LOOP:item:list">
 		 <tr bgcolor="#CCCCCC" id="attr:bgcolor:item_tgl">
-		  <td>#{item}#</td>
+		  <td>@{item}@</td>
 		 </tr>
 		</tbody>
 	END
@@ -1725,7 +1725,7 @@ END
 #    def test_convert_properties2	# delete_id_attr
 #	input = <<-'END'
 #		<tr id="foo">
-#		 <td>#{item}#</td>
+#		 <td>@{item}@</td>
 #		</tr>
 #	END
 #	expected = <<-'END'

@@ -20,6 +20,7 @@ module Kwartz
       ODD             = "'odd'"
       EVEN            = "'even'"
       DATTR           = "kd"
+      EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
       
       ## converter & element
       NOEND           = [ "input", "br", "meta", "img", "hr" ]

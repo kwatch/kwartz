@@ -47,12 +47,12 @@
 .	
 .	
 .JA	◎Replace Element by Valueパターン	| replace-elem-by-value
-.EN	.$$ Replace Element by Value pattern	| replace-elem-by-value
+.EN	.$$ Replace Element by Value Pattern	| replace-elem-by-value
 .	
 .JA	エレメントを、変数や式の値で置き換えることができます。
 .JA	これを「Replace Element by Value」パターンといいます。
 .EN	You can replace the element with the value of a variable or an expression.
-.EN	This pattern is named 'Replace Element by Value.'
+.EN	This is named 'Replace Element by Value' pattern.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -79,12 +79,12 @@
 .	
 .	
 .JA	◎Replace Content by Valueパターン	| replace-cont-by-value
-.EN	.$$ Replace Content by Value pattern	| replace-cont-by-value
+.EN	.$$ Replace Content by Value Pattern	| replace-cont-by-value
 .	
 .JA	タグは残したままエレメントの内容だけを式の値で置き換えることができます。
 .JA	これを「Replace Content by Value」パターンといいます。
 .EN	You can also replace only the content of the element in the same way.
-.EN	This pattern is named 'Replace Content by Value.'
+.EN	This is named 'Replace Content by Value' pattern.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -113,7 +113,7 @@
 .	
 .	
 .JA	なお「Replace Content by Value」パターンは、Kwartzでは次のように書くことができます。
-.EN	The 'Replace content by value' pattern is described as the following in Kwartz.
+.EN	The 'Replace Content by Value' pattern is to be described as the following in Kwartz.
 .	
 .	
 .JA	プレゼンテーションロジック：
@@ -129,13 +129,13 @@
 .	
 .	
 .JA	◎Replace Element by Elementパターン	| replace-elem-by-elem
-.EN	.$$ Replace Element by Element pattern	| replace-elem-by-elem
+.EN	.$$ Replace Element by Element Pattern	| replace-elem-by-elem
 .	
 .	
 .JA	エレメントを別のエレメントに交換することができます。
 .JA	これは「Replace Element by Element」パターンといいます。
 .EN	You can replace the element by other element.
-.EN	This pattern is named 'Replace Element by Element.'
+.EN	This pattern is named 'Replace Element by Element' pattern.
 .	
 .	
 .JA	このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
@@ -187,13 +187,13 @@
 .	
 .	
 .JA	◎Dummy Elementパターン		| dummy-elem
-.EN	.$$ Dummy Element pattern	| dummy-elem
+.EN	.$$ Dummy Element Pattern	| dummy-elem
 .	
 .	
 .JA	プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
 .JA	これは「Dummy Element」パターンといいます。
 .EN	If presentation logic is empty, the element is not printed out.
-.EN	This pattern is named 'Dummy Element'.
+.EN	This pattern is named 'Dummy Element' pattern.
 .	
 .	
 .JA	このパターンは、プレゼンテーションデータにダミーデータを含めるときに使用します。
@@ -230,7 +230,7 @@
 .	
 .	
 .JA	◎Dummy Tagパターン		| dummy-tag
-.EN	.$$ Dummy Tag pattern		| dummy-tag
+.EN	.$$ Dummy Tag Pattern		| dummy-tag
 .	
 .	
 .JA	プレゼンテーションロジックの定義において、「{{,@cont,}}」だけを使用し、
@@ -238,7 +238,7 @@
 .JA	これは「Dummy Tag」パターンといいます。
 .EN	If you use only {{,@cont,}} and don't use {{,@stag,}} and {{,@cont,}},
 .EN	you can remove start and end tags of the element.
-.EN	This pattern is named 'Dummy Tag'.
+.EN	This pattern is named 'Dummy Tag' pattern.
 .	
 .	
 .JA	このパターンは、ある条件のときだけタグを出力したい場合に使います。
@@ -248,7 +248,7 @@
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- dummy-tag.pdata
-.	<a href="#{url}#" {{*id="mark:next"*}}>Next</a>
+.	<a href="@{url}@" {{*id="mark:next"*}}>Next</a>
 .	.--------------------
 .	
 .	
@@ -283,13 +283,13 @@
 .	
 .	
 .JA	◎Iterate Elementパターン	| iterate-elem
-.EN	.$$ Iterate Element pattern	| iterate-elem
+.EN	.$$ Iterate Element Pattern	| iterate-elem
 .	
 .	
 .JA	繰り返しの中に「{{,@stag,}}」と「{{,@cont,}}」と「{{,@etag,}}」を含めると、エレメント全体を繰り返すことになります。
 .JA	これを「Iterate Element」パターンといいます。
 .EN	Iteration which contains {{,@stag,}}, {{,@cont,}}, and {{,@etag,}} represents to iterate the element.
-.EN	This pattern is named 'Iterate Element'.
+.EN	This pattern is named 'Iterate Element' pattern.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -297,7 +297,7 @@
 .	.-------------------- iterate-elem.pdata
 .	<table>
 .	  <tr {{*id="mark:items"*}}>
-.	   <td>#{item}#</td>
+.	   <td>@{item}@</td>
 .	  </tr>
 .	</table>
 .	.--------------------
@@ -328,13 +328,13 @@
 .	
 .	
 .JA	◎Iterate Contentパターン	| iterate-cont
-.EN	.$$ Iterate Content pattern	| iterate-cont
+.EN	.$$ Iterate Content Pattern	| iterate-cont
 .	
 .	
 .JA	繰り返しの中に「{{,@cont,}}」を含めると、内容だけを繰り返すことになります。
 .JA	これを「Iterate Content」パターンといいます。
 .EN	Iteration which contains only {{,@cont,}} represents to iterate the content.
-.EN	This pattern is named 'Iterate Content'.
+.EN	This pattern is named 'Iterate Content' pattern.
 .	
 .	
 .JA	これは<dl></dl>の内容だけを繰り返したいときに、特に有効です。
@@ -345,8 +345,8 @@
 .EN	Presentation Data:
 .	.-------------------- iterate-elem.pdata
 .	<ul {{*id="mark:items"*}}>
-.	  <dt>#{item.text}#</dt>
-.	  <dd>#{item.desc}#</dd>
+.	  <dt>@{item.text}@</dt>
+.	  <dd>@{item.desc}@</dd>
 .	</ul>
 .	.--------------------
 .	
@@ -381,13 +381,13 @@
 .	
 .	
 .JA	◎Select Elementパターン	| select-elem
-.EN	.$$ Select Element pattern	| select-elem
+.EN	.$$ Select Element Pattern	| select-elem
 .	
 .	
 .JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
 .JA	これは「Select Element」パターンといいます。
 .EN	The following is an example to choose a certain element from some elements.
-.EN	This pattern is named 'Select Element.'
+.EN	This pattern is named 'Select Element' pattern.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -426,7 +426,7 @@
 .	
 .	
 .JA	◎Pick-up Elementパターン	| pickup-elem
-.EN	.$$ Pick-up Element pattern	| pickup-elem
+.EN	.$$ Pick-up Element Pattern	| pickup-elem
 .	
 .	
 .JA	ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、
@@ -435,7 +435,7 @@
 .JA	これは「Pick-up Element」パターンといいます。
 .EN	If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
 .EN	Elements which are not marked are ignored and not printed.
-.EN	This pattern is named 'Pick-up Element.'
+.EN	This pattern is named 'Pick-up Element' pattern.
 .	
 .	
 .JA	これは「Dummy Element」パターンと逆の考え方です。
@@ -452,12 +452,12 @@
 .	<html>
 .	  <body>
 .	    <div {{*id="breadcrumbs"*}}>
-.	      <a href="#{item['path']}#" {{*id="mark:crumb"*}}>#{item['name']}#</a>
+.	      <a href="@{item['path']}@" {{*id="mark:crumb"*}}>@{item['name']}@</a>
 .	      <span {{*id="mark:separator"*}}>&gt;</span>
 .	      <a href="/aaa/">AAA</a> &lt;
 .	      <a href="/aaa/bbb/">BBB</a> &lgt;
 .	      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
-.	      <b {{*id="mark:title"*}}>#{title}#</b>
+.	      <b {{*id="mark:title"*}}>@{title}@</b>
 .	    </div>
 .	  </body>
 .	</html>
@@ -532,14 +532,14 @@
 .	
 .	
 .JA	◎Extract Elementパターン	| extract-elem
-.EN	.$$ Extract Element pattern	| extract-elem
+.EN	.$$ Extract Element Pattern	| extract-elem
 .	
 .JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 .JA	ほかは一切表示しないようにすることができます。
 .JA	このパターンは「Extract Element」パターンといいます。
 .EN	It is able to extract a certain element form the whole presentation data.
 .EN	Other element and text strings are not printed.
-.EN	This pattern is named 'Extract Element.'
+.EN	This pattern is named 'Extract Element' pattern.
 .	
 .	
 .JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。

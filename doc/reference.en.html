@@ -1261,7 +1261,7 @@ Variables are called Local variables if they are used only in the template.
 <a name="analyze.html"></a>
 <pre class="program">&lt;table&gt;
   &lt;caption id="value:<b>title</b>"&gt;Sample&lt;/caption&gt;
-  &lt;tr id="mark:items" bgcolor="#{<b>color</b>}#"&gt;
+  &lt;tr id="mark:items" bgcolor="@{<b>color</b>}@"&gt;
     &lt;td id="value:<b>item</b>"&gt;Foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
@@ -1419,12 +1419,13 @@ Kd attributes are always removed.
 
 <a name="directive-output"></a>
 <h3 class="section2">Printing Values of Expressions</h3>
-<p>'<code>#{<i>expression</i>}#</code>' is a directive which prints the value of an expression.
+<p>'<code>@{<i>expression</i>}@</code>' is a directive which prints the value of an expression.
+This pattern is changeable with a constant EMBED_PATTERN in configuration file (kwartz/config.rb).
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-output.html"></a>
-<pre class="program">Hello <b>#{user.name}#</b>!
+<pre class="program">Hello <b>@{user.name}@</b>!
 </pre>
 <p>Output Program:
 </p>
@@ -1459,8 +1460,8 @@ These are not effected by the command-line option '<code>-e</code>'.
 <p>Presentation Data:
 </p>
 <a name="directive-output2.html"></a>
-<pre class="program">With sanitizing:    <b>#{E(var)}#</b>!
-Without sanitizing: <b>#{X(var)}#</b>!
+<pre class="program">With sanitizing:    <b>@{E(var)}@</b>!
+Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>Output Program:
 </p>
@@ -1485,7 +1486,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <a name="directive-value"></a>
 <h3 class="section2">Printing value of expression 2</h3>
 <p>'<code>id="value:<i>expression</i>"</code>' is a directive to print the value of expression instead of the content.
-It is more suitable for HTML design than '<code>#{<i>expression</i>}#</code>' because it allows for the use of dummy data.
+It is more suitable for HTML design than '<code>@{<i>expression</i>}@</code>' because it allows for the use of dummy data.
 </p>
 <p>Presentation Data:
 </p>
@@ -1552,7 +1553,7 @@ You can enumerate other attributes this way as well.
 </p>
 <a name="directive-attr2.pdata"></a>
 <pre class="program">&lt;font id="if:message!=empty<b>;attr:class=klass;attr:bgcolor=color</b>"&gt;
- #{message}#
+ @{message}@
 &lt;/font&gt;
 </pre>
 <p>Output Script:
@@ -1794,7 +1795,7 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 </p>
 <a name="directive-foreach.pdata"></a>
 <pre class="program">&lt;tr <b>id="foreach:item=list"</b>&gt;
-  &lt;td&gt;#{item}#&lt;/td&gt;
+  &lt;td&gt;@{item}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <p>Output Program:
@@ -1833,8 +1834,8 @@ It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 </p>
 <a name="directive-loop.pdata"></a>
 <pre class="program">&lt;dl <b>id="loop:item=list"</b>&gt;
-  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
-  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+  &lt;dt&gt;@{item.text}@&lt;/dt&gt;
+  &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>Output Program:
@@ -1875,8 +1876,8 @@ The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
 </p>
 <a name="directive-foreach2.pdata"></a>
 <pre class="program">&lt;tr <b>id="Foreach:item=list"</b>&gt;
-  &lt;td&gt;#{item_ctr}#&lt;/td&gt;
-  &lt;td&gt;#{item}#&lt;td&gt;
+  &lt;td&gt;@{item_ctr}@&lt;/td&gt;
+  &lt;td&gt;@{item}@&lt;td&gt;
 &lt;/tr&gt;
 </pre>
 <p>Output Program:
@@ -1928,8 +1929,8 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 <a name="directive-foreach3.pdata"></a>
 <pre class="program">&lt;table&gt;
   &lt;tbody <b>id="LOOP:item=list"</b>&gt;
-    &lt;tr class="<b>#{item_tgl}#</b>"&gt;
-      &lt;td&gt;#{item}#&lt;/td&gt;
+    &lt;tr class="<b>@{item_tgl}@</b>"&gt;
+      &lt;td&gt;@{item}@&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
@@ -1992,7 +1993,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 </p>
 <a name="directive-while.pdata"></a>
 <pre class="program">&lt;tr <b>id="while:row=sth.fetch()"</b>&gt;
-  &lt;td&gt;#{row[0]}#&lt;/td&gt;
+  &lt;td&gt;@{row[0]}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <p>Output Program:
@@ -2182,9 +2183,9 @@ Hello &lt;%= name %&gt;!
 &lt;input type="checkbox" id="foreach:item=list" <b>checked="checked"</b>/&gt;
 
 ## NG
-&lt;option id="attr:value=val" #{flag ? 'selected' : ''}#/&gt;
+&lt;option id="attr:value=val" @{flag ? 'selected' : ''}@/&gt;
 ## OK
-&lt;option value="#{val}#" #{flag ? 'selected' : ''}#&gt;
+&lt;option value="@{val}@" @{flag ? 'selected' : ''}@&gt;
 </pre>
 </li>
 </ul>
@@ -2430,6 +2431,13 @@ NOEND </b></dt>
 CHARSET </b></dt>
 <dd class="dd3">
 	Specify character encoding name for jstl11 and jstl10.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+EMBED_PATTERN </b></dt>
+<dd class="dd3">
+	Specify a pattern to embed expression into presentation data.
 </dd>
 </dl>
 <br>

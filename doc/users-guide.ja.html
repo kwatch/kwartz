@@ -346,7 +346,7 @@ HTMLテンプレートがSGML形式を崩さない</dt>
 自動サニタイズ機能をサポート</dt>
 <dd class="dd2">
 <p>	Kwartzでは、サニタイズを自動的に行うようにすることができます。
-	つまり、いちいち「CGI::escapeHTML(var)」や「<code>htmlspecialchars($var)</code>」と書く必要がありません。
+	つまり、いちいち「CGI.escapeHTML(var)」や「<code>htmlspecialchars($var)</code>」と書く必要がありません。
 	またサニタイズ機能はオン/オフすることができます。
 	さらに、ある部分だけをサニタイズする/しないを細かく指定できます。
 </p>
@@ -828,7 +828,7 @@ Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
 <li>「<code>id="dummy:<i>str</i>"</code>」は、そのエレメントがダミーであることを表します（つまり出力されません）。
     ここで<code><i>str</i></code>はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
 </li>
-<li>「<code>#{<i>expression</i>}#</code>」は、式の値を出力するためのディレクティブです。
+<li>「<code>@{<i>expression</i>}@</code>」<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup>は、式の値を出力するためのディレクティブです。
 </li>
 </ul>
 <p>プレゼンテーションデータ(example3.html)：
@@ -837,8 +837,8 @@ Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
 <pre class="program">&lt;table&gt;
   &lt;tr <b>id="foreach:member=member_list"</b>&gt;
     &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
-    &lt;td&gt;&lt;a href="mailto:<b>#{member['email']}#</b>"&gt;
-         <b>#{member['email']}#</b>&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<b>@{member['email']}@</b>"&gt;
+         <b>@{member['email']}@</b>&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr <b>id="dummy:d1"</b>&gt;
     &lt;td&gt;bar&lt;/td&gt;
@@ -899,6 +899,12 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 <p>このほか、条件分岐を行うディレクティブなども用意されています。
 詳細はリファレンスマニュアルをご覧ください。
 </p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:4" href="#fnlink:4">*4</a>)</dt>
+  <dd>このパターンは設定ファイルの定数EMBED_PATTERNで変更できます。</dd>
+ </dl>
+</div>
 <br>
 
 
@@ -915,7 +921,7 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 <p>プレゼンテーションデータ：
 </p>
 <a name="sanitize1.html"></a>
-<pre class="program">&lt;tr bgcolor="#{color}#"&gt;
+<pre class="program">&lt;tr bgcolor="@{color}@"&gt;
   &lt;td id="value:str"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -970,7 +976,7 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 </p>
 <a name="sanitize-partial1.pdata"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="<b>#{X(color)}#</b>"&gt;
+ &lt;tr bgcolor="<b>@{X(color)}@</b>"&gt;
    &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;

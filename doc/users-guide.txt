@@ -141,11 +141,11 @@
 .EN	.%  Auto-Sanitizing and Partial-Sanitizing Support
 .		
 .JA		Kwartzでは、サニタイズを自動的に行うようにすることができます。
-.JA		つまり、いちいち「CGI::escapeHTML(var)」や「{{,htmlspecialchars($var),}}」と書く必要がありません。
+.JA		つまり、いちいち「CGI.escapeHTML(var)」や「{{,htmlspecialchars($var),}}」と書く必要がありません。
 .JA		またサニタイズ機能はオン/オフすることができます。
 .JA		さらに、ある部分だけをサニタイズする/しないを細かく指定できます。
 .EN		Kwartz can do sanitizing automatically.
-.EN		You don't need to write '{{,CGI::escapeHTML(var),}}' or '{{,htmlspecialchars($var),}}'.
+.EN		You don't need to write '{{,CGI.escapeHTML(var),}}' or '{{,htmlspecialchars($var),}}'.
 .EN		You are free to turn sanitizing on/off, as well specifying which parts of the template to sanitize.
 .	
 .	
@@ -516,7 +516,7 @@
 .EN	.#Presentation Data:
 .	.#.--------------------
 .	.#<ul id="mark:list">
-.	.# <li>#{member}#</li>
+.	.# <li>@{member}@</li>
 .	.#</ul>
 .	.#.--------------------
 .	
@@ -667,13 +667,13 @@
 .JA	.* 「{{,id="value:{{/expression/}}",}}」は、内容のかわりに式の値を出力することを表します。
 .JA	.* 「{{,id="dummy:{{/str/}}",}}」は、そのエレメントがダミーであることを表します（つまり出力されません）。
 .JA	    ここで{{,{{/str/}},}}はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
-.JA	.* 「{{,#{{{/expression/}}}#,}}」は、式の値を出力するためのディレクティブです。
+.JA	.* 「{{,@{{{/expression/}}}@,}}」{{(このパターンは設定ファイルの定数EMBED_PATTERNで変更できます。)}}は、式の値を出力するためのディレクティブです。
 .EN	The following is an example to use directives.
 .EN	.* Directive '{{,id="foreach:{{/var/}}={{/list/}}",}}' means to iterate the element.
 .EN	.* Directive '{{,id="value:{{/expression/}}",}} means to print value of expression as content of the element.
 .EN	.* Directive '{{,id="dummy:{{/str/}}",}}' means that the element is a dummy and is not printed out.
 .EN	   ({{/Str/}} is a string only to keep unique value of id attribute.)
-.EN	.* '{{,#{{{/expression/}}}#,}}' is also a directive to print out expression value.
+.EN	.* '{{,@{{{/expression/}}}@,}}'{{(This pattern is editable with a constant EMBED_PATTERN in configuration file(kwartz/config.rb).)}} is also a directive to print out expression value.
 .	
 .	
 .JA	プレゼンテーションデータ(example3.html)：
@@ -682,8 +682,8 @@
 .	<table>
 .	  <tr {{*id="foreach:member=member_list"*}}>
 .	    <td {{*id="value:member['name']"*}}>foo</td>
-.	    <td><a href="mailto:{{*#{member['email']}#*}}">
-.	         {{*#{member['email']}#*}}</a></td>
+.	    <td><a href="mailto:{{*@{member['email']}@*}}">
+.	         {{*@{member['email']}@*}}</a></td>
 .	  </tr>
 .	  <tr {{*id="dummy:d1"*}}>
 .	    <td>bar</td>
@@ -748,7 +748,7 @@
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data (sanitize1.html):
 .	.-------------------- sanitize1.html
-.	<tr bgcolor="#{color}#">
+.	<tr bgcolor="@{color}@">
 .	  <td id="value:str">foo</td>
 .	</tr>
 .	.--------------------
@@ -798,7 +798,7 @@
 .EN	Presentaion Data:
 .	.-------------------- sanitize-partial1.pdata
 .	<table>
-.	 <tr bgcolor="{{*#{X(color)}#*}}">
+.	 <tr bgcolor="{{*@{X(color)}@*}}">
 .	   <td {{*id="value:E(str)"*}}>foo</td>
 .	 </tr>
 .	</table>
@@ -1202,7 +1202,7 @@
 .		## use ERB
 .		require 'erb'
 .		require 'cgi'        # for sanitizing
-.		str = File.open('guide.d/example.rhtml') { |f| f.read() }
+.		str = File.open('guide.d/example1.rhtml') { |f| f.read() }
 .		str.untaint
 .		trim_mode = 1
 .		erb = ERB.new(str, $SAFE, trim_mode)

@@ -45,7 +45,7 @@ module Kwartz
       end
       attr_reader :stmt_list, :elem_list
       alias :element_list :elem_list
-      
+
       def reset(input)
          @input = input
          @parser.reset(input)
@@ -81,7 +81,7 @@ module Kwartz
          @attr_values = Kwartz::Util::OrderedHash.new
          @attr_spaces = {}
          @append_exprs = []
-         
+
          if ! @before_text.empty?
             @is_begline = @before_text[-1] == ?\n
          else
@@ -90,7 +90,7 @@ module Kwartz
          @is_endline = @tag_str[-1] == ?\n
          @is_whole_line = @is_begline && @is_endline
          @prev_last_char = @tag_str[-1]
-         
+
          #if @is_begline && @is_endline
          #   # nothing
          #else
@@ -454,7 +454,7 @@ module Kwartz
          return parse_attr_kdvalue(attr_value)
       end
 
-      
+
       def parse_attr_kdvalue(attr_value)
          directive_name = directive_arg = nil
          attr_value.split(/;/).each do |str|
@@ -537,16 +537,17 @@ module Kwartz
          return PrintStatement.new(arguments2)
       end
 
-      
+
       def create_print_node(str, linenum)
          arguments = expand_embed_expr(str, linenum)
          return PrintStatement.new(arguments)
       end
 
-      
+
       def expand_embed_expr(str, linenum)
          list = []
-         while str =~ /\#\{(.*?)\}\#/			## *pattern*
+         pattern = Kwartz::Config::EMBED_PATTERN   ## /\#\{(.*?)\}\#/
+         while str =~ pattern
             front     = $`
             following = $'
             expr_str  = $1
@@ -563,7 +564,7 @@ module Kwartz
          end
          return list
       end
-      
+
 
       @@flag_matrix = {
          # directive_name => [ flag_loop, flag_counter, flag_toggle ]

@@ -475,7 +475,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <p>プレゼンテーションデータ：
 </p>
 <a name="dummy-tag.pdata"></a>
-<pre class="program">&lt;a href="#{url}#" <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
+<pre class="program">&lt;a href="@{url}@" <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
 </pre>
 <p>プレゼンテーションロジック：
 </p>
@@ -530,7 +530,7 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <a name="iterate-elem.pdata"></a>
 <pre class="program">&lt;table&gt;
   &lt;tr <b>id="mark:items"</b>&gt;
-   &lt;td&gt;#{item}#&lt;/td&gt;
+   &lt;td&gt;@{item}@&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -588,8 +588,8 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 </p>
 <a name="iterate-elem.pdata"></a>
 <pre class="program">&lt;ul <b>id="mark:items"</b>&gt;
-  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
-  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+  &lt;dt&gt;@{item.text}@&lt;/dt&gt;
+  &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/ul&gt;
 </pre>
 <p>プレゼンテーションロジック：
@@ -718,12 +718,12 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <b>id="breadcrumbs"</b>&gt;
-      &lt;a href="#{item['path']}#" <b>id="mark:crumb"</b>&gt;#{item['name']}#&lt;/a&gt;
+      &lt;a href="@{item['path']}@" <b>id="mark:crumb"</b>&gt;@{item['name']}@&lt;/a&gt;
       &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
       &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
       &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
       &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <b>id="mark:title"</b>&gt;#{title}#&lt;/b&gt;
+      &lt;b <b>id="mark:title"</b>&gt;@{title}@&lt;/b&gt;
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;

@@ -46,10 +46,10 @@
 .JA	  インストール手順は次のとおりです。
 .	
 .		.====================
-.EN		### Unarchive the kwartz-ruby-*.tar.gz
+.EN		### Unarchive the kwartz-ruby_*.tar.gz
 .JA		### ファイルを解凍する
-.		$ tar xjf kwartz-ruby-*.tar.gz
-.		$ cd kwartz-ruby-*/
+.		$ tar xjf kwartz-ruby_*.tar.gz
+.		$ cd kwartz-ruby_*/
 .		
 .EN		### Run setup.rb
 .JA		### setup.rbを実行する

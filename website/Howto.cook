@@ -1,0 +1,108 @@
+/*
+ *
+ */
+
+U = users-guide;
+R = reference;
+P = p-pattern;
+docdir = ../doc;
+website_tagfile = kuwata-lab;
+html_tagfile    = html-css_i;
+
+
+
+/*
+ *
+ */
+
+help:
+{
+	[print "Help:"];
+	[print "  cook all:      create all"];
+	[print "  cook clean:    remove files"];
+}
+
+
+/*
+ *  recipes for kuwata-lab.com
+ */
+
+website_products = index.html README.en.html README.ja.html ChangeLog.html
+                [U].en.01.html [U].ja.01.html
+                [R].en.01.html [R].ja.01.html
+		[P].en.01.html [P].ja.01.html
+		design.html design.css
+		;
+all: [website_products];
+
+clean:
+{
+	rm -rf m18n.rb output.rb index.html design.html design.css
+		README.* ChangeLog.* [U].* [R].* [P].* Howto.list guide.d;
+}
+
+
+output.rb: ../doc/output.rb
+{
+	cp -a [need] .;
+}
+
+%1.%2.txt:	../doc/%1.txt
+{
+	ruby ../m18n.rb -l [upcase %2] [need] > [target];
+}
+
+%1.%2.01.html: %1.%2.txt output.rb
+{
+	local basename = %1;
+	local lang = %2;
+	local tagfile = [website_tagfile];
+	if [match [lang] 'ja'] then
+		tagfile = [tagfile],euc;
+	rm -rf guide.d;
+	mkdir -p guide.d;
+	retrieve -d guide.d [basename].[lang].txt;
+	/* -b: .profile and breadcrumbs, -s: separate, -n: number */
+	kwaser -t [tagfile] -bsn -T [basename].[lang].txt > [basename].[lang].toc.html;
+	kwaser -t [tagfile] -bsn    [basename].[lang].txt;
+	rm [basename].[lang].toc.html;
+}
+
+design.html design.css: [P].en.txt
+{
+	mkdir -p guide.d;
+	retrieve -d guide.d [need];
+	mv guide.d/design.html guide.d/design.css .;
+}
+
+README.%.txt: ../README.txt
+{
+	local lang = %;
+	ruby ../m18n.rb -l [upcase [lang]] [need] > README.[lang].txt;
+}
+
+README.%.html: README.%.txt
+{
+	if [matches % 'ja'] then
+		kwaser -t [website_tagfile],euc -b [need] > [target];
+	else
+		kwaser -t [website_tagfile]     -b [need] > [target];
+	/*
+        local lang = %;
+        local tagfile = [website_tagfile];
+        if [matches [lang] 'ja'] then
+		tagfile = [tagfile],euc;
+        kwaser -t [tagfile] [need] > [target];
+	*/
+}
+
+index.html:     index.txt
+{
+        kwaser -t [website_tagfile] -b [need] > [target];
+}
+
+
+ChangeLog.html: ../ChangeLog
+{
+        kwaser -t [website_tagfile] -b [need] > [target];
+}

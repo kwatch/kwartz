@@ -6,7 +6,7 @@
 .	.?release:	$Release$
 .	
 .	
-.JA	●はじめに
+.JA	●はじめに	| preface*
 .EN	.$ Preface	| preface*
 .	
 .	
@@ -836,7 +836,7 @@
 .	.-------------------- analyze.html
 .	<table>
 .	  <caption id="value:{{*title*}}">Sample</caption>
-.	  <tr id="mark:items" bgcolor="#{{{*color*}}}#">
+.	  <tr id="mark:items" bgcolor="@{{{*color*}}}@">
 .	    <td id="value:{{*item*}}">Foo</td>
 .	  </tr>
 .	</table>
@@ -1050,13 +1050,16 @@
 .JA	◎値の出力 | directive-output
 .EN	.$$ Printing Values of Expressions | directive-output
 .	
-.JA	「{{,#{{{/expression/}}}#,}}」は、式の値を出力するコマンドです。
-.EN	'{{,#{{{/expression/}}}#,}}' is a directive which prints the value of an expression.
+.JA	「{{,@{{{/expression/}}}@,}}」は、式の値を出力するディレクティブです。
+.JA	このパターンは、設定ファイルのEMBED_PATTERNに設定されています。
+.EN	'{{,@{{{/expression/}}}@,}}' is a directive which prints the value of an expression.
+.EN	This pattern is changeable with a constant EMBED_PATTERN in configuration file (kwartz/config.rb).
+.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- directive-output.html
-.	Hello {{*#{user.name}#*}}!
+.	Hello {{*@{user.name}@*}}!
 .	.--------------------
 .	
 .JA	出力用プログラム：
@@ -1089,8 +1092,8 @@
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- directive-output2.html
-.	With sanitizing:    {{*#{E(var)}#*}}!
-.	Without sanitizing: {{*#{X(var)}#*}}!
+.	With sanitizing:    {{*@{E(var)}@*}}!
+.	Without sanitizing: {{*@{X(var)}@*}}!
 .	.--------------------
 .	
 .JA	出力用プログラム：
@@ -1106,9 +1109,9 @@
 .EN	.$$ Printing value of expression 2| directive-value
 .	
 .JA	「{{,id="value:{{/expression/}}",}}」とすることで、内容のかわりに式の値を出力します。
-.JA	ダミーデータを利用できるため、「{{,#{{{/expression/}}}#,}}」と比べてHTMLデザインがより崩れません。
+.JA	ダミーデータを利用できるため、「{{,@{{{/expression/}}}@,}}」と比べてHTMLデザインがより崩れません。
 .EN	'{{,id="value:{{/expression/}}",}}' is a directive to print the value of expression instead of the content.
-.EN	It is more suitable for HTML design than '{{,#{{{/expression/}}}#,}}' because it allows for the use of dummy data.
+.EN	It is more suitable for HTML design than '{{,@{{{/expression/}}}@,}}' because it allows for the use of dummy data.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -1137,7 +1140,7 @@
 .EN	.$$ Attribute Values	| directive-attr
 .	
 .JA	「{{,id="attr:{{/name/}}={{/value/}}",}}」または「{{,id="attr:{{/name/}}:{{/value/}}",}}」とすることで、タグの属性値を設定できます。
-.JA	これを用いると、「{{,#{...}#,}}」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
+.JA	これを用いると、「{{,@{...}@,}}」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
 .EN	'{{,id="attr:{{/name/}}={{/value/}}",}}' (or '{{,id="attr:{{/name/}}:{{/value/}}",}}') is a directive to set an attribute value.
 .EN	It overwrites the existing value if attribute {{,{{/name/}},}} is already set.
 .	
@@ -1174,7 +1177,7 @@
 .EN	Presentation Data:
 .	.-------------------- directive-attr2.pdata
 .	<font id="if:message!=empty{{*;attr:class=klass;attr:bgcolor=color*}}">
-.	 #{message}#
+.	 @{message}@
 .	</font>
 .	.--------------------
 .	
@@ -1311,7 +1314,7 @@
 .EN	Presentation Data:
 .	.-------------------- directive-foreach.pdata
 .	<tr {{*id="foreach:item=list"*}}>
-.	  <td>#{item}#</td>
+.	  <td>@{item}@</td>
 .	</tr>
 .	.--------------------
 .	
@@ -1337,8 +1340,8 @@
 .EN	Presentation Data:
 .	.-------------------- directive-loop.pdata
 .	<dl {{*id="loop:item=list"*}}>
-.	  <dt>#{item.text}#</dt>
-.	  <dd>#{item.desc}#</dd>
+.	  <dt>@{item.text}@</dt>
+.	  <dd>@{item.desc}@</dd>
 .	</dl>
 .	.--------------------
 .	
@@ -1365,8 +1368,8 @@
 .EN	Presentation Data:
 .	.-------------------- directive-foreach2.pdata
 .	<tr {{*id="Foreach:item=list"*}}>
-.	  <td>#{item_ctr}#</td>
-.	  <td>#{item}#<td>
+.	  <td>@{item_ctr}@</td>
+.	  <td>@{item}@<td>
 .	</tr>
 .	.--------------------
 .	
@@ -1401,8 +1404,8 @@
 .	.-------------------- directive-foreach3.pdata
 .	<table>
 .	  <tbody {{*id="LOOP:item=list"*}}>
-.	    <tr class="{{*#{item_tgl}#*}}">
-.	      <td>#{item}#</td>
+.	    <tr class="{{*@{item_tgl}@*}}">
+.	      <td>@{item}@</td>
 .	    </tr>
 .	  </tbody>
 .	</table>
@@ -1436,7 +1439,7 @@
 .EN	Presentation Data:
 .	.-------------------- directive-while.pdata
 .	<tr {{*id="while:row=sth.fetch()"*}}>
-.	  <td>#{row[0]}#</td>
+.	  <td>@{row[0]}@</td>
 .	</tr>
 .	.--------------------
 .	
@@ -1538,7 +1541,7 @@
 .EN	.#Presentation Data (tab.html) :
 .	.#.-------------------- tab.html
 .	.#<span style="border-width:1 1 0 1; border-style:solid; padding:1 5 1 5">
-.	.#  <a href="#{tab['url']}#" style="text-decoration:none">#{tab['name']}#</a>
+.	.#  <a href="@{tab['url']}@" style="text-decoration:none">@{tab['name']}@</a>
 .	.#</span>
 .	.#.--------------------
 .	.#
@@ -1785,9 +1788,9 @@
 .		<input type="checkbox" id="foreach:item=list" {{*checked="checked"*}}/>
 .		
 .		## NG
-.		<option id="attr:value=val" #{flag ? 'selected' : ''}#/>
+.		<option id="attr:value=val" @{flag ? 'selected' : ''}@/>
 .		## OK
-.		<option value="#{val}#" #{flag ? 'selected' : ''}#>
+.		<option value="@{val}@" @{flag ? 'selected' : ''}@>
 .		.--------------------
 .	
 .	
@@ -2050,6 +2053,10 @@
 .	.[ CHARSET ]
 .JA		文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。
 .EN		Specify character encoding name for jstl11 and jstl10.
+.	
+.	.[ EMBED_PATTERN ]
+.JA		プレゼンテーションデータ中に式を埋め込むためのパターンを指定します。
+.EN		Specify a pattern to embed expression into presentation data.
 .	
 .	
 .	

@@ -189,7 +189,7 @@ h3, .subsection	{
       last update: $Date$<br>
     </div>
 
-<a name="はじめに"></a>
+<a name="preface"></a>
 <h2 class="section1">はじめに</h2>
 <p>このドキュメントは、Kwartzのリファレンスマニュアルです。
 プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプションについて説明しています。
@@ -197,7 +197,7 @@ h3, .subsection	{
 <a name="toc"></a>
 <h3 class="section2">目次</h3>
 <ul>
-  <li><a href="#はじめに">はじめに</a>
+  <li><a href="#preface">はじめに</a>
   <ul>
     <li><a href="#toc">目次</a>
     </li>
@@ -1254,7 +1254,7 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 <a name="analyze.html"></a>
 <pre class="program">&lt;table&gt;
   &lt;caption id="value:<b>title</b>"&gt;Sample&lt;/caption&gt;
-  &lt;tr id="mark:items" bgcolor="#{<b>color</b>}#"&gt;
+  &lt;tr id="mark:items" bgcolor="@{<b>color</b>}@"&gt;
     &lt;td id="value:<b>item</b>"&gt;Foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
@@ -1406,12 +1406,13 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 
 <a name="directive-output"></a>
 <h3 class="section2">値の出力</h3>
-<p>「<code>#{<i>expression</i>}#</code>」は、式の値を出力するコマンドです。
+<p>「<code>@{<i>expression</i>}@</code>」は、式の値を出力するディレクティブです。
+このパターンは、設定ファイルのEMBED_PATTERNに設定されています。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-output.html"></a>
-<pre class="program">Hello <b>#{user.name}#</b>!
+<pre class="program">Hello <b>@{user.name}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1444,8 +1445,8 @@ Hello &lt;c:out value="${user.name}"/&gt;!
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-output2.html"></a>
-<pre class="program">With sanitizing:    <b>#{E(var)}#</b>!
-Without sanitizing: <b>#{X(var)}#</b>!
+<pre class="program">With sanitizing:    <b>@{E(var)}@</b>!
+Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1470,7 +1471,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <a name="directive-value"></a>
 <h3 class="section2">値の出力2</h3>
 <p>「<code>id="value:<i>expression</i>"</code>」とすることで、内容のかわりに式の値を出力します。
-ダミーデータを利用できるため、「<code>#{<i>expression</i>}#</code>」と比べてHTMLデザインがより崩れません。
+ダミーデータを利用できるため、「<code>@{<i>expression</i>}@</code>」と比べてHTMLデザインがより崩れません。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -1497,7 +1498,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <a name="directive-attr"></a>
 <h3 class="section2">属性値の設定</h3>
 <p>「<code>id="attr:<i>name</i>=<i>value</i>"</code>」または「<code>id="attr:<i>name</i>:<i>value</i>"</code>」とすることで、タグの属性値を設定できます。
-これを用いると、「<code>#{...}#</code>」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
+これを用いると、「<code>@{...}@</code>」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
 </p>
 <p>次の例では、属性classにダミーの属性値 "<code>odd</code>" を設定していますが、実際には変数<code>klass</code>の値を用いるようにしています。
 </p>
@@ -1534,7 +1535,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 </p>
 <a name="directive-attr2.pdata"></a>
 <pre class="program">&lt;font id="if:message!=empty<b>;attr:class=klass;attr:bgcolor=color</b>"&gt;
- #{message}#
+ @{message}@
 &lt;/font&gt;
 </pre>
 <p>出力用スクリプト：
@@ -1776,7 +1777,7 @@ elseやelseifも使用できます。
 </p>
 <a name="directive-foreach.pdata"></a>
 <pre class="program">&lt;tr <b>id="foreach:item=list"</b>&gt;
-  &lt;td&gt;#{item}#&lt;/td&gt;
+  &lt;td&gt;@{item}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <p>出力用プログラム：
@@ -1815,8 +1816,8 @@ elseやelseifも使用できます。
 </p>
 <a name="directive-loop.pdata"></a>
 <pre class="program">&lt;dl <b>id="loop:item=list"</b>&gt;
-  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
-  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+  &lt;dt&gt;@{item.text}@&lt;/dt&gt;
+  &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>出力用プログラム：
@@ -1857,8 +1858,8 @@ elseやelseifも使用できます。
 </p>
 <a name="directive-foreach2.pdata"></a>
 <pre class="program">&lt;tr <b>id="Foreach:item=list"</b>&gt;
-  &lt;td&gt;#{item_ctr}#&lt;/td&gt;
-  &lt;td&gt;#{item}#&lt;td&gt;
+  &lt;td&gt;@{item_ctr}@&lt;/td&gt;
+  &lt;td&gt;@{item}@&lt;td&gt;
 &lt;/tr&gt;
 </pre>
 <p>出力用プログラム：
@@ -1909,8 +1910,8 @@ elseやelseifも使用できます。
 <a name="directive-foreach3.pdata"></a>
 <pre class="program">&lt;table&gt;
   &lt;tbody <b>id="LOOP:item=list"</b>&gt;
-    &lt;tr class="<b>#{item_tgl}#</b>"&gt;
-      &lt;td&gt;#{item}#&lt;/td&gt;
+    &lt;tr class="<b>@{item_tgl}@</b>"&gt;
+      &lt;td&gt;@{item}@&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
@@ -1973,7 +1974,7 @@ elseやelseifも使用できます。
 </p>
 <a name="directive-while.pdata"></a>
 <pre class="program">&lt;tr <b>id="while:row=sth.fetch()"</b>&gt;
-  &lt;td&gt;#{row[0]}#&lt;/td&gt;
+  &lt;td&gt;@{row[0]}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <p>出力用プログラム：
@@ -2160,9 +2161,9 @@ Hello &lt;%= name %&gt;!
 &lt;input type="checkbox" id="foreach:item=list" <b>checked="checked"</b>/&gt;
 
 ## NG
-&lt;option id="attr:value=val" #{flag ? 'selected' : ''}#/&gt;
+&lt;option id="attr:value=val" @{flag ? 'selected' : ''}@/&gt;
 ## OK
-&lt;option value="#{val}#" #{flag ? 'selected' : ''}#&gt;
+&lt;option value="@{val}@" @{flag ? 'selected' : ''}@&gt;
 </pre>
 </li>
 </ul>
@@ -2409,6 +2410,13 @@ NOEND </b></dt>
 CHARSET </b></dt>
 <dd class="dd3">
 	文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+EMBED_PATTERN </b></dt>
+<dd class="dd3">
+	プレゼンテーションデータ中に式を埋め込むためのパターンを指定します。
 </dd>
 </dl>
 <br>

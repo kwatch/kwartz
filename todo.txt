@@ -37,3 +37,5 @@
 .- [_] load library path
 .- [_] include file path
 .- [_] change #{...}# to @{...}@
+.- [_] API doc
+.- [_] auto-rename local variable to '_var'
