@@ -17,7 +17,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test($input, $expected, $lang, $flag_test=TRUE) {
+	function _test($input, $expected, $lang, $flag_test=TRUE, $flag_escape=FALSE) {
 		$input    = preg_replace('/^\t\t/m',  '',  $input);
 		$input    = preg_replace('/^\n/',     '',  $input);
 		$expected = preg_replace('/^\t\t/m',  '',  $expected);
@@ -25,11 +25,11 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$parser  = new KwartzParser($input);
 		$block   = $parser->parse();
 		if ($lang == 'php') {
-			$translator = new KwartzPhpTranslator($block);
+			$translator = new KwartzPhpTranslator($block, $flag_escape);
 		} elseif ($lang == 'eruby') {
-			$translator = new KwartzErubyTranslator($block);
+			$translator = new KwartzErubyTranslator($block, $flag_escape);
 		} elseif ($lang == 'jsp') {
-			$translator = new KwartzJspTranslator($block);
+			$translator = new KwartzJspTranslator($block, $flag_escape);
 		} else {
 			assert(false);
 		}
@@ -39,6 +39,10 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 			$this->assertEquals($expected, $actual);
 		}
 		return $translator;
+	}
+	
+	function _test_escape($input, $expected, $lang, $flag_test=TRUE, $flag_escape=TRUE) {
+		return $this->_test($input, $expected, $lang, $flag_test, $flag_escape);
 	}
 
 	function _test_php($input, $expected, $flag_test=TRUE) {
@@ -625,7 +629,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 
 	const input_macro2 = '
-		:expand(elem_foo)
+		:expand(element_foo)
 		:macro(stag_foo)
 		  :print("<span>")
 		:end
@@ -635,12 +639,12 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		:macro(etag_foo)
 		  :print("</span>\n")
 		:end
-		:macro(elem_foo)
+		:macro(element_foo)
 		  :expand(stag_foo)
 		  :expand(cont_foo)
 		  :expand(etag_foo)
 		:end
-		:macro(elem_foo)
+		:macro(element_foo)
 		  :foreach(foo=bar)
 		    :expand(stag_foo)
 		    :expand(cont_foo)
@@ -838,6 +842,46 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_indent1, $expected);
 	}
+
+
+
+	const input_escape1 = '
+	:print(data, "\n")
+	:print("aaa", array[i], x+y, "bbb\n");
+	:print(x > y ? x : y, "\n")
+	';
+
+	function test_php_escape1() {
+		$expected = '
+		<?php echo htmlspecialchars($data); ?>
+		aaa<?php echo htmlspecialchars($array[$i]); ?><?php echo htmlspecialchars($x + $y); ?>bbb
+		<?php echo htmlspecialchars($x > $y ? $x : $y); ?>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'php');
+	}
+
+	function test_eruby_escape1() {
+		$expected = '
+		<%= CGI.escapeHTML((data).to_s) %>
+		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= CGI.escapeHTML((x + y).to_s) %>bbb
+		<%= CGI.escapeHTML((x > y ? x : y).to_s) %>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'eruby');
+	}
+
+	function test_jsp_escape1() {
+		$expected = '
+		<c:out value="${data}"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}"/>bbb
+		<c:choose><c:when test="${x > y}">
+		<c:out value="${x}"/>
+		</c:when><c:otherwise>
+		<c:out value="${y}"/>
+		</c:otherwise></c:choose>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jsp');
+	}
+
 }
 
 

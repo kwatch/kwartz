@@ -589,8 +589,8 @@ require_once('KwartzUtility.inc');
 				$this->macro_stmt_list[] = new KwartzMacroStatement("stag_$name", $stag_block);
 				$this->macro_stmt_list[] = new KwartzMacroStatement("cont_$name", $cont_block);
 				$this->macro_stmt_list[] = new KwartzMacroStatement("etag_$name", $etag_block);
-				$this->macro_stmt_list[] = new KwartzMacroStatement("elem_$name", $elem_block);
-				$stmt_list[] = new KwartzExpandStatement("elem_$name");
+				$this->macro_stmt_list[] = new KwartzMacroStatement("element_$name", $elem_block);	## element_ or elem_
+				$stmt_list[] = new KwartzExpandStatement("element_$name");
 				break;
 
 			case 'dummy':

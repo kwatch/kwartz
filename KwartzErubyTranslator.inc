@@ -30,11 +30,11 @@ require_once('KwartzTranslator.inc');
 			
 			':print'      => '<%= ',
 			':endprint'   => ' %>',
-			':print2'     => '<%= CGI.escapeHTML((',
-			':endprint2'  => ').to_s()) ?>',
+			':eprint'     => '<%= CGI.escapeHTML((',
+			':endeprint'  => ').to_s) %>',
 			
-			':include'    => '<?php include(',
-			':endinclude' => '); ?>',
+			':include'    => '<% include(',
+			':endinclude' => '); %>',
 			
 			'true'        => 'true',
 			'false'       => 'false',
@@ -49,11 +49,11 @@ require_once('KwartzTranslator.inc');
 			':]'   => "]",
 			
 			'E('   => 'CGI.escapeHTML((',
-			'E)'   => ').to_s())',
+			'E)'   => ').to_s)',
 		);
 
-		function __construct($block) {
-			parent::__construct($block);
+		function __construct($block, $flag_escape=FALSE) {
+			parent::__construct($block, $flag_escape);
 		}
 
 		protected function keyword($token) {

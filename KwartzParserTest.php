@@ -748,10 +748,10 @@ END;
 
 
 	function test_expand_stmt1() {
-		$input = ":expand(elem_foo)";
+		$input = ":expand(element_foo)";
 		$expected = <<<END
 		:expand
-		  'elem_foo'
+		  'element_foo'
 
 END;
 		//$this->_test_stmt($input, $expected, 'parse_expand_stmt');
@@ -759,10 +759,10 @@ END;
 	}
 
 	function test_expand_stmt2() {
-		$input = "@elem_foo";
+		$input = "@element_foo";
 		$expected = <<<END
 		:expand
-		  'elem_foo'
+		  'element_foo'
 
 END;
 		//$this->_test_stmt($input, $expected, 'parse_expand_stmt');
@@ -792,7 +792,7 @@ END;
 END;
 		$expected = <<<END
 		:macro
-		  'elem_foo'
+		  'element_foo'
 		  <<block>>
 		    :expand
 		      'stag_foo'
@@ -828,7 +828,7 @@ END;
 		$expected = <<<END
 		<<block>>
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :expand
 		        'stag_foo'
@@ -837,7 +837,7 @@ END;
 		      :expand
 		        'etag_foo'
 		  :macro
-		    'elem_bar'
+		    'element_bar'
 		    <<block>>
 		      :expand
 		        'stag_bar'
@@ -846,7 +846,7 @@ END;
 		      :expand
 		        'etag_bar'
 		  :macro
-		    'elem_baz'
+		    'element_baz'
 		    <<block>>
 		      :expand
 		        'stag_baz'
@@ -932,7 +932,7 @@ END;
 		:macro(etag_foo)
 		  :print("</tr>\n")
 		:end
-		:macro(elem_foo)
+		:macro(element_foo)
 		  :expand(stag_foo)
 		  :expand(cont_foo)
 		  :expand(etag_foo)
@@ -971,7 +971,7 @@ END;
 		      :print
 		        "</tr>\\n"
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :expand
 		        'stag_foo'
@@ -980,7 +980,7 @@ END;
 		      :expand
 		        'etag_foo'
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :set
 		        =
@@ -1271,7 +1271,7 @@ END;
 		$expected = <<<END
 <<block>>
   :macro
-    'elem_foo'
+    'element_foo'
     <<block>>
       :expand
         'stag_foo'
@@ -1318,7 +1318,7 @@ END;
 		$expected = <<<END
 <<block>>
   :macro
-    'elem_user'
+    'element_user'
     <<block>>
       :::<?php foreach (\$hash as \$key=>\$value) { ?>
       :print

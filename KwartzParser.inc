@@ -633,8 +633,8 @@ require_once('KwartzScanner.inc');
 			}
 			$this->token_check('name', "'$t' should take a name.");
 			$name = $this->value();
-			$macro_name = $flag_element ? ('elem_' . $name) : $name;
-			//$macro_name = $flag_element ? ('element_' . $name) : $name;
+			//$macro_name = $flag_element ? ('elem_' . $name) : $name;
+			$macro_name = $flag_element ? ('element_' . $name) : $name;
 			$this->scan();
 			if ($flag_php_mode) {
 				$this->token_check2('{', "'$t()' requires '{'.");
@@ -688,10 +688,10 @@ require_once('KwartzScanner.inc');
 					}
 					$macro_name .= '_' . $this->current_element_name;
 					break;
-				//default:
-				//	if (preg_match(/^elem_(.*)$/, $macro_name, $m = array()) {
-				//		$macro_name = 'element_' . $m[1];
-				//	}
+				default:
+					if (preg_match('/^elem_(.*)$/', $macro_name, $m = array())) {	## elem_ to element_
+						$macro_name = 'element_' . $m[1];
+					}
 				}
 				return new KwartzExpandStatement($macro_name);
 			}
@@ -707,9 +707,9 @@ require_once('KwartzScanner.inc');
 			}
 			$this->token_check('name', "'{$t}' requires macro-name.");
 			$macro_name = $this->value();
-			//if (preg_match('/^elem_(.*)$/', $macro_name, $m=array())) {
-			//	$macro_name = 'element_' . $m[1];
-			//}
+			if (preg_match('/^elem_(.*)$/', $macro_name, $m=array())) {		## elem_ to element_
+				$macro_name = 'element_' . $m[1];
+			}
 			$this->scan();
 			if ($flag_paren) {
 				$this->token_check2(')', "'{$t}(' is not closed by ')'.");

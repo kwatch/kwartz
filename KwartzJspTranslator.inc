@@ -34,8 +34,8 @@ require_once('KwartzNode.inc');
 
 			':print'      => '<c:out value="${',
 			':endprint'   => '}" escapeXml="false"/>',
-			':print2'     => '<c:out value="${',
-			':endprint2'  => '}"/>',
+			':eprint'     => '<c:out value="${',
+			':endeprint'  => '}"/>',
 
 			':include'    => NULL,
 			':endinclude' => NULL,
@@ -68,8 +68,8 @@ require_once('KwartzNode.inc');
 			'E)'   => NULL,
 		);
 
-		function __construct($block) {
-			parent::__construct($block);
+		function __construct($block, $flag_escape=FALSE) {
+			parent::__construct($block, $flag_escape);
 			$this->condfind_visitor = new KwartzConditionalExpressionFindVisitor();
 			$this->deepcopy_visitor = new KwartzConditionalDeepCopyVisitor();
 		}

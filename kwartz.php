@@ -64,6 +64,9 @@ require_once('KwartzCompiler.inc');
 			} else {
 				$lang = 'php';
 			}
+			
+			## flag escape
+			$flag_escape = ($this->option('-s') || $this->option('-e'))
 
 			## determine which action to do (default: 'compile')
 			$action = 'compile';
@@ -109,12 +112,12 @@ require_once('KwartzCompiler.inc');
 			}
 
 			## do action
-			$output = $this->do_action($action, $input, $plogic_code, $lang);
+			$output = $this->do_action($action, $input, $plogic_code, $lang, $flag_escape);
 			echo $output;
 		}
 
 
-		function do_action(&$action, &$input, &$plogic_code, $lang) {
+		function do_action(&$action, &$input, &$plogic_code, $lang, $flag_escape) {
 			switch ($action) {
 			case 'compile':
 				$output = '';
@@ -134,7 +137,7 @@ require_once('KwartzCompiler.inc');
 						$output .= "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jstl/core\" %>$newline";
 					}
 				}
-				$compiler = new KwartzCompiler($input, $plogic_code, $lang);
+				$compiler = new KwartzCompiler($input, $plogic_code, $lang, $flag_escape);
 				$output .= $compiler->compile();
 				break;
 
@@ -145,7 +148,7 @@ require_once('KwartzCompiler.inc');
 				break;
 
 			case 'translate':
-				$parser = new KwartzParser($input);
+				$parser = new KwartzParser($input, $flag_escape);
 				$block = $parser->parse();
 				switch ($lang) {
 				case 'php':
@@ -229,6 +232,8 @@ END;
 				switch ($opt) {
 				case '-h':
 				case '-v':
+				case '-s':
+				case '-e':
 					$this->options[$opt] = TRUE;
 					break;
 

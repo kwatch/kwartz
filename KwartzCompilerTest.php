@@ -14,7 +14,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
+	function __test($pdata, $plogic, $expected, $lang, $flag_test, $flag_escape) {
 		//if (! $flag_test) { return; }
 		$pdata    = preg_replace('/^\t\t/m', '', $pdata);
 		$pdata    = preg_replace('/^\n/',    '', $pdata);
@@ -22,7 +22,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$plogic   = preg_replace('/^\n/',    '', $plogic);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$expected = preg_replace('/^\n/',    '', $expected);
-		$compiler = new KwartzCompiler($pdata, $plogic, $lang);
+		$compiler = new KwartzCompiler($pdata, $plogic, $lang, $flag_escape);
 		$code = $compiler->compile();
 		$actual = $code;
 		if ($flag_test) {
@@ -34,6 +34,14 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 			#echo kwartz_inspect_str($actual);
 		}
 		return $compiler;
+	}
+	
+	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
+		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, FALSE);
+	}
+	
+	function _test_escape($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
+		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, TRUE);
 	}
 
 	
@@ -73,7 +81,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const plogic_compile1 = '
-		:elem(user)
+		:element(user)
 		  :set(i = 0)
 		  :foreach(user = user_list)
 		    :set(i += 1)
@@ -211,7 +219,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const plogic_compile2 = '
-		:elem(link)
+		:element(link)
 		  :if (url != null)
 		    @stag
 		    @cont
@@ -345,7 +353,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const plogic_compile3 = '
-		:elem(week)
+		:element(week)
 		
 		  :set(day = \'&nbsp;\')
 		  :set(wday = 1)
@@ -382,7 +390,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		
 		:end
 		
-		:elem(day)
+		:element(day)
 		  :if(wday == 1)
 		    @stag
 		    :print(day)
@@ -653,6 +661,143 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$plogic   = preg_replace('/\n/', "\r\n", KwartzCompilerTest::plogic_compile1);
 		$expected = preg_replace('/\n/', "\r\n", KwartzCompilerTest::expected_compile1_jsp);
 		$this->_test($pdata, $plogic, $expected, 'jsp');
+	}
+
+
+
+	## --------------------
+	## escape
+	## --------------------
+	const pdata_escape1 = '
+		<html>
+		  <body>
+		    <div id="mark:mainbody">
+		      <div class="error" kd="mark:error">
+		        <span kd="value:error_msg">not found.</span>
+		      </div>
+		      <table kd="mark:user_list">
+		        <tbody kd="LOOP:user=user_list">
+		          <tr class="odd" kd="attr:class:user_tgl">
+		            <td kd="value:user[:name]">foo</td>
+		          </tr>
+		        </tbody>
+		      </table>
+		      <p kd="mark:total">total:<span kd="value:user_ctr">10</span></p>
+		    </div>
+		  </body>
+		</html>
+		';
+	
+	const plogic_escape1 = '
+		:element(mainbody)
+		  :if (flag_error)
+		    @element_error
+		  :else
+		    @element_user_list
+		    @element_total
+		  :end
+		:end
+		';
+	
+	const expected_escape1_php = '
+		<html>
+		  <body>
+		<?php if ($flag_error) { ?>
+		      <div class="error">
+		<?php echo htmlspecialchars($error_msg); ?>      </div>
+		<?php } else { ?>
+		      <table>
+		        <tbody>
+		  <?php $user_ctr = 0; ?>
+		  <?php foreach ($user_list as $user) { ?>
+		    <?php $user_ctr += 1; ?>
+		    <?php $user_tgl = $user_ctr % 2 == 0 ? "even" : "odd"; ?>
+		          <tr class="<?php echo htmlspecialchars($user_tgl); ?>">
+		            <td><?php echo htmlspecialchars($user[\'name\']); ?></td>
+		          </tr>
+		  <?php } ?>
+		        </tbody>
+		      </table>
+		      <p>total:<?php echo htmlspecialchars($user_ctr); ?></p>
+		<?php } ?>
+		  </body>
+		</html>
+		';
+
+	const expected_escape1_eruby = '
+		<html>
+		  <body>
+		<% if flag_error then %>
+		      <div class="error">
+		<%= CGI.escapeHTML((error_msg).to_s) %>      </div>
+		<% else %>
+		      <table>
+		        <tbody>
+		  <% user_ctr = 0 %>
+		  <% for user in user_list do %>
+		    <% user_ctr += 1 %>
+		    <% user_tgl = user_ctr % 2 == 0 ? "even" : "odd" %>
+		          <tr class="<%= CGI.escapeHTML((user_tgl).to_s) %>">
+		            <td><%= CGI.escapeHTML((user[:name]).to_s) %></td>
+		          </tr>
+		  <% end %>
+		        </tbody>
+		      </table>
+		      <p>total:<%= CGI.escapeHTML((user_ctr).to_s) %></p>
+		<% end %>
+		  </body>
+		</html>
+		';
+
+
+	const expected_escape1_jsp = '
+		<html>
+		  <body>
+		<c:choose><c:when test="${flag_error}">
+		      <div class="error">
+		<c:out value="${error_msg}"/>      </div>
+		</c:when><c:otherwise>
+		      <table>
+		        <tbody>
+		  <c:set var="user_ctr" value="0"/>
+		  <c:forEach var="user" items="${user_list}">
+		    <c:set var="user_ctr" value="${user_ctr + 1}"/>
+		    <c:choose><c:when test="${user_ctr % 2 == 0}">
+		      <c:set var="user_tgl" value="even"/>
+		    </c:when><c:otherwise>
+		      <c:set var="user_tgl" value="odd"/>
+		    </c:otherwise></c:choose>
+		          <tr class="<c:out value="${user_tgl}"/>">
+		            <td><c:out value="${user[\'name\']}"/></td>
+		          </tr>
+		  </c:forEach>
+		        </tbody>
+		      </table>
+		      <p>total:<c:out value="${user_ctr}"/></p>
+		</c:otherwise></c:choose>
+		  </body>
+		</html>
+		';
+	
+	function test_escape1_php() {
+		$pdata    = KwartzCompilerTest::pdata_escape1;
+		$plogic   = KwartzCompilerTest::plogic_escape1;
+		$expected = KwartzCompilerTest::expected_escape1_php;
+		$this->_test_escape($pdata, $plogic, $expected, 'php');
+	}
+
+	function test_escape1_eruby() {
+		$pdata    = KwartzCompilerTest::pdata_escape1;
+		$plogic   = KwartzCompilerTest::plogic_escape1;
+		$expected = KwartzCompilerTest::expected_escape1_eruby;
+		$this->_test_escape($pdata, $plogic, $expected, 'eruby');
+	}
+
+	function test_escape1_jsp() {
+		$pdata    = KwartzCompilerTest::pdata_escape1;
+		$plogic   = KwartzCompilerTest::plogic_escape1;
+		$expected = KwartzCompilerTest::expected_escape1_jsp;
+		$this->_test_escape($pdata, $plogic, $expected, 'jsp');
 	}
 
 }

@@ -33,6 +33,7 @@ require_once('KwartzUtility.inc');
 	abstract class KwartzBaseTranslator extends KwartzTranslator {
 		protected $code = "";
 		protected $block;
+		protected $flag_escape = false;
 		protected $macro_stmt_hash = array();
 		protected $nl = "\n";			// newline char ("\n" or "\r\n")
 		protected $priorities = array(
@@ -122,11 +123,20 @@ require_once('KwartzUtility.inc');
 		protected $max_depth = 9;
 
 
-		function __construct($block) {
-			$this->block = $block;
+		function __construct($block, $flag_escape=FALSE) {
+			$this->block       = $block;
+			$this->flag_escape = $flag_escape;
+			if ($flag_escape) {
+				$print_key    = ':print';
+				$endprint_key = ':endprint';
+			} else {
+				$print_key    = ':eprint';
+				$endprint_key = ':endeprint';
+			}
 		}
 		
 		function code() { return $this->code; }
+		function flag_escape() { return $this->flag_escape; }
 		
 		function set_newline_char($newline) { $this->nl = $newline; }
 		function newline_char() { return $this->nl; }
@@ -327,13 +337,20 @@ require_once('KwartzUtility.inc');
 		}
 
 		protected function translate_print_statement($stmt, $depth) {
+			if ($this->flag_escape) {
+				$startkey = ':eprint';
+				$endkey   = ':endeprint';
+			} else {
+				$startkey = ':print';
+				$endkey   = ':endprint';
+			}
 			foreach ($stmt->arglist() as $expr) {
 				if (($t = $expr->token()) == 'string') {
 					$this->code .= $expr->value();
 				} else {
-					$this->code .= $this->keyword(':print');
+					$this->code .= $this->keyword($startkey);	# 'print' or 'print2'
 					$this->translate_expression($expr);
-					$this->code .= $this->keyword(':endprint');
+					$this->code .= $this->keyword($endkey);		# 'endprint' or 'endprint2'
 				}
 			}
 		}
@@ -456,8 +473,8 @@ require_once('KwartzUtility.inc');
 
 			':print'      => '<?php echo ',
 			':endprint'   => '; ?>',
-			':print2'     => '<?php echo htmlspecialchars(',
-			':endprint2'  => '); ?>',
+			':eprint'     => '<?php echo htmlspecialchars(',
+			':endeprint'  => '); ?>',
 			
 			':include'    => '<?php include(',
 			':endinclude' => '); ?>',
@@ -479,8 +496,8 @@ require_once('KwartzUtility.inc');
 			'E)'   => ')',
 		);
 		
-		function __construct($block) {
-			parent::__construct($block);
+		function __construct($block, $flag_escape=FALSE) {
+			parent::__construct($block, $flag_escape);
 		}
 
 		protected function keyword($token) {

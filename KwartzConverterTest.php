@@ -454,7 +454,7 @@ END;
 		      :print
 		        "</div>"
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :expand
 		        'stag_foo'
@@ -463,7 +463,7 @@ END;
 		      :expand
 		        'etag_foo'
 		  :expand
-		    'elem_foo'
+		    'element_foo'
 
 END;
 		$this->_test_convert($input,  $expected);
@@ -1010,7 +1010,7 @@ END;
 		    'etag_day'
 		    <<block>>
 		  :macro
-		    'elem_day'
+		    'element_day'
 		    <<block>>
 		      :expand
 		        'stag_day'
@@ -1019,7 +1019,7 @@ END;
 		      :expand
 		        'etag_day'
 		  :expand
-		    'elem_day'
+		    'element_day'
 
 END;
 		$this->_test_convert($input, $expected);
@@ -1089,7 +1089,7 @@ END;
 		      :print
 		        "  </div>\\n"
 		  :macro
-		    'elem_baz'
+		    'element_baz'
 		    <<block>>
 		      :expand
 		        'stag_baz'
@@ -1106,14 +1106,14 @@ END;
 		    'cont_bar'
 		    <<block>>
 		      :expand
-		        'elem_baz'
+		        'element_baz'
 		  :macro
 		    'etag_bar'
 		    <<block>>
 		      :print
 		        " </div>\\n"
 		  :macro
-		    'elem_bar'
+		    'element_bar'
 		    <<block>>
 		      :expand
 		        'stag_bar'
@@ -1130,14 +1130,14 @@ END;
 		    'cont_foo'
 		    <<block>>
 		      :expand
-		        'elem_bar'
+		        'element_bar'
 		  :macro
 		    'etag_foo'
 		    <<block>>
 		      :print
 		        "</div>"
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :expand
 		        'stag_foo'
@@ -1146,7 +1146,7 @@ END;
 		      :expand
 		        'etag_foo'
 		  :expand
-		    'elem_foo'
+		    'element_foo'
 
 END;
 		$this->_test_convert($input, $expected);
@@ -1190,7 +1190,7 @@ END;
 		      :print
 		        "</div>"
 		  :macro
-		    'elem_foo'
+		    'element_foo'
 		    <<block>>
 		      :expand
 		        'stag_foo'
@@ -1199,7 +1199,7 @@ END;
 		      :expand
 		        'etag_foo'
 		  :expand
-		    'elem_foo'
+		    'element_foo'
 
 END;
 		$this->_test_convert($input, $expected);

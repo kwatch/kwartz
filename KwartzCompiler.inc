@@ -28,12 +28,9 @@ require_once('KwartzUtility.inc');
 		private $pdata;
 		private $plogic;
 		private $lang;
+		private $flag_escape;
 		
-		private $converter;
-		private $parser;
-		private $translator;
-		
-		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php') {
+		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php', $flag_escape=FALSE) {
 			$this->pdata = $pdata_str;
 			$this->plogic = $plogic_code;
 			switch ($lang) {
@@ -47,6 +44,7 @@ require_once('KwartzUtility.inc');
 				throw new KwartzCompilationError($msg, $this);
 			}
 			$this->lang = $lang;
+			$this->flag_escape = $flag_escape;
 		}
 		
 		function compile() {
@@ -80,13 +78,13 @@ require_once('KwartzUtility.inc');
 			## translate block into PHP code
 			switch ($this->lang) {
 			case 'php':
-				$translator = new KwartzPhpTranslator($block);
+				$translator = new KwartzPhpTranslator($block, $this->flag_escape);
 				break;
 			case 'eruby':
-				$translator = new KwartzErubyTranslator($block);
+				$translator = new KwartzErubyTranslator($block, $this->flag_escape);
 				break;
 			case 'jsp':
-				$translator = new KwartzJspTranslator($block);
+				$translator = new KwartzJspTranslator($block, $this->flag_escape);
 				break;
 			default:
 				assert(false);
