@@ -17,7 +17,7 @@ module Kwartz
 
    ## abstract class
    class Translator
-   
+
       def translate_expression(expr, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate_expression() is not implemented.")
       end
@@ -27,7 +27,7 @@ module Kwartz
       def translate(node, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate() is not implemented.")
       end
-      
+
       @@subclasses = {}
       def self.register(lang, klass)
          @@subclasses[lang] = klass
@@ -47,24 +47,18 @@ module Kwartz
 
    end
 
-   
+
    ## abstract class
    class BaseTranslator < Translator
       include Visitor
-      
+
       def initialize(properties={})
          @properties = properties
          if !@properties.key?(:escape)
             @properties[:escape] = Kwartz::Config::ESCAPE
          end
          #
-         if properties[:escape]
-            @default_print     = :eprint
-            @default_endprint  = :endeprint
-         else
-            @default_print     = :print
-            @default_endprint  = :endprint
-         end
+         @default_flag_escape = properties[:escape] ? true : false
          #
          @rename = properties[:rename] || Kwartz::Config::RENAME
          if @rename
@@ -77,11 +71,11 @@ module Kwartz
          @code   = ''
       end
       attr_accessor :local_vars
-      
+
       def rename?
          return @rename
       end
-      
+
       def indent(depth)
          @indent * depth
       end
@@ -358,17 +352,11 @@ module Kwartz
             if t == :string || t == :numeric
                @code << expr.value
             else
-               startkey = endkey = nil
+               flag_escape = nil
                if expr.token == :function
                   fname = expr.funcname
                   if fname == 'E' || fname == 'X'
-                     if fname == 'E'
-                        startkey = :eprint
-                        endkey   = :endeprint
-                     else
-                        startkey = :print
-                        endkey   = :endprint
-                     end
+                     flag_escape = fname == 'E'
                      args = expr.arguments
                      if !args || args.length != 1
                         raise TranslationError.new("function #{fname}() should take only an argument.")
@@ -376,23 +364,22 @@ module Kwartz
                      expr = args[0]
                   end
                end
-               if !startkey
-                  if constant_expr?(expr)
-                     startkey = :print
-                     endkey   = :endprint
-                  else
-                     startkey = @default_print
-                     endkey   = @default_endprint
-                  end
+               if flag_escape == nil
+                  flag_escape = constant_expr?(expr) ? false : @default_flag_escape
                end
-               @code << keyword(startkey)
-               translate_expression(expr)
-               @code << keyword(endkey)
+               Kwartz::assert(false) unless flag_escape != nil
+               @code << keyword(flag_escape ? :eprint    : :print)
+               translate_expression_for_print(expr, flag_escape)
+               @code << keyword(flag_escape ? :endeprint : :endprint)
             end
          end
          return @code
       end
 
+      def translate_expression_for_print(expr, flag_escape)
+         return translate_expression(expr)
+      end
+      protected :translate_expression_for_print
 
       ##
       def visit_expr_statement(stmt, depth)

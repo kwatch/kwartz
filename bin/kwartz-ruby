@@ -33,6 +33,7 @@ require 'kwartz/translator/eruby'
 require 'kwartz/translator/erb'
 require 'kwartz/translator/php'
 require 'kwartz/translator/jstl'
+require 'kwartz/translator/velocity'
 require 'kwartz/util/optparse'
 
 module Kwartz
@@ -233,7 +234,7 @@ Usage: #{command} [..options..] file1 [file2...]
   -h, --help : help
   -v         : version
   -a action  : compile/parse/translate/convert/analyze/defun (default 'compile')
-  -l lang    : eruby/erb/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
+  -l lang    : eruby/erb/php/jstl10/jstl11/velocity (default '#{Kwartz::Config::LANG}')
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   -p file1,file2,...  : presentation logic filenames
   -i file1,file2,...  : import element from outer files

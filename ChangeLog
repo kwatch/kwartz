@@ -3,6 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-03-22 rev.56
+	.- [enhance] new class VelocityTranslator
+	.- [change] new file visitor/conditional.rb
+	.- [change] new method Translator#translate_expression_for_print()
+
 .: 2005-03-21 rev.55
 	.- [update] update p-pattern.txt
 

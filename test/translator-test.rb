@@ -18,6 +18,8 @@ require 'kwartz/translator'
 require 'kwartz/translator/eruby'
 require 'kwartz/translator/php'
 require 'kwartz/translator/jstl'
+require 'kwartz/translator/velocity'
+
 
 
 ##
@@ -34,7 +36,7 @@ class TranslatorTest < Test::Unit::TestCase
          s = caller()[1]
          s =~ /in `(.*)'/          #'
          testmethod = $1
-         if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
+         if testmethod =~ /_(eruby|php|jstl11|jstl10|velocity)$/
             lang = $1
          else
             raise "invalid testmethod name (='#{testmethod}')"
@@ -76,6 +78,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '1'
       _test_expr(@@literal1, expected)
    end
+   def test_literal1_velocity
+      expected = '1'
+      _test_expr(@@literal1, expected)
+   end
 
 
    @@literal2 = '"str\'s\r\n"'
@@ -95,6 +101,10 @@ class TranslatorTest < Test::Unit::TestCase
    def test_literal2_jstl10
       #expected = '"str\'s\r\n"'
       expected = "'str\\'s\r\n'"
+      _test_expr(@@literal2, expected)
+   end
+   def test_literal2_velocity
+      expected = '"str\'s\r\n"'
       _test_expr(@@literal2, expected)
    end
 
@@ -135,6 +145,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "true"
       _test_expr(@@literal4, expected)
    end
+   def test_literal4_velocity
+      expected = "true"
+      _test_expr(@@literal4, expected)
+   end
 
 
    @@literal5 = "false"
@@ -151,6 +165,10 @@ class TranslatorTest < Test::Unit::TestCase
       _test_expr(@@literal5, expected)
    end
    def test_literal5_jstl10
+      expected = "false"
+      _test_expr(@@literal5, expected)
+   end
+   def test_literal5_velocity
       expected = "false"
       _test_expr(@@literal5, expected)
    end
@@ -173,6 +191,12 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "null"
       _test_expr(@@literal6, expected)
    end
+   def test_literal6_velocity
+      expected = ""
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@literal6, expected)
+      end
+   end
 
 
 
@@ -191,6 +215,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = 'a + b * c - d % e'
       _test_expr(@@expression1, expected)
    end
+   def test_expression1_velocity
+      expected = '$a + $b * $c - $d % $e'
+      _test_expr(@@expression1, expected)
+   end
 
 
    @@expression2 = 'a * (b+c) % (d.+e)'
@@ -206,6 +234,12 @@ class TranslatorTest < Test::Unit::TestCase
       expected = 'a * (b + c) % (fn:join(d,e))'
       _test_expr(@@expression2, expected)
    end
+   def test_expression2_velocity
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@expression2, expected)
+      end
+   end
 
 
    @@expression3 = '- 2 * b'
@@ -219,6 +253,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
    def test_expression3_jstl11
       expected = '-2 * b'
+      _test_expr(@@expression3, expected)
+   end
+   def test_expression3_velocity
+      expected = '-2 * $b'
       _test_expr(@@expression3, expected)
    end
 
@@ -238,6 +276,10 @@ class TranslatorTest < Test::Unit::TestCase
 #      expected = 'a = 10'
 #      _test_expr(@@assign1, expected)
 #   end
+   def test_assign1_php
+      expected = '$a = 10'
+      _test_expr(@@assign1, expected)
+   end
 
 
    @@assign2 = 'a += i+1'
@@ -251,6 +293,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
 #   def test_assign2_jstl11
 #      expected = 'a += i + 1'
+#      _test_expr(@@assign2, expected)
+#   end
+#   def test_assign2_velocity
+#      expected = '$a += $i + 1'
 #      _test_expr(@@assign2, expected)
 #   end
 
@@ -268,6 +314,10 @@ class TranslatorTest < Test::Unit::TestCase
 #      expected = 'a[i] *= a[i - 2] + a[i - 1]'
 #      _test_expr(@@assign3, expected)
 #   end
+#   def test_assign3_velocity
+#      expected = '$a[$i] *= $a[$i - 2] + $a[$i - 1]'
+#      _test_expr(@@assign3, expected)
+#   end
 
 
    @@assign4 = "a[:name] .+= 's1'.+'s2'"
@@ -281,6 +331,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
 #   def test_assign4_jstl11
 #      expected = "a['name'] .= \"s1\" . \"s2\""
+#      _test_expr(@@assign4, expected)
+#   end
+#   def test_assign4_velocity
+#      expected = "$a['name'] = \"s1\" . \"s2\""
 #      _test_expr(@@assign4, expected)
 #   end
 
@@ -300,6 +354,10 @@ class TranslatorTest < Test::Unit::TestCase
 #      expected = 'list = array()'
 #      _test_expr(@@function1, expected)
 #   end
+#   def test_function1_velocity
+#      expected = '$list = []'
+#      _test_expr(@@function1, expected)
+#   end
 
 
    @@function2 = 'hash = hash_new()'
@@ -313,6 +371,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
 #   def test_function2_jstl11
 #      expected = 'hash = array()'
+#      _test_expr(@@function2, expected)
+#   end
+#   def test_function2_velocity
+#      expected = '$hash = {}'
 #      _test_expr(@@function2, expected)
 #   end
 
@@ -428,6 +490,11 @@ class TranslatorTest < Test::Unit::TestCase
       _test_expr(@@empty1, expected)
       _test_expr(@@empty1, expected, {}, 'jstl10')
    end
+   def test_empty1_velocity
+      expected = '! $str || $str == ""'
+      _test_expr(@@empty1, expected)
+   end
+
 
    @@empty2 = 'str != empty'
    def test_empty2_eruby
@@ -442,6 +509,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = 'not empty str'
       _test_expr(@@empty2, expected)
       _test_expr(@@empty2, expected, {}, 'jstl10')
+   end
+   def test_empty2_velocity
+      expected = '$str && $str != ""'
+      _test_expr(@@empty2, expected)
    end
 
 
@@ -467,6 +538,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '<c:set var="a" value="1"/>' + "\n"
       _test_stmt(@@expr_stmt1, expected)
    end
+   def test_expr_stmt1_velocity	# numeric
+      expected = "#set($a = 1)\n"
+      _test_stmt(@@expr_stmt1, expected)
+   end
 
 
    @@expr_stmt2 = 's = "foo";'
@@ -486,6 +561,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '<c:set var="s" value="foo"/>' + "\n"
       _test_stmt(@@expr_stmt2, expected)
    end
+   def test_expr_stmt2_velocity	# string
+      expected = "#set($s = \"foo\")\n"
+      _test_stmt(@@expr_stmt2, expected)
+   end
 
 
    @@expr_stmt3 = 'v *= a[i]+1;'
@@ -503,6 +582,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
    def test_expr_stmt3_jstl10	# *=
       expected = '<c:set var="v" value="${v * (a[i] + 1)}"/>' + "\n"
+      _test_stmt(@@expr_stmt3, expected)
+   end
+   def test_expr_stmt3_velocity	# *=
+      expected = "#set($v = $v * ($a[$i] + 1))\n"
       _test_stmt(@@expr_stmt3, expected)
    end
 
@@ -527,6 +610,16 @@ class TranslatorTest < Test::Unit::TestCase
 </c:when><c:otherwise>
   <c:set var="max" value="${y}"/>
 </c:otherwise></c:choose>
+END
+      _test_stmt(@@epxr_stmt4, expected)
+   end
+   def test_expr_stmt4_velocity	# conditinal expr
+      expected = <<'END'
+#if($x > $y)
+  #set($max = $x)
+#else
+  #set($max = $y)
+#end
 END
       _test_stmt(@@epxr_stmt4, expected)
    end
@@ -555,6 +648,16 @@ END
 END
       _test_stmt(@@epxr_stmt5, expected)
    end
+   def test_expr_stmt5_velocity	# conditinal expr
+      expected = <<'END'
+#if($x > $y)
+  #set($max = $x)
+#else
+  #set($max = $y)
+#end
+END
+      _test_stmt(@@epxr_stmt5, expected)
+   end
 
 
    @@epxr_stmt6 = "map[:key] = value;"
@@ -574,6 +677,10 @@ END
       expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
       _test_stmt(@@epxr_stmt6, expected)
    end
+   def test_expr_stmt6_velocity	# map[:key] = value
+      expected = "#set($map['key'] = $value)\n"
+      _test_stmt(@@epxr_stmt6, expected)
+   end
 
 
    @@epxr_stmt7 = "map['key'] = value;"
@@ -591,6 +698,10 @@ END
    end
    def test_expr_stmt7_jstl10	# map['key'] = value
       expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt7, expected)
+   end
+   def test_expr_stmt7_velocity	# map['key'] = value
+      expected = "#set($map[\"key\"] = $value)\n"
       _test_stmt(@@epxr_stmt7, expected)
    end
 
@@ -616,6 +727,10 @@ END
          _test_stmt(@@epxr_stmt8, expected)
       end
    end
+   def test_expr_stmt8_velocity	# map[key] = value
+      expected = "#set($map[$key] = $value)\n"
+      _test_stmt(@@epxr_stmt8, expected)
+   end
 
 
    @@epxr_stmt9 = "obj.prop = value;"
@@ -633,6 +748,10 @@ END
    end
    def test_expr_stmt9_jstl10	# map[:key] = value
       expected = '<c:set var="obj" property="prop" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt9, expected)
+   end
+   def test_expr_stmt9_velocity	# map[:key] = value
+      expected = "#set($obj.prop = $value)\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
 
@@ -653,6 +772,12 @@ END
       expected = 'foo<c:out value="${a + b}" escapeXml="false"/>' + "\n"
       _test_stmt(@@print_stmt1, expected)
    end
+   def test_print_stmt1_velocity
+      expected = ""
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@print_stmt1, expected)
+      end
+   end
 
 
    @@print_stmt2 = 'print(E(e), X(x), default);'
@@ -668,6 +793,10 @@ END
       expected = '<c:out value="${e}"/><c:out value="${x}" escapeXml="false"/><c:out value="${default}" escapeXml="false"/>'
       _test_stmt(@@print_stmt2, expected)
    end
+   def test_print_stmt2_velocity
+      expected = "$!{esc.html($e)}$!{x}$!{default}"
+      _test_stmt(@@print_stmt2, expected)
+   end
 
 
    @@print_stmt3 = 'print(E(e), X(x), default);'
@@ -681,6 +810,10 @@ END
    end
    def test_print_stmt3_jstl11
       expected = '<c:out value="${e}"/><c:out value="${x}" escapeXml="false"/><c:out value="${default}"/>'
+      _test_stmt(@@print_stmt3, expected, {:escape=>true})
+   end
+   def test_print_stmt3_velocity
+      expected = "$!{esc.html($e)}$!{x}$!{esc.html($default)}"
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
 
@@ -707,6 +840,13 @@ END
       expected = <<'END'
 <c:if test="${x eq y}">
 yes</c:if>
+END
+      _test_stmt(@@if_stmt1, expected)
+   end
+   def test_if_stmt1_velocity
+      expected = <<'END'
+#if($x == $y)
+yes#end
 END
       _test_stmt(@@if_stmt1, expected)
    end
@@ -737,6 +877,14 @@ END
 END
       _test_stmt(@@if_stmt2, expected)
    end
+   def test_if_stmt2_velocity
+      expected = <<'END'
+#if($x > $y)
+$!{x}#else
+$!{y}#end
+END
+      _test_stmt(@@if_stmt2, expected)
+   end
 
 
    @@if_stmt3 = 'if (x>y) print(x); else if (y>z) print(y);'
@@ -761,6 +909,14 @@ END
 <c:choose><c:when test="${x gt y}">
 <c:out value="${x}" escapeXml="false"/></c:when><c:when test="${y gt z}">
 <c:out value="${y}" escapeXml="false"/></c:when></c:choose>
+END
+      _test_stmt(@@if_stmt3, expected)
+   end
+   def test_if_stmt3_velocity
+      expected = <<'END'
+#if($x > $y)
+$!{x}#elseif($y > $z)
+$!{y}#end
 END
       _test_stmt(@@if_stmt3, expected)
    end
@@ -819,6 +975,20 @@ END
 END
       _test_stmt(@@if_stmt4, expected)
    end
+   def test_if_stmt4_velocity
+      expected = <<'END'
+#if($x > $y && $x > $z)
+  #set($max = $x)
+#elseif($y > $x && $y > $z)
+  #set($max = $y)
+#elseif($z > $x && $z > $x)
+  #set($max = $z)
+#else
+  #set($max = -1)
+#end
+END
+      _test_stmt(@@if_stmt4, expected)
+   end
 
 
    ## ---------------------------- foreach statement
@@ -833,7 +1003,7 @@ END
 <li><%= item %></li>
 <% end %>
 END
-      _test_stmt(@@foreach_stmt2, expected)
+      _test_stmt(@@foreach_stmt1, expected)
    end
    def test_foreach_stmt1_php
       expected = <<'END'
@@ -841,7 +1011,7 @@ END
 <li><?php echo $item; ?></li>
 <?php } ?>
 END
-      _test_stmt(@@foreach_stmt2, expected)
+      _test_stmt(@@foreach_stmt1, expected)
    end
    def test_foreach_stmt1_jstl11
       expected = <<'END'
@@ -849,7 +1019,15 @@ END
 <li><c:out value="${item}" escapeXml="false"/></li>
 </c:forEach>
 END
-      _test_stmt(@@foreach_stmt2, expected)
+      _test_stmt(@@foreach_stmt1, expected)
+   end
+   def test_foreach_stmt1_velocity
+      expected = <<'END'
+#foreach($item in $list)
+<li>$!{item}</li>
+#end
+END
+      _test_stmt(@@foreach_stmt1, expected)
    end
 
 
@@ -881,6 +1059,14 @@ END
 </c:forEach>
 END
    end
+   def test_foreach_stmt2_velocity
+      expected = <<'END'
+#foreach($item in $list)
+<li>$!{item}</li>
+#end
+END
+      _test_stmt(@@foreach_stmt2, expected)
+   end
 
 
    ## ---------------------------- while statement
@@ -911,6 +1097,12 @@ END
          _test_stmt(@@while_stmt1, expected)
       end
    end
+   def test_while_stmt1_velocity
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@while_stmt1, expected)
+      end
+   end
 
 
    ## ---------------------------- expand statement
@@ -935,6 +1127,12 @@ END
       end
    end
    def test_expand_stmt1_jstl10
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@expand_stmt1, expected)
+      end
+   end
+   def test_expand_stmt1_velocity
       expected = ''
       assert_raise(Kwartz::TranslationError) do
          _test_stmt(@@expand_stmt1, expected)
@@ -1015,6 +1213,16 @@ i = <c:out value="${i}"/>\r
 </c:forEach>\r
 END
       _test_stmt(@@prop1, expected, {:newline => "\r\n", :escape=>true} )
+   end
+
+   def test_properties1_velocity
+      expected = <<END
+#set($i = 10)\r
+#foreach($i in $list)\r
+i = $!{i}\r
+#end\r
+END
+      _test_stmt(@@prop1, expected, {:newline => "\r\n"} )
    end
 
 
