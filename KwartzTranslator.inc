@@ -127,11 +127,11 @@ require_once('KwartzUtility.inc');
 			$this->block       = $block;
 			$this->flag_escape = $flag_escape;
 			if ($flag_escape) {
-				$print_key    = ':print';
-				$endprint_key = ':endprint';
+				$this->print_key    = ':eprint';
+				$this->endprint_key = ':endeprint';
 			} else {
-				$print_key    = ':eprint';
-				$endprint_key = ':endeprint';
+				$this->print_key    = ':print';
+				$this->endprint_key = ':endprint';
 			}
 		}
 		
@@ -337,20 +337,32 @@ require_once('KwartzUtility.inc');
 		}
 
 		protected function translate_print_statement($stmt, $depth) {
-			if ($this->flag_escape) {
-				$startkey = ':eprint';
-				$endkey   = ':endeprint';
-			} else {
-				$startkey = ':print';
-				$endkey   = ':endprint';
-			}
 			foreach ($stmt->arglist() as $expr) {
 				if (($t = $expr->token()) == 'string') {
 					$this->code .= $expr->value();
 				} else {
-					$this->code .= $this->keyword($startkey);	# 'print' or 'print2'
+					$startkey = $endkey = NULL;
+					if ($expr->token() == 'function') {
+						$fname = $expr->funcname();
+						if ($fname == 'E') {
+							$startkey = ':eprint';
+							$endkey   = ':endeprint';
+							$arglist = $expr->arglist();
+							$expr = $arglist[0];
+						} elseif ($fname == 'X') {
+							$startkey = ':print';
+							$endkey   = ':endprint';
+							$arglist = $expr->arglist();
+							$expr = $arglist[0];
+						}
+					}
+					if (! $startkey) {
+						$startkey = $this->print_key;
+						$endkey   = $this->endprint_key;
+					}
+					$this->code .= $this->keyword($startkey);	# 'print' or 'eprint'
 					$this->translate_expression($expr);
-					$this->code .= $this->keyword($endkey);		# 'endprint' or 'endprint2'
+					$this->code .= $this->keyword($endkey);		# 'endprint' or 'endeprint'
 				}
 			}
 		}

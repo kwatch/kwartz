@@ -882,6 +882,86 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jsp');
 	}
 
+
+
+	const input_escape2 = '
+	:print(data, "\n")
+	:print("aaa", E(array[i]), X(x+y), "bbb\n");
+	:print(x > y ? x : y, "\n")
+	';
+
+	function test_php_escape2() {
+		$expected = '
+		<?php echo $data; ?>
+		aaa<?php echo htmlspecialchars($array[$i]); ?><?php echo $x + $y; ?>bbb
+		<?php echo $x > $y ? $x : $y; ?>
+		';
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'php');
+	}
+
+	function test_eruby_escape2() {
+		$expected = '
+		<%= data %>
+		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= x + y %>bbb
+		<%= x > y ? x : y %>
+		';
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'eruby');
+	}
+
+	function test_jsp_escape2() {
+		$expected = '
+		<c:out value="${data}" escapeXml="false"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
+		<c:choose><c:when test="${x > y}">
+		<c:out value="${x}" escapeXml="false"/>
+		</c:when><c:otherwise>
+		<c:out value="${y}" escapeXml="false"/>
+		</c:otherwise></c:choose>
+		';
+		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'jsp');
+	}
+
+
+
+	const input_escape3 = '
+	:print(data, "\n")
+	:print("aaa", E(array[i]), X(x+y), "bbb\n");
+	:print(x > y ? x : y, "\n")
+	';
+
+	function test_php_escape3() {
+		$expected = '
+		<?php echo htmlspecialchars($data); ?>
+		aaa<?php echo htmlspecialchars($array[$i]); ?><?php echo $x + $y; ?>bbb
+		<?php echo htmlspecialchars($x > $y ? $x : $y); ?>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'php');
+	}
+
+	function test_eruby_escape3() {
+		$expected = '
+		<%= CGI.escapeHTML((data).to_s) %>
+		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= x + y %>bbb
+		<%= CGI.escapeHTML((x > y ? x : y).to_s) %>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'eruby');
+	}
+
+	function test_jsp_escape3() {
+		$expected = '
+		<c:out value="${data}"/>
+		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
+		<c:choose><c:when test="${x > y}">
+		<c:out value="${x}"/>
+		</c:when><c:otherwise>
+		<c:out value="${y}"/>
+		</c:otherwise></c:choose>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jsp');
+	}
+
+
+
 }
 
 

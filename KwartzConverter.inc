@@ -534,9 +534,14 @@ require_once('KwartzUtility.inc');
 				}
 				break;
 
-			case 'value':
-			case 'echo':
+			case 'value':  case 'Value':  case 'VALUE':
+			case 'echo':   case 'Echo':   case 'ECHO':
 				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
+				if ($directive_name == 'Value' || $directive_name == 'Echo') {
+					$expr = new KwartzFunctionExpression('E', array($expr));
+				} elseif ($directive_name == 'VALUE' || $directive_name == 'ECHO') {
+					$expr = new KwartzFunctionExpression('X', array($expr));
+				}
 				if ($flag_remove_span) {
 					$stmt_list[] = new KwartzPrintStatement(array($expr));
 				} else {

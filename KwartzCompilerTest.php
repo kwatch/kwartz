@@ -800,6 +800,63 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test_escape($pdata, $plogic, $expected, 'jsp');
 	}
 
+
+
+
+	const pdata_escape2 = '
+		<li kd="Value:x">bar</li>
+		<li kd="VALUE:x">baz</li>
+		<li php="Echo($x)">bar</li>
+		<li php="ECHO($x)">baz</li>
+		';
+	
+	const plogic_escape2 = '';
+	
+	const expected_escape2_php = '
+		<li><?php echo htmlspecialchars($x); ?></li>
+		<li><?php echo $x; ?></li>
+		<li><?php echo htmlspecialchars($x); ?></li>
+		<li><?php echo $x; ?></li>
+		';
+
+	const expected_escape2_eruby = '
+		<li><%= CGI.escapeHTML((x).to_s) %></li>
+		<li><%= x %></li>
+		<li><%= CGI.escapeHTML((x).to_s) %></li>
+		<li><%= x %></li>
+		';
+
+	const expected_escape2_jsp = '
+		<li><c:out value="${x}"/></li>
+		<li><c:out value="${x}" escapeXml="false"/></li>
+		<li><c:out value="${x}"/></li>
+		<li><c:out value="${x}" escapeXml="false"/></li>
+		';
+	
+	function test_escape2_php() {
+		$pdata    = KwartzCompilerTest::pdata_escape2;
+		$plogic   = KwartzCompilerTest::plogic_escape2;
+		$expected = KwartzCompilerTest::expected_escape2_php;
+		$this->_test($pdata, $plogic, $expected, 'php');
+		$this->_test_escape($pdata, $plogic, $expected, 'php');
+	}
+
+	function test_escape2_eruby() {
+		$pdata    = KwartzCompilerTest::pdata_escape2;
+		$plogic   = KwartzCompilerTest::plogic_escape2;
+		$expected = KwartzCompilerTest::expected_escape2_eruby;
+		$this->_test($pdata, $plogic, $expected, 'eruby');
+		$this->_test_escape($pdata, $plogic, $expected, 'eruby');
+	}
+
+	function test_escape2_jsp() {
+		$pdata    = KwartzCompilerTest::pdata_escape2;
+		$plogic   = KwartzCompilerTest::plogic_escape2;
+		$expected = KwartzCompilerTest::expected_escape2_jsp;
+		$this->_test($pdata, $plogic, $expected, 'jsp');
+		$this->_test_escape($pdata, $plogic, $expected, 'jsp');
+	}
+
 }
 
 

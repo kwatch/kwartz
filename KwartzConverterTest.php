@@ -1207,6 +1207,88 @@ END;
 
 
 
+	function test_convert_escape1() {
+		$input = <<<END
+		<td kd="value:a[0]">foo</td>
+		<td kd="Value:a[1]">bar</td>
+		<td kd="VALUE:a[2]">baz</td>
+END;
+		$expected = <<<END
+		<<block>>
+		  :print
+		    "<td>"
+		  :print
+		    []
+		      a
+		      0
+		  :print
+		    "</td>\\n"
+		  :print
+		    "<td>"
+		  :print
+		    E()
+		      []
+		        a
+		        1
+		  :print
+		    "</td>\\n"
+		  :print
+		    "<td>"
+		  :print
+		    X()
+		      []
+		        a
+		        2
+		  :print
+		    "</td>"
+
+END;
+		$this->_test_convert($input, $expected);
+	}
+
+
+
+	function test_convert_escape1_php() {
+		$input = <<<END
+		<td php="echo(\$a[0])">foo</td>
+		<td php="Echo(\$a[1])">bar</td>
+		<td php="ECHO(\$a[2])">baz</td>
+END;
+		$expected = <<<END
+		<<block>>
+		  :print
+		    "<td>"
+		  :print
+		    []
+		      a
+		      0
+		  :print
+		    "</td>\\n"
+		  :print
+		    "<td>"
+		  :print
+		    E()
+		      []
+		        a
+		        1
+		  :print
+		    "</td>\\n"
+		  :print
+		    "<td>"
+		  :print
+		    X()
+		      []
+		        a
+		        2
+		  :print
+		    "</td>"
+
+END;
+		$this->_test_convert($input, $expected);
+	}
+
+
+
 	function test_convert_practice1() {
 		$input = <<<END
 		<table>
