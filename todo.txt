@@ -1,12 +1,15 @@
 .- [v] new class MethodExpression
 .- [_] rename class names 'StringExpression' to 'StringLiteral', 'BooleanExpression' to 'BooleanLiteral', ...
 .- [_] Parser#initialize(input, property) => Parser#initialize(property)
+.- [v] Converter#initialize(input, property) => Converter#initialize(property)
 .- [_] regard <input>, <br>, <img>, <meta>, <hr> as empty tag
-.- [_] create 'kwartz/default.rb' and 'kwartz/config.rb' and module Kwartz::Default'
+.- [x] create 'kwartz/default.rb' and 'kwartz/config.rb' and module Kwartz::Default'
+.- [v] kwartz/config.rb
 .- [_] kwartz/messages.rb
 .- [v] kwartz/util/optparse.rb
 .- [v] check_token()
-.- [_] <span>
+.- [v] assert
+.- [v] delete <span>
 .- [_] is_instance_of()
 .- [v] analyzer
 .- [v] php
@@ -17,4 +20,4 @@
 .- [_] pl
 .- [_] mkmethod
 .- [_] C() S() D()
-.- [_] eol auto-detect
+.- [v] eol auto-detect

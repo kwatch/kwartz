@@ -2,6 +2,9 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-31 rev.28
+	.- [enhance] auto-detect newline ("\r\n" or "\n")
+
 .: 2004-01-30 rev.27
 	.- [enhance] span tag deletion
 	.- [enhance] new file: README.txt m18n.rb

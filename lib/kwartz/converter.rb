@@ -4,6 +4,7 @@
 ### $Id$
 ###
 
+require 'kwartz/config'
 require 'kwartz/exception'
 require 'kwartz/utility'
 require 'kwartz/util/orderedhash'
@@ -30,24 +31,27 @@ module Kwartz
    ##
    class Converter
 
-      def initialize(input, properties={})
-         @input = input
-         #@macro_codes = []
-         @linenum  = 1
-         @delta    = 0
+      def initialize(properties={})
          @properties = properties
-         @kd_attr    = properties[:attr_name] || 'kd'   # or 'kd::kwartz'
+         @kd_attr    = properties[:attr_name]  || Kwartz::Config::ATTR_NAME      # 'kd'
          #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
          #@delete_id_attr = properties[:delete_id_attr] || false
-         @even_value = properties[:even_value] || "'even'"
-         @odd_value  = properties[:odd_value]  || "'odd'"
+         @even_value = properties[:even_value] || Kwartz::Config::EVEN_VALUE     # "'even'"
+         @odd_value  = properties[:odd_value]  || Kwartz::Config::ODD_VALUE      # "'odd'"
          @filename   = properties[:filename]
          @parser = Parser.new('', properties)
-         @stmt_list = []
-         @elem_list = []
       end
       attr_reader :stmt_list, :elem_list
       alias :element_list :elem_list
+      
+      def reset(input)
+         @input = input
+         @parser.reset(input)
+         @linenum = 1
+         @delta   = 0
+         @stmt_list = []
+         @elem_list = []
+      end
 
       FETCH_PATTERN = /([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?)/	#"
 
@@ -99,7 +103,8 @@ module Kwartz
       end
 
 
-      def fetch_all
+      def fetch_all(input)
+         reset(input)
          s = ''
          while tagname = fetch()
             s << "linenum+delta: #{@linenum}+#{@delta}\n"
@@ -115,7 +120,11 @@ module Kwartz
          return s
       end
 
-      def convert
+      def convert(input)
+         reset(input)
+         if input =~ /(\r?\n)/
+            @properties[:newline] = $1
+         end
          _convert(nil, @stmt_list)
          return BlockStatement.new(@stmt_list)
       end
@@ -171,18 +180,18 @@ module Kwartz
       end
 
 
-      def _convert(etagname, stmt_list=[], flag_print_tag=true)
+      def _convert(etagname, stmt_list=[], flag_tag_print=true)
          start_linenum = @linenum
          if etagname
             Kwartz::assert unless @tagname == etagname
-            #if flag_print_tag
+            #if flag_tag_print
             #   if @tagname == 'span' && @attr_values.empty?
             #      stmt_list << create_print_node('', @linenum)
             #   else
             #      stmt_list << build_print_node()
             #   end
             #end
-            if flag_print_tag
+            if flag_tag_print
                if @tagname == 'span' && @attr_values.empty?
                   flag_spantag = true
                   s = @is_whole_line ? '' : @before_space + @after_space
@@ -201,14 +210,14 @@ module Kwartz
 
             if @slash_etag == '/'		# end-tag
                if @tagname == etagname
-                  #if flag_print_tag
+                  #if flag_tag_print
                   #   if @tagname == 'span' && @attr_values.empty?
                   #      stmt_list << create_print_node('', @linenum)
                   #   else
                   #      stmt_list << build_print_node()
                   #   end
                   #end
-                  if flag_print_tag
+                  if flag_tag_print
                      if flag_spantag
                         s = @is_whole_line ? '' : @before_space + @after_space
                         stmt_list << create_print_node(s, @linenum)
@@ -481,7 +490,7 @@ module Kwartz
                arguments << StringExpression.new("\"")
             else
                #arguments << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
-               str = "#{aspace}#{aname}=\"#{avalue}\""
+               str  = "#{aspace}#{aname}=\"#{avalue}\""
                list = expand_embed_expr(str, linenum)
                arguments.concat(list)
             end
@@ -567,11 +576,11 @@ end # module Kwartz
 if __FILE__ == $0
 
    input = ARGF.read()
-   converter = Kwartz::Converter.new(input)
+   converter = Kwartz::Converter.new()
    #--
    #print converter.fetch_all
    #--
-   block_stmt = converter.convert()
+   block_stmt = converter.convert(input)
    print block_stmt._inspect
    converter.elem_list.each do |elem|
       print elem._inspect

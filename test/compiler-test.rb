@@ -417,6 +417,72 @@ END
    end
 
 
+
+
+   ## -------------------- newline
+   @@pdata7 = <<'END'
+<tr kd="mark:list">
+  <td kd="value:item">foo</td>
+</tr>
+END
+   @@pdata7.gsub!(/\n/, "\r\n")
+   @@plogic7 = <<'END'
+#list {
+   plogic: {
+      foreach (item in list) {
+         @stag;
+         @cont;
+         @etag;
+      }
+   }
+}
+END
+
+   def test_compile7_eruby	# newline
+      expected = <<END
+<% for item in list do %>\r
+<tr>\r
+  <td><%= item %></td>\r
+</tr>\r
+<% end %>\r
+END
+      _test(@@pdata7, @@plogic7, expected)
+   end
+
+   def test_compile7_php	# newline
+      expected = <<END
+<?php foreach ($list as $item) { ?>\r
+<tr>\r
+  <td><?php echo $item; ?></td>\r
+</tr>\r
+<?php } ?>\r
+END
+      _test(@@pdata7, @@plogic7, expected)
+   end
+
+   def test_compile7_jstl11	# newline
+      expected = <<END
+<c:forEach var="item" items="${list}">\r
+<tr>\r
+  <td><c:out value="${item}" escapeXml="false"/></td>\r
+</tr>\r
+</c:forEach>\r
+END
+      _test(@@pdata7, @@plogic7, expected)
+   end
+
+   def test_compile7_jstl10	# newline
+      expected = <<END
+<c:forEach var="item" items="${list}">\r
+<tr>\r
+  <td><c:out value="${item}" escapeXml="false"/></td>\r
+</tr>\r
+</c:forEach>\r
+END
+      _test(@@pdata7, @@plogic7, expected)
+   end
+
+
 end
 
 

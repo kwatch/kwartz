@@ -36,8 +36,8 @@ class ConverterTest < Test::Unit::TestCase
 	return unless flag_test
 	input.gsub!(/^\t\t/, '')
 	expected.gsub!(/^\t\t/, '')
-	converter = Kwartz::Converter.new(input)
-	actual = converter.fetch_all
+	converter = Kwartz::Converter.new()
+	actual = converter.fetch_all(input)
 	#assert_equal(expected, actual)
 	assert_equal_with_diff(expected, actual)
     end
@@ -198,7 +198,8 @@ class ConverterTest < Test::Unit::TestCase
     	return unless flag_test
 	input.gsub!(/^\t\t/, '')
 	expected.gsub!(/^\t\t/, '')
-	converter = Kwartz::Converter.new(input)
+	converter = Kwartz::Converter.new()
+	converter.reset(input)
 	converter.fetch()
 	converter.parse_attr_str()
         actual = ''
@@ -275,8 +276,8 @@ END
        return if !flag_test
        input.gsub!(/^\t\t/, '')
        expected.gsub!(/^\t\t/, '')
-       converter = Kwartz::Converter.new(input, properties)
-       block_stmt = converter.convert()
+       converter = Kwartz::Converter.new(properties)
+       block_stmt = converter.convert(input)
        actual = block_stmt._inspect
        actual << converter.elem_list.collect {|e| e._inspect}.join
        #assert_equal(expected, actual)
@@ -1664,58 +1665,58 @@ END
     end
 
 
-    def test_convert_properties2	# delete_id_attr
-	input = <<-'END'
-		<tr id="foo">
-		 <td>#{item}#</td>
-		</tr>
-	END
-	expected = <<-'END'
-		:block
-		  @element(foo)
-		===== marking=foo =====
-		[tagname]
-		tr
-		[attrs]
-		id="foo"
-		[content]
-		:block
-		  :print
-		    " <td>"
-		  :print
-		    item
-		  :print
-		    "</td>\n"
-		[spaces]
-		["", "\n", "", "\n"]
-		[plogic]
-		:block
-		  @stag
-		  @cont
-		  @etag
-	END
-	#expected = <<-'END'
-	#	:macro(stag_foo)
-	#	  :print("<tr>\n")
-	#	:end
-	#	:macro(cont_foo)
-	#	  :print(" <td>")
-	#	  :print(item)
-	#	  :print("</td>\n")
-	#	:end
-	#	:macro(etag_foo)
-	#	  :print("</tr>\n")
-	#	:end
-	#	:macro(element_foo)
-	#	  :expand(stag_foo)
-	#	  :expand(cont_foo)
-	#	  :expand(etag_foo)
-	#	:end
-	#
-	#	:expand(element_foo)
-	#END
-	_test_convert(input, expected, {:delete_id_attr=>true})
-    end
+#    def test_convert_properties2	# delete_id_attr
+#	input = <<-'END'
+#		<tr id="foo">
+#		 <td>#{item}#</td>
+#		</tr>
+#	END
+#	expected = <<-'END'
+#		:block
+#		  @element(foo)
+#		===== marking=foo =====
+#		[tagname]
+#		tr
+#		[attrs]
+#		id="foo"
+#		[content]
+#		:block
+#		  :print
+#		    " <td>"
+#		  :print
+#		    item
+#		  :print
+#		    "</td>\n"
+#		[spaces]
+#		["", "\n", "", "\n"]
+#		[plogic]
+#		:block
+#		  @stag
+#		  @cont
+#		  @etag
+#	END
+#	#expected = <<-'END'
+#	#	:macro(stag_foo)
+#	#	  :print("<tr>\n")
+#	#	:end
+#	#	:macro(cont_foo)
+#	#	  :print(" <td>")
+#	#	  :print(item)
+#	#	  :print("</td>\n")
+#	#	:end
+#	#	:macro(etag_foo)
+#	#	  :print("</tr>\n")
+#	#	:end
+#	#	:macro(element_foo)
+#	#	  :expand(stag_foo)
+#	#	  :expand(cont_foo)
+#	#	  :expand(etag_foo)
+#	#	:end
+#	#
+#	#	:expand(element_foo)
+#	#END
+#	_test_convert(input, expected, {:delete_id_attr=>true})
+#    end
 
 
     def test_convert_properties3	# attr_name
@@ -1737,6 +1738,36 @@ END
 	#	:print("</td>\n")
 	#END
 	_test_convert(input, expected, {:attr_name=>'kd:kwartz'})
+    end
+
+
+    def test_convert_properties4	# newline
+	input = <<-'END'
+		<tr kd="loop:item:list">
+		  <td kd="value:item">foo</td>
+		</tr>
+	END
+	input.gsub!(/\n/, "\r\n")
+	expected = <<-'END'
+		:block
+		  :print
+		    "<tr>\r\n"
+		  :foreach
+		    item
+		    list
+		    :block
+		      :print
+		        "  <td>"
+		      :print
+		        item
+		      :print
+		        "</td>\r\n"
+		  :print
+		    "</tr>\r\n"
+	END
+	properties = {}
+	_test_convert(input, expected, properties)
+	assert_equal("\r\n", properties[:newline])
     end
 
 
@@ -1965,7 +1996,4 @@ end
 
 if $0 == __FILE__
     Test::Unit::UI::Console::TestRunner.run(ConverterTest)
-    #suite = Test::Unit::TestSuite.new()
-    #suite << ConverterTest.suite()
-    #Test::Unit::UI::Console::TestRunner.run(suite)
 end

@@ -52,8 +52,7 @@ class TranslatorTest < Test::Unit::TestCase
    def _test_stmt(input, expected, properties={})
       _test('parse_program', input, expected, properties)
    end
-
-
+   
 
    ## ======================================== expression
 
@@ -906,7 +905,58 @@ END
    end
 
 
+   ## ======================================== properties
+
+   @@prop1 = <<'END'
+i = 10;
+foreach (i in list) {
+  print("i = ", i, "\r\n");
+}
+END
+
+   def test_properties1_eruby
+      expected = <<END
+<% i = 10 %>\r
+<% for i in list do %>\r
+i = <%= i %>\r
+<% end %>\r
+END
+      _test_stmt(@@prop1, expected, {:newline => "\r\n"} )
+   end
+   
+   def test_properties1_php
+      expected = <<END
+<?php $i = 10; ?>\r
+<?php foreach ($list as $i) { ?>\r
+i = <?php echo $i; ?>\r
+<?php } ?>\r
+END
+      _test_stmt(@@prop1, expected, {:newline => "\r\n"} )
+   end
+   
+   def test_properties1_jstl11
+      expected = <<END
+<c:set var="i" value="10"/>\r
+<c:forEach var="i" items="${list}">\r
+i = <c:out value="${i}"/>\r
+</c:forEach>\r
+END
+      _test_stmt(@@prop1, expected, {:newline => "\r\n",  :escape=>true} )
+   end
+   
+   def test_properties1_jstl10
+      expected = <<END
+<c:set var="i" value="10"/>\r
+<c:forEach var="i" items="${list}">\r
+i = <c:out value="${i}"/>\r
+</c:forEach>\r
+END
+      _test_stmt(@@prop1, expected, {:newline => "\r\n", :escape=>true} )
+   end
+   
+
 end
+
 
 
 ##

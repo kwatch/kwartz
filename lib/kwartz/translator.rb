@@ -4,6 +4,7 @@
 ### $Id$
 ###
 
+require 'kwartz/config'
 require 'kwartz/exception'
 require 'kwartz/node'
 require 'kwartz/visitor'
@@ -62,8 +63,8 @@ module Kwartz
          end
          #
          @flag_escape = false
-         @nl          = properties[:newline] || "\n"
-         @indent      = properties[:indent] || '  '
+         @nl          = properties[:newline] || Kwartz::Config::NEWLINE     # "\n"
+         @indent      = properties[:indent]  || Kwartz::Config::INDENT      # '  '
          @code = ''
       end
 

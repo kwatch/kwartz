@@ -37,13 +37,14 @@ module Kwartz
       def initialize(properties={})
          @properties = properties
       end
+      attr_reader :properties
 
       ## ex.
       ##   block_stmt, element_list = compiler.convert(ARGF.read(), ARGF.filename)
       def convert(pdata_str, filename=nil)
          @properties[:filename] = filename if filename
-         converter = Kwartz::Converter.new(pdata_str, @properties)
-         block_stmt = converter.convert()
+         converter = Kwartz::Converter.new(@properties)
+         block_stmt = converter.convert(pdata_str)
          elem_list = converter.element_list
          @properties.delete(:filename) if filename
          return block_stmt, elem_list
@@ -98,7 +99,7 @@ module Kwartz
       
       
       ## facade method
-      def compile(pdata_str='', plogic_str='', lang='eruby', pdata_filename=nil, plogic_filename=nil)
+      def compile(pdata_str='', plogic_str='', lang=Kwartz::Config::LANG, pdata_filename=nil, plogic_filename=nil)
          ## convert
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic
