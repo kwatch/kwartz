@@ -68,7 +68,7 @@ module Kwartz
 	 
 	 action = @options['-a'] || 'compile'
 	 case action
-	 when 'compile', 'convert', 'parse', 'translate'
+	 when 'compile', 'convert', 'parse', 'translate', 'scan'
 	    # nothing
 	 else
 	    raise CommandOptionError.new("#{action}: invalid action.")
@@ -185,6 +185,9 @@ END
 	 when 'convert'
 	    converter = Converter.new(input, properties)
 	    output = converter.convert()
+	 when 'scan'
+	    scanner = Scanner.new(input, properties)
+	    output = scanner.scan_all()
 	 else
 	    raise CommandOptionError.new("#{action}: not implemented yet.")
 	 end
@@ -200,7 +203,7 @@ if __FILE__ == $0
    begin
       main_command = Kwartz::MainCommand.new(ARGV)
       main_command.main()
-   rescue Kwartz::CommandOptionError => ex
+   rescue Kwartz::KwartzError => ex
       $stderr.print ex.message, "\n"
       exit 1
    end

@@ -2,17 +2,20 @@ require 'kwartz/exception'
 
 module Kwartz
 
-   ###
-   ### dump string
-   ###
-   def self.dump_str(str)
-      str = str.dup
-      str.gsub!(/\\/, '\\\\')
-      str.gsub!(/"/, '\\"')	#'
-      str.gsub!(/\n/, '\\n')
-      str.gsub!(/\r/, '\\r')
-      str.gsub!(/\t/, '\\t')
-      return "\"#{str}\""
+   class Util
+      ###
+      ### dump string
+      ###
+      def self.dump_str(str)
+         str = str.dup
+         str.gsub!(/\\/, '\\\\\\\\')		# wow!
+         str.gsub!(/"/, '\\"')	#'
+         str.gsub!(/\n/, '\\n')
+         str.gsub!(/\r/, '\\r')
+         str.gsub!(/\t/, '\\t')
+         return "\"#{str}\""
+      end
+      
    end
 
 

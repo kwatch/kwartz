@@ -1,3 +1,7 @@
+###
+### converter.rb
+###
+
 require 'kwartz/exception'
 require 'kwartz/utility'
 
@@ -8,7 +12,7 @@ module Kwartz
 	 @converter = converter
 	 @filename = converter.filename
 	 @line_num = converter.line_num
-	 super("[line #{@line_num}] #{message}")
+	 super("[" + (@filename ? "file:#{@filename}," : '') + "line:#{@line_num}] #{message}")
       end
    end
 
@@ -310,7 +314,7 @@ module Kwartz
 	    after_text = $'
 	    if before_text && !before_text.empty?
 	       s << ", " if flag
-	       s << Kwartz::dump_str(before_text)
+	       s << Kwartz::Util::dump_str(before_text)
 	       flag = true
 	    end
 	    if expr_str && !expr_str.empty?
@@ -322,7 +326,7 @@ module Kwartz
 	 end
 	 if str && !str.empty?
 	    s << ", " if flag
-	    s << Kwartz::dump_str(str)
+	    s << Kwartz::Util::dump_str(str)
 	 end
 	 s << ")"
 	 return s
