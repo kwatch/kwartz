@@ -57,7 +57,7 @@ require_once('KwartzUtility.inc');
 
 		//const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)((?:.|\n)*)/';
 		//const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)/';
-		const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)/';
+		const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)\s*(\/?)>([ \t]*\r?\n?)/';
 
 		function fetch() {
 			if (preg_match(KwartzConverter::fetch_pattern, $this->input, $m = array())) {
@@ -120,18 +120,20 @@ require_once('KwartzUtility.inc');
 			if ($id_value !== NULL || $kd_value !== NULL || $php_value !== NULL) {
 				$kd_attr_exprs = array();	// hash
 				$php_attr_exprs = array();	// hash
+				$kd_embed_exprs = array();	// array
+				$php_embed_exprs = array();	// array
 				$id_directive = $kd_directive = $php_directive = NULL;
 				$directive = NULL;
 				if ($id_value !== NULL) {
-					$id_directive = $this->parse_directive_kdstr($id_value, $kd_attr_exprs);
+					$id_directive = $this->parse_directive_kdstr($id_value, $kd_attr_exprs, $kd_embed_exprs);
 					if ($id_directive) { $directive = $id_directive; }
 				}
 				if ($kd_value !== NULL) {
-					$kd_directive = $this->parse_directive_kdstr($kd_value, $kd_attr_exprs);
+					$kd_directive = $this->parse_directive_kdstr($kd_value, $kd_attr_exprs, $kd_embed_exprs);
 					if ($kd_directive) { $directive = $kd_directive; }
 				}
 				if ($php_value != NULL) {
-					$php_directive = $this->parse_directive_phpstr($php_value, $php_attr_exprs);
+					$php_directive = $this->parse_directive_phpstr($php_value, $php_attr_exprs, $php_embed_exprs);
 					if ($php_directive) { $directive = $php_directive; }
 				}
 
@@ -151,6 +153,12 @@ require_once('KwartzUtility.inc');
 						$space = $spaces[$i];
 						$s .= "{$space}{$attr_name}=\"{$value}\"";
 					}
+				}
+				foreach ($kd_embed_exprs as $expr_str) {
+					$s .= " #{" . $expr_str . "}#";
+				}
+				foreach ($php_embed_exprs as $expr_str) {
+					$s .= " @{" . $expr_str . "}@";
 				}
 				$this->attr_str = $s;
 			}
@@ -190,8 +198,16 @@ require_once('KwartzUtility.inc');
 
 
 		## helper method for convert().
-		## returns a tuple(==array($name, $value)).
-		private function parse_directive_kdstr(&$str, &$kd_attr_exprs) {
+		## - args:
+		##     - $str : directive string.
+		##		ex. "attr:class=klass;rowspan=rowspan"
+		##     - $attr_exprs: hash of attribute string.
+		##		ex. array('class'=>'klass', 'rowspan'=>'rowspan')
+		##     - $embed_exprs: array of attribute string
+		##		ex. array('flag ? "checked" : ""')
+		## - return: a tuple of directive name and argument.
+		##		ex. array('foreach', 'item=list')
+		private function parse_directive_kdstr(&$str, &$attr_exprs, &$embed_exprs) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
@@ -201,15 +217,25 @@ require_once('KwartzUtility.inc');
 					$name  = $matches[1];
 					$value = trim($matches[2]);
 					switch ($name) {
-					case 'attr':
-						if (preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $value, $m=array())) {
-							$attr_name = $m[1];
-							$expr_str  = $m[2];
-							$kd_attr_exprs[$attr_name] = $expr_str;
-						} else {
+					case 'attr':  case 'Attr':  case 'ATTR':
+						if (! preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $value, $m=array())) {
 							$msg = "'attr:\"'{$value}\"': invalid directive.";
 							throw new KwartzConvertionError($msg, $this);
 						}
+						$attr_name = $m[1];
+						$expr_str  = $m[2];
+						if     ($name == 'Attr') { $expr_str = "E($expr_str)"; }
+						elseif ($name == 'ATTR') { $expr_str = "X($expr_str)"; }
+						$attr_exprs[$attr_name] = $expr_str;
+						break;
+					case 'embed':
+						$embed_exprs[] = $value;
+						break;
+					case 'Embed':
+						$embed_exprs[] = "E($value)";
+						break;
+					case 'EMBED':
+						$embed_exprs[] = "X($value)";
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
@@ -260,11 +286,13 @@ require_once('KwartzUtility.inc');
 		## - args:
 		##     - $str : directive string.
 		##		ex. "attr('class'=>$klass,'rowspan'=>$rowspan);foreach($list as $item)"
-		##     - $kd_attr_exprs: hash of attributes.
+		##     - $attr_exprs: hash of attribute string.
 		##		ex. array('class'=>'$klass', 'rowspan'=>'$rowspan')
+		##     - $embed_exprs: array of attribute string
+		##		ex. array('$flag ? "checked" : ""')
 		## - return: a tuple of directive name and argument.
 		##		ex. array('foreach', '$list as $item')
-		private function parse_directive_phpstr(&$str, &$attr_exprs) {
+		private function parse_directive_phpstr(&$str, &$attr_exprs, &$embed_exprs) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
@@ -278,16 +306,25 @@ require_once('KwartzUtility.inc');
 						$flag_escape = $name != 'ATTR';
 						$pairs = preg_split('/,/', $value);
 						foreach ($pairs as $pair) {
-							if (preg_match('/^\'([-:\w]+)\'=>(.*)/', $pair, $m=array())) {
-								$attr_name = $m[1];
-								$expr_str  = $m[2];
-								//$expr_str  = $flag_escape ? "htmlspecialchars({$m[2]})" : $m[2];
-								$attr_exprs[$attr_name] = $expr_str;
-							} else {
+							if (!preg_match('/^\'([-:\w]+)\'=>(.*)/', $pair, $m=array())) {
 								$msg = "'attr:\"'{$pair}\"': invalid directive.";
 								throw new KwartzConvertionError($msg, $this);
 							}
+							$attr_name = $m[1];
+							$expr_str  = $m[2];
+							if     ($name == 'Attr') { $expr_str = "E($expr_str)"; }
+							elseif ($name == 'ATTR') { $expr_str = "X($expr_str)"; }
+							$attr_exprs[$attr_name] = $expr_str;
 						}
+						break;
+					case 'embed':
+						$embed_exprs[] = $value;
+						break;
+					case 'Embed':
+						$embed_exprs[] = "E($value)";
+						break;
+					case 'EMBED':
+						$embed_exprs[] = "X($value)";
 						break;
 					case 'echo':  case 'Echo':  case 'ECHO':
 					case 'mark':
@@ -323,11 +360,11 @@ require_once('KwartzUtility.inc');
 
 
 		## test for parse_directive_kdstr()
-		function _parse_directive_kdstr(&$str, &$attr_exprs) {
-			return $this->parse_directive_kdstr($str, $attr_exprs);
+		function _parse_directive_kdstr(&$str, &$attr_exprs, &$embed_exprs) {
+			return $this->parse_directive_kdstr($str, $attr_exprs, $embed_exprs);
 		}
-		function _parse_directive_phpstr(&$str, &$attr_exprs) {
-			return $this->parse_directive_phpstr($str, $attr_exprs);
+		function _parse_directive_phpstr(&$str, &$attr_exprs, &$embed_exprs) {
+			return $this->parse_directive_phpstr($str, $attr_exprs, $embed_exprs);
 		}
 
 

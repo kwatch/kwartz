@@ -262,17 +262,57 @@ END;
 
 	function test_parse_directive_kdstr1() {
 		$converter = new KwartzConverter('');
-		$directive_str = "attr:class:klass;attr:id:item;value:expr";
-		$attr_directives = array();
-		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_directives);
-		$this->assertEquals('klass', $attr_directives['class']);
-		$this->assertEquals('item', $attr_directives['id']);
+		$directive_str = "attr:class:klass;ATTR:id:item;value:expr";
+		$attr_exprs = array();
+		$embed_exprs = array();
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $embed_exprs);
+		$this->assertEquals('klass', $attr_exprs['class']);
+		$this->assertEquals('X(item)', $attr_exprs['id']);
 		$this->assertEquals('value', $directive[0]);
 		$this->assertEquals('expr', $directive[1]);
-		//echo var_dump($attr_directives);
+		//echo var_dump($attr_exprs);
 		//echo var_dump($directive);
 	}
-	
+
+	function test_parse_directive_phpstr1() {
+		$converter = new KwartzConverter('');
+		$directive_str = "attr('class'=>\$klass,'id'=>\$item);echo(\$expr)";
+		$attr_exprs = array();
+		$embed_exprs = array();
+		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $embed_exprs);
+		$this->assertEquals('$klass', $attr_exprs['class']);
+		$this->assertEquals('$item', $attr_exprs['id']);
+		$this->assertEquals('echo', $directive[0]);
+		$this->assertEquals('$expr', $directive[1]);
+		//echo var_dump($attr_exprs);
+		//echo var_dump($directive);
+	}
+
+
+	function test_parse_directive_kdstr2() {
+		$converter = new KwartzConverter('');
+		$directive_str = "Embed:foo;embed:@C(flag!='')";
+		$attr_exprs = array();
+		$embed_exprs = array();
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $embed_exprs);
+		$this->assertEquals(2, count($embed_exprs));
+		$this->assertEquals("E(foo)", $embed_exprs[0]);
+		$this->assertEquals("@C(flag!='')", $embed_exprs[1]);
+		$this->assertEquals(NULL, $directive);
+	}
+
+	function test_parse_directive_phpstr2() {
+		$converter = new KwartzConverter('');
+		$directive_str = "Embed(\$foo);embed(@C(\$flag!=''))";
+		$attr_exprs = array();
+		$embed_exprs = array();
+		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $embed_exprs);
+		$this->assertEquals(2, count($embed_exprs));
+		$this->assertEquals("E(\$foo)", $embed_exprs[0]);
+		$this->assertEquals("@C(\$flag!='')", $embed_exprs[1]);
+		$this->assertEquals(NULL, $directive);
+	}
+
 
 	function test_parse_attr_str1() {
 		$input = <<<END
@@ -293,7 +333,7 @@ END;
 
 
 
-	function test_parse_attr_str2() {
+	function test_parse_attr_str1_php() {
 		$input = <<<END
 <tr id="foo" class="odd" php="attr('class'=>\$klass,'align'=>\$item->align);foreach(\$list as \$item)">
   <td id="value:klass">hoge</td>
@@ -315,6 +355,47 @@ END;
 		$this->assertEquals("foreach", $directive[0]);
 		$this->assertEquals("\$list as \$item", $directive[1]);
 	}
+
+
+
+	function test_parse_attr_str2() {
+		$input = <<<END
+<tr id="foo" class="odd" kd="Attr:class:klass;embed:flag?'checked':'';set:klass=ctr%2==0?'even':'odd'">
+  <td id="value:klass">hoge</td>
+</tr>
+END;
+		$converter = new KwartzConverter($input);
+		$tag_name = $converter->fetch();
+		//echo "*** debug: before:" . $converter->_attr_str() . "\n";
+		$directive = $converter->_parse_attr_str($converter->_attr_str());
+		//echo "*** debug: after:" . $converter->_attr_str() . "\n";
+		$this->assertEquals(' id="foo" class="#{E(klass)}#" #{flag?\'checked\':\'\'}#', $converter->_attr_str());
+		//echo var_dump($directive);
+		$this->assertEquals("set", $directive[0]);
+		$this->assertEquals("klass=ctr%2==0?'even':'odd'", $directive[1]);
+	}
+
+
+	function test_parse_attr_str2_php() {
+		$input = <<<END
+<tr id="foo" class="odd" php="Attr('class'=>\$klass);embed(\$flag?'checked':'');foreach(\$list as \$item)">
+  <td id="value:klass">hoge</td>
+</tr>
+END;
+		$expected1 = ' id="foo" class="odd" php="Attr(\'class\'=>$klass);embed($flag?\'checked\':\'\');foreach($list as $item)"';
+		$expected2 = ' id="foo" class="@{E($klass)}@" @{$flag?\'checked\':\'\'}@';
+
+		$converter = new KwartzConverter($input);
+		$tag_name = $converter->fetch();
+		$this->assertEquals($expected1, $converter->_attr_str());
+		
+		$directive = $converter->_parse_attr_str($converter->_attr_str());
+		$this->assertEquals($expected2, $converter->_attr_str());
+
+		$this->assertEquals("foreach", $directive[0]);
+		$this->assertEquals("\$list as \$item", $directive[1]);
+	}
+
 
 
 	###
@@ -1902,10 +1983,78 @@ END;
 	function test_elseif1_php() {
 		$input    = KwartzConverterTest::input_elseif1_php;
 		$expected = KwartzConverterTest::expected_elseif1;
-		$this->_test_convert($input, $expected, true);
+		$this->_test_convert($input, $expected);
+	}
+	
+	
+	
+	const input_embed1 =
+		'<input type="radio" kd="attr:value:item[\'value\'];embed:item[\'age\']<20?\'checked\':\'\'" />
+		';
+	const input_embed1_php =
+		'<input type="radio" php="attr(\'value\'=>$item[\'value\']);embed($item[\'age\']<20?\'checked\':\'\')" />
+		';
+	const expected_embed1 =
+		'<<block>>
+		  :print
+		    "<input type=\"radio\" value=\""
+		    []
+		      item
+		      "value"
+		    "\" "
+		    ?
+		      <
+		        []
+		          item
+		          "age"
+		        20
+		      "checked"
+		      ""
+		    "/>\n"
+		';
+	function test_embed1() {
+		$input    = KwartzConverterTest::input_embed1;
+		$expected = KwartzConverterTest::expected_embed1;
+		$this->_test_convert($input, $expected);
+	}
+	function test_embed1_php() {
+		$input    = KwartzConverterTest::input_embed1_php;
+		$expected = KwartzConverterTest::expected_embed1;
+		$this->_test_convert($input, $expected);
 	}
 
 
+
+	const input_embed2 =
+		'<input type="radio" kd="embed:@C(item[\'age\']<20)" />
+		';
+	const input_embed2_php =
+		'<input type="radio" php="embed(@C($item[\'age\']<20))" />
+		';
+	const expected_embed2 = 
+		'<<block>>
+		  :print
+		    "<input type=\"radio\" "
+		    ?
+		      <
+		        []
+		          item
+		          "age"
+		        20
+		      "checked=\"checked\""
+		      ""
+		    "/>\n"
+		';
+	function test_embed2() {
+		$input    = KwartzConverterTest::input_embed2;
+		$expected = KwartzConverterTest::expected_embed2;
+		$this->_test_convert($input, $expected);
+	}
+	function test_embed2_php() {
+		$input    = KwartzConverterTest::input_embed2_php;
+		$expected = KwartzConverterTest::expected_embed2;
+		$this->_test_convert($input, $expected);
+	}
 }
 
 
