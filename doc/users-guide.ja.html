@@ -71,13 +71,15 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
     </li>
     <li><a href="#analyze">グローバル変数とローカル変数</a>
     </li>
-    <li><a href="#rename">ローカル変数の名前を変更する</a>
+    <li><a href="#rename">テンプレートローカル変数の名前を変更する</a>
     </li>
     <li><a href="#span">spanタグの削除</a>
     </li>
     <li><a href="#topics-append">開始タグに式の値を追加する</a>
     </li>
     <li><a href="#rawcode">プレゼンテーションロジックをターゲット言語で記述する</a>
+    </li>
+    <li><a href="#topic-defun">テンプレートをRubyまたはPHPの関数にコンパイルする</a>
     </li>
   </ul>
   </li>
@@ -914,8 +916,8 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 <h3 class="section2">グローバル変数とローカル変数</h3>
 <p>Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
 </p>
-<p>Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
-テンプレートの中でだけ使用される変数をローカル変数と呼んでいます。
+<p>Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数を「テンプレートグローバル変数」、
+テンプレートの中でだけ使用される変数を「テンプレートローカル変数」と呼んでいます。
 Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 </p>
 <p>次の例をご覧ください。
@@ -945,8 +947,8 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 }
 </pre>
 <p>この例では4つの変数があります。
-このうち、<code>item</code>と<code>ctr</code>はテンプレート中でだけ使われるのでローカル変数、
-<code>title</code>と<code>list</code>はメインプログラムで設定されて出力用スクリプトに渡されるのでグローバル変数です。
+このうち、<code>item</code>と<code>ctr</code>はテンプレート中でだけ使われるのでテンプレートローカル変数、
+<code>title</code>と<code>list</code>はメインプログラムで設定されて出力用スクリプトに渡されるのでテンプレートグローバル変数です。
 </p>
 <p>kwartzをコマンドランオプション <code>-a analyze</code> をつけて起動すると、グローバル変数とローカル変数を報告してくれます。
 </p>
@@ -960,13 +962,13 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 
 
 <a name="rename"></a>
-<h3 class="section2">ローカル変数の名前を変更する</h3>
+<h3 class="section2">テンプレートローカル変数の名前を変更する</h3>
 <p>RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
-ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
-これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
+テンプレート側の変数を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+これに対処するため、Kwartzではテンプレートローカル変数名を自動的に変更する機能があります。
 </p>
 <p>コンパイル時にコマンドラインオプション「<code>--rename</code>」を指定すると、
-ローカル変数名の頭に「<code>_</code>をつけます。
+テンプレートローカル変数名の頭に「<code>_</code>をつけます。
 </p>
 <p>前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
 </p>
@@ -1011,7 +1013,7 @@ $ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
 &lt;/c:forEach&gt;
 &lt;/dl&gt;
 </pre>
-<p>なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
+<p>なお設定ファイルの定数RENAMEで、デフォルトでテンプレートローカル変数名を変更する・しないを設定できます。
 </p>
 <br>
 
@@ -1163,6 +1165,92 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 <p>「<code>&lt;%</code>」または「<code>&lt;?</code>」から行末までをraw-codeといいます。
 raw-codeは文(statement)であり、式(expression)ではありません。
 そのため、「plogic:」部に書くことはできますが「value:」部や「attr:」部に書くことはできません。
+</p>
+<br>
+
+
+<a name="topic-defun"></a>
+<h3 class="section2">テンプレートをRubyまたはPHPの関数にコンパイルする</h3>
+<p>コマンドラインオプション「<code>-a defun</code>」を指定すると、テンプレートをRubyまたはPHPの関数に変換できます。
+</p>
+<p>プレゼンテーションデータ(hoge.html)：
+</p>
+<a name="hoge.html"></a>
+<pre class="program">Hello @{user}@ !
+&lt;ul id="mark:list"&gt;
+  &lt;li id="value:item"&gt;xxx&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<p>プレゼンテーションロジック(hoge.plogic)：
+</p>
+<a name="hoge.plogic"></a>
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    foreach (item in list) {
+      @cont;
+    }
+    @stag;
+  }
+}
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">$ kwartz -l eruby <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.rb
+$ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+  def view_hoge(__args)
+    user = __args[:user]
+    list = __args[:list]
+    return _view_hoge(user,list)
+  end
+  def _view_hoge(user,list)
+    _erbout = ''; _erbout &lt;&lt; "Hello "; _erbout &lt;&lt;(( user ).to_s); _erbout &lt;&lt; " !\n"
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+     for item in list do 
+    _erbout &lt;&lt; "  &lt;li&gt;"; _erbout &lt;&lt;(( item ).to_s); _erbout &lt;&lt; "&lt;/li&gt;\n"
+     end 
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+    _erbout
+  end
+
+### for PHP
+&lt;?php
+    function view_hoge($__args) {
+        $user = $__args['user']
+        $list = $__args['list']
+        return _view_hoge(user,list)
+    }
+    function _view_hoge(user,list) {
+        ob_start();
+?&gt;Hello &lt;?php echo $user; ?&gt; !
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;ul&gt;
+&lt;?php
+        $__s = ob_get_contents();
+        ob_end_clean();
+        return $__s;
+    }
+?&gt;</pre>
+<p>関数は2つ定義されます。どちらでもお好きなほうをお使いください。
+</p>
+<ul type="disc">
+<li>引数をハッシュで与える関数<code>view_<i>filename</i>()</code>
+</li>
+<li>引数を明示的に指定する関数<code>_view_<i>filename</i>()</code>
+</li>
+</ul>
+<p>コマンドラインオプション「<code>-C <i>name</i></code>」でクラス名またはモジュール名を、
+「<code>-F <i>name</i></code>」で関数名またはメソッド名を、
+「<code>-A <i>name</i></code>」で引数を指定できます。
+また設定ファイルの「DEFUN_CLASS」でクラス名またはモジュール名を、
+「DEFUN_FUNCTION」で関数名またはメソッド名を指定できます。
 </p>
 <br>
 

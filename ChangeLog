@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-03-20 rev.54
+	.- [update] update reference.txt and users-guide.txt for '-a defun'
+	.- [change] change 'global/local variable' to 'template global/local variable' in users-guide.txt 
+
 .: 2005-03-19 rev.53
 	.- [enhance] new action 'defun' support; which is equvalent to 'mkmethod' script
 	.- [enhance] new command-line option '-C', '-F', '-A' support

@@ -7,27 +7,31 @@
 
 module Kwartz
    module Config
-      
+
       ## translator
       ESCAPE          = false
       NEWLINE         = "\n"
       INDENT          = "  "
-      RENAME          = false        # rename local var or not
-      RENAME_PREFIX   = '_'          # ex. var => _var
-      
+      RENAME          = false		# rename local var or not
+      RENAME_PREFIX   = '_'		# ex. var => _var
+
       ## compiler
       LANG            = "eruby"
-      
+
       ## converter
       ODD             = "'odd'"
       EVEN            = "'even'"
       DATTR           = "kw:d"
-      INCDIRS         = [ '.' ]      # directories from which 'include' directive includes
-      EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
-      
+      INCDIRS         = [ '.' ]		# directories from which 'include' directive includes
+      EMBED_PATTERN   = /@\{(.*?)\}@/	# or /\#\{(.*?)\}\#/
+
       ## converter & element
       NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]
-      
+
+      ## defun
+      DEFUN_CLASS     = nil		#
+      DEFUN_FUNCTION  = 'view_%s'       # or 'expand_%s' for compatible
+
       ## kwartz command
       CHARSET         = nil		# ex. UTF-8, EUC-JP
       HEADER_JSTL11   = <<END
@@ -40,7 +44,6 @@ END
       HEADER_JSP_CHARSET = <<END
 <%@ page contentType="text/html; charset=__CHARSET__" %>
 END
-      DEFUN_FORMAT    = 'view_%s'       # or 'expand_%s' for compatible
 
    end
 end

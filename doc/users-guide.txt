@@ -924,12 +924,12 @@
 .JA	Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
 .EN	Kwartz have a function to analyze presentation data/logic files and inspect variables.
 .	
-.JA	Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
-.JA	テンプレートの中でだけ使用される変数をローカル変数と呼んでいます。
+.JA	Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数を「テンプレートグローバル変数」、
+.JA	テンプレートの中でだけ使用される変数を「テンプレートローカル変数」と呼んでいます。
 .JA	Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
-.EN	In Kwartz, variables are called Global variables if they are set in the main program and are passed to output script.
-.EN	Variables are called Local variables if they are used only in the template.
-.EN	Kwartz have a function to detect whether variables are global or local and report the result.
+.EN	In Kwartz, variables are called 'template global variables' if they are set in the main program and are passed to output script.
+.EN	Variables are called 'template local variables' if they are used only in the template.
+.EN	Kwartz have a function to detect whether variables are template global or local and report the result.
 .	
 .JA	次の例をご覧ください。
 .EN	Assume the following presentation data and presentation logic:
@@ -961,14 +961,14 @@
 .	.--------------------
 .	
 .JA	この例では4つの変数があります。
-.JA	このうち、{{,item,}}と{{,ctr,}}はテンプレート中でだけ使われるのでローカル変数、
-.JA	{{,title,}}と{{,list,}}はメインプログラムで設定されて出力用スクリプトに渡されるのでグローバル変数です。
-.EN	In this case, variables {{,ctr,}} and {{,item,}} are Local Variables because they are used only in the template.
-.EN	Variables {{,title,}} and {{,list,}} are Global Variables because they are set in the main program and passed to output script.
+.JA	このうち、{{,item,}}と{{,ctr,}}はテンプレート中でだけ使われるのでテンプレートローカル変数、
+.JA	{{,title,}}と{{,list,}}はメインプログラムで設定されて出力用スクリプトに渡されるのでテンプレートグローバル変数です。
+.EN	In this case, variables {{,ctr,}} and {{,item,}} are template local variables because they are used only in the template.
+.EN	Variables {{,title,}} and {{,list,}} are template global variables because they are set in the main program and passed to output script.
 .	
 .JA	kwartzをコマンドランオプション {{,-a analyze,}} をつけて起動すると、グローバル変数とローカル変数を報告してくれます。
 .EN	.#Kwartz can detect whether variables are global or local.
-.EN	Invoking kwartz with the command-line option {{,-a analyze,}} reports global/local variables.
+.EN	Invoking kwartz with the command-line option {{,-a analyze,}} reports template global or local variables.
 .	
 .JA	実行例：
 .EN	Analyzing Example:
@@ -980,21 +980,21 @@
 .	
 .	
 .	
-.JA	◎ローカル変数の名前を変更する		| rename
-.EN	.$$ Rename Local Variable Names		| rename
+.JA	◎テンプレートローカル変数の名前を変更する		| rename
+.EN	.$$ Rename Template Local Variable Names		| rename
 .	
 .	
 .JA	RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
-.JA	ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
-.JA	これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
-.EN	In Ruby or PHP, if local variables in template have the same name of variables in main program,
+.JA	テンプレート側の変数を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+.JA	これに対処するため、Kwartzではテンプレートローカル変数名を自動的に変更する機能があります。
+.EN	In Ruby or PHP, if template local variables in templates have the same name of variables in main program,
 .EN	assignment into local variables effects the control of main program.
-.EN	To address this problem, Kwartz have a feature to rename local variable names in template automatically.
+.EN	To address this problem, Kwartz have a feature to rename template local variable names in templates automatically.
 .	
 .	
 .JA	コンパイル時にコマンドラインオプション「{{,--rename,}}」を指定すると、
-.JA	ローカル変数名の頭に「{{,_,}}をつけます。
-.EN	The command-line option '{{,--rename,}}' renames all of local variable names in template automatically.
+.JA	テンプレートローカル変数名の頭に「{{,_,}}をつけます。
+.EN	The command-line option '{{,--rename,}}' renames all of template local variable names in template automatically.
 .	
 .	
 .JA	前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
@@ -1017,8 +1017,8 @@
 .	.--------------------
 .	
 .	
-.JA	なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
-.EN	Constant RENAME in configuration file specifies whether rename local variable names in default.
+.JA	なお設定ファイルの定数RENAMEで、デフォルトでテンプレートローカル変数名を変更する・しないを設定できます。
+.EN	Constant RENAME in configuration file specifies whether rename template local variable names in default.
 .	
 .	
 .	
@@ -1174,6 +1174,87 @@
 .	
 .	
 .	
+.JA	◎テンプレートをRubyまたはPHPの関数にコンパイルする	| topic-defun
+.EN	.$$ Compile Template as a Function of Ruby or PHP	| topic-defun
+.	
+.	
+.JA	コマンドラインオプション「{{,-a defun,}}」を指定すると、テンプレートをRubyまたはPHPの関数に変換できます。
+.EN	Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
+.	
+.	
+.JA	プレゼンテーションデータ(hoge.html)：
+.EN	Presentation Data (hoge.html)
+.	.-------------------- hoge.html
+.	Hello @{user}@ !
+.	<ul id="mark:list">
+.	  <li id="value:item">xxx</li>
+.	</ul>
+.	.--------------------
+.	
+.JA	プレゼンテーションロジック(hoge.plogic)：
+.EN	Presentation Logic (hoge.plogic)
+.	.-------------------- hoge.plogic
+.	#list {
+.	  plogic: {
+.	    @stag;
+.	    foreach (item in list) {
+.	      @cont;
+.	    }
+.	    @stag;
+.	  }
+.	}
+.	.--------------------
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.rb
+.	$ kwartz -l php   {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.php
+.	.====================
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -l eruby,php -a defun -p guide.d/hoge.plogic guide.d/hoge.html
+.	.--------------------
+.	
+.	
+.JA	関数は2つ定義されます。どちらでもお好きなほうをお使いください。
+.JA	.* 引数をハッシュで与える関数{{,view_{{/filename/}}(),}}
+.JA	.* 引数を明示的に指定する関数{{,_view_{{/filename/}}(),}}
+.EN	Two functions are defined by '-a defun' option. You can use whichever you prefer.
+.EN	.* {{,view_{{/filename/}}(),}} - a function which takes arguments by a hash object.
+.EN	.* {{,_view_{{/filename/}}(),}} - a function which takes arguments explicitly.
+.	
+.	
+.JA	.#メインプログラム：
+.EN	.#Main Program:
+.	.#.-------------------- hoge-main.php
+.	.#<?php
+.	.#// set $args
+.	.#$user = "Kwartz";
+.	.#$list = array('Foo', 'Bar', 'Baz');
+.	.#{{*$args*}} = array('user'=>$user, 'list'=>$list);
+.	.#
+.	.#// output
+.	.#include('hoge.php');
+.	.#echo {{*expand_hoge1($args)*}};
+.	.#?>
+.	.#.--------------------
+.	
+.	
+.JA	コマンドラインオプション「{{,-C {{/name/}},}}」でクラス名またはモジュール名を、
+.JA	「{{,-F {{/name/}},}}」で関数名またはメソッド名を、
+.JA	「{{,-A {{/name/}},}}」で引数を指定できます。
+.JA	また設定ファイルの「DEFUN_CLASS」でクラス名またはモジュール名を、
+.JA	「DEFUN_FUNCTION」で関数名またはメソッド名を指定できます。
+.EN	You can specify funtion or method name with the command-line option '{{,-F {{/name/}},}}',
+.EN	class or module name with '{{,-C {{/name/}},}}', and arguments with '{{,-A {{/arg1,arg2,.../}},}}'.
+.EN	The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
+.EN	class/module name and function/method name.
+.	
+.	
 .	.#@EOF
 .	
 .	
@@ -1215,81 +1296,6 @@
 .	include($view);
 .	.--------------------
 .	
-.	
-.	
-.JA	◎テンプレートをPHPの関数にコンパイルする	| topic-mkmethod
-.EN	.$$ Compile Template as a PHP Function 		| topic-mkmethod
-.	
-.	
-.JA	付属のmkmethodスクリプトを使用することで、コンパイルしたテンプレートをPHPの関数として定義できます。
-.EN	Using the 'mkmethod' script, you can compile templates into a function of PHP.
-.	
-.	
-.JA	プレゼンテーションデータ(hoge1.html)：
-.EN	Presentation Data (hoge1.html)
-.	.-------------------- hoge1.html
-.	Hello @{user}@ !
-.	<ul id="mark:list">
-.	  <li id="value:item">xxx</li>
-.	</ul>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック(hoge1.plogic)：
-.EN	Presentation Logic (hoge1.plogic)
-.	.-------------------- hoge1.plogic
-.	#list {
-.	  plogic: {
-.	    @stag;
-.	    foreach (item in list) {
-.	      @cont;
-.	    }
-.	    @stag;
-.	  }
-.	}
-.	.--------------------
-.	
-.JA	コンパイル：
-.EN	Compile:
-.	.====================
-.	$ mkmethod -p hoge1.plogic hoge1.html > hoge1.view
-.	.====================
-.	
-.	
-.JA	出力用スクリプト(hoge1.view)：
-.EN	Output Script (hoge1.view):
-.	.--------------------
-.	.<<<:! mkmethod -p guide.d/hoge1.plogic guide.d/hoge1.html | tee hoge1.view
-.	.--------------------
-.	
-.	
-.JA	メインプログラム(hoge1.php)：
-.EN	Main Program (hoge1.php):
-.	.-------------------- hoge1.php
-.	<?php
-.	// set $args
-.	$user = "Kwartz";
-.	$list = array('Foo', 'Bar', 'Baz');
-.	{{*$args*}} = array('user'=>$user, 'list'=>$list);
-.	
-.	// output
-.	include('hoge1.view');
-.	echo {{*expand_hoge1($args)*}};
-.	?>
-.	.--------------------
-.	
-.	
-.JA	出力結果：
-.EN	Output Result:
-.	.____________________
-.	.<<<:! php -q guide.d/hoge1.php
-.	.____________________
-.	
-.	
-.JA	またコマンドラインオプション {{,-m,}} でメソッド名を、{{,-c,}} でクラス名を、{{,-a,}} で引数を指定できます。
-.JA	詳しくは {{,mkmethod-php -h,}} でヘルプを参照してください。
-.EN	You can specify method name with the command-line option {{,-m,}}, class name with {{,-c,}},
-.EN	and arguments with {{,-a,}}.
-.EN	See the help of mkmethod-php (type {{,mkmethod-php -h,}}) for details.
 .	
 .	
 .	.#@EOF

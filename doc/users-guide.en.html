@@ -71,13 +71,15 @@ a template system which realized the concept of 'Separation of Presentation Logi
     </li>
     <li><a href="#analyze">Analyzing Global and Local Variables</a>
     </li>
-    <li><a href="#rename">Rename Local Variable Names</a>
+    <li><a href="#rename">Rename Template Local Variable Names</a>
     </li>
     <li><a href="#span">Span Tag Deletion</a>
     </li>
     <li><a href="#topics-append">Appending Expression to Start Tag</a>
     </li>
     <li><a href="#rawcode">Describe Presentation Logic in Target Language</a>
+    </li>
+    <li><a href="#topic-defun">Compile Template as a Function of Ruby or PHP</a>
     </li>
   </ul>
   </li>
@@ -915,9 +917,9 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <h3 class="section2">Analyzing Global and Local Variables</h3>
 <p>Kwartz have a function to analyze presentation data/logic files and inspect variables.
 </p>
-<p>In Kwartz, variables are called Global variables if they are set in the main program and are passed to output script.
-Variables are called Local variables if they are used only in the template.
-Kwartz have a function to detect whether variables are global or local and report the result.
+<p>In Kwartz, variables are called 'template global variables' if they are set in the main program and are passed to output script.
+Variables are called 'template local variables' if they are used only in the template.
+Kwartz have a function to detect whether variables are template global or local and report the result.
 </p>
 <p>Assume the following presentation data and presentation logic:
 </p>
@@ -945,10 +947,10 @@ Kwartz have a function to detect whether variables are global or local and repor
   }
 }
 </pre>
-<p>In this case, variables <code>ctr</code> and <code>item</code> are Local Variables because they are used only in the template.
-Variables <code>title</code> and <code>list</code> are Global Variables because they are set in the main program and passed to output script.
+<p>In this case, variables <code>ctr</code> and <code>item</code> are template local variables because they are used only in the template.
+Variables <code>title</code> and <code>list</code> are template global variables because they are set in the main program and passed to output script.
 </p>
-<p>Invoking kwartz with the command-line option <code>-a analyze</code> reports global/local variables.
+<p>Invoking kwartz with the command-line option <code>-a analyze</code> reports template global or local variables.
 </p>
 <p>Analyzing Example:
 </p>
@@ -960,12 +962,12 @@ Variables <code>title</code> and <code>list</code> are Global Variables because 
 
 
 <a name="rename"></a>
-<h3 class="section2">Rename Local Variable Names</h3>
-<p>In Ruby or PHP, if local variables in template have the same name of variables in main program,
+<h3 class="section2">Rename Template Local Variable Names</h3>
+<p>In Ruby or PHP, if template local variables in templates have the same name of variables in main program,
 assignment into local variables effects the control of main program.
-To address this problem, Kwartz have a feature to rename local variable names in template automatically.
+To address this problem, Kwartz have a feature to rename template local variable names in templates automatically.
 </p>
-<p>The command-line option '<code>--rename</code>' renames all of local variable names in template automatically.
+<p>The command-line option '<code>--rename</code>' renames all of template local variable names in template automatically.
 </p>
 <p>The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
 </p>
@@ -1010,7 +1012,7 @@ $ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
 &lt;/c:forEach&gt;
 &lt;/dl&gt;
 </pre>
-<p>Constant RENAME in configuration file specifies whether rename local variable names in default.
+<p>Constant RENAME in configuration file specifies whether rename template local variable names in default.
 </p>
 <br>
 
@@ -1163,6 +1165,91 @@ It enables you to write presentation logics in Ruby, PHP, and Java.
 <p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called 'raw-code'.
 Raw-code is statement and not expression, therefore you can write raw-code in 'plogic:' part
 but not in 'value:' part and 'attr:' part.
+</p>
+<br>
+
+
+<a name="topic-defun"></a>
+<h3 class="section2">Compile Template as a Function of Ruby or PHP</h3>
+<p>Using the command-line option '<code>-a defun</code>', you can compile templates into a function of Ruby or PHP.
+</p>
+<p>Presentation Data (hoge.html)
+</p>
+<a name="hoge.html"></a>
+<pre class="program">Hello @{user}@ !
+&lt;ul id="mark:list"&gt;
+  &lt;li id="value:item"&gt;xxx&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<p>Presentation Logic (hoge.plogic)
+</p>
+<a name="hoge.plogic"></a>
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    foreach (item in list) {
+      @cont;
+    }
+    @stag;
+  }
+}
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz -l eruby <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.rb
+$ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+  def view_hoge(__args)
+    user = __args[:user]
+    list = __args[:list]
+    return _view_hoge(user,list)
+  end
+  def _view_hoge(user,list)
+    _erbout = ''; _erbout &lt;&lt; "Hello "; _erbout &lt;&lt;(( user ).to_s); _erbout &lt;&lt; " !\n"
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+     for item in list do 
+    _erbout &lt;&lt; "  &lt;li&gt;"; _erbout &lt;&lt;(( item ).to_s); _erbout &lt;&lt; "&lt;/li&gt;\n"
+     end 
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+    _erbout
+  end
+
+### for PHP
+&lt;?php
+    function view_hoge($__args) {
+        $user = $__args['user']
+        $list = $__args['list']
+        return _view_hoge(user,list)
+    }
+    function _view_hoge(user,list) {
+        ob_start();
+?&gt;Hello &lt;?php echo $user; ?&gt; !
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;ul&gt;
+&lt;?php
+        $__s = ob_get_contents();
+        ob_end_clean();
+        return $__s;
+    }
+?&gt;</pre>
+<p>Two functions are defined by '-a defun' option. You can use whichever you prefer.
+</p>
+<ul type="disc">
+<li><code>view_<i>filename</i>()</code> - a function which takes arguments by a hash object.
+</li>
+<li><code>_view_<i>filename</i>()</code> - a function which takes arguments explicitly.
+</li>
+</ul>
+<p>You can specify funtion or method name with the command-line option '<code>-F <i>name</i></code>',
+class or module name with '<code>-C <i>name</i></code>', and arguments with '<code>-A <i>arg1,arg2,...</i></code>'.
+The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
+class/module name and function/method name.
 </p>
 <br>
 

@@ -2061,16 +2061,18 @@
 .EN		Version information.
 .	
 .	.[-a {{/action/}}]
-.JA		.#実行する処理。'convert', 'translate', 'compile', 'analyze' のどれか。デフォルトは'compile'。
+.JA		.#実行する処理。'convert', 'translate', 'compile', 'analyze', 'defun' のどれか。デフォルトは'compile'。
 .JA		実行する処理。{{/action/}}には次のどれかを指定する（デフォルトはcompile）。
 .JA		.:compile:	プレゼンテーションデータとプレゼンテーションロジックを読み込み、出力用スクリプトを生成します。
 .JA		.:analyze:	プレゼンテーションデータとプレゼンテーションロジックを読み込み、変数のスコープを解析します。
+.JA		.:defun:	プレゼンテーションデータとプレゼンテーションロジックを読み込み、RubyまたはPHPの関数に変換します。
 .JA		.:convert:	プレゼンテーションデータを読み込み、PLプログラムに変換します。デバッグ用です。
 .JA		.:transalte:	PLプログラムを読み込み、出力用スクリプトに変換します。デバッグ用です。
 .EN		.#Action to do. {{/action/}} may be 'convert', 'translate', 'compile'(default) or 'analyze'.
 .EN		Action to do. {{/action/}} may be one of the following (default is 'compile').
 .EN		.:compile:	Read presentation data and presentation logic, and generate output script.
 .EN		.:analyze:	Read presentation data and presentation logic, and report scope of variables.
+.EN		.:defun:	Read presentation data and presentation logic, and define function of Ruby or PHP.
 .EN		.:convert:	Read presentation data, and convert to PL program. This is for debugging.
 .EN		.:translate:	Read PL program, and translate into output script. This is for debugging.
 .	
@@ -2256,6 +2258,16 @@
 .	.[ NOEND ]
 .JA		終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。
 .EN		List of tag name which doesn't require end tag. Default is [ "input", "br", "meta", "img", "hr" ].
+.	
+.	.[ DEFUN_CLASS ]
+.JA		コマンドラインオプション'-a defun'を使って関数を定義するときの、
+.JA		デフォルトのクラス名またはモジュール名です。
+.EN		Default name of class or module when defining functions with the command-line option '-a defun'.
+.	
+.	.[ DEFUN_FUNCTION ]
+.JA		コマンドラインオプション'-a defun'を使って関数を定義するときの、
+.JA		デフォルトの関数名またはメソッド名です。
+.EN		Default name of function or method when defining functions with the command-line option '-a defun'.
 .	
 .	.[ CHARSET ]
 .JA		文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。

@@ -151,7 +151,7 @@ module Kwartz
          output << properties[:header] if properties[:header]
 
          ## parse presentation logic file
-         @compiler = Kwartz::Compiler.new(properties)
+         compiler = Kwartz::Compiler.new(properties)
          plogic_filenames = options[?p] ? options[?p].split(/,/) : []
          decl_list = []
          plogic_filenames.each do |filename|
@@ -160,7 +160,7 @@ module Kwartz
             end
             File.open(filename) do |file|
                plogic_str = file.read()
-               list = @compiler.parse_plogic(plogic_str, filename)
+               list = compiler.parse_plogic(plogic_str, filename)
                decl_list.concat(list) if list
             end
          end
@@ -174,7 +174,7 @@ module Kwartz
             end
             File.open(filename) do |file|
                pdata_str = file.read()
-               block_stmt, elem_list = @compiler.convert(pdata_str, filename)
+               block_stmt, elem_list = compiler.convert(pdata_str, filename)
                element_list.concat(elem_list) if elem_list
             end
          end
@@ -183,7 +183,7 @@ module Kwartz
          if @argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
-            output << perform(action, @compiler, input, filename, element_list, decl_list, lang)
+            output << perform(action, compiler, input, filename, element_list, decl_list, lang)
             source = input
          else
             source = ''
@@ -193,7 +193,7 @@ module Kwartz
                end
                File.open(filename) do |file|
                   input = file.read()
-                  output << perform(action, @compiler, input, filename, element_list, decl_list, lang)
+                  output << perform(action, compiler, input, filename, element_list, decl_list, lang)
                   source << input
                end
             end
@@ -202,18 +202,16 @@ module Kwartz
          ## define functions
          if action == :defun
             body = output
-            arguments = perform(:arguments, @compiler, input, filename, element_list, decl_list, lang)
+            defun = Defun::create(lang)
+            raise CommandOptionError.new("action 'defun' doesn't support a language '#{lang}'.") unless defun
             context = {
                :class     => options[?C] || properties[:class],
                :function  => options[?F] || properties[:function],
-               :arguments => options[?A] || properties[:arguments] || arguments,
+               :arguments => options[?A] || properties[:arguments],
                :lang      => lang,
                :filename  => filename
             }
-            defun = Defun::create(lang)
-            unless defun
-               raise CommandOptionError.new("action 'defun' doesn't support a language '#{lang}'.")
-            end
+            context[:arguments] ||= perform(:arguments, compiler, input, filename, element_list, decl_list, lang)
             output = defun.generate(body, context)
          end
 
