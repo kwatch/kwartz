@@ -295,16 +295,15 @@ require_once('KwartzUtility.inc');
 				}
 				if ($this->flag_single) {		# single tag
 					if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str)) != NULL) {
-						if ($tag_name == 'span' && ! $this->attr_str) {
+						$flag_remove_span = ($tag_name == 'span' && ! $this->attr_str);
+						if ($flag_remove_span) {
 							$list = array();
-							$flag_span_removed = TRUE;
 						} else {
 							$print_stmt = $this->create_print_stmt($this->create_tagstr());
 							$list = array($print_stmt);
-							$flag_span_removed = FALSE;
 						}
 						$block = new KwartzBlockStatement($list);
-						$this->store_stmt_for_directive($directive, $block, $stmt_list, $flag_span_removed);
+						$this->store_stmt_for_directive($directive, $block, $stmt_list, $flag_remove_span);
 					} else {
 						$print_stmt = $this->create_print_stmt($this->create_tagstr());
 						$stmt_list[] = $print_stmt;
@@ -318,16 +317,14 @@ require_once('KwartzUtility.inc');
 					}
 				} else {				# start tag
 					if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str)) != NULL) { # directive specifed
+						$flag_remove_span = ($tag_name == 'span' && ! $this->attr_str);
 						$block = $this->_convert($tag_name);
-						if ($tag_name == 'span' && ! $this->attr_str) {
+						if ($flag_remove_span) {
 							# ignore first and last statement
 							$first_stmt = $block->shift(); //array_shift($block->statements());
 							$last_stmt  = $block->pop();   //array_pop($block->statements());
-							$flag_span_removed = TRUE;
-						} else {
-							$flag_span_removed = FALSE;
 						}
-						$this->store_stmt_for_directive($directive, $block, $stmt_list, $flag_span_removed);
+						$this->store_stmt_for_directive($directive, $block, $stmt_list, $flag_remove_span);
 					} else {										# directive not specified
 						if ($tag_name == $end_tag_name) {
 							$block = $this->_convert($tag_name);
@@ -355,7 +352,7 @@ require_once('KwartzUtility.inc');
 		}
 
 
-		private function store_stmt_for_directive(&$directive, &$block, &$stmt_list, $flag_span_removed=FALSE) {
+		private function store_stmt_for_directive(&$directive, &$block, &$stmt_list, $flag_remove_span=FALSE) {
 			$directive_name = $directive[0];
 			$directive_arg	= $directive[1];
 			switch ($directive_name) {
@@ -401,7 +398,7 @@ require_once('KwartzUtility.inc');
 				$ctr_name     = $loopvar_name . '_ctr';
 				$toggle_name  = $loopvar_name . '_tgl';
 				if ($flag_loop) {
-					if (! $flag_span_removed) {
+					if (! $flag_remove_span) {
 						$first_stmt = $block->shift(); //array_shift($block->statements());
 						$last_stmt  = $block->pop();   //array_pop($block->statements());
 						$stmt_list[] = $first_stmt;
@@ -430,7 +427,7 @@ require_once('KwartzUtility.inc');
 				$stmt = new KwartzForeachStatement($loopvar_expr, $list_expr, $block);
 				$stmt_list[] = $stmt;
 				if ($flag_loop) {
-					if (! $flag_span_removed) {
+					if (! $flag_remove_span) {
 						$stmt_list[] = $last_stmt;
 					}
 				}
@@ -448,7 +445,7 @@ require_once('KwartzUtility.inc');
 
 			case 'value':
 				$expr = $this->parse_expression($directive_arg);
-				if ($flag_span_removed) {
+				if ($flag_remove_span) {
 					$stmt_list[] = new KwartzPrintStatement(array($expr));
 				} else {
 					$stmt_list[] = $block->shift();  //array_shift($block->statements());	// stag
@@ -481,7 +478,7 @@ require_once('KwartzUtility.inc');
 
 			case 'mark':
 				$name = $directive_arg;
-				if ($flag_span_removed) {
+				if ($flag_remove_span) {
 					$stag_list = array();
 					$etag_list = array();
 				} else {

@@ -693,6 +693,25 @@ END;
 
 
 
+	function test_convert_span3() {		# bug
+		$input = <<<END
+<span id="value:day" class="holiday">&nbsp;</span>
+END;
+		$expected = <<<END
+<<block>>
+  :print
+    "<span class=\\"holiday\\">"
+  :print
+    day
+  :print
+    "</span>"
+
+END;
+		$this->_test_convert($input, $expected);
+	}
+
+
+
 	function test_convert_span_removed1() {		# bug
 		$input = <<<END
 		<span id="mark:day">hoge</span>

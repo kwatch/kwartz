@@ -216,7 +216,7 @@ require_once('KwartzScanner.inc');
 				$msg = "'empty' is allowed only in right-side of '==' or '!='.";
 				throw new KwartzSyntaxError($msg, $this->scanner);
 			default:
-				echo "*** debug: t=", var_dump($t), "\n";
+				echo "*** assert(false): t=", var_dump($t), "\n";
 				assert(false);
 			}
 			return $expr;

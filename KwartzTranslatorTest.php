@@ -203,7 +203,7 @@ END;
 		:end
 END;
 		$expected = <<<END
-		<?php if (\$cond1) ?>
+		<?php if (\$cond1) { ?>
 		cond1
 		<?php } ?>
 
@@ -222,7 +222,7 @@ END;
 		:end
 END;
 		$expected = <<<END
-		<?php if (\$cond1) ?>
+		<?php if (\$cond1) { ?>
 		aaa
 		<?php } else { ?>
 		bbb
@@ -247,7 +247,7 @@ END;
 		:end
 END;
 		$expected = <<<END
-		<?php if (\$cond1) ?>
+		<?php if (\$cond1) { ?>
 		aaa
 		<?php } elseif (\$cond2) { ?>
 		bbb
@@ -372,6 +372,49 @@ END;
 		$this->_test($input, $expected);
 	}
 
+
+
+
+	function test_php_indent1() {
+		$input = <<<END
+:print("<table>\n")
+:set(ctr = 0)
+:foreach(item = list)
+  :set(ctr += 1)
+  :if(ctr % 2 == 0)
+    :set(klass='even')
+  :elseif(ctr % 2 == 1)
+    :set(klass='odd')
+  :else
+    :set(klass='never')
+  :end
+  :print("  <tr class=\"", klass, "\">\n")
+  :print("    <td>", item, "</td>\n")
+  :print("  </tr>\n")
+:end
+:print("</table>\n")
+END;
+		$expected = <<<END
+<table>
+<?php \$ctr = 0; ?>
+<?php foreach (\$list as \$item) { ?>
+  <?php \$ctr += 1; ?>
+  <?php if (\$ctr % 2 == 0) { ?>
+    <?php \$klass = "even"; ?>
+  <?php } elseif (\$ctr % 2 == 1) { ?>
+    <?php \$klass = "odd"; ?>
+  <?php } else { ?>
+    <?php \$klass = "never"; ?>
+  <?php } ?>
+  <tr class="<?php echo \$klass; ?>">
+    <td><?php echo \$item; ?></td>
+  </tr>
+<?php } ?>
+</table>
+
+END;
+		$this->_test($input, $expected);
+	}
 
 
 }
