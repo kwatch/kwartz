@@ -253,6 +253,9 @@ Hello&lt;?php echo $username; ?&gt;!
 
 ### for JSTL
 Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
+
+### for Velocity
+Hello$!{username}!
 </pre>
 <br>
 
@@ -324,6 +327,9 @@ This is named 'Replace Content by Value Pattern.'
 
 ### for JSTL
 &lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
+
+### for Velocity
+&lt;h1&gt;$!{title}&lt;/h1&gt;
 </pre>
 <br>
 
@@ -757,6 +763,11 @@ This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
+
+### for Velocity
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
 </pre>
 <br>
 
@@ -834,6 +845,12 @@ Next&lt;?php } else { ?&gt;
 Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 &lt;a href="&lt;c:out value="${url}" escapeXml="false"/&gt;"&gt;Next&lt;/a&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($url)
+Next#else
+&lt;a href="$!{url}"&gt;Next&lt;/a&gt;
+#end
 </pre>
 <br>
 
@@ -910,6 +927,14 @@ This pattern is very useful for all these situations.
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
+&lt;/ul&gt;
+
+### for Velocity
+&lt;ul&gt;
+#foreach($item in $list)
+  &lt;dt&gt;$!{item.text}&lt;/dt&gt;
+  &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
+#end
 &lt;/ul&gt;
 </pre>
 <br>
@@ -994,6 +1019,14 @@ This pattern is named 'Iterate Content' pattern.
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
+&lt;/ul&gt;
+
+### for Velocity
+&lt;ul&gt;
+#foreach($item in $list)
+  &lt;dt&gt;$!{item.text}&lt;/dt&gt;
+  &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
+#end
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1086,6 +1119,15 @@ This pattern is named 'Select Element Pattern.'
 &lt;/c:when&gt;&lt;c:otherwise&gt;
   &lt;font color="black"&gt;No error.&lt;/font&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($status == "error")
+  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+#elseif($status == "warning")
+  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+#else
+  &lt;font color="black"&gt;No error.&lt;/font&gt;
+#end
 </pre>
 <br>
 
@@ -1190,6 +1232,17 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
       &amp;gt;
 &lt;/c:forEach&gt;
       &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+### for Velocity
+&lt;html&gt;
+  &lt;body&gt;
+#foreach($item in $list)
+      &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
+      &amp;gt;
+#end
+      &lt;b&gt;$!{title}&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>

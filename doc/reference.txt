@@ -33,6 +33,9 @@
 .JA	.#◎更新履歴		| changelog*
 .EN	.#.$$ ChangeLog		| changelog*
 .	.#
+.	.#.: 2005-03-24
+.JA	.#	.- プレゼンテーションロジックファイルの書式についての章を追加
+.EN	.#	.- add new chapter about presentation logic file format
 .	.#.: 2005-03-07
 .	.#	.- beta3 release
 .	.#.: 2005-02-19
@@ -107,37 +110,38 @@
 .	PHP		., TRUE		., FALSE	., NULL
 .	eRuby		., true		., false	., nil
 .	JSP(JSTL)	., true		., false	., null
+.	Velocity	., true		., false	., -
 .	.+--------------------
 .JA		{{,true,}}、{{,false,}}、{{,null,}}の変換
 .EN		Translation of {{,true,}}, {{,false,}} and {{,null,}}
 .	
 .	
-.JA	.#なおVelocityではnullやそれに類するキーワードがありません。
-.JA	.#そのため、nullを含むPLプログラムをVelocityに変換するとエラーになります。
-.JA	.#ただしnullとの比較を行う論理式は、nullを使わない式に変換されます。
-.EN	.#Translating a PL program which contains the keyword {{,null,}} into a Velocity script will cause an error
-.EN	.#because Velocity doesn't have a keyword which is equivalent to {{,null,}}.
-.EN	.#However, Kwartz will translate '{{,expr==null,}}' and '{{,expr!=null,}}' to '{{,!expr,}}' and '{{,expr,}}'
-.EN	.#when translating to Velocity.
-.	.#
-.	.#
-.JA	.#PLプログラム：
-.EN	.#PL Program:
-.	.#.-------------------- pl-boolean.plogic
-.	.#:set(flag = obj == null? true : false)
-.	.#
-.	.#:if (expr != null)
-.	.#  :print("expr is not null.\n")
-.	.#:else
-.	.#  :print("epxr is null.\n")
-.	.#:end
-.	.#.--------------------
-.	.#
-.JA	.#出力用スクリプト：
-.EN	.#Output Script:
-.	.#.____________________
-.	.#.<<<:! ./output.rb -a translate -l velocity guide.d/pl-boolean.plogic
-.	.#.____________________
+.JA	なおVelocityではnullやそれに類するキーワードがありません。
+.JA	そのため、nullを含むPLプログラムをVelocityに変換するとエラーになります。
+.JA	ただしnullとの比較を行う論理式は、nullを使わない式に変換されます。
+.EN	Translating a PL program which contains the keyword {{,null,}} into a Velocity script will cause an error
+.EN	because Velocity doesn't have a keyword which is equivalent to {{,null,}}.
+.EN	However, Kwartz will translate '{{,expr==null,}}' and '{{,expr!=null,}}' to '{{,!expr,}}' and '{{,expr,}}'
+.EN	when translating to Velocity.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-boolean.plogic
+.	flag = obj == null? true : false;
+.	
+.	if (expr != null) {
+.	  print("expr is not null.\n");
+.	} else {
+.	  print("epxr is null.\n");
+.	}
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! ./output.rb -a translate -l velocity guide.d/pl-boolean.plogic
+.	.____________________
 .	
 .	
 .	
@@ -181,9 +185,11 @@
 .JA	文字列の連結演算子「{{,.+,}}」は、eRubyでは「{{,+,}}」に、PHPでは「{{,.,}}」に、
 .JA	JSTL1.1では関数{{,fn:join(),}}に変換されます。
 .JA	JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
+.JA	Velocityではエラーになります。
 .EN	String concatenation operator ('{{,.+,}}') is converted into '{{,+,}}' in eRuby, '{{,.,}}' in PHP,
 .EN	a function '{{,fn:join(),}}' in JSTL1.1.
 .EN	There is no concatenation operator in JSTL1.0, so Kwartz converts it into a little tricky code.
+.EN	Concatenation operator will be error in Velocity.
 .	
 .JA	PLプログラム(PL)：
 .EN	PL Program (PL):
@@ -197,11 +203,11 @@
 .	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -a translate guide.d/pl-concatop.plogic
 .	.____________________
 .	
-.JA	条件演算子（3項演算子）はeRubyとPHPとJSTL1.1では使用できますが、JSTL1.0では使用できません。
-.JA	そのため条件演算子を含む式は、JSTL1.0ではif文（に相当する<c:choose>）に変換されます。
+.JA	条件演算子（3項演算子）はeRubyとPHPとJSTL1.1では使用できますが、JSTL1.0とVelocityでは使用できません。
+.JA	そのため条件演算子を含む式は、JSTL1.0とVelocityではif文（JSTL1.0ならif文に相当する<c:choose>）に変換されます。
 .EN	Conditional Operator is available in eRuby, PHP, and JSTL1.1.
-.EN	However, it is not available in JSTL1.0.
-.EN	Therefore, conditional operators will be translated to if statements in JSTL1.0.
+.EN	However, it is not available in JSTL1.0 and Velocity.
+.EN	Therefore, conditional operators will be translated to corresponding if statements in JSTL1.0 and velocity.
 .	
 .JA	PLプログラム(PL)：
 .EN	PL Program:
@@ -212,7 +218,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -a translate guide.d/pl-condop.plogic
+.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10,velocity -a translate guide.d/pl-condop.plogic
 .	.____________________
 .	
 .	
@@ -223,7 +229,7 @@
 .	
 .JA	出力は「{{,print({{/.../}});,}}」で表します。
 .JA	引数には任意の式を書くことができます。
-.EN	{{,print({{/.../}});,}} is print statement.
+.EN	{{,print({{/.../}}),}} is print statement.
 .EN	Any expression can be in arguments.
 .	
 .JA	PLプログラム：
@@ -267,6 +273,13 @@
 .	.____________________
 .	.<<<:! ./output.rb -a translate -e -l eruby,php,jstl guide.d/pl-print2.plogic
 .	.____________________
+.	
+.	
+.JA	「{{,print(a .+ b .+ c);,}}」は「{{,print(a); print(b); print(c);,}}」と展開されます。
+.JA	これは、文字列の連結演算子「{{,.+,}}」をサポートしていない一部の言語を考慮した仕様です。
+.EN	'{{,print(a .+ b .+ c);,}}' will be expanded such as '{{,print(a); print(b); print(c);,}}'.
+.EN	This is for some languages which doesn't support string concatenation operator ({{,.+,}}).
+.	
 .	
 .	
 .	
@@ -317,8 +330,8 @@
 .	.-------------------- pl-array.plogic
 .JA	list[n] = 10;           // n番目の要素に代入
 .EN	list[n] = 10;           // assign into n-th element of the array
-.JA	print(list[i], "\n");     // i番目の要素を出力
-.EN	print(list[i], "\n");     // print  i-th element of the array
+.JA	print(list[i], "\n");   // i番目の要素を出力
+.EN	print(list[i], "\n");   // print  i-th element of the array
 .JA	hash['key'] = 'foo';    // ハッシュの要素に代入
 .EN	hash['key'] = 'foo';    // assign into a hash element
 .JA	print(hash['key'], "\n"); // ハッシュの要素を出力
@@ -348,7 +361,7 @@
 .	   eRuby		., {{,hash[:key],}}
 .	   PHP			., {{,$hash['key'],}}
 .	   JSTL			., {{,hash['key'],}}
-.	.# Velocity		., {{,hash.key,}}
+.	   Velocity		., {{,hash.key,}}
 .	.+--------------------
 .JA		「{{,hash[:key],}}」の変換結果
 .EN		Translation of '{{,hash[:key],}}'
@@ -377,8 +390,8 @@
 .JA	また「{{,{{/object/}}.{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}」のように引数をつけてメソッドを呼ぶこともできます。
 .JA	ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSTLへの変換時にはエラーになります。
 .JA	.#プロパティはメソッド呼び出しではないので、引数をとることはできません。
-.EN	You can reference a property of an object as '{{,{{/object/}}->{{/property/}},}}'.
-.EN	You can also call a method with arguments such as '{{,{{/object/}}->{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}'.
+.EN	You can reference a property of an object as '{{,{{/object/}}.{{/property/}},}}'.
+.EN	You can also call a method with arguments such as '{{,{{/object/}}.{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}'.
 .EN	Translation of method call into JSTL will raise an error because JSTL's Expression Language doesn't support method call.
 .EN	.#Properties are not methods, so properties cannot accept any arguments.
 .	
@@ -407,7 +420,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! ./output.rb -l eruby,php -a translate guide.d/pl-method.plogic
+.	.<<<:! ./output.rb -l eruby,php,velocity -a translate guide.d/pl-method.plogic
 .	.____________________
 .	
 .	
@@ -448,11 +461,11 @@
 .	
 .	
 .JA	またwhile文も使用できます。
-.JA	ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSTLへ変換しようとするとエラーになります。
-.JA	.#またVelocityもwhile文に相当するVelocityディレクティブがないため、変換時にエラーとなります。
+.JA	ただし、JSTLおよびVelocityにはwhile文に相当するカスタムタグやディレクティブがないため、
+.JA	JSTLまたはVelocityへ変換しようとするとエラーになります。
 .EN	You can also use a while statment.
-.EN	Kwartz will raise an error if you try to translate a while statement into a JSTL script,
-.EN	because there is no JSTL tag which is equivalent to the while statment.
+.EN	Kwartz will raise an error if you try to translate a while statement into a JSTL or Velocity script,
+.EN	because there is no JSTL tag or Velocity directive which is equivalent to the while statment.
 .	
 .	
 .JA	PLプログラム：
@@ -512,14 +525,18 @@
 .EN	The following functions are available in PL.
 .	.[ E({{/expr/}}) ]
 .JA		式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+.JA		E()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 .EN		Sanitizes(escapes) the expression {{/expr/}}. Using this function sanitizes
 .EN		even when the command-line option for sanitizing is not specified.
+.EN		E() is pseudo-function and allowed to appear only as argument of print statement.
 .	
 .	.[ X({{/expr/}}) ]
 .JA		式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
+.JA		X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 .JA		X({{/expr/}})で指定された式はサニタイズされません。
 .EN		Don't sanitize expression {{/expr/}}, even when the command-line option for
 .EN		sanitizing is specified.
+.EN		X() is pseudo-function and allowed to appear only as argument of print statement.
 .	
 .	.[ C({{/expression/}}) ]
 .JA		「{{,{{/expression/}} ? ' checked="checked"' : '',}}」と同じです。
@@ -572,15 +589,15 @@
 .JA	.#現在のところ、これら以外の関数をユーザが自由に定義することはできません。
 .EN	.#Currently, you cannot define or use any functions except the above two.
 .	
-.JA	ただし、JSTL1.0では関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+.JA	ただし、JSTL1.0とVelocityでは関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
 .JA	JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
-.EN	JSTL1.0 doesn't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
+.EN	JSTL1.0 and Velocity don't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
 .EN	JSTL1.1 supports some functions but it is limited.
 .EN	In fact, list_new(), hash_new(), and hash_keys() are not supported.
 .	
 .	.+------------------------------------------------------------
 .JA	  関数名                            ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
-.EN	  Functions                         ., eRuby                              ., PHP                           ., JSTL1.1     ., JSTL1.0
+.EN	  Functions                         ., eRuby                              ., PHP                           ., JSTL1.1     ., JSTL1.0 & Velocity
 .	.------------------------------------------------------------                                              
 .	{{,list_new(),}}                    ., {{,[],}}                         ., {{,array(),}}                   ., -   ., -
 .	{{,list_length({{/list/}}),}}       ., {{,{{/list/}}.length,}}          ., {{,array_length({{/list/}}),}}  ., {{,fn:length({{/list/}}),}}  .,  -
@@ -594,7 +611,7 @@
 .	
 .	
 .JA	これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
-.JA	JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+.JA	JSTLとVelocityではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
 .EN	All functions except above are printed "as is" when translating into PHP or eRuby script.
 .EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support
 .EN	user-defined functions.
@@ -722,7 +739,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! ./output.rb -l eruby,php,jstl11 -p guide.d/pl-decl.plogic guide.d/pl-decl.pdata
+.	.<<<:! ./output.rb -l eruby,php,jstl11,velocity -p guide.d/pl-decl.plogic guide.d/pl-decl.pdata
 .	.____________________
 .	
 .	
@@ -878,9 +895,9 @@
 .EN	.$$ Global and Local Variables	 | pl-scope
 .	
 .	
-.JA	Kwartzでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
-.EN	In Kwartz, variables are called Global variables if they are set in the main program and are  passed to output script.
-.EN	Variables are called Local variables if they are used only in the template.
+.JA	Kwartzでは、メインプログラムから出力用プログラムに渡される変数をテンプレートグローバル変数、テンプレートの中だけで使用される変数をテンプレートローカル変数と呼んでいます。
+.EN	In Kwartz, variables are called 'Template Global Variables' if they are set in the main program and are  passed to output script.
+.EN	Variables are called 'Template Local Variables' if they are used only in the template.
 .	
 .	
 .JA	例えば次のようなプレゼンテーションデータとプレゼンテーションロジックを考えます。
@@ -918,23 +935,23 @@
 .	
 .	
 .JA	いくつかの変数がでてきますが、これらは次のように分類できます。
-.JA	.[ グローバル変数 ]
+.JA	.[ テンプレートグローバル変数 ]
 .JA		 変数「{{,title,}}」と「{{,list,}}」は、メインプログラムからテンプレートに渡される変数であり、メインプログラムで値を設定する必要があります。
-.JA		Kwartzではこれをグローバル変数と呼んでいます。
-.JA	.[ ローカル変数 ]
+.JA		Kwartzではこれをテンプレートグローバル変数と呼んでいます。
+.JA	.[ テンプレートローカル変数 ]
 .JA		変数「{{,item,}}」と「{{,ctr,}}」と「{{,color,}}」はテンプレートの中だけで使用される変数であり、メインプログラムで設定する必要はありません。
-.JA		Kwartzではこれをローカル変数と呼んでいます。
+.JA		Kwartzではこれをテンプレートローカル変数と呼んでいます。
 .EN	There are several variables. They are classified as follows:
-.EN	.[ Global variables ]
+.EN	.[ Template global variables ]
 .EN		The variables '{{,title,}}' and '{{,list,}}' need to be set in the main program and be passed to template.
-.EN		These variables are called 'Global variables' in Kwartz.
-.EN	.[ Local variables ]
+.EN		These variables are called 'Template Global Variables' in Kwartz.
+.EN	.[ Template local variables ]
 .EN		The variables '{{,item,}}', '{{,ctr,}}', and '{{,color,}}' are used only in the template.
-.EN		These variables are called 'Local variables' in Kwartz.
+.EN		These variables are called 'Template Local Variables' in Kwartz.
 .	
 .	
-.JA	kwartzコマンドにオプション「{{,-a analyze,}}」をつけて起動すると、テンプレートを分析してグローバル変数とローカル変数を報告してくれます。
-.EN	Invoking Kwartz with the command-line option '{{,-a analyze,}}' analyzes the template and reports global/local variables.
+.JA	kwartzコマンドにオプション「{{,-a analyze,}}」をつけて起動すると、テンプレートを分析してテンプレートグローバル変数とテンプレートローカル変数を報告してくれます。
+.EN	Invoking Kwartz with the command-line option '{{,-a analyze,}}' analyzes the template and reports template global/local variables.
 .	.--------------------
 .	$ kwartz -p analyze.plogic -a analyze analyze.html
 .	Global: {{*title*}} {{*list*}}
@@ -942,24 +959,24 @@
 .	.--------------------
 .	
 .	
-.JA	このとき、Kwartzは次のようなルールでグローバル変数とローカル変数とを判別しています。
+.JA	このとき、Kwartzは次のようなルールでグローバルかローカルかを判定しています。
 .JA	.* 変数が初めて現れたときに…
-.JA	    .- 代入文の左辺に現れた変数はローカル変数
-.JA	    .- foreach文のループ変数として現れた変数はローカル変数
-.JA	    .- それ以外はグローバル変数
-.EN	Kwartz detemines whether variables are global/local according to the following rule:
+.JA	    .- 代入文の左辺に現れた変数はテンプレートローカル変数
+.JA	    .- foreach文のループ変数として現れた変数はテンプレートローカル変数
+.JA	    .- それ以外はテンプレートグローバル変数
+.EN	Kwartz detemines whether variables are global or local according to the following rule:
 .EN	.* When Kwartz finds a new variable ...
-.EN	    .- If it appears in the lefthand-side of an assignment, it is to be recognized as a local variable.
-.EN	    .- If it appears as the loop variable of a foreach statement, it is to be recognized as a local variable.
-.EN	    .- Otherwize, it is to be recognized as a global variable.
+.EN	    .- If it appears in the lefthand-side of an assignment, it is to be recognized as a template local variable.
+.EN	    .- If it appears as the loop variable of a foreach statement, it is to be recognized as a template local variable.
+.EN	    .- Otherwize, it is to be recognized as a template global variable.
 .	
 .	
-.JA	またグローバル変数へ代入したり、グローバル変数をループ変数としていると、分析時に警告を出します。
-.JA	なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりグローバル変数を変更すべきではないからです（変更してよいのはローカル変数のみのはずです）。
-.JA	.#そのほか、初期化されていないローカル変数が使われている場合も分析時に警告が出ます。
-.EN	Kwartz reports warnings if global variables appears in the lefthand-side of assignments or are used as loop variables in foreach statements.
-.EN	Because the role of template system is to display global variables, templates should not change or modify global variables.
-.EN	.#In addition, Kwartz reports warning when uninitalized local variables are used in templates.
+.JA	またテンプレートグローバル変数へ代入したり、テンプレートグローバル変数をループ変数としていると、分析時に警告を出します。
+.JA	なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりテンプレートグローバル変数を変更すべきではないからです（変更してよいのはテンプレートローカル変数のみのはずです）。
+.JA	.#そのほか、初期化されていないテンプレートローカル変数が使われている場合も分析時に警告が出ます。
+.EN	Kwartz reports warnings if template global variables appear in the lefthand-side of assignments or are used as loop variables in foreach statements.
+.EN	Because the role of template system is to display template global variables, templates should not change or modify template global variables.
+.EN	.#In addition, Kwartz reports warning when uninitalized template local variables are used in templates.
 .	
 .	
 .JA	テンプレート（プレゼンテーションデータとプレゼンテーションロジック）が複雑になると、メインプログラムで設定しなければならない変数がどれか、わかりづらくなることがあります。
@@ -1997,6 +2014,74 @@
 .	.#	<span id="while:i>0"> ... </span>         ## NG
 .	.#	<span id="while:0<i"> ... </span>         ## OK
 .	.#	.--------------------
+.	
+.	
+.	
+.	
+.JA	●プレゼンテーションロジックファイル		| plogic
+.EN	.$ Presentation Logic File Format		| plogic
+.	
+.	
+.JA	プレゼンテーションロジックファイルの書き方です。
+.EN	The following is an example of presentation logic file.
+.	
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation logic:
+.	.--------------------
+.JA	「id="mark:name"」でマーキングされたエレメントの宣言
+.EN	// element declaration for 'id="mark:name"'
+.	#name {
+.	  
+.JA	  // 内容のかわりに出力する式
+.EN	  // print value of expression instead of content
+.	  value:  {{/expression/}};
+.	  
+.JA	  // 属性（名前と値）
+.EN	  // set attribute values
+.	  attr: "{{/attr1/}}" {{/expr1/}}, "{{/attr2/}}" {{/expr2/}}, "{{/attr3/}}" {{/expr3/}};
+.	  
+.JA	  // 削除する属性の名前
+.EN	  // remove attributes
+.	  remove:  "{{/attr1/}}", "{{/attr2/}}", "{{/attr3/}}";
+.	  
+.JA	  // 開始タグに追加する式
+.EN	  // append expression to start tag
+.	  append:  "{{/expr1/}}", "{{/expr2/}}", "{{/expr3/}}";
+.	  
+.JA	  // タグ名
+.EN	  // change tag name
+.	  tagname: "{{/tagname/}}",
+.	
+.JA	  // プレゼンテーションロジック本体
+.EN	  // set presentation logic
+.	  plogic: {
+.	    @stag;
+.	    @cont;
+.	    @etag;
+.	  }
+.	}
+.	
+.JA	// ドキュメント宣言
+.EN	// document declaration
+.	#DOCUMENT {
+.JA	  // はじめに実行されるロジック
+.EN	  // logics to do at the beginning of the document
+.	  begin: {
+.	    ...
+.	  }
+.	
+.JA	  // 最後に実行されるロジック
+.EN	  // logics to do at the end of the document
+.	  end: {
+.	    ...
+.	  }
+.	  
+.JA	  // 他のプレゼンテーションロジックファイルを読み込む
+.EN	  // load presentation logic file required
+.	  require: file1.plogic, file2.plogic;
+.	}
+.	.--------------------
 .	
 .	
 .	

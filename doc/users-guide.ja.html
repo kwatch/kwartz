@@ -139,7 +139,7 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
 <p>	Kwartzは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
 	つまり、ひとつのHTMLテンプレートを様々な言語から使用することができるのです。
 	また使用する言語を変えたとしても、プレゼンテーション層は何も変更する必要がありません。
-	現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&amp;1.0)に対応しています。
+	現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&amp;1.0)、Velocityに対応しています。
 </p>
 </dd>
 <dt class="dt2">
@@ -258,6 +258,9 @@ $ kwartz -l jstl11 -p example1.plogic example1.html &gt; example1.jsp
 
 ### for JSTL 1.0
 $ kwartz -l jstl10 -p example1.plogic example1.html &gt; example1.jsp
+
+### for Velocity
+$ kwartz -l velocity -p example1.plogic example1.html &gt; example1.vm
 </pre>
 <p>以下は自動生成された出力用スクリプトです。
 </p>
@@ -304,8 +307,19 @@ $ kwartz -l jstl10 -p example1.plogic example1.html &gt; example1.jsp
 &lt;/c:forEach&gt;
 &lt;/table&gt;
 </pre>
+<p>出力用スクリプト for Velocity(example1.vm):
+</p>
+<pre class="program">&lt;table&gt;
+#foreach($member in $member_list)
+  &lt;tr&gt;
+    &lt;td&gt;$!{member}&lt;/td&gt;
+  &lt;/tr&gt;
+#end
+&lt;/table&gt;
+</pre>
 <p>またコンパイル時にコマンドオプション <code>-e</code> をつけると、サニタイズされた出力用スクリプトが生成されます。
-サニタイズには、eRubyでは<code>CGI.escapeHTML()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out/&gt;</code>が使用されます。
+サニタイズには、eRubyでは<code>CGI.escapeHTML()</code>が、PHPでは<code>htmlspecialchars()</code>が、
+JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out/&gt;</code>が、VelocityではEscapeToolの<code>$esc.html()</code>が使用されます。
 </p>
 <p>これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
 呼び出し方は、各プログラミング言語によって異なります。
@@ -353,9 +367,62 @@ ERuby::import('example1.rhtml')
 
    // 出力
    RequestDispatcher dispatcher = 
-       request.getRequestDispatcher('example1.jsp');
+       request.getRequestDispatcher("example1.jsp");
    dispatcher.include(request, response);
    // または dispatcher.forward(request, response);
+}
+</pre>
+<p>メインプログラム(Velocity)：
+</p>
+<a name="Main1.java"></a>
+<pre class="program">import org.apache.velocity.app.Velocity;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.Template;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.MethodInvocationException;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+
+public class Main1 {
+  public static void main(String[] args) {
+    try {
+    // 初期化
+    Velocity.init();
+ 
+    // データを用意する
+    java.util.List member_list = new java.util.ArrayList();
+    member_list.add("Oboro");
+    member_list.add("Ominae");
+    member_list.add("Jaquemonde");
+ 
+    // Contextを作成しデータをセットする
+    VelocityContext context = new VelocityContext();
+    context.put("member_list", member_list);
+ 
+    // テンプレートを読み込み、Contextとマージする。
+    Template template = Velocity.getTemplate("Test.vm", "UTF8");
+    OutputStreamWriter writer = new OutputStreamWriter(System.out);
+    template.merge(context, writer);
+
+    // 出力する
+    writer.flush();
+  }
+  catch (ResourceNotFoundException ex) {
+    // テンプレートが見つからなかった
+  }
+  catch (ParseErrorException ex) {
+    // テンプレート解析時に構文エラーがあった
+  }
+  catch (MethodInvocationException ex) {
+     // メソッド呼び出しができなかった
+  }
+  catch (IOException ex) {
+    // 入出力に問題があった
+  }
+  catch (Exception ex) {
+    // その他のエラー
+  }
 }
 </pre>
 <p>出力用プログラムを呼び出して実行すると、例えば次のようなWebページが生成されます。
@@ -457,10 +524,76 @@ $ kwartz -l jstl11 -p example2.plogic example2.html &gt; example2.jsp
 
 ### for JSTL 1.0
 $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
+
+### for Velocity
+$ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% i = 0 %&gt;
+&lt;% for member in member_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+  &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:&lt;%= member["email"] %&gt;"&gt;&lt;%= member["email"] %&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php $i = 0; ?&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php   $color = $i % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:&lt;?php echo $member["email"]; ?&gt;"&gt;&lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+&lt;c:set var="i" value="0"/&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;c:set var="i" value="${i + 1}"/&gt;
+  &lt;c:set var="color" value="${i % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:&lt;c:out value="${member['email']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+
+### for Velocity
+&lt;table&gt;
+#set($i = 0)
+#foreach($member in $member_list)
+  #set($i = $i + 1)
+  #if($i % 2 == 0)
+    #set($color = "#FFCCCC")
+  #else
+    #set($color = "#CCCCFF")
+  #end
+ &lt;tr bgcolor="$!{color}"&gt;
+  &lt;td&gt;$!{member["name"]}&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:$!{member["email"]}"&gt;$!{member["email"]}&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+#end
+&lt;/table&gt;
+</pre>
 <br>
 
 
@@ -508,7 +641,7 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
   }
 }
 </pre>
-   これは次と同じです。
+   これは次のように書くこともできます。
 <pre class="program">#list {
   value: "Hello!";
 }
@@ -651,7 +784,50 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% for member in member_list do %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;%= member["email"] %&gt;"&gt;
+         &lt;%= member["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;?php echo $member["email"]; ?&gt;"&gt;
+         &lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;c:out value="${member['email']}" escapeXml="false"/&gt;"&gt;
+         &lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+
+### for Velocity
+&lt;table&gt;
+#foreach($member in $member_list)
+  &lt;tr&gt;
+    &lt;td&gt;$!{member["name"]}&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:$!{member["email"]}"&gt;
+         $!{member["email"]}&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+#end
+&lt;/table&gt;
+</pre>
 <p>このほか、条件分岐を行うディレクティブなども用意されています。
 詳細はリファレンスマニュアルをご覧ください。
 </p>
@@ -672,7 +848,7 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 <a name="sanitize1"></a>
 <h3 class="section2">自動サニタイズ</h3>
 <p>コマンドラインオプション <code>-e</code> をつけると、出力スクリプトをサニタイズします。
-サニタイズでは、eRubyでは<code>CGI.escapeHTML()</code>が、ERBでは<code>h()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out&gt;</code>がそれぞれ使用されます。
+サニタイズでは、eRubyでは<code>CGI.escapeHTML()</code>が、ERBでは<code>h()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out&gt;</code>が、Velocityでは<code>$!esc.html()</code>がそれぞれ使用されます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -692,12 +868,39 @@ $ kwartz -e -l erb    sanitize1.html &gt; sanitize1.rhtml
 ### for PHP
 $ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
 	
-### for JSTL 1.1
-$ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+### for JSTL
+$ kwartz -e -l jstl   sanitize1.html &gt; sanitize1.jsp
+
+### for Velocity
+$ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;tr bgcolor="&lt;%= CGI::escapeHTML((color).to_s) %&gt;"&gt;
+  &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for ERB
+&lt;tr bgcolor="&lt;%=h(color)%&gt;"&gt;
+  &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr bgcolor="&lt;?php echo htmlspecialchars($color); ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL
+&lt;tr bgcolor="&lt;c:out value="${color}"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for Velocity
+&lt;tr bgcolor="$!esc.html($color)"&gt;
+  &lt;td&gt;$!esc.html($str)&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
 <p>式が文字列や数値のような定数の場合は、サニタイズされません。
 また「<code>flag ? 'checked' : ''</code>」のような条件演算子では、<code>flag</code>の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
 </p>
@@ -707,7 +910,8 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 <a name="sanitize2"></a>
 <h3 class="section2">部分サニタイズ</h3>
 <p>関数<code>E(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズします。
-また関数<code>X(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズしません。
+また関数<code>X(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズしません
+<sup>(<a href="#fnref:5" name="fnlink:5">*5</a>)</sup>。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -731,14 +935,57 @@ $ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
 	
 ### for JSTL 1.1
 $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+
+### for Velocity
+$ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for ERB
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+   &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+   &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for Velocity
+&lt;table&gt;
+ &lt;tr bgcolor="$!{color}"&gt;
+   &lt;td&gt;$!esc.html($str)&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
 <p>またコマンドラインオプションに関係なく、「<code>id="Value:<i>expr</i>"</code>」や「<code>id="Attr:<i>name</i>=<i>expr</i>)"</code>」は式<code><i>expr</i></code>を必ずサニタイズします。
 逆に、「<code>id="VALUE:<i>expr</i>"</code>」や「<code>id="ATTR:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズしません。
 これらはそれぞれ、「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>」と同じです。
 </p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:5" href="#fnlink:5">*5</a>)</dt>
+  <dd>E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「<code>@{E(...)</code>}@」や「<code>id="value:E(...)"</code>」と書くことはできますが、「<code>id="set:str=E(...)"</code>」のようには書けません。</dd>
+ </dl>
+</div>
 <br>
 
 
@@ -855,10 +1102,54 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
 $ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
 $ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l velocity -p analyze.plogic <b>--rename</b> analyze.html
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;%= title %&gt;
+&lt;dl&gt;
+&lt;% _ctr = 0 %&gt;
+&lt;% for _item in list do %&gt;
+&lt;%   _ctr += 1 %&gt;
+ &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;?php echo $title; ?&gt;
+&lt;dl&gt;
+&lt;?php $_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $_item) { ?&gt;
+&lt;?php   $_ctr += 1; ?&gt;
+ &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;c:out value="${title}" escapeXml="false"/&gt;
+&lt;dl&gt;
+&lt;c:set var="_ctr" value="0"/&gt;
+&lt;c:forEach var="_item" items="${list}"&gt;
+  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
+ &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+
+### for Velocity
+$!{title}
+&lt;dl&gt;
+#set($_ctr = 0)
+#foreach($_item in $list)
+  #set($_ctr = $_ctr + 1)
+ &lt;dt&gt;$!{ctr}&lt;/dt&gt;
+ &lt;dd&gt;$!{item}&lt;/dd&gt;
+#end
+&lt;/dl&gt;
+</pre>
 <p>なお設定ファイルの定数RENAMEで、デフォルトでテンプレートローカル変数名を変更する・しないを設定できます。
 </p>
 <br>
@@ -924,7 +1215,32 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${flag}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($flag)
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+#else
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+#end
+</pre>
 <p>ディレクティブ <code>id="append:<i>expr</i>"</code> でも同じことができます。
 </p>
 <p>プレゼンテーションデータ：
@@ -950,7 +1266,32 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= foo == 100 ? " checked=\"checked\"" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $foo == 100 ? " checked=\"checked\"" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${foo eq 100 ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${foo eq 100}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($foo == 100)
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+#else
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+#end
+</pre>
 <br>
 
 
@@ -983,17 +1324,17 @@ raw-codeは文(statement)であり、式(expression)ではありません。
 <h3 class="section2">テンプレートをRubyまたはPHPの関数にコンパイルする</h3>
 <p>コマンドラインオプション「<code>-a defun</code>」を指定すると、テンプレートをRubyまたはPHPの関数に変換できます。
 </p>
-<p>プレゼンテーションデータ(hoge.html)：
+<p>プレゼンテーションデータ(hoge1.html)：
 </p>
-<a name="hoge.html"></a>
+<a name="hoge1.html"></a>
 <pre class="program">Hello @{user}@ !
 &lt;ul id="mark:list"&gt;
   &lt;li id="value:item"&gt;xxx&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-<p>プレゼンテーションロジック(hoge.plogic)：
+<p>プレゼンテーションロジック(hoge1.plogic)：
 </p>
-<a name="hoge.plogic"></a>
+<a name="hoge1.plogic"></a>
 <pre class="program">#list {
   plogic: {
     @stag;
@@ -1011,7 +1352,43 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+  def view_hoge1(__args)
+    user = __args[:user]
+    list = __args[:list]
+    return _view_hoge1(user,list)
+  end
+  def _view_hoge1(user,list)
+    _erbout = ''; _erbout &lt;&lt; "Hello "; _erbout &lt;&lt;(( user ).to_s); _erbout &lt;&lt; " !\n"
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+     for item in list do 
+    _erbout &lt;&lt; "  &lt;li&gt;"; _erbout &lt;&lt;(( item ).to_s); _erbout &lt;&lt; "&lt;/li&gt;\n"
+     end 
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+    _erbout
+  end
+
+### for PHP
+&lt;?php
+    function view_hoge1($__args) {
+        $user = $__args['user']
+        $list = $__args['list']
+        return _view_hoge1(user,list)
+    }
+    function _view_hoge1(user,list) {
+        ob_start();
+?&gt;Hello &lt;?php echo $user; ?&gt; !
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;ul&gt;
+&lt;?php
+        $__s = ob_get_contents();
+        ob_end_clean();
+        return $__s;
+    }
+?&gt;</pre>
 <p>関数は2つ定義されます。どちらでもお好きなほうをお使いください。
 </p>
 <ul type="disc">

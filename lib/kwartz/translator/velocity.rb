@@ -60,8 +60,8 @@ module Kwartz
         ## so you should include prefix and suffix in ':print'/':endprint' keywords
         :print      => '$!{',
         :endprint   => '}',
-        :eprint     => '$!{esc.html(',
-        :endeprint  => ')}',
+        :eprint     => '$!esc.html(',
+        :endeprint  => ')',
 
         ## literal
         :true        => 'true',
@@ -113,8 +113,8 @@ module Kwartz
         ## array & hash op
         '['    => '[',
         ']'    => ']',
-        '[:'   => "['",		# or '.'
-        ':]'   => "']",		# or ''
+        '[:'   => ".",		# or "['"
+        ':]'   => "",		# or "']"
 
         ## property op
         '.'    => '.',
@@ -158,7 +158,7 @@ module Kwartz
       end
 
       ##
-      def visit_binary_expression(expr, depth=0)
+      def visit_arithmetic_expression(expr, depth=0)
          if expr.token == '.+'
             #translate_expression(expr.left)
             #translate_expression(expr.right)
@@ -168,7 +168,7 @@ module Kwartz
          end
          return @code
       end
-
+      
       ##
       def visit_funtion_expression(expr, depth=0)
          case expr.funcname
@@ -189,6 +189,31 @@ module Kwartz
       ##
       def visit_method_expression(expr, depth=0)
          raise TranslationError.new("#{expr.method_name}(): Velocity doesn't support method-call.")
+      end
+
+
+      ##
+      def visit_relational_expression(expr, depth=0)
+         case expr.token
+         when '=='
+            if expr.left.token == :null || expr.right.token == :null
+               expr2 = expr.left.token == :null ? expr.right : expr.left
+               translate_expression(expr2, depth)
+            else
+               super(expr, depth)
+            end
+         when '!='
+            if expr.left.token == :null || expr.right.token == :null
+               expr2 = expr.left.token == :null ? expr.right : expr.left
+               expr3 = Kwartz::UnaryExpression.new('!', expr2)
+               return translate_expression(expr3, depth)
+            else
+               super(expr, depth)
+            end
+         else
+            super(expr, depth)
+         end
+         return @code
       end
 
 
@@ -223,9 +248,9 @@ module Kwartz
       def visit_null_expression(expr, depth=0)
          raise TranslationError.new("Velocity doesn't support 'null' literal.")
       end
-
+      
       ##
-      def translate_expression_for_print(expr, flag_escape)
+      def _translate_expression_for_print(expr, flag_escape)
          case expr.token
          when :string, :number, :boolean, :null
             translate_expression(expr)
@@ -233,21 +258,21 @@ module Kwartz
             @code << '$' if flag_escape
             @code << expr.name
          when '[]'
-            translate_expression_for_print(expr.left)
+            _translate_expression_for_print(expr.left, flag_escape)
             @code << keyword('[')
             translate_expression(expr.right)
             @code << keyword(']')
          when '[:]'
-            translate_expression_for_print(expr.left)
+            _translate_expression_for_print(expr.left, flag_escape)
             @code << keyword('[:')
-            translate_expression(expr.right)
+            @code << expr.right.value
             @code << keyword(':]')
          when '.'
-            translate_expression_for_print(expr.object)
+            _translate_expression_for_print(expr.object, flag_escape)
             @code << keyword('.')
             @code << expr.propname
-         when :method
-            translate_expression_for_print(expr.receiver)
+         when '.()'
+            _translate_expression_for_print(expr.receiver, flag_escape)
             @code << keyword('.')
             @code << expr.method_name
             @code << keyword('(')

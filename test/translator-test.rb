@@ -678,7 +678,7 @@ END
       _test_stmt(@@epxr_stmt6, expected)
    end
    def test_expr_stmt6_velocity	# map[:key] = value
-      expected = "#set($map['key'] = $value)\n"
+      expected = "#set($map.key = $value)\n"
       _test_stmt(@@epxr_stmt6, expected)
    end
 
@@ -734,23 +734,23 @@ END
 
 
    @@epxr_stmt9 = "obj.prop = value;"
-   def test_expr_stmt9_eruby	# map[:key] = value
+   def test_expr_stmt9_eruby	# obj.prop = value;
       expected = "<% obj.prop = value %>\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
-   def test_expr_stmt9_php	# map[:key] = value
+   def test_expr_stmt9_php	# obj.prop = value;
       expected = "<?php $obj->prop = $value; ?>\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
-   def test_expr_stmt9_jstl11	# map[:key] = value
+   def test_expr_stmt9_jstl11	# obj.prop = value;
       expected = '<c:set var="obj" property="prop" value="${value}"/>' + "\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
-   def test_expr_stmt9_jstl10	# map[:key] = value
+   def test_expr_stmt9_jstl10	# obj.prop = value;
       expected = '<c:set var="obj" property="prop" value="${value}"/>' + "\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
-   def test_expr_stmt9_velocity	# map[:key] = value
+   def test_expr_stmt9_velocity	# obj.prop = value;
       expected = "#set($obj.prop = $value)\n"
       _test_stmt(@@epxr_stmt9, expected)
    end
@@ -794,7 +794,7 @@ END
       _test_stmt(@@print_stmt2, expected)
    end
    def test_print_stmt2_velocity
-      expected = "$!{esc.html($e)}$!{x}$!{default}"
+      expected = "$!esc.html($e)$!{x}$!{default}"
       _test_stmt(@@print_stmt2, expected)
    end
 
@@ -813,7 +813,7 @@ END
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
    def test_print_stmt3_velocity
-      expected = "$!{esc.html($e)}$!{x}$!{esc.html($default)}"
+      expected = "$!esc.html($e)$!{x}$!esc.html($default)"
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
 

@@ -3,6 +3,13 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+
+.: 2005-03-24 rev.57
+	.- [enhance] 'var==null' => '$var' and 'var!=null' => '! $var' in VelocityTranslator
+	.- [change] 'print(var)' is translated into '$!{var}' (not '$var') in VelocityTranslator
+	.- [change] token of MethodExpression is changed from '.' to '.()'
+	.- [update] document update
+
 .: 2005-03-22 rev.56
 	.- [enhance] new class VelocityTranslator
 	.- [change] new file visitor/conditional.rb

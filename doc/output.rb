@@ -30,15 +30,16 @@ ARGV.each_with_index do |arg, i|
    args << arg
 end
 
-lang_list = langs ? langs.split(/,/) : [ 'eruby', 'php', 'jstl' ]
+lang_list = langs ? langs.split(/,/) : [ 'eruby', 'php', 'jstl', 'velocity' ]
 
 names = {
-    'php'    => 'PHP',
-    'eruby'  => 'eRuby',
-    'erb'    => 'ERB',
-    'jstl'   => 'JSTL',
-    'jstl11' => 'JSTL 1.1',
-    'jstl10' => 'JSTL 1.0',
+    'php'      => 'PHP',
+    'eruby'    => 'eRuby',
+    'erb'      => 'ERB',
+    'jstl'     => 'JSTL',
+    'jstl11'   => 'JSTL 1.1',
+    'jstl10'   => 'JSTL 1.0',
+    'velocity' => 'Velocity',
 }
 
 nl = nil

@@ -106,6 +106,9 @@ module Kwartz
         ## property op
         '.'    => '.',
 
+        ## method op
+        '.()'  => nil,
+
         ## other op
         '('    => '(',
         ')'    => ')',

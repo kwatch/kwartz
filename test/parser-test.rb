@@ -221,7 +221,7 @@ END
 
    def test_parse_factor_expr5
       input = "x.m1(a, b)"
-      expected = ".\n  x\n  m1\n    a\n    b\n"
+      expected = ".()\n  x\n  m1\n    a\n    b\n"
       _test(input, expected, MethodExpression)
    end
 

@@ -110,6 +110,9 @@ module Kwartz
         ## property op
         '.'    => '->',
 
+        ## method op
+        '.()'  => '->',
+
         ## other op
         '('    => '(',
         ')'    => ')',

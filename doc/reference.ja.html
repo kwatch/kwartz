@@ -116,6 +116,8 @@
     </li>
   </ul>
   </li>
+  <li><a href="#plogic">プレゼンテーションロジックファイル</a>
+  </li>
   <li><a href="#opt">コマンドラインオプション</a>
   </li>
   <li><a href="#config">設定オプション</a>
@@ -190,8 +192,43 @@
   <td class="td1">false</td>
   <td class="td1">null</td>
  </tr>
+ <tr class="tr1">
+  <td class="td1">Velocity</td>
+  <td class="td1">true</td>
+  <td class="td1">false</td>
+  <td class="td1">-</td>
+ </tr>
 </table>
 </div>
+<p>なおVelocityではnullやそれに類するキーワードがありません。
+そのため、nullを含むPLプログラムをVelocityに変換するとエラーになります。
+ただしnullとの比較を行う論理式は、nullを使わない式に変換されます。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-boolean.plogic"></a>
+<pre class="program">flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for Velocity
+#if($obj)
+  #set($flag = true)
+#else
+  #set($flag = false)
+#end
+#if(! $expr)
+expr is not null.
+#else
+epxr is null.
+#end
+</pre>
 <br>
 
 
@@ -245,6 +282,7 @@
 <p>文字列の連結演算子「<code>.+</code>」は、eRubyでは「<code>+</code>」に、PHPでは「<code>.</code>」に、
 JSTL1.1では関数<code>fn:join()</code>に変換されます。
 JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
+Velocityではエラーになります。
 </p>
 <p>PLプログラム(PL)：
 </p>
@@ -253,9 +291,23 @@ JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
-<p>条件演算子（3項演算子）はeRubyとPHPとJSTL1.1では使用できますが、JSTL1.0では使用できません。
-そのため条件演算子を含む式は、JSTL1.0ではif文（に相当する&lt;c:choose&gt;）に変換されます。
+<pre class="output">### for eRuby
+&lt;% filename = basename + ".plogic" %&gt;
+
+### for PHP
+&lt;?php $filename = $basename . ".plogic"; ?&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="filename" value="${fn:join(basename,'.plogic')}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:set var="filename" value="${basename}${'.plogic'}"/&gt;
+</pre>
+<p>条件演算子（3項演算子）はeRubyとPHPとJSTL1.1では使用できますが、JSTL1.0とVelocityでは使用できません。
+そのため条件演算子を含む式は、JSTL1.0とVelocityではif文（JSTL1.0ならif文に相当する&lt;c:choose&gt;）に変換されます。
 </p>
 <p>PLプログラム(PL)：
 </p>
@@ -264,7 +316,32 @@ JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% color = ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
+
+### for PHP
+&lt;?php $color = $ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="color" value="${ctr % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${ctr % 2 eq 0}"&gt;
+  &lt;c:set var="color" value="#FFCCCC"/&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+  &lt;c:set var="color" value="#CCCCFF"/&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($ctr % 2 == 0)
+  #set($color = "#FFCCCC")
+#else
+  #set($color = "#CCCCFF")
+#end
+</pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
@@ -286,10 +363,32 @@ JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+foo&lt;%= bar %&gt;baz
+
+### for PHP
+foo&lt;?php echo $bar; ?&gt;baz
+
+### for JSTL
+foo&lt;c:out value="${bar}" escapeXml="false"/&gt;baz
+
+### for Velocity
+foo$!{bar}baz
+</pre>
 <p>自動サニタイズ機能を使用した場合は次のような出力になります。
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+
+### for PHP
+foo&lt;?php echo htmlspecialchars($bar); ?&gt;baz
+
+### for JSTL
+foo&lt;c:out value="${bar}"/&gt;baz
+
+### for Velocity
+foo$!esc.html($bar)baz
+</pre>
 <p>また自動サニタイズ機能を使用しても、条件演算子が返す値が文字列または数字である場合は、サニタイズされません。
 </p>
 <p>PLプログラム：
@@ -302,7 +401,21 @@ print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;option &lt;%= CGI::escapeHTML((condition ? var1 : var2).to_s) %&gt;&gt;
+&lt;option &lt;%= condition ? "selected" : "" %&gt;&gt;
+
+### for PHP
+&lt;option &lt;?php echo htmlspecialchars($condition ? $var1 : $var2); ?&gt;&gt;
+&lt;option &lt;?php echo $condition ? "selected" : ""; ?&gt;&gt;
+
+### for JSTL
+&lt;option &lt;c:out value="${condition ? var1 : var2}"/&gt;&gt;
+&lt;option &lt;c:out value="${condition ? 'selected' : ''}" escapeXml="false"/&gt;&gt;
+</pre>
+<p>「<code>print(a .+ b .+ c);</code>」は「<code>print(a); print(b); print(c);</code>」と展開されます。
+これは、文字列の連結演算子「<code>.+</code>」をサポートしていない一部の言語を考慮した仕様です。
+</p>
 <br>
 
 
@@ -320,7 +433,29 @@ str .+= '.txt';		// 文字列の末尾に追加
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for PHP
+&lt;?php $name = "Foo"; ?&gt;
+&lt;?php $count += 1; ?&gt;
+&lt;?php $str .= ".txt"; ?&gt;
+
+### for eRuby
+&lt;% name = "Foo" %&gt;
+&lt;% count += 1 %&gt;
+&lt;% str += ".txt" %&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="name" value="Foo"/&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;c:set var="str" value="${fn:join(str,'.txt')}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:set var="name" value="Foo"/&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;c:set var="str" value="${str}${'.txt'}"/&gt;
+</pre>
 <br>
 
 
@@ -335,13 +470,24 @@ str .+= '.txt';		// 文字列の末尾に追加
 </p>
 <a name="pl-array.plogic"></a>
 <pre class="program">list[n] = 10;           // n番目の要素に代入
-print(list[i], "\n");     // i番目の要素を出力
+print(list[i], "\n");   // i番目の要素を出力
 hash['key'] = 'foo';    // ハッシュの要素に代入
 print(hash['key'], "\n"); // ハッシュの要素を出力
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% list[n] = 10 %&gt;
+&lt;%= list[i] %&gt;
+&lt;% hash["key"] = "foo" %&gt;
+&lt;%= hash["key"] %&gt;
+
+### for PHP
+&lt;?php $list[$n] = 10; ?&gt;
+&lt;?php echo $list[$i]; ?&gt;
+&lt;?php $hash["key"] = "foo"; ?&gt;
+&lt;?php echo $hash["key"]; ?&gt;
+</pre>
 <p>ハッシュは、「<code>hash[:key]</code>」という形でも参照できます。
 このとき、「<code>key</code>」は英数字と「<code>_</code>」のみからなる文字列である必要があります。
 </p>
@@ -369,6 +515,10 @@ print(hash['key'], "\n"); // ハッシュの要素を出力
   <td class="td1">JSTL</td>
   <td class="td1"><code>hash['key']</code></td>
  </tr>
+ <tr class="tr1">
+  <td class="td1">Velocity</td>
+  <td class="td1"><code>hash.key</code></td>
+ </tr>
 </table>
 </div>
 <p>PLプログラム：
@@ -378,7 +528,17 @@ print(hash['key'], "\n"); // ハッシュの要素を出力
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;%= hash[:key] %&gt;
+
+### for PHP
+&lt;?php echo $hash['key']; ?&gt;
+
+### for JSTL
+&lt;c:out value="${hash['key']}" escapeXml="false"/&gt;
+
+### for Velocity
+$!{hash.key}</pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
@@ -403,7 +563,22 @@ print(user.name, "\n");
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% user.name = "Foo" %&gt;
+&lt;%= user.name %&gt;
+
+### for PHP
+&lt;?php $user-&gt;name = "Foo"; ?&gt;
+&lt;?php echo $user-&gt;name; ?&gt;
+
+### for JSTL
+&lt;c:set var="user" property="name" value="Foo"/&gt;
+&lt;c:out value="${user.name}" escapeXml="false"/&gt;
+
+### for Velocity
+#set($user.name = "Foo")
+$!{user.name}
+</pre>
 <p>PLプログラム：
 </p>
 <a name="pl-method.plogic"></a>
@@ -412,7 +587,14 @@ print(user.method(10, 20));
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;%= user.method(10, 20) %&gt;
+
+### for PHP
+&lt;?php echo $user-&gt;method(10, 20); ?&gt;
+
+### for Velocity
+$!{user.method(10, 20)}</pre>
 <p>またPLではオブジェクトやプロパティを参照することはできても、オブジェクトを自分で生成したりクラスを定義したりすることはできません。
 それらはPLの外部で（つまりメインプログラムの中で）行われることになります。
 </p>
@@ -433,9 +615,29 @@ print(user.method(10, 20));
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% for item in list do %&gt;
+&lt;%= item %&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php echo $item; ?&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:forEach var="item" items="${list}"&gt;
+&lt;c:out value="${item}" escapeXml="false"/&gt;
+&lt;/c:forEach&gt;
+
+### for Velocity
+#foreach($item in $list)
+$!{item}
+#end
+</pre>
 <p>またwhile文も使用できます。
-ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSTLへ変換しようとするとエラーになります。
+ただし、JSTLおよびVelocityにはwhile文に相当するカスタムタグやディレクティブがないため、
+JSTLまたはVelocityへ変換しようとするとエラーになります。
 </p>
 <p>PLプログラム：
 </p>
@@ -448,7 +650,18 @@ while(i &lt; length) {
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% i = 0 %&gt;
+&lt;% while i &lt; length do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%= list[i] %&gt;&lt;% end %&gt;
+
+### for PHP
+&lt;?php $i = 0; ?&gt;
+&lt;?php while ($i &lt; $length) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php echo $list[$i]; ?&gt;&lt;?php } ?&gt;
+</pre>
 <p>なおJavaやCのようなfor文は用意されていません。ご注意ください。
 </p>
 <br>
@@ -471,7 +684,42 @@ while(i &lt; length) {
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% if val &gt; 0 then %&gt;
+* value is positive.
+&lt;% elsif val &lt; 0 then %&gt;
+* value is negative.
+&lt;% else %&gt;
+* value is zero.
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($val &gt; 0) { ?&gt;
+* value is positive.
+&lt;?php } elseif ($val &lt; 0) { ?&gt;
+* value is negative.
+&lt;?php } else { ?&gt;
+* value is zero.
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${val gt 0}"&gt;
+* value is positive.
+&lt;/c:when&gt;&lt;c:when test="${val lt 0}"&gt;
+* value is negative.
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+* value is zero.
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($val &gt; 0)
+* value is positive.
+#elseif($val &lt; 0)
+* value is negative.
+#else
+* value is zero.
+#end
+</pre>
 <br>
 
 
@@ -484,6 +732,7 @@ while(i &lt; length) {
 E(<i>expr</i>) </b></dt>
 <dd class="dd3">
 	式 <i>expr</i> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+	E()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 </dd>
 </dl>
 <dl class="dl3">
@@ -491,6 +740,7 @@ E(<i>expr</i>) </b></dt>
 X(<i>expr</i>) </b></dt>
 <dd class="dd3">
 	式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
+	X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 	X(<i>expr</i>)で指定された式はサニタイズされません。
 </dd>
 </dl>
@@ -578,7 +828,7 @@ str_index(<i>string</i>, <i>char</i>) </b></dt>
 	  文字列<i>string</i>において文字<i>char</i>のある場所を返します。
 </dd>
 </dl>
-<p>ただし、JSTL1.0では関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+<p>ただし、JSTL1.0とVelocityでは関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
 JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
 </p>
 <div align="center">
@@ -649,7 +899,7 @@ JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対
 </table>
 </div>
 <p>これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
-JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+JSTLとVelocityではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
 </p>
 <p>E()とX()は、print文の引数として使われることを想定しています。
 それ以外の場所では使わないでください。
@@ -673,7 +923,34 @@ JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% if !str1 || str1.empty? then %&gt;
+str1 is empty.
+&lt;% elsif str2 &amp;&amp; !str2.empty? then %&gt;
+str2 is not empty.
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if (!$str1) { ?&gt;
+str1 is empty.
+&lt;?php } elseif ($str2) { ?&gt;
+str2 is not empty.
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${empty str1}"&gt;
+str1 is empty.
+&lt;/c:when&gt;&lt;c:when test="${not empty str2}"&gt;
+str2 is not empty.
+&lt;/c:when&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if(! $str1 || $str1 == "")
+str1 is empty.
+#elseif($str2 &amp;&amp; $str2 != "")
+str2 is not empty.
+#end
+</pre>
 <br>
 
 
@@ -763,7 +1040,56 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;li id="foo" class="&lt;%= klass %&gt;"&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+&lt;/form&gt;
+
+### for PHP
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li id="foo" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+&lt;/form&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;li id="foo" class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+&lt;/form&gt;
+
+### for Velocity
+&lt;ul&gt;
+#foreach($item in $list)
+  &lt;li id="foo" class="$!{klass}"&gt;$!{item}&lt;/li&gt;
+#end
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+#if($flag)
+  &lt;html:text type="checkbox" name="user" value="Y" checked /&gt;
+#else
+  &lt;html:text type="checkbox" name="user" value="Y" /&gt;
+#end
+&lt;/form&gt;
+</pre>
 <br>
 
 
@@ -838,7 +1164,42 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% list = context[:list] %&gt;
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+
+### for PHP
+&lt;?php $list = $context['list']; ?&gt;
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+
+### for JSTL
+&lt;c:set var="list" value="${context['list']}"/&gt;
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;li&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+
+### for Velocity
+#set($list = $context.list)
+&lt;ul&gt;
+#foreach($item in $list)
+  &lt;li&gt;$!{item}&lt;/li&gt;
+#end
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+</pre>
 <br>
 
 
@@ -859,7 +1220,11 @@ print("key=", key, " value=", value, "\n");
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for PHP
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
+&lt;?php } ?&gt;
+</pre>
 <p>Raw-codeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
 つまり、プレゼンテーションロジックをターゲット言語で記述できます。
 </p>
@@ -886,7 +1251,7 @@ Raw-codeは文(statement)であり式(expression)ではないためです。
 
 <a name="pl-scope"></a>
 <h3 class="section2">グローバル変数とローカル変数</h3>
-<p>Kwartzでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
+<p>Kwartzでは、メインプログラムから出力用プログラムに渡される変数をテンプレートグローバル変数、テンプレートの中だけで使用される変数をテンプレートローカル変数と呼んでいます。
 </p>
 <p>例えば次のようなプレゼンテーションデータとプレゼンテーションロジックを考えます。
 </p>
@@ -920,40 +1285,40 @@ Raw-codeは文(statement)であり式(expression)ではないためです。
 </p>
 <dl class="dl3">
 <dt class="dt3"><b>
-グローバル変数 </b></dt>
+テンプレートグローバル変数 </b></dt>
 <dd class="dd3">
 	 変数「<code>title</code>」と「<code>list</code>」は、メインプログラムからテンプレートに渡される変数であり、メインプログラムで値を設定する必要があります。
-	Kwartzではこれをグローバル変数と呼んでいます。
+	Kwartzではこれをテンプレートグローバル変数と呼んでいます。
 </dd>
 <dt class="dt3"><b>
-ローカル変数 </b></dt>
+テンプレートローカル変数 </b></dt>
 <dd class="dd3">
 	変数「<code>item</code>」と「<code>ctr</code>」と「<code>color</code>」はテンプレートの中だけで使用される変数であり、メインプログラムで設定する必要はありません。
-	Kwartzではこれをローカル変数と呼んでいます。
+	Kwartzではこれをテンプレートローカル変数と呼んでいます。
 </dd>
 </dl>
-<p>kwartzコマンドにオプション「<code>-a analyze</code>」をつけて起動すると、テンプレートを分析してグローバル変数とローカル変数を報告してくれます。
+<p>kwartzコマンドにオプション「<code>-a analyze</code>」をつけて起動すると、テンプレートを分析してテンプレートグローバル変数とテンプレートローカル変数を報告してくれます。
 </p>
 <pre class="program">$ kwartz -p analyze.plogic -a analyze analyze.html
 Global: <b>title</b> <b>list</b>
 Local:  <b>ctr</b> <b>item</b> <b>color</b>
 </pre>
-<p>このとき、Kwartzは次のようなルールでグローバル変数とローカル変数とを判別しています。
+<p>このとき、Kwartzは次のようなルールでグローバルかローカルかを判定しています。
 </p>
 <ul type="disc">
 <li>変数が初めて現れたときに…
     <ul type="circle">
-    <li>代入文の左辺に現れた変数はローカル変数
+    <li>代入文の左辺に現れた変数はテンプレートローカル変数
     </li>
-    <li>foreach文のループ変数として現れた変数はローカル変数
+    <li>foreach文のループ変数として現れた変数はテンプレートローカル変数
     </li>
-    <li>それ以外はグローバル変数
+    <li>それ以外はテンプレートグローバル変数
     </li>
     </ul>
 </li>
 </ul>
-<p>またグローバル変数へ代入したり、グローバル変数をループ変数としていると、分析時に警告を出します。
-なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりグローバル変数を変更すべきではないからです（変更してよいのはローカル変数のみのはずです）。
+<p>またテンプレートグローバル変数へ代入したり、テンプレートグローバル変数をループ変数としていると、分析時に警告を出します。
+なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりテンプレートグローバル変数を変更すべきではないからです（変更してよいのはテンプレートローカル変数のみのはずです）。
 </p>
 <p>テンプレート（プレゼンテーションデータとプレゼンテーションロジック）が複雑になると、メインプログラムで設定しなければならない変数がどれか、わかりづらくなることがあります。
 そのようなときは、この分析機能を利用してください。変数名のタイプミスも見つけやすくなります。
@@ -1030,7 +1395,22 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+
+### for PHP
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+
+### for JSTL
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+
+### for Velocity
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+</pre>
 <br>
 
 
@@ -1046,13 +1426,35 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+Hello &lt;%= user.name %&gt;!
+
+### for PHP
+Hello &lt;?php echo $user-&gt;name; ?&gt;!
+
+### for JSTL
+Hello &lt;c:out value="${user.name}" escapeXml="false"/&gt;!
+
+### for Velocity
+Hello $!{user.name}!
+</pre>
 <p>コンパイル時に、コマンドオプション<code>-e</code>を指定した場合は、式をサニタイズして出力します。
 このとき、文字列や数値はサニタイズされず、式のみがサニタイズされることに注意してください。
 </p>
 <p>出力用プログラム（コマンドオプション<code>-e</code>をつけた場合）：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+
+### for PHP
+Hello &lt;?php echo htmlspecialchars($user-&gt;name); ?&gt;!
+
+### for JSTL
+Hello &lt;c:out value="${user.name}"/&gt;!
+
+### for Velocity
+Hello $!esc.html($user.name)!
+</pre>
 <p>コマンドオプションの有無に関わらずサニタイズをする/しないを指定するには、関数<code>E()</code>と<code>X()</code>を使用します。
 <code>E(<i>expr</i>)</code>は式<code><i>expr</i></code>をサニタイズし、<code>X(<i>expr</i>)</code>はサニタイズしません。
 </p>
@@ -1064,7 +1466,22 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
+Without sanitizing: &lt;%= var %&gt;!
+
+### for PHP
+With sanitizing:    &lt;?php echo htmlspecialchars($var); ?&gt;!
+Without sanitizing: &lt;?php echo $var; ?&gt;!
+
+### for JSTL
+With sanitizing:    &lt;c:out value="${var}"/&gt;!
+Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
+
+### for Velocity
+With sanitizing:    $!esc.html($var)!
+Without sanitizing: $!{var}!
+</pre>
 <p>.
 .
 </p>
@@ -1083,7 +1500,18 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
+
+### for PHP
+&lt;li&gt;&lt;?php echo $hash["name"]; ?&gt;&lt;/li&gt;
+
+### for JSTL
+&lt;li&gt;&lt;c:out value="${hash['name']}" escapeXml="false"/&gt;&lt;/li&gt;
+
+### for Velocity
+&lt;li&gt;$!{hash["name"]}&lt;/li&gt;
+</pre>
 <p>また「<code>id="Value:<i>expr</i>"</code>」でサニタイズすることを、「<code>id="VALUE:<i>expr</i>"</code>」でサニタイズしないことを指定できます。
 これらはそれぞれ「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="value:X(<i>expr</i>)"</code>」と同じです。
 </p>
@@ -1106,7 +1534,26 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;tr class="&lt;%= klass %&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr class="&lt;?php echo $klass; ?&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL
+&lt;tr class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+### for Velocity
+&lt;tr class="$!{klass}"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
 <p>また「<code>id="Attr:<i>name</i>=<i>value</i>"</code>」でサニタイズすることを、「<code>id="ATTR:<i>name</i>=<i>value</i>"</code>」でサニタイズしないことを指定できます。
 これらはそれぞれ「<code>id="attr:<i>name</i>=E(<i>value</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>value</i>)"</code>」と同じです。
 </p>
@@ -1121,7 +1568,34 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% if message &amp;&amp; !message.empty? then %&gt;
+&lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
+ &lt;%= message %&gt;
+&lt;/font&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($message) { ?&gt;
+&lt;font class="&lt;?php echo $klass; ?&gt;" bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+ &lt;?php echo $message; ?&gt;
+&lt;/font&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:if test="${not empty message}"&gt;
+&lt;font class="&lt;c:out value="${klass}" escapeXml="false"/&gt;" bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+ &lt;c:out value="${message}" escapeXml="false"/&gt;
+&lt;/font&gt;
+&lt;/c:if&gt;
+
+### for Velocity
+#if($message &amp;&amp; $message != "")
+&lt;font class="$!{klass}" bgcolor="$!{color}"&gt;
+ $!{message}
+&lt;/font&gt;
+#end
+</pre>
 <br>
 
 
@@ -1140,7 +1614,32 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
+
+### for PHP
+&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt;&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt;&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
+&lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Ruby&lt;/option&gt;
+&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
+&lt;input type="radio" name="gender" value="M" checked&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="gender" value="M"&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
 <p>なお「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」の出力を簡単にするための機能として、関数「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」が用意されています。
 これらは、式<code><i>expr</i></code>が真のときにそれぞれ「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」を出力します。
 </p>
@@ -1158,7 +1657,46 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for PHP
+&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected=\"selected\"" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;?php echo $os == "mac" ? " disabled=\"disabled\"" : ""; ?&gt; /&gt;Windows
+
+### for eRuby
+&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected=\"selected\"" : "" %&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;%= os == "mac" ? " disabled=\"disabled\"" : "" %&gt; /&gt;Windows
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected="selected"' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;c:out value="${os eq 'mac' ? ' disabled="disabled"' : ''}" escapeXml="false"/&gt; /&gt;Windows
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
+&lt;option name="lang" value="ruby" selected="selected"&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Ruby&lt;/option&gt;
+
+&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
+&lt;input type="radio" name="gender" value="M" checked="checked" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="gender" value="M" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Male
+
+&lt;c:choose&gt;&lt;c:when test="${os eq 'mac'}"&gt;
+&lt;input type="radio" name="os" value="win" disabled="disabled" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="os" value="win" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Windows
+</pre>
 <br>
 
 
@@ -1175,7 +1713,30 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% var = value %&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;% count += 1 %&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+
+### for PHP
+&lt;?php $var = $value; ?&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;?php $count += 1; ?&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+
+### for JSTL
+&lt;c:set var="var" value="${value}"/&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+
+### for Velocity
+#set($var = $value)
+&lt;dt&gt;foo&lt;/dt&gt;
+#set($count = $count + 1)
+&lt;dd&gt;123&lt;/dd&gt;
+</pre>
 <br>
 
 
@@ -1199,7 +1760,66 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% if value &gt; 0 then %&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;% elsif value &lt; 0 then %&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;% else %&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($value &gt; 0) { ?&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;?php } elseif ($value &lt; 0) { ?&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;?php } else { ?&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${value gt 0}"&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;/c:when&gt;&lt;c:when test="${value lt 0}"&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($value &gt; 0)
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+#elseif($value &lt; 0)
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+#else
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+#end
+</pre>
 <p>「<code>elseif</code>」や「<code>else</code>」を使う場合は、直前に空行を入れないようにしてください。
 </p>
 <br>
@@ -1218,7 +1838,34 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% for item in list do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:forEach var="item" items="${list}"&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/c:forEach&gt;
+
+### for Velocity
+#foreach($item in $list)
+&lt;tr&gt;
+  &lt;td&gt;$!{item}&lt;/td&gt;
+&lt;/tr&gt;
+#end
+</pre>
 <br>
 
 
@@ -1238,7 +1885,38 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;dl&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;dl&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;dl&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+
+### for Velocity
+&lt;dl&gt;
+#foreach($item in $list)
+  &lt;dt&gt;$!{item.text}&lt;/dt&gt;
+  &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
+#end
+&lt;/dl&gt;
+</pre>
 <br>
 
 
@@ -1257,7 +1935,46 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item_ctr %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php $item_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php   $item_ctr += 1; ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item_ctr; ?&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:set var="item_ctr" value="0"/&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;c:set var="item_ctr" value="${item_ctr + 1}"/&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;c:out value="${item_ctr}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;/c:forEach&gt;
+
+### for Velocity
+#set($item_ctr = 0)
+#foreach($item in $list)
+  #set($item_ctr = $item_ctr + 1)
+&lt;tr&gt;
+  &lt;td&gt;$!{item_ctr}&lt;/td&gt;
+  &lt;td&gt;$!{item}&lt;td&gt;
+&lt;/tr&gt;
+#end
+</pre>
 <br>
 
 
@@ -1282,7 +1999,66 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;%   item_tgl = item_ctr % 2 == 0 ? "even" : "odd" %&gt;
+    &lt;tr class="&lt;%= item_tgl %&gt;"&gt;
+      &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;% end %&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;?php $item_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php   $item_ctr += 1; ?&gt;
+&lt;?php   $item_tgl = $item_ctr % 2 == 0 ? "even" : "odd"; ?&gt;
+    &lt;tr class="&lt;?php echo $item_tgl; ?&gt;"&gt;
+      &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;?php } ?&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;c:set var="item_ctr" value="0"/&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;c:set var="item_ctr" value="${item_ctr + 1}"/&gt;
+  &lt;c:set var="item_tgl" value="${item_ctr % 2 eq 0 ? 'even' : 'odd'}"/&gt;
+    &lt;tr class="&lt;c:out value="${item_tgl}" escapeXml="false"/&gt;"&gt;
+      &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/c:forEach&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+### for Velocity
+&lt;table&gt;
+  &lt;tbody&gt;
+#set($item_ctr = 0)
+#foreach($item in $list)
+  #set($item_ctr = $item_ctr + 1)
+  #if($item_ctr % 2 == 0)
+    #set($item_tgl = "even")
+  #else
+    #set($item_tgl = "odd")
+  #end
+    &lt;tr class="$!{item_tgl}"&gt;
+      &lt;td&gt;$!{item}&lt;/td&gt;
+    &lt;/tr&gt;
+#end
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
 <br>
 
 
@@ -1302,7 +2078,20 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用プログラム：
 </p>
-<pre class="output"></pre>
+<pre class="output">### for eRuby
+&lt;% while row = sth.fetch() do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+</pre>
 <br>
 
 
@@ -1498,7 +2287,21 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+
+    ... main contents ...
+
+&lt;!-- begin footer --&gt;
+&lt;center&gt;
+  copyright&amp;copy; &lt;%= year %&gt; kuwata-lab all rights reserverd
+&lt;/center&gt;
+&lt;!-- end footer --&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
 <p>「<code>include</code>」ディレクティブのほかに、「<code>Include</code>」と「<code>INCLUDE</code>」が使用できます。
 </p>
 <ul type="disc">
@@ -1614,6 +2417,57 @@ Hello &lt;%= name %&gt;!
 <br>
 
 
+<br>
+
+
+<a name="plogic"></a>
+<h2 class="section1">プレゼンテーションロジックファイル</h2>
+<p>プレゼンテーションロジックファイルの書き方です。
+</p>
+<p>プレゼンテーションロジック：
+</p>
+<pre class="program">「id="mark:name"」でマーキングされたエレメントの宣言
+#name {
+  
+  // 内容のかわりに出力する式
+  value:  <i>expression</i>;
+  
+  // 属性（名前と値）
+  attr: "<i>attr1</i>" <i>expr1</i>, "<i>attr2</i>" <i>expr2</i>, "<i>attr3</i>" <i>expr3</i>;
+  
+  // 削除する属性の名前
+  remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
+  
+  // 開始タグに追加する式
+  append:  "<i>expr1</i>", "<i>expr2</i>", "<i>expr3</i>";
+  
+  // タグ名
+  tagname: "<i>tagname</i>",
+
+  // プレゼンテーションロジック本体
+  plogic: {
+    @stag;
+    @cont;
+    @etag;
+  }
+}
+
+// ドキュメント宣言
+#DOCUMENT {
+  // はじめに実行されるロジック
+  begin: {
+    ...
+  }
+
+  // 最後に実行されるロジック
+  end: {
+    ...
+  }
+  
+  // 他のプレゼンテーションロジックファイルを読み込む
+  require: file1.plogic, file2.plogic;
+}
+</pre>
 <br>
 
 

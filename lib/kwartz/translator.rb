@@ -114,6 +114,7 @@ module Kwartz
         '{}'       =>  90,
         '[:]'      =>  90,
         '.'        =>  90,
+        '.()'      =>  90,
 
         '-.'       =>  80,
         '+.'       =>  80,
@@ -215,6 +216,7 @@ module Kwartz
          t = expr.token
          _translate_expr(expr.left, t)
          op = keyword(t)
+         Kwartz::assert("*** t = #{t.inspect}") unless op
          @code << op
          _translate_expr(expr.right, t)
          return @code
@@ -348,39 +350,52 @@ module Kwartz
       ##
       def visit_print_statement(stmt, depth)
          stmt.arguments.each do |expr|
-            t = expr.token
-            if t == :string || t == :numeric
-               @code << expr.value
-            else
-               flag_escape = nil
-               if expr.token == :function
-                  fname = expr.funcname
-                  if fname == 'E' || fname == 'X'
-                     flag_escape = fname == 'E'
-                     args = expr.arguments
-                     if !args || args.length != 1
-                        raise TranslationError.new("function #{fname}() should take only an argument.")
-                     end
-                     expr = args[0]
-                  end
-               end
-               if flag_escape == nil
-                  flag_escape = constant_expr?(expr) ? false : @default_flag_escape
-               end
-               Kwartz::assert(false) unless flag_escape != nil
-               @code << keyword(flag_escape ? :eprint    : :print)
-               translate_expression_for_print(expr, flag_escape)
-               @code << keyword(flag_escape ? :endeprint : :endprint)
-            end
+            _translate_print_argument(expr)
          end
          return @code
       end
 
-      def translate_expression_for_print(expr, flag_escape)
+      ##
+      def _translate_print_argument(expr, flag_escape=nil)
+         t = expr.token
+         if t == :string || t == :numeric
+            @code << expr.value
+            return
+         end
+         if flag_escape == nil
+            if expr.token == :function
+               fname = expr.funcname
+               if fname == 'E' || fname == 'X'
+                  flag_escape = fname == 'E'
+                  args = expr.arguments
+                  if !args || args.length != 1
+                     raise TranslationError.new("function #{fname}() should take only an argument.")
+                  end
+                  expr = args[0]
+               end
+            end
+            if flag_escape == nil
+               flag_escape = constant_expr?(expr) ? false : @default_flag_escape
+            end
+         end
+         Kwartz::assert(false) unless flag_escape != nil
+         if expr.token == '.+'
+            _translate_print_argument(expr.left)
+            _translate_print_argument(expr.right)
+         else
+            @code << keyword(flag_escape ? :eprint    : :print)
+            _translate_expression_for_print(expr, flag_escape)
+            @code << keyword(flag_escape ? :endeprint : :endprint)
+         end
+      end
+      protected :_translate_print_argument
+      
+      def _translate_expression_for_print(expr, flag_escape)
          return translate_expression(expr)
       end
-      protected :translate_expression_for_print
+      protected :_translate_expression_for_print
 
+      
       ##
       def visit_expr_statement(stmt, depth)
          @code << prefix(depth)

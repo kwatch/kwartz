@@ -30,6 +30,9 @@
 .JA	.#◎更新履歴		| changelog*
 .EN	.#.$$ Changelog		| changelog*
 .	.#
+.	.#.: 2005-03-23
+.JA	.#	.- コマンドラインオプション「-a defun」についての記述を追加。
+.EN	.#	.- describe about new command-line option '-a defun'
 .	.#.: 2005-03-07
 .	.#	.- beta3 release
 .	.#.: 2005-02-19
@@ -106,9 +109,9 @@
 .JA		Kwartzは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
 .JA		つまり、ひとつのHTMLテンプレートを様々な言語から使用することができるのです。
 .JA		また使用する言語を変えたとしても、プレゼンテーション層は何も変更する必要がありません。
-.JA		現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&1.0)に対応しています。
-.EN		Kwartz can create output scripts for Ruby(eRuby), PHP, and JSP(JSTL 1.1 & 1.0) from a template file,
-.EN		because Kwartz uses an internal intermediate language.
+.JA		現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&1.0)、Velocityに対応しています。
+.EN		Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.1 & 1.0), and Velocity
+.EN		from a template file, because Kwartz uses an internal intermediate language.
 .EN		You don't have to change the presentation layer at all, even if you changed programming language.
 .		
 .		
@@ -265,6 +268,9 @@
 .	
 .	### for JSTL 1.0
 .	$ kwartz -l jstl10 -p example1.plogic example1.html > example1.jsp
+.	
+.	### for Velocity
+.	$ kwartz -l velocity -p example1.plogic example1.html > example1.vm
 .	.====================
 .	
 .	
@@ -295,11 +301,19 @@
 .	.<<<:! kwartz -l jstl10 -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.jsp
 .	.--------------------
 .	
+.JA	出力用スクリプト for Velocity(example1.vm):
+.EN	Output Script for JSTL1.0(example1.jsp):
+.	.--------------------
+.	.<<<:! kwartz -l velocity -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.vm
+.	.--------------------
+.	
 .	
 .JA	またコンパイル時にコマンドオプション {{,-e,}} をつけると、サニタイズされた出力用スクリプトが生成されます。
-.JA	サニタイズには、eRubyでは{{,CGI.escapeHTML(),}}が、PHPでは{{,htmlspecialchars(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
+.JA	サニタイズには、eRubyでは{{,CGI.escapeHTML(),}}が、PHPでは{{,htmlspecialchars(),}}が、
+.JA	JSTLでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が、VelocityではEscapeToolの{{,$esc.html(),}}が使用されます。
 .EN	Using the command-line option '{{,-e,}}' when compiling, Kwartz will output sanitized scripts.
-.EN	For sanitizing, {{,CGI.escapeHTML(),}} is used in eRuby, {{,htmlspecialchars(),}} in PHP, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSTL.
+.EN	For sanitizing, {{,CGI.escapeHTML(),}} is used in eRuby, {{,htmlspecialchars(),}} in PHP,
+.EN	{{,<c:out/>,}} without {{,escapeXml="false",}} in JSTL, {{,$esc.html(),}} of EscapeTool in Velocity.
 .	
 .	
 .JA	これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
@@ -362,13 +376,77 @@
 .JA	   // 出力
 .EN	   // print
 .	   RequestDispatcher dispatcher = 
-.	       request.getRequestDispatcher('example1.jsp');
+.	       request.getRequestDispatcher("example1.jsp");
 .	   dispatcher.include(request, response);
 .JA	   // または dispatcher.forward(request, response);
 .EN	   // or dispatcher.forward(request, response);
 .	}
 .	.--------------------
 .		
+.JA	メインプログラム(Velocity)：
+.EN	Main Program (Velocity) :
+.	.-------------------- Main1.java
+.	import org.apache.velocity.app.Velocity;
+.	import org.apache.velocity.VelocityContext;
+.	import org.apache.velocity.Template;
+.	import org.apache.velocity.exception.ResourceNotFoundException;
+.	import org.apache.velocity.exception.ParseErrorException;
+.	import org.apache.velocity.exception.MethodInvocationException;
+.	import java.io.OutputStreamWriter;
+.	import java.io.IOException;
+.	
+.	public class Main1 {
+.	  public static void main(String[] args) {
+.	    try {
+.	    // 初期化
+.	    Velocity.init();
+.	 
+.JA	    // データを用意する
+.EN	    // create data
+.	    java.util.List member_list = new java.util.ArrayList();
+.	    member_list.add("Oboro");
+.	    member_list.add("Ominae");
+.	    member_list.add("Jaquemonde");
+.	 
+.JA	    // Contextを作成しデータをセットする
+.EN	    // create context and set data
+.	    VelocityContext context = new VelocityContext();
+.	    context.put("member_list", member_list);
+.	 
+.JA	    // テンプレートを読み込み、Contextとマージする。
+.EN	    // read template and merge it with context
+.	    Template template = Velocity.getTemplate("Test.vm", "UTF8");
+.	    OutputStreamWriter writer = new OutputStreamWriter(System.out);
+.	    template.merge(context, writer);
+.	
+.JA	    // 出力する
+.EN	    // print out
+.	    writer.flush();
+.	  }
+.	  catch (ResourceNotFoundException ex) {
+.JA	    // テンプレートが見つからなかった
+.EN	    // template not found
+.	  }
+.	  catch (ParseErrorException ex) {
+.JA	    // テンプレート解析時に構文エラーがあった
+.EN	    // syntax error exists in template
+.	  }
+.	  catch (MethodInvocationException ex) {
+.JA	     // メソッド呼び出しができなかった
+.EN	     // method invocation violation
+.	  }
+.	  catch (IOException ex) {
+.JA	    // 入出力に問題があった
+.EN	    // I/O exepption
+.	  }
+.	  catch (Exception ex) {
+.JA	    // その他のエラー
+.EN	    // other exception
+.	  }
+.	}
+.	.--------------------
+.	
+.	
 .JA	出力用プログラムを呼び出して実行すると、例えば次のようなWebページが生成されます。
 .EN	Calling or executing the output script, you might get a web page like this:
 .	
@@ -497,6 +575,9 @@
 .	
 .	### for JSTL 1.0
 .	$ kwartz -l jstl10 -p example2.plogic example2.html > example2.jsp
+.	
+.	### for Velocity
+.	$ kwartz -l velocity -p example2.plogic example2.html > example2.vm
 .	.====================
 .	
 .JA	出力用スクリプト：
@@ -568,8 +649,8 @@
 .		  }
 .		}
 .		.--------------------
-.JA	   これは次と同じです。
-.EN	   This is equal to the following.
+.JA	   これは次のように書くこともできます。
+.EN	   The following is equalt to the above.
 .		.--------------------
 .		#list {
 .		  value: "Hello!";
@@ -761,9 +842,9 @@
 .	
 .	
 .JA	コマンドラインオプション {{,-e,}} をつけると、出力スクリプトをサニタイズします。
-.JA	サニタイズでは、eRubyでは{{,CGI.escapeHTML(),}}が、ERBでは{{,h(),}}が、PHPでは{{,htmlspecialchars(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out>,}}がそれぞれ使用されます。
-.EN	{{,-e,}} is the command-line optin to generate output script with sanitizing.
-.EN	{{,CGI.escapeHTML(),}} is used in eRuby for sanitizing, {{,htmlspecialchars(),}} in PHP, and {{,<c:out/>,}} tag without {{,escapeXml="false",}} in JSTL.
+.JA	サニタイズでは、eRubyでは{{,CGI.escapeHTML(),}}が、ERBでは{{,h(),}}が、PHPでは{{,htmlspecialchars(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out>,}}が、Velocityでは{{,$!esc.html(),}}がそれぞれ使用されます。
+.EN	'{{,-e,}}' is the command-line optin to generate output script with sanitizing.
+.EN	'{{,CGI.escapeHTML(),}}' is used in eRuby for sanitizing, '{{,htmlspecialchars(),}}' in PHP, '{{,<c:out/>,}}' tag without '{{,escapeXml="false",}}' in JSTL, and '{{,$!esc.html(),}}' in Velocity.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -787,15 +868,18 @@
 .	### for PHP
 .	$ kwartz -e -l php    sanitize1.html > sanitize1.php
 	
-.	### for JSTL 1.1
-.	$ kwartz -e -l jstl11 sanitize1.html > sanitize1.jsp
+.	### for JSTL
+.	$ kwartz -e -l jstl   sanitize1.html > sanitize1.jsp
+.	
+.	### for Velocity
+.	$ kwartz -e -l velocity sanitize1.html > sanitize1.vm
 .	.====================
 .	
 .	
 .JA	出力用スクリプト：
 .EN	Output Scirpt:
 .	.--------------------
-.	.<<<:! ./output.rb -s -l eruby,erb,php,jstl guide.d/sanitize1.html
+.	.<<<:! ./output.rb -s -l eruby,erb,php,jstl,velocity guide.d/sanitize1.html
 .	.--------------------
 .	
 .	
@@ -811,9 +895,11 @@
 .EN	.$$ Partially Sanitizing	| sanitize2
 .	
 .JA	関数{{,E({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズします。
-.JA	また関数{{,X({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズしません。
+.JA	また関数{{,X({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズしません
+.JA	{{(E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「{{,@{E(...),}}}@」や「{{,id="value:E(...)",}}」と書くことはできますが、「{{,id="set:str=E(...)",}}」のようには書けません。)}}。
 .EN	The function {{,E({{/expr/}}),}} always sanitizes expression {{,{{/expr/}},}} even when '-e' is not specified.
 .EN	The function {{,X({{/expr/}}),}} doesn't sanitize expression {{,{{/expr/}},}} even when '-e' is specified.
+.EN	{{(E() and X() are pseudo-function. They are not expression but allowed to appear as argument of print statement of PL. For example, '{{,@{E(...)}@,}}' and '{{,id="value:E(...),}}' are valid, but '{{,id="set:str=E(...)",}}' is invalid.)}}
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentaion Data:
@@ -839,12 +925,15 @@
 	
 .	### for JSTL 1.1
 .	$ kwartz -e -l jstl11 sanitize1.html > sanitize1.jsp
+.	
+.	### for Velocity
+.	$ kwartz -e -l velocity sanitize1.html > sanitize1.vm
 .	.====================
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -l eruby,erb,php,jstl guide.d/sanitize-partial1.pdata
+.	.<<<:! ./output.rb -l eruby,erb,php,jstl,velocity guide.d/sanitize-partial1.pdata
 .	.--------------------
 .	
 .JA	またコマンドラインオプションに関係なく、「{{,id="Value:{{/expr/}}",}}」や「{{,id="Attr:{{/name/}}={{/expr/}})",}}」は式{{,{{/expr/}},}}を必ずサニタイズします。
@@ -1007,6 +1096,7 @@
 .	$ kwartz -l eruby  -p analyze.plogic {{*--rename*}} analyze.html
 .	$ kwartz -l php    -p analyze.plogic {{*--rename*}} analyze.html
 .	$ kwartz -l jstl11 -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l velocity -p analyze.plogic {{*--rename*}} analyze.html
 .	.====================
 .	
 .	
@@ -1093,7 +1183,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -p guide.d/topics-append1.plogic guide.d/topics-append1.pdata
+.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10,velocity -p guide.d/topics-append1.plogic guide.d/topics-append1.pdata
 .	.--------------------
 .	
 .JA	ディレクティブ {{,id="append:{{/expr/}}",}} でも同じことができます。
@@ -1136,7 +1226,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -p guide.d/topics-append3.plogic guide.d/topics-append3.pdata
+.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10,velocity -p guide.d/topics-append3.plogic guide.d/topics-append3.pdata
 .	.--------------------
 .	
 .	
@@ -1175,25 +1265,25 @@
 .	
 .	
 .JA	◎テンプレートをRubyまたはPHPの関数にコンパイルする	| topic-defun
-.EN	.$$ Compile Template as a Function of Ruby or PHP	| topic-defun
+.EN	.$$ Compile Template into a Function of Ruby or PHP	| topic-defun
 .	
 .	
 .JA	コマンドラインオプション「{{,-a defun,}}」を指定すると、テンプレートをRubyまたはPHPの関数に変換できます。
 .EN	Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
 .	
 .	
-.JA	プレゼンテーションデータ(hoge.html)：
-.EN	Presentation Data (hoge.html)
-.	.-------------------- hoge.html
+.JA	プレゼンテーションデータ(hoge1.html)：
+.EN	Presentation Data (hoge1.html)
+.	.-------------------- hoge1.html
 .	Hello @{user}@ !
 .	<ul id="mark:list">
 .	  <li id="value:item">xxx</li>
 .	</ul>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック(hoge.plogic)：
-.EN	Presentation Logic (hoge.plogic)
-.	.-------------------- hoge.plogic
+.JA	プレゼンテーションロジック(hoge1.plogic)：
+.EN	Presentation Logic (hoge1.plogic)
+.	.-------------------- hoge1.plogic
 .	#list {
 .	  plogic: {
 .	    @stag;
@@ -1216,7 +1306,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -l eruby,php -a defun -p guide.d/hoge.plogic guide.d/hoge.html
+.	.<<<:! ./output.rb -l eruby,php -a defun -p guide.d/hoge1.plogic guide.d/hoge1.html
 .	.--------------------
 .	
 .	
@@ -1252,7 +1342,7 @@
 .EN	You can specify funtion or method name with the command-line option '{{,-F {{/name/}},}}',
 .EN	class or module name with '{{,-C {{/name/}},}}', and arguments with '{{,-A {{/arg1,arg2,.../}},}}'.
 .EN	The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
-.EN	class/module name and function/method name.
+.EN	default class/module name and default function/method name.
 .	
 .	
 .	.#@EOF

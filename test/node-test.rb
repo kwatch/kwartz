@@ -123,7 +123,7 @@ END
       ]
       expr = MethodExpression.new(VariableExpression.new('recv'), 'm1', arguments)
       expected = <<END
-.
+.()
   recv
   m1
     "arg1"

@@ -78,7 +78,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  '-.', '+.', '!'
    class UnaryExpression < Expression
       def initialize(token, child_expr)
          super(token)
@@ -98,7 +98,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: :empty :notempty
    class EmptyExpression < UnaryExpression
       def initialize(tkn, expr)
          super(tkn, expr)
@@ -132,7 +132,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '+', '-', '*', '/', '%', '.+'
    class ArithmeticExpression < BinaryExpression
       def initialize(token, left_expr, right_expr)
          super(token, left_expr, right_expr)
@@ -144,7 +144,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  '=', '+=', '-=', '*=', '/=', '%=', '.+='
    class AssignmentExpression < BinaryExpression
       def initialize(token, left_expr, right_expr)
          super(token, left_expr, right_expr)
@@ -156,7 +156,7 @@ module Kwartz
    end
 
    
-   ##
+   ## token:: '==', '!=', '<', '<=', '>', '>='
    class RelationalExpression < BinaryExpression
       def initialize(token, left_expr, right_expr)
          super(token, left_expr, right_expr)
@@ -168,7 +168,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '&&', '||'
    class LogicalExpression < BinaryExpression
       def initialize(token, left_expr, right_expr)
          super(token, left_expr, right_expr)
@@ -180,7 +180,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '[]', '[:]'
    class IndexExpression < BinaryExpression
       def initialize(token, left_expr, right_expr)
          super(token, left_expr, right_expr)
@@ -192,7 +192,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: :function
    class FunctionExpression < Expression
       def initialize(funcname, arguments=[])
          super(:function)
@@ -216,7 +216,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '.'
    class PropertyExpression < Expression
       def initialize(object_expr, propname)
          super('.')
@@ -239,10 +239,10 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '.()'
    class MethodExpression < Expression
       def initialize(receiver_expr, method_name, arguments=[])
-         super('.')
+         super('.()')
          @receiver = receiver_expr
          @method_name = method_name
          @arguments = arguments
@@ -266,7 +266,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token:: '?:'
    class ConditionalExpression < Expression
       def initialize(condition_expr, left_expr, right_expr)
          super('?:')
@@ -290,7 +290,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :variable
    class VariableExpression < Expression
       def initialize(variable_name)
          super(:variable)
@@ -334,7 +334,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :numeric
    class NumericExpression < LiteralExpression
       def initialize(numeric_str)
          super(:numeric, numeric_str)
@@ -346,7 +346,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :string
    class StringExpression < LiteralExpression
       def initialize(string)
          super(:string, string)
@@ -364,7 +364,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :ture, :false
    class BooleanExpression < LiteralExpression
       def initialize(flag)
          super(:boolean, flag)
@@ -376,7 +376,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :null
    class NullExpression < LiteralExpression
       def initialize(null=nil)
          super(:null, nil)
@@ -409,7 +409,7 @@ module Kwartz
       end
    end
 
-   ##
+   ## token::  :print
    class PrintStatement < Statement
       def initialize(arguments=[])
          super(:print)
@@ -431,7 +431,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :expr
    class ExprStatement < Statement
       def initialize(expression)
          super(:expr)
@@ -451,7 +451,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :block
    class BlockStatement < Statement
       def initialize(stmt_list=[])
          super(:block)
@@ -479,7 +479,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :if
    class IfStatement < Statement
       def initialize(condition_expr, then_stmt, else_stmt=nil)
          super(:if)
@@ -503,7 +503,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :foreach
    class ForeachStatement < Statement
       def initialize(loopvar_expr, list_expr, body_stmt)
          super(:foreach)
@@ -527,7 +527,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :while
    class WhileStatement < Statement
       def initialize(condition_expr, body_stmt)
          super(:while)
@@ -549,7 +549,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :macro
    class MacroStatement < Statement
       def initialize(macro_name, body_stmt)
          super(:macro)
@@ -571,7 +571,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :expand
    class ExpandStatement < Statement
       def initialize(type, name=nil)
          super(:expand)
@@ -596,7 +596,7 @@ module Kwartz
    end
 
 
-   ##
+   ## token::  :rawcode
    class RawcodeStatement < Statement
       def initialize(rawcode_str)
          super(:rawcode)
