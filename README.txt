@@ -149,7 +149,12 @@
 .EN	.$ Special Thanks
 .JA	●Special Thanks
 .	
-.EN	.* Shu-yu Guo - He corrected my English of documents. Very Thanks!
+.EN	.* Shu-yu Guo - He corrected my English of documents.
+.EN	.* Andreas Schwarz - He gave me several good advices.
+.EN	.* Wesley J Landaker - He created a Debian package of Kwartz.
+.EN	Very thanks!
 .JA	.* Shu-yu Guo - ドキュメントの英語を直してくれました。多謝。
+.JA	.* Andreas Schwarz - いくつかの重要なアドバイスをくれました。多謝。
+.JA	.* Wesley J Landaker - Debianパッケージを作ってくれました。多謝。
 .	
 .#@EOF

@@ -252,6 +252,7 @@ END
 end
 
 
+
 if __FILE__ == $0
    begin
       main_command = Kwartz::MainCommand.new(ARGV)

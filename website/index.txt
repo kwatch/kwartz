@@ -48,6 +48,15 @@ conditional branching) from the presentation data (HTML file).
 	   {{<IPA|http://www.ipa.go.jp/about/english/index.html>}}
 	   (Information-Technology Promotion Agency Japan).
 
+.% Special Thanks
+	.* Shu-yu Guo - He corrected my English of documents.
+	.* Andreas Schwarz - He gave me several good advices.
+	.* Wesley J Landaker - He created a Debian package of Kwartz.
+	Very thanks!
+
+
+
+
 .#.% ChangeLog
 .#	See ChangeLog ({{<English|ChangeLog.en.html>}}/{{<Japanese|ChangeLog.ja.html>}}) for detail.
 

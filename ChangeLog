@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-14 rev.43
+	.- [change] README.txt updated
+	.- [release] 2.0.0-beta1
+
 .: 2005-02-14 rev.42
 	.- [enhance] Kwartz::Config::EMBED_PATTERN
 	.- [change] embedded expression pattern is changed to '@{...}@'
