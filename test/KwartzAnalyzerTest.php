@@ -315,6 +315,41 @@ class KwartzAnalyzerTest extends PHPUnit_TestCase {
         $this->_test($pdata, $plogic, $expected);
     }
 
+    
+    // :macro(BEGIN) and :macro(END)
+    function test_analyze_macro3() {
+        $pdata = '
+		<ul kd="mark:ul">
+		  <li kd="value:item">hoge</li>
+		</ul>
+		';
+        $plogic = '
+		:element(ul)
+		  :foreach(item=list)
+		    @stag
+		    @cont
+		    @etag
+		  :end
+		:end
+		
+		:macro(BEGIN)
+		  :set(list = args["list"])
+		:end
+		
+		:macro(END)
+		  :set(val = args["val"])
+		  :print("val = ", value)
+		:end
+		';
+        $expected = '
+		global vars: args value
+		local vars: item list val
+		warned global vars:
+		warned local vars:
+		';
+        $this->_test($pdata, $plogic, $expected);
+    }
+
 }
 
 
@@ -328,4 +363,3 @@ class KwartzAnalyzerTest extends PHPUnit_TestCase {
 	echo $result->toString();
 //}
 ?>
-

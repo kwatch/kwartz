@@ -26,7 +26,8 @@ conditional branching) from the presentation data (HTML file).
 	.* Supports Auto-Sanitizing and Partial-Sanitizing
 
 .% Download
-	.* {{<KwartzPHP-0.3.0.tgz|download.html>}} (sourceforge.net) (2005-01-01 released)
+	.* {{<KwartzPHP-0.3.1.tgz|download.html>}} (sourceforge.net) (2005-01-09 released)
+	.#.* {{<KwartzPHP-0.3.0.tgz|download.html>}} (sourceforge.net) (2005-01-01 released)
 	.#.* {{<KwartzPHP-0.2.0.tgz>}}
 	.#.* {{<KwartzPHP-0.1.0.tgz>}}
 

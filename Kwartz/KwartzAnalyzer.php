@@ -34,7 +34,27 @@ class KwartzAnalyzer {
     }
     
     function analyze() {
+        $begin_block = NULL;
+        $end_block   = NULL;
+        if ($this->node->token() == '<<block>>') {
+            $block = $this->node;
+            foreach ($block->statements() as $stmt) {
+                if ($stmt->token() == ':macro') {
+                    if ($stmt->macro_name() == 'BEGIN') {
+                        $begin_block = $stmt->body_block();
+                    } elseif ($stmt->macro_name() == 'END') {
+                        $end_block = $stmt->body_block();
+                    }
+                }
+            }
+        }
+        if ($begin_block) {
+            $begin_block->accept($this->analyze_visitor);
+        }
         $this->node->accept($this->analyze_visitor);
+        if ($end_block) {
+            $end_block->accept($this->analyze_visitor);
+        }
     }
     
     function global_vars() {
@@ -92,7 +112,7 @@ class KwartzAnalyzer {
 /**
  * helper class for KwartzAnalyzer
  */
-class KwartzAnalyzeVisitor {
+class KwartzAnalyzeVisitor extends KwartzVisitor {
     private $global_vars;
     private $local_vars;
     private $macro_stmt_list;

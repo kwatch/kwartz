@@ -18,8 +18,8 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.3.1</version>
-    <date>2005-01-09</date>
+    <version>0.3.2</version>
+    <date>2005-01-10</date>
     <license>GPL ver.2</license>
     <state>beta</state>
     <notes>public beta</notes>
@@ -34,6 +34,15 @@
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>0.3.2</version>
+      <date>2005-01-10</date>
+      <state>beta</state>
+      <notes>
+- [change] KwartzAnalyzeVisitor class now extends KwartzVisitor class
+- [bug:1099306] KwartzAnalyzer#analyze() now analyzes BEGIN and END macro.
+      </notes>
+    </release>
     <release>
       <version>0.3.1</version>
       <date>2005-01-09</date>

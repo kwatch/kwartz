@@ -1,9 +1,13 @@
 .=title:	ChangeLog
 
-.: 2005-01-09 rev.54 (ver 0.3.1)
+.: 2005-01-10 rev.56 (ver 0.3.2)
+	.- [change] KwartzAnalyzeVisitor class now extends KwartzVisitor class
+	.- [bug:1099306] KwartzAnalyzer#analyze() now analyzes BEGIN and END macro.
+	
+.: 2005-01-09 rev.55 (ver 0.3.1)
 	.- [enhance] new class KwartzErbTranslator added
 	
-.: 2005-01-09 rev.53
+.: 2005-01-09 rev.54
 	.- [bug:1098862] KwartzParser#parse_block_stmt() fratten the block-statement which is returned by parse_load_stmt().
 	
 .: 2005-01-01 rev.52 (ver 0.3.0)
