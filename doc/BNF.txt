@@ -45,10 +45,39 @@
 
 
 
+
+
   ###
   ### statement
   ###
+  
+  print-stmt   ::=  'print' '(' arguments ')' ';'
+  
+  expr-stmt    ::=  expression ';'
+  
+  block-stmt   ::=  '{'
+  
+  elseif-part  ::=  'elseif' '(' expression ')' statement elseif-part | e
+  
+  if-stmt      ::=  'if' '(' expression ')' statement
+                  | 'if' '(' expression ')' statement elseif-part
+                  | 'if' '(' expression ')' statement elseif-part 'else' statement
+               ::=  'if' '(' expression ')' statement
+                    { 'elseif' '(' expression ')' statement }
+                    [ 'else' statement ]
 
+  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
+  
+  while-stmt   ::=  'while' '(' expression ')' statement
+
+  stmt-list    ::=  statement | stmt-list statement
+               ::=  statement { statement }
+
+  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
+
+  statement    ::=  print-stmt | expr-stmt | if-stmt | foreach-stmt | while-stmt | block-stmt | ';'
+
+/****** obsolete
   print-stmt   ::=  ':print' '(' arguments ')'
   
   set-stmt     ::=  ':set' '(' expression ')'
@@ -77,6 +106,35 @@
   block        ::=  statement | block statement | e
                ::=  { statement }
 
+ ****************/
+
+
+  ##
+  ## definition
+  ##
+
+  element-def  ::=  'element' name '{' [ decl-list ] '}'
+  
+  decl-list    ::=  declaration | decl-list declaration
+  
+  declaration  ::=  value-decl | attr-decl | remove-decl | append-decl | tagname-decl | plogic-decl
+  
+  value-decl   ::=  'value:' [ expression ] ';'
+  
+  attr-decl    ::=  'attr:' [ string '=>' expression { ',' string '=>' expression } ] ';'
+  
+  remove-decl  ::=  'remove:' [ string { ',' string } ] ';'
+  
+  append-decl  ::=  'append:' [ expression ] ';'
+  
+  tagname-decl ::=  'tagname:' [ expression ] ';'
+  
+  plogic-decl  ::=  'plogic:' [ stmt-list ] ';'
+  
+  begin-def    ::=  'BEGIN' '{' [ stmt-list ] '}'
+  
+  end-def      ::=  'END'   '{' [ stmt-list ] '}'
+  
 
 
   ###

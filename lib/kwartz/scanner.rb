@@ -72,6 +72,7 @@ module Kwartz
       @@keywords = {
          'expand'   =>   :expand,
          'element'  =>   :element,
+         'macro'    =>   :macro,
          'value:'   =>   :value,
          'attr:'    =>   :attr,
          'append:'  =>   :append,
@@ -81,6 +82,7 @@ module Kwartz
          'print'    =>   :print,
          'while'    =>   :while,
          'foreach'  =>   :foreach,
+         'for'      =>   :for,
          'in'       =>   :in,
          'if'       =>   :if,
          'else'     =>   :else,
@@ -230,12 +232,18 @@ module Kwartz
             end
             @value = s
             
-            if w = @keywords[@token]
+            begin
+            if w = @keywords[@value]
                @token = w
-            elsif ch == ?: && (w = @keywords[@token + ':'])
+            elsif ch == ?: && (w = @keywords[@value + ':'])
                @token = w
+               getchar()
             else
                @token = :name
+            end
+            rescue TypeError => ex
+               $stderr.puts "*** debug: @token=#{@token.inspect}"
+               raise ex
             end
             return @token
          end
@@ -359,7 +367,7 @@ module Kwartz
                return @token = ch.chr + ch2.chr		## && ||
             else
                msg = "'#{ch.chr}': invalid char."
-               raise ScanError(msg, @linenum, @filename)
+               raise ScanError.new(msg, @linenum, @filename)
             end
          end
 

@@ -369,6 +369,161 @@ module Kwartz
       end
 
 
+      ##
+      ##  print-stmt   ::=  'print' '(' arguments ')' ';'
+      ##  
+      def parse_print_stmt()
+         Kwartz::assert(token() == :print)
+         tkn = scan()
+         check_token('(', "print-statement requires '('.") unless tkn != '('
+         scan()
+         arglist = parse_arguments()
+         check_token(')', "print-statement requires ')'.") unless token() != ')'
+         tkn = scan()
+         check_token(';', "print-statement requires ';'.") unless tkn != ';'
+         scan()
+         return PrintStatement.new(arglist)
+      end
+      
+      
+      ##  
+      ##  expr-stmt    ::=  expression ';'
+      ##  
+      def parse_expr_stmt()
+         expr = parse_expression()
+         check_token(';', "expression-statement requires ';'.") unless token() != ';'
+         scan()
+         return ExpressionStatement.new(expr)
+      end
+      
+      
+      ##  
+      ##  elseif-part  ::=  'elseif' '(' expression ')' statement elseif-part | e
+      ##  
+      ##  
+      ##  if-stmt      ::=  'if' '(' expression ')' statement
+      ##                  | 'if' '(' expression ')' statement elseif-part
+      ##                  | 'if' '(' expression ')' statement elseif-part 'else' statement
+      ##               ::=  'if' '(' expression ')' statement
+      ##                    { 'elseif' '(' expression ')' statement }
+      ##                    [ 'else' statement ]
+      ##
+      def parse_if_stmt()
+         Kwartz::assert(token() == :if || token() == :elseif)
+         tkn = scan()
+         check_token('(', "if-statement requires '('.") unless tkn == '('
+         scan()
+         cond_expr = parse_expression()
+         check_token(')', "if-statement requires ')'.") unless tkn == ')'
+         scan()
+         then_body = parse_statement()
+         if token() == :elseif
+            scan()
+            tkn = scan()
+            check_token('(', "elseif-statement requires ')'.") unless tkn == '('
+            scan()
+            else_body = parse_if_stmt()
+         elsif token() == :else
+            scan()
+            else_body = parse_statement()
+         else
+            else_body = nil
+         end
+         return IfStatement.new(cond_expr, then_body, else_body)
+      end
+
+      
+      ##
+      ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
+      ##  
+      def parse_foreach_stmt()
+         Kwartz::assert(token() == 'foreach')
+         tkn = scan()
+         check_token('(', "foreach-statement requires '('.") unless tkn == '('
+         tkn = scan()
+         check_token(:variable, "foreach-statement requires loop-variable but got '#{tkn}'.") unless tkn == :variable
+         loopvar_name = value()
+         tkn = scan()
+         check_token(:in, "foreach-statement requires 'in' but got '#{tkn}'.") unless tkn == :in
+         scan()
+         list_expr = parse_expression()
+         check_token(')', "foreach-statement requires ')'.") unless tkn == ')'
+         scan()
+         body_stmt = parse_statement()
+         return ForeachStatement(loopvar_name, list_expr, body_stmt)
+      end
+      
+      
+      ##  
+      ##  while-stmt   ::=  'while' '(' expression ')' statement
+      ##
+      def parse_while_stmt()
+         Kwartz::assert(token() == :while)
+         tkn = scan()
+         check_token('(', "while-statement requires '('") unless tkn == '('
+         scan()
+         cond_expr = parse_expression()
+         tkn = scan()
+         check_token(')', "while-statement requires ')'") unless tkn == ')'
+         scan()
+         body_stmt = parse_statement()
+         return WhileStatement.new(cond_expr, body_stmt)
+      end
+      
+      
+      ##  
+      ##
+      def parse_stmt_list()
+         list = []
+         while stmt = parse_statement()
+            list << stmt unless stmt == ';'
+         end
+         return list
+      end
+      
+      
+      ##  
+      ##  stmt-list    ::=  statement | stmt-list statement
+      ##               ::=  statement { statement }
+      ##  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
+      ##
+      def parse_block_stmt()
+         Kwartz::assert(token() == '{')
+         scan()
+         stmt_list = parse_stmt_list()
+         check_token('}', "block-statement requires '}'.") unless token() != '}'
+         scan()
+         return BlockStatement(stmt_list)
+      end
+
+      
+      ##
+      ##  statement    ::=  print-stmt | expr-stmt | if-stmt | foreach-stmt | while-stmt | block-stmt | ';'
+      ##
+      def parse_statement()
+         case token()
+         when '{'
+            return parse_block_stmt()
+         when :print
+            return parse_print_stmt()
+         when :if
+            return parse_if_stmt()
+         when :foreach
+            return parse_foreach_stmt()
+         when :while
+            return parse_while_stmt()
+         when :element
+            return parse_element_stmt()
+         when :expand
+            return parse_expand_stmt()
+         when ';'
+            scan()
+            return ';'
+         else
+            return parse_expr_stmt()
+         end
+      end
+      
 
 
       ##
