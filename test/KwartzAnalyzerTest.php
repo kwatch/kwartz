@@ -13,149 +13,153 @@ require_once('Kwartz/KwartzConverter.php');
 
 class KwartzAnalyzerTest extends PHPUnit_TestCase {
 
-	function _test($pdata, $plogic, $expected, $flag_test=TRUE) {
-		$expected = preg_replace('/^\t\t/m', '', $expected);
-		#$expected = preg_replace('/^\n/',    '', $expected);
-
-		$pdata_block = NULL;
-		if ($pdata) {
-			$converter = new KwartzConverter($pdata);
-			$pdata_block = $converter->convert();
-		}
-		$plogic_block = NULL;
-		if ($plogic) {
-			$parser = new KwartzParser($plogic);
-			$plogic_block = $parser->parse();
-		}
-		if ($pdata_block == NULL) {
-			$block = $plogic_block;
-		} elseif ($plogic_block == NULL) {
-			$block = $pdata_block;
-		} else {
-			$list = array_merge($pdata_block->statements(), $plogic_block->statements());
-			$block = new KwartzBlockStatement($list);
-		}
-		assert($block != NULL);
-
-		$analyzer = new KwartzAnalyzer($block);
-		$analyzer->analyze();
-
-		$s = "\n";
-
-		$s .= "global vars:";
-		$warned_globals = array();
-		$global_vars = $analyzer->global_vars();
-		ksort($global_vars);
-		foreach ($global_vars as $name => $flag_warning) {
-			$s .= " ${name}";
-			if ($flag_warning) { $warned_globals[] = $name; }
-		}
-		$s .= "\n";
-
-		$s .= "local vars:";
-		$warned_locals = array();
-		$local_vars = $analyzer->local_vars();
-		ksort($local_vars);
-		foreach ($local_vars as $name => $flag_warning) {
-			$s .= " ${name}";
-			if ($flag_warning) { $warned_locals[] = $name; }
-		}
-		$s .= "\n";
-
-		$s .= "warned global vars:";
-		sort($warned_globals);
-		foreach ($warned_globals as $name) {
-			$s .= " $name";
-		}
-		$s .= "\n";
-
-		$s .= "warned local vars:";
-		sort($warned_locals);
-		foreach ($warned_locals as $name) {
-			$s .= " $name";
-		}
-		$s .= "\n";
-		
-		$actual = $s;
-
-		if ($flag_test) {
-			$this->assertEquals($expected, $actual);
-		} else {
-		}
-	}
-	
-	function test_analyze1() {
-		$plogic = '
+    function _test($pdata, $plogic, $expected, $flag_test=TRUE) {
+        $expected = preg_replace('/^\t\t/m', '', $expected);
+        //$expected = preg_replace('/^\n/',    '', $expected);
+        
+        $pdata_block = NULL;
+        if ($pdata) {
+            $converter = new KwartzConverter($pdata);
+            $pdata_block = $converter->convert();
+        }
+        $plogic_block = NULL;
+        if ($plogic) {
+            $parser = new KwartzParser($plogic);
+            $plogic_block = $parser->parse();
+        }
+        if ($pdata_block == NULL) {
+            $block = $plogic_block;
+        } elseif ($plogic_block == NULL) {
+            $block = $pdata_block;
+        } else {
+            $list = array_merge($pdata_block->statements(), $plogic_block->statements());
+            $block = new KwartzBlockStatement($list);
+        }
+        assert($block != NULL);
+        
+        $analyzer = new KwartzAnalyzer($block);
+        $analyzer->analyze();
+        
+        $s = "\n";
+        
+        $s .= "global vars:";
+        $warned_globals = array();
+        $global_vars = $analyzer->global_vars();
+        ksort($global_vars);
+        foreach ($global_vars as $name => $flag_warning) {
+            $s .= " ${name}";
+            if ($flag_warning) { $warned_globals[] = $name; }
+        }
+        $s .= "\n";
+        
+        $s .= "local vars:";
+        $warned_locals = array();
+        $local_vars = $analyzer->local_vars();
+        ksort($local_vars);
+        foreach ($local_vars as $name => $flag_warning) {
+            $s .= " ${name}";
+            if ($flag_warning) { $warned_locals[] = $name; }
+        }
+        $s .= "\n";
+        
+        $s .= "warned global vars:";
+        sort($warned_globals);
+        foreach ($warned_globals as $name) {
+            $s .= " $name";
+        }
+        $s .= "\n";
+        
+        $s .= "warned local vars:";
+        sort($warned_locals);
+        foreach ($warned_locals as $name) {
+            $s .= " $name";
+        }
+        $s .= "\n";
+        
+        $actual = $s;
+        
+        if ($flag_test) {
+            $this->assertEquals($expected, $actual);
+        } else {
+        }
+    }
+    
+    
+    // basic test with local/global var
+    function test_analyze1() {
+        $plogic = '
 		:set(x = 1)
 		:print(x, y)
 		';
-		$expected ='
+        $expected ='
 		global vars: y
 		local vars: x
 		warned global vars:
 		warned local vars:
 		';
-		$this->_test('', $plogic, $expected);
-	}
+        $this->_test('', $plogic, $expected);
+    }
 
 
-	function test_analyze2() {
-		$plogic = '
+    // 'x += 1' and 'y = y*1'
+    function test_analyze2() {
+        $plogic = '
 		:set(x += 1)
 		:set(y = y*1)
 		:set(z = 0)
 		:set(z += 1)
 		';
-		$expected ='
+        $expected ='
 		global vars: y
 		local vars: x z
 		warned global vars: y
 		warned local vars: x
 		';
-		$this->_test('', $plogic, $expected);
-	}
-	
+        $this->_test('', $plogic, $expected);
+    }
 
-
-	function test_analyze3() {
-		$plogic = '
+    // array and hash
+    function test_analyze3() {
+        $plogic = '
 		:print(a[0])
 		:set(b[0]=c[:key])
 		:set(c=0)
 		';
-		$expected ='
+        $expected ='
 		global vars: a b c
 		local vars:
 		warned global vars: b c
 		warned local vars:
 		';
-		$this->_test('', $plogic, $expected);
-	}
+        $this->_test('', $plogic, $expected);
+    }
 
 
-	function test_analyze4() {
-		$plogic = '
+    // complex example
+    function test_analyze4() {
+        $plogic = '
 		:set(ctr = 0)
 		:foreach(item = list)
 		  :set(ctr += 1)
 		  :foreach(value = item.values)
 		    :print(value)
+		    :print(str_length(value))
 		  :end
 		:end
 		';
-		$expected ='
+        $expected ='
 		global vars: list
 		local vars: ctr item value
 		warned global vars:
 		warned local vars:
 		';
-		$this->_test('', $plogic, $expected);
-	}
+        $this->_test('', $plogic, $expected);
+    }
 
 
 
-	function test_analyze_macro1() {
-		$plogic = '
+    function test_analyze_macro1() {
+        $plogic = '
 		:element(user)
 		  @stag
 		  @cont
@@ -182,19 +186,19 @@ class KwartzAnalyzerTest extends PHPUnit_TestCase {
 		:end
 		';
 
-		$expected ='
+        $expected ='
 		global vars: list
 		local vars: ctr user
 		warned global vars:
 		warned local vars:
 		';
-		$this->_test('', $plogic, $expected);
-	}
+        $this->_test('', $plogic, $expected);
+    }
 
 
 
-	function test_analyze_macro2() {
-		$pdata = '
+    function test_analyze_macro2() {
+        $pdata = '
 		<?php
 			$year = 2004;
 			$month = 10;
@@ -252,7 +256,7 @@ class KwartzAnalyzerTest extends PHPUnit_TestCase {
 		</body>
 		';
 
-		$plogic = '
+        $plogic = '
 		element week {
 		
 		    $day = \'&nbsp;\';
@@ -301,15 +305,15 @@ class KwartzAnalyzerTest extends PHPUnit_TestCase {
 		}
 		';
 
-		$expected  = '
+        $expected  = '
 		global vars: first_weekday month num_days year
 		local vars: day wday
 		warned global vars:
 		warned local vars:
 		';
-		
-		$this->_test($pdata, $plogic, $expected);
-	}
+        
+        $this->_test($pdata, $plogic, $expected);
+    }
 
 }
 

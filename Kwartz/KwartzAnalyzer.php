@@ -185,7 +185,7 @@ class KwartzAnalyzeVisitor {
         }
     }
     function visit_function_expr($expr) {
-        foreach ($expr->arglist as $expr) {
+        foreach ($expr->arglist() as $expr) {
             $expr->accept($this);
         }
     }
