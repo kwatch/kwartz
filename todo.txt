@@ -24,9 +24,11 @@
 .- [v] eol auto-detect
 .- [_] load statement
 .- [_] include directive
-.- [_] #DOCUMENT
-.- [_] begin: end:
+.- [v] #DOCUMENT
+.- [v] begin: end:
 .- [v] jsp header
 .- [_] --header, --footer
 .- [_] auto-compile
 .- [_] retrieve or extract (-r name)
+.- [_] /* comment */
+.- [_] parse type appropriately in 'vartype { type var; }'

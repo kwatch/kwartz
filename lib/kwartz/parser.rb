@@ -8,6 +8,7 @@ require 'kwartz/exception'
 require 'kwartz/scanner'
 require 'kwartz/node'
 require 'kwartz/element'
+require 'kwartz/util/orderedhash'
 
 module Kwartz
 
@@ -378,7 +379,7 @@ module Kwartz
             return false
          end
       end
-      
+
 
       ##
       ## BNF:
@@ -391,7 +392,7 @@ module Kwartz
 
       ##
       ##  print-stmt   ::=  'print' '(' arguments ')' ';'
-      ##  
+      ##
       def parse_print_stmt()
          Kwartz::assert unless token() == :print
          tkn = scan()
@@ -404,23 +405,23 @@ module Kwartz
          scan()
          return PrintStatement.new(arguments)
       end
-      
-      
-      ##  
+
+
+      ##
       ##  expr-stmt    ::=  expression ';'
-      ##  
+      ##
       def parse_expr_stmt()
          expr = parse_expression()
          syntax_error("expression-statement requires ';'.") unless token() == ';'
          scan()
          return ExprStatement.new(expr)
       end
-      
-      
-      ##  
+
+
+      ##
       ##  elseif-part  ::=  'elseif' '(' expression ')' statement elseif-part | e
-      ##  
-      ##  
+      ##
+      ##
       ##  if-stmt      ::=  'if' '(' expression ')' statement
       ##                  | 'if' '(' expression ')' statement elseif-part
       ##                  | 'if' '(' expression ')' statement elseif-part 'else' statement
@@ -452,10 +453,10 @@ module Kwartz
          return IfStatement.new(cond_expr, then_body, else_body)
       end
 
-      
+
       ##
       ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
-      ##  
+      ##
       def parse_foreach_stmt()
          Kwartz::assert unless token() == :foreach
          tkn = scan()
@@ -473,9 +474,9 @@ module Kwartz
          body_stmt = parse_statement()
          return ForeachStatement.new(loopvar_expr, list_expr, body_stmt)
       end
-      
-      
-      ##  
+
+
+      ##
       ##  while-stmt   ::=  'while' '(' expression ')' statement
       ##
       def parse_while_stmt()
@@ -489,7 +490,7 @@ module Kwartz
          body_stmt = parse_statement()
          return WhileStatement.new(cond_expr, body_stmt)
       end
-      
+
 
       ##
       ##  @stag,  @cont,  @etag,  @element(name)
@@ -518,8 +519,8 @@ module Kwartz
          return ExpandStatement.new(type.intern, name)
       end
 
-      
-      ##  
+
+      ##
       ##
       def parse_stmt_list()
          list = []
@@ -528,9 +529,9 @@ module Kwartz
          end
          return list
       end
-      
-      
-      ##  
+
+
+      ##
       ##  stmt-list    ::=  statement | stmt-list statement
       ##               ::=  statement { statement }
       ##  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
@@ -546,7 +547,7 @@ module Kwartz
 
 
       ##
-      ##  statement    ::=  print-stmt | if-stmt | foreach-stmt | while-stmt 
+      ##  statement    ::=  print-stmt | if-stmt | foreach-stmt | while-stmt
       ##                  | expr-stmt | block-stmt | expand-stmt | ';'
       ##
       def parse_statement()
@@ -582,99 +583,150 @@ module Kwartz
 
 
       ## ------------------------------------------------------------
-      
+
       ##
-      ## plogic ::= { element_decl }
+      ## EBNF:
+      ##   presentation-logic ::= { ( element-decl | document-decl ) }
       ##
       def parse_plogic
          elem_decl_list = []
          while token() == '#'
-            elem_decl = parse_element_decl()
+            t = scan()
+            syntax_error("'#': element declaration requires an element name.") unless t == :name
+            if value() == 'DOCUMENT'
+               elem_decl = parse_document_decl()
+            else
+               elem_decl = parse_element_decl()
+            end
             elem_decl_list << elem_decl
          end
-         syntax_error("plogic is not ended.") unless token() == nil
+         syntax_error("plogic is not ended, or '#' not found.") unless token() == nil
          return elem_decl_list
       end
-      
+
       ##
-      ## element-decl  ::= '#' name '{' sub-decl-list '}'
-      ## sub-decl-list ::= sub-decl | sub-decl-list sub-decl | e
-      ## sub-decl      ::= value-decl | attr-decl | append-decl | remove-decl | tagname-decl | plogic-decl
+      ## EBNF:
+      ##   element-decl  ::=  '#' name '{' { elem-part } '}'
       ##
       def parse_element_decl()
-         Kwartz::assert unless token() == '#'
-         tkn = scan()
-         syntax_error("'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
-         marking = value()
-         tkn = scan()
-         syntax_error("'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
-         scan()
-         hash = parse_sub_decl_list()
-         syntax_error("'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
-         scan()
-         return ElementDeclaration.create_from_hash(marking, hash)
+         return _parse_element_decl('element') { parse_elem_part() }
       end
-      
-      def parse_sub_decl_list()
+
+      ##
+      ## EBNF:
+      ##   document-decl  ::=  '#' 'DOCUMENT' '{' { doc-part } '}'
+      ##
+      def parse_document_decl()
+         return _parse_element_decl('document') { parse_doc_part() }
+      end
+
+      def _parse_element_decl(decl_name)
+         Kwartz::assert("token()=#{token()}") unless token() == :name
+         marking = value()
+         t = scan()
+         syntax_error("'#': #{decl_name} declaration requires '{'.") unless t == '{'
+         scan()
          hash = {}
-         while true
-            key, obj = parse_sub_decl()
+         while token() == :name
+            key, obj = yield()		# parse_elem_part() or parse_doc_part()
             break unless key
             hash[key] = obj
          end
-         return hash
+         syntax_error("'#': #{decl_name} declaration requires '}'.") unless token() == '}'
+         scan()
+         #return ElementDeclaration.create_from_hash(marking, hash)
+         return Declaration.new(marking, hash)
       end
-      
-      def parse_sub_decl()
+      private :_parse_element_decl
+
+
+      ##
+      ## EBNF:
+      ##   elem-part     ::=  value-part | attr-part | remove-part | append-part | tagname-part | plogic-part
+      ##
+      def parse_elem_part()
+         Kwartz::assert("token()=#{token()}") unless token() == :name
          obj = nil
-         case key = token()
-         when :value
-            obj = parse_value_decl()
-         when :attr
-            obj = parse_attr_decl()
-         when :append
-            obj = parse_append_decl()
-         when :remove
-            obj = parse_remove_decl()
-         when :tagname
-            obj = parse_tagname_decl()
-         when :plogic
-            obj = parse_plogic_decl()
+         case key = value()
+         when 'value'     ;   obj = parse_value_part()
+         when 'attr'      ;   obj = parse_attr_part()
+         when 'append'    ;   obj = parse_append_part()
+         when 'remove'    ;   obj = parse_remove_part()
+         when 'tagname'   ;   obj = parse_tagname_part()
+         when 'plogic'    ;   obj = parse_plogic_part()
          else
-            key = nil
-            obj = nil
+            syntax_error("'#{value()}': invalid part-name.")
          end
-         return key, obj
+         return key.intern, obj
       end
-      
+
+
       ##
-      ##  value_dec  ::= 'value:' [ expression ] ';'
+      ## EBNF:
+      ##   doc-part      ::= begin-part | end-part | global-part | local-part | vartype-part
       ##
-      def parse_value_decl()
-         Kwartz::assert unless token() == :value
-         tkn = scan()
-         if tkn == ';'
+      def parse_doc_part()
+         Kwartz::assert("token()=#{token()}") unless token() == :name
+         key = value()
+         case key
+         when 'begin'           ;   obj = parse_begin_part()
+         when 'end'             ;   obj = parse_end_part()
+         when 'global'          ;   obj = parse_global_part()
+         when 'local'           ;   obj = parse_local_part()
+         when 'vartype'         ;   obj = parse_vartype_part()
+         when 'global_vartype'  ;   obj = parse_globalvartype_part()
+         when 'local_vartype'   ;   obj = parse_localvartype_part()
+         else
+            syntax_error("'#{value()}': invalid part-name.")
+         end
+         return key.intern, obj
+      end
+
+
+      ##
+      ## EBNF:
+      ##   value-part    ::=  'value' ':' [ expression ] ';'
+      ##
+      def parse_value_part()
+         Kwartz::assert unless value() == 'value'
+         expr = _parse_part_expr('value')
+         return expr
+      end
+
+      def _parse_part_expr(part_name)
+         Kwartz::assert unless value() == part_name
+         scan()
+         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
+         t = scan()
+         if t == ';'
             scan()
             return nil
          end
          expr = parse_expression()
-         syntax_error("value-declaration requires ';'.") unless token() == ';'
+         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
          scan()
          return expr
       end
-      
+      private :_parse_part_expr
+
+
       ##
-      ##  attr_decl ::= 'attr:' [ string expression { ',' string expression } ] ';'
+      ## EBNF:
+      ##   attr-part     ::=  'attr' ':' [ string '=>' expression { ',' string '=>' expression } ] ';'
       ##
-      def parse_attr_decl()
-         Kwartz::assert unless token() == :attr
-         attrs = {}
-         tkn = scan()
-         if tkn == ';'
-            scan()
-            return attrs
-         end
-         while true
+      def parse_attr_part()
+         Kwartz::assert unless value() == 'attr'
+         hash = _parse_part_hash('attr')
+         return hash
+      end
+
+      def _parse_part_hash(part_name)
+         Kwartz::assert unless value() == part_name
+         scan()
+         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
+         scan()
+         attrs = Kwartz::Util::OrderedHash.new
+         while token() != ';'
             aname_expr = parse_expression()
             syntax_error("attr-declaration requires attribute names as string.") unless aname_expr.token == :string
             aname = aname_expr.value
@@ -683,75 +735,212 @@ module Kwartz
             break if token() != ','
             scan()
          end
-         syntax_error("attr-declaration requires ';'.") unless token() == ';'
+         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
          scan()
          return attrs
       end
-      
+      private :_parse_part_hash
+
+
       ##
-      ## append_decl ::= 'append:' [ expression ] ';'
+      ## EBNF:
+      ##   remove-part   ::=  'remove' ':' [ string { ',' string } ] ';'
       ##
-      def parse_append_decl()
-         Kwartz::assert unless token() == :append
-         list = []
-         tkn = scan()
-         if tkn == ';'
-            scan()
-            return nil
-         end
-         while true
-            expr = parse_expression()
-            list << expr
-            break if token() != ','
-            scan()
-         end
-         syntax_error("append-declaration requires ';'.") unless token() == ';'
-         scan()
+      def parse_remove_part()
+         list = _parse_part_strs('remove')
          return list
       end
 
-      ##
-      ## remove_decl ::= 'remove:' { string } ';'
-      ##
-      def parse_remove_decl()
+      def _parse_part_strs(part_name)
+         Kwartz::assert unless value() == part_name
+         scan()
+         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
          list = []
-         Kwartz::assert unless token() == :remove
-         while (tkn = scan()) == :string
-            list << value()
+         while (t = scan()) != ';'         # or t == :string
+            syntax_error("#{part_name}-part requires a string.") unless token() == :string
+            str = value()
+            list << str
+            t = scan()
+            break if t != ','
          end
-         syntax_error("append-declaration requires ';'.") unless token() == ';'
+         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
          scan()
          return list
       end
-      
+      private :_parse_part_strs
+
+
       ##
-      ## tagname_decl ::= 'tagname:' [ expression ] ';'
+      ## EBNF:
+      ##   append-part   ::=  'append' ':' [ expression { ',' expression } ] ';'
       ##
-      def parse_tagname_decl()
-         Kwartz::assert unless token() == :tagname
-         tkn = scan()
-         if tkn == ';'
-            scan()
-            return nil
-         end
-         expr = parse_expression()
-         syntax_error("tagname-declaration requires ';'.") unless token() == ';'
+      def parse_append_part()
+         list = _parse_part_exprs('append')
+         return list
+      end
+
+      def _parse_part_exprs(part_name)
+         Kwartz::assert unless value() == part_name
          scan()
+         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
+         list = []
+         while (t = scan()) != ';'
+            expr = parse_expression()
+            list << expr
+            break if token() != ','
+         end
+         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
+         scan()
+         return list
+      end
+      private :_parse_part_expr
+
+
+      ##
+      ## EBNF:
+      ##   tagname-part  ::=  'tagname' ':' [ expression ] ';'
+      ##
+      def parse_tagname_part()
+         expr = _parse_part_expr('tagname')
          return expr
       end
-      
+
+
       ##
-      ## plogic_decl ::= 'plogic:' block-stmt
+      ## EBNF:
+      ##   plogic-part   ::=  'plogic' ':' block-stmt
       ##
-      def parse_plogic_decl()
-         Kwartz::assert unless token() == :plogic
-         tkn = scan()
-         syntax_error("plogic-declaration requires '{'.") unless tkn == '{'
+      def parse_plogic_part()
+         block_stmt = _parse_part_blockstmt('plogic')
+         return block_stmt
+      end
+
+      def _parse_part_blockstmt(part_name)
+         Kwartz::assert unless value() == part_name
+         t = scan()
+         syntax_error("#{part_name}-declaration requires ':'.") unless t == ':'
+         t = scan()
+         syntax_error("#{part_name}-declaration requires '{'.") unless t == '{'
          block_stmt = parse_block_stmt()
          return block_stmt
       end
-      
-      
+      private :_parse_part_blockstmt
+
+
+      ##
+      ## EBNF:
+      ##   begin-part    ::= 'begin' ':' block-stmt
+      ##
+      def parse_begin_part()
+         block_stmt = _parse_part_blockstmt('begin')
+         return block_stmt
+      end
+
+
+      ##
+      ## EBNF:
+      ##   end-part      ::= 'end' ':' block-stmt
+      ##
+      def parse_end_part()
+         block_stmt = _parse_part_blockstmt('end')
+         return block_stmt
+      end
+
+
+      ##
+      ## EBNF:
+      ##   global-part   ::= 'global' ':' [ name { ',' name } ] ';'
+      ##
+      def parse_global_part()
+         list = _parse_part_names('global')
+         return list
+      end
+
+
+      ##
+      ## EBNF:
+      ##   local-part    ::= 'local' ':'  [ name { ',' name } ] ';'
+      ##
+      def parse_local_part()
+         list = _parse_part_names('local')
+         return list
+      end
+
+      def _parse_part_names(key)
+         Kwartz::assert unless token() == :name && value() == key
+         t = scan()
+         syntax_error("#{key}-part requires ':'.") unless t == ':'
+         list = []
+         t = scan()
+         #while t != ';'
+         while t == :name
+            name = value()
+            list << name
+            t = scan()
+            break if t != ','
+            t = scan()
+         end
+         syntax_error("#{key}-part requires ';'.") unless t == ';'
+         scan()
+         return list
+      end
+      private :_parse_part_names
+
+
+      ##
+      ## EBNF:
+      ##  vartype-part  ::= 'vartype' ':' '{' { type varname ';' } '}'
+      ##
+      def parse_vartype_part()
+         hash = _parse_part_vartype('vartype')
+         return hash
+      end
+
+      def parse_gvartype_part()
+         hash = _parse_part_vartype('global_vartype')
+         return hash
+      end
+
+      def parse_lvartype_part()
+         hash = _parse_part_vartype('local_vartype')
+         return hash
+      end
+
+      def _parse_part_vartype(part_name)
+         Kwartz::assert unless token() == :name && value() == part_name
+         t = scan()
+         syntax_error("#{part_name}-declaration requires ':'.") unless t == ':'
+         t = scan()
+         syntax_error("#{part_name}-declaration requires '{'.") unless t == '{'
+         hash = Kwartz::Util::OrderedHash.new
+         scan()
+         while token() != '}'
+            varname, vartype = _parse_vartype(part_name)
+            hash[varname] = vartype
+         end
+         syntax_error("#{part_name}-declaration is not closed by '}'.") unless token() == '}'
+         scan()
+         return hash
+      end
+      private :_parse_part_vartype
+
+      def _parse_vartype(part_name)
+         Kwartz::assert unless token() != '}'
+         list = []
+         t = token()
+         while t != ';' && t != '}' && t != nil		# Ohhhh...
+            list << (t.is_a?(String) ? t : value())
+            t = scan()
+         end
+         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
+         scan()
+         varname = list.pop()
+         vartype = list.join(' ')
+         return varname, vartype
+      end
+      private :_parse_vartype
+
+
       ##
       ##
       ##
@@ -785,6 +974,9 @@ if __FILE__ == $0
    input = ARGF.read()
    parser = Kwartz::Parser.new(input)
    #--
+   decl = parser.parse_document_decl()
+   print decl._inspect
+   #--
    #decl_list = parser.parse_plogic()
    #decl_list.each do |elem_decl|
    #   print elem_decl._inspect()
@@ -793,8 +985,8 @@ if __FILE__ == $0
    #expr = parser.parse_expression()
    #print expr._inspect()
    #--
-   stmt_list = parser.parse_stmt_list()
-   stmt_list.each do |stmt|
-      print stmt._inspect()
-   end
+   #stmt_list = parser.parse_stmt_list()
+   #stmt_list.each do |stmt|
+   #   print stmt._inspect()
+   #end
 end

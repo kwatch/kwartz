@@ -2,6 +2,10 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-02-06 rev.33
+	.- [enhance] can parse #DOCUMENT declaration
+	.- [change] class ElementDeclaration is deleted and new class Declaration is added
+
 .: 2004-02-01 rev.32
 	.- [change] properties '--odd_value', '--even_value', '--attr_name' is renamed to '--odd', '--even', '--attr' respectively.
 	.- [enhance] Config::ESCAPE added

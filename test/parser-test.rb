@@ -26,7 +26,7 @@ class ParseExpressionTest < Test::Unit::TestCase
    def setup
       @flag_suspend = false
    end
-   
+
    ##
    def _test(input, expected, klass, properties={})
       return if @flag_suspend
@@ -131,9 +131,9 @@ END
 END
       _test(input, expected, ConditionalExpression)
    end
-   
 
-   def test_parse_item_expr5	# arity check of macro C() S() D() 
+
+   def test_parse_item_expr5	# arity check of macro C() S() D()
       input = "C()"
       expected = ''
       assert_raise(Kwartz::SemanticError) do
@@ -187,7 +187,7 @@ END
          _test(input, expected, Expression)
       end
    end
-   
+
    def test_parse_literal_expr5		# bug: Parser#parse_literal()
       input = "'foo' bar"
       expected = '"foo"' + "\n"
@@ -510,7 +510,7 @@ class ParseStatementTest < Test::Unit::TestCase
    def setup
       #@flag_suspend = true
    end
-   
+
    def _test(input, expected, klass=nil, properties={})
       return if @flag_suspend
       s = caller().first
@@ -531,7 +531,7 @@ class ParseStatementTest < Test::Unit::TestCase
       end
       assert_equal_with_diff(expected, actual)
    end
-   
+
    ##
    def test_parse_print_stmt1
       input = "print(10, 'abc', true);"
@@ -561,8 +561,8 @@ END
 END
       _test(input, expected, PrintStatement)
    end
-   
-   
+
+
    ##
    def test_parse_expr_stmt1
       input = "a = 10;"
@@ -617,7 +617,7 @@ END
       _test(input, expected, BlockStatement)
    end
 
-   
+
    ##
    def test_parse_block_stmt2
       input = " { }  "
@@ -1092,21 +1092,23 @@ class ParseDeclarationTest < Test::Unit::TestCase
    end
 
 
-   def _test(input, expected, klass=nil, properties={})
+   def _test(input, expected, klass=nil, properties={}, method_name=nil)
       return if @flag_suspend
-      s = caller().first
-      s =~ /in `(.*)'/		#'
-      testmethod = $1
-      method_name = testmethod.sub(/\Atest_/, '').sub(/\d*\z/, '')
-      #$stderr.puts "*** debug: method_name=#{method_name.inspect}"
+      if !method_name
+         s = caller().first
+         s =~ /in `(.*)'/		#'
+         testmethod = $1
+         method_name = testmethod.sub(/\Atest_/, '').sub(/\d*\z/, '')
+         #$stderr.puts "*** debug: method_name=#{method_name.inspect}"
+      end
       parser = Parser.new(input, properties)
       obj = parser.__send__(method_name)
       assert_equal(klass, obj.class) if klass
       actual = ""
       if klass == Array
          if obj[0].is_a?(String)
-            actual << obj.collect { |str| str.inspect() }.join(',')
-         elsif obj[0].is_a?(ElementDeclaration)
+            actual << obj.collect { |str| str.inspect() }.join(',') << "\n"
+         elsif obj[0].is_a?(Declaration)
             obj.each do |elem_decl|
                actual << "[#{elem_decl.name}]\n"
                actual << elem_decl._inspect()
@@ -1117,7 +1119,7 @@ class ParseDeclarationTest < Test::Unit::TestCase
                actual << expr._inspect()
             end
          end
-      elsif klass == Hash
+      elsif klass == Hash || klass == Kwartz::Util::OrderedHash
          actual << obj.keys.sort.collect { |key| "[#{key}]\n#{obj[key]._inspect}" }.join()
       elsif klass == nil
          actual = obj
@@ -1127,17 +1129,17 @@ class ParseDeclarationTest < Test::Unit::TestCase
       assert_equal_with_diff(expected.to_s, actual.to_s)
    end
 
-   
+
    ##
-   def test_parse_value_decl1
+   def test_parse_value_part1
       input = "value: foo;"
       expected = "foo\n"
       _test(input, expected, VariableExpression)
    end
 
-   
+
    ##
-   def test_parse_value_decl2
+   def test_parse_value_part2
       input = "value: 'mailto:'.+user.email;"
       expected = <<'END'
 .+
@@ -1148,10 +1150,10 @@ class ParseDeclarationTest < Test::Unit::TestCase
 END
       _test(input, expected, ArithmeticExpression)
    end
-   
-   
+
+
    ##
-   def test_parse_value_decl3
+   def test_parse_value_part3
       input = "value: 'mailto:'.+user.email attr:"
       expected = nil
       assert_raise(Kwartz::SyntaxError) do
@@ -1161,7 +1163,7 @@ END
 
 
    ##
-   def test_parse_value_decl4
+   def test_parse_value_part4
       @flag_suspend = false
       input = "value: ;"
       expected = ''
@@ -1170,21 +1172,21 @@ END
 
 
    ##
-   def test_parse_attr_decl1
+   def test_parse_attr_part1
       input = 'attr: "foo" bar; '
       expected = "[foo]\nbar\n"
-      _test(input, expected, Hash)
+      _test(input, expected, Kwartz::Util::OrderedHash)
    end
 
    ##
-   def test_parse_attr_decl2
+   def test_parse_attr_part2
       input = 'attr: "class" klass, "href" user.url; '
       expected = "[class]\nklass\n[href]\n.\n  user\n  url\n"
-      _test(input, expected, Hash)
+      _test(input, expected, Kwartz::Util::OrderedHash)
    end
 
    ##
-   def test_parse_attr_decl3
+   def test_parse_attr_part3
       input = 'attr: "class" klass, "href" user.url '
       expected = ""
       assert_raise(Kwartz::SyntaxError) do
@@ -1193,14 +1195,14 @@ END
    end
 
    ##
-   def test_parse_append_decl1
+   def test_parse_append_part1
       input = 'append: flag ? " checked=\"checked\"" : "";'
       expected = "?:\n  flag\n  \" checked=\\\"checked\\\"\"\n  \"\"\n"
       _test(input, expected, Array)
    end
 
    ##
-   def test_parse_append_decl2
+   def test_parse_append_part2
       input = 'append: flag ? " checked=\"checked\"" : ""'
       expected = "?:\n  flag\n  \" checked=\\\"checked\\\"\"\n  \"\"\n"
       assert_raise(Kwartz::SyntaxError) do
@@ -1209,37 +1211,37 @@ END
    end
 
    ##
-   def test_parse_tagname_decl1
+   def test_parse_tagname_part1
       input = 'tagname: "html:html";'
       expected = '"html:html"' + "\n"
       _test(input, expected, StringExpression)
    end
 
    ##
-   def test_parse_tagname_decl2
+   def test_parse_tagname_part2
       input = 'tagname: "html:html"'
       expected = '"html:html"' + "\n"
       assert_raise(Kwartz::SyntaxError) do
          _test(input, expected, nil)
       end
    end
-   
+
    ##
-   def test_parse_remove_decl1
+   def test_parse_remove_part1
       input = 'remove: "id";'
-      expected = '"id"'
+      expected = '"id"' + "\n"
       _test(input, expected, Array)
    end
 
    ##
-   def test_parse_remove_decl2
-      input = 'remove: "id" "class" \'foo\';'
-      expected = '"id","class","foo"'
+   def test_parse_remove_part2
+      input = 'remove: "id", "class", \'foo\';'
+      expected = '"id","class","foo"' + "\n"
       _test(input, expected, Array)
    end
 
    ##
-   def test_parse_remove_decl3
+   def test_parse_remove_part3
       input = 'remove: "id"'
       expected = nil
       assert_raise(Kwartz::SyntaxError) do
@@ -1248,21 +1250,21 @@ END
    end
 
    ##
-   def test_parse_plogic_decl1
+   def test_parse_plogic_part1
       input = 'plogic: { }'
       expected = ":block\n"
       _test(input, expected, BlockStatement)
    end
 
    ##
-   def test_parse_plogic_decl2
+   def test_parse_plogic_part2
       input = 'plogic: { @stag; @cont; @etag; }'
       expected = ":block\n  @stag\n  @cont\n  @etag\n"
       _test(input, expected, BlockStatement)
    end
 
    ##
-   def test_parse_plogic_decl3
+   def test_parse_plogic_part3
       input = <<'END'
       plogic: {
        @stag;
@@ -1282,91 +1284,91 @@ END
 END
       _test(input, expected, BlockStatement)
    end
-   
+
    ##
-   def test_parse_plogic_decl4
+   def test_parse_plogic_part4
       input = 'plogic: ;'
       expected = nil
       assert_raise(Kwartz::SyntaxError) do
          _test(input, expected, nil)
       end
    end
-   
-   ##
-   def test_parse_sub_decl_list1
-      input = <<'END'
-value:   user.name;
-attr:    "class" klass, "bgcolor" color;
-append:  flag ? ' checked="checked"' : '';
-remove:  "id";
-tagname: tag;
-plogic: {
-	@stag;
-	foreach (item in list) {
-	  @cont;
-	}
-	@etag;
-}
-END
-      expected = <<'END'
-append:
-?:
-  flag
-  " checked=\"checked\""
-  ""
-attr:
-bgcolor=color
-class=klass
-plogic:
-:block
-  @stag
-  :foreach
-    item
-    list
-    :block
-      @cont
-  @etag
-remove:
-id
-tagname:
-tag
-value:
-.
-  user
-  name
-END
-      parser = Kwartz::Parser.new(input)
-      hash = parser.parse_sub_decl_list()
-      s = ''
-      hash.keys.collect{|k| k.to_s}.sort.each do |key|
-         key = key.intern
-         value = hash[key]
-         s << "#{key}:\n"
-         case key
-         when :value, :tagname, :plogic
-            s << value._inspect if value
-         when :append
-            value.each do |v|
-               s << v._inspect()
-            end
-         when :attr
-            value.keys.sort.each do |k|
-               v = value[k]
-               s << "#{k}=#{v._inspect}"
-            end
-         when :remove
-            s << value.collect{|v| "#{v}"}.join(",") << "\n"
-         else
-            fail("invalid key(='#{key.inspect}')")
-         end
-      end
-      assert_equal_with_diff(expected, s)
-   end
+
+#   ##
+#   def test_parse_elem_part1
+#      input = <<'END'
+#value:   user.name;
+#attr:    "class" klass, "bgcolor" color;
+#append:  flag ? ' checked="checked"' : '';
+#remove:  "id";
+#tagname: tag;
+#plogic: {
+#	@stag;
+#	foreach (item in list) {
+#	  @cont;
+#	}
+#	@etag;
+#}
+#END
+#      expected = <<'END'
+#append:
+#?:
+#  flag
+#  " checked=\"checked\""
+#  ""
+#attr:
+#bgcolor=color
+#class=klass
+#plogic:
+#:block
+#  @stag
+#  :foreach
+#    item
+#    list
+#    :block
+#      @cont
+#  @etag
+#remove:
+#id
+#tagname:
+#tag
+#value:
+#.
+#  user
+#  name
+#END
+#      parser = Kwartz::Parser.new(input)
+#      hash = parser.parse_elem_part()
+#      s = ''
+#      hash.keys.collect{|k| k.to_s}.sort.each do |key|
+#         key = key.intern
+#         value = hash[key]
+#         s << "#{key}:\n"
+#         case key
+#         when :value, :tagname, :plogic
+#            s << value._inspect if value
+#         when :append
+#            value.each do |v|
+#               s << v._inspect()
+#            end
+#         when :attr
+#            value.keys.sort.each do |k|
+#               v = value[k]
+#               s << "#{k}=#{v._inspect}"
+#            end
+#         when :remove
+#            s << value.collect{|v| "#{v}"}.join(",") << "\n"
+#         else
+#            fail("invalid key(='#{key.inspect}')")
+#         end
+#      end
+#      assert_equal_with_diff(expected, s)
+#   end
 
    ##
    def test_parse_element_decl1
       input = <<'END'
-#foo {
+foo {
 	value:   user.name;
 	attr:    "class" klass, "bgcolor" color;
 	append:  flag ? ' checked="checked"' : '';
@@ -1386,7 +1388,7 @@ END
     .
       user
       name
-  attrs:
+  attr:
     "bgcolor" color
     "class" klass
   append:
@@ -1408,7 +1410,138 @@ END
       @etag
 }
 END
-      _test(input, expected, ElementDeclaration)
+      _test(input, expected, Declaration)
+   end
+
+
+   ##
+   def test_parse_begin_part1
+      input = <<'END'
+begin:{
+      user_list = args['users'];
+      print("<!-- document start -->\n");
+   }
+END
+      expected = <<'END'
+:block
+  :expr
+    =
+      user_list
+      []
+        args
+        "users"
+  :print
+    "<!-- document start -->\n"
+END
+      _test(input, expected, Kwartz::BlockStatement)
+   end
+
+
+   ##
+   def test_parse_end_part1
+      input = <<'END'
+end:{
+      print("<!-- copyright -->\n");
+   }
+END
+      expected = <<'END'
+:block
+  :print
+    "<!-- copyright -->\n"
+END
+      _test(input, expected, Kwartz::BlockStatement)
+   end
+
+
+   ##
+   def test_parse_global_part1
+      input = <<'END'
+global: foo, bar;
+END
+      expected = <<'END'
+"foo","bar"
+END
+      _test(input, expected, Array)
+   end
+
+
+   ##
+   def test_parse_local_part1
+      input = <<'END'
+local: foo, bar;
+END
+      expected = <<'END'
+"foo","bar"
+END
+      _test(input, expected, Array)
+   end
+
+
+   ##
+   def test_parse_vartype_part1
+      input = <<'END'
+vartype: {
+	int i;
+	String str;
+	String[] str_list;
+}
+END
+      expected = <<'END'
+
+END
+      #_test(input, expected, Hash)
+      parser = Kwartz::Parser.new(input)
+      hash = parser.parse_vartype_part()
+      assert_equal(Kwartz::Util::OrderedHash, hash.class)
+      assert_equal("int", hash["i"])
+      assert_equal("String", hash["str"])
+      assert_equal("String [ ]", hash["str_list"])
+   end
+
+
+   ##
+   def test_parse_document_decl1
+      input = <<'END'
+DOCUMENT {
+   begin: {
+      user_list = args['users'];
+      title     = args[:title];
+      print("<!-- document start -->\n");
+   }
+   end: {
+      print("<!-- copyright(c) 2004-2005 ", copyright, " rights reserved -->\n");
+   }
+   global: args, copyright;
+}
+END
+      expected = <<'END'
+#DOCUMENT {
+  begin:
+    :block
+      :expr
+        =
+          user_list
+          []
+            args
+            "users"
+      :expr
+        =
+          title
+          [:]
+            args
+            "title"
+      :print
+        "<!-- document start -->\n"
+  end:
+    :block
+      :print
+        "<!-- copyright(c) 2004-2005 "
+        copyright
+        " rights reserved -->\n"
+  global: args, copyright;
+}
+END
+      _test(input, expected, Declaration)
    end
 
 
@@ -1437,10 +1570,9 @@ END
 #foo {
   value:
     user
-  attrs:
+  attr:
     "bgcolor" color
     "class" klass
-  append:
   plogic:
     :block
       @stag
@@ -1452,7 +1584,6 @@ END
 }
 [bar]
 #bar {
-  append:
   plogic:
     :block
       @cont
@@ -1460,7 +1591,7 @@ END
 END
       _test(input, expected, Array)
    end
-   
+
 
 end
 

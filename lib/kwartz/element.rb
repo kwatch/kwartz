@@ -23,19 +23,22 @@ module Kwartz
       attr_accessor :name, :tagname, :content, :attrs, :append, :is_empty, :spaces, :plogic
       alias :marking :name
 
-      def swallow(elem_decl)
-         return unless @name == elem_decl.name
-         @tagname = elem_decl.tagname if elem_decl.tagname
-         @content = PrintStatement.new([elem_decl.value]) if elem_decl.value
-         elem_decl.attrs.each do |key,val|
+
+      def swallow(decl)
+         return unless @name == decl.name
+         part = decl.part
+         @tagname = part[:tagname] if part[:tagname]
+         @content = PrintStatement.new([part[:value]]) if part[:value]
+         part[:attr].each do |key,val|
             @attrs[key] = val
-         end if elem_decl.attrs
-         elem_decl.remove.each do |aname|
+         end if part[:attr]
+         part[:remove].each do |aname|
             @attrs.delete(aname)
-         end if elem_decl.remove
-         @append.concat(elem_decl.append) if elem_decl.append
-         @plogic = elem_decl.plogic if elem_decl.plogic
+         end if part[:remove]
+         @append.concat(part[:append]) if part[:append]
+         @plogic = part[:plogic] if part[:plogic]
       end
+
 
       def self.create_from_taginfo(name, staginfo, etaginfo, body_stmt_list)
          Kwartz::assert unless !etaginfo || staginfo[:tagname] == etaginfo[:tagname]
@@ -54,6 +57,7 @@ module Kwartz
          etag_whole_line  = etaginfo ? etaginfo[:is_whole_line] : nil
          return Element.new(name, tagname, content, attrs, append_expr, is_empty, spaces, stag_whole_line, etag_whole_line)
       end
+
 
       def stag_stmt(properties={})
          arguments = []
@@ -89,10 +93,12 @@ module Kwartz
          return PrintStatement.new(arguments)
       end
 
+
       def cont_stmt(properties={})
          #Kwartz::assert unless @is_empty && @content
          return @content
       end
+
 
       def etag_stmt(properties={})
          #return nil if @is_empty
@@ -129,6 +135,7 @@ module Kwartz
          return BlockStatement.new(list)
       end
 
+
       def _inspect()
          s = ''
          s << "===== marking=#{@name} =====\n"
@@ -157,6 +164,7 @@ module Kwartz
          return s
       end
 
+
       ## returns element_table (hash of element.name => element)
       def self.merge(element_list, element_decl_list)
          decl_table = {}
@@ -174,50 +182,37 @@ module Kwartz
 
    end
 
-   class ElementDeclaration
-      def initialize(name, value=nil, attrs={}, append=[], remove=[], tagname=nil, plogic=nil)
-         @name    = name
-         @value   = value
-         @attrs   = attrs
-         @append  = append
-         @remove  = remove
-         @tagname = tagname
-         @plogic  = plogic
-      end
 
-      attr_reader :name, :value, :attrs, :append, :remove, :tagname, :plogic
-      alias :marking :name
-
-      def self.create_from_hash(name, hash)
-         name    = name
-         value   = hash[:value]
-         attrs   = hash[:attr] || hash[:attrs] || {}
-         append  = hash[:append] || []
-         remove  = hash[:remove] || []
-         tagname = hash[:tagname]
-         plogic  = hash[:plogic]
-         return self.new(name, value, attrs, append, remove, tagname, plogic)
+   class Declaration
+      def initialize(name, part={})
+         @name = name
+         @part = part
       end
+      attr_reader :name, :part
 
       def _inspect()
+         h = @part
          s = "\##{@name} {\n"
-         s <<    "  value:\n" << @value._inspect(2) if @value
-         if @attrs && !@attrs.empty?
-            s << "  attrs:\n"
-            @attrs.keys.sort.each do |key|
-               s << "    \"#{key}\" " << @attrs[key]._inspect()
+         s <<    "  value:\n" << h[:value]._inspect(2) if h[:value]
+         if h[:attr]
+            s << "  attr:\n"
+            h[:attr].keys.sort.each do |key|
+               s << "    \"#{key}\" " << h[:attr][key]._inspect()
             end
          end
-         #s << "  attrs:\n    "  << @attrs.keys.sort.collect { |key| "\"#{key}\" " + @attrs[key]._inspect() }.join("    ") if @attrs && !@attrs.empty?
-         if @append
+         if h[:append]
             s << "  append:\n"
-            @append.each do |expr|
+            h[:append].each do |expr|
                s << expr._inspect(2)
             end
          end
-         s << "  remove:\n    " << @remove.sort.collect{|aname| '"'+aname+'"'}.join(",") << "\n" if @remove && !@remove.empty?
-         s << "  tagname:\n" << @tagname._inspect(2) if @tagname
-         s << "  plogic:\n" << @plogic._inspect(2)  if @plogic
+         s << "  remove:\n    " << h[:remove].sort.collect{|aname| '"'+aname+'"'}.join(",") << "\n" if h[:remove] && !h[:remove].empty?
+         s << "  tagname:\n" << h[:tagname]._inspect(2) if h[:tagname]
+         s << "  plogic:\n"  << h[:plogic]._inspect(2)  if h[:plogic]
+         s << "  begin:\n"   << h[:begin]._inspect(2)   if h[:begin]
+         s << "  end:\n"     << h[:end]._inspect(2)     if h[:end]
+         s << "  global: "   << h[:global].join(', ') << ";\n" if h[:global]
+         s << "  local: "    << h[:local].join(', ')  << ";\n" if h[:local]
          s << "}\n"
          return s
       end

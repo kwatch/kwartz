@@ -251,9 +251,9 @@ module Kwartz
             begin
             if w = @keywords[@value]
                @token = w
-            elsif ch == ?: && (w = @keywords[@value + ':'])
-               @token = w
-               getchar()
+            #elsif ch == ?: && (w = @keywords[@value + ':'])
+            #   @token = w
+            #   getchar()
             else
                @token = :name
             end
@@ -387,7 +387,7 @@ module Kwartz
             end
          end
 
-         ## @macro
+         ## @stag, @cont, @etag, @element(marking)
          if ch == ?@
             s = ''
             while (ch = getchar()) != nil && is_word(ch)

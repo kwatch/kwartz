@@ -138,12 +138,18 @@ class ScannerTest < Test::Unit::TestCase
 		:expand
 		:element
 		:macro
-		:value
-		:attr
-		:append
-		:remove
-		:tagname
-		:plogic
+		value
+		:
+		attr
+		:
+		append
+		:
+		remove
+		:
+		tagname
+		:
+		plogic
+		:
 		value
 		attr
 		append

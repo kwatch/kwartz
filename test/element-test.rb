@@ -33,30 +33,32 @@ class ElementTest < Test::Unit::TestCase
       marking = 'user_list'
       tagname = 'li'
       content = Kwartz::PrintStatement.new( [ Kwartz::StringExpression.new("foo") ] )
-      attrs   = { "id" => "user_list", "bgcolor" => "color", "class"=>"user", }
+      attr    = { "id" => "user_list", "bgcolor" => "color", "class"=>"user", }
       append  = []
       is_empty = false
-      element = Kwartz::Element.new(marking, tagname, content, attrs, append)
+      element = Kwartz::Element.new(marking, tagname, content, attr, append)
 
-      value = Kwartz::VariableExpression.new("user")
-      attrs = { "bgcolor" => Kwartz::VariableExpression.new('color') }
-      append = [ Kwartz::StringExpression.new(" checked") ]
-      remove = [ "id" ]
-      tagname = nil
-      plogic = Kwartz::ForeachStatement.new(Kwartz::VariableExpression.new("user"),
-      Kwartz::VariableExpression.new("list"),
-      Kwartz::BlockStatement.new( [
-         Kwartz::ExpandStatement.new(:stag),
-         Kwartz::ExpandStatement.new(:cont),
-         Kwartz::ExpandStatement.new(:etag),
-         ]))
-      elem_decl = Kwartz::ElementDeclaration.new(marking, value, attrs, append, remove, tagname, plogic)
+      part = {}
+      part[:value] = Kwartz::VariableExpression.new("user")
+      part[:attr]  = { "bgcolor" => Kwartz::VariableExpression.new('color') }
+      part[:append] = [ Kwartz::StringExpression.new(" checked") ]
+      part[:remove] = [ "id" ]
+      part[:tagname] = nil
+      part[:plogic] = Kwartz::ForeachStatement.new(
+                         Kwartz::VariableExpression.new("user"),
+                         Kwartz::VariableExpression.new("list"),
+                         Kwartz::BlockStatement.new( [
+                            Kwartz::ExpandStatement.new(:stag),
+                            Kwartz::ExpandStatement.new(:cont),
+                            Kwartz::ExpandStatement.new(:etag),
+                            ]))
+      decl = Kwartz::Declaration.new(marking, part)
 
       expected1 = <<'END'
 #user_list {
   value:
     user
-  attrs:
+  attr:
     "bgcolor" color
   append:
     " checked"
@@ -114,9 +116,9 @@ class="user"
     @cont
     @etag
 END
-      assert_equal_with_diff(expected1, elem_decl._inspect)
+      assert_equal_with_diff(expected1, decl._inspect)
       assert_equal_with_diff(expected2, element._inspect)
-      element.swallow(elem_decl)
+      element.swallow(decl)
       assert_equal_with_diff(expected3, element._inspect)
 
       #print "------- elem_decl ---------\n"

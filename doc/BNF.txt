@@ -83,34 +83,42 @@
 
 
 
-  ##
-  ## presentation logic declaration
-  ##
+  ###
+  ### presentation logic declaration
+  ###
   
-  presentation-logic ::= { element-decl }
+  presentation-logic ::= { ( element-decl | document-decl ) }
   
-  element-decl ::=  'element' name '{' [ decl-list ] '}'
+  element-decl  ::=  '#' name '{' { elem-part } '}'
   
-  decl-list    ::=  declaration | decl-list declaration
+  elem-part     ::=  value-part | attr-part | remove-part | append-part | tagname-part | plogic-part
   
-  declaration  ::=  value-decl | attr-decl | remove-decl | append-decl | tagname-decl | plogic-decl
+  value-part    ::=  'value:' [ expression ] ';'
   
-  value-decl   ::=  'value:' [ expression ] ';'
+  attr-part     ::=  'attr:' [ string '=>' expression { ',' string '=>' expression } ] ';'
   
-  attr-decl    ::=  'attr:' [ string '=>' expression { ',' string '=>' expression } ] ';'
+  remove-part   ::=  'remove:' [ string { ',' string } ] ';'
   
-  remove-decl  ::=  'remove:' [ string { ',' string } ] ';'
+  append-part   ::=  'append:' [ expression { ',' expression } ] ';'
   
-  append-decl  ::=  'append:' [ expression ] ';'
+  tagname-part  ::=  'tagname:' [ expression ] ';'
   
-  tagname-decl ::=  'tagname:' [ expression ] ';'
+  plogic-part   ::=  'plogic:' block-stmt
   
-  plogic-decl  ::=  'plogic:' [ stmt-list ] ';'
   
-  begin-def    ::=  'BEGIN' '{' [ stmt-list ] '}'
+  document-decl ::= '#' DOCUMENT '{' { doc-part } '}'
   
-  end-def      ::=  'END'   '{' [ stmt-list ] '}'
+  doc-part      ::= begin-part | end-part | global-part | local-part | vartype-part
   
+  begin-part    ::= 'begin:' block-stmt
+  
+  end-part      ::= 'end:' block-stmt
+  
+  global-part   ::= 'global:' [ name { ',' name } ] ';'
+  
+  local-part    ::= 'local:'  [ name { ',' name } ] ';'
+
+  vartype-part  ::= 'vartype:' '{' { type-name var-name ';' } '}'
 
 
   ###
