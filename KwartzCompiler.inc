@@ -9,6 +9,8 @@ require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 require_once('KwartzConverter.inc');
 require_once('KwartzTranslator.inc');
+require_once('KwartzErubyTranslator.inc');
+require_once('KwartzJspTranslator.inc');
 
 
 //namespace Kwartz {
@@ -33,6 +35,7 @@ require_once('KwartzTranslator.inc');
 			switch ($lang) {
 			case 'php':
 			case 'eruby':
+			case 'jsp':
 				# OK
 				break;
 			default:
@@ -76,6 +79,9 @@ require_once('KwartzTranslator.inc');
 				break;
 			case 'eruby':
 				$translator = new KwartzErubyTranslator($block);
+				break;
+			case 'jsp':
+				$translator = new KwartzJspTranslator($block);
 				break;
 			default:
 				assert(false);

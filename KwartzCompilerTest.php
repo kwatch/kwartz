@@ -135,6 +135,28 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		</html>
 		';
 
+	const expected_compile1_jsp = '
+		<html>
+		 <body>
+		  <table>
+		<c:set var="i" value="0"/>
+		<c:forEach var="user" items="${user_list}">
+		  <c:set var="i" value="${i + 1}"/>
+		  <c:choose><c:when test="${i % 2 == 0}">
+		    <c:set var="klass" value="even"/>
+		  </c:when><c:otherwise>
+		    <c:set var="klass" value="odd"/>
+		  </c:otherwise></c:choose>
+		   <tr class="<c:out value="${klass}" escapeXml="false"/>">
+		    <td><c:out value="${user[\'name\']}" escapeXml="false"/></td>
+		    <td><c:out value="${user[\'mail\']}" escapeXml="false"/></td>
+		   </tr>
+		</c:forEach>
+		  </table>
+		 </body>
+		</html>
+		';
+
 
 	function test_compile1_php() {
 		$pdata      = KwartzCompilerTest::pdata_compile1;
@@ -161,6 +183,19 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata,     $plogic_php, $expected_eruby, 'eruby');
 		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
+	}
+
+	function test_compile1_jsp() {
+		$pdata          = KwartzCompilerTest::pdata_compile1;
+		$pdata_php      = KwartzCompilerTest::pdata_compile1_php;
+		$plogic         = KwartzCompilerTest::plogic_compile1;
+		$plogic_php     = KwartzCompilerTest::plogic_compile1_php;
+		$expected_jsp   = KwartzCompilerTest::expected_compile1_jsp;
+
+		$this->_test($pdata,     $plogic,     $expected_jsp, 'jsp');
+		$this->_test($pdata,     $plogic_php, $expected_jsp, 'jsp');
+		$this->_test($pdata_php, $plogic,     $expected_jsp, 'jsp');
+		$this->_test($pdata_php, $plogic_php, $expected_jsp, 'jsp');
 	}
 
 
@@ -214,6 +249,13 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		next page<% end %>
 		';
 
+	const expected_compile2_jsp = '
+		<c:choose><c:when test="${url != null}">
+		<a href="<c:out value="${url}" escapeXml="false"/>">next page</a>
+		</c:when><c:otherwise>
+		next page</c:otherwise></c:choose>
+		';
+
 	function test_compile2_php() {
 		$pdata      = KwartzCompilerTest::pdata_compile2;
 		$pdata_php  = KwartzCompilerTest::pdata_compile2_php;
@@ -238,6 +280,19 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata,     $plogic_php, $expected_eruby, 'eruby');
 		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
+	}
+
+	function test_compile2_jsp() {
+		$pdata          = KwartzCompilerTest::pdata_compile2;
+		$pdata_php      = KwartzCompilerTest::pdata_compile2_php;
+		$plogic         = KwartzCompilerTest::plogic_compile2;
+		$plogic_php     = KwartzCompilerTest::plogic_compile2_php;
+		$expected_jsp   = KwartzCompilerTest::expected_compile2_jsp;
+
+		$this->_test($pdata,     $plogic,     $expected_jsp, 'jsp');
+		$this->_test($pdata,     $plogic_php, $expected_jsp, 'jsp');
+		$this->_test($pdata_php, $plogic,     $expected_jsp, 'jsp');
+		$this->_test($pdata_php, $plogic_php, $expected_jsp, 'jsp');
 	}
 
 
@@ -546,6 +601,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		&nbsp;
 		';
 
+
 	function test_compile3_php() {
 		$pdata        = KwartzCompilerTest::pdata_compile3;
 		$plogic       = KwartzCompilerTest::plogic_compile3;
@@ -571,6 +627,10 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$this->_test($pdata_php, $plogic,     $expected_eruby, 'eruby');
 		$this->_test($pdata_php, $plogic_php, $expected_eruby, 'eruby');
 	}
+
+	#function test_compile3_jsp() {
+	#	# translation error
+	#}
 
 }
 

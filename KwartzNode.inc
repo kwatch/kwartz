@@ -37,18 +37,23 @@ require_once('KwartzUtility.inc');
 	## Node
 	##
 	abstract class KwartzNode {
-		// instance vars
+		## instance vars
 		private $token;
 
-		// constructor
+		## constructor
 		function __construct($token) {
 			$this->token = $token;
 		}
 
-		// instance methods
+		## instance methods
 		function token() {
 			return $this->token;
 		}
+		
+		//function set_token($token) {
+		//	$this->token = $token;
+		//}
+		
 		//function set_token($token) {
 		//	$this->token = $token;
 		//	return $this;
@@ -69,6 +74,7 @@ require_once('KwartzUtility.inc');
 		function pretty_print($depth=0) {
 			echo $this->inspect($depth);
 		}
+		
 	}
 
 
@@ -79,16 +85,16 @@ require_once('KwartzUtility.inc');
 	}
 
 	class KwartzUnaryExpression extends KwartzExpression {
-		// instance vars
+		## instance vars
 		private $child;		// expression
 
-		// constructor
+		## constructor
 		function __construct($token, $child_expr) {
 			parent::__construct($token);
 			$this->child = $child_expr;
 		}
 
-		// instance methods
+		## instance methods
 		function child() {
 			return $this->child;
 		}
@@ -98,38 +104,46 @@ require_once('KwartzUtility.inc');
 			$s .= $this->child->inspect($depth + 1);
 			return $s;
 		}
+		
+		function accept($visitor) {
+			return $visitor->visit_unary_expr($this);
+		}
 	}
 
 	class KwartzBinaryExpression extends KwartzExpression {
-		// instance vars
+		## instance vars
 		private $left;		// expression
 		private $right;		// expression
 
-		// constructor
+		## constructor
 		function __construct($token, $left, $right) {
 			parent::__construct($token);
 			$this->left  = $left;
 			$this->right = $right;
 		}
 
-		// instance methods
+		## instance methods
 		function left() {
 			return $this->left;
 		}
 		function right() {
 			return $this->right;
 		}
-
+		
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->left->inspect($depth + 1);
 			$s .= $this->right->inspect($depth + 1);
 			return $s;
 		}
+
+		function accept($visitor) {
+			return $visitor->visit_binary_expr($this);
+		}
 	}
 
 	class KwartzFunctionExpression extends KwartzExpression {
-		// constructor
+		## constructor
 		private $funcname;
 		private $arglist;
 
@@ -150,11 +164,15 @@ require_once('KwartzUtility.inc');
 			}
 			return $s;
 		}
+
+		function accept($visitor) {
+			return $visitor->visit_function_expr($this);
+		}
 	}
 
 
 	class KwartzPropertyExpression extends KwartzExpression {
-		// constructor
+		## constructor
 		private $object;		// expression
 		private $property;		// string
 
@@ -173,6 +191,10 @@ require_once('KwartzUtility.inc');
 			$s .= $this->indent($depth+1);
 			$s .= "'{$this->property}'\n";
 			return $s;
+		}
+		
+		function accept($visitor) {
+			return $visitor->visit_property_expr($this);
 		}
 	}
 
@@ -206,35 +228,27 @@ require_once('KwartzUtility.inc');
 		function right() {
 			return $this->right;
 		}
+		
+		function accept($visitor) {
+			return $visitor->visit_conditional_expr($this);
+		}
 	}
-
-	//class KwartzListExpression extends KwartzExpression {
-	//	private $list;		// array
-	//
-	//	function __construct($list) {
-	//		$this->list = $list;
-	//	}
-	//
-	//	function list() {
-	//		return $this->list;
-	//	}
-	//}
 
 
 	##
 	## Leaf
 	##
 	abstract class KwartzLeafExpression extends KwartzExpression {
-		// instance vars
+		## instance vars
 		private $value;		// string
 
-		// constructor
+		## constructor
 		function __construct($token, $value) {
 			parent::__construct($token);
 			$this->value = $value;
 		}
 
-		// instance methods
+		## instance methods
 		function value() {
 			return $this->value;
 		}
@@ -250,50 +264,69 @@ require_once('KwartzUtility.inc');
 			$s .= "\n";
 			return $s;
 		}
+		
+		function accept($visitor) {
+			return $visitor->visit_leaf_expr($this);
+		}
 	}
 
 
 	class KwartzVariableExpression extends KwartzLeafExpression {
-		// constructor
+		## constructor
 		function __construct($varname) {
 			parent::__construct('variable', $varname);
+		}
+		function accept($visitor) {
+			return $visitor->visit_variable_expr($this);
 		}
 	}
 
 
 	class KwartzNumericExpression extends KwartzLeafExpression {
-		// constructor
+		## constructor
 		function __construct($value) {
 			parent::__construct('number', $value);
+		}
+		function accept($visitor) {
+			return $visitor->visit_numeric_expr($this);
 		}
 	}
 
 
 	class KwartzStringExpression extends KwartzLeafExpression {
-		// constructor
+		## constructor
 		function __construct($value) {
 			parent::__construct('string', $value);
 		}
 
-		// instance methods
+		## instance methods
 		function inspect($depth=0) {
 			$s = $this->indent($depth);
 			$s .= kwartz_inspect_str($this->value()) . "\n";
 			return $s;
 		}
+		function accept($visitor) {
+			return $visitor->visit_string_expr($this);
+		}
 	}
 
 	class KwartzBooleanExpression extends KwartzLeafExpression {
-		// constructor
+		## constructor
 		function __construct($value) {
 			parent::__construct('boolean', $value);
+		}
+		function accept($visitor) {
+			return $visitor->visit_boolean_expr($this);
 		}
 	}
 
 	class KwartzNullExpression extends KwartzLeafExpression {
-		// constructor
+		## constructor
 		function __construct($value='null') {
 			parent::__construct('null', $value);
+		}
+		function accept($visitor) {
+			return $visitor->visit_null_expr($this);
 		}
 	}
 
@@ -320,19 +353,22 @@ require_once('KwartzUtility.inc');
 	## Statement
 	##
 	abstract class KwartzStatement extends KwartzNode {
+		function accept($visitor) {
+			assert(false);
+		}
 	}
 
 	class KwartzBlockStatement extends KwartzStatement {
-		// instance vars
+		## instance vars
 		private $statements;		// array
 
-		// constructor
+		## constructor
 		function __construct($statements=array()) {
 			parent::__construct('<<block>>');
 			$this->statements = $statements;
 		}
 
-		// instance methods
+		## instance methods
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			foreach ($this->statements as $stmt) {
@@ -341,15 +377,22 @@ require_once('KwartzUtility.inc');
 			return $s;
 		}
 		function statements() { return $this->statements; }
+		function set_statement($index, $stmt) {
+			$statements[$index] = $stmt;
+		}
 		
 		function shift()         { return array_shift($this->statements); }
 		function unshift(&$stmt) { return array_unshift($this->statements, $stmt); }
 		function push(&$stmt)    { return array_push($this->statements, $stmt); }
 		function pop()           { return array_pop($this->statements); }
+		
+		function accept($visitor) {
+			return $visitor->visit_block_stmt($this);
+		}
 	}
 
 	class KwartzPrintStatement extends KwartzStatement {
-		// instance vars
+		## instance vars
 		private $expressions;		// array
 
 		function __construct($expr_list) {
@@ -366,6 +409,10 @@ require_once('KwartzUtility.inc');
 		}
 		
 		function expressions() { return $this->expressions; }
+		
+		function accept($visitor) {
+			return $visitor->visit_print_stmt($this);
+		}
 	}
 
 	class KwartzSetStatement extends KwartzStatement {
@@ -383,15 +430,20 @@ require_once('KwartzUtility.inc');
 		}
 		
 		function assign_expr() { return $this->assign_expr; }
+		function set_assign_expr($expr) { $this->assign_expr = $expr; }
+
+		function accept($visitor) {
+			return $visitor->visit_set_stmt($this);
+		}
 	}
 
 	class KwartzIfStatement extends KwartzStatement {
-		// instance vars
+		## instance vars
 		private $condition;
 		private $then_block;
 		private $else_stmt;		// block or if-statement
 
-		// constructor
+		## constructor
 		function __construct($condition_expr, $then_block, $else_stmt) {
 			parent::__construct(':if');
 			$this->condition  = $condition_expr;
@@ -399,7 +451,7 @@ require_once('KwartzUtility.inc');
 			$this->else_stmt  = $else_stmt;
 		}
 
-		// instance methods
+		## instance methods
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->condition->inspect($depth + 1);
@@ -413,15 +465,19 @@ require_once('KwartzUtility.inc');
 		function condition()  { return $this->condition; }
 		function then_block() { return $this->then_block; }
 		function else_stmt()  { return $this->else_stmt; }
+		
+		function accept($visitor) {
+			return $visitor->visit_if_stmt($this);
+		}
 	}
 
 	class KwartzForeachStatement extends KwartzStatement {
-		// instance vars
+		## instance vars
 		private $loopvar_var;
 		private $list_expr;
 		private $body_block;
 
-		// constructor
+		## constructor
 		function __construct($loopvar_var, $list_expr, $body_block) {
 			parent::__construct(':foreach');
 			$this->loopvar_var = $loopvar_var;
@@ -429,7 +485,7 @@ require_once('KwartzUtility.inc');
 			$this->body_block  = $body_block;
 		}
 
-		// instance methods
+		## instance methods
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->loopvar_var->inspect($depth + 1);
@@ -441,22 +497,26 @@ require_once('KwartzUtility.inc');
 		function loopvar_expr() { return $this->loopvar_var; }
 		function list_expr() { return $this->list_expr; }
 		function body_block() { return $this->body_block; }
+		
+		function accept($visitor) {
+			return $visitor->visit_foreach_stmt($this);
+		}
 	}
 
 
 	class KwartzWhileStatement extends KwartzStatement {
-		// instance vars
+		## instance vars
 		private $condition;		// expression
 		private $body_block;
 
-		// constructor
+		## constructor
 		function __construct($condition_expr, $body_block) {
 			parent::__construct(':while');
 			$this->condition  = $condition_expr;
 			$this->body_block = $body_block;
 		}
 
-		// instance methods
+		## instance methods
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->condition->inspect($depth + 1);
@@ -466,6 +526,10 @@ require_once('KwartzUtility.inc');
 		
 		function condition()  { return $this->condition; }
 		function body_block() { return $this->body_block; }
+
+		function accept($visitor) {
+			return $visitor->visit_while_stmt($this);
+		}
 	}
 
 	class KwartzMacroStatement extends KwartzStatement {
@@ -488,6 +552,10 @@ require_once('KwartzUtility.inc');
 		
 		function macro_name() { return $this->macro_name; }
 		function body_block() { return $this->body_block; }
+
+		function accept($visitor) {
+			return $visitor->visit_macro_stmt($this);
+		}
 	}
 
 	class KwartzExpandStatement extends KwartzStatement {
@@ -505,6 +573,10 @@ require_once('KwartzUtility.inc');
 		}
 		
 		function macro_name() { return $this->macro_name; }
+		
+		function accept($visitor) {
+			return $visitor->visit_expand_stmt($this);
+		}
 	}
 
 	class KwartzRawcodeStatement extends KwartzStatement {
@@ -522,6 +594,10 @@ require_once('KwartzUtility.inc');
 		}
 		
 		function rawcode() { return $this->rawcode; }
+		
+		function accept($visitor) {
+			return $visitor->visit_rawcode_stmt($this);
+		}
 	}
 
 //} // end of namespace Kwartz
