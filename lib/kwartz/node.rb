@@ -6,7 +6,7 @@
 
 ##  class hierarchy:
 ##
-##  Node
+##    Node
 ##	Expression
 ##	   Unary
 ##	   Binary
