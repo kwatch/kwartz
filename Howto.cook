@@ -10,7 +10,8 @@ chmod:
 	chmod a+x bin/kwartz;
 }
 
-text_files = ChangeLog.txt setup.rb README.ja.txt README.en.txt;
+text_files = ChangeLog.txt README.ja.txt README.en.txt COPYING \
+		setup.rb todo.txt kwartz-ruby.gemspec ;
 
 doc_files = 
 	doc/docstyle.css
@@ -34,6 +35,7 @@ kwartz-ruby_%:  [text_files] [doc_files]
 	find [archive_dir] -name '.svn' | xargs rm -rf ;
 	find [archive_dir] -type f | xargs ruby -pi -e '\'gsub(/\\$Release.*?\\$/, "$Release: '[release]'$")\'';
 	find [archive_dir] -type f | xargs chmod 644;
+	ruby -pi -e '\'gsub(/-beta\\d+/, " ") if /s\\.version/\'' [archive_dir]/kwartz-ruby.gemspec;
 	chmod 755 [archive_dir]/bin/'*';
 	tar cjf [archive_dir].tar.bz2 [archive_dir];
 }

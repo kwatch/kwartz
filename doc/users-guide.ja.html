@@ -55,13 +55,13 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
   </li>
   <li><a href="#directives">ディレクティブ</a>
   </li>
-  <li><a href="#sanitizing">サニタイズ</a>
+  <li><a href="#sanitize">サニタイズ</a>
   <ul>
-    <li><a href="#sanitizing-auto">自動サニタイズ</a>
+    <li><a href="#sanitize1">自動サニタイズ</a>
     </li>
-    <li><a href="#sanitizing-partial">部分サニタイズ</a>
+    <li><a href="#sanitize2">部分サニタイズ</a>
     </li>
-    <li><a href="#sanitizing-config">サニタイズの設定</a>
+    <li><a href="#sanitize3">サニタイズの設定</a>
     </li>
   </ul>
   </li>
@@ -69,13 +69,15 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
   <ul>
     <li><a href="#restriction">制限事項</a>
     </li>
-    <li><a href="#topics-analyze">グローバル変数とローカル変数</a>
+    <li><a href="#analyze">グローバル変数とローカル変数</a>
     </li>
-    <li><a href="#topics-span">spanタグの削除</a>
+    <li><a href="#rename">ローカル変数の名前を変更する</a>
+    </li>
+    <li><a href="#span">spanタグの削除</a>
     </li>
     <li><a href="#topics-append">開始タグに式の値を追加する</a>
     </li>
-    <li><a href="#topics-rawcode">プレゼンテーションロジックをターゲット言語で記述する</a>
+    <li><a href="#rawcode">プレゼンテーションロジックをターゲット言語で記述する</a>
     </li>
   </ul>
   </li>
@@ -644,7 +646,7 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
 </p>
 <p>プレゼンテーションロジックをプレゼンテーションデータの中に埋め込むには、ディレクティブを用います。
 ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
-Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
+Kwartzでは、id属性とkw:d属性を用いてディレクティブを記述します。
 </p>
 <p>次はディレクティブを使った例です：
 </p>
@@ -736,12 +738,12 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 <br>
 
 
-<a name="sanitizing"></a>
+<a name="sanitize"></a>
 <h2 class="section1">サニタイズ</h2>
 <p>Kwartzでは、自動でサニタイズを行うことができます。
 またある部分だけをサニタイズする/しないを選択することもできます。
 </p>
-<a name="sanitizing-auto"></a>
+<a name="sanitize1"></a>
 <h3 class="section2">自動サニタイズ</h3>
 <p>コマンドラインオプション <code>-e</code> をつけると、出力スクリプトをサニタイズします。
 サニタイズでは、eRubyでは<code>CGI.escapeHTML()</code>が、ERBでは<code>h()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out&gt;</code>がそれぞれ使用されます。
@@ -790,12 +792,12 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 &lt;/tr&gt;
 </pre>
 <p>式が文字列や数値のような定数の場合は、サニタイズされません。
-また「<code>$flag ? 'checked' : ''</code>」のような条件演算子では、<code>$flag</code>の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
+また「<code>flag ? 'checked' : ''</code>」のような条件演算子では、<code>flag</code>の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
 </p>
 <br>
 
 
-<a name="sanitizing-partial"></a>
+<a name="sanitize2"></a>
 <h3 class="section2">部分サニタイズ</h3>
 <p>関数<code>E(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズします。
 また関数<code>X(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズしません。
@@ -860,7 +862,7 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 <br>
 
 
-<a name="sanitizing-config"></a>
+<a name="sanitize3"></a>
 <h3 class="section2">サニタイズの設定</h3>
 <p>kwartz/config.rbはKwartz-rubyの動作を設定しているファイルです。
 デフォルトでサニタイズを行うように設定するには、この中で定数<code>ESCAPE</code>の値をtrueに変更します。
@@ -908,7 +910,7 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
 <br>
 
 
-<a name="topics-analyze"></a>
+<a name="analyze"></a>
 <h3 class="section2">グローバル変数とローカル変数</h3>
 <p>Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
 </p>
@@ -921,10 +923,10 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <p>プレゼンテーションデータ(analyze.html)：
 </p>
 <a name="analyze.html"></a>
-<pre class="program">&lt;span kd="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+<pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
- &lt;dt kd="value:<b>ctr</b>"&gt;&lt;/dt&gt;
- &lt;dd kd="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+ &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+ &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>プレゼンテーションロジック(analyze.plogic)：
@@ -957,7 +959,64 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <br>
 
 
-<a name="topics-span"></a>
+<a name="rename"></a>
+<h3 class="section2">ローカル変数の名前を変更する</h3>
+<p>RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
+ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
+</p>
+<p>コンパイル時にコマンドラインオプション「<code>--rename</code>」を指定すると、
+ローカル変数名の頭に「<code>_</code>をつけます。
+</p>
+<p>前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
+</p>
+<p>実行例：
+</p>
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;%= title %&gt;
+&lt;dl&gt;
+&lt;% _ctr = 0 %&gt;
+&lt;% for _item in list do %&gt;
+&lt;%   _ctr += 1 %&gt;
+ &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;?php echo $title; ?&gt;
+&lt;dl&gt;
+&lt;?php $_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $_item) { ?&gt;
+&lt;?php   $_ctr += 1; ?&gt;
+ &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;c:out value="${title}" escapeXml="false"/&gt;
+&lt;dl&gt;
+&lt;c:set var="_ctr" value="0"/&gt;
+&lt;c:forEach var="_item" items="${list}"&gt;
+  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
+ &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+</pre>
+<p>なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
+</p>
+<br>
+
+
+<a name="span"></a>
 <h3 class="section2">spanタグの削除</h3>
 <p>Kwartzでは、ディレクティブしか含まないようなspanタグは、ダミータグとみなされて自動的に削除されます。
 </p>
@@ -988,7 +1047,7 @@ Hello &lt;%= user %&gt;!
 <a name="topics-span2.pdata"></a>
 <pre class="program">&lt;h1&gt;&lt;span id="mark:title" class="title"&gt;title&lt;/span&gt;&lt;/h1&gt;
 
-Hello &lt;span kd="value:user" style="color:black"&gt;World&lt;/span&gt;!
+Hello &lt;span kw:d="value:user" style="color:black"&gt;World&lt;/span&gt;!
 </pre>
 <p>出力用スクリプト(for eRuby)：
 </p>
@@ -1083,7 +1142,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 <br>
 
 
-<a name="topics-rawcode"></a>
+<a name="rawcode"></a>
 <h3 class="section2">プレゼンテーションロジックをターゲット言語で記述する</h3>
 <p>行が「<code>&lt;%</code>」または「<code>&lt;?</code>」で始まる場合、そこから行末まではそのまま出力されます。
 これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。

@@ -55,13 +55,13 @@ a template system which realized the concept of 'Separation of Presentation Logi
   </li>
   <li><a href="#directives">Directives</a>
   </li>
-  <li><a href="#sanitizing">Sanitizing</a>
+  <li><a href="#sanitize">Sanitizing</a>
   <ul>
-    <li><a href="#sanitizing-auto">Automatic Sanitizing</a>
+    <li><a href="#sanitize1">Automatic Sanitizing</a>
     </li>
-    <li><a href="#sanitizing-partial">Partially Sanitizing</a>
+    <li><a href="#sanitize2">Partially Sanitizing</a>
     </li>
-    <li><a href="#sanitizing-config">Configuration for sanitizing</a>
+    <li><a href="#sanitize3">Configuration for sanitizing</a>
     </li>
   </ul>
   </li>
@@ -69,13 +69,15 @@ a template system which realized the concept of 'Separation of Presentation Logi
   <ul>
     <li><a href="#restriction">Restrictions</a>
     </li>
-    <li><a href="#topics-analyze">Analyzing Global and Local Variables</a>
+    <li><a href="#analyze">Analyzing Global and Local Variables</a>
     </li>
-    <li><a href="#topics-span">Span Tag Deletion</a>
+    <li><a href="#rename">Rename Local Variable Names</a>
+    </li>
+    <li><a href="#span">Span Tag Deletion</a>
     </li>
     <li><a href="#topics-append">Appending Expression to Start Tag</a>
     </li>
-    <li><a href="#topics-rawcode">Describe Presentation Logic in Target Language</a>
+    <li><a href="#rawcode">Describe Presentation Logic in Target Language</a>
     </li>
   </ul>
   </li>
@@ -644,7 +646,7 @@ You can choose to separate or not to sepearate presentation data and presentatio
 </p>
 <p>To embed presentation logic into presentation data, use directives.
 Directive is a command to embed presentation logic into presentation data.
-In Kwartz, 'id' and 'kd' attributes are used to describe directives.
+In Kwartz, 'id' and 'kw:d' attributes are used to describe directives.
 </p>
 <p>The following is an example to use directives.
 </p>
@@ -736,11 +738,11 @@ See reference manual for details.
 <br>
 
 
-<a name="sanitizing"></a>
+<a name="sanitize"></a>
 <h2 class="section1">Sanitizing</h2>
 <p>Kwartz supports Automatic Sanitizing and Partially Sanitizing.
 </p>
-<a name="sanitizing-auto"></a>
+<a name="sanitize1"></a>
 <h3 class="section2">Automatic Sanitizing</h3>
 <p><code>-e</code> is the command-line optin to generate output script with sanitizing.
 <code>CGI.escapeHTML()</code> is used in eRuby for sanitizing, <code>htmlspecialchars()</code> in PHP, and <code>&lt;c:out/&gt;</code> tag without <code>escapeXml="false"</code> in JSTL.
@@ -794,7 +796,7 @@ Conditional expression such as '<code>flag ? " checked" : ""</code>' is not sani
 <br>
 
 
-<a name="sanitizing-partial"></a>
+<a name="sanitize2"></a>
 <h3 class="section2">Partially Sanitizing</h3>
 <p>The function <code>E(<i>expr</i>)</code> always sanitizes expression <code><i>expr</i></code> even when '-e' is not specified.
 The function <code>X(<i>expr</i>)</code> doesn't sanitize expression <code><i>expr</i></code> even when '-e' is specified.
@@ -860,7 +862,7 @@ These are equivalent to <code>id="value:E(<i>expr</i>)"</code>, <code>id="attr:<
 <br>
 
 
-<a name="sanitizing-config"></a>
+<a name="sanitize3"></a>
 <h3 class="section2">Configuration for sanitizing</h3>
 <p>File 'kwartz/config.rb' is a configuration file for Kwartz-ruby.
 If you want to sanitize in default, change value of constant <code>ESCAPE</code> to true in the configuration file.
@@ -909,7 +911,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <br>
 
 
-<a name="topics-analyze"></a>
+<a name="analyze"></a>
 <h3 class="section2">Analyzing Global and Local Variables</h3>
 <p>Kwartz have a function to analyze presentation data/logic files and inspect variables.
 </p>
@@ -922,10 +924,10 @@ Kwartz have a function to detect whether variables are global or local and repor
 <p>Presentation Data (analyze.html):
 </p>
 <a name="analyze.html"></a>
-<pre class="program">&lt;span kd="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+<pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
- &lt;dt kd="value:<b>ctr</b>"&gt;&lt;/dt&gt;
- &lt;dd kd="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+ &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+ &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>Presentation Logic (analyze.plogic):
@@ -957,7 +959,63 @@ Variables <code>title</code> and <code>list</code> are Global Variables because 
 <br>
 
 
-<a name="topics-span"></a>
+<a name="rename"></a>
+<h3 class="section2">Rename Local Variable Names</h3>
+<p>In Ruby or PHP, if local variables in template have the same name of variables in main program,
+assignment into local variables effects the control of main program.
+To address this problem, Kwartz have a feature to rename local variable names in template automatically.
+</p>
+<p>The command-line option '<code>--rename</code>' renames all of local variable names in template automatically.
+</p>
+<p>The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
+</p>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;%= title %&gt;
+&lt;dl&gt;
+&lt;% _ctr = 0 %&gt;
+&lt;% for _item in list do %&gt;
+&lt;%   _ctr += 1 %&gt;
+ &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;?php echo $title; ?&gt;
+&lt;dl&gt;
+&lt;?php $_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $_item) { ?&gt;
+&lt;?php   $_ctr += 1; ?&gt;
+ &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;c:out value="${title}" escapeXml="false"/&gt;
+&lt;dl&gt;
+&lt;c:set var="_ctr" value="0"/&gt;
+&lt;c:forEach var="_item" items="${list}"&gt;
+  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
+ &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+</pre>
+<p>Constant RENAME in configuration file specifies whether rename local variable names in default.
+</p>
+<br>
+
+
+<a name="span"></a>
 <h3 class="section2">Span Tag Deletion</h3>
 <p>The span tags which contains only directives are regarded as dummy tags and deleted automatically.
 </p>
@@ -988,7 +1046,7 @@ Hello &lt;%= user %&gt;!
 <a name="topics-span2.pdata"></a>
 <pre class="program">&lt;h1&gt;&lt;span id="mark:title" class="title"&gt;title&lt;/span&gt;&lt;/h1&gt;
 
-Hello &lt;span kd="value:user" style="color:black"&gt;World&lt;/span&gt;!
+Hello &lt;span kw:d="value:user" style="color:black"&gt;World&lt;/span&gt;!
 </pre>
 <p>Output Script(for eRuby):
 </p>
@@ -1084,7 +1142,7 @@ when the expression <code><i>expr</i></code> is true.
 <br>
 
 
-<a name="topics-rawcode"></a>
+<a name="rawcode"></a>
 <h3 class="section2">Describe Presentation Logic in Target Language</h3>
 <p>Lines staring with '<code>&lt;%</code>' or '<code>&lt;?</code>' are printed as it is.
 It enables you to write presentation logics in Ruby, PHP, and Java.

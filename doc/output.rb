@@ -13,6 +13,7 @@ unless filename
 end
 
 script = File.open(filename) { |f| f.read }
+KWARTZ_NOEXEC = true
 eval script
 
 

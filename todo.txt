@@ -19,6 +19,8 @@
 .- [v] translator/jstl11.rb
 .- [_] translator/velocity.rb
 .- [_] translator/pl.rb
+.- [_] translator/template-toolkit.rb
+.- [_] translator/dtml.rb
 .- [_] mkmethod
 .- [v] macro C() S() D()
 .- [v] eol auto-detect
@@ -32,9 +34,9 @@
 .- [v] retrieve or extract (-r name)
 .- [_] /* comment */
 .- [_] parse type appropriately in 'vartype { type var; }'
-.- [_] ruby gems
+.- [_] rubygems package
 .- [x] load statement
-.- [_] include directive
+.- [_] 'include' directive
 .- [_] load library path
 .- [_] include file path
 .- [v] change #{...}# to @{...}@
@@ -44,3 +46,7 @@
 .- [_] rewrite Scanner.rb
 .- [_] integrate element definition and declaration
 .- [_] bin/kwartz -> bin/kwartz-ruby and create new bin/kwartz
+.- [_] rename 'kd' attribute to 'kw:d'
+.- [_] man page
+.- [_] re-design website
+.- [_] correct my English (>_<)

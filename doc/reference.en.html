@@ -48,7 +48,7 @@ in this document.
     </li>
     <li><a href="#pl-print">Printing</a>
     </li>
-    <li><a href="#pl-set">Assignment</a>
+    <li><a href="#pl-assign">Assignment</a>
     </li>
     <li><a href="#pl-array">Arrays and Hashes</a>
     </li>
@@ -68,51 +68,51 @@ in this document.
     </li>
     <li><a href="#pl-rawcode">Raw-code</a>
     </li>
-    <li><a href="#pl-analyze">Global and Local Variables</a>
+    <li><a href="#pl-scope">Global and Local Variables</a>
     </li>
     <li><a href="#pl-infuture">Features Under Consideration</a>
     </li>
   </ul>
   </li>
-  <li><a href="#directive">Directives</a>
+  <li><a href="#kd">Directives</a>
   <ul>
-    <li><a href="#directive-whatis">What is a Directive?</a>
+    <li><a href="#kd-whatis">What is a Directive?</a>
     </li>
-    <li><a href="#directive-mark">Marking</a>
+    <li><a href="#kd-mark">Marking</a>
     </li>
-    <li><a href="#directive-output">Printing Values of Expressions</a>
+    <li><a href="#kd-output">Printing Values of Expressions</a>
     </li>
-    <li><a href="#directive-value">Printing value of expression 2</a>
+    <li><a href="#kd-value">Printing value of expression 2</a>
     </li>
-    <li><a href="#directive-attr">Attribute Values</a>
+    <li><a href="#kd-attr">Attribute Values</a>
     </li>
-    <li><a href="#directive-apend">Appending Attribute Expression</a>
+    <li><a href="#kd-apend">Appending Attribute Expression</a>
     </li>
-    <li><a href="#directive-set">Assignment</a>
+    <li><a href="#kd-set">Assignment</a>
     </li>
-    <li><a href="#directive-if">Conditional Branching</a>
+    <li><a href="#kd-if">Conditional Branching</a>
     </li>
-    <li><a href="#directive-foreach">Iteration (foreach)</a>
+    <li><a href="#kd-foreach">Iteration (foreach)</a>
     </li>
-    <li><a href="#directive-loop">Iteration(loop)</a>
+    <li><a href="#kd-loop">Iteration(loop)</a>
     </li>
-    <li><a href="#directive-foreach2">Iteration with Count</a>
+    <li><a href="#kd-foreach2">Iteration with Count</a>
     </li>
-    <li><a href="#directive-foreach3">Iteration with a Toggle Switch</a>
+    <li><a href="#kd-foreach3">Iteration with a Toggle Switch</a>
     </li>
-    <li><a href="#directive-while">Iteration (while)</a>
+    <li><a href="#kd-while">Iteration (while)</a>
     </li>
-    <li><a href="#directive-dummy">Dummy data</a>
+    <li><a href="#kd-dummy">Dummy data</a>
     </li>
-    <li><a href="#directive-replace">Replacement of Elements</a>
+    <li><a href="#kd-replace">Replacement of Elements</a>
     </li>
-    <li><a href="#directive-placeholder">Placeholder</a>
+    <li><a href="#kd-placeholder">Placeholder</a>
     </li>
-    <li><a href="#directive-notes">Notes</a>
+    <li><a href="#kd-notes">Notes</a>
     </li>
   </ul>
   </li>
-  <li><a href="#command-line">Command-line options</a>
+  <li><a href="#opt">Command-line options</a>
   </li>
   <li><a href="#config">Configuration options</a>
   </li>
@@ -362,7 +362,7 @@ print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 <br>
 
 
-<a name="pl-set"></a>
+<a name="pl-assign"></a>
 <h3 class="section2">Assignment</h3>
 <p>Assignment statement is such as <code>var = 100;</code>.
 Also '<code>+=</code>', '<code>-=</code>', '<code>*=</code>', '<code>/=</code>', '<code>%=</code>' and '<code>+=</code>' are allowed.
@@ -1136,7 +1136,7 @@ because raw-code is statement and not expression.
 <br>
 
 
-<a name="pl-analyze"></a>
+<a name="pl-scope"></a>
 <h3 class="section2">Global and Local Variables</h3>
 <p>In Kwartz, variables are called Global variables if they are set in the main program and are  passed to output script.
 Variables are called Local variables if they are used only in the template.
@@ -1233,16 +1233,16 @@ They may be implemented in the future release (or not).
 <br>
 
 
-<a name="directive"></a>
+<a name="kd"></a>
 <h2 class="section1">Directives</h2>
-<a name="directive-whatis"></a>
+<a name="kd-whatis"></a>
 <h3 class="section2">What is a Directive?</h3>
 <p>Kwartz allows presentation logic to be embedded in presentation data.
 Commands for that purpose are called 'directives'.
 </p>
 <p>'Directives' is a set of commands to embed presentation logic into presentation data.
-Kwartz uses the id attribute and the kd attribute to embed directives in presentation data.
-Kd directive is an original attribute of Kwartz, but the ability of id and kd attributes are equivalent for Kwartz.
+Kwartz uses the id attribute and the kw:d attribute to embed directives in presentation data.
+Kw:d is an original attribute of Kwartz, but the ability of id and kw:d attributes are equivalent for Kwartz.
 Marking (<code>id="<i>name</i>"</code> or <code>id="mark:<i>name</i>"</code>) is also a directive.
 </p>
 <p>You may have a question: 
@@ -1272,14 +1272,14 @@ But Kwartz has the following merits compared to other template systems;
 <br>
 
 
-<a name="directive-mark"></a>
+<a name="kd-mark"></a>
 <h3 class="section2">Marking</h3>
 <p>The directive '<code>id="<i>name</i>"</code>' or '<code>id="mark:<i>name</i>"</code>' marks an element
  with a name <code><i>name</i></code>.  This is called 'marking'.
 </p>
 <p>The difference between '<code>id="<i>name</i>"</code>' and '<code>id="mark:<i>name</i>"</code>' is
  that the former is left in but the latter is removed when compiling.
-Kd attributes are always removed.
+kw:d attributes are always removed.
 </p>
 <p>Presentation Data:
 </p>
@@ -1304,7 +1304,7 @@ Kd attributes are always removed.
 <br>
 
 
-<a name="directive-output"></a>
+<a name="kd-output"></a>
 <h3 class="section2">Printing Values of Expressions</h3>
 <p>'<code>@{<i>expression</i>}@</code>' is a directive which prints the value of an expression.
 This pattern is changeable with a constant EMBED_PATTERN in configuration file (kwartz/config.rb).
@@ -1370,7 +1370,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="directive-value"></a>
+<a name="kd-value"></a>
 <h3 class="section2">Printing value of expression 2</h3>
 <p>'<code>id="value:<i>expression</i>"</code>' is a directive to print the value of expression instead of the content.
 It is more suitable for HTML design than '<code>@{<i>expression</i>}@</code>' because it allows for the use of dummy data.
@@ -1398,7 +1398,7 @@ These are equal to '<code>id="value:E(<i>expr</i>)"</code>' and '<code>id="value
 <br>
 
 
-<a name="directive-attr"></a>
+<a name="kd-attr"></a>
 <h3 class="section2">Attribute Values</h3>
 <p>'<code>id="attr:<i>name</i>=<i>value</i>"</code>' (or '<code>id="attr:<i>name</i>:<i>value</i>"</code>') is a directive to set an attribute value.
 It overwrites the existing value if attribute <code><i>name</i></code> is already set.
@@ -1469,7 +1469,7 @@ You can enumerate other attributes this way as well.
 <br>
 
 
-<a name="directive-apend"></a>
+<a name="kd-apend"></a>
 <h3 class="section2">Appending Attribute Expression</h3>
 <p>'<code>id="append:<i>expression</i>"</code>' is a directive to append expression into a tag.
 This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... selected&gt;&lt;/option&gt;'.
@@ -1570,7 +1570,7 @@ Windows
 <br>
 
 
-<a name="directive-set"></a>
+<a name="kd-set"></a>
 <h3 class="section2">Assignment</h3>
 <p>'<code>id="set:<i>var</i>=<i>value</i>"</code>' is a directive for assigning values into variables.
 Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</code>', '<code>/=</code>', '<code>.=</code>' are also available.
@@ -1604,7 +1604,7 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <br>
 
 
-<a name="directive-if"></a>
+<a name="kd-if"></a>
 <h3 class="section2">Conditional Branching</h3>
 <p>'<code>id="if:<i>expression</i>"</code>' is a directive for conditional branching.
 '<code>else</code>' and '<code>elseif</code>' are also available.
@@ -1674,7 +1674,7 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <br>
 
 
-<a name="directive-foreach"></a>
+<a name="kd-foreach"></a>
 <h3 class="section2">Iteration (foreach)</h3>
 <p>'<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>' (or '<code>id="foreach:<i>loopvar</i>:<i>list</i>)"</code>') is a directive for iteration, assigning each value in the array into a variable each time through the loop.
 </p>
@@ -1711,7 +1711,7 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <br>
 
 
-<a name="directive-loop"></a>
+<a name="kd-loop"></a>
 <h3 class="section2">Iteration(loop)</h3>
 <p>'<code>id="loop:<i>loopvar</i>=<i>list</i>"</code>' (or '<code>id="loop:<i>loopvar</i>:<i>list</i>"</code>') is a directive for iteration.
 It iterates only contents. The start tag and the end tag are not iterated.
@@ -1754,7 +1754,7 @@ It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 <br>
 
 
-<a name="directive-foreach2"></a>
+<a name="kd-foreach2"></a>
 <h3 class="section2">Iteration with Count</h3>
 <p>'<code>id="Foreach:<i>var</i>=<i>list</i>"</code>' and '<code>id="Loop:<i>var</i>=<i>list</i>"</code>' are directives for iteration with loop counting.
 The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
@@ -1802,7 +1802,7 @@ The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
 <br>
 
 
-<a name="directive-foreach3"></a>
+<a name="kd-foreach3"></a>
 <h3 class="section2">Iteration with a Toggle Switch</h3>
 <p>'<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>' and '<code>id="LOOP:<i>var</i>=<i>list</i>"</code>' are directives for iteration with toggle switching.
 The toggle switch's value changes depending on whether loop counter is odd or even.
@@ -1869,7 +1869,7 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 <br>
 
 
-<a name="directive-while"></a>
+<a name="kd-while"></a>
 <h3 class="section2">Iteration (while)</h3>
 <p>'<code>id="while:<i>expression</i>"</code>' is a directive to iterate with a while statement. 
 </p>
@@ -1902,7 +1902,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 <br>
 
 
-<a name="directive-dummy"></a>
+<a name="kd-dummy"></a>
 <h3 class="section2">Dummy data</h3>
 <p>'<code>id="dummy:<i>str</i>"</code>' is a directive for ignoring an element.
 </p>
@@ -1928,7 +1928,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 <br>
 
 
-<a name="directive-replace"></a>
+<a name="kd-replace"></a>
 <h3 class="section2">Replacement of Elements</h3>
 <p>'<code>id="replace:<i>name</i>"</code>' replaces an element with other element
 which is already marked with the name <i>name</i>.
@@ -1979,7 +1979,7 @@ in other files.
 <br>
 
 
-<a name="directive-placeholder"></a>
+<a name="kd-placeholder"></a>
 <h3 class="section2">Placeholder</h3>
 <p>'<code>id="placeholder:<i>name</i>"</code>' replaces content of the element by other element
 which is already marked with the name <i>name</i>.
@@ -2061,12 +2061,12 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 <br>
 
 
-<a name="directive-notes"></a>
+<a name="kd-notes"></a>
 <h3 class="section2">Notes</h3>
 <p>These are some notes on the use of directives.
 </p>
 <ul type="disc">
-<li>One id or kd attribute can have only one directive.
+<li>One id or kw:d attribute can have only one directive.
    For example, '<code>id="set:var=100;value:var"</code>' causes an error.
 <pre class="program">## NG
 &lt;span id="set:var=100;value:var"&gt;foo&lt;/span&gt;
@@ -2127,7 +2127,7 @@ Hello &lt;%= name %&gt;!
 <br>
 
 
-<a name="command-line"></a>
+<a name="opt"></a>
 <h2 class="section1">Command-line options</h2>
 <p>The script 'kwartz' is a commad-line script to compile templates (presentation data file and presentation logic file) into output scripts.
 </p>
@@ -2220,7 +2220,7 @@ translate</dt>
 <dt class="dt3"><b>
 --dname=<i>name</i></b></dt>
 <dd class="dd3">
-	Attribute name used as a directive. Default is 'kd'.
+	Attribute name used as a directive. Default is 'kw:d'.
 </dd>
 </dl>
 <dl class="dl3">
@@ -2272,6 +2272,13 @@ translate</dt>
 --odd=<i>value</i></b></dt>
 <dd class="dd3">
 	Odd value. Default is <code>'odd'</code>. Directives FOREACH and LIST will use this value.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--rename=<i>true</i>|<i>false</i></b></dt>
+<dd class="dd3">
+	Specify rename or not local variable names.  Regarded as true when value is omitted.
 </dd>
 </dl>
 <p>Examples:
@@ -2331,6 +2338,21 @@ INDENT </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+RENAME </b></dt>
+<dd class="dd3">
+	Specify whether rename local variable names. 
+	If true, '_' is added to beginning of local variable name.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+RENAME_PREFIX </b></dt>
+<dd class="dd3">
+	Specify the prefix of local variable name when RENAME is true.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 LANG </b></dt>
 <dd class="dd3">
 	Specify default language for output script.
@@ -2356,7 +2378,7 @@ EVEN </b></dt>
 <dt class="dt3"><b>
 DATTR </b></dt>
 <dd class="dd3">
-	Specify an attribute name for directives. Default is 'kd'.
+	Specify an attribute name for directives. Default is 'kw:d'.
 </dd>
 </dl>
 <dl class="dl3">

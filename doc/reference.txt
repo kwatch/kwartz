@@ -64,7 +64,7 @@
 .	
 .	
 .	
-.JA	◎文字列 | pl-string
+.JA	◎文字列    | pl-string
 .EN	.$$ Strings | pl-string
 .	
 .	
@@ -215,7 +215,7 @@
 .	
 .	
 .	
-.JA	◎出力 | pl-print
+.JA	◎出力       | pl-print
 .EN	.$$ Printing | pl-print
 .	
 .	
@@ -268,8 +268,8 @@
 .	
 .	
 .	
-.JA	◎代入 | pl-set
-.EN	.$$ Assignment | pl-set
+.JA	◎代入         | pl-assign
+.EN	.$$ Assignment | pl-assign
 .	
 .	
 .JA	代入は「{{,var = 100;,}}」のように行います。
@@ -367,7 +367,7 @@
 .	
 .	
 .	
-.JA	◎プロパティとメソッド | pl-property
+.JA	◎プロパティとメソッド   | pl-property
 .EN	.$$ Properties & Methods | pl-property
 .	
 .	
@@ -475,7 +475,7 @@
 .	
 .	
 .	
-.JA	◎条件分岐 | pl-if
+.JA	◎条件分岐                | pl-if
 .EN	.$$ Conditional Branching | pl-if
 .	
 .	
@@ -872,8 +872,8 @@
 .	
 .	
 .	
-.JA	◎グローバル変数とローカル変数	 | pl-analyze
-.EN	.$$ Global and Local Variables	 | pl-analyze
+.JA	◎グローバル変数とローカル変数	 | pl-scope
+.EN	.$$ Global and Local Variables	 | pl-scope
 .	
 .	
 .JA	Kwartzでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
@@ -989,7 +989,7 @@
 .	
 .	
 .	
-.JA	◎未実装（または検討中）の機能  | pl-infuture
+.JA	◎未実装（または検討中）の機能   | pl-infuture
 .EN	.$$ Features Under Consideration | pl-infuture
 .	
 .JA	以下の機能は実装されていませんが、将来において実装されるかもしれません。
@@ -1009,12 +1009,12 @@
 .	
 .	
 .	
-.JA	●ディレクティブ	| directive
-.EN	.$ Directives		| directive
+.JA	●ディレクティブ	| kd
+.EN	.$ Directives		| kd
 .	
 .	
-.JA	◎ディレクティブとは？		| directive-whatis
-.EN	.$$ What is a Directive?	| directive-whatis
+.JA	◎ディレクティブとは？		| kd-whatis
+.EN	.$$ What is a Directive?	| kd-whatis
 .	
 .	
 .JA	Kwartzでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
@@ -1028,8 +1028,8 @@
 .JA	「{{,id="{{/name/}}",}}」や「{{,id="mark:{{/name/}}",}}」も、「マーキング」というディレクティブです。
 .JA	.#他に、繰り返しや条件分岐のためのディレクティブが用意されています。
 .EN	'Directives' is a set of commands to embed presentation logic into presentation data.
-.EN	Kwartz uses the id attribute and the kd attribute to embed directives in presentation data.
-.EN	Kd directive is an original attribute of Kwartz, but the ability of id and kd attributes are equivalent for Kwartz.
+.EN	Kwartz uses the id attribute and the kw:d attribute to embed directives in presentation data.
+.EN	Kw:d is an original attribute of Kwartz, but the ability of id and kw:d attributes are equivalent for Kwartz.
 .EN	Marking ({{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}}) is also a directive.
 .EN	.#There are several directives for iteration, conditional branching, and so on.
 .	
@@ -1067,8 +1067,8 @@
 .	
 .	
 .	
-.JA	◎マーキング	| directive-mark
-.EN	.$$ Marking	| directive-mark
+.JA	◎マーキング	| kd-mark
+.EN	.$$ Marking	| kd-mark
 .	
 .	
 .JA	「{{,id="{{/name/}}",}}」または「{{,id="mark:{{/name/}}",}}」とすることで、マーキングを行います。
@@ -1078,10 +1078,10 @@
 .	
 .	
 .JA	「{{,id="{{/name/}}",}}」と「{{,id="mark:{{/name/}}",}}」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
-.JA	またkd属性は必ず取り除かれます。
+.JA	またkw:d属性は必ず取り除かれます。
 .EN	The difference between '{{,id="{{/name/}}",}}' and '{{,id="mark:{{/name/}}",}}' is
 .EN	 that the former is left in but the latter is removed when compiling.
-.EN	Kd attributes are always removed.
+.EN	kw:d attributes are always removed.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -1101,8 +1101,8 @@
 .	
 .	
 .	
-.JA	◎値の出力 | directive-output
-.EN	.$$ Printing Values of Expressions | directive-output
+.JA	◎値の出力                         | kd-output
+.EN	.$$ Printing Values of Expressions | kd-output
 .	
 .JA	「{{,@{{{/expression/}}}@,}}」は、式の値を出力するディレクティブです。
 .JA	このパターンは、設定ファイルのEMBED_PATTERNに設定されています。
@@ -1159,8 +1159,8 @@
 .	
 .	.
 .	.
-.JA	◎値の出力2 | directive-value
-.EN	.$$ Printing value of expression 2| directive-value
+.JA	◎値の出力2                        | kd-value
+.EN	.$$ Printing value of expression 2 | kd-value
 .	
 .JA	「{{,id="value:{{/expression/}}",}}」とすることで、内容のかわりに式の値を出力します。
 .JA	ダミーデータを利用できるため、「{{,@{{{/expression/}}}@,}}」と比べてHTMLデザインがより崩れません。
@@ -1190,8 +1190,8 @@
 .	
 .	
 .	
-.JA	◎属性値の設定 | directive-attr
-.EN	.$$ Attribute Values	| directive-attr
+.JA	◎属性値の設定          | kd-attr
+.EN	.$$ Attribute Values	| kd-attr
 .	
 .JA	「{{,id="attr:{{/name/}}={{/value/}}",}}」または「{{,id="attr:{{/name/}}:{{/value/}}",}}」とすることで、タグの属性値を設定できます。
 .JA	これを用いると、「{{,@{...}@,}}」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
@@ -1244,8 +1244,8 @@
 .	
 .	
 .	
-.JA	◎属性の追加	| directive-append
-.EN	.$$ Appending Attribute Expression | directive-apend
+.JA	◎属性の追加                       | kd-append
+.EN	.$$ Appending Attribute Expression | kd-apend
 .	
 .JA	「{{,id="append:{{/expression/}}",}}」とすることで、タグの中に式の値を追加できます。
 .JA	これは主に「<input ... checked />」や「<option ... selected></option>」を実現するための機能です。
@@ -1296,8 +1296,8 @@
 .	
 .	
 .	
-.JA	◎変数への代入	| directive-set
-.EN	.$$ Assignment	| directive-set
+.JA	◎変数への代入  | kd-set
+.EN	.$$ Assignment  | kd-set
 .	
 .JA	「{{,id="set:{{/var/}}={{/value/}}",}}」は、変数{{/var/}}に値{{/value/}}を設定します。
 .JA	「{{,=,}}」だけでなく「{{,+=,}}」「{{,-=,}}」「{{,*=,}}」「{{,/=,}}」「{{,.=,}}」が使用できます。
@@ -1320,8 +1320,8 @@
 .	
 .	
 .	
-.JA	◎条件分岐 | directive-if
-.EN	.$$ Conditional Branching	| directive-if
+.JA	◎条件分岐                      | kd-if
+.EN	.$$ Conditional Branching       | kd-if
 .	
 .JA	「{{,id="if:{{/expression/}}",}}」とすることで、条件分岐を行います。
 .JA	elseやelseifも使用できます。
@@ -1356,8 +1356,8 @@
 .	
 .	
 .	
-.JA	◎繰り返し(foreach) | directive-foreach
-.EN	.$$ Iteration (foreach)	| directive-foreach
+.JA	◎繰り返し(foreach)     | kd-foreach
+.EN	.$$ Iteration (foreach)	| kd-foreach
 .	
 .JA	「{{,id="foreach:{{/loopvar/}}={{/list/}}",}}」（または「{{,id="foreach:{{/loopvar/}}:{{/list/}}",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら、繰り返しを行います。
 .JA	.#繰り返すのは開始タグ、内容、終了タグです。
@@ -1380,8 +1380,8 @@
 .	
 .	
 .	
-.JA	◎繰り返し(loop) 	| directive-loop
-.EN	.$$ Iteration(loop)	| directive-loop
+.JA	◎繰り返し(loop) 	| kd-loop
+.EN	.$$ Iteration(loop)	| kd-loop
 .	
 .JA	「{{,id="loop:{{/loopvar/}}={{/list/}}",}}」（または「{{,id="loop:{{/loopvar/}}:{{/list/}}",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら繰り返しを行います。
 .JA	「{{,id="foreach:{{/loopvar/}}={{/list/}})",}}」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
@@ -1408,8 +1408,8 @@
 .	
 .	
 .	
-.JA	◎カウンタつき繰り返し(Foreach,Loop) | directive-foreach2
-.EN	.$$ Iteration with Count	| directive-foreach2
+.JA	◎カウンタつき繰り返し(Foreach,Loop) | kd-foreach2
+.EN	.$$ Iteration with Count	     | kd-foreach2
 .	
 .	
 .JA	「{{,id="Foreach:{{/var/}}={{/list/}})",}}」や「{{,id="Loop:{{/var/}}={{/list/}})",}}」を使うと、カウンタを増やしながら繰り返しを行います。
@@ -1436,8 +1436,8 @@
 .	
 .	
 .	
-.JA	◎トグルつき繰り返し(FOREACH,LOOP)	| directive-foreach3
-.EN	.$$ Iteration with a Toggle Switch	| directive-foreach3
+.JA	◎トグルつき繰り返し(FOREACH,LOOP)	| kd-foreach3
+.EN	.$$ Iteration with a Toggle Switch	| kd-foreach3
 .	
 .	
 .JA	「{{,id="FOREACH:{{/var/}}={{/list/}}",}}」や「{{,id="LOOP:{{/var/}}={{/list/}}",}}」とすると、トグルつきの繰り返しを行うことができます。
@@ -1475,8 +1475,8 @@
 .	
 .	
 .	
-.JA	◎繰り返し(while) | directive-while
-.EN	.$$ Iteration (while)	| directive-while
+.JA	◎繰り返し(while)       | kd-while
+.EN	.$$ Iteration (while)	| kd-while
 .	
 .	
 .JA	「{{,id="while:{{/expression/}}",}}」とすることで、繰り返しを行うことができます。
@@ -1505,8 +1505,8 @@
 .	
 .	
 .	
-.JA	◎ダミーデータ | directive-dummy
-.EN	.$$ Dummy data	| directive-dummy
+.JA	◎ダミーデータ  | kd-dummy
+.EN	.$$ Dummy data	| kd-dummy
 .	
 .JA	「{{,id="dummy:{{/str/}}",}}」とすることで、そのノードをダミーデータとみなして読み飛ばします。
 .EN	'{{,id="dummy:{{/str/}}",}}' is a directive for ignoring an element.
@@ -1542,8 +1542,8 @@
 .	
 .	
 .	
-.JA	◎エレメントの置換 		| directive-replace
-.EN	.$$ Replacement of Elements	| directive-replace
+.JA	◎エレメントの置換 		| kd-replace
+.EN	.$$ Replacement of Elements	| kd-replace
 .	
 .	
 .JA	「{{,id="replace:{{/name/}}",}}」とすることで、そのエレメントを別のエレメントに置き換えることができます。
@@ -1588,8 +1588,8 @@
 .	
 .	
 .	
-.JA	◎プレースホルダ 		| directive-placeholder
-.EN	.$$ Placeholder			| directive-placeholder
+.JA	◎プレースホルダ 		| kd-placeholder
+.EN	.$$ Placeholder			| kd-placeholder
 .	
 .	
 .JA	「{{,id="placeholder:{{/name/}}",}}」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
@@ -1662,8 +1662,8 @@
 .	
 .	
 .	
-.JA	.#◎プレゼンテーションデータファイルの読み込み	| directive-include
-.EN	.#.$$ Including Presentation Data Files		| directive-include
+.JA	.#◎プレゼンテーションデータファイルの読み込み	| kd-include
+.EN	.#.$$ Including Presentation Data Files		| kd-include
 .	.#
 .	.#
 .JA	.#「{{,id="include:{{/filename/}}",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
@@ -1710,8 +1710,8 @@
 .	
 .	
 .	
-.JA	.#◎プレゼンテーションロジックファイルの読み込み	| directive-load
-.EN	.#.$$ Load presentation logic file		| directive-load
+.JA	.#◎プレゼンテーションロジックファイルの読み込み	| kd-load
+.EN	.#.$$ Load presentation logic file			| kd-load
 .	.#
 .	.#
 .JA	.#「{{,kd:php="require:{{/filename/}}",}}」で他のプレゼンテーションロジックファイルを読み込むことができます。
@@ -1790,34 +1790,34 @@
 .	
 .	
 .	
-.JA	.#◎id属性とkd属性について	| directive-idkd
-.EN	.#.$$ id and kd Attributes	| directive-idkd
+.JA	.#◎id属性とkw:d属性について	| kd-idkd
+.EN	.#.$$ id and kw:d Attributes	| kd-idkd
 .	.#
 .	.#
-.JA	.#Kwartzでは、ディレクティブを記述するのにid属性とkd属性が使用できます。
+.JA	.#Kwartzでは、ディレクティブを記述するのにid属性とkw:d属性が使用できます。
 .JA	.#ここでは、両者の使い分けについて説明します。
 .	.#
 .	.#
-.JA	.#.* id属性もkd属性も、機能としては同じです。
-.JA	.#今までid属性で説明していましたが、すべてkd属性に書いても動作します。
-.EN	.#.* The kd attribute is equivalent to the id attribute in Kwartz.
-.EN	.#   Anything that can go in an id attribute can also be placed in a kd attribute.
+.JA	.#.* id属性もkw:d属性も、機能としては同じです。
+.JA	.#今までid属性で説明していましたが、すべてkw:d属性に書いても動作します。
+.EN	.#.* The kw:d attribute is equivalent to the id attribute in Kwartz.
+.EN	.#   Anything that can go in an id attribute can also be placed in a kw:d attribute.
 .	.#
 .	.#
-.JA	.#.* ひとつのタグにid属性とkd属性の両方を記述した場合、kd属性のほうが優先されます。
-.JA	.#   例えば「{{,id="name" kd="foreach:item=list",}}」とした場合、kd属性のほうが有効となります。
-.EN	.#.* If a tag has both an id attribute and a kd attribte,
+.JA	.#.* ひとつのタグにid属性とkw:d属性の両方を記述した場合、kw:d属性のほうが優先されます。
+.JA	.#   例えば「{{,id="name" kw:d="foreach:item=list",}}」とした場合、kw:d属性のほうが有効となります。
+.EN	.#.* If a tag has both an id attribute and a kw:d attribte,
 .EN	.#   Kwartz overrides the former with the latter.
-.EN	.#   For example, if you write '{{,id="name" kd="foreach:item=list",}}',
-.#N	.#    the kd attribute is enabled but not the id attribute.
+.EN	.#   For example, if you write '{{,id="name" kw:d="foreach:item=list",}}',
+.#N	.#    the kw:d attribute is enabled but not the id attribute.
 .	.#
 .	.#
-.JA	.#.* ただし、kd属性に記述したディレクティブが{{,attr,}}のみの場合は、
+.JA	.#.* ただし、kw:d属性に記述したディレクティブが{{,attr,}}のみの場合は、
 .JA	.#   id属性のディレクティブも有効となります。
-.JA	.#   例えば「{{,id="name" kd="attr:href=url",}}」とした場合、そのエレメントは名前{{,name,}}を使ってマーキングされます。
-.EN	.#.* However, if the kd attribute has only {{,attr,}} directives,
+.JA	.#   例えば「{{,id="name" kw:d="attr:href=url",}}」とした場合、そのエレメントは名前{{,name,}}を使ってマーキングされます。
+.EN	.#.* However, if the kw:d attribute has only {{,attr,}} directives,
 .EN	.#   then the id attribute is not overwritten.
-.EN	.#   For example, if you write '{{,id="name" kd="attr:href=url",}},
+.EN	.#   For example, if you write '{{,id="name" kw:d="attr:href=url",}},
 .EN	.#   the element is marked with the name {{,name,}}.
 .	.#
 .	.#
@@ -1832,37 +1832,37 @@
 .EN	.#   .#You should remember it.
 .	.#
 .	.#
-.JA	.#.* kd属性は、HTMLの仕様にはない独自の属性です。
+.JA	.#.* kw:d属性は、HTMLの仕様にはない独自の属性です。
 .JA	.#   そのため、そのままでは{{<W3C Markup Vaidation Service|http://validator.w3.org>}}のようなHTML検証ツールでエラーとなります。
-.JA	.#   そこで、kd属性を取り除いたうえで{{<W3C Markup Vaidation Service|http://validator.w3.org>}}に送信するCGI/PHPスクリプトを用意しました。
+.JA	.#   そこで、kw:d属性を取り除いたうえで{{<W3C Markup Vaidation Service|http://validator.w3.org>}}に送信するCGI/PHPスクリプトを用意しました。
 .JA	.#   スクリプトはKwartzのアーカイブの中に含まれています。
 .JA	.#   また{{<こちら|<http://www.kuwata-ab.com/webtech/kwartz/validator.php>}}でも実行できます。
-.EN	.#.* The kd attribute is unique to Kwartz and it is not in the HTML Specification.
-.EN	.#   So, you will get errors when you use {{<W3C Markup Vaidation Service|http://validator.w3.org>}} with HTML files which contain kd attributes.
-.EN	.#   Kwartz gives you a CGI/PHP script which deletes kd attributes from your HTML file and then sends it to {{<W3C Markup Vaidation Service|http://validator.w3.org>}}.
+.EN	.#.* The kw:d attribute is unique to Kwartz and it is not in the HTML Specification.
+.EN	.#   So, you will get errors when you use {{<W3C Markup Vaidation Service|http://validator.w3.org>}} with HTML files which contain kw:d attributes.
+.EN	.#   Kwartz gives you a CGI/PHP script which deletes kw:d attributes from your HTML file and then sends it to {{<W3C Markup Vaidation Service|http://validator.w3.org>}}.
 .EN	.#   They are included in the Kwartz archive, and is available at {{<here|<http://www.kuwata-ab.com/kwartz/validator.php>}}.
 .	.#
 .	.#
-.JA	.#.* kd属性の名前は、コマンドラインオプション {{,--attr-name={{/xxx/}},}} で変更することができます。
-.JA	.#   例えばkd属性のかわりにstyle属性を使う場合は、 --attr-name=style としてください。
-.EN	.#.* You can change the kd attribte name with the command-line option {{,--attr-name={{/xxx/}},}}.
-.EN	.#   For example, {{,--attr-name=style,}} make Kwartz to use 'style' attributes instead of 'kd' attributes.
+.JA	.#.* kw:d属性の名前は、コマンドラインオプション {{,--attr-name={{/xxx/}},}} で変更することができます。
+.JA	.#   例えばkw:d属性のかわりにstyle属性を使う場合は、 --attr-name=style としてください。
+.EN	.#.* You can change the kw:d attribte name with the command-line option {{,--attr-name={{/xxx/}},}}.
+.EN	.#   For example, {{,--attr-name=style,}} make Kwartz to use 'style' attributes instead of 'kw:d' attributes.
 .	.#
 .	
 .	
 .	
 .	
-.JA	◎注意事項	| directive-notes
-.EN	.$$ Notes	| directive-notes
+.JA	◎注意事項	| kd-notes
+.EN	.$$ Notes	| kd-notes
 .	
 .	
 .JA	ディレクティブを使用する際の注意事項です。
 .EN	These are some notes on the use of directives.
 .	
 .	
-.JA	.* ひとつのid属性またはkd属性にはひとつのディレクティブしか記述できません。
+.JA	.* ひとつのid属性またはkw:d属性にはひとつのディレクティブしか記述できません。
 .JA	   例えば「{{,id="set:var=100;value:var",}}」のような記述はエラーになります。
-.EN	.* One id or kd attribute can have only one directive.
+.EN	.* One id or kw:d attribute can have only one directive.
 .EN	   For example, '{{,id="set:var=100;value:var",}}' causes an error.
 .		.--------------------
 .		## NG
@@ -1949,8 +1949,8 @@
 .	
 .	
 .	
-.JA	●コマンドラインオプション | command-line
-.EN	.$ Command-line options	   | command-line
+.JA	●コマンドラインオプション | opt
+.EN	.$ Command-line options	   | opt
 .	
 .JA	テンプレートを出力用プログラムへコンパイルするには、kwartzコマンドを使用します。
 .EN	The script 'kwartz' is a commad-line script to compile templates (presentation data file and presentation logic file) into output scripts.
@@ -2050,8 +2050,8 @@
 .EN		Character set. Kwartz will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSTL.
 .	
 .	.[--dname={{/name/}}]
-.JA		ディレクティブで使用する属性名。デフォルトは 'kd'。
-.EN		Attribute name used as a directive. Default is 'kd'.
+.JA		ディレクティブで使用する属性名。デフォルトは 'kw:d'。
+.EN		Attribute name used as a directive. Default is 'kw:d'.
 .	
 .	.#.[--delete-idattr={{/true/}}|{{/false/}}]
 .JA	.#	プレゼンテーションデータから {{,id="name",}} を取り除く。
@@ -2103,9 +2103,9 @@
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
 .	
-.	.#.[--rename={{/true/}}|{{/false/}}]
-.JA	.#	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
-.EN	.#	Specify rename or not local variable names.  Regarded as true when value is omitted.
+.	.[--rename={{/true/}}|{{/false/}}]
+.JA		ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
+.EN		Specify rename or not local variable names.  Regarded as true when value is omitted.
 .	
 .	
 .	
@@ -2172,15 +2172,15 @@
 .JA		インデントとして使う空白文字列を指定します。
 .EN		Specify a string which represents indent of output script.
 .	
-.	.#.[ RENAME ]
-.JA	.#	ローカル変数の名前を変更するかどうかを指定します。
-.JA	.#	trueなら、ローカル変数名の頭に「_」をつけます。
-.EN	.#	Specify whether rename local variable names. 
-.EN	.#	If true, '_' is added to beginning of local variable name.
-.	.#
-.	.#.[ RENAME_PREFIX ]
-.JA	.#	ローカル変数の頭につける文字列を指定します。
-.EN	.#	Specify the prefix of local variable name when RENAME is true.
+.	.[ RENAME ]
+.JA		ローカル変数の名前を変更するかどうかを指定します。
+.JA		trueなら、ローカル変数名の頭に「_」をつけます。
+.EN		Specify whether rename local variable names. 
+.EN		If true, '_' is added to beginning of local variable name.
+.	
+.	.[ RENAME_PREFIX ]
+.JA		ローカル変数の頭につける文字列を指定します。
+.EN		Specify the prefix of local variable name when RENAME is true.
 .	
 .	.[ LANG ]
 .JA		デフォルトの出力用言語を指定します。
@@ -2199,8 +2199,8 @@
 .EN		This is used by {{,id="FOREACH:{{/var/}}={{/list/}}",}} and {{,id="LOOP:{{/var/}}={{/list/}}",}}.
 .	
 .	.[ DATTR ]
-.JA		ディレクティブで使用する属性名を指定します。デフォルトはkdです。
-.EN		Specify an attribute name for directives. Default is 'kd'.
+.JA		ディレクティブで使用する属性名を指定します。デフォルトはkw:dです。
+.EN		Specify an attribute name for directives. Default is 'kw:d'.
 .	
 .	.[ NOEND ]
 .JA		終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。

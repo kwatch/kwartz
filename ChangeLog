@@ -3,7 +3,12 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2005-02-10 rev.49
+.: 2005-02-20 rev.50
+	.- [change] 'kd' attribute is renamed to 'kw:d'
+	.- [enhance] new file kwartz-ruby.gemspec added
+	.- [change] bin/kwartz is rewrited as ruby script
+
+.: 2005-02-20 rev.49
 	.- [change] rename bin/kwartz to bin/kwartz-ruby
 	.- [change] add new shell script bin/kwartz which invoke bin/kwartz-ruby
 

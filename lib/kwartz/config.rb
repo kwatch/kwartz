@@ -21,7 +21,7 @@ module Kwartz
       ## converter
       ODD             = "'odd'"
       EVEN            = "'even'"
-      DATTR           = "kd"
+      DATTR           = "kw:d"
       EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
       
       ## converter & element

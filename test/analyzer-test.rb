@@ -180,8 +180,8 @@ END
    ## ---------------------------------------- #DOCUMENT { begin: {...} end: {...} }
    def test_analyze6	# unsupported function
       pdata = <<'END'
-<tr kd="mark:list">
-  <td kd="value:item">foo</td>
+<tr kw:d="mark:list">
+  <td kw:d="value:item">foo</td>
 </tr>
 END
       plogic = <<'END'

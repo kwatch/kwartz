@@ -48,7 +48,7 @@
     </li>
     <li><a href="#pl-print">出力</a>
     </li>
-    <li><a href="#pl-set">代入</a>
+    <li><a href="#pl-assign">代入</a>
     </li>
     <li><a href="#pl-array">配列、ハッシュ</a>
     </li>
@@ -68,51 +68,51 @@
     </li>
     <li><a href="#pl-rawcode">ターゲット言語のプログラムコード</a>
     </li>
-    <li><a href="#pl-analyze">グローバル変数とローカル変数</a>
+    <li><a href="#pl-scope">グローバル変数とローカル変数</a>
     </li>
     <li><a href="#pl-infuture">未実装（または検討中）の機能</a>
     </li>
   </ul>
   </li>
-  <li><a href="#directive">ディレクティブ</a>
+  <li><a href="#kd">ディレクティブ</a>
   <ul>
-    <li><a href="#directive-whatis">ディレクティブとは？</a>
+    <li><a href="#kd-whatis">ディレクティブとは？</a>
     </li>
-    <li><a href="#directive-mark">マーキング</a>
+    <li><a href="#kd-mark">マーキング</a>
     </li>
-    <li><a href="#directive-output">値の出力</a>
+    <li><a href="#kd-output">値の出力</a>
     </li>
-    <li><a href="#directive-value">値の出力2</a>
+    <li><a href="#kd-value">値の出力2</a>
     </li>
-    <li><a href="#directive-attr">属性値の設定</a>
+    <li><a href="#kd-attr">属性値の設定</a>
     </li>
-    <li><a href="#directive-append">属性の追加</a>
+    <li><a href="#kd-append">属性の追加</a>
     </li>
-    <li><a href="#directive-set">変数への代入</a>
+    <li><a href="#kd-set">変数への代入</a>
     </li>
-    <li><a href="#directive-if">条件分岐</a>
+    <li><a href="#kd-if">条件分岐</a>
     </li>
-    <li><a href="#directive-foreach">繰り返し(foreach)</a>
+    <li><a href="#kd-foreach">繰り返し(foreach)</a>
     </li>
-    <li><a href="#directive-loop">繰り返し(loop)</a>
+    <li><a href="#kd-loop">繰り返し(loop)</a>
     </li>
-    <li><a href="#directive-foreach2">カウンタつき繰り返し(Foreach,Loop)</a>
+    <li><a href="#kd-foreach2">カウンタつき繰り返し(Foreach,Loop)</a>
     </li>
-    <li><a href="#directive-foreach3">トグルつき繰り返し(FOREACH,LOOP)</a>
+    <li><a href="#kd-foreach3">トグルつき繰り返し(FOREACH,LOOP)</a>
     </li>
-    <li><a href="#directive-while">繰り返し(while)</a>
+    <li><a href="#kd-while">繰り返し(while)</a>
     </li>
-    <li><a href="#directive-dummy">ダミーデータ</a>
+    <li><a href="#kd-dummy">ダミーデータ</a>
     </li>
-    <li><a href="#directive-replace">エレメントの置換</a>
+    <li><a href="#kd-replace">エレメントの置換</a>
     </li>
-    <li><a href="#directive-placeholder">プレースホルダ</a>
+    <li><a href="#kd-placeholder">プレースホルダ</a>
     </li>
-    <li><a href="#directive-notes">注意事項</a>
+    <li><a href="#kd-notes">注意事項</a>
     </li>
   </ul>
   </li>
-  <li><a href="#command-line">コマンドラインオプション</a>
+  <li><a href="#opt">コマンドラインオプション</a>
   </li>
   <li><a href="#config">設定オプション</a>
   </li>
@@ -361,7 +361,7 @@ print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 <br>
 
 
-<a name="pl-set"></a>
+<a name="pl-assign"></a>
 <h3 class="section2">代入</h3>
 <p>代入は「<code>var = 100;</code>」のように行います。
 また、「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>%=</code>」「<code>.=</code>」も使用できます。
@@ -1129,7 +1129,7 @@ Raw-codeは文(statement)であり式(expression)ではないためです。
 <br>
 
 
-<a name="pl-analyze"></a>
+<a name="pl-scope"></a>
 <h3 class="section2">グローバル変数とローカル変数</h3>
 <p>Kwartzでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
 </p>
@@ -1224,9 +1224,9 @@ Local:  <b>ctr</b> <b>item</b> <b>color</b>
 <br>
 
 
-<a name="directive"></a>
+<a name="kd"></a>
 <h2 class="section1">ディレクティブ</h2>
-<a name="directive-whatis"></a>
+<a name="kd-whatis"></a>
 <h3 class="section2">ディレクティブとは？</h3>
 <p>Kwartzでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
 そのための命令を「ディレクティブ(Directive)」といいます。
@@ -1259,13 +1259,13 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 <br>
 
 
-<a name="directive-mark"></a>
+<a name="kd-mark"></a>
 <h3 class="section2">マーキング</h3>
 <p>「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」とすることで、マーキングを行います。
 マーキングとは、エレメントに対してその名前で目印をつけることです。
 </p>
 <p>「<code>id="<i>name</i>"</code>」と「<code>id="mark:<i>name</i>"</code>」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
-またkd属性は必ず取り除かれます。
+またkw:d属性は必ず取り除かれます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -1290,7 +1290,7 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 <br>
 
 
-<a name="directive-output"></a>
+<a name="kd-output"></a>
 <h3 class="section2">値の出力</h3>
 <p>「<code>@{<i>expression</i>}@</code>」は、式の値を出力するディレクティブです。
 このパターンは、設定ファイルのEMBED_PATTERNに設定されています。
@@ -1354,7 +1354,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="directive-value"></a>
+<a name="kd-value"></a>
 <h3 class="section2">値の出力2</h3>
 <p>「<code>id="value:<i>expression</i>"</code>」とすることで、内容のかわりに式の値を出力します。
 ダミーデータを利用できるため、「<code>@{<i>expression</i>}@</code>」と比べてHTMLデザインがより崩れません。
@@ -1381,7 +1381,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="directive-attr"></a>
+<a name="kd-attr"></a>
 <h3 class="section2">属性値の設定</h3>
 <p>「<code>id="attr:<i>name</i>=<i>value</i>"</code>」または「<code>id="attr:<i>name</i>:<i>value</i>"</code>」とすることで、タグの属性値を設定できます。
 これを用いると、「<code>@{...}@</code>」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
@@ -1450,7 +1450,7 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="directive-append"></a>
+<a name="kd-append"></a>
 <h3 class="section2">属性の追加</h3>
 <p>「<code>id="append:<i>expression</i>"</code>」とすることで、タグの中に式の値を追加できます。
 これは主に「&lt;input ... checked /&gt;」や「&lt;option ... selected&gt;&lt;/option&gt;」を実現するための機能です。
@@ -1551,7 +1551,7 @@ Windows
 <br>
 
 
-<a name="directive-set"></a>
+<a name="kd-set"></a>
 <h3 class="section2">変数への代入</h3>
 <p>「<code>id="set:<i>var</i>=<i>value</i>"</code>」は、変数<i>var</i>に値<i>value</i>を設定します。
 「<code>=</code>」だけでなく「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>.=</code>」が使用できます。
@@ -1585,7 +1585,7 @@ Windows
 <br>
 
 
-<a name="directive-if"></a>
+<a name="kd-if"></a>
 <h3 class="section2">条件分岐</h3>
 <p>「<code>id="if:<i>expression</i>"</code>」とすることで、条件分岐を行います。
 elseやelseifも使用できます。
@@ -1655,7 +1655,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-foreach"></a>
+<a name="kd-foreach"></a>
 <h3 class="section2">繰り返し(foreach)</h3>
 <p>「<code>id="foreach:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="foreach:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら、繰り返しを行います。
 </p>
@@ -1692,7 +1692,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-loop"></a>
+<a name="kd-loop"></a>
 <h3 class="section2">繰り返し(loop)</h3>
 <p>「<code>id="loop:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="loop:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
 「<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
@@ -1735,7 +1735,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-foreach2"></a>
+<a name="kd-foreach2"></a>
 <h3 class="section2">カウンタつき繰り返し(Foreach,Loop)</h3>
 <p>「<code>id="Foreach:<i>var</i>=<i>list</i>)"</code>」や「<code>id="Loop:<i>var</i>=<i>list</i>)"</code>」を使うと、カウンタを増やしながら繰り返しを行います。
 カウンタは1から始まり、変数名は<code><i>var</i>_ctr</code>です。
@@ -1783,7 +1783,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-foreach3"></a>
+<a name="kd-foreach3"></a>
 <h3 class="section2">トグルつき繰り返し(FOREACH,LOOP)</h3>
 <p>「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」や「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」とすると、トグルつきの繰り返しを行うことができます。
 トグルは、繰り返し回数が奇数回か偶数回かによって、値が入れ替わります。
@@ -1849,7 +1849,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-while"></a>
+<a name="kd-while"></a>
 <h3 class="section2">繰り返し(while)</h3>
 <p>「<code>id="while:<i>expression</i>"</code>」とすることで、繰り返しを行うことができます。
 </p>
@@ -1882,7 +1882,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-dummy"></a>
+<a name="kd-dummy"></a>
 <h3 class="section2">ダミーデータ</h3>
 <p>「<code>id="dummy:<i>str</i>"</code>」とすることで、そのノードをダミーデータとみなして読み飛ばします。
 </p>
@@ -1908,7 +1908,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-replace"></a>
+<a name="kd-replace"></a>
 <h3 class="section2">エレメントの置換</h3>
 <p>「<code>id="replace:<i>name</i>"</code>」とすることで、そのエレメントを別のエレメントに置き換えることができます。
 </p>
@@ -1958,7 +1958,7 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-placeholder"></a>
+<a name="kd-placeholder"></a>
 <h3 class="section2">プレースホルダ</h3>
 <p>「<code>id="placeholder:<i>name</i>"</code>」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
 通常は、コマンドラインオプション「<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>」とともに使用し、
@@ -2039,12 +2039,12 @@ elseやelseifも使用できます。
 <br>
 
 
-<a name="directive-notes"></a>
+<a name="kd-notes"></a>
 <h3 class="section2">注意事項</h3>
 <p>ディレクティブを使用する際の注意事項です。
 </p>
 <ul type="disc">
-<li>ひとつのid属性またはkd属性にはひとつのディレクティブしか記述できません。
+<li>ひとつのid属性またはkw:d属性にはひとつのディレクティブしか記述できません。
    例えば「<code>id="set:var=100;value:var"</code>」のような記述はエラーになります。
 <pre class="program">## NG
 &lt;span id="set:var=100;value:var"&gt;foo&lt;/span&gt;
@@ -2104,7 +2104,7 @@ Hello &lt;%= name %&gt;!
 <br>
 
 
-<a name="command-line"></a>
+<a name="opt"></a>
 <h2 class="section1">コマンドラインオプション</h2>
 <p>テンプレートを出力用プログラムへコンパイルするには、kwartzコマンドを使用します。
 </p>
@@ -2197,7 +2197,7 @@ transalte</dt>
 <dt class="dt3"><b>
 --dname=<i>name</i></b></dt>
 <dd class="dd3">
-	ディレクティブで使用する属性名。デフォルトは 'kd'。
+	ディレクティブで使用する属性名。デフォルトは 'kw:d'。
 </dd>
 </dl>
 <dl class="dl3">
@@ -2250,6 +2250,13 @@ transalte</dt>
 --odd=<i>value</i></b></dt>
 <dd class="dd3">
 	奇数のときの値。デフォルトは「<code>'odd'</code>」。ディレクティブFOREACHとLISTで使われる。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--rename=<i>true</i>|<i>false</i></b></dt>
+<dd class="dd3">
+	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
 </dd>
 </dl>
 <p>使い方の例です。
@@ -2309,6 +2316,21 @@ INDENT </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+RENAME </b></dt>
+<dd class="dd3">
+	ローカル変数の名前を変更するかどうかを指定します。
+	trueなら、ローカル変数名の頭に「_」をつけます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+RENAME_PREFIX </b></dt>
+<dd class="dd3">
+	ローカル変数の頭につける文字列を指定します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 LANG </b></dt>
 <dd class="dd3">
 	デフォルトの出力用言語を指定します。
@@ -2334,7 +2356,7 @@ EVEN </b></dt>
 <dt class="dt3"><b>
 DATTR </b></dt>
 <dd class="dd3">
-	ディレクティブで使用する属性名を指定します。デフォルトはkdです。
+	ディレクティブで使用する属性名を指定します。デフォルトはkw:dです。
 </dd>
 </dl>
 <dl class="dl3">

@@ -421,8 +421,8 @@ END
 
    ## -------------------- newline
    @@pdata7 = <<'END'
-<tr kd="mark:list">
-  <td kd="value:item">foo</td>
+<tr kw:d="mark:list">
+  <td kw:d="value:item">foo</td>
 </tr>
 END
    @@pdata7.gsub!(/\n/, "\r\n")
@@ -487,8 +487,8 @@ END
    ## -------------------- #DOCUMENT
 
    @@pdata8 = <<'END'
-<tr kd="mark:list">
-  <td kd="value:item">foo</td>
+<tr kw:d="mark:list">
+  <td kw:d="value:item">foo</td>
 </tr>
 END
    @@plogic8 = <<'END'
@@ -574,8 +574,8 @@ END
    ## -------------------- require:
 
    @@pdata9 = <<'END'
-<tr kd="mark:list">
-  <td kd="mark:item">foo</td>
+<tr kw:d="mark:list">
+  <td kw:d="mark:item">foo</td>
 </tr>
 END
    @@plogic9 = <<'END'

@@ -87,7 +87,7 @@ class ConverterTest < Test::Unit::TestCase
     def test_fetch2	# tags with directive
 	input = <<-'END'
 		<ul id="user">
-		 <li kd="value:user">foo</li>
+		 <li kw:d="value:user">foo</li>
 		</ul>
 	END
 	expected = <<-'END'
@@ -102,7 +102,7 @@ class ConverterTest < Test::Unit::TestCase
 		tagname:       li
 		before_text:   ""
 		before_space:  " "
-		attr_str:      " kd=\"value:user\""
+		attr_str:      " kw:d=\"value:user\""
 		after_space:   ""
 
 		linenum+delta: 2+1
@@ -147,7 +147,7 @@ class ConverterTest < Test::Unit::TestCase
 		bbb
 		ccc<b>foo</b>
 		ddd<i
-		  kd="bar">
+		  kw:d="bar">
 		BAR
 		</i>
 		eee
@@ -171,7 +171,7 @@ class ConverterTest < Test::Unit::TestCase
 		tagname:       i
 		before_text:   "ddd"
 		before_space:  ""
-		attr_str:      "\n  kd=\"bar\""
+		attr_str:      "\n  kw:d=\"bar\""
 		after_space:   "\n"
 
 		linenum+delta: 7+1
@@ -222,7 +222,7 @@ class ConverterTest < Test::Unit::TestCase
     ##
     def test_attr1	# attr
 	input = <<-'END'
-		<tr id="foo" kd="attr:bgcolor=color;attr:class:klass" class="even">
+		<tr id="foo" kw:d="attr:bgcolor=color;attr:class:klass" class="even">
 		</tr>
 	END
 	#expected = ' id="foo" class="@{klass}@" bgcolor="@{color}@"'
@@ -233,7 +233,7 @@ class ConverterTest < Test::Unit::TestCase
     ##
     def test_attr2	# Attr,ATTR
 	input = <<-'END'
-		<tr id="foo" kd="Attr:bgcolor=color;ATTR:class:klass" class="even">
+		<tr id="foo" kw:d="Attr:bgcolor=color;ATTR:class:klass" class="even">
 		</tr>
 	END
 	#expected = ' id="foo" class="@{X(klass)}@" bgcolor="@{E(color)}@"'
@@ -250,7 +250,7 @@ END
     ##
     def test_attr3	# append,Append,APPEND
 	input = <<-'END'
-		<tr id="foo" kd="append:foo;Append:bar;APPEND:baz"  class="even">
+		<tr id="foo" kw:d="append:foo;Append:bar;APPEND:baz"  class="even">
 		</tr>
 	END
 	#expected = ' id="foo"  class="even" @{foo}@ @{E(bar)}@ @{X(baz)}@'
@@ -371,7 +371,7 @@ END
 
     def test_convert_attr1	# attr
     	input = <<-'END'
-		<tr class="odd" kd="attr:class:klass;Attr:bgcolor=color;ATTR:align=align">
+		<tr class="odd" kw:d="attr:class:klass;Attr:bgcolor=color;ATTR:align=align">
 		</tr>
 	END
 	expected = <<-'END'
@@ -395,8 +395,8 @@ END
 
     def test_convert_append1	# append
     	input = <<-'END'
-		<input type="radio" kd="attr:value:val;append:checked?'checked':''" />
-		<input type="radio" kd="Append:checked;APPEND:selected"/>
+		<input type="radio" kw:d="attr:value:val;append:checked?'checked':''" />
+		<input type="radio" kw:d="Append:checked;APPEND:selected"/>
 	END
 	expected = <<-'END'
 		:block
@@ -427,7 +427,7 @@ END
     
     def test_convert_invalid1	# invalid directive
     	input = <<-'END'
-		<div kd="foo=bar">foobar</div>
+		<div kw:d="foo=bar">foobar</div>
 	END
 	expected = <<-'END'
 	END
@@ -439,7 +439,7 @@ END
 
     def test_convert_value1	# value
     	input = <<-'END'
-		<td kd="value:user">foo</td>
+		<td kw:d="value:user">foo</td>
 	END
 	expected = <<-'END'
 		:block
@@ -461,9 +461,9 @@ END
 
     def test_convert_value2	# value,Value,VALUE
     	input = <<-'END'
-		<td kd="value:user">foo</td>
-		<td kd="Value:user">foo</td>
-		<td kd="VALUE:user">foo</td>
+		<td kw:d="value:user">foo</td>
+		<td kw:d="Value:user">foo</td>
+		<td kw:d="VALUE:user">foo</td>
 	END
 	expected = <<-'END'
 		:block
@@ -505,7 +505,7 @@ END
 #
 #    def test_convert_value3	# value with <span>
 #    	input = <<-'END'
-#		<span kd="value:user">foo</span>
+#		<span kw:d="value:user">foo</span>
 #	END
 #	expected = <<-'END'
 #		##:print("<span>")
@@ -518,7 +518,7 @@ END
 
     def test_convert_value4	# value with empty element
     	input = <<-'END'
-		<span kd="value:user"/>
+		<span kw:d="value:user"/>
 	END
 	expected = ''
 	assert_raise(Kwartz::ConvertionError) {
@@ -529,7 +529,7 @@ END
 
     def test_convert_foreach1	# foreach
     	input = <<-'END'
-		<tr kd="foreach:user:list">
+		<tr kw:d="foreach:user:list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -565,7 +565,7 @@ END
 
     def test_convert_foreach2	# Foreach
     	input = <<-'END'
-		<tr kd="Foreach:user=list">
+		<tr kw:d="Foreach:user=list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -611,7 +611,7 @@ END
 
     def test_convert_foreach3	# FOREACH
     	input = <<-'END'
-		<tr kd="FOREACH:user:list">
+		<tr kw:d="FOREACH:user:list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -669,7 +669,7 @@ END
 
     def test_convert_foreach4	# invalid foreach
     	input = <<-'END'
-		<tr kd="foreach:user in list">
+		<tr kw:d="foreach:user in list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -682,7 +682,7 @@ END
 
     def test_convert_loop1	# loop
     	input = <<-'END'
-		<tr kd="loop:user=list">
+		<tr kw:d="loop:user=list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -720,7 +720,7 @@ END
 
     def test_convert_loop2	# Loop
     	input = <<-'END'
-		<tr kd="Loop:user=list">
+		<tr kw:d="Loop:user=list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -768,7 +768,7 @@ END
 
     def test_convert_loop3	# LOOP
     	input = <<-'END'
-		<tr kd="LOOP:user:list">
+		<tr kw:d="LOOP:user:list">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -828,7 +828,7 @@ END
 
     def test_convert_loop4	# invalid loop
     	input = <<-'END'
-		<tr kd="loop:user">
+		<tr kw:d="loop:user">
 		  <td>@{user}@</td>
 		</tr>
 	END
@@ -841,7 +841,7 @@ END
 
     def test_convert_loop5	# loop with empty element
 	input = <<-'END'
-		<li kd="loop:user=list"/>
+		<li kw:d="loop:user=list"/>
 	END
 	expected = ''
 	assert_raise(Kwartz::ConvertionError) {
@@ -856,7 +856,7 @@ END
 
     def test_convert_if1	# if
     	input = <<-'END'
-		<font color="red" kd="if:error_msg!=null">
+		<font color="red" kw:d="if:error_msg!=null">
 		  @{error_msg}@
 		</font>
 	END
@@ -889,10 +889,10 @@ END
 
     def test_convert_if2	# else
     	input = <<-'END'
-		<tr class="odd" kd="if:ctr%2==1">
+		<tr class="odd" kw:d="if:ctr%2==1">
 		  <td>@{data}@</td>
 		</tr>
-		<tr class="even" kd="else:">
+		<tr class="even" kw:d="else:">
 		  <td>@{data}@</td>
 		</tr>
 	END
@@ -948,10 +948,10 @@ END
 
     def test_convert_if3	# elseif
     	input = <<-'END'
-		<div class="typeA" kd="if:type=='A'">@{message}@</div>
-		<div class="typeB" kd="elseif:type=='B'">@{message}@</div>
-		<div class="typeC" kd="elseif:type=='C'">@{message}@</div>
-		<div class="typeD" kd="else:">@{message}@</div>
+		<div class="typeA" kw:d="if:type=='A'">@{message}@</div>
+		<div class="typeB" kw:d="elseif:type=='B'">@{message}@</div>
+		<div class="typeC" kw:d="elseif:type=='C'">@{message}@</div>
+		<div class="typeD" kw:d="else:">@{message}@</div>
 	END
 	expected = <<-'END'
 		:block
@@ -1021,11 +1021,11 @@ END
 
     def test_convert_if4	# invalid else
     	input = <<-'END'
-		<tr class="odd" kd="if:ctr%2==1">
+		<tr class="odd" kw:d="if:ctr%2==1">
 		  <td>@{data}@</td>
 		</tr>
 
-		<tr class="even" kd="else:">
+		<tr class="even" kw:d="else:">
 		  <td>@{data}@</td>
 		</tr>
 	END
@@ -1038,12 +1038,12 @@ END
 
     def test_convert_if5	# nested if
     	input = <<-'END'
-		<ul kd="if:type=='A'">
-		  <ol kd="if:type=='B'">
-		    <li kd="if:type=='C'">@{message}@</li>
+		<ul kw:d="if:type=='A'">
+		  <ol kw:d="if:type=='B'">
+		    <li kw:d="if:type=='C'">@{message}@</li>
 		  </ol>
 		</ul>
-		<ul kd="else:">@{message}@</ul>
+		<ul kw:d="else:">@{message}@</ul>
 	END
 	expected = <<-'END'
 		:block
@@ -1110,7 +1110,7 @@ END
     def test_convert_mark1	# mark
 	input = <<-'END'
 		<table>
-		  <tr kd="mark:user">
+		  <tr kw:d="mark:user">
 		    <td>foo</td>
 		  </tr>
 		</table>
@@ -1271,7 +1271,7 @@ END
     def test_convert_mark4	# id and directive
     	input = <<-'END'
 		<table>
-		  <tr id="user" kd="foreach:user:list">
+		  <tr id="user" kw:d="foreach:user:list">
 		    <td>foo</td>
 		  </tr>
 		</table>
@@ -1520,7 +1520,7 @@ END
 
     def test_convert_while1	# while
     	input = <<-'END'
-		<div kd="while:data=d.fetch">
+		<div kw:d="while:data=d.fetch">
 		  @{data}@
 		</div>
 	END
@@ -1555,8 +1555,8 @@ END
 
     def test_convert_set1	# set
 	input = <<-'END'
-		<div kd="set:ctr=0"/>
-		<div kd="set:ctr+=1"/>
+		<div kw:d="set:ctr=0"/>
+		<div kw:d="set:ctr+=1"/>
 	END
 	#	<div id="set:ctr:-1"/>		# doesn't support
 	expected = <<-'END'
@@ -1588,7 +1588,7 @@ END
 #
 #    def test_convert63	# set with <span>
 #    	input = <<-'END'
-#		<span kd="set:ctr+=1"/>
+#		<span kw:d="set:ctr+=1"/>
 #	END
 #	expected = <<-'END'
 #		:set(ctr+=1)
@@ -1600,7 +1600,7 @@ END
 
     def test_convert_set2	# set & attr
     	input = <<-'END'
-		<span kd="set:ctr+=1;attr:class=foo"/>
+		<span kw:d="set:ctr+=1;attr:class=foo"/>
 	END
 	expected = <<-'END'
 		:block
@@ -1639,7 +1639,7 @@ END
 
     def test_convert_replace1	# replace
 	input = <<-'END'
-		<div kd="replace:foo">
+		<div kw:d="replace:foo">
 		foo
 		</div>
 	END
@@ -1674,7 +1674,7 @@ END
 
     def test_convert_properties1	# 'even' and 'odd'
 	input = <<-'END'
-		<tbody kd="LOOP:item:list">
+		<tbody kw:d="LOOP:item:list">
 		 <tr bgcolor="#CCCCCC" id="attr:bgcolor:item_tgl">
 		  <td>@{item}@</td>
 		 </tr>
@@ -1796,7 +1796,7 @@ END
 
     def test_convert_properties3	# dattr
 	input = <<-'END'
-		<td kd:kwartz="value:item">foo</td>
+		<td kw:kwartz="value:item">foo</td>
 	END
 	expected = <<-'END'
 		:block
@@ -1812,14 +1812,14 @@ END
 	#	:print(item)
 	#	:print("</td>\n")
 	#END
-	_test_convert(input, expected, {:dattr=>'kd:kwartz'})
+	_test_convert(input, expected, {:dattr=>'kw:kwartz'})
     end
 
 
     def test_convert_properties4	# newline
 	input = <<-'END'
-		<tr kd="loop:item:list">
-		  <td kd="value:item">foo</td>
+		<tr kw:d="loop:item:list">
+		  <td kw:d="value:item">foo</td>
 		</tr>
 	END
 	input.gsub!(/\n/, "\r\n")

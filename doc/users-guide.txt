@@ -675,10 +675,10 @@
 .	
 .JA	プレゼンテーションロジックをプレゼンテーションデータの中に埋め込むには、ディレクティブを用います。
 .JA	ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
-.JA	Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
+.JA	Kwartzでは、id属性とkw:d属性を用いてディレクティブを記述します。
 .EN	To embed presentation logic into presentation data, use directives.
 .EN	Directive is a command to embed presentation logic into presentation data.
-.EN	In Kwartz, 'id' and 'kd' attributes are used to describe directives.
+.EN	In Kwartz, 'id' and 'kw:d' attributes are used to describe directives.
 .	
 .	
 .JA	次はディレクティブを使った例です：
@@ -744,8 +744,8 @@
 .	
 .	
 .	
-.JA	●サニタイズ		| sanitizing
-.EN	.$ Sanitizing		| sanitizing
+.JA	●サニタイズ		| sanitize
+.EN	.$ Sanitizing		| sanitize
 .	
 .	
 .JA	Kwartzでは、自動でサニタイズを行うことができます。
@@ -754,8 +754,8 @@
 .	
 .	
 .	
-.JA	◎自動サニタイズ	 | sanitizing-auto
-.EN	.$$ Automatic Sanitizing | sanitizing-auto
+.JA	◎自動サニタイズ	 | sanitize1
+.EN	.$$ Automatic Sanitizing | sanitize1
 .	
 .	
 .JA	コマンドラインオプション {{,-e,}} をつけると、出力スクリプトをサニタイズします。
@@ -798,15 +798,15 @@
 .	
 .	
 .JA	式が文字列や数値のような定数の場合は、サニタイズされません。
-.JA	また「{{,$flag ? 'checked' : '',}}」のような条件演算子では、{{,$flag,}}の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
+.JA	また「{{,flag ? 'checked' : '',}}」のような条件演算子では、{{,flag,}}の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
 .EN	Constant string and constant number are not sanitized.
 .EN	Conditional expression such as '{{,flag ? " checked" : "",}}' is not sanitized because the result is constant string whether the value of '{{,flag,}}' is true or false.
 .	
 .	
 .	
 .	
-.JA	◎部分サニタイズ		| sanitizing-partial
-.EN	.$$ Partially Sanitizing	| sanitizing-partial
+.JA	◎部分サニタイズ		| sanitize2
+.EN	.$$ Partially Sanitizing	| sanitize2
 .	
 .JA	関数{{,E({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズします。
 .JA	また関数{{,X({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズしません。
@@ -855,8 +855,8 @@
 .	
 .	
 .	
-.JA	◎サニタイズの設定	| sanitizing-config
-.EN	.$$ Configuration for sanitizing	| sanitizing-config
+.JA	◎サニタイズの設定			| sanitize3
+.EN	.$$ Configuration for sanitizing	| sanitize3
 .	
 .JA	kwartz/config.rbはKwartz-rubyの動作を設定しているファイルです。
 .JA	デフォルトでサニタイズを行うように設定するには、この中で定数{{,ESCAPE,}}の値をtrueに変更します。
@@ -916,8 +916,8 @@
 .	
 .	
 .	
-.JA	◎グローバル変数とローカル変数		 | topics-analyze
-.EN	.$$ Analyzing Global and Local Variables | topics-analyze
+.JA	◎グローバル変数とローカル変数		 | analyze
+.EN	.$$ Analyzing Global and Local Variables | analyze
 .	
 .JA	Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
 .EN	Kwartz have a function to analyze presentation data/logic files and inspect variables.
@@ -935,10 +935,10 @@
 .JA	プレゼンテーションデータ(analyze.html)：
 .EN	Presentation Data (analyze.html):
 .	.-------------------- analyze.html
-.	<span kd="value:{{*title*}}">Analyzer Example</span>
+.	<span kw:d="value:{{*title*}}">Analyzer Example</span>
 .	<dl id="mark:items">
-.	 <dt kd="value:{{*ctr*}}"></dt>
-.	 <dd kd="value:{{*item*}}">Foo</dd>
+.	 <dt kw:d="value:{{*ctr*}}"></dt>
+.	 <dd kw:d="value:{{*item*}}">Foo</dd>
 .	</dl>
 .	.--------------------
 .	
@@ -978,51 +978,51 @@
 .	
 .	
 .	
-.JA	.#◎ローカル変数の名前を変更する		| topics-rename
-.EN	.#.$$ Rename Local Variable Names		| topics-span
-.	.#
-.	.#
-.JA	.#RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
-.JA	.#ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
-.JA	.#これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
-.EN	.#In Ruby or PHP, if local variables in template have the same name of variables in main program,
-.EN	.#assignment into local variables effects the control of main program.
-.EN	.#To address this problem, Kwartz have a feature to rename local variable names in template automatically.
-.	.#
-.	.#
-.JA	.#コンパイル時にコマンドラインオプション「{{,--rename,}}」を指定すると、
-.JA	.#ローカル変数名の頭に「{{,_,}}をつけます。
-.EN	.#The command-line option '{{,--rename,}}' renames all of local variable names in template automatically.
-.	.#
-.	.#
-.JA	.#前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
-.EN	.#The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
-.	.#
-.	.#
-.JA	.#実行例：
-.EN	.#Compile:
-.	.#.====================
-.	.#$ kwartz -l eruby  -p analyze.plogic {{*--rename*}} analyze.html
-.	.#$ kwartz -l php    -p analyze.plogic {{*--rename*}} analyze.html
-.	.#$ kwartz -l jstl11 -p analyze.plogic {{*--rename*}} analyze.html
-.	.#.====================
-.	.#
-.	.#
-.JA	.#出力用スクリプト：
-.EN	.#Output Script:
-.	.#.--------------------
-.	.#.<<<:! ./output.rb -p guide.d/analyze.plogic --rename guide.d/analyze.html
-.	.#.--------------------
-.	.#
-.	.#
-.JA	.#なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
-.EN	.#Constant RENAME in configuration file specifies whether rename local variable names in default.
+.JA	◎ローカル変数の名前を変更する		| rename
+.EN	.$$ Rename Local Variable Names		| rename
+.	
+.	
+.JA	RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
+.JA	ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+.JA	これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
+.EN	In Ruby or PHP, if local variables in template have the same name of variables in main program,
+.EN	assignment into local variables effects the control of main program.
+.EN	To address this problem, Kwartz have a feature to rename local variable names in template automatically.
+.	
+.	
+.JA	コンパイル時にコマンドラインオプション「{{,--rename,}}」を指定すると、
+.JA	ローカル変数名の頭に「{{,_,}}をつけます。
+.EN	The command-line option '{{,--rename,}}' renames all of local variable names in template automatically.
+.	
+.	
+.JA	前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
+.EN	The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
+.	
+.	
+.JA	実行例：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby  -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l php    -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l jstl11 -p analyze.plogic {{*--rename*}} analyze.html
+.	.====================
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -p guide.d/analyze.plogic --rename guide.d/analyze.html
+.	.--------------------
+.	
+.	
+.JA	なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
+.EN	Constant RENAME in configuration file specifies whether rename local variable names in default.
 .	
 .	
 .	
 .	
-.JA	◎spanタグの削除	| topics-span
-.EN	.$$ Span Tag Deletion	| topics-span
+.JA	◎spanタグの削除	| span
+.EN	.$$ Span Tag Deletion	| span
 .	
 .JA	Kwartzでは、ディレクティブしか含まないようなspanタグは、ダミータグとみなされて自動的に削除されます。
 .EN	The span tags which contains only directives are regarded as dummy tags and deleted automatically.
@@ -1058,7 +1058,7 @@
 .	.-------------------- topics-span2.pdata
 .	<h1><span id="mark:title" class="title">title</span></h1>
 .	
-.	Hello <span kd="value:user" style="color:black">World</span>!
+.	Hello <span kw:d="value:user" style="color:black">World</span>!
 .	.--------------------
 .	
 .JA	出力用スクリプト(for eRuby)：
@@ -1138,8 +1138,8 @@
 .	.--------------------
 .	
 .	
-.JA	◎プレゼンテーションロジックをターゲット言語で記述する	| topics-rawcode
-.EN	.$$ Describe Presentation Logic in Target Language	| topics-rawcode
+.JA	◎プレゼンテーションロジックをターゲット言語で記述する	| rawcode
+.EN	.$$ Describe Presentation Logic in Target Language	| rawcode
 .	
 .	
 .JA	行が「{{,<%,}}」または「{{,<?,}}」で始まる場合、そこから行末まではそのまま出力されます。
@@ -1176,8 +1176,8 @@
 .	
 .	
 .	
-.JA	◎タイムスタンプを比較して自動コンパイルを行う		| topic-autocompile
-.EN	.$$ Auto-compiling with Timestamp Comparison		| topic-autocompile
+.JA	◎タイムスタンプを比較して自動コンパイルを行う		| autocompile
+.EN	.$$ Auto-compiling with Timestamp Comparison		| autocompile
 .	
 .	
 .JA	プレゼンテーションファイルや出力用スクリプトファイルのタイムスタンプを実行時に比較して、自動コンパイルを行うことができます。
@@ -1219,42 +1219,44 @@
 .EN	.$$ Compile Template as a PHP Function 		| topic-mkmethod
 .	
 .	
-.JA	付属のmkmethod-phpスクリプトを使用することで、コンパイルしたテンプレートをPHPの関数として定義できます。
-.EN	Using the 'mkmethod-php' script, you can compile templates into a function of PHP.
+.JA	付属のmkmethodスクリプトを使用することで、コンパイルしたテンプレートをPHPの関数として定義できます。
+.EN	Using the 'mkmethod' script, you can compile templates into a function of PHP.
 .	
 .	
 .JA	プレゼンテーションデータ(hoge1.html)：
 .EN	Presentation Data (hoge1.html)
 .	.-------------------- hoge1.html
-.	Hello @{$user}@ !
+.	Hello @{user}@ !
 .	<ul id="mark:list">
-.	  <li kd="value($item)">xxx</li>
+.	  <li id="value:item">xxx</li>
 .	</ul>
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック(hoge1.plogic)：
 .EN	Presentation Logic (hoge1.plogic)
 .	.-------------------- hoge1.plogic
-.	element list {
-.	  @stag;
-.	  foreach ($list as $item) {
-.	    @cont;
+.	#list {
+.	  plogic: {
+.	    @stag;
+.	    foreach (item in list) {
+.	      @cont;
+.	    }
+.	    @stag;
 .	  }
-.	  @stag;
 .	}
 .	.--------------------
 .	
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ mkmethod-php -p hoge1.plogic hoge1.html > hoge1.view
+.	$ mkmethod -p hoge1.plogic hoge1.html > hoge1.view
 .	.====================
 .	
 .	
 .JA	出力用スクリプト(hoge1.view)：
 .EN	Output Script (hoge1.view):
 .	.--------------------
-.	.<<<:! mkmethod-php -p guide.d/hoge1.plogic guide.d/hoge1.html | tee hoge1.view
+.	.<<<:! mkmethod -p guide.d/hoge1.plogic guide.d/hoge1.html | tee hoge1.view
 .	.--------------------
 .	
 .	

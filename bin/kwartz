@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/ruby
 
 ##
 ## invoke kwartz-ruby script
@@ -7,6 +7,11 @@
 ## $Release$
 ##
 
-basedir=`dirname $0`
-script=$basedir/kwartz-ruby
-exec ruby $script $@
+### if shell script
+#basedir=`dirname $0`
+#script=$basedir/kwartz-ruby
+#exec ruby $script $@
+
+### if ruby script
+script = __FILE__ + '-ruby'
+load script
