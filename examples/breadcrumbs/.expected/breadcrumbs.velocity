@@ -1,0 +1,13 @@
+<html>
+  <body>
+
+    <div id="breadcrumbs">
+#foreach($crumb in $breadcrumbs)
+      <a href="$!{crumb.path}">$!{crumb.name}</a>
+      &gt;
+#end
+      $!{title}
+    </div>
+
+  </body>
+</html>

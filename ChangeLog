@@ -3,6 +3,8 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-03-29 rev.59
+	.- [bugfix] add some missing files
 
 .: 2005-03-28 rev.58
 	.- [enhance] new test script 'examples-test.rb'
