@@ -3,7 +3,7 @@
 ###
 ### KwartzUtility.inc
 ###
-### $Id: KwartzUtility.inc,v 0.1 2004/08/16 14:03:32 kwatch Exp $
+### $Id: KwartzUtility.inc,v 0.1 2004/08/16 14:03:32 kwatch Exp kwatch $
 ###
 
 //namespace Kwartz {

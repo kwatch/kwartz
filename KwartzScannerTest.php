@@ -3,7 +3,7 @@
 ###
 ### KwartzScannerTest.php
 ###
-### $Id: KwartzScannerTest.php,v 0.1 2004/08/16 14:04:46 kwatch Exp $
+### $Id: KwartzScannerTest.php,v 0.1 2004/08/16 14:04:46 kwatch Exp kwatch $
 ###
 
 require_once('PHPUnit.php');
@@ -120,6 +120,7 @@ END;
   :print("  <td>", item.name, "</td>\n")
   :print("</tr>\n")
 :end
+:load('file.txt')
 END;
 
 		$expected = <<<END
@@ -178,6 +179,10 @@ name
 "</tr>\\n"
 )
 :end
+:load
+(
+"file.txt"
+)
 
 END;
 		$this->_test($input, $expected);
@@ -214,7 +219,7 @@ END;
 	## invalid char
 	##
 	function test_scan_invalid1() {
-		$input = 'ほげ';
+		$input = 'あいうえお';
 		try {
 			$this->_test($input, NULL, false);
 		} catch (KwartzScannerException $ex) {
@@ -223,6 +228,32 @@ END;
 		}
 		$this->fail("KwartzScannerException should be thrown.");
 	}
+
+
+	##
+	## rawcode
+	##
+	function test_scan_rawcode1() {
+		$input = ":::<?php echo hoge; %>\n";
+		$scanner = new KwartzScanner($input);
+		$scanner->scan();
+		$this->assertEquals(':::', $scanner->token());
+		$this->assertEquals('<?php echo hoge; %>', $scanner->token_str());
+	}
+
+
+
+	##
+	## @macro_name
+	##
+	function test_scan_expand2() {
+		$input = "@elem_foo";
+		$scanner = new KwartzScanner($input);
+		$scanner->scan();
+		$this->assertEquals('@', $scanner->token());
+		$this->assertEquals('elem_foo', $scanner->token_str());
+	}
+
 }
 
 

@@ -3,7 +3,7 @@
 ###
 ### KwartzScanner.inc
 ###
-### $Id: KwartzScanner.inc,v 0.1 2004/08/16 14:02:49 kwatch Exp $
+### $Id: KwartzScanner.inc,v 0.1 2004/08/16 14:02:49 kwatch Exp kwatch $
 ###
 
 require_once('KwartzException.inc');
@@ -51,7 +51,7 @@ require_once('KwartzUtility.inc');
 		private $reserved = array(
 			'if'	   => 'if',
 			'elseif'   => 'elseif',
-			'elsif'	   => 'elsif',
+			'elsif'	   => 'elseif',
 			'else'	   => 'else',
 			'foreach'  => 'foreach',
 			'for'	   => 'for',
@@ -67,6 +67,7 @@ require_once('KwartzUtility.inc');
 			'nil'	   => 'null',
 			'set'	   => 'set',
 			'end'	   => 'end',
+			'load'	   => 'load',
 		);
 
 		//const EOF = -1;
@@ -288,8 +289,11 @@ require_once('KwartzUtility.inc');
 				if ($c == ':') {
 					$c = $this->read();
 					if ($c == ':') {
-						$this->read();
-						return $this->token = ':::';
+						while (($c = $this->read()) != EOF && $c != "\n") {
+							$s .= $c;
+						}
+						$this->token_str = $s;
+						return $this->token = ':::';	# rawcode
 					}
 					return $this->token = '::';
 				}
@@ -309,7 +313,7 @@ require_once('KwartzUtility.inc');
 				}
 				return $this->token = ':';
 			}
-			
+
 			if ($c == '[') {
 				$c = $this->read();
 				if ($c == ':') {
@@ -317,6 +321,19 @@ require_once('KwartzUtility.inc');
 					return $this->token = '[:';
 				}
 				return $this->token = '[';
+			}
+
+			if ($c == '@') {
+				$s = '';
+				while ( ($c = $this->read()) != EOF && (ctype_alnum($c) || $c == '_') ) {
+					$s .= $c;
+				}
+				if ($s == '') {
+					$msg = "'@' needs macro-name.";
+					throw new KwartzScannerError($msg, $this);
+				}
+				$this->token_str = $s;
+				return $this->token = '@';
 			}
 
 			switch ($c) {
@@ -329,7 +346,6 @@ require_once('KwartzUtility.inc');
 			case '?':
 			case ',':
 			case ';':
-			case '@':
 			case '\\':
 			case '`':
 			case '~':

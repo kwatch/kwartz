@@ -3,7 +3,7 @@
 ###
 ### KwartzElementTest.php
 ###
-### $Id: KwartzElementTEst.php,v 0.1 2004/08/16 14:04:10 kwatch Exp $
+### $Id: KwartzElementTest.php,v 0.1 2004/08/16 14:04:10 kwatch Exp kwatch $
 ###
 
 require_once('PHPUnit.php');
@@ -85,7 +85,7 @@ class KwartzElementTest extends PHPUnit_TestCase {
 		$this->macro_stmt = new KwartzMacroStatement('foo', new KwartzBlockStatement($list));
 		
 		## rawcode-statement
-		$rawcode = "<?php echo \$hoge; ?>\n";
+		$rawcode = "<?php echo \$hoge; ?>";
 		$this->rawcode_stmt = new KwartzRawcodeStatement($rawcode);
 		
 	}
@@ -262,7 +262,7 @@ END;
 	function test_expand_stmt1() {
 		$expected = <<<END
 :expand
-  foo
+  'foo'
 
 END;
 		$actual = $this->expand_stmt->inspect();
@@ -277,14 +277,14 @@ END;
 	function test_macro_stmt1() {
 		$expected = <<<END
 :macro
-  foo
+  'foo'
   <<block>>
     :expand
-      stag_foo
+      'stag_foo'
     :expand
-      cont_foo
+      'cont_foo'
     :expand
-      etag_foo
+      'etag_foo'
 
 END;
 		$actual = $this->macro_stmt->inspect();
@@ -302,6 +302,8 @@ END;
 
 END;
 		$actual = $this->rawcode_stmt->inspect();
+		//echo kwartz_inspect_str($expected), "\n";
+		//echo kwartz_inspect_str($actual), "\n";
 		$this->assertEquals($expected, $actual);
 	}
 

@@ -3,7 +3,7 @@
 ###
 ### KwartzParserTest.php
 ###
-### $Id: KwartzParserTest.php,v 0.1 2004/08/16 14:08:06 kwatch Exp $
+### $Id: KwartzParserTest.php,v 0.1 2004/08/16 14:08:06 kwatch Exp kwatch $
 ###
 
 require_once('PHPUnit.php');
@@ -476,6 +476,488 @@ END;
 	###
 	### statement
 	###
+
+	function _test_stmt($input, $expected, $method_name='parse_statement', $flag_test=true) {
+		$scanner = new KwartzScanner($input);
+		$parser  = new KwartzParser($scanner);
+		$stmt = $parser->$method_name();
+		$actual = $stmt->inspect();
+		if ($flag_test) {
+			$this->assertEquals($expected, $actual);
+		}
+		return $actual;
+	}
+	
+	function test_parse_set_stmt1() {
+		$input = ":set(v = 1)";
+		$expected = <<<END
+:set
+  =
+    v
+    1
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_set_stmt');
+	}
+
+
+	function test_parse_print_stmt1() {
+		$input = ":print(x, y+1, z)";
+		$expected = <<<END
+:print
+  x
+  +
+    y
+    1
+  z
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_print_stmt');
+	}
+
+
+	function test_parse_block_stmt1() {
+		$input = <<<END
+:set(x = 1)
+:print(x)
+END;
+		$expected = <<<END
+<<block>>
+  :set
+    =
+      x
+      1
+  :print
+    x
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_block_stmt');
+	}
+
+
+	function test_parse_if_stmt1() {
+		$input = ":if(x > 0) :print(x) :end";
+		$expected = <<<END
+:if
+  >
+    x
+    0
+  <<block>>
+    :print
+      x
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+	}
+
+
+	function test_parse_if_stmt2() {
+		$input = ":if(x > y) :set(max=x) :else :set(max=y) :end";
+		$expected = <<<END
+:if
+  >
+    x
+    y
+  <<block>>
+    :set
+      =
+        max
+        x
+  <<block>>
+    :set
+      =
+        max
+        y
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+	}
+
+
+
+	function test_parse_if_stmt3() {
+		$input = <<<END
+:if (x > 1000)
+  :print('A')
+:elseif (x > 100)
+  :print('B')
+:elseif (x > 10)
+  :print('C')
+:end
+END;
+		$expected = <<<END
+:if
+  >
+    x
+    1000
+  <<block>>
+    :print
+      "A"
+  :if
+    >
+      x
+      100
+    <<block>>
+      :print
+        "B"
+    :if
+      >
+        x
+        10
+      <<block>>
+        :print
+          "C"
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+	}
+
+
+
+	function test_parse_if_stmt4() {
+		$input = <<<END
+:if (x > 1000)
+  :print('A')
+:elseif (x > 100)
+  :print('B')
+:elseif (x > 10)
+  :print('C')
+:else
+  :print('X')
+:end
+END;
+		$expected = <<<END
+:if
+  >
+    x
+    1000
+  <<block>>
+    :print
+      "A"
+  :if
+    >
+      x
+      100
+    <<block>>
+      :print
+        "B"
+    :if
+      >
+        x
+        10
+      <<block>>
+        :print
+          "C"
+      <<block>>
+        :print
+          "X"
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_if_stmt');
+	}
+
+
+	function test_foreach_stmt1() {
+		$input = <<<END
+:foreach(item = list)
+	:print("<td>", item.name, "</td>\n")
+:end
+END;
+		$expected = <<<END
+:foreach
+  item
+  list
+  <<block>>
+    :print
+      "<td>"
+      .
+        item
+        'name'
+      "</td>\\n"
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_foreach_stmt');
+	}
+
+
+	function test_while_stmt1() {
+		$input = <<<END
+:while(row = s.next)
+	:print("<td>", row[0], "</td>\n")
+:end
+END;
+		$expected = <<<END
+:while
+  =
+    row
+    .
+      s
+      'next'
+  <<block>>
+    :print
+      "<td>"
+      []
+        row
+        0
+      "</td>\\n"
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_while_stmt');
+	}
+
+
+	function test_macro_stmt1() {
+		$input = <<<END
+:macro(stag_foo)
+  :print("<td>\n")
+:end
+END;
+		$expected = <<<END
+:macro
+  'stag_foo'
+  <<block>>
+    :print
+      "<td>\\n"
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_macro_stmt');
+	}
+
+
+	function test_expand_stmt1() {
+		$input = ":expand(elem_foo)";
+		$expected = <<<END
+:expand
+  'elem_foo'
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_expand_stmt');
+	}
+
+	function test_expand2_stmt1() {
+		$input = "@elem_foo";
+		$expected = <<<END
+:expand
+  'elem_foo'
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_expand2_stmt');
+	}
+
+	function test_expand2_stmt2() {
+		$input = "@stag";
+		$expected = NULL;
+		try {
+			$this->_test_stmt($input, $expected, 'parse_expand2_stmt', false);
+		} catch (KwartzSemanticError $ex) {
+			# OK
+			return;
+		}
+		$this->fail("kwartzSemanticError expected.");
+	}
+
+
+	function test_elem_stmt1() {
+		$input = <<<END
+:elem(foo)
+  @stag
+  @cont
+  @etag
+:end
+END;
+		$expected = <<<END
+:macro
+  'elem_foo'
+  <<block>>
+    :expand
+      'stag_foo'
+    :expand
+      'cont_foo'
+    :expand
+      'etag_foo'
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_elem_stmt');
+	}
+
+
+	function test_elem_stmt2() {
+		$input = <<<END
+:elem(foo)
+  @stag
+  @cont
+  @etag
+:end
+:elem(bar)
+  @stag
+  @cont
+  @etag
+:end
+:elem(baz)
+  @stag
+  @cont
+  @etag
+:end
+END;
+		$expected = <<<END
+<<block>>
+  :macro
+    'elem_foo'
+    <<block>>
+      :expand
+        'stag_foo'
+      :expand
+        'cont_foo'
+      :expand
+        'etag_foo'
+  :macro
+    'elem_bar'
+    <<block>>
+      :expand
+        'stag_bar'
+      :expand
+        'cont_bar'
+      :expand
+        'etag_bar'
+  :macro
+    'elem_baz'
+    <<block>>
+      :expand
+        'stag_baz'
+      :expand
+        'cont_baz'
+      :expand
+        'etag_baz'
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_block_stmt');
+	}
+
+
+	function test_rawcode_stmt1() {
+		$input = ":::<?php echo hoge; ?>\n";
+		$expected = <<<END
+:::<?php echo hoge; ?>
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_rawcode_stmt');
+	}
+
+
+	function test_load_stmt1() {
+		$content = <<<END
+:print(x)
+END;
+		$filename = '_load.plogic';
+		$f = fopen($filename, 'w');
+		fwrite($f, $content);
+		fclose($f);
+		$input = ":load('{$filename}')";
+		$expected = <<<END
+<<block>>
+  :print
+    x
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_load_stmt');
+		unlink($filename);
+	}
+
+
+	function test_parse_complex_stmt1() {
+		$input = <<<END
+:macro(stag_foo)
+  :print("<tr class=\"", klass, "\"\n")
+:end
+:macro(cont_foo)
+  :print("  <td>", item, "</td>\n")
+:end
+:macro(etag_foo)
+  :print("</tr>\n")
+:end
+:macro(elem_foo)
+  :expand(stag_foo)
+  :expand(cont_foo)
+  :expand(etag_foo)
+:end
+
+:elem(foo)
+  :set(ctr = 0)
+  :foreach (item = list)
+    :set(ctr += 1)
+    :set(klass = ctr%2 == 0 ? 'even':'odd')
+    @stag
+    @cont
+    @etag
+  :end
+:end
+END;
+		$expected = <<<END
+<<block>>
+  :macro
+    'stag_foo'
+    <<block>>
+      :print
+        "<tr class=\\""
+        klass
+        "\\"\\n"
+  :macro
+    'cont_foo'
+    <<block>>
+      :print
+        "  <td>"
+        item
+        "</td>\\n"
+  :macro
+    'etag_foo'
+    <<block>>
+      :print
+        "</tr>\\n"
+  :macro
+    'elem_foo'
+    <<block>>
+      :expand
+        'stag_foo'
+      :expand
+        'cont_foo'
+      :expand
+        'etag_foo'
+  :macro
+    'elem_foo'
+    <<block>>
+      :set
+        =
+          ctr
+          0
+      :foreach
+        item
+        list
+        <<block>>
+          :set
+            +=
+              ctr
+              1
+          :set
+            =
+              klass
+              ?
+                ==
+                  %
+                    ctr
+                    2
+                  0
+                "even"
+                "odd"
+          :expand
+            'stag_foo'
+          :expand
+            'cont_foo'
+          :expand
+            'etag_foo'
+
+END;
+		$this->_test_stmt($input, $expected, 'parse_all');
+	}
 
 }
 

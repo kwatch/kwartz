@@ -3,7 +3,7 @@
 ###
 ### KwartzElement.inc - class definition of Element, Expression, Statement, ...
 ###
-### $Id: KwartzElement.inc,v 0.1 2004/08/16 13:40:23 kwatch Exp $
+### $Id: KwartzElement.inc,v 0.1 2004/08/16 13:40:23 kwatch Exp kwatch $
 ###
 
 
@@ -31,6 +31,7 @@
 ###	   Rawcode
 ###
 
+require_once('KwartzUtility.inc');
 
 //namespace Kwartz {
 
@@ -78,22 +79,22 @@
 	##
 	abstract class KwartzExpression extends KwartzElement {
 	}
-	
+
 	class KwartzUnaryExpression extends KwartzExpression {
 		// instance vars
 		private $child;		// expression
-		
+
 		// constructor
 		function __construct($token, $child_expr) {
 			parent::__construct($token);
 			$this->child = $child_expr;
 		}
-		
+
 		// instance methods
 		function child() {
 			return $this->child;
 		}
-		
+
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->child->inspect($depth + 1);
@@ -128,18 +129,18 @@
 			return $s;
 		}
 	}
-	
+
 	class KwartzFunctionExpression extends KwartzExpression {
 		// constructor
 		private $funcname;
 		private $arglist;
-		
+
 		function __construct($funcname, $arglist) {
 			parent::__construct('function');
 			$this->funcname = $funcname;
-			$this->arglist  = $arglist;
+			$this->arglist	= $arglist;
 		}
-		
+
 		function funcname() { return $this->funcname; }
 		function arglist()  { return $this->arglist; }
 
@@ -158,13 +159,13 @@
 		// constructor
 		private $object;		// expression
 		private $property;		// string
-		
+
 		function __construct($token, $object_expr, $property_name) {
 			parent::__construct($token);
 			$this->object = $object_expr;
 			$this->property = $property_name;
 		}
-		
+
 		function object()   { return $this->object; }
 		function property() { return $this->property; }
 
@@ -186,10 +187,10 @@
 		function __construct($token, $condition_expr, $left_expr, $right_expr) {
 			parent::__construct($token);
 			$this->condition = $condition_expr;
-			$this->left      = $left_expr;
-			$this->right     = $right_expr;
+			$this->left	 = $left_expr;
+			$this->right	 = $right_expr;
 		}
-		
+
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->condition->inspect($depth+1);
@@ -279,7 +280,7 @@
 		// instance methods
 		function inspect($depth=0) {
 			$s = $this->indent($depth);
-			$s .= '"' . $this->value() . "\"\n";
+			$s .= kwartz_inspect_str($this->value()) . "\n";
 			return $s;
 		}
 	}
@@ -297,14 +298,14 @@
 			parent::__construct('null', $value);
 		}
 	}
-	
+
 	//## property name
 	//class KwartzNameExpression extends KwartzLeafExpression {
 	//	// constructor
 	//	function __construct($name) {
 	//		parent::__construct('name', $name);
 	//	}
-	//	
+	//
 	//	// instance methods
 	//	function name() {
 	//		$this->value();
@@ -325,22 +326,23 @@
 
 	class KwartzBlockStatement extends KwartzStatement {
 		// instance vars
-		private $stmt_list;		// array
+		private $statements;		// array
 
 		// constructor
-		function __construct($stmt_list=array()) {
+		function __construct($statements=array()) {
 			parent::__construct('<<block>>');
-			$this->stmt_list = $stmt_list;
+			$this->statements = $statements;
 		}
 
 		// instance methods
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
-			foreach ($this->stmt_list as $stmt) {
+			foreach ($this->statements as $stmt) {
 				$s .= $stmt->inspect($depth + 1);
 			}
 			return $s;
 		}
+		function statements() { return $this->statements; }
 	}
 
 	class KwartzPrintStatement extends KwartzStatement {
@@ -395,7 +397,9 @@
 			$s = parent::inspect($depth);
 			$s .= $this->cond_expr->inspect($depth + 1);
 			$s .= $this->then_block->inspect($depth + 1);
-			$s .= $this->else_stmt->inspect($depth + 1);
+			if ($this->else_stmt) {
+				$s .= $this->else_stmt->inspect($depth + 1);
+			}
 			return $s;
 		}
 	}
@@ -424,6 +428,28 @@
 		}
 	}
 
+
+	class KwartzWhileStatement extends KwartzStatement {
+		// instance vars
+		private $condition;		// expression
+		private $body_block;
+
+		// constructor
+		function __construct($condition_expr, $body_block) {
+			parent::__construct(':while');
+			$this->condition  = $condition_expr;
+			$this->body_block = $body_block;
+		}
+
+		// instance methods
+		function inspect($depth=0) {
+			$s = parent::inspect($depth);
+			$s .= $this->condition->inspect($depth + 1);
+			$s .= $this->body_block->inspect($depth + 1);
+			return $s;
+		}
+	}
+
 	class KwartzMacroStatement extends KwartzStatement {
 		private $macro_name;		// string
 		private $body_block;		// BlockStatement
@@ -437,14 +463,14 @@
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->indent($depth + 1);
-			$s .= $this->macro_name . "\n";
+			$s .= "'" . $this->macro_name . "'\n";
 			$s .= $this->body_block->inspect($depth + 1);
 			return $s;
 		}
 	}
 
 	class KwartzExpandStatement extends KwartzStatement {
-		private $macro_name;
+		private $macro_name;		// string
 
 		function __construct($macro_name) {
 			parent::__construct(':expand');
@@ -453,7 +479,7 @@
 		function inspect($depth=0) {
 			$s = parent::inspect($depth);
 			$s .= $this->indent($depth + 1);
-			$s .= $this->macro_name . "\n";
+			$s .= "'" . $this->macro_name . "'\n";
 			return $s;
 		}
 	}
@@ -462,17 +488,16 @@
 		private $code_str;
 
 		function __construct($code_str) {
-			parent::__construct(':::');
+			parent::__construct(':rawcode');
 			$this->code_str = $code_str;
 		}
 
 		function inspect($depth=0) {
 			$s = $this->indent($depth);
-			$s .= ':::' . $this->code_str;
+			$s .= ':::' . $this->code_str . "\n";
 			return $s;
 		}
 	}
-
 
 //} // end of namespace Kwartz
 ?>

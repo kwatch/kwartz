@@ -3,7 +3,7 @@
 ###
 ### Kwartz.inc -- library for Kwartz-php
 ###
-### $Id: Kwartz.inc,v 0.2 2004/08/16 13:39:24 kwatch Exp $
+### $Id: Kwartz.inc,v 0.2 2004/08/16 13:39:24 kwatch Exp kwatch $
 ###
 
 
