@@ -237,11 +237,30 @@ END;
 	## rawcode
 	##
 	function test_scan_rawcode1() {
-		$input = ":::<?php echo hoge; %>\n";
+		$input = ":::<?php echo hoge; ?>\n";
 		$scanner = new KwartzScanner($input);
 		$scanner->scan();
 		$this->assertEquals(':::', $scanner->token());
-		$this->assertEquals('<?php echo hoge; %>', $scanner->token_str());
+		$this->assertEquals('<?php echo hoge; ?>', $scanner->token_str());
+	}
+
+
+	function test_scan_rawcode2() {
+		$input = "<?php echo hoge; ?>\n";
+		$scanner = new KwartzScanner($input);
+		$scanner->scan();
+		$this->assertEquals(':rawcode', $scanner->token());
+		$this->assertEquals('<?php echo hoge; ?>', $scanner->token_str());
+	}
+
+
+
+	function test_scan_rawcode3() {
+		$input = "  <%= hoge %>\n";
+		$scanner = new KwartzScanner($input);
+		$scanner->scan();
+		$this->assertEquals(':rawcode', $scanner->token());
+		$this->assertEquals('<%= hoge %>', $scanner->token_str());
 	}
 
 

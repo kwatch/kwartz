@@ -408,7 +408,8 @@ require_once('KwartzScanner.inc');
 			case ':elem':
 				$stmt = $this->parse_elem_stmt();
 				break;
-			case ':::':	#case ':rawcode':
+			case ':::':
+			case ':rawcode':
 				$stmt = $this->parse_rawcode_stmt();
 				break;
 			default:

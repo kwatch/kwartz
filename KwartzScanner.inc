@@ -224,7 +224,25 @@ require_once('KwartzUtility.inc');
 				return $this->token = 'string';
 			}
 
-			if ($c == '<' || $c == '>' || $c == '!') {
+			if ($c == '<') {
+				$c = $this->read();
+				switch ($c) {
+				case '=':
+					$this->read();
+					return $this->token = '<=';
+				case '?':
+				case '%':
+					$s = '<' . $c;
+					while (($c = $this->read()) != EOF && $c != "\n") {
+						$s .= $c;
+					}
+					$this->token_str = $s;
+					return $this->token = ':rawcode';
+				}
+				return $this->token = '<';
+			}
+
+			if ($c == '>' || $c == '!') {
 				$op = $c;
 				$c = $this->read();
 				if ($c == '=') {
