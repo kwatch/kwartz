@@ -174,11 +174,11 @@ END;
 	function test_fetch6() {
 		$input = <<<END
 		<span id="foo" class="foo"
-		      php="attr('class'=>\$user->ctr%2==0?'even':'odd')">hello</span>
+		      kd:php="attr('class'=>\$user->ctr%2==0?'even':'odd')">hello</span>
 
 END;
 #		$expected = <<<END
-#"" "" <span " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""> ""
+#"" "" <span " id=\"foo\" class=\"foo\"\\n      kd:php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""> ""
 #"hello" "" </span ""> "\\n"
 #""
 #END;
@@ -186,7 +186,7 @@ END;
 		before_text:  ""
 		before_space: ""
 		tag:          <span>
-		attr_str:     " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""
+		attr_str:     " id=\"foo\" class=\"foo\"\\n      kd:php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""
 		after_space:  ""
 		
 		before_text:  "hello"
@@ -329,11 +329,11 @@ END;
 
 	function test_parse_attr_str1_php() {
 		$input = <<<END
-<tr id="foo" class="odd" php="attr('class'=>\$klass,'align'=>\$item->align);foreach(\$list as \$item)">
+<tr id="foo" class="odd" kd:php="attr('class'=>\$klass,'align'=>\$item->align);foreach(\$list as \$item)">
   <td id="value:klass">hoge</td>
 </tr>
 END;
-		$expected1 = ' id="foo" class="odd" php="attr(\'class\'=>$klass,\'align\'=>$item->align);foreach($list as $item)"';
+		$expected1 = ' id="foo" class="odd" kd:php="attr(\'class\'=>$klass,\'align\'=>$item->align);foreach($list as $item)"';
 		$expected2 = ' id="foo" class="@{$klass}@" align="@{$item->align}@"';
 
 		$converter = new KwartzConverter($input);
@@ -370,11 +370,11 @@ END;
 
 	function test_parse_attr_str2_php() {
 		$input = <<<END
-<tr id="foo" class="odd" php="Attr('class'=>\$klass);embed(\$flag?'checked':'');foreach(\$list as \$item)">
+<tr id="foo" class="odd" kd:php="Attr('class'=>\$klass);embed(\$flag?'checked':'');foreach(\$list as \$item)">
   <td id="value:klass">hoge</td>
 </tr>
 END;
-		$expected1 = ' id="foo" class="odd" php="Attr(\'class\'=>$klass);embed($flag?\'checked\':\'\');foreach($list as $item)"';
+		$expected1 = ' id="foo" class="odd" kd:php="Attr(\'class\'=>$klass);embed($flag?\'checked\':\'\');foreach($list as $item)"';
 		$expected2 = ' id="foo" class="@{E($klass)}@" @{$flag?\'checked\':\'\'}@';
 
 		$converter = new KwartzConverter($input);
@@ -390,14 +390,15 @@ END;
 
 
 
+
 	###
 	### convert()
 	###
-	function _test_convert($input, $expected, $flag_test=TRUE) {
+	function _test_convert($input, $expected, $flag_test=TRUE, $toppings=NULL) {
 		if (! $flag_test) { return; }
 		$input    = preg_replace('/^\t\t/m', '', $input);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
-		$converter = new KwartzConverter($input);
+		$converter = new KwartzConverter($input, $toppings);
 		$block = $converter->convert();
 		$actual = $block->inspect();
 		if ($flag_test) {
@@ -507,7 +508,7 @@ END;
 END;
 
 		$input2 = <<<END
-		<div php="mark(foo)">
+		<div kd:php="mark(foo)">
 		hoge
 		</div>
 END;
@@ -552,7 +553,7 @@ END;
 		<td kd="value:hash['key']">hoge</td>
 END;
 		$input2 = <<<END
-		<td php="echo(\$hash['key'])">hoge</td>
+		<td kd:php="echo(\$hash['key'])">hoge</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -580,7 +581,7 @@ END;
 		</font>
 END;
 		$input2 = <<<END
-		<font color="red" php="if(\$flag!=true)">
+		<font color="red" kd:php="if(\$flag!=true)">
 		ERROR
 		</font>
 END;
@@ -611,7 +612,7 @@ END;
 		<font color="red" kd="unless:list.length>0">Empty.</font>
 END;
 #		$input2 = <<<END
-#		<font color="red" php="unless(list.length>0)">Empty.</font>
+#		<font color="red" kd:php="unless(list.length>0)">Empty.</font>
 #END;
 		$expected = <<<END
 		<<block>>
@@ -644,7 +645,7 @@ END;
 		<li kd="while:i<max">foo</li>
 END;
 		$input2 = <<<END
-		<li php="while(\$i<\$max)">foo</li>
+		<li kd:php="while(\$i<\$max)">foo</li>
 END;
 		$expected = <<<END
 		<<block>>
@@ -677,7 +678,7 @@ END;
 END;
 		$input2 = <<<END
 		<ul>
-		<li php="dummy(x1)" class="even">bar</li>
+		<li kd:php="dummy(x1)" class="even">bar</li>
 		</ul>
 END;
 		$expected = <<<END
@@ -699,7 +700,7 @@ END;
 		<td kd="set:i=i+1">hoge</td>
 END;
 		$input2 = <<<END
-		<td php="\$i=\$i+1">hoge</td>
+		<td kd:php="\$i=\$i+1">hoge</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -729,7 +730,7 @@ END;
 		<b kd="foreach:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="foreach(\$list as \$item)">hoge</b>
+		<b kd:php="foreach(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -757,7 +758,7 @@ END;
 		<b kd="Foreach:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="Foreach(\$list as \$item)">hoge</b>
+		<b kd:php="Foreach(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -792,7 +793,7 @@ END;
 		<b kd="FOREACH:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="FOREACH(\$list as \$item)">hoge</b>
+		<b kd:php="FOREACH(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -832,13 +833,59 @@ END;
 	}
 
 
+	function test_convert_foreach4() {	# even/odd value
+		$input = <<<END
+		<b kd="FOREACH:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b kd:php="FOREACH(\$list as \$item)">hoge</b>
+END;
+		$expected = <<<END
+		<<block>>
+		  :set
+		    =
+		      item_ctr
+		      0
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :set
+		        +=
+		          item_ctr
+		          1
+		      :set
+		        =
+		          item_tgl
+		          ?
+		            ==
+		              %
+		                item_ctr
+		                2
+		              0
+		            "#FFCCCC"
+		            "#CCCCFF"
+		      :print
+		        "<b>"
+		      :print
+		        "hoge"
+		      :print
+		        "</b>"
+
+END;
+		$toppings = array('even_value'=>'#FFCCCC', 'odd_value'=>'#CCCCFF');
+		$this->_test_convert($input, $expected, true, $toppings);
+		$this->_test_convert($input2, $expected, true, $toppings);
+	}
+
+
 
 	function test_convert_loop1() {
 		$input = <<<END
 		<b kd="loop:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="loop(\$list as \$item)">hoge</b>
+		<b kd:php="loop(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -867,7 +914,7 @@ END;
 		<b kd="Loop:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="Loop(\$list as \$item)">hoge</b>
+		<b kd:php="Loop(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -903,7 +950,7 @@ END;
 		<b kd="LOOP:item=list">hoge</b>
 END;
 		$input2 = <<<END
-		<b php="LOOP(\$list as \$item)">hoge</b>
+		<b kd:php="LOOP(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -943,6 +990,52 @@ END;
 	}
 
 
+	function test_convert_loop4() {		# even/odd value
+		$input = <<<END
+		<b kd="LOOP:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b kd:php="LOOP(\$list as \$item)">hoge</b>
+END;
+		$expected = <<<END
+		<<block>>
+		  :print
+		    "<b>"
+		  :set
+		    =
+		      item_ctr
+		      0
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :set
+		        +=
+		          item_ctr
+		          1
+		      :set
+		        =
+		          item_tgl
+		          ?
+		            ==
+		              %
+		                item_ctr
+		                2
+		              0
+		            "#FFCCCC"
+		            "#CCCCFF"
+		      :print
+		        "hoge"
+		  :print
+		    "</b>"
+
+END;
+		$toppings = array('even_value'=>'#FFCCCC', 'odd_value'=>'#CCCCFF');
+		$this->_test_convert($input,  $expected, true, $toppings);
+		$this->_test_convert($input2, $expected, true, $toppings);
+	}
+
+
 
 	function test_convert_span1() {
 		$input = <<<END
@@ -951,9 +1044,9 @@ END;
 		<span id="attr:class:var3;set:var3=value3"/>
 END;
 		$input2 = <<<END
-		<span php="\$var1=\$value1"/>
-		  <span php="\$var2=\$value2"/>
-		<span php="attr('class'=>\$var3);\$var3=\$value3"/>
+		<span kd:php="\$var1=\$value1"/>
+		  <span kd:php="\$var2=\$value2"/>
+		<span kd:php="attr('class'=>\$var3);\$var3=\$value3"/>
 END;
 		$expected = <<<END
 		<<block>>
@@ -1015,7 +1108,7 @@ END;
 		</span>
 END;
 		$input2 = <<<END
-		<span php="foreach(\$list as \$item)">
+		<span kd:php="foreach(\$list as \$item)">
 		aaa
 		</span>
 		<span>
@@ -1049,7 +1142,7 @@ END;
 <span id="value:day" class="holiday">&nbsp;</span>
 END;
 		$input2 = <<<END
-<span php="echo(\$day)" class="holiday">&nbsp;</span>
+<span kd:php="echo(\$day)" class="holiday">&nbsp;</span>
 END;
 		$expected = <<<END
 <<block>>
@@ -1325,9 +1418,9 @@ END;
 
 	function test_convert_escape1_php() {
 		$input = <<<END
-		<td php="echo(\$a[0])">foo</td>
-		<td php="Echo(\$a[1])">bar</td>
-		<td php="ECHO(\$a[2])">baz</td>
+		<td kd:php="echo(\$a[0])">foo</td>
+		<td kd:php="Echo(\$a[1])">bar</td>
+		<td kd:php="ECHO(\$a[2])">baz</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -1419,14 +1512,14 @@ END;
 
 		$input2 = <<<END
 		<table>
-		  <span php="\$ctr=0"/>
-		  <tbody php="loop(\$user_list as \$user)">
-		    <span php="\$ctr+=1"/>
-		    <tr class="odd" php="attr('class'=>\$klass);\$klass=\$user_ctr%2==0?'even':'odd'">
-		      <td php="echo(\$user['name'])">Foo</td>
-		      <td php="echo(\$user['mail'])">foo@mail.org</td>
+		  <span kd:php="\$ctr=0"/>
+		  <tbody kd:php="loop(\$user_list as \$user)">
+		    <span kd:php="\$ctr+=1"/>
+		    <tr class="odd" kd:php="attr('class'=>\$klass);\$klass=\$user_ctr%2==0?'even':'odd'">
+		      <td kd:php="echo(\$user['name'])">Foo</td>
+		      <td kd:php="echo(\$user['mail'])">foo@mail.org</td>
 		    </tr>
-		    <tr class="even" php="dummy(d1)">
+		    <tr class="even" kd:php="dummy(d1)">
 		      <td>Bar</td>
 		      <td>bar@mail.com</td>
 		    </tr>
@@ -1573,10 +1666,10 @@ END;
 
 	function test_replace2() {
 		$input = 
-		'<b php="replace(foo)">
+		'<b kd:php="replace(foo)">
 		bakeratta
 		</b>
-		<span php="replace(foo)"/>
+		<span kd:php="replace(foo)"/>
 		';
 		$expected = 
 		'<<block>>
@@ -1638,8 +1731,8 @@ END;
 	function test_include1_php() {
 		$filename = '_test.plogic';
 		$pdata =
-		'<div php="foreach($list as $item)">
-		  <span php="echo($item)">foo</span>
+		'<div kd:php="foreach($list as $item)">
+		  <span kd:php="echo($item)">foo</span>
 		</div>
 		';
 		$pdata = preg_replace('/^\t\t/m', '', $pdata);
@@ -1648,7 +1741,7 @@ END;
 		fclose($f);
 		$input = 
 		'<div>
-		  <div php="include(\'' . $filename . '\')">
+		  <div kd:php="include(\'' . $filename . '\')">
 		    foo
 		  </div>
 		</div>
@@ -1746,7 +1839,7 @@ END;
 		fclose($f);
 		$input = 
 		'<div>
-		  <div php="load(\'' . $filename . '\')">
+		  <div kd:php="load(\'' . $filename . '\')">
 		    foo
 		  </div>
 		</div>
@@ -1793,12 +1886,12 @@ END;
 		';
 	const input_else1_php =
 		'<table>
-		  <tbody php="Loop($user_list as $user)">
-		    <tr class="odd" php="if($user_ctr%2==1)">
-		      <td php="echo($user)">foo</td>
+		  <tbody kd:php="Loop($user_list as $user)">
+		    <tr class="odd" kd:php="if($user_ctr%2==1)">
+		      <td kd:php="echo($user)">foo</td>
 		    </tr>
-		    <tr class="even" php="else()">
-		      <td php="echo($user)">bar</td>
+		    <tr class="even" kd:php="else()">
+		      <td kd:php="echo($user)">bar</td>
 		    </tr>
 		  </tbody>
 		</table>
@@ -1885,15 +1978,15 @@ END;
 		';
 	const input_elseif1_php =
 		'<table>
-		  <tbody php="Loop($user_list as $user)">
-		    <tr class="line1" php="if($user_ctr%3==1)">
-		      <td php="echo($user)">foo</td>
+		  <tbody kd:php="Loop($user_list as $user)">
+		    <tr class="line1" kd:php="if($user_ctr%3==1)">
+		      <td kd:php="echo($user)">foo</td>
 		    </tr>
-		    <tr class="line2" php="elseif($user_ctr%3==2)">
-		      <td php="echo($user)">bar</td>
+		    <tr class="line2" kd:php="elseif($user_ctr%3==2)">
+		      <td kd:php="echo($user)">bar</td>
 		    </tr>
-		    <tr class="line3" php="else()">
-		      <td php="echo($user)">bar</td>
+		    <tr class="line3" kd:php="else()">
+		      <td kd:php="echo($user)">bar</td>
 		    </tr>
 		  </tbody>
 		</table>
@@ -1984,7 +2077,7 @@ END;
 		'<input type="radio" kd="attr:value:item[\'value\'];embed:item[\'age\']<20?\'checked\':\'\'" />
 		';
 	const input_embed1_php =
-		'<input type="radio" php="attr(\'value\'=>$item[\'value\']);embed($item[\'age\']<20?\'checked\':\'\')" />
+		'<input type="radio" kd:php="attr(\'value\'=>$item[\'value\']);embed($item[\'age\']<20?\'checked\':\'\')" />
 		';
 	const expected_embed1 =
 		'<<block>>
@@ -2021,7 +2114,7 @@ END;
 		'<input type="radio" kd="embed:@C(item[\'age\']<20)" />
 		';
 	const input_embed2_php =
-		'<input type="radio" php="embed(@C($item[\'age\']<20))" />
+		'<input type="radio" kd:php="embed(@C($item[\'age\']<20))" />
 		';
 	const expected_embed2 = 
 		'<<block>>
@@ -2046,6 +2139,44 @@ END;
 		$input    = KwartzConverterTest::input_embed2_php;
 		$expected = KwartzConverterTest::expected_embed2;
 		$this->_test_convert($input, $expected);
+	}
+
+
+
+	function test_delete_idattr() {	# --delete_idattr=true
+		$input    = '<td id="user">@{$user}@</td>';
+		$expected = <<<END
+		<<block>>
+		  :macro
+		    'stag_user'
+		    <<block>>
+		      :print
+		        "<td>"
+		  :macro
+		    'cont_user'
+		    <<block>>
+		      :print
+		        user
+		  :macro
+		    'etag_user'
+		    <<block>>
+		      :print
+		        "</td>"
+		  :macro
+		    'element_user'
+		    <<block>>
+		      :expand
+		        'stag_user'
+		      :expand
+		        'cont_user'
+		      :expand
+		        'etag_user'
+		  :expand
+		    'element_user'
+
+END;
+		$toppings = array('delete_idattr'=>TRUE);
+		$this->_test_convert($input, $expected, true, $toppings);
 	}
 }
 

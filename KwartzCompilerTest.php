@@ -67,11 +67,11 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<html>
 		 <body>
 		  <table>
-		   <tr class="odd" php="mark(user);attr(\'class\'=>$klass)">
-		    <td php="echo($user[\'name\'])">foo</td>
-		    <td php="echo($user[\'mail\'])">foo@mail.com</td>
+		   <tr class="odd" kd:php="mark(user);attr(\'class\'=>$klass)">
+		    <td kd:php="echo($user[\'name\'])">foo</td>
+		    <td kd:php="echo($user[\'mail\'])">foo@mail.com</td>
 		   </tr>
-		   <tr class="even" php="dummy(d1)">
+		   <tr class="even" kd:php="dummy(d1)">
 		    <td>bar</td>
 		    <td>bar@mail.com</td>
 		   </tr>
@@ -218,7 +218,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const pdata_compile2_php = '
-		<a href="@{$url}@" php="mark(link)">next page</a>
+		<a href="@{$url}@" kd:php="mark(link)">next page</a>
 		';
 
 	const plogic_compile2 = '
@@ -410,7 +410,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	const pdata_compile3_php = '
 		<table cellpadding="2" summary="">
 		  <caption>
-		    <i php="echo($month)">Jan</i>&nbsp;<i php="echo($year)">20XX</i>
+		    <i kd:php="echo($month)">Jan</i>&nbsp;<i kd:php="echo($year)">20XX</i>
 		  </caption>
 		  <thead>
 		    <tr bgcolor="#CCCCCC">
@@ -419,8 +419,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr php="mark(week)">
-		      <td><span php="mark(day)" class="holiday">&nbsp;</span></td>
+		    <tr kd:php="mark(week)">
+		      <td><span kd:php="mark(day)" class="holiday">&nbsp;</span></td>
 		      <td id="dummy:d1">&nbsp;</td>
 		      <td id="dummy:d2">1</td>
 		      <td id="dummy:d3">2</td>
@@ -428,22 +428,22 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		      <td id="dummy:d5">4</td>
 		      <td id="dummy:d6">5</td>
 		    </tr>
-		    <tr php="dummy(w1)">
+		    <tr kd:php="dummy(w1)">
 		      <td><span class="holiday">6</span></td>
 		      <td>7</td><td>8</td><td>9</td>
 		      <td>10</td><td>11</td><td>12</td>
 		    </tr>
-		    <tr php="dummy(w2)">
+		    <tr kd:php="dummy(w2)">
 		      <td><span class="holiday">13</span></td>
 		      <td>14</td><td>15</td><td>16</td>
 		      <td>17</td><td>18</td><td>19</td>
 		    </tr>
-		    <tr php="dummy(w3)">
+		    <tr kd:php="dummy(w3)">
 		      <td><span class="holiday">20</span></td>
 		      <td>21</td><td>22</td><td>23</td>
 		      <td>24</td><td>25</td><td>26</td>
 		    </tr>
-		    <tr php="dummy(w4)">
+		    <tr kd:php="dummy(w4)">
 		      <td><span class="holiday">27</span></td>
 		      <td>28</td><td>29</td><td>30</td>
 		      <td>31</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -818,8 +818,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	const pdata_escape2 = '
 		<li kd="Value:x">bar</li>
 		<li kd="VALUE:x">baz</li>
-		<li php="Echo($x)">bar</li>
-		<li php="ECHO($x)">baz</li>
+		<li kd:php="Echo($x)">bar</li>
+		<li kd:php="ECHO($x)">baz</li>
 		';
 	
 	const plogic_escape2 = '';

@@ -26,6 +26,12 @@ require_once('KwartzUtility.inc');
 		private $input;		// string
 		private $parser;
 		private $toppings;
+		
+		private $kd_attr_name;
+		private $php_attr_name;
+		private $even_value;
+		private $odd_value;
+		private $delete_idattr;
 
 		private $before_text;
 		private $before_space;
@@ -65,6 +71,12 @@ require_once('KwartzUtility.inc');
 			$this->toppings = $toppings ? $toppings : array();
 			$this->macro_stmt_list = array();
 			$this->parser = new KwartzParser(' ', $this->toppings);
+			#
+			$this->kd_attr_name  = $this->topping('attr_name',     'kd');
+			$this->php_attr_name = $this->topping('php_attr_name', 'kd:php');
+			$this->even_value    = $this->topping('even_value',    'even');
+			$this->odd_value     = $this->topping('odd_value',     'odd');
+			$this->delete_idattr = $this->topping('delete_idattr', FALSE);
 		}
 		
 		function topping($name, $default_value=NULL) {
@@ -128,9 +140,15 @@ require_once('KwartzUtility.inc');
 			}
 
 			$kd_value = $id_value = $php_value = NULL;
-			if (array_key_exists('id',  $attr_hash)) { $id_value  = $attr_hash['id'];  }
-			if (array_key_exists('kd',  $attr_hash)) { $kd_value  = $attr_hash['kd'];  }
-			if (array_key_exists('php', $attr_hash)) { $php_value = $attr_hash['php']; }
+			if (array_key_exists('id',  $attr_hash)) {			# id attr
+				$id_value  = $attr_hash['id'];
+			}
+			if (array_key_exists($this->kd_attr_name,  $attr_hash)) {	# kd attr
+				$kd_value  = $attr_hash[$this->kd_attr_name];
+			}
+			if (array_key_exists($this->php_attr_name, $attr_hash)) {	# kd:php attr
+				$php_value = $attr_hash[$this->php_attr_name];
+			}
 			
 			$directive = NULL;	// or tuple
 			if ($id_value !== NULL || $kd_value !== NULL || $php_value !== NULL) {
@@ -155,8 +173,10 @@ require_once('KwartzUtility.inc');
 				$i = 0;
 				foreach ($attr_names as $attr_name) {
 					$attr_value = $attr_hash[$attr_name];
-					if ($attr_name == 'php' || $attr_name == 'kd' || ($attr_name == 'id' && !preg_match('/^[-\w]+$/', $attr_value))) {
-						# nothing
+					if (   $attr_name == $this->php_attr_name
+					    || $attr_name == $this->kd_attr_name
+					    || ($attr_name == 'id' && ($this->delete_idattr || !preg_match('/^[-\w]+$/', $attr_value)))) {
+						# nothing (i.e. delete the attribute)
 					} else {
 						$space = $spaces[$i];
 						$s .= "{$space}{$attr_name}=\"{$attr_value}\"";
@@ -201,8 +221,8 @@ require_once('KwartzUtility.inc');
 				if (preg_match('/^\w+$/', $s)) {
 					$directive = array('mark', $s);
 				} elseif (preg_match('/^(\w+):(.*)$/', $s, $matches = array())) {
-					$dname = $matches[1];		// directive name
-					$darg  = trim($matches[2]);	// directive arg
+					$dname = $matches[1];		# directive name
+					$darg  = trim($matches[2]);	# directive arg
 					switch ($dname) {
 					case 'attr':  case 'Attr':  case 'ATTR':
 						if (! preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $darg, $m=array())) {
@@ -211,7 +231,7 @@ require_once('KwartzUtility.inc');
 						}
 						$attr_name = $m[1];
 						$expr_str  = $m[2];
-						list($e1, $e2) = KwartzConverter::$escapes[$dname];	// 'E(' ')' or 'X(' ')'
+						list($e1, $e2) = KwartzConverter::$escapes[$dname];	# 'E(' ')' or 'X(' ')'
 						$attr_hash[$attr_name] = "#{{$e1}{$expr_str}{$e2}}#";
 						//if     ($dname == 'Attr') { $attr_hash[$attr_name] = '#{E(' . $expr_str . ')}#'; }
 						//elseif ($dname == 'ATTR') { $attr_hash[$attr_name] = '#{X(' . $expr_str . ')}#'; }
@@ -227,7 +247,7 @@ require_once('KwartzUtility.inc');
 					//	$embed_str .= ' #{X(' . $darg . ')}#';
 					//	break;
 					case 'embed':  case 'Embed':  case 'EMBED':
-						list($e1, $e2) = KwartzConverter::$escapes[$dname];	// 'E(' ')' or 'X(' ')'
+						list($e1, $e2) = KwartzConverter::$escapes[$dname];	# 'E(' ')' or 'X(' ')'
 						$embed_str .= " #{{$e1}{$darg}{$e2}}#";
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
@@ -269,7 +289,7 @@ require_once('KwartzUtility.inc');
 				}
 			}
 			if ($directive) {
-				$directive[2] = FALSE;		// $flag_php_mode false
+				$directive[2] = FALSE;		# $flag_php_mode false
 			}
 			return $directive;
 		}
@@ -289,8 +309,8 @@ require_once('KwartzUtility.inc');
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
-				if (preg_match('/^\w+$/', $s)) {
-					$directive = $s == 'else' ? array('else', NULL) : array('mark', $s);
+				if ($s == 'dummy' || $s == 'else') {
+					$directive = array($s, NULL);
 				} elseif (preg_match('/^(\w+)\((.*)\)$/', $s, $matches = array())) {
 					$dname = $matches[1];
 					$darg  = trim($matches[2]);
@@ -586,8 +606,8 @@ require_once('KwartzUtility.inc');
 				$expr = new KwartzBinaryExpression('%', $ctr_expr, new KwartzNumericExpression(2));
 				$expr = new KwartzBinaryExpression('==', $expr, new KwartzNumericExpression(0));
 				$expr = new KwartzConditionalExpression('?', $expr, 
-							new KwartzStringExpression($this->topping('even_var', 'even')),
-							new KwartzStringExpression($this->topping('odd_var', 'odd')));
+							new KwartzStringExpression($this->even_value),
+							new KwartzStringExpression($this->odd_value)  );
 				$expr = new KwartzBinaryExpression('=', $toggle_expr, $expr);
 				$assign_stmt = new KwartzSetStatement($expr);
 				array_unshift($block->statements(), $assign_stmt);

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 ###
@@ -6,6 +7,9 @@
 ### Type 'php kwartz.php --help' for help. 
 ###
 
+if (PHP_SAPI == 'cgi') {
+	
+}
 
 require_once('KwartzException.inc');
 require_once('KwartzNode.inc');
@@ -28,6 +32,10 @@ require_once('KwartzAnalyzer.inc');
 	}
 
 	class KwartzCommand {
+
+		const revision   = '$Rev$';
+		const lastupdate = '$Date$';
+	
 		private $command_name;
 		private $options = array();
 		private $toppings = array();
@@ -249,6 +257,7 @@ Usage: {$this->command_name} [..options..] [filenames...]
   -a action	 : compile/parse/translate/convert/analyze (default 'compile')
   -p file.plogic : presentation logic file
   -e             : escape(sanitize)
+  -s             : escape(sanitize)
   --escape=true  : escape(sanitize)
   --header=text  : header text (default '<%@ taglib ...>' when jsp)
   --footer=text  : footer text
@@ -260,10 +269,9 @@ END;
 		}
 
 		function version() {
-			$version = <<<END
-
-END;
-			return $version;
+			$revision   = KwartzCommand::revision;
+			$lastupdate = KwartzCommand::lastupdate;
+			return "kwartz.php: $revision ($date)";
 		}
 
 
@@ -343,7 +351,7 @@ END;
 ##
 ## main program
 ##
-if (basename(__FILE__) == $argv[0]) {
+if (basename(__FILE__) == basename($argv[0])) {
 	try {
 		$kwartz = new KwartzCommand($argv[0]);
 		$kwartz->main($argv);
