@@ -39,7 +39,7 @@ module Kwartz
 
    class MainCommand
 
-      VERSION     = ('$Revision$' =~ /\d+(?:\.\d+)+/ && $&)
+      VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)+/ && $&)
       LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
 
       def initialize(argv=ARGV)
