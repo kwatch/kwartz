@@ -39,7 +39,7 @@ module Kwartz
          #@delete_id_attr = properties[:delete_id_attr] || false
          @even       = properties[:even]  || Kwartz::Config::EVEN     # "'even'"
          @odd        = properties[:odd]   || Kwartz::Config::ODD      # "'odd'"
-         @empty_tags = properties[:empty_tags] || Kwartz::Config::EMPTY_TAGS  # %w(input br meta img hr)
+         @noend_tags = properties[:noend] || Kwartz::Config::NOEND  # %w(input br meta img hr)
          @filename   = properties[:filename]
          @parser = Parser.new('', properties)
       end
@@ -231,7 +231,7 @@ module Kwartz
                else
                   stmt_list << create_print_node(@tag_str, @linenum)
                end
-            elsif @slash_empty == '/' || @empty_tags.include?(@tagname)		# empty-tag
+            elsif @slash_empty == '/' || @noend_tags.include?(@tagname)		# empty-tag
                directive_name, directive_arg = parse_attr_str(@attr_str)
                if directive_name
                   if directive_name == :mark

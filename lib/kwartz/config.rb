@@ -22,7 +22,7 @@ module Kwartz
       DATTR           = "kd"
       
       ## converter & element
-      EMPTY_TAGS      = [ "input", "br", "meta", "img", "hr" ]
+      NOEND           = [ "input", "br", "meta", "img", "hr" ]
       
       ## kwartz command
       HEADER_JSTL11   = <<END

@@ -1,0 +1,1025 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Presentation Pattern Catalog</title>
+  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <style type="text/css">
+   <!--
+
+body		{
+		background-color:#FFFFFF;
+		}
+.mainbody	{
+		color:#333333;
+		line-height:150%;
+		}
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+		}
+a:visited	{
+		color:#DD9900;
+		}
+
+p		{
+		color:#333333;
+		line-height:150%;
+		}
+
+pre		{
+		width: 100%;
+		line-height:130%;
+		white-space:pre;
+		}
+.program	{
+		border-style:solid;
+		border-width:2;
+		border-color:#6699FF;
+		color:#333333;
+		background-color:#DDEEFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.terminal	{
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#333333;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+		word-break:keep-all;
+		}
+.output		{
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC;
+		color:#333333;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.program_caption {
+		}
+.terminal_caption {
+		}
+.output_caption {
+		}
+
+
+ul,ol,dl	{
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#333333;
+		line-height:130%;
+		}
+
+.dt2, .dt3	{
+		font-weight:bold;
+		}
+
+.table1		{
+		padding:2;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+.th1, .th2	{
+		padding:1;
+		color:#333333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+		}
+.td1, .th2	{
+		padding:1;
+		color:#333333;
+		background-color:#EEEEDD;
+		line-height:130%;
+		}
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#333333;
+		}
+.table2		{
+		padding:1;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		color:#333333;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+		}
+h2, .section	{
+		Xfont-size:16pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+		}
+h3, .subsection	{
+		Xfont-size:12pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+		}
+
+.em		{
+		font-weight:bold;
+		}
+
+.toc		{
+		font-size:small;
+		line-height:100%;
+		}
+.footnote	{
+		font-size:small;
+		}
+.note		{
+		background-color:#FFFFDD;
+		border-style:solid;
+		border-width:0 1 0 1;
+		border-color:#DDDD66;
+		color:#333300;
+		Xfont-size:small;
+		line-height:120%;
+		padding: 5 20 5 20;
+		}
+.figure		{
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+		}
+
+   -->
+  </style>
+
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+    <div align="left"><h1>Presentation Pattern Catalog</h1></div>
+
+    <div align="left">
+      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>Kwartz-php is the template system which realized the concept of '<b>Separation of Presentation Logic and Presentation Data (SoPL/PD)</b>.'
+There are several techniques to help you to separate presentation logic and presentation data excellently.
+These techniques are called 'Presentation Patterns.'<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>
+This document shows several Presentation Patterns.
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>'Presentation Patterns' are not limited in presentation layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.'</dd>
+ </dl>
+</div>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+    <li><a href="#changelog">ChangeLog</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#replacement">Replacement</a>
+  <ul>
+    <li><a href="#replace-elem-by-value">Replace Element by Value pattern</a>
+    </li>
+    <li><a href="#replace-cont-by-value">Replace Content by Value pattern</a>
+    </li>
+    <li><a href="#replace-elem-by-elem">Replace Element by Element pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#dummy">Dummy</a>
+  <ul>
+    <li><a href="#dummy-elem">Dummy Element pattern</a>
+    </li>
+    <li><a href="#dummy-tag">Dummy Tag pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#iteration">Iteration</a>
+  <ul>
+    <li><a href="#iterate-elem">Iterate Element pattern</a>
+    </li>
+    <li><a href="#iterate-cont">Iterate Content pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#selection">Selection</a>
+  <ul>
+    <li><a href="#select-elem">Select Element pattern</a>
+    </li>
+    <li><a href="#pickup-elem">Pick-up Element pattern</a>
+    </li>
+    <li><a href="#extract-elem">Extract Element pattern</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+<br>
+
+
+<a name="changelog"></a>
+<h3 class="section2">ChangeLog</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-02-13</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>alpha release
+	</li>
+	</ul>
+</dd>
+</dl>
+<br>
+
+
+<br>
+
+
+<a name="replacement"></a>
+<h2 class="section1">Replacement</h2>
+<a name="replace-elem-by-value"></a>
+<h3 class="section2">Replace Element by Value pattern</h3>
+<p>You can replace the element with the value of a variable or an expression.
+This pattern is named 'Replace element by value.'
+</p>
+<p>Presentation Data:
+</p>
+<a name="teq-replace2.pdata"></a>
+<pre class="program">Hello &lt;span <b>id="mark:user"</b>&gt;World&lt;/span&gt;!
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="teq-replace2.plogic"></a>
+<pre class="program">#user {
+  plogic: {
+    <b>print(username);</b>  // print value of variable 'username' instead of the element
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+Hello&lt;%= username %&gt;!
+
+### for PHP
+Hello&lt;?php echo $username; ?&gt;!
+
+### for JSTL
+Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
+</pre>
+<br>
+
+
+<a name="replace-cont-by-value"></a>
+<h3 class="section2">Replace Content by Value pattern</h3>
+<p>You can also replace only the content of the element in the same way.
+This pattern is named 'Replace content by value.'
+</p>
+<p>Presentation Data:
+</p>
+<a name="teq-replace1.pdata"></a>
+<pre class="program">&lt;h1 <b>id="mark:title"</b>&gt;Example&lt;/h1&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="teq-replace1.plogic"></a>
+<pre class="program">#title {
+  plogic: {
+    @stag;
+    <b>print(title);</b>  // print value of a variable 'title' instead of content
+    @etag;
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+
+### for PHP
+&lt;h1&gt;&lt;?php echo $title; ?&gt;&lt;/h1&gt;
+
+### for JSTL
+&lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
+</pre>
+<p>The 'Replace content by value' pattern is described as the following in Kwartz.
+</p>
+<p>Presentation Logic:
+</p>
+<pre class="program">#title {
+  <b>value: title;</b>  // print value of a variable 'title' instead of content
+}
+</pre>
+<br>
+
+
+<a name="replace-elem-by-elem"></a>
+<h3 class="section2">Replace Element by Element pattern</h3>
+<p>You can replace the element by other element.
+This pattern is named 'Replace element by element.'
+</p>
+<p>Presentation Data:
+</p>
+<a name="replace-elem-by-elem.pdata"></a>
+<pre class="program">&lt;div <b>id="mark:links"</b>&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div <b>id="mark:links2"</b>&gt;
+  Home | Document | FAQ
+&lt;/div&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="replace-elem-by-elem.plogic"></a>
+<pre class="program">#links2 {
+  plogic: {
+    <b>@element(links);</b>  // replace the element 'links2' by the element 'links'
+  }
+}
+</pre>
+<p><code>@element(<i>name</i>)</code> represents the element which is marked by <code>id="mark:<i>name</i>"</code> or <code>id="<i>name</i>"</code>.
+</p>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+### for PHP
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+### for JSTL
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+<p>This pattern is very useful to reuse the element in other place.
+</p>
+<br>
+
+
+<br>
+
+
+<a name="dummy"></a>
+<h2 class="section1">Dummy</h2>
+<a name="dummy-elem"></a>
+<h3 class="section2">Dummy Element pattern</h3>
+<p>If presentation logic is empty, the element is not printed out.
+This pattern is named 'Dummy element'.
+</p>
+<p>Presentation Data:
+</p>
+<a name="dummy-elem.pdata"></a>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy"</b>&gt;bar&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="dummy-elem.plogic"></a>
+<pre class="program">#dummy {
+  plogic: {
+    // empty
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+
+### for PHP
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+
+### for JSTL
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+
+<a name="dummy-tag"></a>
+<h3 class="section2">Dummy Tag pattern</h3>
+<p>If you use only <code>@cont</code> and don't use <code>@stag</code> and <code>@cont</code>,
+you can remove start and end tags of the element.
+This pattern is named 'Dummy tag'.
+</p>
+<p>This pattern is very useful if you want to print tags according to condition.
+</p>
+<p>Presentation Data:
+</p>
+<a name="dummy-tag.pdata"></a>
+<pre class="program">&lt;a href="#{url}#" <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="dummy-tag.plogic"></a>
+<pre class="program">#next {
+  plogic: {
+    if (url == null) {
+      <b>@cont;</b>   // don't print tags
+    } else {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;% if url == nil then %&gt;
+Next&lt;% else %&gt;
+&lt;a href="&lt;%= url %&gt;"&gt;Next&lt;/a&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($url == NULL) { ?&gt;
+Next&lt;?php } else { ?&gt;
+&lt;a href="&lt;?php echo $url; ?&gt;"&gt;Next&lt;/a&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${url eq null}"&gt;
+Next&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;a href="&lt;c:out value="${url}" escapeXml="false"/&gt;"&gt;Next&lt;/a&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<br>
+
+
+<a name="iteration"></a>
+<h2 class="section1">Iteration</h2>
+<a name="iterate-elem"></a>
+<h3 class="section2">Iterate Element pattern</h3>
+<p>Iteration which contains <code>@stag</code>, <code>@cont</code>, and <code>@etag</code> represents to iterate the element.
+This pattern is named 'Iterate element'.
+</p>
+<p>Presentation Data:
+</p>
+<a name="iterate-elem.pdata"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="mark:items"</b>&gt;
+   &lt;td&gt;#{item}#&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="iterate-elem.plogic"></a>
+<pre class="program">#items {
+  plogic: {
+    // iterate start tag, content, and end tag
+    <b>foreach (item in list) {</b>
+      @stag;
+      @cont;
+      @etag;
+    <b>}</b>
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+
+### for PHP
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+
+### for JSTL
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+
+<a name="iterate-cont"></a>
+<h3 class="section2">Iterate Content pattern</h3>
+<p>Iteration which contains only <code>@cont</code> represents to iterate the content.
+This pattern is named 'Iterate content' and this is very useful when creating &lt;dl&gt;&lt;/dl&gt; list.
+</p>
+<p>Presentation Data:
+</p>
+<a name="iterate-elem.pdata"></a>
+<pre class="program">&lt;ul <b>id="mark:items"</b>&gt;
+  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
+  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+&lt;/ul&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="iterate-elem.plogic"></a>
+<pre class="program">#items {
+  plogic: {
+    // iterate only content
+    @stag;
+    <b>foreach (item in list) {</b>
+      @cont;
+    <b>}</b>
+    @etag;
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+
+### for PHP
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+
+### for JSTL
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+
+<br>
+
+
+<a name="selection"></a>
+<h2 class="section1">Selection</h2>
+<a name="select-elem"></a>
+<h3 class="section2">Select Element pattern</h3>
+<p>The following is an example to choose a certain element from some elements.
+This pattern is named 'Select Element.'
+</p>
+<p>Presentation Data:
+</p>
+<a name="select-elem.pdata"></a>
+<pre class="program">&lt;div id="mark:message"&gt;
+  &lt;font color="red"   <b>id="mark:error"</b>&gt;ERROR!&lt;/font&gt;
+  &lt;font color="blue"  <b>id="mark:warning"</b>&gt;Warning:&lt;/font&gt;
+  &lt;font color="black" <b>id="mark:good"</b>&gt;No error.&lt;/font&gt;
+&lt;/div&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="select-elem.plogic"></a>
+<pre class="program">#message {
+  plogic: {
+    if (status == 'error') {
+      <b>@element(error);</b>      // ERROR!
+    } else if (status == 'warning') {
+      <b>@element(warning);</b>    // Warning:
+    } else {
+      <b>@element(good);</b>       // No error.
+    }
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;% if status == "error" then %&gt;
+  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+&lt;% elsif status == "warning" then %&gt;
+  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+&lt;% else %&gt;
+  &lt;font color="black"&gt;No error.&lt;/font&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($status == "error") { ?&gt;
+  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+&lt;?php } elseif ($status == "warning") { ?&gt;
+  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+&lt;?php } else { ?&gt;
+  &lt;font color="black"&gt;No error.&lt;/font&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${status eq 'error'}"&gt;
+  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+&lt;/c:when&gt;&lt;c:when test="${status eq 'warning'}"&gt;
+  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+  &lt;font color="black"&gt;No error.&lt;/font&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<a name="pickup-elem"></a>
+<h3 class="section2">Pick-up Element pattern</h3>
+<p>If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
+This pattern is named 'Pick-up Element.'
+</p>
+<p>Presentation Data:
+</p>
+<a name="pickup-elem.pdata"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="breadcrumbs"</b>&gt;
+      &lt;a href="#{item['path']}#" <b>id="mark:crumb"</b>&gt;#{item['name']}#&lt;/a&gt;
+      &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b <b>id="mark:title"</b>&gt;#{title}#&lt;/b&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="pickup-elem.plogic"></a>
+<pre class="program">#breadcrumbs {
+  plogic: {
+    foreach (item in list) {
+      <b>@element(crumb);</b>          // print &lt;a&gt;...&lt;/a&gt;
+      <b>@element(separator);</b>      // print '&amp;gt;'
+    }
+    <b>@element(title);</b>            // print &lt;b&gt;title&lt;/b&gt;
+  }
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+&lt;% for item in list do %&gt;
+      &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
+      &amp;gt;
+&lt;% end %&gt;
+      &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+### for PHP
+&lt;html&gt;
+  &lt;body&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+      &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
+      &amp;gt;
+&lt;?php } ?&gt;
+      &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+
+### for JSTL
+&lt;html&gt;
+  &lt;body&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+      &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
+      &amp;gt;
+&lt;/c:forEach&gt;
+      &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>The above example should be described as following.
+</p>
+<p>Presentation Data:
+</p>
+<a name="pickup-elem.pdata"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="breadcrumbs"</b>&gt;
+      &lt;a href="/" <b>id="mark:crumb"</b>&gt;Home&lt;/a&gt;
+      &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b <b>id="mark:title"</b>&gt;Page Title&lt;/b&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="pickup-elem.plogic"></a>
+<pre class="program">#breadcrumbs {
+  plogic: {
+    foreach (item in list) {
+      <b>@element(crumb);</b>          // print &lt;a&gt;...&lt;/a&gt;
+      <b>@element(separator);</b>      // print '&amp;gt;'
+    }
+    <b>@element(title);</b>            // print &lt;b&gt;title&lt;/b&gt;
+  }
+}
+#crumb {
+  value: item['name'];
+  attr:  "href" item['path'];
+}
+#title {
+  value: title;
+}
+</pre>
+<br>
+
+
+<a name="extract-elem"></a>
+<h3 class="section2">Extract Element pattern</h3>
+<p>It is able to extract a certain element form the whole presentation data.
+Other text strings are not printed.
+This pattern is named 'Extract Element.'
+</p>
+<p>This pattern is very useful to extract HTML fragments and make them libraries.
+The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
+</p>
+<p>Presentation Data (<a href="design.html">design.html</a>):
+</p>
+<a name="design.html"></a>
+<pre class="program">&lt;html <b>id="mark:whole"</b>&gt;
+  &lt;head&gt;
+    &lt;title&gt;Design Examples&lt;/title&gt;
+    &lt;link rel="stylesheet" href="design.css" type="text/css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div <b>id="mark:tablist"</b>&gt;
+      &lt;div class="tabs" id="mark:tabs"&gt;
+        &lt;a href="/" class="" <b>id="mark:tab"</b>&gt;Home&lt;/a&gt;
+        &lt;a href="/product/" class="selected"&gt;Product&lt;/a&gt;
+        &lt;a href="/download/" class=""&gt;Download&lt;/a&gt;
+        &lt;a href="/support/" class=""&gt;Support&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div class="tabsline"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;br&gt;
+
+    &lt;div <b>id="mark:menulist"</b>&gt;
+      &lt;span class="menu_title" id="value:menu_title"&gt;MenuList&lt;/span&gt;
+      &lt;div class="menus" <b>id="mark:menus"</b>&gt;
+        &lt;a href="/cgi-bin/email.cgi" class="" <b>id="mark:menu"</b>&gt;E-Mail&lt;/a&gt;
+        &lt;span <b>id="mark:menu_separator"</b>&gt;&lt;br&gt;&lt;/span&gt;
+        &lt;a href="/cgi-bin/board.cgi" class="selected"&gt;MesgBoard&lt;/a&gt;&lt;br&gt;
+        &lt;a href="/cgi-bin/photo.cgi" class=""&gt;PhotoAlbum&lt;/a&gt;&lt;br&gt;
+        &lt;a href="/cgi-bin/greeting.cgi" class=""&gt;GreetingCard&lt;/a&gt;&lt;br&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+      
+    &lt;p&gt; ..... &lt;/p&gt;
+    &lt;p&gt; ..... &lt;/p&gt;
+    &lt;p&gt; ..... &lt;/p&gt;
+    
+    &lt;div align="center" class="copyright" <b>id="mark:copyright"</b>&gt;
+      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Presentation Logic (copyright.plogic):
+</p>
+<a name="copyright.plogic"></a>
+<pre class="program"><b>#whole</b> {
+  // replace the element 'whole' with the element you want to extract
+  plogic: {
+    <b>@element(copyright);</b>
+  }
+}
+</pre>
+<p>Presentation Logic (tablist.plogic):
+</p>
+<a name="tablist.plogic"></a>
+<pre class="program"><b>#whole</b> {
+  // replace the element 'whole' with the element you want to extract
+  plogic: {
+    <b>@element(tablist);</b>
+  }
+}
+
+#tabs {
+  plogic: {
+    @stag;
+    foreach (tab in tablist) {
+      klass = current_tabname == tab['name'] ? 'selected' : '';
+      @element(tab);
+    }
+    @etag;
+  }
+}
+
+#tab {
+  value: tab['name'];
+  attr:  "href" tab['href'], "class" klass;
+}
+</pre>
+<p>Presentation Logic (menulist.plogic):
+</p>
+<a name="menulist.plogic"></a>
+<pre class="program"><b>#whole</b> {
+  // replace the element 'whole' with the element you want to extract
+  plogic: {
+    <b>@element(menulist);</b>
+  }
+}
+
+#menus {
+  plogic: {
+    @stag;
+    foreach (menu in menulist) {
+      @element(menu);
+      @element(menu_separator);
+    }
+    @etag;
+  }
+}
+
+#menu {
+  value:  menu['name'];
+  attr:   "href" menu['cgipath'], "class" klass;
+  plogic: {
+    klass = current_menu == menu['name'] ? 'selected' : '';
+    @stag;
+    @cont;
+    @etag;
+  }
+}
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">### copyright
+$ kwartz -l eruby -p copyright.plogic design.pdata
+$ kwartz -l php   -p copyright.plogic design.pdata
+
+### tablist
+$ kwartz -l eruby -p tablist.plogic   design.pdata
+$ kwartz -l php   -p tablist.plogic   design.pdata
+
+### menulist
+$ kwartz -l eruby -p menulist.plogic  design.pdata
+$ kwartz -l php   -p menulist.plogic  design.pdata
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+    &lt;div align="center" class="copyright"&gt;
+      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+    &lt;/div&gt;
+
+### for PHP
+    &lt;div align="center" class="copyright"&gt;
+      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+    &lt;/div&gt;
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+    &lt;div&gt;
+      &lt;div class="tabs"&gt;
+&lt;% for tab in tablist do %&gt;
+&lt;%   klass = current_tabname == tab["name"] ? "selected" : "" %&gt;
+        &lt;a href="&lt;%= tab["href"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= tab["name"] %&gt;&lt;/a&gt;
+&lt;% end %&gt;
+      &lt;/div&gt;
+      &lt;div class="tabsline"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+### for PHP
+    &lt;div&gt;
+      &lt;div class="tabs"&gt;
+&lt;?php foreach ($tablist as $tab) { ?&gt;
+&lt;?php   $klass = $current_tabname == $tab["name"] ? "selected" : ""; ?&gt;
+        &lt;a href="&lt;?php echo $tab["href"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $tab["name"]; ?&gt;&lt;/a&gt;
+&lt;?php } ?&gt;
+      &lt;/div&gt;
+      &lt;div class="tabsline"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+    &lt;div&gt;
+      &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
+      &lt;div class="menus"&gt;
+&lt;% for menu in menulist do %&gt;
+&lt;%   klass = current_menu == menu["name"] ? "selected" : "" %&gt;
+        &lt;a href="&lt;%= menu["cgipath"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu["name"] %&gt;&lt;/a&gt;
+        &lt;br&gt;
+&lt;% end %&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+### for PHP
+    &lt;div&gt;
+      &lt;span class="menu_title"&gt;&lt;?php echo $menu_title; ?&gt;&lt;/span&gt;
+      &lt;div class="menus"&gt;
+&lt;?php foreach ($menulist as $menu) { ?&gt;
+&lt;?php   $klass = $current_menu == $menu["name"] ? "selected" : ""; ?&gt;
+        &lt;a href="&lt;?php echo $menu["cgipath"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $menu["name"]; ?&gt;&lt;/a&gt;
+        &lt;br&gt;
+&lt;?php } ?&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+</pre>
+<br>
+
+
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

@@ -1,27 +1,56 @@
-.JA	●プレゼンテーションパターン	| pattern
-.EN	.$ Presentation Pattern		| pattern
+.JA	.=title:	プレゼンテーションパターン・カタログ
+.EN	.=title:	Presentation Pattern Catalog
+.	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.	.?version:	$Rev$
+.	.?release:	$Release$
+.	.?lastupdate:	$Date$
 .	
-.JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を初めて実現したテンプレートシステムです。
+.	
+.JA	●はじめに	| preface*
+.EN	.$ Preface	| preface*
+.	
+.JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を実現したテンプレートシステムです。
 .JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するためのテクニックが存在します。
 .JA	これは「プレゼンテーションパターン」と呼ばれます{{(「プレゼンテーションパターン」という名前がついていますが、これらのテクニックはプレゼンテーション層だけに限定されるわけではありません。しかし最もよく使われるのはプレゼンテーション層においてであるため、このような名前にしています。)}}。
 .JA	この章では、プレゼンテーションパターンをいくつか紹介します。
-.EN	Kwartz-php is the first template system which realized the concept of 'Separation of Presentation Data and Presentation Logic.'
+.EN	Kwartz-php is the template system which realized the concept of '{{*Separation of Presentation Logic and Presentation Data (SoPL/PD)*}}.'
 .EN	There are several techniques to help you to separate presentation logic and presentation data excellently.
-.EN	These techniques are called 'Presentation Patterns.'{{('Presentation Patterns' are not limited in Presentation Layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.')}}
-.EN	This section shows several Presentation Patterns.
+.EN	These techniques are called 'Presentation Patterns.'{{('Presentation Patterns' are not limited in presentation layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.')}}
+.EN	This document shows several Presentation Patterns.
 .JA	.#この章では、プレゼンテーションデータとプレゼンテーションロジックをうまく分離するための、便利なパターンを紹介します。
 .JA	.#この章ではそれらを紹介します。
 .EN	.#There are several patterns in the presentation layer which help you to separate presentation data and presentation logic excellently.
 .EN	.#This section shows these great patterns.
 .	
 .	
-.JA	◎置換			| pattern-replacement
-.JA	.#◎式による置換
-.EN	.$$ Replacement		| pattern-prelacement
-.EN	.#$$ Replacement (by Expression)
+.JA	◎目次			| toc*
+.EN	.$$ Table of Contents	| toc*
+.	
+.	.#.+toc:
+.JA	.<<< p-pattern.ja.toc
+.EN	.<<< p-pattern.en.toc
+.	.#.-toc:
+.	
+.	
+.JA	◎更新履歴		| changelog*
+.EN	.$$ ChangeLog		| changelog*
+.	
+.	.: 2005-02-14
+.		.- alpha release
+.	
+.	
+.	
+.JA	.●置換			| replacement
+.EN	.$ Replacement		| replacement
+.	
+.	
+.JA	.◎Replace Element by Valueパターン	| replace-elem-by-value
+.EN	.$$ Replace Element by Value pattern	| replace-elem-by-value
 .	
 .JA	エレメントを、変数や式の値で置き換えることができます。
+.JA	これを「Replace Element by Value」パターンといいます。
 .EN	You can replace the element with the value of a variable or an expression.
+.EN	This pattern is named 'Replace element by value.'
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -32,21 +61,28 @@
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
 .	.-------------------- teq-replace2.plogic
-.	element user {
-.JA	  {{*echo $username;*}}    ## エレメントのかわりに変数$usernameを出力する
-.EN	  {{*echo $username;*}}    ## print the value of $username instead of the element
+.	#user {
+.	  plogic: {
+.JA	    {{*print(username);*}}  // エレメントのかわりに変数usernameを出力する
+.EN	    {{*print(username);*}}  // print value of variable 'username' instead of the element
+.	  }
 .	}
 .	.--------------------
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
+.	.<<<:! ./output.rb -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
 .	.--------------------
 .	
 .	
-.JA	同様に、タグは残したままエレメントの内容だけを置き換えることができます。
+.JA	.◎Replace Content by Valueパターン	| replace-cont-by-value
+.EN	.$$ Replace Content by Value pattern	| replace-cont-by-value
+.	
+.JA	タグは残したままエレメントの内容だけを式の値で置き換えることができます。
+.JA	これを「Replace Content by Value」といいます。
 .EN	You can also replace only the content of the element in the same way.
+.EN	This pattern is named 'Replace content by value.'
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -57,59 +93,50 @@
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
 .	.-------------------- teq-replace1.plogic
-.	element title {
-.	  @stag;
-.JA	  {{*echo $title;*}}     ## 内容(@cont)のかわりに$titleを出力する
-.EN	  {{*echo $title;*}}     ## print $title instead of content
-.	  @etag;
+.	#title {
+.	  plogic: {
+.	    @stag;
+.JA	    {{*print(title);*}}  // 内容(@cont)のかわりに変数titleの値を出力する
+.EN	    {{*print(title);*}}  // print value of a variable 'title' instead of content
+.	    @etag;
+.	  }
 .	}
 .	.--------------------
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
+.	.<<<:! ./output.rb -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
 .	.--------------------
 .	
 .	
-.JA	なおKwartz-phpでは、式の値で内容を置き換えるための機能を用意しています。
-.JA	そのためには、プレゼンテーションデータで「{{,kd:php="value({{/expression/}})",}}」とします。
-.JA	こうすると、プレゼンテーションロジックを書くことなしに、上と同じ出力用スクリプトが得られます。
-.EN	Kwartz-php provides you a function to replace the content with expression's value easily.
-.EN	{{,kd:php="value({{/expression/}})",}} replaces the content with the value of {{/expression/}}.
-.EN	You can get the same output script as the above without a presentation logic file.
+.JA	なお「Replace Content by Value」パターンは、Kwartzでは次のように書くことができます。
+.EN	The 'Replace content by value' pattern is described as the following in Kwartz.
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
 .	.--------------------
-.	<h1 {{*kd:php="value($title)"*}}>Example</h1>
+.	#title {
+.JA	  {{*value: title;*}}  // 内容のかわりに変数titleの値を出力する
+.EN	  {{*value: title;*}}  // print value of a variable 'title' instead of content
+.	}
 .	.--------------------
 .	
-.JA	このkd:php属性によるコマンドをディレクティブといいます。
-.JA	ディレクティブとは、プレゼンテーションデータ中にプレゼンテーションロジックを埋め込むための機能です。
-.JA	value()ディレクティブは内容を式の値で置き換えるものですが、他に繰り返しや条件分岐もあります。
-.JA	詳しくはリファレンスマニュアルをご覧ください。
-.EN	This is one of the 'directives'.
-.EN	Directives are commands to embed presentation logics into presentation data.
-.EN	Directives are described with the {{,kd:php,}} attribute in Kwartz-php.
-.EN	Directive {{,value(),}} provides a function to replace the content with expression's value.
-.EN	There are several directives such as iteration and conditional branching.
-.EN	See the reference manual for details.
 .	
 .	
-.	
-.JA	◎交換			| pattern-substitution
-.JA	.#◎他のエレメントによる置換
-.EN	.$$ Substitution	| pattern-substitution
-.EN	.#$$ Replacement by Other Element
+.JA	◎Replace Element by Elementパターン	| replace-elem-by-elem
+.EN	.$$ Replace Element by Element pattern	| replace-elem-by-elem
 .	
 .JA	エレメントを別のエレメントに交換することができます。
-.EN	You can substitute the element with other element.
+.JA	これは「Replace element by element」パターンといいます。
+.EN	You can replace the element by other element.
+.EN	This pattern is named 'Replace element by element.'
 .	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-substitute.pdata
+.	.-------------------- replace-elem-by-elem.pdata
 .	<div {{*id="mark:links"*}}>
 .	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
 .	</div>
@@ -124,263 +151,235 @@
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-substitute.plogic
-.	element links2 {
-.JA	  {{*@element_links;*}}   ## エレメントlins2をエレメントlinksで置き換える
-.EN	  {{*@element_links;*}}   ## substitute the element 'links2' with the element 'links'
+.	.-------------------- replace-elem-by-elem.plogic
+.	#links2 {
+.	  plogic: {
+.JA	    {{*@element(links);*}}  // エレメントlins2をエレメントlinksで置き換える
+.EN	    {{*@element(links);*}}  // replace the element 'links2' by the element 'links'
+.	  }
 .	}
 .	.--------------------
 .	
-.JA	ここで「{{,@element_{{/name/}},}}」は、「{{,id="mark:{{/name/}}",}}」や「{{,id="{{/name/}}",}}」でマーキングされたエレメントを表しています。
-.EN	{{,@element_{{/name/}},}} represents the element which is marked by {{,id="mark:{{/name/}}",}} or {{,id="{{/name/}}",}}.
+.JA	ここで「{{,@element({{/name/}}),}}」は、「{{,id="mark:{{/name/}}",}}」や「{{,id="{{/name/}}",}}」でマーキングされたエレメントを表しています。
+.EN	{{,@element({{/name/}}),}} represents the element which is marked by {{,id="mark:{{/name/}}",}} or {{,id="{{/name/}}",}}.
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-substitute.plogic guide.d/teq-substitute.pdata
+.	.<<<:! ./output.rb -p guide.d/replace-elem-by-elem.plogic guide.d/replace-elem-by-elem.pdata
 .	.--------------------
 .	
 .JA	このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
 .EN	This pattern is very useful to reuse the element in other place.
 .	
-.	.#なおKwartz-phpでは、エレメントを別のエレメントで置き換えるためのディレクティブ{{,replace(),}}を用意しています。
-.	.#これを用いると、プレゼンテーションロジックファイルなしで上と同じ出力用スクリプトを得ることができます。
-.	.#Kwartz-php provieds the directive {{,replace(),}} which replaces the element with other element.
-.	.#You can get the same output script without presentation logic file if you use this directive.
-.	.#
-.	.#.-------------------- teq-replace4.pdata
-.	.#<div id="mark:links">
-.	.# <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
-.	.#</div>
-.	.#
-.	.#<p>Welcome to my Home Page!</p>
-.	.#
-.	.#<div {{*kd:php="replace(links)"*}}>
-.	.#  Home | Document | FAQ
-.	.#</div>
-.	.#.--------------------
 .	
 .	
+.JA	●ダミー		| dummy
+.EN	.$ Dummy	| dummy
 .	
-.JA	◎削除		| pattern-deletion
-.EN	.$$ Deletion	| pattern-deletion
 .	
-.JA	エレメントの定義において、「{{,@stag,}}」と「{{,@etag,}}」をコメントアウトすれば、開始タグと終了タグを削除したことになります。
-.JA	また「{{,@cont,}}」もコメントアウトすれば、エレメント全体を削除したことになります。
-.EN	You can delete the start tag and the end tag by commenting out {{,@stag,}} and {{,@etag,}} in the element definition.
-.EN	You can delete the element whole if you commented out {{,@cont,}} in addition to {{,@stag,}} and {{,@etag,}}.
+.JA	◎Dummy Elementパターン		| dummy-elem
+.EN	.$$ Dummy Element pattern	| dummy-elem
+.	
+.	
+.JA	プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
+.JA	これは「Dummy element」パターンといいます。
+.EN	If presentation logic is empty, the element is not printed out.
+.EN	This pattern is named 'Dummy element'.
 .	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-delete.pdata
-.	<p id="mark:dummy">
-.	  This is a pen.
-.	</p>
+.	.-------------------- dummy-elem.pdata
+.	<ul>
+.	  <li>foo</li>
+.	  <li {{*id="dummy"*}}>bar</li>
+.	</ul>
 .	.--------------------
+.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-delete.plogic
-.	element dummy {
-.	  {{*##*}} @stag;
-.	  {{*##*}} @cont;
-.	  {{*##*}} @etag;
+.	.-------------------- dummy-elem.plogic
+.	#dummy {
+.	  plogic: {
+.	    // empty
+.	  }
 .	}
 .	.--------------------
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.JA	              ## 何も出力されない
-.EN	              ## Nothis is printed.
+.	.<<<:! ./output.rb -p guide.d/dummy-elem.plogic guide.d/dummy-elem.pdata
 .	.--------------------
 .	
-.JA	これを用いると、HTMLファイル中にいくらでもダミーデータを含めることができるので、大変便利です。
-.EN	This pattern is very useful to delete dummy elements in HTML file.
 .	
-.JA	ある条件のときだけエレメントを削除するには次のようにします。
-.EN	The following is an example to delete the element according to a condition.
+.	
+.JA	◎Dummy Tagパターン		| dummy-tag
+.EN	.$$ Dummy Tag pattern		| dummy-tag
+.	
+.	
+.JA	プレゼンテーションロジックの定義において、「{{,@cont,}}」だけを使用し、
+.JA	「{{,@stag,}}」と「{{,@stag,}}」を使わないようにすると、エレメントのタグを削除できます。
+.JA	これは「Dummy tag」パターンといいます。
+.EN	If you use only {{,@cont,}} and don't use {{,@stag,}} and {{,@cont,}},
+.EN	you can remove start and end tags of the element.
+.EN	This pattern is named 'Dummy tag'.
+.	
+.	
+.JA	このパターンは、ある条件のときだけタグを出力したい場合に使います。
+.EN	This pattern is very useful if you want to print tags according to condition.
+.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-delete2.pdata
-.	<a href="@{$next_url}@" {{*id="mark:link"*}}>
-.	  Next Page&lt;&lt;
-.	</a>
+.	.-------------------- dummy-tag.pdata
+.	<a href="#{url}#" {{*id="mark:next"*}}>Next</a>
 .	.--------------------
+.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-delete2.plogic
-.	element link {
-.	  {{*if ($next_url != null) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*}*}}
+.	.-------------------- dummy-tag.plogic
+.	#next {
+.	  plogic: {
+.	    if (url == null) {
+.JA	      {{*@cont;*}}   // タグを出力しない
+.EN	      {{*@cont;*}}   // don't print tags
+.	    } else {
+.	      @stag;
+.	      @cont;
+.	      @etag;
+.	    }
+.	  }
 .	}
 .	.--------------------
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-delete2.plogic guide.d/teq-delete2.pdata
-.	.--------------------
-.	
-.JA	また内容を残したまま、タグだけを削除することもできます。
-.EN	You can delete only the start tag and the end tag, leaving the content.
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-delete3.plogic
-.	element link {
-.	  {{*if ($next_url != null) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*} else {*}}
-.	    {{*##*}}@stag;
-.	    @cont;
-.	    {{*##*}}@etag;
-.	  {{*}*}}
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-delete3.plogic guide.d/teq-delete2.pdata
-.	.--------------------
-.	
-.JA	なおエレメントを削除するためのディレクティブ{{,dummy,}}が用意されています。
-.JA	このディレクティブが指定されたエレメントは、出力されません。
-.EN	Kwartz-php provides a directive {{,dummy,}} which suppress the output of the element.
-.EN	The element which has a directive {{,dummy,}} is ignored by Kwartz-php.
-.	
-.	.--------------------
-.	<p {{*kd:php="dummy"*}}>
-.	  This is a dummy element.
-.	</p>
+.	.<<<:! ./output.rb -p guide.d/dummy-tag.plogic guide.d/dummy-tag.pdata
 .	.--------------------
 .	
 .	
-.JA	◎繰り返し	| pattern-iteration
-.EN	.$$ Iteration	| patetrn-iteration
 .	
-.JA	Kwartz-phpでは、次のような繰り返しを行うことができます。
-.JA	.* エレメント全体を繰り返す
-.JA	.* 内容だけを繰り返す。タグは1回だけ出力する。
-.JA	.* 内容だけを繰り返す。タグは出力しない。
-.EN	There are several situation in the iteration.
-.EN	.* Iterate the element.
-.EN	.* Iterate the content. Start/End tags are printed once.
-.EN	.* Iterate the content. Start/End tags are not printed.
-.	
-.JA	エレメント全体を繰り返す：
-.EN	Iterating the element:
-.	.-------------------- teq-iterate1.plogic
-.	element name {
-.	  {{*foreach ($list as $item) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*}*}}
-.	}
-.	.--------------------
-.	
-.JA	内容だけを繰り返す。タグは1回だけ出力する。
-.EN	Iterating the content, with printng the start/end tags once.
-.	.-------------------- teq-iterate2.plogic
-.	element name {
-.	  @stag;
-.	  {{*foreach ($list as $item) {*}}
-.	    @cont;
-.	  {{*}*}}
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	内容だけを繰り返し、タグは出力しない。
-.EN	Iterating the content, ignoreing the start/end tags.
-.	.-------------------- teq-iterate3.plogic
-.	element name {
-.	  {{*##*}}@stag;
-.	  {{*foreach ($list as $item) {*}}
-.	    @cont;
-.	  {{*}*}}
-.	  {{*##*}}@etag;
-.	}
-.	.--------------------
+.JA	●繰り返し	| iteration
+.EN	.$ Iteration	| iteration
 .	
 .	
-.JA	もちろん、繰り返し中に条件分岐や代入など、複雑なロジックを入れても構いません。
-.JA	次の例は、奇数行と偶数行とで色を変えたテーブルです。
-.JA	.* 「{{,kd:php="attr('bgcolor'=>$color)",}}」は、属性bgcolorの値として変数$colorを用いるためのディレクティブです。
-.JA	.* 「{{,kd:php="value($user)",}}」は、そのエレメントの内容を変数$userの値で置き換えるためのディレクティブです。
-.JA	.* 「{{,kd:php="dummy",}}」は、ダミーエレメントを出力しないためのディレクティブです。
-.EN	It is able to contain conditional branchings or assignments in the iteration.
-.EN	The following is an example of a table with colored borders.
-.EN	.* {{,kd:php="attr('bgcolor'=>$color)",}} is a directive to replace the bgcolor attribute with the value of $color.
-.EN	.* {{,kd:php="value($user)",}} is a directive to replace the content with the value of $user.
-.EN	.* {{,kd:php="dummy",}} is a directive which represents that the element is a dummy and Kwartz-php ignores it.
+.JA	◎Iterate Elementパターン	| iterate-elem
+.EN	.$$ Iterate Element pattern	| iterate-elem
+.	
+.	
+.JA	繰り返しの中に「{{,@stag,}}」と「{{,@cont,}}」と「{{,@etag,}}」を含めると、エレメント全体を繰り返すことになります。
+.JA	これを「Iterate Element」パターンといいます。
+.EN	Iteration which contains {{,@stag,}}, {{,@cont,}}, and {{,@etag,}} represents to iterate the element.
+.EN	This pattern is named 'Iterate element'.
+.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-iterate4.pdata
+.	.-------------------- iterate-elem.pdata
 .	<table>
-.	  <tbody {{*id="mark:user_list"*}}>
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="attr('bgcolor'=>$color)"*}}>
-.	      <td {{*kd:php="value($ctr)"*}}>1</td>
-.	      <td {{*kd:php="value($user)"*}}>Foo</td>
-.	    </tr>
-.	    <tr bgcolor="#FFCCCC" {{*kd:php="dummy"*}}>
-.	      <td>2</td>
-.	      <td>Bar</td>
-.	    </tr>
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="dummy"*}}>
-.	      <td>3</td>
-.	      <td>Baz</td>
-.	    </tr>
-.	  </tbody>
+.	  <tr {{*id="mark:items"*}}>
+.	   <td>#{item}#</td>
+.	  </tr>
 .	</table>
 .	.--------------------
 .	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-iterate4.plogic
-.	element user_list {
-.	  @stag;
-.	  {{*$ctr = 0;*}}
-.	  {{*foreach ($user_list as $user) {*}}
-.	    {{*$ctr += 1;*}}
-.	    {{*$color = $ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';*}}
-.	    @cont;
-.	  {{*}*}}
-.	  @etag;
+.	.-------------------- iterate-elem.plogic
+.	#items {
+.	  plogic: {
+.JA	    // 開始タグ、内容、終了タグを繰り返す
+.EN	    // iterate start tag, content, and end tag
+.	    {{*foreach (item in list) {*}}
+.	      @stag;
+.	      @cont;
+.	      @etag;
+.	    {{*}*}}
+.	  }
 .	}
 .	.--------------------
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-iterate4.plogic guide.d/teq-iterate4.pdata
+.	.<<<:! ./output.rb -p guide.d/iterate-elem.plogic guide.d/iterate-elem.pdata
 .	.--------------------
 .	
 .	
+.JA	◎Iterate Contentパターン	| iterate-cont
+.EN	.$$ Iterate Content pattern	| iterate-cont
 .	
-.JA	◎選択		| pattern-choice
-.EN	.$$ Choice	| pattern-choice
 .	
-.JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
-.EN	The following is an example to choose a certain element from some elements.
+.JA	繰り返しの中に「{{,@cont,}}」を含めると、内容だけを繰り返すことになります。
+.JA	これを「Iterate Content」パターンといいます。
+.JA	これは<dl></dl>の内容だけを繰り返したいときに、特に有効です。
+.EN	Iteration which contains only {{,@cont,}} represents to iterate the content.
+.EN	This pattern is named 'Iterate content' and this is very useful when creating <dl></dl> list.
 .	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- pat-choice.pdata
-.	<div {{*id="mark:message"*}}>
+.	.-------------------- iterate-elem.pdata
+.	<ul {{*id="mark:items"*}}>
+.	  <dt>#{item.text}#</dt>
+.	  <dd>#{item.desc}#</dd>
+.	</ul>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- iterate-elem.plogic
+.	#items {
+.	  plogic: {
+.JA	    // 内容だけを繰り返す
+.EN	    // iterate only content
+.	    @stag;
+.	    {{*foreach (item in list) {*}}
+.	      @cont;
+.	    {{*}*}}
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -p guide.d/iterate-elem.plogic guide.d/iterate-elem.pdata
+.	.--------------------
+.	
+.	
+.	
+.JA	●選択		| selection
+.EN	.$ Selection	| selection
+.	
+.	
+.JA	◎Select Elementパターン	| select-elem
+.EN	.$$ Select Element pattern	| select-elem
+.	
+.	
+.JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
+.JA	これは「Select Element」パターンといいます。
+.EN	The following is an example to choose a certain element from some elements.
+.EN	This pattern is named 'Select Element.'
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- select-elem.pdata
+.	<div id="mark:message">
 .	  <font color="red"   {{*id="mark:error"*}}>ERROR!</font>
 .	  <font color="blue"  {{*id="mark:warning"*}}>Warning:</font>
 .	  <font color="black" {{*id="mark:good"*}}>No error.</font>
@@ -390,17 +389,17 @@
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- pat-choice.plogic
-.	element message {
-.	  @stag;
-.	  {{*if ($error) {*}}
-.	    {{*@element_error;*}}       ## ERROR!
-.	  {{*} elseif ($warning) {*}}
-.	    {{*@element_warning;*}}     ## Warning:
-.	  {{*} else {*}}
-.	    {{*@element_good;*}}        ## No error.
-.	  {{*}*}}
-.	  @etag;
+.	.-------------------- select-elem.plogic
+.	#message {
+.	  plogic: {
+.	    if (status == 'error') {
+.	      {{*@element(error);*}}      // ERROR!
+.	    } else if (status == 'warning') {
+.	      {{*@element(warning);*}}    // Warning:
+.	    } else {
+.	      {{*@element(good);*}}       // No error.
+.	    }
+.	  }
 .	}
 .	.--------------------
 .	
@@ -408,82 +407,115 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/pat-choice.plogic guide.d/pat-choice.pdata
+.	.<<<:! ./output.rb -p guide.d/select-elem.plogic guide.d/select-elem.pdata
 .	.--------------------
 .	
 .	
-.JA	なお条件分岐を行うためのディレクティブも用意されています。
-.JA	これを使うと、プレゼンテーションなしで上と同じ出力用スクリプトが得られます。
-.EN	There are directives for conditional branching.
-.EN	You can get the same output script without presentation logic file when you use these directives.
+.JA	◎Pick-up Elementパターン	| pickup-elem
+.EN	.$$ Pick-up Element pattern	| pickup-elem
+.	
+.	
+.JA	ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、プレゼンテーションロジックでそのエレメントだけを利用します。
+.JA	これは「Pick-up Element」パターンといいます。
+.EN	If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
+.EN	This pattern is named 'Pick-up Element.'
+.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
+.	.-------------------- pickup-elem.pdata
+.	<html>
+.	  <body>
+.	    <div {{*id="breadcrumbs"*}}>
+.	      <a href="#{item['path']}#" {{*id="mark:crumb"*}}>#{item['name']}#</a>
+.	      <span {{*id="mark:separator"*}}>&gt;</span>
+.	      <a href="/aaa/">AAA</a> &lt;
+.	      <a href="/aaa/bbb/">BBB</a> &lgt;
+.	      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
+.	      <b {{*id="mark:title"*}}>#{title}#</b>
+.	    </div>
+.	  </body>
+.	</html>
 .	.--------------------
-.	<div>
-.	  <font color="red"   {{*kd:php="if($error)"*}}>ERROR!</font>
-.	  <font color="blue"  {{*kd:php="elseif($warning)"*}}>Warning:</font>
-.	  <font color="black" {{*kd:php="else"*}}>No error.</font>
-.	</div>
-.	.--------------------
 .	
-.	
-.	
-.JA	◎抽出		| pattern-extraction
-.EN	.$$ Extraction	| pattern-extraction
-.	
-.JA	プレゼンテーションデータ全体から、ある一部だけを抜き出すことができます。
-.EN	It is able to extract a certain element form the whole presentation data.
-.	
-.JA	例えば次の例では、エレメント'breadcrumbs'からエレメント'crumb'と'separator'だけを抜き出して使用しています。
-.JA	それ以外のデータは表示されません。
-.EN	The following is an example to extract and use only the element 'crumb' and 'separator' from the element 'breadcrumbs'.
-.EN	Other text strings are not printed.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- pat-extract1.pdata
-.	<div {{*id="mark:breadcrumbs"*}}>
-.	  <a {{*id="mark:crumb"*}} href="@{$href}@">Home</a>
-.	  <span {{*id="mark:separator"*}}> &lt; </span>
-.	  <a href="/aaa/">AAA</a> &lt;
-.	  <a href="/aaa/bbb/">BBB</a> &lt;
-.	  <a href="/aaa/bbb/ccc/">CCC</a> &lt;
-.	</div>
-.	<span kd:php="value($title)">DDD</span>
-.	.--------------------
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- pat-extract1.plogic
-.	element breadcrumbs {
-.	  @stag;
-.	  foreach ($breadcrumbs as $crumb) {
-.JA	    {{*@element_crumb;*}}        ## <a href="">...</a>を出力
-.JA	    {{*@element_separator;*}}    ## &lt; を出力
-.EN	    {{*@element_crumb;*}}        ## print <a href="">...</a>
-.EN	    {{*@element_separator;*}}    ## print &lt;
+.	.-------------------- pickup-elem.plogic
+.	#breadcrumbs {
+.	  plogic: {
+.	    foreach (item in list) {
+.	      {{*@element(crumb);*}}          // print <a>...</a>
+.	      {{*@element(separator);*}}      // print '&gt;'
+.	    }
+.	    {{*@element(title);*}}            // print <b>title</b>
 .	  }
-.	  @etag;
-.	}
-.	
-.	element crumb {
-.	  $href = $crumb['href'];
-.	  @stag;
-.JA	  echo $crumb['title'];    ## 内容の変わりに式の値を出力
-.EN	  echo $crumb['title'];    ## print expression instead of content
-.	  @etag;
 .	}
 .	.--------------------
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/pat-extract1.plogic guide.d/pat-extract1.pdata
+.	.<<<:! ./output.rb -p guide.d/pickup-elem.plogic guide.d/pickup-elem.pdata
 .	.--------------------
 .	
 .	
-.JA	.#このパターンは、HTMLファイルから部品化したいエレメントだけを抜き出すのに便利です。
+.JA	上の例は、次のように書くこともできます。
+.EN	The above example should be described as following.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- pickup-elem.pdata
+.	<html>
+.	  <body>
+.	    <div {{*id="breadcrumbs"*}}>
+.	      <a href="/" {{*id="mark:crumb"*}}>Home</a>
+.	      <span {{*id="mark:separator"*}}>&gt;</span>
+.	      <a href="/aaa/">AAA</a> &lt;
+.	      <a href="/aaa/bbb/">BBB</a> &lgt;
+.	      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
+.	      <b {{*id="mark:title"*}}>Page Title</b>
+.	    </div>
+.	  </body>
+.	</html>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- pickup-elem.plogic
+.	#breadcrumbs {
+.	  plogic: {
+.	    foreach (item in list) {
+.	      {{*@element(crumb);*}}          // print <a>...</a>
+.	      {{*@element(separator);*}}      // print '&gt;'
+.	    }
+.	    {{*@element(title);*}}            // print <b>title</b>
+.	  }
+.	}
+.	#crumb {
+.	  value: item['name'];
+.	  attr:  "href" item['path'];
+.	}
+.	#title {
+.	  value: title;
+.	}
+.	.--------------------
+.	
+.	
+.	
+.JA	◎Extract Elementパターン	| extract-elem
+.EN	.$$ Extract Element pattern	| extract-elem
+.	
+.JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、ほかは一切表示しないようにすることができます。
+.JA	このパターンは「Extract element」パターンといいます。
+.EN	It is able to extract a certain element form the whole presentation data.
+.EN	Other text strings are not printed.
+.EN	This pattern is named 'Extract Element.'
+.	
+.	
 .JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
 .JA	例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
 .EN	This pattern is very useful to extract HTML fragments and make them libraries.
@@ -559,7 +591,7 @@
 .	
 .	    <div {{*id="mark:tablist"*}}>
 .	      <div class="tabs" id="mark:tabs">
-.	        <a href="{{*@{$tab_href}@*}}" class="{{*@{$tab_class}@*}}" {{*id="mark:tab"*}}>Home</a>
+.	        <a href="/" class="" {{*id="mark:tab"*}}>Home</a>
 .	        <a href="/product/" class="selected">Product</a>
 .	        <a href="/download/" class="">Download</a>
 .	        <a href="/support/" class="">Support</a>
@@ -571,14 +603,13 @@
 .	    <br>
 .	
 .	    <div {{*id="mark:menulist"*}}>
-.	      <span class="menu_title" {{*id="mark:menu_title"*}}>MenuList</span>
+.	      <span class="menu_title" id="value:menu_title">MenuList</span>
 .	      <div class="menus" {{*id="mark:menus"*}}>
-.	        <a href="email.cgi" class="" {{*id="mark:menu"*}}
-.		  {{*kd:php="attr('href'=>$menu_href,'class'=>$menu_class)"*}}>E-Mail</a>
-.		<span {{*id="mark:menu_separator"*}}><br></span>
-.	        <a href="board.cgi" class="selected">MesgBoard</a><br>
-.	        <a href="photo.cgi" class="">PhotoAlbum</a><br>
-.	        <a href="greeting.cgi" class="">GreetingCard</a><br>
+.	        <a href="/cgi-bin/email.cgi" class="" {{*id="mark:menu"*}}>E-Mail</a>
+.	        <span {{*id="mark:menu_separator"*}}><br></span>
+.	        <a href="/cgi-bin/board.cgi" class="selected">MesgBoard</a><br>
+.	        <a href="/cgi-bin/photo.cgi" class="">PhotoAlbum</a><br>
+.	        <a href="/cgi-bin/greeting.cgi" class="">GreetingCard</a><br>
 .	      </div>
 .	    </div>
 .	    <br>
@@ -588,7 +619,7 @@
 .	    <p> ..... </p>
 .	    
 .	    <div align="center" class="copyright" {{*id="mark:copyright"*}}>
-.	      Copyright&copy; 2004 kuwata-lab. All Rights Reserved.
+.	      Copyright&copy; 2004-2005 kuwata-lab. All Rights Reserved.
 .	    </div>
 .	    
 .	  </body>
@@ -599,72 +630,76 @@
 .JA	プレゼンテーションロジック(copyright.plogic)：
 .EN	Presentation Logic (copyright.plogic):
 .	.-------------------- copyright.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_copyright;*}}   ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'whole'
-.EN	  {{*@element_copyright;*}}   ## with the element what you want to extract
-.EN	{{*}*}}
+.	{{*#whole*}} {
+.JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
+.EN	  // replace the element 'whole' with the element you want to extract
+.	  plogic: {
+.	    {{*@element(copyright);*}}
+.	  }
+.	}
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック(tablist.plogic)：
 .EN	Presentation Logic (tablist.plogic):
 .	.-------------------- tablist.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_tablist;*}}     ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'all'
-.EN	  {{*@element_tablist;*}}     ## with the element what you want to extract
-.EN	{{*}*}}
-.	
-.	element tabs {
-.	  foreach ($tablist as $tab) {
-.	    @element_tab;
+.	{{*#whole*}} {
+.JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
+.EN	  // replace the element 'whole' with the element you want to extract
+.	  plogic: {
+.	    {{*@element(tablist);*}}
 .	  }
 .	}
 .	
-.	element tab {
-.	  $tab_href = $tab['href'];
-.	  $tab_name = $tab['name'];
-.	  $klass = $current_tab == $tab_name ? 'selected' : '';
-.	  @stag;
-.	  echo $tab_name;
-.	  @etag;
+.	#tabs {
+.	  plogic: {
+.	    @stag;
+.	    foreach (tab in tablist) {
+.	      klass = current_tabname == tab['name'] ? 'selected' : '';
+.	      @element(tab);
+.	    }
+.	    @etag;
+.	  }
+.	}
+.	
+.	#tab {
+.	  value: tab['name'];
+.	  attr:  "href" tab['href'], "class" klass;
 .	}
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック(menulist.plogic)：
 .EN	Presentation Logic (menulist.plogic):
 .	.-------------------- menulist.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_menulist;*}}    ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'whole'
-.EN	  {{*@element_menulist;*}}    ## with the element what you want to extract
-.EN	{{*}*}}
-.	
-.	element menu_title {
-.	  @stag;
-.	  echo $menu_title;
-.	  @etag;
+.	{{*#whole*}} {
+.JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
+.EN	  // replace the element 'whole' with the element you want to extract
+.	  plogic: {
+.	    {{*@element(menulist);*}}
+.	  }
 .	}
 .	
-.	element menus {
-.	  foreach ($menulist as $menu) {
+.	#menus {
+.	  plogic: {
 .	    @stag;
-.	    @element_menu;
-.	    @element_menu_separator;
+.	    foreach (menu in menulist) {
+.	      @element(menu);
+.	      @element(menu_separator);
+.	    }
 .	    @etag;
 .	  }
 .	}
 .	
-.	element menu {
-.	  $menu_href = $menu['href'];
-.	  $menu_name = $menu['name'];
-.	  $menu_class = $menu_name == $current_menu ? 'selected' : '';
-.	  @stag;
-.	  echo $menu_name;
-.	  @etag;
+.	#menu {
+.	  value:  menu['name'];
+.	.#  attr:   "href" menu['cgipath'] ,
+.	.#          "class" current_menu == menu['name'] ? 'selected' : '';
+.	  attr:   "href" menu['cgipath'], "class" klass;
+.	  plogic: {
+.	    klass = current_menu == menu['name'] ? 'selected' : '';
+.	    @stag;
+.	    @cont;
+.	    @etag;
+.	  }
 .	}
 .	.--------------------
 .	
@@ -672,33 +707,35 @@
 .EN	Compile:
 .	.====================
 .	### copyright
-.	$ kwartz-php -p copyright.plogic design.pdata > copyright.php
+.	$ kwartz -l eruby -p copyright.plogic design.pdata
+.	$ kwartz -l php   -p copyright.plogic design.pdata
 .	
 .	### tablist
-.	$ kwartz-php -p tablist.plogic   design.pdata > tablist.php
+.	$ kwartz -l eruby -p tablist.plogic   design.pdata
+.	$ kwartz -l php   -p tablist.plogic   design.pdata
 .	
 .	### menulist
-.	$ kwartz-php -p menulist.plogic  design.pdata > menulist.php
+.	$ kwartz -l eruby -p menulist.plogic  design.pdata
+.	$ kwartz -l php   -p menulist.plogic  design.pdata
 .	.====================
 .	
 .	
-.JA	出力用スクリプト(copyright.php)：
-.EN	Output Script (copyright.php):
+.JA	出力用スクリプト：
+.EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/copyright.plogic guide.d/design.html
-.	.--------------------
-.	
-.JA	出力用スクリプト(tablist.php)：
-.EN	Output Script (tablist.php):
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/tablist.plogic guide.d/design.html
+.	.<<<:! ./output.rb -l eruby,php -p guide.d/copyright.plogic guide.d/design.html
 .	.--------------------
 .	
-.JA	出力用スクリプト(menulist.php)：
-.EN	Output Script (menulist.php):
+.JA	出力用スクリプト：
+.EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/menulist.plogic guide.d/design.html
+.	.<<<:! ./output.rb -l eruby,php -p guide.d/tablist.plogic guide.d/design.html
 .	.--------------------
 .	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -l eruby,php -p guide.d/menulist.plogic guide.d/design.html
+.	.--------------------
 .	
 .	

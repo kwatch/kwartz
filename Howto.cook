@@ -18,7 +18,9 @@ kwartz-ruby_%:  README.ja.txt README.en.txt
 	archive_dir = [target];
 	rm -rf [archive_dir];
 	mkdir -p [archive_dir];
-	cp -a lib bin test doc [files] [archive_dir];
+	cp -a lib bin test [files] [archive_dir];
+	mkdir -p [archive_dir]/doc;
+	cp doc/BNF.txt doc/reference.??.html doc/users-guide.??.html [archive_dir]/doc;
 	cd examples \; make clean;
 	cp -a examples [archive_dir];
 	find [archive_dir] -name '.svn' | xargs rm -rf ;

@@ -112,8 +112,8 @@ module Kwartz
             properties[:escape] = options[?e]
          end
 
-         if properties.key?(:empty_tags)
-            properties[:empty_tags] = properties[:empty_tags].split(/,/)
+         if properties.key?(:noend)
+            properties[:noend] = properties[:noend].split(/,/)
          end
 
          lang = (options[?l] || Kwartz::Config::LANG)

@@ -5,8 +5,13 @@ else if [exists '../m18n.rb'] then
 
 U = users-guide;
 R = reference;
+P = p-pattern;
 
-all: [U].en.html [U].ja.html [R].en.html [R].ja.html;
+all: [U].en.html [U].ja.html
+     [R].en.html [R].ja.html
+     [P].en.html [P].ja.html
+     design.html design.css
+     ;
 
 %1.%2.html: %1.%2.txt
 {
@@ -24,4 +29,10 @@ all: [U].en.html [U].ja.html [R].en.html [R].ja.html;
 %1.%2.txt: %1.txt
 {
 	ruby [m18n] -l [upcase %2] [need] > [target];
+}
+
+design.html design.css: p-pattern.en.txt
+{
+	retrieve -d guide.d [need];
+	mv guide.d/design.* .;
 }

@@ -16,11 +16,22 @@
 .EN	Presentation language (PL), directives, and the command-line options are described in this document.
 .	
 .	
-.	.+toc:
+.	
+.JA	◎目次			| toc*
+.EN	.$$ Table of Contents	| toc*
+.	
+.	.#.+toc:
 .JA	.<<< reference.ja.toc.html
 .EN	.<<< reference.en.toc.html
-.	.-toc:
+.	.#.-toc:
 .	
+.	
+.	
+.JA	◎更新履歴		| changelog*
+.EN	.$$ ChangeLog		| changelog*
+.	
+.	.: 2005-02-14
+.		.- alpha release
 .	
 .	
 .	
@@ -2030,6 +2041,10 @@
 .	.[ DATTR ]
 .JA		ディレクティブで使用する属性名を指定します。デフォルトはkdです。
 .EN		Specify an attribute name for directives. Default is 'kd'.
+.	
+.	.[ NOEND ]
+.JA		終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。
+.EN		List of tag name which doesn't require end tag. Default is [ "input", "br", "meta", "img", "hr" ].
 .	
 .	.[ CHARSET ]
 .JA		文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。
