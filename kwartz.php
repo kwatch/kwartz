@@ -19,6 +19,7 @@ require_once('KwartzConverter.inc');
 require_once('KwartzTranslator.inc');
 require_once('KwartzErubyTranslator.inc');
 require_once('KwartzJspTranslator.inc');
+require_once('KwartzPlphpTranslator.inc');
 require_once('KwartzCompiler.inc');
 require_once('KwartzAnalyzer.inc');
 
@@ -40,8 +41,8 @@ require_once('KwartzAnalyzer.inc');
 		private $options = array();
 		private $toppings = array();
 		
-		function __construct($command_name) {
-			$this->command_name = $command_name;
+		function __construct() {
+			//$this->command_name = $command_name;
 		}
 
 		function main(&$argv) {
@@ -68,11 +69,12 @@ require_once('KwartzAnalyzer.inc');
 				case 'php':
 				case 'eruby':
 				case 'jsp':
+				case 'plphp':
 					# OK
 					break;
 				default:
 					$msg = "'$lang': unsupported language name.";
-					throw new KwartzComandOptionError($msg);
+					throw new KwartzCommandOptionError($msg);
 				}
 			} else {
 				$lang = 'php';
@@ -91,6 +93,7 @@ require_once('KwartzAnalyzer.inc');
 				//case 'scan':
 				case 'parse':
 				case 'convert':
+				case'_convert':
 				case 'translate':
 				case 'compile':
 				case 'analyze':
@@ -172,6 +175,19 @@ require_once('KwartzAnalyzer.inc');
 				$block = $parser->parse();
 				$output = $block->inspect();
 				break;
+				
+			case '_convert':
+				$converter = new KwartzConverter($input, $toppings);
+				$block = $converter->convert();
+				$output = $block->inspect();
+				break;
+
+			case 'convert':
+				$converter = new KwartzConverter($input, $toppings);
+				$block = $converter->convert();
+				$translator = new KwartzPlphpTranslator($block, $toppings);
+				$output = $translator->translate();
+				break;
 
 			case 'translate':
 				$parser = new KwartzParser($input, $flag_escape, $toppings);
@@ -186,14 +202,11 @@ require_once('KwartzAnalyzer.inc');
 				case 'jsp':
 					$translator = new KwartzJspTranslator($block, $toppings);
 					break;
+				case 'plphp':
+					$translator = new KwartzPlphpTranslator($block, $toppings);
+					break;
 				}
 				$output = $translator->translate();
-				break;
-
-			case 'convert':
-				$converter = new KwartzConverter($input, $toppings);
-				$block = $converter->convert();
-				$output = $block->inspect();
 				break;
 
 			case 'analyze':
@@ -353,7 +366,7 @@ END;
 ##
 if (basename(__FILE__) == basename($argv[0])) {
 	try {
-		$kwartz = new KwartzCommand($argv[0]);
+		$kwartz = new KwartzCommand();
 		$kwartz->main($argv);
 	} catch (KwartzException $ex) {
 		fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");

@@ -339,13 +339,18 @@ require_once('KwartzUtility.inc');
 			}
 
 			if ($c == '.') {
-				if (($c = $this->read()) != '+') {
-					return $this->token = '.';
-				} elseif (($c = $this->read()) != '=') {
+				$c = $this->read();
+				if ($c == '=') {
+					$c = $this->read();
+					return $this->token = '.=';
+				} else if ($c == '+') {
+					if (($c = $this->read()) == '=') {
+						$c = $this->read();
+						return $this->token = '.+=';
+					}
 					return $this->token = '.+';
 				}
-				$c = $this->read();
-				return $this->token = '.+=';
+				return $this->token = '.';
 			}
 
 			if ($c == '&' || $c == '|') {

@@ -127,7 +127,7 @@ require_once('KwartzUtility.inc');
 		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
 			$this->block       = $block->rearrange();
 			$this->flag_escape = $flag_escape;
-			$this->toppings     = $toppings ? $toppings : array();
+			$this->toppings    = $toppings ? $toppings : array();
 			if ($flag_escape) {
 				$this->print_key    = ':eprint';
 				$this->endprint_key = ':endeprint';
@@ -200,17 +200,19 @@ require_once('KwartzUtility.inc');
 		abstract protected function keyword($token);
 
 		function translate() {
-			//$i = -1;
 			$statements = $this->block->statements();
 			foreach ($statements as $stmt) {
-				//$i++;
 				if ($stmt->token() == ':macro') {
 					$this->add_macro($stmt->macro_name(), $stmt->body_block());
-					//unset($block->statements()[$i]);
 				}
 			}
-			//$this->code = "";
+			if (! $this->flag_supress_begin && $this->macro('BEGIN')) {
+				$this->translate_statement($this->macro('BEGIN'), 0);
+			}
 			$this->translate_statement($this->block, 0);
+			if (! $this->flag_supress_end && $this->macro('END')) {
+				$this->translate_statement($this->macro('END'), 0);
+			}
 			return $this->code;
 		}
 
@@ -355,6 +357,9 @@ require_once('KwartzUtility.inc');
 		function translate_statement($stmt, $depth) {
 			$class_name = get_class($stmt);
 			$method_name = $this->dispatcher[$class_name];
+			if (! is_string($method_name)) {
+				throw new exception();
+			}
 			$this->$method_name($stmt, $depth);
 		}
 

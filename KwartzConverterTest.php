@@ -264,8 +264,8 @@ END;
 		$converter = new KwartzConverter('');
 		$directive_str = "attr:class:klass;ATTR:id:item;value:expr";
 		$attr_exprs = array();
-		$embed_exprs = array();
-		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $embed_exprs);
+		$append_exprs = array();
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $append_exprs);
 		$this->assertEquals('#{klass}#', $attr_exprs['class']);
 		$this->assertEquals('#{X(item)}#', $attr_exprs['id']);
 		$this->assertEquals('value', $directive[0]);
@@ -278,8 +278,8 @@ END;
 		$converter = new KwartzConverter('');
 		$directive_str = "attr('class'=>\$klass,'id'=>\$item);echo(\$expr)";
 		$attr_exprs = array();
-		$embed_exprs = array();
-		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $embed_exprs);
+		$append_exprs = array();
+		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $append_exprs);
 		$this->assertEquals('@{$klass}@', $attr_exprs['class']);
 		$this->assertEquals('@{$item}@', $attr_exprs['id']);
 		$this->assertEquals('echo', $directive[0]);
@@ -291,21 +291,21 @@ END;
 
 	function test_parse_directive_kdstr2() {
 		$converter = new KwartzConverter('');
-		$directive_str = 'Embed:foo;embed:@C(flag!=\'\')';
+		$directive_str = 'Append:foo;append:@C(flag!=\'\')';
 		$attr_hash = array();
-		$embed_str = '';
-		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $embed_str);
-		$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $embed_str);
+		$append_str = '';
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $append_str);
+		$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
 	function test_parse_directive_phpstr2() {
 		$converter = new KwartzConverter('');
-		$directive_str = 'Embed(\$foo);embed(@C(\$flag!=\'\'))';
+		$directive_str = 'Append(\$foo);append(@C(\$flag!=\'\'))';
 		$attr_hash = array();
-		$embed_str = '';
-		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $embed_str);
-		$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $embed_str);
+		$append_str = '';
+		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $append_str);
+		$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -354,7 +354,7 @@ END;
 
 	function test_parse_attr_str2() {
 		$input = <<<END
-<tr id="foo" class="odd" kd="Attr:class:klass;embed:flag?'checked':'';set:klass=ctr%2==0?'even':'odd'">
+<tr id="foo" class="odd" kd="Attr:class:klass;append:flag?'checked':'';set:klass=ctr%2==0?'even':'odd'">
   <td id="value:klass">hoge</td>
 </tr>
 END;
@@ -370,11 +370,11 @@ END;
 
 	function test_parse_attr_str2_php() {
 		$input = <<<END
-<tr id="foo" class="odd" kd:php="Attr('class'=>\$klass);embed(\$flag?'checked':'');foreach(\$list as \$item)">
+<tr id="foo" class="odd" kd:php="Attr('class'=>\$klass);append(\$flag?'checked':'');foreach(\$list as \$item)">
   <td id="value:klass">hoge</td>
 </tr>
 END;
-		$expected1 = ' id="foo" class="odd" kd:php="Attr(\'class\'=>$klass);embed($flag?\'checked\':\'\');foreach($list as $item)"';
+		$expected1 = ' id="foo" class="odd" kd:php="Attr(\'class\'=>$klass);append($flag?\'checked\':\'\');foreach($list as $item)"';
 		$expected2 = ' id="foo" class="@{E($klass)}@" @{$flag?\'checked\':\'\'}@';
 
 		$converter = new KwartzConverter($input);
@@ -833,7 +833,7 @@ END;
 	}
 
 
-	function test_convert_foreach4() {	# even/odd value
+	function test_convert_foreach4() {	# --even_value/odd_value
 		$input = <<<END
 		<b kd="FOREACH:item=list">hoge</b>
 END;
@@ -887,6 +887,12 @@ END;
 		$input2 = <<<END
 		<b kd:php="loop(\$list as \$item)">hoge</b>
 END;
+		$input3 = <<<END
+		<b kd="list:item=list">hoge</b>
+END;
+		$input4 = <<<END
+		<b kd:php="list(\$list as \$item)">hoge</b>
+END;
 		$expected = <<<END
 		<<block>>
 		  :print
@@ -903,6 +909,8 @@ END;
 END;
 		$this->_test_convert($input,  $expected);
 		$this->_test_convert($input2, $expected);
+		$this->_test_convert($input3, $expected);
+		$this->_test_convert($input4, $expected);
 	}
 
 
@@ -910,12 +918,10 @@ END;
 
 
 	function test_convert_loop2() {
-		$input = <<<END
-		<b kd="Loop:item=list">hoge</b>
-END;
-		$input2 = <<<END
-		<b kd:php="Loop(\$list as \$item)">hoge</b>
-END;
+		$input1 = '<b kd="Loop:item=list">hoge</b>'           ;
+		$input2 = '<b kd:php="Loop($list as $item)">hoge</b>' ;
+		$input3 = '<b kd="List:item=list">hoge</b>'           ;
+		$input4 = '<b kd:php="List($list as $item)">hoge</b>' ;
 		$expected = <<<END
 		<<block>>
 		  :print
@@ -938,19 +944,26 @@ END;
 		    "</b>"
 
 END;
-		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input1, $expected);
 		$this->_test_convert($input2, $expected);
+		$this->_test_convert($input3, $expected);
+		$this->_test_convert($input4, $expected);
 	}
 
 
 
-
-	function test_convert_loop3() {
+	function test_convert_loop3() {		# LOOP
 		$input = <<<END
 		<b kd="LOOP:item=list">hoge</b>
 END;
 		$input2 = <<<END
 		<b kd:php="LOOP(\$list as \$item)">hoge</b>
+END;
+		$input3 = <<<END
+		<b kd="LIST:item=list">hoge</b>
+END;
+		$input4 = <<<END
+		<b kd:php="LIST(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -987,15 +1000,24 @@ END;
 END;
 		$this->_test_convert($input,  $expected);
 		$this->_test_convert($input2, $expected);
+		$this->_test_convert($input3, $expected);
+		$this->_test_convert($input4, $expected);
 	}
 
 
-	function test_convert_loop4() {		# even/odd value
+
+	function test_convert_loop4() {		# --even_value/odd_value
 		$input = <<<END
 		<b kd="LOOP:item=list">hoge</b>
 END;
 		$input2 = <<<END
 		<b kd:php="LOOP(\$list as \$item)">hoge</b>
+END;
+		$input3 = <<<END
+		<b kd="LIST:item=list">hoge</b>
+END;
+		$input4 = <<<END
+		<b kd:php="LIST(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -1033,6 +1055,8 @@ END;
 		$toppings = array('even_value'=>'#FFCCCC', 'odd_value'=>'#CCCCFF');
 		$this->_test_convert($input,  $expected, true, $toppings);
 		$this->_test_convert($input2, $expected, true, $toppings);
+		$this->_test_convert($input3, $expected, true, $toppings);
+		$this->_test_convert($input4, $expected, true, $toppings);
 	}
 
 
@@ -1706,8 +1730,6 @@ END;
 		'<<block>>
 		  :print
 		    "<div>\n"
-		  :print
-		    "  <div>\n"
 		  :foreach
 		    item
 		    list
@@ -1718,8 +1740,6 @@ END;
 		        item
 		      :print
 		        "</div>\n"
-		  :print
-		    "  </div>\n"
 		  :print
 		    "</div>\n"
 		';
@@ -1752,8 +1772,6 @@ END;
 		'<<block>>
 		  :print
 		    "<div>\n"
-		  :print
-		    "  <div>\n"
 		  :foreach
 		    item
 		    list
@@ -1765,15 +1783,11 @@ END;
 		      :print
 		        "</div>\n"
 		  :print
-		    "  </div>\n"
-		  :print
 		    "</div>\n"
 		';
 		$this->_test_convert($input, $expected);
 		unlink($filename);
 	}
-
-
 
 
 	function test_load1() {
@@ -1802,8 +1816,6 @@ END;
 		'<<block>>
 		  :print
 		    "<div>\n"
-		  :print
-		    "  <div>\n"
 		  :foreach
 		    item
 		    list
@@ -1814,8 +1826,6 @@ END;
 		        item
 		      :print
 		        "</div>\n"
-		  :print
-		    "  </div>\n"
 		  :print
 		    "</div>\n"
 		';
@@ -1850,8 +1860,6 @@ END;
 		'<<block>>
 		  :print
 		    "<div>\n"
-		  :print
-		    "  <div>\n"
 		  :foreach
 		    item
 		    list
@@ -1862,8 +1870,6 @@ END;
 		        item
 		      :print
 		        "</div>\n"
-		  :print
-		    "  </div>\n"
 		  :print
 		    "</div>\n"
 		';
@@ -2073,13 +2079,13 @@ END;
 	
 	
 	
-	const input_embed1 =
-		'<input type="radio" kd="attr:value:item[\'value\'];embed:item[\'age\']<20?\'checked\':\'\'" />
+	const input_append1 =
+		'<input type="radio" kd="attr:value:item[\'value\'];append:item[\'age\']<20?\'checked\':\'\'" />
 		';
-	const input_embed1_php =
-		'<input type="radio" kd:php="attr(\'value\'=>$item[\'value\']);embed($item[\'age\']<20?\'checked\':\'\')" />
+	const input_append1_php =
+		'<input type="radio" kd:php="attr(\'value\'=>$item[\'value\']);append($item[\'age\']<20?\'checked\':\'\')" />
 		';
-	const expected_embed1 =
+	const expected_append1 =
 		'<<block>>
 		  :print
 		    "<input type=\"radio\" value=\""
@@ -2097,26 +2103,26 @@ END;
 		      ""
 		    " />\n"
 		';
-	function test_embed1() {
-		$input    = KwartzConverterTest::input_embed1;
-		$expected = KwartzConverterTest::expected_embed1;
+	function test_append1() {
+		$input    = KwartzConverterTest::input_append1;
+		$expected = KwartzConverterTest::expected_append1;
 		$this->_test_convert($input, $expected);
 	}
-	function test_embed1_php() {
-		$input    = KwartzConverterTest::input_embed1_php;
-		$expected = KwartzConverterTest::expected_embed1;
+	function test_append1_php() {
+		$input    = KwartzConverterTest::input_append1_php;
+		$expected = KwartzConverterTest::expected_append1;
 		$this->_test_convert($input, $expected);
 	}
 
 
 
-	const input_embed2 =
-		'<input type="radio" kd="embed:@C(item[\'age\']<20)" />
+	const input_append2 =
+		'<input type="radio" kd="append:@C(item[\'age\']<20)" />
 		';
-	const input_embed2_php =
-		'<input type="radio" kd:php="embed(@C($item[\'age\']<20))" />
+	const input_append2_php =
+		'<input type="radio" kd:php="append(@C($item[\'age\']<20))" />
 		';
-	const expected_embed2 = 
+	const expected_append2 = 
 		'<<block>>
 		  :print
 		    "<input type=\"radio\" "
@@ -2130,14 +2136,14 @@ END;
 		      ""
 		    " />\n"
 		';
-	function test_embed2() {
-		$input    = KwartzConverterTest::input_embed2;
-		$expected = KwartzConverterTest::expected_embed2;
+	function test_append2() {
+		$input    = KwartzConverterTest::input_append2;
+		$expected = KwartzConverterTest::expected_append2;
 		$this->_test_convert($input, $expected);
 	}
-	function test_embed2_php() {
-		$input    = KwartzConverterTest::input_embed2_php;
-		$expected = KwartzConverterTest::expected_embed2;
+	function test_append2_php() {
+		$input    = KwartzConverterTest::input_append2_php;
+		$expected = KwartzConverterTest::expected_append2;
 		$this->_test_convert($input, $expected);
 	}
 
@@ -2178,6 +2184,7 @@ END;
 		$toppings = array('delete_idattr'=>TRUE);
 		$this->_test_convert($input, $expected, true, $toppings);
 	}
+
 }
 
 

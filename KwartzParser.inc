@@ -384,9 +384,10 @@ require_once('KwartzScanner.inc');
 		##		 ::= conditional-expr [ assign-op conditional-expr ]
 		function parse_assignment($flag_php_mode=FALSE) {
 			$expr = $this->parse_conditional($flag_php_mode);
+			$concat_op = $flag_php_mode ? '.=' : '.+=';
 			switch ($t = $this->token()) {
 			case '=': case '+=':  case '-=':  case '*=':  case '/=':
-			case '%=':  case '^=':	case '.+=':
+			case '%=':  case '^=':	case '.+=':  case $concat_op:
 				switch ($expr->token()) {
 				case 'variable':
 				case '[]':
@@ -399,6 +400,7 @@ require_once('KwartzScanner.inc');
 				}
 				$this->scan();
 				$expr2 = $this->parse_assignment($flag_php_mode);
+				$t = $t == '.=' ? '.+=' : $t;
 				$expr = new KwartzBinaryExpression($t, $expr, $expr2);
 			}
 			return $expr;

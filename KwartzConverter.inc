@@ -52,15 +52,18 @@ require_once('KwartzUtility.inc');
 			'loop'    => array(TRUE,  FALSE, FALSE),
 			'Loop'    => array(TRUE,  TRUE,  FALSE),
 			'LOOP'    => array(TRUE,  TRUE,  TRUE),
+			'list'    => array(TRUE,  FALSE, FALSE),
+			'List'    => array(TRUE,  TRUE,  FALSE),
+			'LIST'    => array(TRUE,  TRUE,  TRUE),
 		);
 
 		static $escapes = array(
-			'attr'  => array( '',   ''  ),
-			'Attr'  => array( 'E(', ')' ),
-			'ATTR'  => array( 'X(', ')' ),
-			'embed' => array( '',   ''  ),
-			'Embed' => array( 'E(', ')' ),
-			'EMBED' => array( 'X(', ')' ),
+			'attr'   => array( '',   ''  ),
+			'Attr'   => array( 'E(', ')' ),
+			'ATTR'   => array( 'X(', ')' ),
+			'append' => array( '',   ''  ),
+			'Append' => array( 'E(', ')' ),
+			'APPEND' => array( 'X(', ')' ),
 		);
 		
 		function _attr_str()	   { return $this->attr_str; }		// for unit-test
@@ -214,7 +217,7 @@ require_once('KwartzUtility.inc');
 		##		ex. array('flag ? "checked" : ""')
 		## - return: a tuple of directive name and argument.
 		##		ex. array('foreach', 'item=list')
-		private function parse_directive_kdstr(&$str, &$attr_hash, &$embed_str) {
+		private function parse_directive_kdstr(&$str, &$attr_hash, &$append_str) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
@@ -237,25 +240,24 @@ require_once('KwartzUtility.inc');
 						//elseif ($dname == 'ATTR') { $attr_hash[$attr_name] = '#{X(' . $expr_str . ')}#'; }
 						//else                      { $attr_hash[$attr_name] = '#{'   . $expr_str .  '}#'; }
 						break;
-					//case 'embed':
-					//	$embed_str .= ' #{'   . $darg .  '}#';
+					//case 'append':
+					//	$append_str .= ' #{'   . $darg .  '}#';
 					//	break;
-					//case 'Embed':
-					//	$embed_str .= ' #{E(' . $darg . ')}#';
+					//case 'Append':
+					//	$append_str .= ' #{E(' . $darg . ')}#';
 					//	break;
-					//case 'EMBED':
-					//	$embed_str .= ' #{X(' . $darg . ')}#';
+					//case 'APPEND':
+					//	$append_str .= ' #{X(' . $darg . ')}#';
 					//	break;
-					case 'embed':  case 'Embed':  case 'EMBED':
+					case 'append':  case 'Append':  case 'APPEND':
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	# 'E(' ')' or 'X(' ')'
-						$embed_str .= " #{{$e1}{$darg}{$e2}}#";
+						$append_str .= " #{{$e1}{$darg}{$e2}}#";
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
 					case 'replace':
 					case 'if':  case 'elsif':  case 'elseif':  case 'else':  case 'unless':
 					case 'while':
-					case 'include':
 					case 'dummy':
 						$directive = array($dname, $darg);
 						break;
@@ -267,6 +269,7 @@ require_once('KwartzUtility.inc');
 						break;
 					case 'foreach': case 'Foreach': case 'FOREACH':
 					case 'loop':	case 'Loop':	case 'LOOP':
+					case 'list':	case 'List':	case 'LIST':
 						if (preg_match('/^\w+:/', $darg)) {
 							$darg = preg_replace('/:/', '=', $darg);
 						}
@@ -305,7 +308,7 @@ require_once('KwartzUtility.inc');
 		##		ex. array('$flag ? "checked" : ""')
 		## - return: a tuple of directive name and argument.
 		##		ex. array('foreach', '$list as $item')
-		private function parse_directive_phpstr(&$str, &$attr_hash, &$embed_str) {
+		private function parse_directive_phpstr(&$str, &$attr_hash, &$append_str) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
@@ -331,18 +334,18 @@ require_once('KwartzUtility.inc');
 							$attr_hash[$attr_name] = "@{{$e1}{$expr_str}{$e2}}@";
 						}
 						break;
-					//case 'embed':
-					//	$embed_str .= ' @{'   . $darg .  '}@';
+					//case 'append':
+					//	$append_str .= ' @{'   . $darg .  '}@';
 					//	break;
-					//case 'Embed':
-					//	$embed_str .= ' @{E(' . $darg . ')}@';
+					//case 'Append':
+					//	$append_str .= ' @{E(' . $darg . ')}@';
 					//	break;
-					//case 'EMBED':
-					//	$embed_str .= ' @{X(' . $darg . ')}@';
+					//case 'APPEND':
+					//	$append_str .= ' @{X(' . $darg . ')}@';
 					//	break;
-					case 'embed':  case 'Embed':  case 'EMBED':
+					case 'append':  case 'Append':  case 'APPEND':
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	// 'E(' ')' or 'X(' ')'
-						$embed_str .= " @{{$e1}{$darg}{$e2}}@";
+						$append_str .= " @{{$e1}{$darg}{$e2}}@";
 						break;
 					case 'echo':  case 'Echo':  case 'ECHO':
 					case 'mark':
@@ -352,6 +355,7 @@ require_once('KwartzUtility.inc');
 					case 'set':
 					case 'foreach': case 'Foreach': case 'FOREACH':
 					case 'loop':	case 'Loop':	case 'LOOP':
+					case 'list':	case 'List':	case 'LIST':
 					case 'dummy':
 						$directive = array($dname, $darg);
 						break;
@@ -378,11 +382,11 @@ require_once('KwartzUtility.inc');
 
 
 		## test for parse_directive_kdstr()
-		function _parse_directive_kdstr(&$str, &$attr_exprs, &$embed_exprs) {
-			return $this->parse_directive_kdstr($str, $attr_exprs, $embed_exprs);
+		function _parse_directive_kdstr(&$str, &$attr_exprs, &$append_exprs) {
+			return $this->parse_directive_kdstr($str, $attr_exprs, $append_exprs);
 		}
-		function _parse_directive_phpstr(&$str, &$attr_exprs, &$embed_exprs) {
-			return $this->parse_directive_phpstr($str, $attr_exprs, $embed_exprs);
+		function _parse_directive_phpstr(&$str, &$attr_exprs, &$append_exprs) {
+			return $this->parse_directive_phpstr($str, $attr_exprs, $append_exprs);
 		}
 
 
@@ -529,6 +533,9 @@ require_once('KwartzUtility.inc');
 			'loop'    => 'handle_directive_foreach',
 			'Loop'    => 'handle_directive_foreach',
 			'LOOP'    => 'handle_directive_foreach',
+			'list'    => 'handle_directive_foreach',
+			'List'    => 'handle_directive_foreach',
+			'LIST'    => 'handle_directive_foreach',
 
 			'value'   => 'handle_directive_value',
 			'Value'   => 'handle_directive_value',
@@ -746,23 +753,29 @@ require_once('KwartzUtility.inc');
 				$msg = "'$directive_name' directive: file '$filename' not found.";
 				throw new KwartzConvertionError($msg, $this);
 			}
-			$first_stmt = $block->shift();
-			$last_stmt = $block->pop();
+			//if (! $flag_remove_span) {
+			//	$first_stmt = $block->shift();
+			//	$last_stmt = $block->pop();
+			//}
 			$input = file_get_contents($filename);
 			if ($directive_name == 'include') {
-				$pdata =& $input;
-				$converter = new KwartzConverter($pdata);
+				# $input is presentation data
+				$converter = new KwartzConverter($input);
 				$block = $converter->convert();
 			} else {
-				$plogic =& $input;
-				$parser = new KwartzParser($plogic);
+				# $input is presentation logic
+				$parser = new KwartzParser($input);
 				$block = $parser->parse();
 			}
-			$stmt_list[] = $first_stmt;
+			//if (! $flag_remove_span) {
+			//	$stmt_list[] = $first_stmt;
+			//}
 			foreach ($block->statements() as $stmt) {
 				$stmt_list[] = $stmt;
 			}
-			$stmt_list[] = $last_stmt;
+			//if (! $flag_remove_span) {
+			//	$stmt_list[] = $last_stmt;
+			//}
 		}
 
 		private function handle_directive_dummy($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span) {

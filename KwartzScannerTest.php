@@ -70,6 +70,8 @@ class KwartzScannerTest extends PHPUnit_TestCase {
 	###
 
 	function _test($input, $expected, $flag_test = true) {
+		#$input    = preg_replace('/^\t\t\t/m', $input, '');
+		#$expected = preg_replace('/^\t\t\t/m', $expected,  '');
 		$scanner = new KwartzScanner($input);
 		$actual = $scanner->scan_all();
 		if ($flag_test) {
@@ -191,6 +193,31 @@ END;
 		$this->_test($input, $expected);
 	}
 
+
+	##
+	## 
+	##
+	function test_scan_basic3() {
+		$input = <<<END
+x.y
+x.+y
+x.+=y
+
+END;
+		$expected = <<<END
+x
+.
+y
+x
+.+
+y
+x
+.+=
+y
+
+END;
+		$this->_test($input, $expected);
+	}
 
 
 	##

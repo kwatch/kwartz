@@ -1431,6 +1431,18 @@ END;
 		$this->_test_stmt($input, $expected, 'parse');
 	}
 
+	function test_php_concassign1() {
+		$input    = '$s .= \'aaa\';';
+		$expected =
+		'<<block>>
+		  :set
+		    .+=
+		      s
+		      "aaa"
+		';
+		$this->_test_stmt($input, $expected, 'parse');
+	}
+
 }
 
 

@@ -10,6 +10,7 @@ require_once('KwartzConverter.inc');
 require_once('KwartzTranslator.inc');
 require_once('KwartzErubyTranslator.inc');
 require_once('KwartzJspTranslator.inc');
+require_once('KwartzPlphpTranslator.inc');
 require_once('KwartzUtility.inc');
 
 
@@ -39,6 +40,7 @@ require_once('KwartzUtility.inc');
 			case 'php':
 			case 'eruby':
 			case 'jsp':
+			case 'plphp':
 				# OK
 				break;
 			default:
@@ -93,6 +95,9 @@ require_once('KwartzUtility.inc');
 				break;
 			case 'jsp':
 				$translator = new KwartzJspTranslator($block, $this->flag_escape, $this->toppings);
+				break;
+			case 'plphp':
+				$translator = new KwartzPlphpTranslator($block, $this->flag_escape, $this->toppings);
 				break;
 			default:
 				assert(false);
