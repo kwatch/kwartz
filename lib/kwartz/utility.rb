@@ -13,6 +13,7 @@ module Kwartz
          str.gsub!(/\n/, '\\n')
          str.gsub!(/\r/, '\\r')
          str.gsub!(/\t/, '\\t')
+         #str.gsub!(/\#/, '\\#')
          return "\"#{str}\""
       end
       

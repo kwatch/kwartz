@@ -38,106 +38,106 @@ class ConverterTest < Test::Unit::TestCase
 	assert_equal_with_diff(expected, actual)
     end
 
-    def test_fetch1
+    def test_fetch1	# only tags
 	input = <<-END
 		<html>
 		 <body></body>
 		</html>
 	END
 	expected = <<-'END'
-		tag_name:     html
-		line_num:     1
-		before_text:  ""
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 1+1
+		tag_name:      html
+		before_text:   ""
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		tag_name:     body
-		line_num:     2
-		before_text:  ""
-		before_space: " "
-		attr_str:     ""
-		after_space:  ""
+		linenum+delta: 2+0
+		tag_name:      body
+		before_text:   ""
+		before_space:  " "
+		attr_str:      ""
+		after_space:   ""
 		
-		tag_name:     /body
-		line_num:     2
-		before_text:  ""
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 2+1
+		tag_name:      /body
+		before_text:   ""
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		tag_name:     /html
-		line_num:     3
-		before_text:  ""
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 3+1
+		tag_name:      /html
+		before_text:   ""
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		rest:         ""
-		line_num:     4
+		rest:          ""
+		linenum:       4
 	END
 	_test_fetch(input, expected)
     end
 
 
-    def test_fetch2
+    def test_fetch2	# tags with directive
 	input = <<-'END'
 		<ul id="user">
 		 <li kd="value:user">foo</li>
 		</ul>
 	END
 	expected = <<-'END'
-		tag_name:     ul
-		line_num:     1
-		before_text:  ""
-		before_space: ""
-		attr_str:     " id=\"user\""
-		after_space:  "\n"
+		linenum+delta: 1+1
+		tag_name:      ul
+		before_text:   ""
+		before_space:  ""
+		attr_str:      " id=\"user\""
+		after_space:   "\n"
 		
-		tag_name:     li
-		line_num:     2
-		before_text:  ""
-		before_space: " "
-		attr_str:     " kd=\"value:user\""
-		after_space:  ""
+		linenum+delta: 2+0
+		tag_name:      li
+		before_text:   ""
+		before_space:  " "
+		attr_str:      " kd=\"value:user\""
+		after_space:   ""
 		
-		tag_name:     /li
-		line_num:     2
-		before_text:  "foo"
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 2+1
+		tag_name:      /li
+		before_text:   "foo"
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		tag_name:     /ul
-		line_num:     3
-		before_text:  ""
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 3+1
+		tag_name:      /ul
+		before_text:   ""
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		rest:         ""
-		line_num:     4
+		rest:          ""
+		linenum:       4
 	END
 	_test_fetch(input, expected)
     end
 
 
-    def test_fetch3
+    def test_fetch3	# no tags, only texts
 	input = <<-'END'
 		aaa
 		bbb
 		ccc
 	END
 	expected = <<-'END'
-		rest:         "aaa\nbbb\nccc\n"
-		line_num:     1
+		rest:          "aaa\nbbb\nccc\n"
+		linenum:       1
 	END
 	_test_fetch(input, expected)
     end
     
 
 
-    def test_fetch4
+    def test_fetch4	# tags with several lines
 	input = <<-'END'
 		aaa
 		bbb
@@ -149,36 +149,36 @@ class ConverterTest < Test::Unit::TestCase
 		eee
 	END
 	expected = <<-'END'
-		tag_name:     b
-		line_num:     3
-		before_text:  "aaa\nbbb\nccc"
-		before_space: ""
-		attr_str:     ""
-		after_space:  ""
+		linenum+delta: 3+0
+		tag_name:      b
+		before_text:   "aaa\nbbb\nccc"
+		before_space:  ""
+		attr_str:      ""
+		after_space:   ""
 		
-		tag_name:     /b
-		line_num:     3
-		before_text:  "foo"
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 3+1
+		tag_name:      /b
+		before_text:   "foo"
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		tag_name:     i
-		line_num:     4
-		before_text:  "ddd"
-		before_space: ""
-		attr_str:     "\n  kd=\"bar\""
-		after_space:  "\n"
+		linenum+delta: 4+2
+		tag_name:      i
+		before_text:   "ddd"
+		before_space:  ""
+		attr_str:      "\n  kd=\"bar\""
+		after_space:   "\n"
 		
-		tag_name:     /i
-		line_num:     7
-		before_text:  "BAR\n"
-		before_space: ""
-		attr_str:     ""
-		after_space:  "\n"
+		linenum+delta: 7+1
+		tag_name:      /i
+		before_text:   "BAR\n"
+		before_space:  ""
+		attr_str:      ""
+		after_space:   "\n"
 		
-		rest:         "eee\n"
-		line_num:     8
+		rest:          "eee\n"
+		linenum:       8
 	END
 	_test_fetch(input, expected)
     end
@@ -222,9 +222,9 @@ class ConverterTest < Test::Unit::TestCase
     end
 
 
-    def test_attr3	# embed,Embed,EMBED
+    def test_attr3	# append,Append,APPEND
 	input = <<-'END'
-		<tr id="foo" kd="embed:foo;Embed:bar;EMBED:baz"  class="even">
+		<tr id="foo" kd="append:foo;Append:bar;APPEND:baz"  class="even">
 		</tr>
 	END
 	expected = ' id="foo"  class="even" #{foo}# #{E(bar)}# #{X(baz)}#'
@@ -306,10 +306,10 @@ class ConverterTest < Test::Unit::TestCase
     end
 
 
-    def test_convert05	# embed
+    def test_convert05	# append
     	input = <<-'END'
-		<input type="radio" kd="attr:value:val;embed:checked?'checked':''" />
-		<input type="radio" kd="Embed:checked;EMBED:selected"/>
+		<input type="radio" kd="attr:value:val;append:checked?'checked':''" />
+		<input type="radio" kd="Append:checked;APPEND:selected"/>
 	END
 	expected = <<-'END'
 		:print("<input type=\"radio\" value=\"", val, "\" ", checked?'checked':'', " />\n")
@@ -467,6 +467,8 @@ class ConverterTest < Test::Unit::TestCase
 		:print("</tr>\n")
 	END
 	_test_convert(input, expected)
+	input.gsub!(/loop:/, 'list:')
+	_test_convert(input, expected)
     end
 
 
@@ -487,6 +489,8 @@ class ConverterTest < Test::Unit::TestCase
 		:end
 		:print("</tr>\n")
 	END
+	_test_convert(input, expected)
+	input.gsub!(/Loop:/, 'List:')
 	_test_convert(input, expected)
     end
 
@@ -509,6 +513,8 @@ class ConverterTest < Test::Unit::TestCase
 		:end
 		:print("</tr>\n")
 	END
+	_test_convert(input, expected)
+	input.gsub!(/LOOP:/, 'LIST:')
 	_test_convert(input, expected)
     end
 
@@ -544,6 +550,10 @@ class ConverterTest < Test::Unit::TestCase
 		<li kd="loop:user=list"/>
 	END
 	expected = ''
+	assert_raise(Kwartz::ConvertionError) {
+	    _test_convert(input, expected)
+	}
+	input.gsub!(/loop:/, 'list:')
 	assert_raise(Kwartz::ConvertionError) {
 	    _test_convert(input, expected)
 	}
@@ -686,13 +696,13 @@ class ConverterTest < Test::Unit::TestCase
 		:macro(stag_user)
 		  :print("  <tr>\n")
 		:end
-		:macro(etag_user)
-		  :print("  </tr>\n")
-		:end
 		:macro(cont_user)
 		  :print("    <td>")
 		  :print("foo")
 		  :print("</td>\n")
+		:end
+		:macro(etag_user)
+		  :print("  </tr>\n")
 		:end
 		:macro(element_user)
 		  :expand(stag_user)
@@ -720,13 +730,13 @@ class ConverterTest < Test::Unit::TestCase
 		:macro(stag_user)
 		  :print("  <tr id=\"user\">\n")
 		:end
-		:macro(etag_user)
-		  :print("  </tr>\n")
-		:end
 		:macro(cont_user)
 		  :print("    <td>")
 		  :print("foo")
 		  :print("</td>\n")
+		:end
+		:macro(etag_user)
+		  :print("  </tr>\n")
 		:end
 		:macro(element_user)
 		  :expand(stag_user)
@@ -800,13 +810,13 @@ class ConverterTest < Test::Unit::TestCase
 		:macro(stag_user)
 		    :print("  <tr>\n")
 		:end
-		:macro(etag_user)
-		    :print("  </tr>\n")
-		:end
 		:macro(cont_user)
 		    :print("   <td>")
 		    :print("foo")
 		    :print("</td>\n")
+		:end
+		:macro(etag_user)
+		    :print("  </tr>\n")
 		:end
 		:macro(element_user)
 		  :expand(stag_user)
@@ -816,11 +826,11 @@ class ConverterTest < Test::Unit::TestCase
 		:macro(stag_loop)
 		  :print(" <tbody id=\"loop\">\n")
 		:end
-		:macro(etag_loop)
-		  :print(" </tbody>\n")
-		:end
 		:macro(cont_loop)
 		  :expand(element_user)
+		:end
+		:macro(etag_loop)
+		  :print(" </tbody>\n")
 		:end
 		:macro(element_loop)
 		  :expand(stag_loop)
@@ -831,6 +841,36 @@ class ConverterTest < Test::Unit::TestCase
 		:print("<table>\n")
 		:expand(element_loop)
 		:print("</table>\n")
+	END
+	_test_convert(input, expected)
+    end
+
+
+    def test_convert46	# marking to empty tag
+    	input = <<-'END'
+		<label for="male">Male:</label>
+		<input type="radio" name="gender" value="M" id="male"/>
+	END
+	expected = <<-'END'
+		:macro(stag_male)
+		  :print("<input type=\"radio\" name=\"gender\" value=\"M\" id=\"male\"/>\n")
+		:end
+		:macro(cont_male)
+		  ## nothing
+		:end
+		:macro(etag_male)
+		  ## nothing
+		:end
+		:macro(element_male)
+		  :expand(stag_male)
+		  :expand(cont_male)
+		  :expand(etag_male)
+		:end
+		
+		:print("<label for=\"male\">")
+		:print("Male:")
+		:print("</label>\n")
+		:expand(element_male)
 	END
 	_test_convert(input, expected)
     end
@@ -957,13 +997,13 @@ class ConverterTest < Test::Unit::TestCase
 		:macro(stag_foo)
 		  :print("<tr>\n")
 		:end
-		:macro(etag_foo)
-		  :print("</tr>\n")
-		:end
 		:macro(cont_foo)
 		  :print(" <td>")
 		  :print(item)
 		  :print("</td>\n")
+		:end
+		:macro(etag_foo)
+		  :print("</tr>\n")
 		:end
 		:macro(element_foo)
 		  :expand(stag_foo)

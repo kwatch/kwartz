@@ -7,12 +7,9 @@ require 'kwartz/utility'
 
 module Kwartz
 
-   class ConvertionError < KwartzError
-      def initialize(message, converter)
-	 @converter = converter
-	 @filename = converter.filename
-	 @line_num = converter.line_num
-	 super("[" + (@filename ? "file:#{@filename}," : '') + "line:#{@line_num}] #{message}")
+   class ConvertionError < BaseError
+      def initialize(errmsg, linenum=nil, filename=nil)
+	 super(errmsg, linenum, filename)
       end
    end
 
@@ -31,7 +28,7 @@ module Kwartz
       def initialize(input, properties={})
 	 @input = input
 	 @macro_codes = []
-	 @line_num = 1
+	 @linenum  = 1
 	 @delta    = 0
 	 @properties = properties
 	 @kd_attr    = properties[:attr_name] || 'kd'   # or 'kd::kwartz'
@@ -46,7 +43,7 @@ module Kwartz
 
       def fetch
 	 if @input !~ FETCH_PATTERN
-	    @line_num += @delta
+	    @linenum += @delta
 	    return @tag_name = nil
 	 end
 	 
@@ -59,37 +56,28 @@ module Kwartz
 	 @slash_empty  = $6		# "" or "/"
 	 @after_space  = $7
 
-	 @line_num += @delta
-	 @line_num += $`.count("\n")
+	 @linenum  += @delta
+	 @linenum  += $`.count("\n")
 	 @delta    =  $&.count("\n")
 
 	 @input    = $'
 	 return @tag_name
       end
 
-      #attr_reader :before_text
-      #attr_reader :before_space
-      #attr_reader :slash_etag
-      #attr_reader :tag_name
-      #attr_reader :attr_str
-      #attr_reader :slash_empty
-      attr_reader :line_num
-      #attr_reader :input
-      attr_reader :filename
 
       def fetch_all
 	 s = ''
 	 while tag_name = fetch()
-	    s << "tag_name:     #{@slash_etag}#{@tag_name}#{@slash_empty}\n"
-	    s << "line_num:     #{@line_num}\n"
-	    s << "before_text:  #{@before_text.inspect}\n"
-	    s << "before_space: #{@before_space.inspect}\n"
-	    s << "attr_str:     #{@attr_str.inspect}\n"
-	    s << "after_space:  #{@after_space.inspect}\n"
+	    s << "linenum+delta: #{@linenum}+#{@delta}\n"
+	    s << "tag_name:      #{@slash_etag}#{@tag_name}#{@slash_empty}\n"
+	    s << "before_text:   #{@before_text.inspect}\n"
+	    s << "before_space:  #{@before_space.inspect}\n"
+	    s << "attr_str:      #{@attr_str.inspect}\n"
+	    s << "after_space:   #{@after_space.inspect}\n"
 	    s << "\n"
 	 end
-	 s <<    "rest:         #{@input.inspect}\n"
-	 s <<    "line_num:     #{@line_num}\n"
+	 s <<    "rest:          #{@input.inspect}\n"
+	 s <<    "linenum:       #{@linenum}\n"
 	 return s
       end
      
@@ -114,19 +102,23 @@ module Kwartz
       @@empty_denied = {
 	 :value => true, :Value => true, :VALUE => true,
 	 :loop  => true, :Loop  => true, :LOOP  => true,
+	 :list  => true, :List  => true, :LIST  => true,
       }
 
       private
       
       def _convert(etag_name, depth)
+         current_linenum = start_linenum = @linenum
 	 codes = []
 	 if etag_name
-	    codes << create_print_code(build_tag_str(), depth)
+	    current_linenum = @linenum
+	    codes << create_print_code(build_tag_str(), start_linenum, depth)
 	 end
 	 just_before_dname = nil		# just before directive name
 	 while tag_name = fetch()
+	    current_linenum = @linenum
 	    if !@before_text.empty?
-	       print_codes = create_print_codes(@before_text, depth)
+	       print_codes = create_print_codes(@before_text, current_linenum, depth)
 	       codes.concat(print_codes)
 	       just_before_dname = nil
 	    end
@@ -135,22 +127,24 @@ module Kwartz
 	    if @slash_empty == '/'		# empty tag
 	       if directive_name
 		  if @@empty_denied[directive_name]
-		     raise ConvertionError.new("'#{directive_name}' directive cannot use in empty element.", self)
+		     msg = "'#{directive_name}' directive cannot use in empty element."
+		     raise ConvertionError.new(msg, current_linenum, @filename)
 		  end
-		  code = create_print_code(build_tag_str(), depth)
+		  incr = @@depths[directive_name]  # if 'set' or 'value' then 0 else 1
+		  code = create_print_code(build_tag_str(), current_linenum, depth + incr)
 		  if tag_name == 'span' && @attr_str == ''
 		     code.sub!(/\A([ ]*)/, '\1##')
 		  end
 		  body_codes = [ code ]
-		  handle_directive(directive_name, directive_arg, codes, body_codes, depth, just_before_dname)
+		  handle_directive(directive_name, directive_arg, codes, body_codes, current_linenum, depth, just_before_dname)
 		  last_dname = directive_name
 	       else
-		  codes << create_print_code(build_tag_str(), depth)
+		  codes << create_print_code(build_tag_str(), current_linenum, depth)
 	       end
 	    elsif @slash_etag == '/'		# end tag
-	       codes << create_print_code(build_tag_str(), depth)
+	       codes << create_print_code(build_tag_str(), current_linenum, depth)
 	       if tag_name == etag_name
-		  return codes
+		  return codes		# return
 	       end
 	    else				# start tag
 	       if directive_name
@@ -161,22 +155,22 @@ module Kwartz
 		     body_codes[0].sub!(/\A([ ]*)/, '\1##')
 		     body_codes[-1].sub!(/\A([ ]*)/, '\1##')
 		  end
-		  handle_directive(directive_name, directive_arg, codes, body_codes, depth, just_before_dname)
+		  handle_directive(directive_name, directive_arg, codes, body_codes, current_linenum, depth, just_before_dname)
 		  last_dname = directive_name
 	       elsif tag_name == etag_name
 		  codes2 = _convert(tag_name, depth)		# call recursively
 		  codes.concat(codes2)
 	       else
-		  codes << create_print_code(build_tag_str(), depth)
+		  codes << create_print_code(build_tag_str(), current_linenum, depth)
 	       end
 	    end
 	    just_before_dname = last_dname
 	 end
 	 if etag_name
-	    raise ConvertionError.new("'<#{etag_name}>' is not closed by end-tag.", self)
+	    raise ConvertionError.new("'<#{etag_name}>' is not closed by end-tag.", start_line, @filename)
 	 end
 	 if !@input.empty?
-	    print_codes = create_print_codes(@input, depth)
+	    print_codes = create_print_codes(@input, current_linenum, depth)
 	    codes.concat(print_codes)
 	 end
 	 return codes;
@@ -197,20 +191,20 @@ module Kwartz
 	 end
 	 Kwartz::assert(str.empty?)
 
-	 embed_str = ""
+	 append_str = ""
 	 flag_rebuild = false
 	 if attr_hash['id']
-	    dname, darg = parse_attr_idvalue(attr_hash['id'], attr_hash, embed_str)
+	    dname, darg = parse_attr_idvalue(attr_hash['id'], attr_hash, append_str)
 	    if dname;  directive_name = dname; directive_arg = darg;  end
 	    flag_rebuild = true
 	 end
 	 if attr_hash[@kd_attr]
-	    dname, darg = parse_attr_kdvalue(attr_hash[@kd_attr], attr_hash, embed_str)
+	    dname, darg = parse_attr_kdvalue(attr_hash[@kd_attr], attr_hash, append_str)
 	    if dname;  directive_name = dname; directive_arg = darg;  end
 	    flag_rebuild = true
 	 end
 	 if attr_hash[@ruby_attr]
-	    dname, darg = parse_attr_rubyvalue(attr_hash[@ruby_attr], attr_hash, embed_str)
+	    dname, darg = parse_attr_rubyvalue(attr_hash[@ruby_attr], attr_hash, append_str)
 	    if dname;  directive_name = dname; directive_arg = darg;  end
 	    flag_rebuild = true
 	 end
@@ -238,13 +232,13 @@ module Kwartz
 	    @attr_str = str
 	 end
 	 
-	 @attr_str << embed_str if ! embed_str.empty?
+	 @attr_str << append_str if ! append_str.empty?
 	 
 	 return directive_name, directive_arg
       end
 
 
-      def parse_attr_idvalue(attr_value, attr_hash, embed_str)
+      def parse_attr_idvalue(attr_value, attr_hash, append_str)
 	 if attr_value =~ /\A[-_\w]+\z/
 	    if attr_value.index(?-)
 	       return nil, nil
@@ -252,11 +246,11 @@ module Kwartz
 	       return :mark, attr_value
 	    end
 	 end
-	 return parse_attr_kdvalue(attr_value, attr_hash, embed_str)
+	 return parse_attr_kdvalue(attr_value, attr_hash, append_str)
       end
 
       
-      def parse_attr_kdvalue(attr_value, attr_hash, embed_str)
+      def parse_attr_kdvalue(attr_value, attr_hash, append_str)
 	 directive_name = directive_arg = nil
 	 attr_value.split(/;/).each do |str|
 	    #if str =~ /\A[_\w]+\z/
@@ -278,11 +272,11 @@ module Kwartz
 	       attr_value = $2
 	       e1, e2 = @@escape_matrix[d_name]
 	       attr_hash[attr_name] = '#{' + "#{e1}#{attr_value}#{e2}" + '}#'
-	    when :embed, :Embed, :EMBED
+	    when :append, :Append, :APPEND
 	       e1, e2 = @@escape_matrix[d_name]
-	       embed_str << ' #{' + "#{e1}#{d_arg}#{e2}" + '}#'
+	       append_str << ' #{' + "#{e1}#{d_arg}#{e2}" + '}#'
 	    when :value, :Value, :VALUE, \
-	         :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, \
+	         :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST, \
 		 :if, :elsif, :elseif, :else, \
 		 :set, :while, :mark, :replace, :dummy
 	       if directive_name != nil
@@ -298,12 +292,12 @@ module Kwartz
       end
 
       
-      def parse_attr_rubyvalue(attr_value, attr_hash, embed_str)
+      def parse_attr_rubyvalue(attr_value, attr_hash, append_str)
 	 return nil
       end
 
       
-      def create_print_code(str, depth)
+      def create_print_code(str, linenum, depth)
 	 s = ''
 	 s << indent(depth)
 	 s << ":print("
@@ -333,10 +327,12 @@ module Kwartz
       end
 
       
-      def create_print_codes(str, depth)
+      def create_print_codes(str, linenum, depth)
 	 list = []
+	 idx = 0
 	 str.each_line do |line|
-	    list << create_print_code(line, depth)
+	    list << create_print_code(line, idx+linenum, depth)
+	    idx += 1
 	 end
 	 return list
       end
@@ -362,21 +358,24 @@ module Kwartz
 	 :loop    => [ true,  false, false],
 	 :Loop    => [ true,  true,  false],
 	 :LOOP    => [ true,  true,  true ],
+	 :list    => [ true,  false, false],
+	 :List    => [ true,  true,  false],
+	 :LIST    => [ true,  true,  true ],
       }
       
       @@escape_matrix = {
-	 :attr  => [ '',   ''  ],
-	 :Attr  => [ 'E(', ')' ],
-	 :ATTR  => [ 'X(', ')' ],
-	 :embed => [ '',   ''  ],
-	 :Embed => [ 'E(', ')' ],
-	 :EMBED => [ 'X(', ')' ],
-	 :value => [ '',   ''  ],
-	 :Value => [ 'E(', ')' ],
-	 :VALUE => [ 'X(', ')' ],
+	 :attr   => [ '',   ''  ],
+	 :Attr   => [ 'E(', ')' ],
+	 :ATTR   => [ 'X(', ')' ],
+	 :append => [ '',   ''  ],
+	 :Append => [ 'E(', ')' ],
+	 :APPEND => [ 'X(', ')' ],
+	 :value  => [ '',   ''  ],
+	 :Value  => [ 'E(', ')' ],
+	 :VALUE  => [ 'X(', ')' ],
       }
 
-      def handle_directive(directive_name, directive_arg, codes, body_codes, depth, just_before_dname)
+      def handle_directive(directive_name, directive_arg, codes, body_codes, linenum, depth, just_before_dname)
 	 s = indent(depth)
 	 case directive_name
 	 when :value, :Value, :VALUE
@@ -387,14 +386,17 @@ module Kwartz
 	    
 	 when :mark
 	    name = directive_arg
+	    stag_code  = body_codes.shift
+	    etag_code  = body_codes.pop || "  ## nothing"
+	    cont_codes = body_codes.length > 0 ? body_codes : [ "  ## nothing" ]
 	    @macro_codes << ":macro(stag_#{name})"
-	    @macro_codes << body_codes.shift
-	    @macro_codes << ":end"
-	    @macro_codes << ":macro(etag_#{name})"
-	    @macro_codes << body_codes.pop
+	    @macro_codes << stag_code
 	    @macro_codes << ":end"
 	    @macro_codes << ":macro(cont_#{name})"
-	    @macro_codes.concat(body_codes)
+	    @macro_codes.concat(cont_codes)
+	    @macro_codes << ":end"
+	    @macro_codes << ":macro(etag_#{name})"
+	    @macro_codes << etag_code
 	    @macro_codes << ":end"
 	    @macro_codes << ":macro(element_#{name})"
 	    @macro_codes << "  :expand(stag_#{name})"
@@ -403,9 +405,10 @@ module Kwartz
 	    @macro_codes << ":end"
 	    codes << "#{s}:expand(element_#{name})"
 
-	 when :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP
+	 when :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST
 	    unless directive_arg =~ /\A(\w+)\s*[:=]\s*(.*)/
-	       raise ConvertionError.new("'#{directive_name}:#{directive_arg}': invalid directive.", self)
+	       msg = "'#{directive_name}:#{directive_arg}': invalid directive."
+	       raise ConvertionError.new(msg, linenum, @filename)
 	    end
 	    loopvar  = $1
 	    listexpr = $2
@@ -437,7 +440,8 @@ module Kwartz
 	 when :elsif, :elseif, :else
 	    d = just_before_dname
 	    unless d == :if || d == :elseif || d == :elsif
-	       raise ConvertionError.new("'#{directive_name}' directive should be just after 'if' or 'elseif'.", self)
+	       msg = "'#{directive_name}' directive should be just after 'if' or 'elseif'."
+	       raise ConvertionError.new(msg, linenum, @filename)
 	    end
 	    codes.pop		# ignore ':end' of if-statement
 	    if directive_name == :else
@@ -469,7 +473,8 @@ module Kwartz
 	    # nothing
 	    
 	 else
-	    raise ConvertionError.new("'#{directive_name}': invalid directive name.", self)
+	    msg = "'#{directive_name}': invalid directive name."
+	    raise ConvertionError.new(msg, linenum, @filename)
 	 end
 	 
 	 return codes

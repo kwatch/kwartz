@@ -6,7 +6,7 @@
 ### Copyright (C) 2004 kuwata-lab
 ### All rights reserved.
 ### author::  kwa(at)kuwata-lab.com
-### id::      $Id$d
+### id::      $Id$
 ###
 ### This project is subsidized by Exploratory Software Project of IPA
 ### (Information-Technology Promotion Agency Japan).
@@ -31,8 +31,8 @@ require 'kwartz'
 module Kwartz
 
    class CommandOptionError < KwartzError
-      def initialize(message='')
-	 super(message)
+      def initialize(errmsg)
+	 super(errmsg)
       end
    end
 
@@ -50,7 +50,7 @@ module Kwartz
       end
 
 
-      def main(argv=ARGV)
+      def main()
 	 parse_argv()
 	 
 	 flag_exit = false
@@ -127,8 +127,7 @@ Usage: #{@command} [..options..] file1 [file2...]
   -a action  : compile/parse/translate/convert (default 'compile')
   -l lang    : ruby/ruby2/eruby/erb/php/jsp (default 'ruby')
   -p file    : presentation logic filename
-  -s         : sanitize (identical to '-e')
-  -e         : escape
+  -s, -e     : sanitize(escape)
   --odd_value=value      : odd  value in FOREACH or LIST (default "'odd'")
   --even_value=value     : even value in FOREACH or LIST (default "'even'")
   --attr_name=attr       : use attribute name as marking (default 'kd')

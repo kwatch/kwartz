@@ -7,12 +7,9 @@ require 'kwartz/utility'
 
 module Kwartz
 
-   class ScanError < KwartzError
-      def initialize(message, scanner)
-	 @scanner  = scanner
-	 @filename = scanner.filename
-	 @line_num = scanner.line_num
-	 super("[" + (@filename ? "file:#{@filename}," : '') + "line:#{@line_num}] #{message}")
+   class ScanError < BaseError
+      def initialize(errmsg, linenum, filename)
+	 super(errmsg, linenum, filename)
       end
    end
 
@@ -22,21 +19,21 @@ module Kwartz
        def initialize(input, properties={})
 	 @properties = properties
 	 reset(input)
+	 @filename = @properties[:filename]
       end
 
-      def reset(input)
+      def reset(input, linenum=1)
 	 @input = input
 	 @lines = input.split(/\r?\n/)
-	 @line_num = 0
+	 @linenum = linenum - 1
 	 @current_line = nil
 	 @token = nil
 	 @value = nil
 	 @index = -1
 	 #@ch = nil
-	 @filename = @properties[:filename]
       end
 
-      attr_reader :token, :value, :line_num, :filename
+      attr_reader :token, :value, :linenum, :filename
 
 
       @@keywords = {
@@ -80,21 +77,16 @@ module Kwartz
 	    else
 	       @line = getline()
 	       return nil unless @line
-	       if @line =~ /\A\#?\w+/
-		  case @line
-		  when /\A\#?(macro|element)\s+(\w+)\s*$/
-		     @token = '#' + $1
-		     @value = $2
-		     @line  = nil
-		     return @token
-		  when /\A\#?end\s*$/
-		     @token = '#end'
-		     @value = nil
-		     @line  = nil
-		     return @token
-		  else
-		     raise ScanError.new("invalid statement: ruby code must start with white space.", self)
-		  end
+	       if @line =~ /\A(macro|element)\s+(\w+)\s*$/
+		  @token = '#' + $1
+		  @value = $2
+		  @line  = nil
+		  return @token
+	       elsif @line =~ /\Aend\s*$/
+		  @token = '#end'
+		  @value = nil
+		  @line  = nil
+		  return @token
 	       elsif @line =~ /\A\s*@(\w+)\s*$/
 		  @token = '@'
 		  @value = $1
@@ -111,11 +103,14 @@ module Kwartz
 	       elsif @line =~ /\A\s*\#/
 		  @line	 = nil		# ignore comment
 		  redo
-	       else
+	       elsif @line =~ /\A\s+/
 		  @token = :rubycode
 		  @value = @line
 		  @line	 = nil
 		  return @token
+	       else
+		  msg = "invalid statement: ruby code must start with white space."
+		  raise ScanError.new(msg, @linenum, @filename)
 	       end
 	    end
 	 end
@@ -162,8 +157,8 @@ module Kwartz
 
 
       def getline()
-	 line = @lines[@line_num]
-	 @line_num += 1
+	 line = @lines[@linenum]
+	 @linenum += 1
 	 return line
       end
 
@@ -220,7 +215,8 @@ module Kwartz
 		  s << ch.chr
 	       end
 	       unless @@keywords[s]
-		  raise ScanError.new("'#{s}': invalid keyword.", self)
+	          msg = "'#{s}': invalid keyword."
+		  raise ScanError.new(msg, @linenum, @filename)
 	       end
 	       return @token = @@keywords[s]
 	    end
@@ -290,7 +286,8 @@ module Kwartz
 	       end
 	    end
 	    if ch == nil
-		raise ScanError.new('string "\'" is not closed.', self)
+	       msg = 'string "\'" is not closed.'
+	       raise ScanError.new(msg, @linenum, @filename)
 	    end
 	    getchar()
 	    @value = s
@@ -321,7 +318,8 @@ module Kwartz
 	       end
 	    end
 	    if ch == nil
-		raise ScanError.new("string '\"' is not closed.", self)
+	       msg = "string '\"' is not closed."
+	       raise ScanError.new(msg, @linenum, @filename)
 	    end
 	    getchar()
 	    @value = s
@@ -354,7 +352,8 @@ module Kwartz
 	       getchar()
 	       return @token = ch.chr + ch2.chr		## && ||
 	    else
-	       raise ScanError("'#{ch.chr}': invalid char.", self)
+	       msg = "'#{ch.chr}': invalid char."
+	       raise ScanError(msg, @linenum, @filename)
 	    end
 	 end
 
@@ -365,7 +364,8 @@ module Kwartz
 	       s << ch.chr
 	    end
 	    if s.empty?
-	       raise ScanError.new("'@' requires macro name.", self)
+	       msg = "'@' requires macro name."
+	       raise ScanError.new(msg, @linenum, @filename)
 	    end
 	    @value = s
 	    return @token = '@'
@@ -387,7 +387,8 @@ module Kwartz
 	    return ch.chr
 	 end
 
-	 raise ScanError.new("'#{ch.chr}': invalid char.", self)
+	 msg = "'#{ch.chr}': invalid char."
+	 raise ScanError.new(msg, @linenum, @filename)
       end
 
 

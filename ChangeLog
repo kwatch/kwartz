@@ -1,0 +1,7 @@
+.: 2004-09-23
+	.- [enhance] support reporting linenum and filename when error occured
+	.- [enhance] support marking with empty tag
+	.- [change] prefix '#' is removed from '#element', '#macro', '#end' in Scanner
+	.- [change] swapped the sequence of etag_xxx and cont_xxx
+	.- [bugfix] now add proper indent for empty tag
+

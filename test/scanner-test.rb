@@ -74,19 +74,19 @@ class ScannerTest < Test::Unit::TestCase
     end
     
     
-    def test_scan2	# #element, #macro, #end
+    def test_scan2	# element, macro, end
 	input = <<-END
-		#macro cont_foo
+		macro cont_foo
 		  :print('<td class="', klass, '">', value, '</td>')
-		#end
-		#element foo
+		end
+		element foo
 		  user_list.each_with_index { |user, index|
 		    klass = index % 2 == 0 ? 'odd' : 'even'
 		    @stag
 		    @cont
 		    @etag
 		  }
-		#end
+		end
 	END
 	expected = <<-'END'
 		#macro cont_foo
@@ -171,13 +171,13 @@ class ScannerTest < Test::Unit::TestCase
     def test_scan7	# comment
 	input = <<-'END'
 ## comment
-#element foo
+element foo
      # :foreach(item=list)
      @stag
      @cont
      @etag
      # :end
-#end
+end
 	END
 	expected = <<-'END'
 #element foo
@@ -192,22 +192,22 @@ class ScannerTest < Test::Unit::TestCase
 
     def test_scan8	# invalid ruby code
 	input = <<-'END'
-		#element foo
+		element foo {
 		for item in list do
 		  @stag
 		  @cont
 		  @etag
 		end
-		#end
+		}
 	END
 	expected = <<-'END'
-		#element foo
-		:rubycodefor item in list do
+		element foo
+		:rubycode for item in list do
 		@stag
 		@cont
 		@etag
-		:rubycodeend
-		#end
+		:rubycode end
+		_end
 	END
 	assert_raise(Kwartz::ScanError) {
 		_test(input, expected)
