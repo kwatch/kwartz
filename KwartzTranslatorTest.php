@@ -125,7 +125,7 @@ END;
 	
 	function test_php_print1() {
 		$input = <<<END
-:print("hoge\\n");
+:print("hoge\\n")
 END;
 		$expected = <<<END
 hoge
@@ -138,7 +138,7 @@ END;
 
 	function test_php_print2() {
 		$input = <<<END
-:print("aaa", x+y, hash['key']);
+:print("aaa", x+y, hash['key'])
 END;
 		$expected = <<<END
 aaa<?php echo \$x + \$y; ?><?php echo \$hash["key"]; ?>

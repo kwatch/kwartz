@@ -484,6 +484,7 @@ require_once('KwartzScanner.inc');
 						$msg = "':if' (at line $linenum) is not closed by ':end'.";
 						throw new KwartzSyntaxError($msg, $this->scanner);
 					}
+					$this->scan();
 				}
 				return new KwartzIfStatement($cond_expr, $then_block, $else_stmt);
 			}
@@ -551,6 +552,7 @@ require_once('KwartzScanner.inc');
 					$msg = "':foreach' (at line $linenum) is not closed by ':end'.";
 					throw new KwartzSyntaxError($msg, $this->scanner);
 				}
+				$this->scan();
 				return new KwartzForeachStatement($loopvar_expr, $list_expr, $body_block);
 			}
 			assert(false);
@@ -616,6 +618,7 @@ require_once('KwartzScanner.inc');
 					$body_block = $this->parse_block_stmt();
 					array_pop($this->element_name_stack);
 					$this->current_element_name = end($this->element_name_stack);
+					//$this->current_element_name = array_pop($this->element_name_stack);
 				} else {
 					$body_block = $this->parse_block_stmt();
 				}
@@ -738,7 +741,12 @@ require_once('KwartzScanner.inc');
 		##
 		##
 		function parse_all() {
-			return $this->parse_block_stmt();
+			$block = $this->parse_block_stmt();
+			if ($this->token() != NULL) {
+				$msg = "EOF expected but '{$this->token()}'.";
+				throw new KwartzSyntaxError($msg, $this->scanner);
+			}
+			return $block;
 		}
 
 	}

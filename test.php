@@ -13,6 +13,7 @@ $filenames = array(
 	'KwartzParserTest.php',
 	'KwartzConverterTest.php',
 	'KwartzTranslatorTest.php',
+	'KwartzCompilerTest.php',
 );
 
 foreach ($filenames as $filename) {
