@@ -122,7 +122,7 @@ module Kwartz
 
       def convert(input)
          reset(input)
-         if input =~ /(\r?\n)/
+         if !@properties.key?(:newline) && input =~ /(\r?\n)/
             @properties[:newline] = $1
          end
          _convert(nil, @stmt_list)

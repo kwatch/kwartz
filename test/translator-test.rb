@@ -29,14 +29,16 @@ class TranslatorTest < Test::Unit::TestCase
       @flag_suspend = false
    end
 
-   def _test(method_name, input, expected, properties={})
-      s = caller()[1]
-      s =~ /in `(.*)'/          #'
-      testmethod = $1
-      if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
-         lang = $1
-      else
-         raise "invalid testmethod name (='#{testmethod}')"
+   def _test(method_name, input, expected, properties={}, lang=nil)
+      if !lang
+         s = caller()[1]
+         s =~ /in `(.*)'/          #'
+         testmethod = $1
+         if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
+            lang = $1
+         else
+            raise "invalid testmethod name (='#{testmethod}')"
+         end
       end
       parser = Kwartz::Parser.new(input, properties)
       block_stmt = parser.__send__(method_name)
@@ -45,11 +47,11 @@ class TranslatorTest < Test::Unit::TestCase
       assert_equal_with_diff(expected, actual)
    end
 
-   def _test_expr(input, expected, properties={})
+   def _test_expr(input, expected, properties={}, lang=nil)
       _test('parse_expression', input, expected, properties)
    end
 
-   def _test_stmt(input, expected, properties={})
+   def _test_stmt(input, expected, properties={}, lang=nil)
       _test('parse_program', input, expected, properties)
    end
    
@@ -406,6 +408,39 @@ class TranslatorTest < Test::Unit::TestCase
 #      expected = 'klass = (i += 1) % 2 == 0 ? "#FFCCCC" : "#CCCCFF"'
 #      _test_expr(@@conditional2, expected)
 #   end
+
+
+   ## ---------------------------- empty and notempty
+
+   @@empty1 = 'str == empty'
+   def test_empty1_eruby
+      expected = '!str || str.empty?'
+      _test_expr(@@empty1, expected)
+   end
+   def test_empty1_php
+      expected = '!$str'
+      _test_expr(@@empty1, expected)
+   end
+   def test_empty1_jstl11
+      expected = 'empty str'
+      _test_expr(@@empty1, expected)
+      _test_expr(@@empty1, expected, {}, 'jstl10')
+   end
+
+   @@empty2 = 'str != empty'
+   def test_empty2_eruby
+      expected = 'str && !str.empty?'
+      _test_expr(@@empty2, expected)
+   end
+   def test_empty2_php
+      expected = '$str'
+      _test_expr(@@empty2, expected)
+   end
+   def test_empty2_jstl11
+      expected = 'not empty str'
+      _test_expr(@@empty2, expected)
+      _test_expr(@@empty2, expected, {}, 'jstl10')
+   end
 
 
 

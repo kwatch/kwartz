@@ -122,7 +122,7 @@ module Kwartz
          when /^'.*'$/, /^".*"$/
             return eval(str)
          else
-            default str
+            return str
          end
       end
 

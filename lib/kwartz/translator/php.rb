@@ -166,11 +166,25 @@ module Kwartz
          return @code
       end
 
+
+      ##
+      def visit_empty_expression(expr, depth=0)
+         if expr.token == :empty
+            expr2 = UnaryExpression.new('!', expr.child)
+         else
+            expr2 = expr.child
+         end
+         translate_expression(expr2)
+         return @code
+      end
+
+
       ##
       def visit_variable_expression(expr, depth=0)
          @code << '$' << expr.name
       end
-      
+
+
       ##
       def visit_foreach_statement(stmt, depth)
          @code << prefix(depth)

@@ -22,3 +22,9 @@
 .- [_] mkmethod
 .- [v] C() S() D()
 .- [v] eol auto-detect
+.- [_] load
+.- [_] include
+.- [_] #DOCUMENT
+.- [_] begin: end:
+.- [v] jsp header
+.- [_] --header, --footer

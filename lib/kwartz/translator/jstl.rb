@@ -54,7 +54,7 @@ module Kwartz
         :null        => 'null',
 
         ## :empty and :notempty
-        :empty       => 'empty',
+        :empty       => 'empty ',
         :notempty    => nil,
 
         ## for future use
@@ -166,6 +166,16 @@ module Kwartz
       ##
       def visit_method_expression(expr, depth=0)
          raise TranslationError.new("#{expr.method_name}(): JSTL doesn't support method-call.")
+      end
+
+
+      ##
+      def visit_empty_expression(expr, depth=0)
+         if expr.token == :notempty
+            @code << keyword('!')
+         end
+         @code << keyword(:empty)
+         translate_expression(expr.child)
       end
 
 

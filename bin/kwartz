@@ -109,6 +109,17 @@ module Kwartz
 
          lang = (options[?l] || Kwartz::Config::LANG)
 
+         output = ''
+         charset = properties[:charset] || Kwartz::Config::CHARSET
+         case lang
+         when 'jstl', 'jstl11'
+            output << Kwartz::Config::HEADER_JSTL11
+            output << Kwartz::Config::HEADER_JSP_CHARSET.gsub(/__CHARSET__/, charset) if charset
+         when 'jstl10'
+            output << Kwartz::Config::HEADER_JSTL10
+            output << Kwartz::Config::HEADER_JSP_CHARSET.gsub(/__CHARSET__/, charset) if charset
+         end
+
          ## parse presentation logic file
          compiler = Kwartz::Compiler.new(properties)
          plogic_filenames = options[?p] ? options[?p].split(/,/) : []
@@ -125,17 +136,15 @@ module Kwartz
          end
 
          ## perform action ang get output
-         output = nil
          if @argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
-            output = perform(action, compiler, input, filename, element_decl_list, lang)
+            output << perform(action, compiler, input, filename, element_decl_list, lang)
          else
             @argv.each do |filename|
                unless test(?f, filename)
                   raise CommandOptionError.new("'#{filename}': not found.")
                end
-               output = ''
                File.open(filename) do |file|
                   input = file.read()
                   output << perform(action, compiler, input, filename, element_decl_list, lang)

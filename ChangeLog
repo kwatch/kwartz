@@ -2,6 +2,10 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-31 rev.31
+	.- [bugfix] translator for eruby, php, and jstl now handle :empty and :notempty correctly
+	.- [enhance] kwartz: add JSP header when jstl11 and jstl10
+
 .: 2004-01-31 rev.30
 	.- [enhance] macro C() S() D() support
 	.- [enhance] new file: lib/kwartz/translator/erb.rb

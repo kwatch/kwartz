@@ -179,6 +179,22 @@ module Kwartz
       end
 
       
+      ##
+      def visit_empty_expression(expr, depth=0)
+         if expr.token == :empty
+            left  = UnaryExpression.new('!', expr.child)
+            right = FunctionExpression.new('str_empty', [ expr.child ])
+            expr2 = LogicalExpression.new('||', left, right)
+         else
+            left  = expr.child
+            right = UnaryExpression.new('!', FunctionExpression.new('str_empty', [ expr.child ]))
+            expr2 = LogicalExpression.new('&&', left, right)
+         end
+         translate_expression(expr2)
+         return @code
+      end
+
+      
    end
 end
 
