@@ -176,7 +176,216 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -p guide.d/replace-elem-by-elem.plogic guide.d/replace-elem-by-elem.pdata
+.	.<<<:! kwartz -p guide.d/replace-elem-by-elem.plogic guide.d/replace-elem-by-elem.pdata
+.	.--------------------
+.	
+.	
+.JA	Kwartzにおいて、コマンドラインオプション「{{,-o {{/file/}},{{/file2/}},...,}}」を指定すると、
+.JA	他のファイルのエレメントを利用できます。
+.EN	In Kwartz, Command-line option '{{,-o {{/file/}},{{/file2/}},...,}}' enables you to use elements
+.EN	which are described in other files.
+.	
+.	
+.JA	プレゼンテーションデータ(links.html)：
+.EN	Presentation Data(links.html):
+.	.-------------------- links.html
+.	<div {{*id="mark:links"*}}>
+.	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
+.	</div>
+.	.--------------------
+.	
+.JA	プレゼンテーションデータ(page.html)：
+.EN	Presentation Data(page.html):
+.	.-------------------- page.html
+.	<div {{*id="mark:links1"*}}> Home | Document | FAQ </div>
+.	
+.	<p>Welcome to my Home Page!</p>
+.	
+.	<div {{*id="mark:links2"*}}> Home | Document | FAQ </div>
+.	.--------------------
+.	
+.JA	プレゼンテーションロジック(page.plogic)：
+.EN	Presentation Logic(page.plogic):
+.	.-------------------- page.plogic
+.	#links1 {
+.	  plogic: {
+.	    {{*@element(links);*}}
+.	  }
+.	}
+.	#links2 {
+.	  plogic: {
+.	    {{*@element(links);*}}
+.	  }
+.	}
+.	.--------------------
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby {{*-o links.html*}} -p page.plogic page.html
+.	.====================
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! kwartz -o guide.d/links.html -p guide.d/page.plogic guide.d/page.html
+.	.--------------------
+.	
+.	
+.	
+.	
+.JA	◎Replace Content by Elementパターン	| replace-cont-by-elem
+.EN	.$$ Replace Content by Element Pattern	| replace-cont-by-elem
+.	
+.	
+.JA	エレメントの内容を、別のエレメントで置き換えることができます。
+.JA	これは「Replace Content by Element」パターンといいます。
+.EN	You can replace content of an element by other element.
+.EN	This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern'.
+.	
+.	
+.JA	このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
+.EN	This pattern is very useful to import elements marked in other presentation data files.
+.	
+.	
+.JA	プレゼンテーションデータ(contents.html)：
+.EN	Presentation Data(contents.html):
+.	.-------------------- contents.html
+.	<html>
+.	  <body>
+.	    
+.	    <p>menu:</p>
+.	    <ul {{*id="mark:menu"*}}>
+.	      <li><a href="..." {{*id="mark:menu_item"*}}>menu1</a></li>
+.	    </ul>
+.	
+.	    <p>article:</p>
+.	    <div {{*id="mark:article"*}}>
+.	      <h2>What is Kwartz?</h2>
+.	      <p>Kwartz is a template system, which realized the
+.	         concept <strong>`Separation of Presentation Logic
+.	         and Presentation Data'(SoPL/PD)</strong>.
+.	      </p>
+.	    </div>
+.	    
+.	  </body>
+.	</html>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック(contents.plogic)：
+.EN	Presentation Logic(contents.plogic):
+.	.-------------------- contents.plogic
+.	#menu {
+.	  plogic: {
+.	    @stag;
+.	    foreach (item in menu_list) {
+.	      @cont;
+.	    }
+.	    @etag;
+.	  }
+.	}
+.	
+.	#menu_item {
+.	  value: item['name'];
+.	  attr:  "href" item['url'];
+.	}
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションデータ(layout.html)：
+.EN	Presentation Data(layout.html):
+.	.-------------------- layout.html
+.	<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+.	<html lang="en">
+.	  <head>
+.	    <title id="value:title">...title...</title>
+.	    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+.	    <link rel="stylesheet" type="text/css" href="design.css">
+.	  </head>
+.	  <body>
+.	
+.	    <table border="0">
+.	      <tr>
+.	        
+.	        <!-- menu part -->
+.	        <td width="100" valign="top">
+.	          <div class="menu" {{*id="mark:placeholder_menu"*}}>
+.	            <ul>
+.	              <li>menu1</li>
+.	              <li>menu2</li>
+.	              <li>menu3</li>
+.	            </ul>
+.	          </div>
+.	        </td>
+.	        
+.	        <!-- article part -->
+.	        <td width="400" valign="top">
+.	          <div class="article" {{*id="mark:placeholder_article"*}}>
+.	            aaa<br>
+.	            bbb<br>
+.	            ccc<br>
+.	            ddd<br>
+.	          </div>
+.	        </td>
+.	        
+.	      </tr>
+.	
+.	      <!-- footer part -->
+.	      <tr>
+.	        <td colspan="2" class="copyright">
+.	          copyright&copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+.	        </td>
+.	      </tr>
+.	    </table>
+.	    
+.	  </body>
+.	</html>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック(layout.plogic)：
+.EN	Presentation Logic(layout.plogic):
+.	.-------------------- layout.plogic
+.	#placeholder_menu {
+.	  plogic: {
+.	    @stag;
+.JA	    {{*@element(menu);*}}   // 内容を別のエレメントで置き換える
+.EN	    {{*@element(menu);*}}   // replace content by other element
+.	    @etag;
+.	 }
+.	}
+.	
+.	#placeholder_article {
+.	  plogic: {
+.	    @stag;
+.JA	    {{*@element(article);*}}   // 内容を別のエレメントで置き換える
+.EN	    {{*@element(article);*}}   // replace content by other element
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	Kwartzではコマンドオプション「{{,-o {{/file1,file2,.../}},}}」を指定することで、
+.JA	他のファイルのエレメントを読み込むことができます。
+.EN	In Kwartz, the command-line option {{,-o {{/file1,file2,.../}},}} enables to import elements
+.EN	which are defined in other files.
+.	
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby  {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	.#$ kwartz -l php    {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	.#$ kwartz -l jstl11 {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	.====================
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! kwartz -o guide.d/contents.html -p guide.d/contents.plogic,guide.d/layout.plogic guide.d/layout.html
 .	.--------------------
 .	
 .	
@@ -439,8 +648,8 @@
 .	
 .	
 .JA	これは「Dummy Element」パターンと逆の考え方です。
-.JA	「Dummy Element」パターンでは必要でないエレメントをマーキングして削除することで必要なものだけを残しますが、
-.JA	「Pick-up Element」パターンでは必要なエレメントだけマーキングして取り出すことで必要でないものを削除します。
+.JA	「Dummy Element」パターンでは不要なエレメントをマーキングして削除することで必要なものだけを残しますが、
+.JA	「Pick-up Element」パターンでは必要なエレメントだけマーキングして取り出すことで不要なものを削除します。
 .EN	'Pick-up Element' pattern is opposite of 'Dummy Element' pattern.
 .EN	In 'Dummy Element' pattern, dummy elements are marked and removed so that necessary elements are leaved.
 .EN	In 'Pick-up Element' pattern, necessary elements are marked and leaved so that dummy elements are removed.
@@ -534,6 +743,7 @@
 .JA	◎Extract Elementパターン	| extract-elem
 .EN	.$$ Extract Element Pattern	| extract-elem
 .	
+.	
 .JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 .JA	ほかは一切表示しないようにすることができます。
 .JA	このパターンは「Extract Element」パターンといいます。
@@ -546,6 +756,7 @@
 .JA	例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
 .EN	This pattern is very useful to extract HTML fragments and make them libraries.
 .EN	The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
+.	
 .	
 .	.#++++++
 .JA	スタイルシート(design.css)：
@@ -665,6 +876,7 @@
 .	}
 .	.--------------------
 .	
+.	
 .JA	プレゼンテーションロジック(tablist.plogic)：
 .EN	Presentation Logic (tablist.plogic):
 .	.-------------------- tablist.plogic
@@ -692,6 +904,7 @@
 .	  attr:  "href" tab['href'], "class" klass;
 .	}
 .	.--------------------
+.	
 .	
 .JA	プレゼンテーションロジック(menulist.plogic)：
 .EN	Presentation Logic (menulist.plogic):
@@ -728,6 +941,7 @@
 .	  }
 .	}
 .	.--------------------
+.	
 .	
 .JA	コンパイル：
 .EN	Compile:

@@ -32,10 +32,12 @@
 .- [_] auto-compile
 .- [v] retrieve or extract (-r name)
 .- [_] /* comment */
+.- [_] rewrite Scanner.rb
 .- [_] parse type appropriately in 'vartype { type var; }'
 .- [_] ruby gems
 .- [_] load library path
 .- [_] include file path
-.- [_] change #{...}# to @{...}@
+.- [v] change #{...}# to @{...}@
 .- [_] API doc
 .- [_] auto-rename local variable to '_var'
+.- [v] placeholder

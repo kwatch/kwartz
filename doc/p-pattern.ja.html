@@ -218,6 +218,8 @@ h3, .subsection	{
     </li>
     <li><a href="#replace-elem-by-elem">Replace Element by Elementパターン</a>
     </li>
+    <li><a href="#replace-cont-by-elem">Replace Content by Elementパターン</a>
+    </li>
   </ul>
   </li>
   <li><a href="#dummy">ダミー</a>
@@ -379,8 +381,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 </p>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;div&gt;
+<pre class="program">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -389,9 +390,47 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 &lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
+</pre>
+<p>Kwartzにおいて、コマンドラインオプション「<code>-o <i>file</i>,<i>file2</i>,...</code>」を指定すると、
+他のファイルのエレメントを利用できます。
+</p>
+<p>プレゼンテーションデータ(links.html)：
+</p>
+<a name="links.html"></a>
+<pre class="program">&lt;div <b>id="mark:links"</b>&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+<p>プレゼンテーションデータ(page.html)：
+</p>
+<a name="page.html"></a>
+<pre class="program">&lt;div <b>id="mark:links1"</b>&gt; Home | Document | FAQ &lt;/div&gt;
 
-### for PHP
-&lt;div&gt;
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div <b>id="mark:links2"</b>&gt; Home | Document | FAQ &lt;/div&gt;
+</pre>
+<p>プレゼンテーションロジック(page.plogic)：
+</p>
+<a name="page.plogic"></a>
+<pre class="program">#links1 {
+  plogic: {
+    <b>@element(links);</b>
+  }
+}
+#links2 {
+  plogic: {
+    <b>@element(links);</b>
+  }
+}
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">$ kwartz -l eruby <b>-o links.html</b> -p page.plogic page.html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -400,17 +439,183 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 &lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
+</pre>
+<br>
 
-### for JSTL
-&lt;div&gt;
- &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
-&lt;/div&gt;
 
-&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+<a name="replace-cont-by-elem"></a>
+<h3 class="section2">Replace Content by Elementパターン</h3>
+<p>エレメントの内容を、別のエレメントで置き換えることができます。
+これは「Replace Content by Element」パターンといいます。
+</p>
+<p>このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
+</p>
+<p>プレゼンテーションデータ(contents.html)：
+</p>
+<a name="contents.html"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    
+    &lt;p&gt;menu:&lt;/p&gt;
+    &lt;ul <b>id="mark:menu"</b>&gt;
+      &lt;li&gt;&lt;a href="..." <b>id="mark:menu_item"</b>&gt;menu1&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
 
-&lt;div&gt;
- &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
-&lt;/div&gt;
+    &lt;p&gt;article:&lt;/p&gt;
+    &lt;div <b>id="mark:article"</b>&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>プレゼンテーションロジック(contents.plogic)：
+</p>
+<a name="contents.plogic"></a>
+<pre class="program">#menu {
+  plogic: {
+    @stag;
+    foreach (item in menu_list) {
+      @cont;
+    }
+    @etag;
+  }
+}
+
+#menu_item {
+  value: item['name'];
+  attr:  "href" item['url'];
+}
+</pre>
+<p>プレゼンテーションデータ(layout.html)：
+</p>
+<a name="layout.html"></a>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title id="value:title"&gt;...title...&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top"&gt;
+          &lt;div class="menu" <b>id="mark:placeholder_menu"</b>&gt;
+            &lt;ul&gt;
+              &lt;li&gt;menu1&lt;/li&gt;
+              &lt;li&gt;menu2&lt;/li&gt;
+              &lt;li&gt;menu3&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td width="400" valign="top"&gt;
+          &lt;div class="article" <b>id="mark:placeholder_article"</b>&gt;
+            aaa&lt;br&gt;
+            bbb&lt;br&gt;
+            ccc&lt;br&gt;
+            ddd&lt;br&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>プレゼンテーションロジック(layout.plogic)：
+</p>
+<a name="layout.plogic"></a>
+<pre class="program">#placeholder_menu {
+  plogic: {
+    @stag;
+    <b>@element(menu);</b>   // 内容を別のエレメントで置き換える
+    @etag;
+ }
+}
+
+#placeholder_article {
+  plogic: {
+    @stag;
+    <b>@element(article);</b>   // 内容を別のエレメントで置き換える
+    @etag;
+  }
+}
+</pre>
+<p>Kwartzではコマンドオプション「<code>-o <i>file1,file2,...</i></code>」を指定することで、
+他のファイルのエレメントを読み込むことができます。
+</p>
+<p>コンパイル：
+</p>
+<pre class="terminal">$ kwartz -l eruby  <b>-o contents.html</b> -p contens.plogic,layout.plogic layout.html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top"&gt;
+          &lt;div class="menu"&gt;
+    &lt;ul&gt;
+&lt;% for item in menu_list do %&gt;
+      &lt;li&gt;&lt;a href="&lt;%= item["url"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;% end %&gt;
+    &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td width="400" valign="top"&gt;
+          &lt;div class="article"&gt;
+    &lt;div&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <br>
 
@@ -709,8 +914,8 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 これは「Pick-up Element」パターンといいます。
 </p>
 <p>これは「Dummy Element」パターンと逆の考え方です。
-「Dummy Element」パターンでは必要でないエレメントをマーキングして削除することで必要なものだけを残しますが、
-「Pick-up Element」パターンでは必要なエレメントだけマーキングして取り出すことで必要でないものを削除します。
+「Dummy Element」パターンでは不要なエレメントをマーキングして削除することで必要なものだけを残しますが、
+「Pick-up Element」パターンでは必要なエレメントだけマーキングして取り出すことで不要なものを削除します。
 </p>
 <p>プレゼンテーションデータ：
 </p>

@@ -275,6 +275,8 @@ Presentation language (PL), directives, and the command-line options are describ
     </li>
     <li><a href="#directive-replace">Replacement of Elements</a>
     </li>
+    <li><a href="#directive-replace">Placeholder</a>
+    </li>
     <li><a href="#directive-notes">Notes</a>
     </li>
   </ul>
@@ -2043,7 +2045,8 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 
 <a name="directive-replace"></a>
 <h3 class="section2">Replacement of Elements</h3>
-<p>'<code>id="replace:<i>name</i>"</code>' replaces an element with the element which is already marked with the name <i>name</i>.
+<p>'<code>id="replace:<i>name</i>"</code>' replaces an element with other element
+which is already marked with the name <i>name</i>.
 </p>
 <p>Presentation Data:
 </p>
@@ -2067,46 +2070,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;html&gt;
-  &lt;body&gt;
-    &lt;!-- breadcrumbs navigation --&gt;
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
-
-   ....
-
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/html
-
-### for PHP
-&lt;html&gt;
-  &lt;body&gt;
-    &lt;!-- breadcrumbs navigation --&gt;
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
-
-   ....
-
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/html
-
-### for JSTL
-&lt;html&gt;
+<pre class="output">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- breadcrumbs navigation --&gt;
     &lt;div&gt;
@@ -2124,8 +2088,91 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p><code>id="require:<i>filename</i>"</code> is a directive to read and to include other presentation logic files.
+<p>The command-line option '<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>' enables you to use elements
+in other files.
 </p>
+<br>
+
+
+<a name="directive-replace"></a>
+<h3 class="section2">Placeholder</h3>
+<p>'<code>id="placeholder:<i>name</i>"</code>' replaces content of the element by other element
+which is already marked with the name <i>name</i>.
+Usually this directive is used to import elements defined in other files,
+with the command-line option <code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>.
+</p>
+<p>Presentation Data(article.html):
+</p>
+<a name="directive-placeholder-article.pdata"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;div <b>id="mark:article"</b>&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+
+</pre>
+<p>Presentation Data(layout.html):
+</p>
+<a name="directive-placeholder-layout.pdata"></a>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        &lt;td width="400" <b>id="placeholder:article"</b>&gt;
+          aaa&lt;br&gt;
+          bbb&lt;br&gt;
+          ccc&lt;br&gt;
+          ddd&lt;br&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz <b>-o article.html</b> layout.html
+</pre>
+<p>Output Script:
+</p>
+<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        &lt;td width="400"&gt;
+    &lt;div&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
 <br>
 
 
@@ -2249,6 +2296,13 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+-e , -s</b></dt>
+<dd class="dd3">
+	Enable auto-sanitizing. This option is equal to <code>--escape=true</code>.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 -l <i>lang</i></b></dt>
 <dd class="dd3">
 	Target language of the output script. <i>lang</i> may be
@@ -2257,9 +2311,12 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--e , -s</b></dt>
+-o <i>file1,file2,...</i></b></dt>
 <dd class="dd3">
-	Enable auto-sanitizing. This option is equal to <code>--escape=true</code>.
+	Outer filename.
+	Elements which are defined in outer files are available to use in presentation logic file
+	and presentaion data file.
+	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<i>name</i></code>').
 </dd>
 </dl>
 <dl class="dl3">

@@ -400,6 +400,21 @@ module Kwartz
             end
             stmt_list << ExpandStatement.new(:element, name)
 
+         when :placeholder
+            if !etaginfo
+               msg = "directive '#{directive_name}' cannot use with empty tag."
+               raise ConvertionError.new(msg, linenum, @filename)
+            end
+            name = directive_arg
+            unless name =~ /\A\w+\z/
+               raise ConvertionError.new("'#{name}': invalid name for placeholder-directive.", linenum, @filename)
+            end
+            first_stmt = body_stmt_list.shift
+            last_stmt  = body_stmt_list.pop
+            stmt_list << first_stmt
+            stmt_list << ExpandStatement.new(:element, name)
+            stmt_list << last_stmt
+
          else
             raise ConvertionError.new("'#{directive_name}': invalid directive", linenum, @filename)
          end
@@ -467,7 +482,7 @@ module Kwartz
                raise ConvertionError.new("'#{str}': invalid directive.", self)
             end
             d_name = $1.intern		# directive name
-            d_arg  = $2		# directive arg
+            d_arg  = $2			# directive arg
             case d_name
             when :attr, :Attr, :ATTR
                if d_arg !~ /^([-_\w]+(?::[-_\w]+)?)[:=](.*)$/
@@ -486,7 +501,7 @@ module Kwartz
             when :value, :Value, :VALUE, \
                :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST, \
                :if, :elsif, :elseif, :else, \
-               :set, :while, :mark, :replace, :dummy
+               :set, :while, :mark, :dummy, :replace, :placeholder
                if directive_name != nil
                   msg = "directive '#{directive_name}' and '#{d_name}': cannot specify two or more directives in an element."
                   raise ConvertionError.new(msg, self)

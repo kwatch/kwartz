@@ -23,7 +23,7 @@ module Kwartz
       EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
       
       ## converter & element
-      NOEND           = [ "input", "br", "meta", "img", "hr" ]
+      NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]
       
       ## kwartz command
       HEADER_JSTL11   = <<END

@@ -71,7 +71,7 @@ module Kwartz
       def main()
          ## parse command-line options
          begin
-            options, properties = Kwartz::Util::optparse(@argv, "hves", "alp", nil, true)
+            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpo", nil, true)
          rescue Kwartz::Util::OptparseError => ex
             case ex.type
             when :invalid_option
@@ -86,6 +86,8 @@ module Kwartz
                   msg = "-#{ex.optchar.chr}: lang requried."
                when ?p
                   msg = "-#{ex.optchar.chr}: presentation logic file requried."
+               when ?o
+                  msg = "-#{ex.optchar.chr}: contents data file requried."
                else
                   Kwartz::assert(false, "ex.optchar=#{ex.optchar}")
                end
@@ -93,17 +95,21 @@ module Kwartz
             raise CommandOptionError.new(msg)
          end
 
+         ## help or version
          if options[?h] || options[?v]
-            $stderr.puts "kwartz: #{RELEASE} (rev.#{VERSION}), kwartz.rb: #{Kwartz::RELEASE} (rev.#{Kwartz::VERSION})" if options[?v]
+            #$stderr.puts "kwartz: #{RELEASE} (rev.#{VERSION}), kwartz.rb: #{Kwartz::RELEASE} (rev.#{Kwartz::VERSION})" if options[?v]
+            $stderr.puts "kwartz: #{RELEASE} (kwartz.rb: #{Kwartz::RELEASE})" if options[?v]
             $stderr.puts usage() if options[?h]
             return 0
          end
 
+         ## action
          action = @@actions[ options[?a] || 'compile' ]
          unless action
             raise CommandOptionError.new("-a #{options[?a]}: invalid action.")
          end
 
+         ## escape(sanitize)
          if properties.key?(:escape)
             # nothing
          elsif options.key?(?s)
@@ -112,6 +118,7 @@ module Kwartz
             properties[:escape] = options[?e]
          end
 
+         ## tags which doesn't require end-tag
          if properties.key?(:noend)
             properties[:noend] = properties[:noend].split(/,/)
          end
@@ -148,12 +155,26 @@ module Kwartz
                element_decl_list.concat(list) if list
             end
          end
+         
+         ## parse contens data file
+         contents_filenames = options[?o] ? options[?o].split(/,/) : []
+         element_list = []
+         contents_filenames.each do |filename|
+            unless test(?f, filename)
+               raise CommandOptionError.new("'#{filename}': not found.")
+            end
+            File.open(filename) do |file|
+               pdata_str = file.read()
+               block_stmt, elem_list = compiler.convert(pdata_str, filename)
+               element_list.concat(elem_list) if elem_list
+            end
+         end
 
          ## perform action and get output
          if @argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
-            output << perform(action, compiler, input, filename, element_decl_list, lang)
+            output << perform(action, compiler, input, filename, element_list, element_decl_list, lang)
          else
             @argv.each do |filename|
                unless test(?f, filename)
@@ -161,7 +182,7 @@ module Kwartz
                end
                File.open(filename) do |file|
                   input = file.read()
-                  output << perform(action, compiler, input, filename, element_decl_list, lang)
+                  output << perform(action, compiler, input, filename, element_list, element_decl_list, lang)
                end
             end
          end
@@ -180,8 +201,9 @@ Usage: #{@command} [..options..] file1 [file2...]
   -v         : version
   -a action  : compile/parse/translate/convert/analyze (default 'compile')
   -l lang    : eruby/erb/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
-  -p file    : presentation logic filename
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
+  -p file1,file2,...  : presentation logic filenames
+  -c file1,file2,...  : contents data filenames
   --escape=true   : sanitize(escape)
   --charset=name  : add '<%@ page contentType="text/html; charset=name" %>'
   --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
@@ -194,7 +216,7 @@ END
          return s
       end
 
-      def perform(action, compiler, input, filename, decl_list, lang)
+      def perform(action, compiler, input, filename, element_list, decl_list, lang)
          case action
          when :scan
             scanner = Scanner.new(input)
@@ -224,7 +246,8 @@ END
             output = code
          when :compile, :analyze
             pdata_str = input
-            block_stmt, element_list = compiler.convert(pdata_str, filename)
+            block_stmt, elem_list = compiler.convert(pdata_str, filename)
+            element_list.concat(elem_list) if elem_list
             element_table = compiler.merge(element_list, decl_list)
             compiler.handle_doc_decl(block_stmt, decl_list)
             if elem_name = compiler.properties[:extract]

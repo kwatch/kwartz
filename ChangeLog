@@ -3,6 +3,12 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+
+.: 2005-02-19 rev.44
+	.- [enhance] new command-line option '-o file'
+	.- [enhance] new directive 'id="placeholder:name"'
+	.- [change] document update
+
 .: 2005-02-14 rev.43
 	.- [change] README.txt updated
 	.- [release] 2.0.0-beta1

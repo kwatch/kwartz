@@ -45,18 +45,20 @@ module Kwartz
       def initialize(properties={})
          @properties = properties
       end
-      attr_reader :properties
+      attr_reader :properties, :element_list
 
 
       ## ex.
-      ##   block_stmt, element_list = compiler.convert(ARGF.read(), ARGF.filename)
+      ##   filename = 'foo.html'
+      ##   pdata = File.open(filename) { |f| f.read() }  # or File.read(filename)
+      ##   block_stmt, element_list = compiler.convert(pdata, filename)
       def convert(pdata_str, filename=nil)
-         @properties[:filename] = filename if filename
          converter = Kwartz::Converter.new(@properties)
+         @properties[:filename] = filename if filename
          block_stmt = converter.convert(pdata_str)
-         elem_list = converter.element_list
          @properties.delete(:filename) if filename
-         return block_stmt, elem_list
+         element_list = converter.element_list
+         return block_stmt, element_list
       end
 
 

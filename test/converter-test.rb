@@ -1654,6 +1654,24 @@ END
     end
 
 
+    def test_convert_placeholder1	# placeholder
+	input = <<-'END'
+		<div id="placeholder:foo">
+		foo
+		</div>
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<div>\n"
+		  @element(foo)
+		  :print
+		    "</div>\n"
+	END
+	_test_convert(input, expected)
+    end
+
+
     def test_convert_properties1	# 'even' and 'odd'
 	input = <<-'END'
 		<tbody kd="LOOP:item:list">

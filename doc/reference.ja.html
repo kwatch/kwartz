@@ -275,6 +275,8 @@ h3, .subsection	{
     </li>
     <li><a href="#directive-replace">エレメントの置換</a>
     </li>
+    <li><a href="#directive-replace">プレースホルダ</a>
+    </li>
     <li><a href="#directive-notes">注意事項</a>
     </li>
   </ul>
@@ -2048,8 +2050,7 @@ elseやelseifも使用できます。
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="output">### for eRuby
-&lt;html&gt;
+<pre class="output">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- ナビゲーション --&gt;
     &lt;div&gt;
@@ -2066,44 +2067,90 @@ elseやelseifも使用できます。
       &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
     &lt;/div&gt;
 &lt;/html
+</pre>
+<p>なおコマンドラインオプション「<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>」を指定すると、
+他のファイルのエレメントを利用できます。
+</p>
+<br>
 
-### for PHP
-&lt;html&gt;
+
+<a name="directive-replace"></a>
+<h3 class="section2">プレースホルダ</h3>
+<p>「<code>id="placeholder:<i>name</i>"</code>」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
+通常は、コマンドラインオプション「<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>」とともに使用し、
+他のファイルで定義されたエレメントを取り込むために使われます。
+</p>
+<p>プレゼンテーションデータ(article.html)：
+</p>
+<a name="directive-placeholder-article.pdata"></a>
+<pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;!-- ナビゲーション --&gt;
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+
+    &lt;div <b>id="mark:article"</b>&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
     &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
 
-   ....
-
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/html
-
-### for JSTL
-&lt;html&gt;
+</pre>
+<p>プレゼンテーションデータ(layout.html)：
+</p>
+<a name="directive-placeholder-layout.pdata"></a>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
   &lt;body&gt;
-    &lt;!-- ナビゲーション --&gt;
-    &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
-    &lt;/div&gt;
 
-   ....
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        &lt;td width="400" <b>id="placeholder:article"</b>&gt;
+          aaa&lt;br&gt;
+          bbb&lt;br&gt;
+          ccc&lt;br&gt;
+          ddd&lt;br&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">$ kwartz <b>-o article.html</b> layout.html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
 
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        &lt;td width="400"&gt;
     &lt;div&gt;
-      &lt;a href="/"&gt;Home&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
-      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the
+         concept &lt;strong&gt;`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
+      &lt;/p&gt;
     &lt;/div&gt;
-&lt;/html
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <br>
 
@@ -2227,6 +2274,13 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+-e , -s</b></dt>
+<dd class="dd3">
+	サニタイズを行う。<code>--escape=true</code>と同じ。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 -l <i>lang</i></b></dt>
 <dd class="dd3">
 	ターゲット言語を指定。指定できるのは
@@ -2235,9 +2289,11 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--e , -s</b></dt>
+-o <i>file1,file2,...</i></b></dt>
 <dd class="dd3">
-	サニタイズを行う。<code>--escape=true</code>と同じ。
+	外部ファイル名。外部ファイルで定義されたエレメントは、
+	プレゼンテーションロジックやプレゼンテーションデータで使用できる。
+	主にplaceholderディレクティブ（「<code>id="placeholder:<i>name</i></code>」）のために使用される。
 </dd>
 </dl>
 <dl class="dl3">

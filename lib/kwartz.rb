@@ -6,7 +6,7 @@
 ###
 
 module Kwartz
-   VERSION   = ('$Rev: 42$' =~ /\d+(?:\.\d+)*/ && $&)
+   VERSION   = ('$Rev$' =~ /\d+(?:\.\d+)*/ && $&)
    RELEASE   = ('$Release: 2.0.0-pre1$' =~ /Release: (.*)\$/ && $1)
 end
 
