@@ -572,13 +572,13 @@ module Kwartz
       ## plogic ::= { element_decl }
       ##
       def parse_plogic
-         elem_table = {}
+         elem_decl_list = []
          while token() == '#'
-            elem = parse_element_decl()
-            elem_table[elem.name] = elem
+            elem_decl = parse_element_decl()
+            elem_decl_list << elem_decl
          end
          check_token(nil, "plogic is not ended.") unless token() == nil
-         return elem_table
+         return elem_decl_list
       end
       
       ##
@@ -597,7 +597,7 @@ module Kwartz
          hash = parse_sub_decl_list()
          check_token('}', "'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
          scan()
-         return ElementDeclaration.new(marking, hash)
+         return ElementDeclaration.create_from_hash(marking, hash)
       end
       
       def parse_sub_decl_list()
@@ -678,15 +678,21 @@ module Kwartz
       ##
       def parse_append_decl()
          Kwartz::assert(token() == :append)
+         list = []
          tkn = scan()
          if tkn == ';'
             scan()
             return nil
          end
-         expr = parse_expression()
+         while true
+            expr = parse_expression()
+            list << expr
+            break if token() != ','
+            scan()
+         end
          check_token(';', "append-declaration requires ';'.") unless token() == ';'
          scan()
-         return expr
+         return list
       end
 
       ##
@@ -761,16 +767,14 @@ end
 
 if __FILE__ == $0
    #--
-   parser = Kwartz::Parser.new("aaa")
-   [ "foo", "E(bar)", "X(baz)" ].each do |line|
-      parser.reset(line, 10)
-      expr = parser.parse_expression()
-      print expr._inspect
+   input = ARGF.read()
+   parser = Kwartz::Parser.new(input)
+   #--
+   decl_list = parser.parse_plogic()
+   decl_list.each do |elem_decl|
+      print elem_decl._inspect()
    end
-   #--
-   #input = ARGF.read()
-   #parser = Kwartz::Parser.new(input)
-   #--
+   
    #expr = parser.parse_expression()
    #print expr._inspect()
    #--

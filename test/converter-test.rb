@@ -1098,6 +1098,7 @@ END
 		[tagname]
 		tr
 		[attrs]
+		[append]
 		[content]
 		:block
 		  :print
@@ -1160,6 +1161,7 @@ END
 		tr
 		[attrs]
 		id="user"
+		[append]
 		[content]
 		:block
 		  :print
@@ -1305,6 +1307,7 @@ END
 		[tagname]
 		tr
 		[attrs]
+		[append]
 		[content]
 		:block
 		  :print
@@ -1325,6 +1328,7 @@ END
 		tbody
 		[attrs]
 		id="loop"
+		[append]
 		[content]
 		:block
 		  @element(user)
@@ -1398,6 +1402,7 @@ END
 		type="radio"
 		id="male"
 		value="M"
+		[append]
 		[content]
 		:block
 		[spaces]
@@ -1651,6 +1656,7 @@ END
 		tr
 		[attrs]
 		id="foo"
+		[append]
 		[content]
 		:block
 		  :print

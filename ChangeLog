@@ -1,4 +1,8 @@
-.: 2005-01-24  rev.18
+.: 2005-01-24  rev.20
+	.- [enhance] Element#swallog() added
+	.- [enhance] element-test.rb: new test added
+
+.: 2005-01-24  rev.19
 	.- [enhance] converter.rb: rewrited to create BlockStatement
 
 .: 2005-01-24  rev.18

@@ -3,6 +3,8 @@
 ###
 ### unit test for Parser
 ###
+### $Id$
+###
 
 $: << 'lib'
 $: << '../lib'
@@ -964,7 +966,19 @@ class ParseDeclarationTest < Test::Unit::TestCase
       assert_equal(klass, obj.class) if klass
       actual = ""
       if klass == Array
-         actual << obj.collect { |str| str.inspect() }.join(',')
+         if obj[0].is_a?(String)
+            actual << obj.collect { |str| str.inspect() }.join(',')
+         elsif obj[0].is_a?(ElementDeclaration)
+            obj.each do |elem_decl|
+               actual << "[#{elem_decl.name}]\n"
+               actual << elem_decl._inspect()
+            end
+            #actual << obj.keys.sort.collect { |key| "[#{key}]\n#{obj[key]._inspect}" }.join()
+         elsif obj[0].is_a?(Expression)
+            obj.each do |expr|
+               actual << expr._inspect()
+            end
+         end
       elsif klass == Hash
          actual << obj.keys.sort.collect { |key| "[#{key}]\n#{obj[key]._inspect}" }.join()
       elsif klass == nil
@@ -1044,7 +1058,7 @@ END
    def test_parse_append_decl1
       input = 'append: flag ? " checked=\"checked\"" : "";'
       expected = "?:\n  flag\n  \" checked=\\\"checked\\\"\"\n  \"\"\n"
-      _test(input, expected, ConditionalExpression)
+      _test(input, expected, Array)
    end
 
    ##
@@ -1141,7 +1155,7 @@ END
    end
    
    ##
-   def test_parse_sub_decl_list
+   def test_parse_sub_decl_list1
       input = <<'END'
 value:   user.name;
 attr:    "class" klass, "bgcolor" color;
@@ -1191,8 +1205,12 @@ END
          value = hash[key]
          s << "#{key}:\n"
          case key
-         when :value, :append, :tagname, :plogic
+         when :value, :tagname, :plogic
             s << value._inspect if value
+         when :append
+            value.each do |v|
+               s << v._inspect()
+            end
          when :attr
             value.keys.sort.each do |k|
                v = value[k]
@@ -1230,7 +1248,7 @@ END
     .
       user
       name
-  attr:
+  attrs:
     "bgcolor" color
     "class" klass
   append:
@@ -1257,7 +1275,7 @@ END
 
 
    ##
-   def test_parse_plogic
+   def test_parse_plogic1
       input = <<'END'
 #foo {
 	value:   user;
@@ -1277,19 +1295,14 @@ END
 }
 END
       expected = <<'END'
-[bar]
-#bar {
-  plogic:
-    :block
-      @cont
-}
 [foo]
 #foo {
   value:
     user
-  attr:
+  attrs:
     "bgcolor" color
     "class" klass
+  append:
   plogic:
     :block
       @stag
@@ -1299,8 +1312,15 @@ END
         @cont
       @etag
 }
+[bar]
+#bar {
+  append:
+  plogic:
+    :block
+      @cont
+}
 END
-      _test(input, expected, Hash)
+      _test(input, expected, Array)
    end
    
 

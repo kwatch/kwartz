@@ -25,4 +25,7 @@ suite << ParseExpressionTest.suite()
 suite << ParseStatementTest.suite()
 suite << ParseDeclarationTest.suite()
 
+require 'element-test'
+suite << ElementTest.suite()
+
 Test::Unit::UI::Console::TestRunner.run(suite)
