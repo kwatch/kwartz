@@ -16,6 +16,7 @@ require 'assert-diff.rb'
 require 'kwartz/compiler'
 require 'kwartz/translator/eruby'
 require 'kwartz/translator/php'
+require 'kwartz/translator/jstl'
 
 
 class CompilerTest < Test::Unit::TestCase
@@ -28,14 +29,10 @@ class CompilerTest < Test::Unit::TestCase
       s = caller().first
       s =~ /in `(.*)'/          #'
       testmethod = $1
-      case testmethod
-      when /_eruby$/
-         lang = 'eruby'
-      when /_php$/
-         lang = 'php'
+      if testmethod =~ /_(eruby|php|jstl11)$/
+         lang = $1
       else
-         #raise "invalid testmethod name (='#{testmethod}')"
-         lang = 'eruby'
+         raise "invalid testmethod name (='#{testmethod}')"
       end
       return if @flag_suspend
       compiler = Kwartz::Compiler.new(properties)
@@ -90,6 +87,17 @@ END
 END
       _test(@@pdata1, @@plogic1, expected)
    end
+   def test_compile1_jstl11	# marking
+      expected = <<'END'
+<table>
+<c:forEach var="user" items="${user_list}">
+ <tr>
+  <td><c:out value="${user.name}" escapeXml="false"/></td>
+ </tr>
+</c:forEach>
+</table>
+END
+   end
 
 
 
@@ -136,6 +144,19 @@ END
   <td><?php echo $user['name']; ?></td>
  </tr>
 <?php } ?>
+</table>
+END
+      _test(@@pdata2, @@plogic2, expected)
+   end
+
+   def test_compile2_jstl11	# nested marking
+      expected = <<'END'
+<table>
+<c:forEach var="user" items="${user_list}">
+ <tr>
+  <td><c:out value="${user['name']}" escapeXml="false"/></td>
+ </tr>
+</c:forEach>
 </table>
 END
       _test(@@pdata2, @@plogic2, expected)
@@ -188,6 +209,19 @@ END
   <td><?php echo $user->name; ?></td>
  </tr>
 <?php } ?>
+</table>
+END
+      _test(@@pdata3, @@plogic3, expected)
+   end
+
+   def test_compile3_jstl11	# remove: "id";
+      expected = <<'END'
+<table>
+<c:forEach var="user" items="${user_list}">
+ <tr>
+  <td><c:out value="${user.name}" escapeXml="false"/></td>
+ </tr>
+</c:forEach>
 </table>
 END
       _test(@@pdata3, @@plogic3, expected)
@@ -274,6 +308,27 @@ END
       _test(@@pdata4, @@plogic4, expected)
    end
 
+   def test_compile4_jstl11
+      expected = <<'END'
+<table id="table" summary="<c:out value="${title}" escapeXml="false"/>">
+<c:set var="i" value="0"/>
+<c:forEach var="user" items="${user_list}">
+  <c:set var="i" value="${i + 1}"/>
+  <c:choose><c:when test="${i % 2 eq 0}">
+    <c:set var="color" value="#FFCCCC"/>
+  </c:when><c:otherwise>
+    <c:set var="color" value="#CCCCFF"/>
+  </c:otherwise></c:choose>
+ <tr bgcolor="<c:out value="${color}" escapeXml="false"/>">
+  <td><c:out value="${user["name"]}" escapeXml="false"/></td>
+  <td><c:out value="${user["email"]}" escapeXml="false"/></td>
+ </tr>
+</c:forEach>
+</table>
+END
+      _test(@@pdata4, @@plogic4, expected)
+   end
+
 
 
    ## -------------------- empty tag
@@ -296,6 +351,13 @@ END
    def test_compile5_php	# empty tag
       expected = <<'END'
 <input name="username" size="30" type="text" id="username" value="<?php echo $user->name; ?>" />
+END
+      _test(@@pdata5, @@plogic5, expected)
+   end
+
+   def test_compile5_jstl11	# empty tag
+      expected = <<'END'
+<input name="username" size="30" type="text" id="username" value="<c:out value="${user.name}" escapeXml="false"/>" />
 END
       _test(@@pdata5, @@plogic5, expected)
    end
@@ -323,6 +385,13 @@ END
    def test_compile6_php	# empty tag and append
       expected = <<'END'
 checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<?php echo $flag ? " checked=\"checked\"" : ""; ?> />
+END
+      _test(@@pdata6, @@plogic6, expected)
+   end
+
+   def test_compile6_jstl11	# empty tag and append
+      expected = <<'END'
+checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<c:out value="${flag ? " checked=\"checked\"" : ""}" escapeXml="false"/> />
 END
       _test(@@pdata6, @@plogic6, expected)
    end

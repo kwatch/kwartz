@@ -17,6 +17,7 @@ require 'kwartz/parser'
 require 'kwartz/translator'
 require 'kwartz/translator/eruby'
 require 'kwartz/translator/php'
+require 'kwartz/translator/jstl'
 
 
 ##
@@ -32,11 +33,8 @@ class TranslatorTest < Test::Unit::TestCase
       s = caller()[1]
       s =~ /in `(.*)'/          #'
       testmethod = $1
-      case testmethod
-      when /_eruby$/
-         lang = 'eruby'
-      when /_php$/
-         lang = 'php'
+      if testmethod =~ /_(eruby|php|jstl11)$/
+         lang = $1
       else
          raise "invalid testmethod name (='#{testmethod}')"
       end
@@ -70,6 +68,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$a + $b * $c - $d % $e'
       _test_expr(@@expression1, expected)
    end
+   def test_expression1_jstl11
+      expected = 'a + b * c - d % e'
+      _test_expr(@@expression1, expected)
+   end
 
 
    @@expression2 = 'a * (b+c) % (d.+e)'
@@ -81,6 +83,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$a * ($b + $c) % ($d . $e)'
       _test_expr(@@expression2, expected)
    end
+   def test_expression2_jstl11
+      expected = 'a * (b + c) % (fn:join(d,e))'
+      _test_expr(@@expression2, expected)
+   end
 
 
    @@expression3 = '- 2 * b'
@@ -90,6 +96,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
    def test_expression3_php
       expected = '-2 * $b'
+      _test_expr(@@expression3, expected)
+   end
+   def test_expression3_jstl11
+      expected = '-2 * b'
       _test_expr(@@expression3, expected)
    end
 
@@ -105,6 +115,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$a = 10'
       _test_expr(@@assign1, expected)
    end
+#   def test_assign1_jstl11
+#      expected = 'a = 10'
+#      _test_expr(@@assign1, expected)
+#   end
 
 
    @@assign2 = 'a += i+1'
@@ -116,6 +130,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$a += $i + 1'
       _test_expr(@@assign2, expected)
    end
+#   def test_assign2_jstl11
+#      expected = 'a += i + 1'
+#      _test_expr(@@assign2, expected)
+#   end
 
 
    @@assign3 = 'a[i] *= a[i-2]+a[i-1]'
@@ -127,6 +145,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$a[$i] *= $a[$i - 2] + $a[$i - 1]'
       _test_expr(@@assign3, expected)
    end
+#   def test_assign3_jstl11
+#      expected = 'a[i] *= a[i - 2] + a[i - 1]'
+#      _test_expr(@@assign3, expected)
+#   end
 
 
    @@assign4 = "a[:name] .+= 's1'.+'s2'"
@@ -138,6 +160,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "$a['name'] .= \"s1\" . \"s2\""
       _test_expr(@@assign4, expected)
    end
+#   def test_assign4_jstl11
+#      expected = "a['name'] .= \"s1\" . \"s2\""
+#      _test_expr(@@assign4, expected)
+#   end
 
 
    ## ---------------------------- function
@@ -151,6 +177,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$list = array()'
       _test_expr(@@function1, expected)
    end
+#   def test_function1_jstl11
+#      expected = 'list = array()'
+#      _test_expr(@@function1, expected)
+#   end
 
 
    @@function2 = 'hash = hash_new()'
@@ -162,26 +192,38 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$hash = array()'
       _test_expr(@@function2, expected)
    end
+#   def test_function2_jstl11
+#      expected = 'hash = array()'
+#      _test_expr(@@function2, expected)
+#   end
 
 
-   @@function3 = 'len = list_length(list) + str_length(str)'
+   @@function3 = 'list_length(list) + str_length(str)'
    def test_function3_eruby
-      expected = 'len = list.length + str.length'
+      expected = 'list.length + str.length'
       _test_expr(@@function3, expected)
    end
    def test_function3_php
-      expected = '$len = count($list) + strlen($str)'
+      expected = 'count($list) + strlen($str)'
+      _test_expr(@@function3, expected)
+   end
+   def test_function3_jstl11
+      expected = 'fn:length(list) + fn:length(str)'
       _test_expr(@@function3, expected)
    end
 
 
-   @@function4 = 'flag = list_empty(list) && hash_empty(hash) && str_empty(str)'
+   @@function4 = 'list_empty(list) && hash_empty(hash) && str_empty(str)'
    def test_function4_eruby
-      expected = 'flag = list.empty? && hash.empty? && str.empty?'
+      expected = 'list.empty? && hash.empty? && str.empty?'
       _test_expr(@@function4, expected)
    end
    def test_function4_php
-      expected = '$flag = count($list)==0 && count($hash)==0 && $str'
+      expected = 'count($list)==0 && count($hash)==0 && $str'
+      _test_expr(@@function4, expected)
+   end
+   def test_function4_jstl11
+      expected = 'fn:length(list)==0 and fn:length(hash)==0 and fn:length(str)==0'
       _test_expr(@@function4, expected)
    end
 
@@ -195,6 +237,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = 'trim($s) . strtoupper($s) . strtolower($s) . strstr($s, "x")'
       _test_expr(@@function5, expected)
    end
+   def test_function5_jstl11
+      expected = 'fn:join(fn:join(fn:join(fn:trim(s),fn:toUpperCase(s)),fn:toLowerCase(s)),fn:indexOf(s, "x"))'
+      _test_expr(@@function5, expected)
+   end
 
 
    @@function6 = 'list_length(hash_keys(hash))'
@@ -206,17 +252,28 @@ class TranslatorTest < Test::Unit::TestCase
       expected = 'count(array_keys($hash))'
       _test_expr(@@function6, expected)
    end
+   def test_function6_jstl11
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function6, expected)
+      end
+   end
 
 
    ## ---------------------------- conditional op
 
-   @@conditional1 = 'max = x > y ? x : y'
+   @@conditional1 = 'x > y ? x : y'
    def test_conditional1_eruby
-      expected = 'max = x > y ? x : y'
+      expected = 'x > y ? x : y'
       _test_expr(@@conditional1, expected)
    end
    def test_conditional1_php
-      expected = '$max = $x > $y ? $x : $y'
+      expected = '$x > $y ? $x : $y'
+      _test_expr(@@conditional1, expected)
+   end
+   def test_conditional1_jstl11
+      input = 'x > y ? x : y'
+      expected = 'x gt y ? x : y'
       _test_expr(@@conditional1, expected)
    end
 
@@ -230,6 +287,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = '$klass = ($i += 1) % 2 == 0 ? "#FFCCCC" : "#CCCCFF"'
       _test_expr(@@conditional2, expected)
    end
+#   def test_conditional2_jstl11
+#      expected = 'klass = (i += 1) % 2 == 0 ? "#FFCCCC" : "#CCCCFF"'
+#      _test_expr(@@conditional2, expected)
+#   end
 
 
 
@@ -246,6 +307,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "<?php $a = 1; ?>\n"
       _test_stmt(@@expr_stmt1, expected)
    end
+   def test_expr_stmt1_jstl11
+      expected = '<c:set var="a" value="1"/>' + "\n"
+      _test_stmt(@@expr_stmt1, expected)
+   end
 
 
    @@epxr_stmt2 = "a[i] += x>y ? x : y;"
@@ -255,6 +320,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
    def test_expr_stmt2_php
       expected = "<?php $a[$i] += $x > $y ? $x : $y; ?>\n"
+      _test_stmt(@@epxr_stmt2, expected)
+   end
+   def test_expr_stmt2_jstl11		# NOT GOOD
+      expected = '<c:set var="a[i]" value="${a[i] + (x gt y ? x : y)}"/>' + "\n"
       _test_stmt(@@epxr_stmt2, expected)
    end
 
@@ -270,6 +339,10 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "foo<?php echo $a + $b; ?>\n"
       _test_stmt(@@print_stmt1, expected)
    end
+   def test_print_stmt1_jstl11
+      expected = 'foo<c:out value="${a + b}" escapeXml="false"/>' + "\n"
+      _test_stmt(@@print_stmt1, expected)
+   end
 
 
    @@print_stmt2 = 'print(E(e), X(x), default);'
@@ -279,6 +352,10 @@ class TranslatorTest < Test::Unit::TestCase
    end
    def test_print_stmt2_php
       expected = "<?php echo htmlspecialchars($e); ?><?php echo $x; ?><?php echo $default; ?>"
+      _test_stmt(@@print_stmt2, expected)
+   end
+   def test_print_stmt2_jstl11
+      expected = '<c:out value="${e}"/><c:out value="${x}" escapeXml="false"/><c:out value="${default}" escapeXml="false"/>'
       _test_stmt(@@print_stmt2, expected)
    end
 
@@ -292,35 +369,44 @@ class TranslatorTest < Test::Unit::TestCase
       expected = "<?php echo htmlspecialchars($e); ?><?php echo $x; ?><?php echo htmlspecialchars($default); ?>"
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
+   def test_print_stmt3_jstl11
+      expected = '<c:out value="${e}"/><c:out value="${x}" escapeXml="false"/><c:out value="${default}"/>'
+      _test_stmt(@@print_stmt3, expected, {:escape=>true})
+   end
 
 
 
    ## ---------------------------- if statement
 
-   @@if_stmt1 = 'if (x>y) print(x); else print(y);'
+   @@if_stmt1 = 'if (x == y) print("yes");'
    def test_if_stmt1_eruby
-      expected = <<'END'
-<% if x > y then %>
-<%= x %><% else %>
-<%= y %><% end %>
+     expected = <<'END'
+<% if x == y then %>
+yes<% end %>
 END
       _test_stmt(@@if_stmt1, expected)
    end
    def test_if_stmt1_php
       expected = <<'END'
-<?php if ($x > $y) { ?>
-<?php echo $x; ?><?php } else { ?>
-<?php echo $y; ?><?php } ?>
+<?php if ($x == $y) { ?>
+yes<?php } ?>
+END
+      _test_stmt(@@if_stmt1, expected)
+   end
+   def test_if_stmt1_jstl11
+      expected = <<'END'
+<c:if test="${x eq y}">
+yes</c:if>
 END
       _test_stmt(@@if_stmt1, expected)
    end
 
 
-   @@if_stmt2 = 'if (x>y) print(x); else if (y>z) print(y);'
+   @@if_stmt2 = 'if (x>y) print(x); else print(y);'
    def test_if_stmt2_eruby
       expected = <<'END'
 <% if x > y then %>
-<%= x %><% elsif y > z then %>
+<%= x %><% else %>
 <%= y %><% end %>
 END
       _test_stmt(@@if_stmt2, expected)
@@ -328,14 +414,49 @@ END
    def test_if_stmt2_php
       expected = <<'END'
 <?php if ($x > $y) { ?>
-<?php echo $x; ?><?php } elseif ($y > $z) { ?>
+<?php echo $x; ?><?php } else { ?>
 <?php echo $y; ?><?php } ?>
+END
+      _test_stmt(@@if_stmt2, expected)
+   end
+   def test_if_stmt2_jstl11
+      expected = <<'END'
+<c:choose><c:when test="${x gt y}">
+<c:out value="${x}" escapeXml="false"/></c:when><c:otherwise>
+<c:out value="${y}" escapeXml="false"/></c:otherwise></c:choose>
 END
       _test_stmt(@@if_stmt2, expected)
    end
 
 
-   @@if_stmt3 = <<'END'
+   @@if_stmt3 = 'if (x>y) print(x); else if (y>z) print(y);'
+   def test_if_stmt3_eruby
+      expected = <<'END'
+<% if x > y then %>
+<%= x %><% elsif y > z then %>
+<%= y %><% end %>
+END
+      _test_stmt(@@if_stmt3, expected)
+   end
+   def test_if_stmt3_php
+      expected = <<'END'
+<?php if ($x > $y) { ?>
+<?php echo $x; ?><?php } elseif ($y > $z) { ?>
+<?php echo $y; ?><?php } ?>
+END
+      _test_stmt(@@if_stmt3, expected)
+   end
+   def test_if_stmt3_jstl11
+      expected = <<'END'
+<c:choose><c:when test="${x gt y}">
+<c:out value="${x}" escapeXml="false"/></c:when><c:when test="${y gt z}">
+<c:out value="${y}" escapeXml="false"/></c:when></c:choose>
+END
+      _test_stmt(@@if_stmt3, expected)
+   end
+
+
+   @@if_stmt4 = <<'END'
 if (x>y && x>z) {
   max = x;
 } else if (y>x && y>z) {
@@ -346,7 +467,7 @@ if (x>y && x>z) {
   max = -1;
 }
 END
-   def test_if_stmt3_eruby
+   def test_if_stmt4_eruby
       expected = <<'END'
 <% if x > y && x > z then %>
 <%   max = x %>
@@ -358,9 +479,9 @@ END
 <%   max = -1 %>
 <% end %>
 END
-      _test_stmt(@@if_stmt3, expected)
+      _test_stmt(@@if_stmt4, expected)
    end
-   def test_if_stmt3_php
+   def test_if_stmt4_php
       expected = <<'END'
 <?php if ($x > $y && $x > $z) { ?>
 <?php   $max = $x; ?>
@@ -372,7 +493,21 @@ END
 <?php   $max = -1; ?>
 <?php } ?>
 END
-      _test_stmt(@@if_stmt3, expected)
+      _test_stmt(@@if_stmt4, expected)
+   end
+   def test_if_stmt4_jstl11
+      expected = <<'END'
+<c:choose><c:when test="${x gt y and x gt z}">
+  <c:set var="max" value="${x}"/>
+</c:when><c:when test="${y gt x and y gt z}">
+  <c:set var="max" value="${y}"/>
+</c:when><c:when test="${z gt x and z gt x}">
+  <c:set var="max" value="${z}"/>
+</c:when><c:otherwise>
+  <c:set var="max" value="-1"/>
+</c:otherwise></c:choose>
+END
+      _test_stmt(@@if_stmt4, expected)
    end
 
 
@@ -395,6 +530,14 @@ END
 <?php foreach ($list as $item) { ?>
 <li><?php echo $item; ?></li>
 <?php } ?>
+END
+      _test_stmt(@@foreach_stmt2, expected)
+   end
+   def test_foreach_stmt1_jstl11
+      expected = <<'END'
+<c:forEach var="item" items="${list}">
+<li><c:out value="${item}" escapeXml="false"/></li>
+</c:forEach>
 END
       _test_stmt(@@foreach_stmt2, expected)
    end
@@ -421,6 +564,13 @@ END
 END
       _test_stmt(@@foreach_stmt2, expected)
    end
+   def test_foreach_stmt2_jstl11
+      expected = <<'END'
+<c:forEach var="item" items="${list}">
+<li><c:out value="${item}" escapeXml="false"/></li>
+</c:forEach>
+END
+   end
 
 
    ## ---------------------------- while statement
@@ -445,6 +595,12 @@ END
 END
       _test_stmt(@@while_stmt1, expected)
    end
+   def test_while_stmt1_jstl11
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@while_stmt1, expected)
+      end
+   end
 
 
    ## ---------------------------- expand statement
@@ -457,6 +613,12 @@ END
       end
    end
    def test_expand_stmt1_php
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@expand_stmt1, expected)
+      end
+   end
+   def test_expand_stmt1_jstl11
       expected = ''
       assert_raise(Kwartz::TranslationError) do
          _test_stmt(@@expand_stmt1, expected)

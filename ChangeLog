@@ -2,6 +2,9 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-28 rev.24
+	.- [enhance] new file: translator/jstl.rb
+
 .: 2004-01-27 rev.23
 	.- [enhance] new file: analyzer.rb, analyzer-test.rb
 	.- [refactor] Visitor class rewrited

@@ -218,6 +218,7 @@ module Kwartz
          else
             _translate_expr(expr.left, t)
             op = keyword(t)
+            $stderr.puts "*** debug: op=#{op.inspect}, t=#{t.inspect}" if $DEBUG
             @code << op
             _translate_expr(expr.right, t)
          end

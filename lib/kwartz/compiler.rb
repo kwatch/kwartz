@@ -1,6 +1,4 @@
 ###
-### compiler.rb
-###
 ### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
@@ -138,9 +136,11 @@ if __FILE__ == $0
 
    require 'kwartz/translator/eruby'
    require 'kwartz/translator/php'
+   require 'kwartz/translator/jstl'
 
    plogic_filename = nil
    plogic_str = ''
+   lang = 'eruby'
    flag_escape = false
    while ARGV[0] && ARGV[0][0] == ?-
       opt = ARGV.shift
@@ -148,6 +148,8 @@ if __FILE__ == $0
       when '-p'
          plogic_filename = ARGV.shift
          plogic_str = File.open(plogic_filename) { |f| f.read() }
+      when '-l'
+         lang = ARGV.shift
       when '-e'
          flag_escape = true
       end
@@ -158,7 +160,6 @@ if __FILE__ == $0
    properties = {}
    properties[:escape] = true if flag_escape
    compiler = Kwartz::Compiler.new(properties)
-   lang = 'eruby'
    code = compiler.compile(lang, pdata_str, plogic_str, pdata_filename, plogic_filename)
    print code
 

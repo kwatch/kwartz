@@ -29,6 +29,9 @@
 ###
 
 require 'kwartz'
+require 'kwartz/translator/eruby'
+require 'kwartz/translator/php'
+require 'kwartz/translator/jstl'
 require 'kwartz/util/optparse'
 
 module Kwartz
