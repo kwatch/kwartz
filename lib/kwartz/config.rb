@@ -12,6 +12,8 @@ module Kwartz
       ESCAPE          = false
       NEWLINE         = "\n"
       INDENT          = "  "
+      RENAME          = false        # rename local var or not
+      RENAME_PREFIX   = '_'          # ex. var => _var
       
       ## compiler
       LANG            = "eruby"

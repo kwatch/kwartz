@@ -10,6 +10,7 @@ require 'kwartz/converter'
 require 'kwartz/parser'
 require 'kwartz/expander'
 require 'kwartz/translator'
+require 'kwartz/analyzer'
 
 
 module Kwartz
@@ -141,7 +142,16 @@ module Kwartz
       ##   code = compiler.translate(block_stmt, lang)
       def translate(node, lang)
          translator = Kwartz::Translator.create(lang, @properties)
+         if translator.rename?
+            analyzer = Kwartz::Analyzer.create('scope', @properties)
+            analyzer.analyze(node)
+            translator.local_vars = analyzer.local_vars
+         end
          code = translator.translate(node)
+         if translator.rename?
+            #translator.local_vars.clear()
+            translator.local_vars = []
+         end
          return code
       end
 
@@ -181,7 +191,7 @@ module Kwartz
          ## expand
          expand(block_stmt, element_table)
          ## analye
-         analyzer = Analyzer.create(name, properties)
+         analyzer = Kwartz::Analyzer.create(name, @properties)
          analyzer.analyze(block_stmt)
          return analyzer.result()
       end

@@ -19,9 +19,9 @@ all: [U].en.html [U].ja.html
 	retrieve -d guide.d [need];
 	lang = %2;
 	if [matches [lang] 'ja'] then
-		tagfile = 'html-css_i,euc';
+		tagfile = 'html-css,euc';
 	else
-		tagfile = 'html-css_i';
+		tagfile = 'html-css';
 	kwaser -t [tagfile] -T [need] > %1.[lang].toc.html;
 	kwaser -t [tagfile]    [need] > [target];
 }

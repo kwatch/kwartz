@@ -6,184 +6,14 @@
   <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
-
-  <style type="text/css">
-   <!--
-
-body		{
-		background-color:#FFFFFF;
-		}
-.mainbody	{
-		color:#333333;
-		line-height:150%;
-		}
-
-a:link, a:active, a:hover {
-		color:#CC6600;
-		}
-a:visited	{
-		color:#DD9900;
-		}
-
-p		{
-		color:#333333;
-		line-height:150%;
-		}
-
-pre		{
-		width: 100%;
-		line-height:130%;
-		white-space:pre;
-		}
-.program	{
-		border-style:solid;
-		border-width:2;
-		border-color:#6699FF;
-		color:#333333;
-		background-color:#DDEEFF;
-		padding:8 9 8 9;
-		margin:0;
-		word-break:keep-all;
-		}
-.terminal	{
-		border-style:solid;
-		border-width:1;
-		border-color:#FFFFFF;
-		color:#333333;
-		background-color:#E0E0E0;
-		padding:9 10 9 10;
-		margin:0;
-		word-break:keep-all;
-		}
-.output		{
-		border-style:solid;
-		border-width:2;
-		border-color:#CCCCCC;
-		color:#333333;
-		background-color:#FFFFFF;
-		padding:8 9 8 9;
-		margin:0;
-		word-break:keep-all;
-		}
-.program_caption {
-		}
-.terminal_caption {
-		}
-.output_caption {
-		}
-
-
-ul,ol,dl	{
-	 	Xmargin:0px;
-		Xpadding:0px;
-		color:#333333;
-		line-height:130%;
-		}
-
-.dt2, .dt3	{
-		font-weight:bold;
-		}
-
-.table1		{
-		padding:2;
-		color:#333333;
-		background-color:#DDDDCC;
-		line-height:130%;
-		Xborder-width:1;
-		Xborder-style:solid;
-		Xborder-color:#FFFFFF;
-		margin:5;
-		}
-.th1, .th2	{
-		padding:1;
-		color:#333333;
-		Xbackground-color:#DDDDCC;
-		background-color:#CCCCBB;
-		line-height:130%;
-		}
-.td1, .th2	{
-		padding:1;
-		color:#333333;
-		background-color:#EEEEDD;
-		line-height:130%;
-		}
-.caption1, .caption2 {
-		Xfont-size:x-small;
-		color:#333333;
-		}
-.table2		{
-		padding:1;
-		color:#333333;
-		background-color:#DDDDCC;
-		line-height:130%;
-		Xborder-width:1;
-		Xborder-style:solid;
-		Xborder-color:#FFFFFF;
-		margin:5;
-		}
-
-h1, .chapter, .doctitle {
-	  	Xfont-size:20pt;
-		color:#333333;
-	 	font-weight:bold;
-		padding:30 0 10 0;
-		}
-h2, .section	{
-		Xfont-size:16pt;
-		color:#333333;
-		font-weight:bold;
-		border-style:solid;
-		border-color:#6699FF;
-		border-width:0 0 2 30;
-		padding:10 20 0 5;
-		}
-h3, .subsection	{
-		Xfont-size:12pt;
-		color:#333333;
-		font-weight:bold;
-		border-style:solid;
-		border-color:#6699FF;
-		border-width: 0 0 0 15;
-		padding: 10 20 0 5;
-		}
-
-.em		{
-		font-weight:bold;
-		}
-
-.toc		{
-		font-size:small;
-		line-height:100%;
-		}
-.footnote	{
-		font-size:small;
-		}
-.note		{
-		background-color:#FFFFDD;
-		border-style:solid;
-		border-width:0 1 0 1;
-		border-color:#DDDD66;
-		color:#333300;
-		Xfont-size:small;
-		line-height:120%;
-		padding: 5 20 5 20;
-		}
-.figure		{
-		Xborder-width:1;
-		Xborder-color:#DDDD66;
-		Xwhite-space:pre;
-		}
-
-   -->
-  </style>
-
+  <link rel="stylesheet" href="docstyle.css" type="text/css">
  </head>
  <body>
 
   <blockquote>
    <div class="mainbody">
-    <div align="left"><h1>Kwartzユーザーズガイド</h1></div>
 
+    <div align="left"><h1>Kwartzユーザーズガイド</h1></div>
     <div align="left">
       Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
       last update: $Date$<br>
@@ -197,7 +27,7 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
-  <dd>Kwartzの開発は、<a href="http://www.ipa.go.jp/">情報処理推進機構(IPA)</a>による平成15年度<a href="http://www.ipa.go.jp/jinzai/esp/">未踏ソフトウェア創造事業</a>の支援を受けています。</dd>
+  <dd>Kwartzの開発は、<a href="http://www.ipa.go.jp/">情報処理推進機構(IPA)</a>による平成15年度<a href="http://www.ipa.go.jp/jinzai/esp/">未踏ソフトウェア創造事業</a>の支援を受けました。</dd>
  </dl>
 </div>
 <a name="toc"></a>
@@ -243,6 +73,8 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
     </li>
     <li><a href="#topics-analyze">グローバル変数とローカル変数</a>
     </li>
+    <li><a href="#topics-rename">ローカル変数の名前を変更する</a>
+    </li>
     <li><a href="#topics-span">spanタグの削除</a>
     </li>
     <li><a href="#topics-append">開始タグに式の値を追加する</a>
@@ -278,7 +110,7 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
 <a name="whatis"></a>
 <h3 class="section2">Kwartzとは？</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup>とは、
-『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data'(SoPL/PD)』という概念を実現したテンプレートシステムです。
+<b>『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data(SoPL/PD)』</b>という概念を実現したテンプレートシステムです。
 </p>
 <p>Kwartz-rubyは、RubyによるKwartzの実装です。
 このほか、PHPやJavaによる実装も予定されています。
@@ -1141,6 +973,63 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <b>Global: title list</b>
 <b>Local:  ctr item</b>
 </pre>
+<br>
+
+
+<a name="topics-rename"></a>
+<h3 class="section2">ローカル変数の名前を変更する</h3>
+<p>RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
+ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
+</p>
+<p>コンパイル時にコマンドラインオプション「<code>--rename</code>」を指定すると、
+ローカル変数名の頭に「<code>_</code>をつけます。
+</p>
+<p>前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
+</p>
+<p>実行例：
+</p>
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;%= title %&gt;
+&lt;dl&gt;
+&lt;% _ctr = 0 %&gt;
+&lt;% for _item in list do %&gt;
+&lt;%   _ctr += 1 %&gt;
+ &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;?php echo $title; ?&gt;
+&lt;dl&gt;
+&lt;?php $_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $_item) { ?&gt;
+&lt;?php   $_ctr += 1; ?&gt;
+ &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;c:out value="${title}" escapeXml="false"/&gt;
+&lt;dl&gt;
+&lt;c:set var="_ctr" value="0"/&gt;
+&lt;c:forEach var="_item" items="${list}"&gt;
+  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
+ &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+</pre>
+<p>なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
+</p>
 <br>
 
 

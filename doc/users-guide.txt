@@ -4,15 +4,16 @@
 .	.?lastupdate:	$Date$
 .	.?version:	$Rev$
 .	.?release:	$Release$
+.	.?stylesheet:	docstyle.css
 .	
 .	
 .JA	●はじめに | preface*
 .EN	.$ Preface | preface*
 .	
 .	
-.JA	このドキュメントは、テンプレートシステムKwartz{{(Kwartzの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けています。)}}のユーザーズガイドです。
+.JA	このドキュメントは、テンプレートシステムKwartz{{(Kwartzの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けました。)}}のユーザーズガイドです。
 .JA	Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』という概念を実現したテンプレートシステムです。
-.EN	This is the users' guide to Kwartz{{(Development of Kwartz is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
+.EN	This is the users' guide to Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
 .EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data (SoPL/PD).'
 .	
 .	
@@ -44,9 +45,9 @@
 .	
 .	
 .JA	Kwartz{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、
-.JA	『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data'(SoPL/PD)』という概念を実現したテンプレートシステムです。
+.JA	{{*『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data(SoPL/PD)』*}}という概念を実現したテンプレートシステムです。
 .EN	Kwartz{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
-.EN	which realized the concept of 'Separation of Presentation Logic and Presentaion Data'(SoPL/PD).
+.EN	which realized the concept of {{*'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)*}}.
 .	
 .	
 .JA	Kwartz-rubyは、RubyによるKwartzの実装です。
@@ -973,6 +974,50 @@
 .	{{*Global: title list*}}
 .	{{*Local:  ctr item*}}
 .	.====================
+.	
+.	
+.	
+.JA	◎ローカル変数の名前を変更する		| topics-rename
+.EN	.$$ Rename Local Variable Names		| topics-span
+.	
+.	
+.JA	RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
+.JA	ローカル変数名を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
+.JA	これに対処するため、Kwartzではローカル変数名を自動的に変更する機能があります。
+.EN	In Ruby or PHP, if local variables in template have the same name of variables in main program,
+.EN	assignment into local variables effects the control of main program.
+.EN	To address this problem, Kwartz have a feature to rename local variable names in template automatically.
+.	
+.	
+.JA	コンパイル時にコマンドラインオプション「{{,--rename,}}」を指定すると、
+.JA	ローカル変数名の頭に「{{,_,}}をつけます。
+.EN	The command-line option '{{,--rename,}}' renames all of local variable names in template automatically.
+.	
+.	
+.JA	前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
+.EN	The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
+.	
+.	
+.JA	実行例：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby  -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l php    -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l jstl11 -p analyze.plogic {{*--rename*}} analyze.html
+.	.====================
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -p guide.d/analyze.plogic --rename guide.d/analyze.html
+.	.--------------------
+.	
+.	
+.JA	なお設定ファイルの定数RENAMEで、デフォルトでローカル変数名を変更する・しないを設定できます。
+.EN	Constant RENAME in configuration file specifies whether rename local variable names in default.
+.	
+.	
 .	
 .	
 .JA	◎spanタグの削除	| topics-span

@@ -204,7 +204,8 @@ Usage: #{@command} [..options..] file1 [file2...]
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   -p file1,file2,...  : presentation logic filenames
   -c file1,file2,...  : contents data filenames
-  --escape=true   : sanitize(escape)
+  --escape[=true] : sanitize(escape)
+  --rename[=true] : rename local variables (ex. rename 'var' to '_var')
   --charset=name  : add '<%@ page contentType="text/html; charset=name" %>'
   --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
   --even=value    : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN}")

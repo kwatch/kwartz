@@ -485,7 +485,7 @@ END
 
 
    ## -------------------- #DOCUMENT
-   
+
    @@pdata8 = <<'END'
 <tr kd="mark:list">
   <td kd="value:item">foo</td>
@@ -621,7 +621,7 @@ END
 
 
    ## -------------------- Kwartz::Config::EMPTY_TAGS
-   
+
    @@pdata10 = <<'END'
 <meta http-equiv="Content-Type" content="text/html; charset=UTF8" id="mark:meta">
 <form>
@@ -664,7 +664,7 @@ END
 
 
    ## -------------------- Rawcode
-   
+
    @@pdata11 = <<'END'
 <dl id="mark:list">
  <dt id="value:key">key</dt><dd id="value:value">value</dd>
@@ -742,7 +742,105 @@ END
    end
 
 
-   
+   ## -------------------- rename local var
+
+   @@pdata12 = <<'END'
+<table>
+  <tr id="mark:items" class="@{klass}@">
+    <td id="mark:item">foo</td>
+  </tr>
+</table>
+END
+   @@plogic12 = <<'END'
+#items {
+  plogic: {
+    i = 0;
+    foreach (item in list) {
+      i += 1;
+      klass = i % 2 == 0 ? 'even' : 'odd';
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+#item {
+  value: item[klass];
+}
+END
+
+   def test_compile12_eruby	# rename local var
+      expected = <<'END'
+<table>
+<% _i = 0 %>
+<% for _item in list do %>
+<%   _i += 1 %>
+<%   _klass = _i % 2 == 0 ? "even" : "odd" %>
+  <tr class="<%= _klass %>">
+    <td><%= _item[_klass] %></td>
+  </tr>
+<% end %>
+</table>
+END
+      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+   end
+
+   def test_compile12_php	# rename local var
+      expected = <<'END'
+<table>
+<?php $_i = 0; ?>
+<?php foreach ($list as $_item) { ?>
+<?php   $_i += 1; ?>
+<?php   $_klass = $_i % 2 == 0 ? "even" : "odd"; ?>
+  <tr class="<?php echo $_klass; ?>">
+    <td><?php echo $_item[$_klass]; ?></td>
+  </tr>
+<?php } ?>
+</table>
+END
+      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+   end
+
+   def test_compile12_jstl11	# rename local var
+      expected = <<'END'
+<table>
+<c:set var="_i" value="0"/>
+<c:forEach var="_item" items="${list}">
+  <c:set var="_i" value="${_i + 1}"/>
+  <c:set var="_klass" value="${_i % 2 eq 0 ? 'even' : 'odd'}"/>
+  <tr class="<c:out value="${_klass}" escapeXml="false"/>">
+    <td><c:out value="${_item[_klass]}" escapeXml="false"/></td>
+  </tr>
+</c:forEach>
+</table>
+END
+      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+   end
+
+   def test_compile12_jstl10	# rename local var
+      expected = <<'END'
+<table>
+<c:set var="_i" value="0"/>
+<c:forEach var="_item" items="${list}">
+  <c:set var="_i" value="${_i + 1}"/>
+  <c:choose><c:when test="${_i % 2 eq 0}">
+    <c:set var="_klass" value="even"/>
+  </c:when><c:otherwise>
+    <c:set var="_klass" value="odd"/>
+  </c:otherwise></c:choose>
+  <tr class="<c:out value="${_klass}" escapeXml="false"/>">
+    <td><c:out value="${_item[_klass]}" escapeXml="false"/></td>
+  </tr>
+</c:forEach>
+</table>
+END
+      _test(@@pdata12, @@plogic12, expected, { :rename => true })
+   end
+
+
+   ## --------------------
+
+
 end
 
 

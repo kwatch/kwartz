@@ -4,6 +4,7 @@
 .	.?lastupdate:	$Date$
 .	.?version:	$Rev$
 .	.?release:	$Release$
+.	.?stylesheet:	docstyle.css
 .	
 .	
 .JA	●はじめに	| preface*
@@ -2043,21 +2044,21 @@
 .JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。
 .EN		Filename of the presentation logics. It is possible to specify several filename using '{{,,,}}' as a separator.
 .	
-.	.[--dname={{/name/}}]
-.JA		ディレクティブで使用する属性名。デフォルトは 'kd'。
-.EN		Attribute name used as a directive. Default is 'kd'.
-.	
 .	.[--charset={{/charset/}}]
 .JA		文字コード。JSTLにおいて '{{,<%@ page contentType="text/html; charset={{/charset/}} "%>,}}' を出力する。
 .EN		Character set. Kwartz will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSTL.
+.	
+.	.[--dname={{/name/}}]
+.JA		ディレクティブで使用する属性名。デフォルトは 'kd'。
+.EN		Attribute name used as a directive. Default is 'kd'.
 .	
 .	.#.[--delete-idattr={{/true/}}|{{/false/}}]
 .JA	.#	プレゼンテーションデータから {{,id="name",}} を取り除く。
 .EN	.#	Delete {{,id="name",}} from presentation data.
 .	
 .	.[--escape={{/true/}}|{{/false/}}]
-.JA		式をサニタイズして出力する。
-.EN		Auto-sanitizing.
+.JA		式をサニタイズして出力する。値が省略されたときはtrueが指定されたものとみなす。
+.EN		Auto-sanitizing. If value is ommited then true is used as value.
 .	
 .	.[--even={{/value/}}]
 .JA		偶数のときの値。デフォルトは「{{,'even',}}」。ディレクティブFOREACHとLISTで使われる。
@@ -2100,6 +2101,10 @@
 .	.[--odd={{/value/}}]
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
+.	
+.	.[--rename={{/true/}}|{{/false/}}]
+.JA		ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
+.EN		Specify rename or not local variable names.  Regarded as true when value is omitted.
 .	
 .	
 .	
@@ -2165,6 +2170,16 @@
 .	.[ INDENT ]
 .JA		インデントとして使う空白文字列を指定します。
 .EN		Specify a string which represents indent of output script.
+.	
+.	.[ RENAME ]
+.JA		ローカル変数の名前を変更するかどうかを指定します。
+.JA		trueなら、ローカル変数名の頭に「_」をつけます。
+.EN		Specify whether rename local variable names. 
+.EN		If true, '_' is added to beginning of local variable name.
+.	
+.	.[ RENAME_PREFIX ]
+.JA		ローカル変数の頭につける文字列を指定します。
+.EN		Specify the prefix of local variable name when RENAME is true.
 .	
 .	.[ LANG ]
 .JA		デフォルトの出力用言語を指定します。

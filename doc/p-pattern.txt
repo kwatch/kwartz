@@ -4,6 +4,7 @@
 .	.?version:	$Rev$
 .	.?release:	$Release$
 .	.?lastupdate:	$Date$
+.	.?stylesheet:	docstyle.css
 .	
 .	
 .JA	●はじめに	| preface*

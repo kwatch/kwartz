@@ -17,7 +17,7 @@ module Kwartz
 
    ## abstract class
    class Translator
-
+   
       def translate_expression(expr, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate_expression() is not implemented.")
       end
@@ -27,7 +27,7 @@ module Kwartz
       def translate(node, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate() is not implemented.")
       end
-
+      
       @@subclasses = {}
       def self.register(lang, klass)
          @@subclasses[lang] = klass
@@ -47,11 +47,11 @@ module Kwartz
 
    end
 
-
+   
    ## abstract class
    class BaseTranslator < Translator
       include Visitor
-
+      
       def initialize(properties={})
          @properties = properties
          if !@properties.key?(:escape)
@@ -66,13 +66,22 @@ module Kwartz
             @default_endprint  = :endprint
          end
          #
-         @flag_escape = false
-         @nl          = properties[:newline] || Kwartz::Config::NEWLINE     # "\n"
-         @indent      = properties[:indent]  || Kwartz::Config::INDENT      # '  '
-         @code = ''
+         @rename = properties[:rename] || Kwartz::Config::RENAME
+         if @rename
+            @rename_prefix = properties[:rename_prefix] || Kwartz::Config::RENAME_PREFIX || '_'
+            @local_vars = []
+         end
+         #
+         @nl     = properties[:newline] || Kwartz::Config::NEWLINE     # "\n"
+         @indent = properties[:indent]  || Kwartz::Config::INDENT      # '  '
+         @code   = ''
       end
-
-
+      attr_accessor :local_vars
+      
+      def rename?
+         return @rename
+      end
+      
       def indent(depth)
          @indent * depth
       end
@@ -311,6 +320,7 @@ module Kwartz
 
       ##
       def visit_variable_expression(expr, depth=0)
+         @code << @rename_prefix if @rename && @local_vars.include?(expr.name)
          @code << expr.name
       end
 
@@ -500,6 +510,6 @@ module Kwartz
       alias   :visit_expression			:translate_expression
       alias   :visit_statement			:translate_statement
 
-   end
+   end  # class Translator
 
 end

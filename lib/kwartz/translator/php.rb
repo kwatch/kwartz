@@ -182,7 +182,9 @@ module Kwartz
 
       ##
       def visit_variable_expression(expr, depth=0)
-         @code << '$' << expr.name
+         #@code << '$' << expr.name
+         @code << '$'
+         super(expr, depth)
       end
 
 

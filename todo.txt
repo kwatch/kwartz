@@ -39,6 +39,7 @@
 .- [_] include file path
 .- [v] change #{...}# to @{...}@
 .- [_] API doc
-.- [_] auto-rename local variable to '_var'
+.- [v] auto-rename local variable to '_var'
 .- [v] placeholder
 .- [_] rewrite Scanner.rb
+.- [_] integrate element definition and declaration
