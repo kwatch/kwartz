@@ -54,7 +54,7 @@ class TranslatorTest < Test::Unit::TestCase
    def _test_stmt(input, expected, properties={}, lang=nil)
       _test('parse_program', input, expected, properties)
    end
-   
+
 
    ## ======================================== expression
 
@@ -942,6 +942,32 @@ END
    end
 
 
+   ## ---------------------------- rawcode statement
+
+   @@rawcode_stmt1 = <<'END'
+  ::: int i = 0;
+  <?php foreach($hash as $key => $value) { ?>
+     print(key, " = ", value, "\n");
+  <?php } ?>
+  <% hash.each do |key, value| %>
+     print(key, " is ", value, "\n");
+  <% end %>
+END
+   def test_expand_stmt1_eruby
+      expected = <<'END'
+ int i = 0;
+<?php foreach($hash as $key => $value) { ?>
+<%= key %> = <%= value %>
+<?php } ?>
+<% hash.each do |key, value| %>
+<%= key %> is <%= value %>
+<% end %>
+END
+      _test_stmt(@@rawcode_stmt1, expected)
+   end
+
+
+
    ## ======================================== properties
 
    @@prop1 = <<'END'
@@ -960,7 +986,7 @@ i = <%= i %>\r
 END
       _test_stmt(@@prop1, expected, {:newline => "\r\n"} )
    end
-   
+
    def test_properties1_php
       expected = <<END
 <?php $i = 10; ?>\r
@@ -970,7 +996,7 @@ i = <?php echo $i; ?>\r
 END
       _test_stmt(@@prop1, expected, {:newline => "\r\n"} )
    end
-   
+
    def test_properties1_jstl11
       expected = <<END
 <c:set var="i" value="10"/>\r
@@ -980,7 +1006,7 @@ i = <c:out value="${i}"/>\r
 END
       _test_stmt(@@prop1, expected, {:newline => "\r\n",  :escape=>true} )
    end
-   
+
    def test_properties1_jstl10
       expected = <<END
 <c:set var="i" value="10"/>\r
@@ -990,7 +1016,7 @@ i = <c:out value="${i}"/>\r
 END
       _test_stmt(@@prop1, expected, {:newline => "\r\n", :escape=>true} )
    end
-   
+
 
 end
 

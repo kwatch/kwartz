@@ -27,16 +27,16 @@ module Kwartz
       def translate(node, depth=0)
          raise NotImplementedError.new("#{self.class.name}#translate() is not implemented.")
       end
-      
+
       @@subclasses = {}
       def self.register(lang, klass)
          @@subclasses[lang] = klass
       end
-      
+
       def self.translator_class(lang)
          return @@subclasses[lang]
       end
-      
+
       def self.create(lang, properties)
          klass = @@subclasses[lang]
          unless klass
@@ -168,7 +168,7 @@ module Kwartz
       end
 
       ## --------------------
-      
+
       ##
       def _translate_expr(expr, parent_token)
          if @@priorities[parent_token] > @@priorities[expr.token]
@@ -216,7 +216,7 @@ module Kwartz
          _translate_expr(expr.right, t)
          return @code
       end
-      
+
       ##
       def visit_arithmetic_expression(expr, depth=0)
          return visit_binary_expression(expr, depth)
@@ -265,7 +265,7 @@ module Kwartz
          @code << expr.propname
          return @code
       end
-      
+
       ##
       def visit_method_expression(expr, depth=0)
          t = expr.token
@@ -472,11 +472,11 @@ module Kwartz
 
       ##
       def visit_rawcode_statement(stmt, depth)
-         @code << indent(depth)
-         @code << stmt.rawcode
-         @code << @nl unless stmt.rawcode[-1] == ?\n
+         @code << stmt.rawcode << @nl
          return @code
       end
+
+
 
       ## --------------------
 

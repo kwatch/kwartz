@@ -3,8 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-19 rev.46
+	.- [enhance] raw-code support
+	.- [change] document update
 
-.: 2005-02-19 rev.44
+.: 2005-02-19 rev.45
 	.- [enhance] new command-line option '-o file'
 	.- [enhance] new directive 'id="placeholder:name"'
 	.- [change] document update

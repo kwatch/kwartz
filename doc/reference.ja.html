@@ -237,6 +237,8 @@ h3, .subsection	{
     </li>
     <li><a href="#pl-doc">ドキュメント宣言</a>
     </li>
+    <li><a href="#pl-rawcode">ターゲット言語のプログラムコード</a>
+    </li>
     <li><a href="#pl-analyze">グローバル変数とローカル変数</a>
     </li>
     <li><a href="#pl-infuture">未実装（または検討中）の機能</a>
@@ -828,12 +830,15 @@ while(i &lt; length) {
 <dt class="dt3"><b>
 E(<i>expr</i>) </b></dt>
 <dd class="dd3">
-	  式 <i>expr</i> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+	式 <i>expr</i> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 X(<i>expr</i>) </b></dt>
 <dd class="dd3">
-	  式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X(<i>expr</i>)で指定された式はサニタイズされません。
+	式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
+	X(<i>expr</i>)で指定された式はサニタイズされません。
 </dd>
 </dl>
 <dl class="dl3">
@@ -863,41 +868,57 @@ list_new() </b></dt>
 <dd class="dd3">
 	  新しいリストを作成します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 list_length(<i>list</i>) </b></dt>
 <dd class="dd3">
 	  リスト<i>list</i>の長さを返します。JSTL1.0では使用できません。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 hash_new() </b></dt>
 <dd class="dd3">
 	  新しいハッシュを作成します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 hash_keys(<i>hash</i>) </b></dt>
 <dd class="dd3">
 	  ハッシュの全キーをリストで返します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_length(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  文字列<i>string</i>の長さを返します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_tolower(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  文字列<i>string</i>を小文字にして返します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_toupper(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  文字列<i>string</i>を大文字にして返します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_trim(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  文字列<i>string</i>の前後から空白を取り除いた文字列を返します。
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_index(<i>string</i>, <i>char</i>) </b></dt>
 <dd class="dd3">
@@ -976,6 +997,9 @@ JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対
 </div>
 <p>これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
 JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+</p>
+<p>E()とX()は、print文の引数として使われることを想定しています。
+それ以外の場所では使わないでください。
 </p>
 <br>
 
@@ -1242,6 +1266,52 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 &lt;/ul&gt;
 &lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 </pre>
+<br>
+
+
+<a name="pl-rawcode"></a>
+<h3 class="section2">ターゲット言語のプログラムコード</h3>
+<p>ターゲット言語のプログラムコードを直接記述することもできます。
+Kwartzでは、「<code>&lt;?</code>」または「<code>&lt;%</code>」で始まる行があれば行末までをターゲット言語のコードと判断し、
+そのまま出力します。
+</p>
+<p>次の例は、PHPのコードを直接記述した例です。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-rawcode.plogic"></a>
+<pre class="program">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for PHP
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
+&lt;?php } ?&gt;
+</pre>
+<p>Raw-codeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
+つまり、プレゼンテーションロジックをターゲット言語で記述できます。
+</p>
+<p>プレゼンテーションロジック：
+</p>
+<pre class="program">#foo {
+  plogic: {
+    @stag;
+    &lt;% hash.each do |key, value| %&gt;
+      @cont;
+    &lt;% end %&gt;
+    @etag;
+  }
+}
+</pre>
+<p>ただし、Raw-codeをエレメント宣言の「value:」部や「attr:」部に記述することはできません。
+Raw-codeは文(statement)であり式(expression)ではないためです。
+</p>
+<p>ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
+それでも構わない場合にのみ使用してください。
+</p>
 <br>
 
 

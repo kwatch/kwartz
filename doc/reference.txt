@@ -504,11 +504,15 @@
 .JA	PLでは、以下の関数を使用することができます。
 .EN	The following functions are available in PL.
 .	.[ E({{/expr/}}) ]
-.JA		  式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
-.EN		  Sanitizes(escapes) the expression {{/expr/}}. Using this function sanitizes even when the command-line option for sanitizing is not specified.
+.JA		式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+.EN		Sanitizes(escapes) the expression {{/expr/}}. Using this function sanitizes
+.EN		even when the command-line option for sanitizing is not specified.
+.	
 .	.[ X({{/expr/}}) ]
-.JA		  式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X({{/expr/}})で指定された式はサニタイズされません。
-.EN		  Don't sanitize expression {{/expr/}}, even when the command-line option for sanitizing is specified.
+.JA		式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
+.JA		X({{/expr/}})で指定された式はサニタイズされません。
+.EN		Don't sanitize expression {{/expr/}}, even when the command-line option for
+.EN		sanitizing is specified.
 .	
 .	.[ C({{/expression/}}) ]
 .JA		「{{,{{/expression/}} ? ' checked="checked"' : '',}}」と同じです。
@@ -525,27 +529,35 @@
 .	.[ list_new() ]
 .JA		  新しいリストを作成します。
 .EN		  Create a new list. 
+.	
 .	.[ list_length({{/list/}}) ]
 .JA		  リスト{{/list/}}の長さを返します。JSTL1.0では使用できません。
 .EN		  Return the length of the {{/list/}}.
+.	
 .	.[ hash_new() ]
 .JA		  新しいハッシュを作成します。
 .EN		  Create a new hash. 
+.	
 .	.[ hash_keys({{/hash/}}) ]
 .JA		  ハッシュの全キーをリストで返します。
 .EN		  Return a list which contains all keys of the {{/hash/}}.
+.	
 .	.[ str_length({{/string/}}) ]
 .JA		  文字列{{/string/}}の長さを返します。
 .EN		  Return the length of the {{/string/}}.
+.	
 .	.[ str_tolower({{/string/}}) ]
 .JA		  文字列{{/string/}}を小文字にして返します。
 .EN		  Make a {{/string/}} to lowercase and return it.
+.	
 .	.[ str_toupper({{/string/}}) ]
 .JA		  文字列{{/string/}}を大文字にして返します。
 .EN		  Make a {{/string/}} to uppercase an return it.
+.	
 .	.[ str_trim({{/string/}}) ]
 .JA		  文字列{{/string/}}の前後から空白を取り除いた文字列を返します。
 .EN		  Strip whitespace from the beginning and end of a {{/string/}} and return it.
+.	
 .	.[ str_index({{/string/}}, {{/char/}}) ]
 .JA		  文字列{{/string/}}において文字{{/char/}}のある場所を返します。
 .EN		  Return the first positin a {{/char/}} occurs in a {{/string/}}.
@@ -577,7 +589,15 @@
 .JA	これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
 .JA	JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
 .EN	All functions except above are printed "as is" when translating into PHP or eRuby script.
-.EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support user-defined functions.
+.EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support
+.EN	user-defined functions.
+.	
+.	
+.JA	E()とX()は、print文の引数として使われることを想定しています。
+.JA	それ以外の場所では使わないでください。
+.EN	Functions E() and X() are intended to be used as arguments of print statement.
+.EN	You shouldn't use them in other place.
+.	
 .	
 .	
 .	
@@ -772,44 +792,73 @@
 .	
 .	
 .	
-.JA	.#◎ターゲット言語のプログラムコード | pl-rawcode
-.EN	.#.$$ Raw-code | pl-rawcode
-.	.#
-.	.#
-.JA	.#ターゲット言語のプログラムコードを直接記述することもできます。
-.JA	.#Kwartzでは、「{{,<?,}}」または「{{,<%,}}」で始まる行があれば行末までをターゲット言語のコードと判断し、そのまま出力します。
-.EN	.#Code in the target program language can be in the PL program.
-.EN	.#If Kwartz find a line starting with {{,<?,}}, Kwartz prints the string from '<?' to the end of line directly.
-.	.#
-.	.#
-.JA	.#次の例は、PHPのコードを直接記述した例です。
-.EN	.#The following is an example which includes PHP code.
-.	.#
-.	.#
-.JA	.#PLプログラム：
-.EN	.#PL Program:
-.	.#.-------------------- pl-rawcode.plogic
-.	.#<?php foreach($hash as $key => $value) { ?>
-.	.#print("key=", $key, " value=", $value, "\n");
-.	.#<?php } ?>
-.	.#.--------------------
-.	.#
-.JA	.#出力用スクリプト：
-.EN	.#Output Script:
-.	.#.____________________
-.	.#.<<<:! ./output.rb -a translate -l php guide.d/pl-rawcode.plogic
-.	.#.____________________
-.	.#
-.	.#
+.JA	◎ターゲット言語のプログラムコード | pl-rawcode
+.EN	.$$ Raw-code | pl-rawcode
+.	
+.	
+.JA	ターゲット言語のプログラムコードを直接記述することもできます。
+.JA	Kwartzでは、「{{,<?,}}」または「{{,<%,}}」で始まる行があれば行末までをターゲット言語のコードと判断し、
+.JA	そのまま出力します。
+.EN	Code in the target program language can be in the PL program.
+.EN	If Kwartz find a line starting with '{{,<%,}}' or '{{,<?,}}',
+.EN	Kwartz prints the string from '{{,<%,}}' or '{{,<?,}}' to the end of line directly.
+.	
+.	
+.JA	次の例は、PHPのコードを直接記述した例です。
+.EN	The following is an example which includes PHP code.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-rawcode.plogic
+.	<?php foreach($hash as $key => $value) { ?>
+.	print("key=", key, " value=", value, "\n");
+.	<?php } ?>
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! ./output.rb  -a translate -l php guide.d/pl-rawcode.plogic
+.	.____________________
+.	
+.	
+.JA	Raw-codeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
+.JA	つまり、プレゼンテーションロジックをターゲット言語で記述できます。
+.EN	Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
+.EN	This means that you can write presentation logics in target language.
+.	
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.--------------------
+.	#foo {
+.	  plogic: {
+.	    @stag;
+.	    <% hash.each do |key, value| %>
+.	      @cont;
+.	    <% end %>
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	ただし、Raw-codeをエレメント宣言の「value:」部や「attr:」部に記述することはできません。
+.JA	Raw-codeは文(statement)であり式(expression)ではないためです。
+.EN	Raw-cde cannot be in 'value:' or 'attr:' part of element declaration,
+.EN	because raw-code is statement and not expression.
+.	
+.	
 .JA	.#また「{{,:::{{/raw code/}},}}」とすると、{{,:::,}}の次の文字から行末までをそのまま出力します。
 .EN	.#'{{,::: {{/raw code/}},}}' also represents code in the target program language.
 .EN	.#Kwartz processes a string after '{{,:::,}}' as raw code.
 .	.#
-.	.#
-.JA	.#ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
-.JA	.#それでも構わない場合にのみ使用してください。
-.EN	.#You should remember that writing a raw-code takes portability away.
-.	.#
+.	
+.JA	ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
+.JA	それでも構わない場合にのみ使用してください。
+.EN	You should remember that writing a raw-code takes portability away.
+.	
 .JA	.#コマンドラインオプション {{,--enable_eruby=true,}} を使用することで、プレゼンテーションロジックの中に複数の言語を埋め込むことができます。
 .JA	.#詳しくは「{{<プレゼンテーションロジック中にeRubyコードを記述する|#tips-eruby>}}」をご覧ください。
 .EN	.#The command-line option '--enable_eruby=true' enables you to embed code from several different languages in the presentation logic file.
@@ -1986,8 +2035,8 @@
 .JA		プレゼンテーションロジックやプレゼンテーションデータで使用できる。
 .JA		主にplaceholderディレクティブ（「{{,id="placeholder:{{/name/}},}}」）のために使用される。
 .EN		Outer filename.
-.EN		Elements which are defined in outer files are available to use in presentation logic file
-.EN		and presentaion data file.
+.EN		Elements which are defined in outer files are available to use in presentation logic
+.EN		and presentaion data.
 .EN		Usually this option is used for 'placeholder' directive ('{{,id="placeholder:{{/name/}},}}').
 .	
 .	.[-p {{/plogic-file/}}]

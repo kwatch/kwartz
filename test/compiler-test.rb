@@ -662,6 +662,87 @@ END
    end
 
 
+
+   ## -------------------- Rawcode
+   
+   @@pdata11 = <<'END'
+<dl id="mark:list">
+ <dt id="value:key">key</dt><dd id="value:value">value</dd>
+</dl>
+END
+
+   def test_compile11_eruby	# rawcode
+      plogic = <<'END'
+#list {
+    plogic: {
+      @stag;
+      <% ENV.each { |key, value| %>
+        @cont;
+      <% } %>
+      @etag;
+    }
+}
+END
+      expected = <<'END'
+<dl>
+<% ENV.each { |key, value| %>
+ <dt><%= key %></dt><dd><%= value %></dd>
+<% } %>
+</dl>
+END
+      _test(@@pdata11, plogic, expected)
+   end
+
+   def test_compile11_php	# rawcode
+      plogic = <<'END'
+#list {
+    plogic: {
+      @stag;
+      <?php foreach (ENV as $key => $value) { ?>
+        @cont;
+      <?php } ?>
+      @etag;
+    }
+}
+END
+      expected = <<'END'
+<dl>
+<?php foreach (ENV as $key => $value) { ?>
+ <dt><?php echo $key; ?></dt><dd><?php echo $value; ?></dd>
+<?php } ?>
+</dl>
+END
+      _test(@@pdata11, plogic, expected)
+   end
+
+   def test_compile11_jstl11	# rawcode
+      plogic = <<'END'
+#list {
+    plogic: {
+      @stag;
+      <% for (Iterator it = hash.getKeys().iterator(); it.hasNext(); ) { %>
+      <%   Object key = it.next(); %>
+      <%   Object value = hash.get(key); %>
+        @cont;
+      <% } %>
+      @etag;
+    }
+}
+END
+      expected = <<'END'
+<dl>
+<% for (Iterator it = hash.getKeys().iterator(); it.hasNext(); ) { %>
+<%   Object key = it.next(); %>
+<%   Object value = hash.get(key); %>
+ <dt><c:out value="${key}" escapeXml="false"/></dt><dd><c:out value="${value}" escapeXml="false"/></dd>
+<% } %>
+</dl>
+END
+      _test(@@pdata11, plogic, expected)
+   end
+
+
+   
 end
 
 

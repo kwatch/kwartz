@@ -147,7 +147,7 @@ module Kwartz
                when :true, :false, :null, :nil, :empty
                   s << ':' << token.id2name
                when :rawcode
-                  s << ':::' << @value
+                  s << @value
                when :rubycode
                   s << ':rubycode' << @value
                else
@@ -197,6 +197,13 @@ module Kwartz
       end
 
 
+      def getrest()
+         rest = @line[@index+1, @line.length]
+         @index = @line.length
+         return rest
+      end
+
+
       def scan_line()
          Kwartz::assert unless @line != nil
 
@@ -225,24 +232,25 @@ module Kwartz
             return @value = @token = '/'
          end
 
-         ##
+         ## :  ::  :::
          if ch == ?:
             ch = getchar()
             return ':' if ch != ?:
             ch = getchar()
             return '::' if ch != ?:
-            getchar()
-            return ':::'
+            @value = getrest()
+            #return ':::'
+            return :rawcode
          end
 
-         ##
+         ## name
          if is_alpha(ch) || ch == ?_
             s = ch.chr
             while (ch = getchar()) != nil && is_word(ch)
                s << ch.chr
             end
             @value = s
-            
+
             begin
             if w = @keywords[@value]
                @token = w
@@ -259,7 +267,7 @@ module Kwartz
             return @token
          end
 
-         ##
+         ## numeric
          if is_digit(ch)
             s = ch.chr
             while (ch = getchar()) != nil && is_digit(ch)
@@ -275,7 +283,7 @@ module Kwartz
             return @token = :numeric
          end
 
-         ##
+         ## .  .=  .+  .+=
          if ch == ?.
             ch = getchar()
             if ch == ?=
@@ -293,7 +301,7 @@ module Kwartz
             return '.'
          end
 
-         ## string
+         ## quoted string
          if ch == ?'					#'
             s = ""
             while (ch = getchar()) != nil && ch != ?'	#'
@@ -321,7 +329,7 @@ module Kwartz
             return @token = :string
          end
 
-         ## string
+         ## double-quoted string
          if ch == ?"					#"
             s = ""
             while (ch = getchar()) != nil && ch != ?"	#"
@@ -351,7 +359,7 @@ module Kwartz
             return @token = :string
          end
 
-         ##
+         ## +  -  *  /  %  ^
          if ch == ?+ || ch == ?- || ch == ?* || ch == ?/ || ch == ?% || ch == ?^
             if (ch2 = getchar()) != nil && ch2 == ?=
                getchar()
@@ -361,7 +369,22 @@ module Kwartz
             end
          end
 
-         ##
+         ## <  <=  <%  <?
+         if ch == ?<
+            ch2 = getchar()
+            if ch2 == ?=
+               getchar()
+               @token = '<='
+            elsif ch2 == ?% || ch2 == ??
+               @value = '<' + ch2.chr + getrest()
+               @token = :rawcode
+            else
+               @token = '<'
+            end
+            return @token
+         end
+
+         ## =  !  >  ==  !=  >=
          if ch == ?= || ch == ?! || ch == ?< || ch == ?>
             if (ch2 = getchar()) != nil && ch2 == ?=
                getchar()
@@ -371,7 +394,7 @@ module Kwartz
             end
          end
 
-         ##
+         ## &&  ||
          if ch == ?& || ch == ?|
             if (ch2 = getchar()) != nil && ch2 == ch
                getchar()

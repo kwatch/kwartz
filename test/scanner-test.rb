@@ -173,7 +173,22 @@ class ScannerTest < Test::Unit::TestCase
        _test(input, expected)
     end
 
+    
+    def test_scan_rawcode1
+       input = <<-'END'
+		:::  pulic int i = 0;
+		<%= foo %>
+		<?php echo $foo; ?>
+       END
+       expected = <<-'END'
+		  pulic int i = 0;
+		<%= foo %>
+		<?php echo $foo; ?>
+       END
+       _test(input, expected)
+    end
 
+    
     def test_scan_operators1
        input = <<-'END'
 		+-*/%!=<><=>===!=+=-=*=/=%=
@@ -227,11 +242,6 @@ class ScannerTest < Test::Unit::TestCase
     def test_scan_chars1
     	input = <<-'END'
 		!^&&||:;,.?
-
-
-
-
-
 
 	END
 	expected = <<-'END'

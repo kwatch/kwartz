@@ -606,7 +606,11 @@ module Kwartz
 
       def _inspect(depth=0, s='')
          indent(depth, s)
-         s << '::: ' << @rawcode
+         if @rawcode =~ /\A<[%?]/
+            s << @rawcode
+         else
+            s << ':::' << @rawcode
+         end
          s << "\n" if @rawcode[-1] != ?\n
          return s
       end

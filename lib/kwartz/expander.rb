@@ -73,6 +73,8 @@ module Kwartz
                list[i] = st2 if st2
             end
             return nil
+         when :rawcode
+            return nil
          end
          Kwartz::assert("stmt.token == #{stmt.token}")
       end

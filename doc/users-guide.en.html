@@ -245,7 +245,9 @@ a template system which realized the concept of 'Separation of Presentation Logi
     </li>
     <li><a href="#topics-span">Span Tag Deletion</a>
     </li>
-    <li><a href="#topics-append">Appending Expression to Tag</a>
+    <li><a href="#topics-append">Appending Expression to Start Tag</a>
+    </li>
+    <li><a href="#topics-rawcode">Describe Presentation Logic in Target Language</a>
     </li>
   </ul>
   </li>
@@ -693,6 +695,7 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
 <h3 class="section2">Other Examples of Presentation Logic</h3>
 <p>Kwartz enables you to write complex presentation logic natulally.
 This section shows some examples.
+See <a href="p-pattern.html">Presentation Pattern Catalog</a> for details.
 </p>
 <ul type="disc">
 <li>You can choose to iterate an element.
@@ -773,6 +776,18 @@ This section shows some examples.
 <pre class="program">#list {
   plogic: {
     @element(foo);  // expand other element marked with name 'foo'
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can replace content of element by other element marked.
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    @element(foo);  // expand other element marked with name 'foo'
+    @etag;
   }
 }
 </pre>
@@ -1172,7 +1187,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 
 
 <a name="topics-append"></a>
-<h3 class="section2">Appending Expression to Tag</h3>
+<h3 class="section2">Appending Expression to Start Tag</h3>
 <p>The following is an example to print only attribute variable such as <code>&lt;input type="..." checked&gt;</code>.
 </p>
 <p>Presentation Data:
@@ -1253,6 +1268,31 @@ when the expression <code><i>expr</i></code> is true.
 &lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
+<br>
+
+
+<a name="topics-rawcode"></a>
+<h3 class="section2">Describe Presentation Logic in Target Language</h3>
+<p>Lines staring with '<code>&lt;%</code>' or '<code>&lt;?</code>' are printed as it is.
+It enables you to write presentation logics in Ruby, PHP, and Java.
+</p>
+<p>Presentation Logic:
+</p>
+<a name="topics-rawcode.plogic"></a>
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    &lt;% ENV.each { |name, value| %&gt;
+      @cont;
+    &lt;% } %&gt;
+    @etag;
+  }
+}
+</pre>
+<p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called 'raw-code'.
+Raw-code is statement and not expression, therefore you can write raw-code in 'plogic:' part
+but not in 'value:' part and 'attr:' part.
+</p>
 <br>
 
 

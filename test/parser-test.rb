@@ -871,6 +871,24 @@ END
 
 
    ##
+   def test_parse_rawcode_stmt1  # <% ... %>, <?php ... ?>
+      input = '   <?php foreach($hash as $key => $value) { ?>'
+      expected = <<'END'
+<?php foreach($hash as $key => $value) { ?>
+END
+      _test(input, expected, RawcodeStatement)
+   end
+
+
+   ##
+   def test_parse_rawcode_stmt2  # :::
+      input    = "  :::  int i=0;\n"
+      expected =   ":::  int i=0;\n"
+      _test(input, expected, RawcodeStatement)
+   end
+
+
+   ##
    def test_parse_stmt_list1
        @flag_suspend = false
        input = <<'END'

@@ -245,7 +245,9 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
     </li>
     <li><a href="#topics-span">spanタグの削除</a>
     </li>
-    <li><a href="#topics-append">タグに式の値を追加する</a>
+    <li><a href="#topics-append">開始タグに式の値を追加する</a>
+    </li>
+    <li><a href="#topics-rawcode">プレゼンテーションロジックをターゲット言語で記述する</a>
     </li>
   </ul>
   </li>
@@ -693,6 +695,7 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
 <h3 class="section2">プレゼンテーションロジックの応用例</h3>
 <p>Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
 ここではその例を示します。
+なお『<a href="p-pattern.html">プレゼンテーションパターンカタログ</a>』もご覧ください。
 </p>
 <ul type="disc">
 <li>エレメント全体を繰り返すことができます。
@@ -773,6 +776,18 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
 <pre class="program">#list {
   plogic: {
     @element(foo);  // 「foo」とマーキングされたエレメントを展開する
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>エレメントの内容を、別のエレメントで置き換えることができます。
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    @element(foo);  // 「foo」とマーキングされたエレメントを展開する
+    @etag;
   }
 }
 </pre>
@@ -1172,7 +1187,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 
 
 <a name="topics-append"></a>
-<h3 class="section2">タグに式の値を追加する</h3>
+<h3 class="section2">開始タグに式の値を追加する</h3>
 <p>「<code>&lt;input type="..." checked&gt;</code>」のようにする場合は、次のようにします。
 </p>
 <p>プレゼンテーションデータ：
@@ -1252,6 +1267,31 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 &lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
+<br>
+
+
+<a name="topics-rawcode"></a>
+<h3 class="section2">プレゼンテーションロジックをターゲット言語で記述する</h3>
+<p>行が「<code>&lt;%</code>」または「<code>&lt;?</code>」で始まる場合、そこから行末まではそのまま出力されます。
+これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。
+</p>
+<p>プレゼンテーションロジック：
+</p>
+<a name="topics-rawcode.plogic"></a>
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    &lt;% ENV.each { |name, value| %&gt;
+      @cont;
+    &lt;% } %&gt;
+    @etag;
+  }
+}
+</pre>
+<p>「<code>&lt;%</code>」または「<code>&lt;?</code>」から行末までをraw-codeといいます。
+raw-codeは文(statement)であり、式(expression)ではありません。
+そのため、「plogic:」部に書くことはできますが「value:」部や「attr:」部に書くことはできません。
+</p>
 <br>
 
 

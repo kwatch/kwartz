@@ -504,20 +504,31 @@ module Kwartz
          when 'stag', 'cont', 'etag'
             name = nil
          when 'element'
-            tkn = scan()
-            syntax_error("@element() requires '('.") unless tkn == '('
-            tkn = scan()
-            syntax_error("@element() requires an element name.") unless tkn == :name
+            t = scan()
+            syntax_error("@element() requires '('.") unless t == '('
+            t = scan()
+            syntax_error("@element() requires an element name.") unless t == :name
             name = value()
-            tkn = scan()
-            syntax_error("@element() requires ')'.") unless tkn == ')'
+            t = scan()
+            syntax_error("@element() requires ')'.") unless t == ')'
          else
             syntax_error("'@' should be '@stag', '@cont', '@etag', or '@element(name)'.")
          end
-         tkn = scan()
-         syntax_error("@#{type} requires ';'.") unless tkn == ';'
+         t = scan()
+         syntax_error("@#{type} requires ';'.") unless t == ';'
          scan()
          return ExpandStatement.new(type.intern, name)
+      end
+
+
+      ##
+      ## rawcode-stmt ::= '<%' strings "\n" | '<?' strings "\n"
+      ##
+      def parse_rawcode_stmt()
+         Kwartz::assert unless token() == :rawcode
+         rawcode = value()
+         scan()
+         return RawcodeStatement.new(rawcode)
       end
 
 
@@ -569,6 +580,8 @@ module Kwartz
             return parse_element_stmt()
          when '@', :expand
             return parse_expand_stmt()
+         when :rawcode
+            return parse_rawcode_stmt()
          when ';'
             scan()
             return ';'

@@ -22,22 +22,23 @@
 .- [_] mkmethod
 .- [v] macro C() S() D()
 .- [v] eol auto-detect
-.- [x] load statement
-.- [_] include directive
 .- [v] #DOCUMENT
 .- [v] begin: {...} end: {...}
 .- [v] require: "file1";
 .- [v] jsp header
 .- [v] --header, --footer
+.- [v] raw-code <% ... %> and <? ... ?>
 .- [_] auto-compile
 .- [v] retrieve or extract (-r name)
 .- [_] /* comment */
-.- [_] rewrite Scanner.rb
 .- [_] parse type appropriately in 'vartype { type var; }'
 .- [_] ruby gems
+.- [x] load statement
+.- [_] include directive
 .- [_] load library path
 .- [_] include file path
 .- [v] change #{...}# to @{...}@
 .- [_] API doc
 .- [_] auto-rename local variable to '_var'
 .- [v] placeholder
+.- [_] rewrite Scanner.rb

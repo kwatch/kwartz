@@ -509,8 +509,12 @@
 .	
 .JA	Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
 .JA	ここではその例を示します。
+.JA	なお『{{<プレゼンテーションパターンカタログ|p-pattern.html>}}』もご覧ください。
 .EN	Kwartz enables you to write complex presentation logic natulally.
 .EN	This section shows some examples.
+.EN	See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
+.	
+.	
 .	
 .JA	.#プレゼンテーションデータ：
 .EN	.#Presentation Data:
@@ -604,6 +608,19 @@
 .		  plogic: {
 .JA		    @element(foo);  // 「foo」とマーキングされたエレメントを展開する
 .EN		    @element(foo);  // expand other element marked with name 'foo'
+.		  }
+.		}
+.		.--------------------
+.	
+.JA	.* エレメントの内容を、別のエレメントで置き換えることができます。
+.EN	.* You can replace content of element by other element marked.
+.		.--------------------
+.		#list {
+.		  plogic: {
+.		    @stag;
+.JA		    @element(foo);  // 「foo」とマーキングされたエレメントを展開する
+.EN		    @element(foo);  // expand other element marked with name 'foo'
+.		    @etag;
 .		  }
 .		}
 .		.--------------------
@@ -1005,8 +1022,8 @@
 .	.--------------------
 .	
 .	
-.JA	◎タグに式の値を追加する	 | topics-append
-.EN	.$$ Appending Expression to Tag  | topics-append
+.JA	◎開始タグに式の値を追加する	 | topics-append
+.EN	.$$ Appending Expression to Start Tag  | topics-append
 .	
 .JA	「{{,<input type="..." checked>,}}」のようにする場合は、次のようにします。
 .EN	The following is an example to print only attribute variable such as {{,<input type="..." checked>,}}.
@@ -1075,6 +1092,37 @@
 .	.--------------------
 .	
 .	
+.JA	◎プレゼンテーションロジックをターゲット言語で記述する	| topics-rawcode
+.EN	.$$ Describe Presentation Logic in Target Language	| topics-rawcode
+.	
+.	
+.JA	行が「{{,<%,}}」または「{{,<?,}}」で始まる場合、そこから行末まではそのまま出力されます。
+.JA	これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。
+.EN	Lines staring with '{{,<%,}}' or '{{,<?,}}' are printed as it is.
+.EN	It enables you to write presentation logics in Ruby, PHP, and Java.
+.	
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- topics-rawcode.plogic
+.	#list {
+.	  plogic: {
+.	    @stag;
+.	    <% ENV.each { |name, value| %>
+.	      @cont;
+.	    <% } %>
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	「{{,<%,}}」または「{{,<?,}}」から行末までをraw-codeといいます。
+.JA	raw-codeは文(statement)であり、式(expression)ではありません。
+.JA	そのため、「plogic:」部に書くことはできますが「value:」部や「attr:」部に書くことはできません。
+.EN	Lines starting with '{{,<%,}}' or '{{,<?,}}' are called 'raw-code'.
+.EN	Raw-code is statement and not expression, therefore you can write raw-code in 'plogic:' part
+.EN	but not in 'value:' part and 'attr:' part.
 .	
 .	
 .	

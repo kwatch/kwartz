@@ -365,7 +365,7 @@ END
    def test_rawcode_stmt1
    	stmt = RawcodeStatement.new("<% time = Time.new.to_s %>\n")
 	expected = <<'END'
-::: <% time = Time.new.to_s %>
+<% time = Time.new.to_s %>
 END
 	_test(stmt, expected)
    end

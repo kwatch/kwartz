@@ -237,6 +237,8 @@ Presentation language (PL), directives, and the command-line options are describ
     </li>
     <li><a href="#pl-doc">Document declaration</a>
     </li>
+    <li><a href="#pl-rawcode">Raw-code</a>
+    </li>
     <li><a href="#pl-analyze">Global and Local Variables</a>
     </li>
     <li><a href="#pl-infuture">Features Under Consideration</a>
@@ -830,12 +832,16 @@ while(i &lt; length) {
 <dt class="dt3"><b>
 E(<i>expr</i>) </b></dt>
 <dd class="dd3">
-	  Sanitizes(escapes) the expression <i>expr</i>. Using this function sanitizes even when the command-line option for sanitizing is not specified.
+	Sanitizes(escapes) the expression <i>expr</i>. Using this function sanitizes
+	even when the command-line option for sanitizing is not specified.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 X(<i>expr</i>) </b></dt>
 <dd class="dd3">
-	  Don't sanitize expression <i>expr</i>, even when the command-line option for sanitizing is specified.
+	Don't sanitize expression <i>expr</i>, even when the command-line option for
+	sanitizing is specified.
 </dd>
 </dl>
 <dl class="dl3">
@@ -865,41 +871,57 @@ list_new() </b></dt>
 <dd class="dd3">
 	  Create a new list. 
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 list_length(<i>list</i>) </b></dt>
 <dd class="dd3">
 	  Return the length of the <i>list</i>.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 hash_new() </b></dt>
 <dd class="dd3">
 	  Create a new hash. 
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 hash_keys(<i>hash</i>) </b></dt>
 <dd class="dd3">
 	  Return a list which contains all keys of the <i>hash</i>.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_length(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  Return the length of the <i>string</i>.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_tolower(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  Make a <i>string</i> to lowercase and return it.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_toupper(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  Make a <i>string</i> to uppercase an return it.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_trim(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  Strip whitespace from the beginning and end of a <i>string</i> and return it.
 </dd>
+</dl>
+<dl class="dl3">
 <dt class="dt3"><b>
 str_index(<i>string</i>, <i>char</i>) </b></dt>
 <dd class="dd3">
@@ -978,7 +1000,11 @@ In fact, list_new(), hash_new(), and hash_keys() are not supported.
 </table>
 </div>
 <p>All functions except above are printed "as is" when translating into PHP or eRuby script.
-Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support user-defined functions.
+Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support
+user-defined functions.
+</p>
+<p>Functions E() and X() are intended to be used as arguments of print statement.
+You shouldn't use them in other place.
 </p>
 <br>
 
@@ -1248,6 +1274,51 @@ It represents document information and takes the following declaration parts.
 &lt;/ul&gt;
 &lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 </pre>
+<br>
+
+
+<a name="pl-rawcode"></a>
+<h3 class="section2">Raw-code</h3>
+<p>Code in the target program language can be in the PL program.
+If Kwartz find a line starting with '<code>&lt;%</code>' or '<code>&lt;?</code>',
+Kwartz prints the string from '<code>&lt;%</code>' or '<code>&lt;?</code>' to the end of line directly.
+</p>
+<p>The following is an example which includes PHP code.
+</p>
+<p>PL Program:
+</p>
+<a name="pl-rawcode.plogic"></a>
+<pre class="program">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+</pre>
+<p>Output Script:
+</p>
+<pre class="output">### for PHP
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
+&lt;?php } ?&gt;
+</pre>
+<p>Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
+This means that you can write presentation logics in target language.
+</p>
+<p>Presentation Logic:
+</p>
+<pre class="program">#foo {
+  plogic: {
+    @stag;
+    &lt;% hash.each do |key, value| %&gt;
+      @cont;
+    &lt;% end %&gt;
+    @etag;
+  }
+}
+</pre>
+<p>Raw-cde cannot be in 'value:' or 'attr:' part of element declaration,
+because raw-code is statement and not expression.
+</p>
+<p>You should remember that writing a raw-code takes portability away.
+</p>
 <br>
 
 
@@ -2314,8 +2385,8 @@ translate</dt>
 -o <i>file1,file2,...</i></b></dt>
 <dd class="dd3">
 	Outer filename.
-	Elements which are defined in outer files are available to use in presentation logic file
-	and presentaion data file.
+	Elements which are defined in outer files are available to use in presentation logic
+	and presentaion data.
 	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<i>name</i></code>').
 </dd>
 </dl>
