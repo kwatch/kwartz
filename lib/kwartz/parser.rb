@@ -111,7 +111,7 @@ module Kwartz
             if tkn == '('
                scan()
                arguments = parse_arguments()
-               syntax_error("missing ')' of '#{name}()' (current token='#{tkn}').") unless token() == ')'
+               syntax_error("missing ')' of function '#{name}()'.") unless token() == ')'
                scan()
                return FunctionExpression.new(name, arguments)
             else
@@ -776,16 +776,16 @@ if __FILE__ == $0
    input = ARGF.read()
    parser = Kwartz::Parser.new(input)
    #--
-   decl_list = parser.parse_plogic()
-   decl_list.each do |elem_decl|
-      print elem_decl._inspect()
-   end
+   #decl_list = parser.parse_plogic()
+   #decl_list.each do |elem_decl|
+   #   print elem_decl._inspect()
+   #end
    #--
    #expr = parser.parse_expression()
    #print expr._inspect()
    #--
-   #stmt_list = parser.parse_stmt_list()
-   #stmt_list.each do |stmt|
-   #   print stmt._inspect()
-   #end
+   stmt_list = parser.parse_stmt_list()
+   stmt_list.each do |stmt|
+      print stmt._inspect()
+   end
 end

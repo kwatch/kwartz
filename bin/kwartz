@@ -48,7 +48,7 @@ module Kwartz
       LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
 
       def initialize(argv=ARGV)
-         @argv = ARGV
+         @argv = argv
          @command = File::basename($0)
       end
 

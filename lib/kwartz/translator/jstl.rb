@@ -67,7 +67,7 @@ module Kwartz
         '*'    => ' * ',
         '/'    => ' / ',
         '%'    => ' % ',
-        '.+'   => ' . ',
+        '.+'   => nil,
 
         ## assignment op
         '='    => nil,

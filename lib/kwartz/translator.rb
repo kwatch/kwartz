@@ -188,16 +188,17 @@ module Kwartz
       ##
       def visit_empty_expression(expr, depth=0)
          t = expr.token
+         child = expr.child
          if t == :empty
-            left  = BinaryExpression.new('==', expr, NullExpression.new())
-            right = BinaryExpression.new('==', expr, StringExpression.new(""))
+            left  = BinaryExpression.new('==', child, NullExpression.new())
+            right = BinaryExpression.new('==', child, StringExpression.new(""))
             expr  = BinaryExpression.new('||', left, right)
          elsif t == :notempty
-            left  = BinaryExpression.new('!=', expr, NullExpression.new())
-            right = BinaryExpression.new('!=', expr, StringExpression.new(""))
+            left  = BinaryExpression.new('!=', child, NullExpression.new())
+            right = BinaryExpression.new('!=', child, StringExpression.new(""))
             expr  = BinaryExpression.new('&&', left, right)
          end
-         translate_expr(expr)
+         translate_expression(expr)
          return @code
       end
 

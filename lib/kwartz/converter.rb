@@ -115,12 +115,20 @@ module Kwartz
 
       def parse_expression(expr_str, linenum)
          @parser.reset(expr_str, linenum)
-         return @parser.parse_expression()
+         expr = @parser.parse_expression()
+         unless @parser.token() == nil
+            raise ConvertionError.new("'#{expr_str}': invalid expression.", linenum, @filename)
+         end
+         return expr
       end
 
       def parse_expr_stmt(stmt_str)
          @parser.reset(stmt_str, 1)
-         return @parser.parse_expr_stmt()
+         stmt = @parser.parse_expr_stmt()
+         unless @parser.token() == nil
+            raise ConvertionError.new("'#{stmt_str}': invalid statement.", linenum, @filename)
+         end
+         return stmt
       end
 
       def save_taginfo()
@@ -179,11 +187,11 @@ module Kwartz
                directive_name, directive_arg = parse_attr_str(@attr_str)
                if directive_name
                   body_stmt_list = []
-                  current_linenum = @linenum
+                  stag_linenum = @linenum
                   staginfo = save_taginfo()
                   _convert(@tagname, body_stmt_list, directive_name != :mark)
                   etaginfo = save_taginfo()
-                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, current_linenum, staginfo, etaginfo)
+                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, stag_linenum, staginfo, etaginfo)
                elsif @tagname == etagname
                   _convert(@tagname, stmt_list)
                else
@@ -406,38 +414,8 @@ module Kwartz
       end
 
 
-      def create_print_node(str, linenum)
+      def build_print_node(linenum=@linenum)
          arguments = []
-         while str =~ /\#\{(.*?)\}\#/
-            expr_str = $1
-            before_text = $`
-            after_text = $'
-            if before_text && !before_text.empty?
-               arguments << StringExpression.new(before_text)
-            end
-            if expr_str && !expr_str.empty?
-               arguments << parse_expression(expr_str, linenum)
-            end
-            str = after_text
-         end
-         if str && !str.empty?
-            arguments << StringExpression.new(str)
-         end
-         return PrintStatement.new(arguments)
-      end
-
-      def build_print_node()
-         arguments = []
-         #flag_expr_exist = false
-         #if @attr_values.values.find { |val| val.is_a?(Expression) }
-         #   flag_expr_exist = true
-         #elsif !@append_exprs.empty?
-         #   flag_expr_exist = true
-         #end
-         #if !flag_expr_exist
-         #   arguments << StringExpression.new(@tag_str)
-         #   return PrintStatement.new(arguments)
-         #end
          arguments << StringExpression.new("#{@before_space}<#{@slash_etag}#{@tagname}")
          @attr_names.each do |aname|
             avalue = @attr_values[aname]
@@ -447,7 +425,10 @@ module Kwartz
                arguments << avalue
                arguments << StringExpression.new("\"")
             else
-               arguments << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
+               #arguments << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
+               str = "#{aspace}#{aname}=\"#{avalue}\""
+               list = expand_embed_expr(str, linenum)
+               arguments.concat(list)
             end
          end
          arguments.concat(@append_exprs) unless @append_exprs.empty?
@@ -470,16 +451,33 @@ module Kwartz
          return PrintStatement.new(arguments2)
       end
 
-      def build_tag_str
-         s = "#{@before_space}<#{@slash_etag}#{@tagname}"
-         @attr_names.each do |aname|
-            s << "#{@attr_spaces[aname]}#{@attr_values[aname]}"
-         end
-         s << "#{@extra_space}#{@slash_empty}>#{@after_space}"
-         return s
-         #return "#{@before_space}<#{@slash_etag}#{@tagname}#{@attr_str}#{@extra_space}#{@slash_empty}>#{@after_space}"
+      
+      def create_print_node(str, linenum)
+         arguments = expand_embed_expr(str, linenum)
+         return PrintStatement.new(arguments)
       end
 
+      
+      def expand_embed_expr(str, linenum)
+         list = []
+         while str =~ /\#\{(.*?)\}\#/
+            front     = $`
+            following = $'
+            expr_str  = $1
+            if front && !front.empty?
+               list << StringExpression.new(front)
+            end
+            if expr_str && !expr_str.empty?
+               list << parse_expression(expr_str, linenum)
+            end
+            str = following
+         end
+         if str && !str.empty?
+            list << StringExpression.new(str)
+         end
+         return list
+      end
+      
 
       @@flag_matrix = {
          # directive_name => [ flag_loop, flag_counter, flag_toggle ]

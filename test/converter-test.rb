@@ -284,7 +284,7 @@ END
     end
 
 
-    def test_convert01	# text only
+    def test_convert_text1	# text only
     	input = <<-'END'
 		aaa
 		bbb
@@ -299,7 +299,7 @@ END
     end
 
 
-    def test_convert02	# '#{...}#'
+    def test_convert_text2	# '#{...}#'
 	input = <<-'END'
 		aaa#{expr1}##{expr2}#bbb
 		<foo #{checked}#>
@@ -318,7 +318,7 @@ END
     end
 
 
-    def test_convert03	# tag without directive
+    def test_convert_text3	# tag without directive
     	input = <<-'END'
 		<div>
 		 <div>
@@ -341,7 +341,34 @@ END
     end
 
 
-    def test_convert04	# attr
+    def test_convert_text4	# [bug:1112279] expr in attr
+	input = <<-'END'
+		<a href="#{url}#">#{url}#</a>
+		<a href="mailto:#{email}#">#{email}#</a>
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<a href=\""
+		    url
+		    "\">"
+		  :print
+		    url
+		  :print
+		    "</a>\n"
+		  :print
+		    "<a href=\"mailto:"
+		    email
+		    "\">"
+		  :print
+		    email
+		  :print
+		    "</a>\n"
+	END
+    end
+
+
+    def test_convert_attr1	# attr
     	input = <<-'END'
 		<tr class="odd" kd="attr:class:klass;Attr:bgcolor=color;ATTR:align=align">
 		</tr>
@@ -365,7 +392,7 @@ END
     end
 
 
-    def test_convert05	# append
+    def test_convert_append1	# append
     	input = <<-'END'
 		<input type="radio" kd="attr:value:val;append:checked?'checked':''" />
 		<input type="radio" kd="Append:checked;APPEND:selected"/>
@@ -395,9 +422,9 @@ END
 	#END
 	_test_convert(input, expected)
     end
-
-
-    def test_convert06	# invalid directive
+    
+    
+    def test_convert_invalid1	# invalid directive
     	input = <<-'END'
 		<div kd="foo=bar">foobar</div>
 	END
@@ -409,7 +436,7 @@ END
     end
 
 
-    def test_convert11	# value
+    def test_convert_value1	# value
     	input = <<-'END'
 		<td kd="value:user">foo</td>
 	END
@@ -431,7 +458,7 @@ END
     end
 
 
-    def test_convert12	# value,Value,VALUE
+    def test_convert_value2	# value,Value,VALUE
     	input = <<-'END'
 		<td kd="value:user">foo</td>
 		<td kd="Value:user">foo</td>
@@ -475,7 +502,7 @@ END
     end
 
 #
-#    def test_convert13	# value with <span>
+#    def test_convert_value3	# value with <span>
 #    	input = <<-'END'
 #		<span kd="value:user">foo</span>
 #	END
@@ -488,7 +515,7 @@ END
 #    end
 #
 
-    def test_convert14	# value with empty element
+    def test_convert_value4	# value with empty element
     	input = <<-'END'
 		<span kd="value:user"/>
 	END
@@ -499,7 +526,7 @@ END
     end
 
 
-    def test_convert21	# foreach
+    def test_convert_foreach1	# foreach
     	input = <<-'END'
 		<tr kd="foreach:user:list">
 		  <td>#{user}#</td>
@@ -535,7 +562,7 @@ END
     end
 
 
-    def test_convert22	# Foreach
+    def test_convert_foreach2	# Foreach
     	input = <<-'END'
 		<tr kd="Foreach:user=list">
 		  <td>#{user}#</td>
@@ -581,7 +608,7 @@ END
     end
 
 
-    def test_convert23	# FOREACH
+    def test_convert_foreach3	# FOREACH
     	input = <<-'END'
 		<tr kd="FOREACH:user:list">
 		  <td>#{user}#</td>
@@ -639,7 +666,20 @@ END
     end
 
 
-    def test_convert24	# loop
+    def test_convert_foreach4	# invalid foreach
+    	input = <<-'END'
+		<tr kd="foreach:user in list">
+		  <td>#{user}#</td>
+		</tr>
+	END
+	expected = ''
+	assert_raise(Kwartz::ConvertionError) {
+	    _test_convert(input, expected)
+	}
+    end
+
+
+    def test_convert_loop1	# loop
     	input = <<-'END'
 		<tr kd="loop:user=list">
 		  <td>#{user}#</td>
@@ -677,7 +717,7 @@ END
     end
 
 
-    def test_convert25	# Loop
+    def test_convert_loop2	# Loop
     	input = <<-'END'
 		<tr kd="Loop:user=list">
 		  <td>#{user}#</td>
@@ -725,7 +765,7 @@ END
     end
 
 
-    def test_convert26	# LOOP
+    def test_convert_loop3	# LOOP
     	input = <<-'END'
 		<tr kd="LOOP:user:list">
 		  <td>#{user}#</td>
@@ -785,20 +825,7 @@ END
     end
 
 
-    def test_convert27	# invalid foreach
-    	input = <<-'END'
-		<tr kd="foreach:user in list">
-		  <td>#{user}#</td>
-		</tr>
-	END
-	expected = ''
-	assert_raise(Kwartz::ConvertionError) {
-	    _test_convert(input, expected)
-	}
-    end
-
-
-    def test_convert28	# invalid foreach
+    def test_convert_loop4	# invalid loop
     	input = <<-'END'
 		<tr kd="loop:user">
 		  <td>#{user}#</td>
@@ -811,7 +838,7 @@ END
     end
 
 
-    def test_convert29	# loop with empty element
+    def test_convert_loop5	# loop with empty element
 	input = <<-'END'
 		<li kd="loop:user=list"/>
 	END
@@ -826,7 +853,7 @@ END
     end
 
 
-    def test_convert31	# if
+    def test_convert_if1	# if
     	input = <<-'END'
 		<font color="red" kd="if:error_msg!=null">
 		  #{error_msg}#
@@ -859,7 +886,7 @@ END
     end
 
 
-    def test_convert32	# else
+    def test_convert_if2	# else
     	input = <<-'END'
 		<tr class="odd" kd="if:ctr%2==1">
 		  <td>#{data}#</td>
@@ -918,7 +945,7 @@ END
     end
 
 
-    def test_convert33	# elseif
+    def test_convert_if3	# elseif
     	input = <<-'END'
 		<div class="typeA" kd="if:type=='A'">#{message}#</div>
 		<div class="typeB" kd="elseif:type=='B'">#{message}#</div>
@@ -991,7 +1018,7 @@ END
     end
 
 
-    def test_convert34	# invalid else
+    def test_convert_if4	# invalid else
     	input = <<-'END'
 		<tr class="odd" kd="if:ctr%2==1">
 		  <td>#{data}#</td>
@@ -1008,7 +1035,7 @@ END
     end
 
 
-    def test_convert35	# nested if
+    def test_convert_if5	# nested if
     	input = <<-'END'
 		<ul kd="if:type=='A'">
 		  <ol kd="if:type=='B'">
@@ -1079,7 +1106,7 @@ END
     end
 
 
-    def test_convert41	# mark
+    def test_convert_mark1	# mark
 	input = <<-'END'
 		<table>
 		  <tr kd="mark:user">
@@ -1140,7 +1167,7 @@ END
     end
 
 
-    def test_convert42	# mark by id attr
+    def test_convert_mark2	# mark by id attr
 	input = <<-'END'
 		<table>
 		  <tr id="user">
@@ -1202,7 +1229,7 @@ END
     end
 
 
-    def test_convert43	# id="user-list"
+    def test_convert_mark3	# id="user-list"
     	input = <<-'END'
 		<table>
 		  <tr id="user-list">
@@ -1240,7 +1267,7 @@ END
     end
 
 
-    def test_convert44	# id and directive
+    def test_convert_mark4	# id and directive
     	input = <<-'END'
 		<table>
 		  <tr id="user" kd="foreach:user:list">
@@ -1284,7 +1311,7 @@ END
     end
 
 
-    def test_convert45	# nested mark
+    def test_convert_mark5	# nested mark
 	input = <<-'END'
 		<table>
 		 <tbody id="loop">
@@ -1376,7 +1403,7 @@ END
     end
 
 
-    def test_convert46	# marking to empty tag
+    def test_convert_mark6	# marking to empty tag
 	input = <<-'END'
 		<label for="male">Male:</label>
 		<input type="radio" name="gender" value="M" id="male"/>
@@ -1433,7 +1460,7 @@ END
     end
 
 
-    def test_convert51	# while
+    def test_convert_while1	# while
     	input = <<-'END'
 		<div kd="while:data=d.fetch">
 		  #{data}#
@@ -1468,7 +1495,7 @@ END
     end
 
 
-    def test_convert52	# set
+    def test_convert_set1	# set
 	input = <<-'END'
 		<div kd="set:ctr=0"/>
 		<div kd="set:ctr+=1"/>
@@ -1501,7 +1528,7 @@ END
     end
 
 #
-#    def test_convert53	# set with <span>
+#    def test_convert63	# set with <span>
 #    	input = <<-'END'
 #		<span kd="set:ctr+=1"/>
 #	END
@@ -1513,7 +1540,7 @@ END
 #    end
 #
 
-    def test_convert54	# set & attr
+    def test_convert_set2	# set & attr
     	input = <<-'END'
 		<span kd="set:ctr+=1;attr:class=foo"/>
 	END
@@ -1536,7 +1563,7 @@ END
     end
 
 
-    def test_convert55	# dummy
+    def test_convert_dummy1	# dummy
 	input = <<-'END'
 		<td id="dummy:d1">
 		  foo
@@ -1552,7 +1579,7 @@ END
     end
 
 
-    def test_convert56	# replace
+    def test_convert_replace1	# replace
 	input = <<-'END'
 		<div kd="replace:foo">
 		foo
@@ -1569,7 +1596,7 @@ END
     end
 
 
-    def test_properties1	# 'even' and 'odd'
+    def test_convert_properties1	# 'even' and 'odd'
 	input = <<-'END'
 		<tbody kd="LOOP:item:list">
 		 <tr bgcolor="#CCCCCC" id="attr:bgcolor:item_tgl">
@@ -1637,7 +1664,7 @@ END
     end
 
 
-    def test_properties2	# delete_id_attr
+    def test_convert_properties2	# delete_id_attr
 	input = <<-'END'
 		<tr id="foo">
 		 <td>#{item}#</td>
@@ -1691,7 +1718,7 @@ END
     end
 
 
-    def test_properties3	# attr_name
+    def test_convert_properties3	# attr_name
 	input = <<-'END'
 		<td kd:kwartz="value:item">foo</td>
 	END
@@ -1713,7 +1740,7 @@ END
     end
 
 
-    def test_example1	# practical example
+    def test_convert_example1	# practical example
 	input = <<-'END'
 		<table>
 		 <tbody id="Loop:user:user_list">
@@ -1836,7 +1863,7 @@ END
     end
 
 
-    def test_convert92	# practical example
+    def test_convert_example2	# practical example
 	input = <<-'END'
 		<table>
 		 <tbody id="LOOP:user:user_list">

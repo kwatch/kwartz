@@ -55,7 +55,7 @@ module Kwartz
          @keywords = @@keywords
       end
 
-      def reset(input, base_linenum=1)
+      def reset(input, base_linenum=0)
          @input = input
          @lines = input.split(/\r?\n/)
          @linenum = 0
@@ -258,7 +258,7 @@ module Kwartz
                @token = :name
             end
             rescue TypeError => ex
-               $stderr.puts "*** debug: @token=#{@token.inspect}"
+               #$stderr.puts "*** debug: @token=#{@token.inspect}"
                raise ex
             end
             return @token

@@ -833,8 +833,82 @@ END
     end
 
 
+    ##
+   def test_parse_stmt_list2
+       @flag_suspend = false
+       input = <<'END'
+ day = 'foo';
+ print(day);
+ while (i > 0) i -= 1;
+END
+       expected = <<'END'
+:expr
+  =
+    day
+    "foo"
+:print
+  day
+:while
+  >
+    i
+    0
+  :expr
+    -=
+      i
+      1
+END
+       _test(input, expected, Array)
+    end
+
+
+
    ##
-   def test_parse_stmt_list91    # complex statement list
+   def test_parse_program1
+      input = <<'END'
+a = 1;
+print(a);
+a = 10;
+END
+      expected = <<'END'
+:block
+  :expr
+    =
+      a
+      1
+  :print
+    a
+  :expr
+    =
+      a
+      10
+END
+      _test(input, expected, BlockStatement)
+   end
+
+
+
+   ##
+   def test_parse_program2	# error linenum
+      input = <<'END'
+a = 1;
+print(a)
+a = 10;
+END
+      expected = ''
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+      begin
+         _test(input, expected, nil)
+      rescue Kwartz::SyntaxError => ex
+         assert_equal(3, ex.linenum)
+      end
+   end
+
+
+
+   ##
+   def test_parse_program9    # complex statement list
       input = <<'END'
   day = '&nbsp';
   wday = 1;
@@ -866,88 +940,91 @@ END
 END
 
       expected = <<'END'
-:expr
-  =
-    day
-    "&nbsp"
-:expr
-  =
-    wday
-    1
-:while
-  <
-    wday
-    first_weekday
-  :block
-    :if
-      ==
-        wday
-        1
-      @stag
-    @cont
-    :expr
-      +=
-        wday
-        1
-:expr
-  =
-    day
-    0
-:expr
-  -=
-    wday
-    1
-:while
-  <
-    day
-    num_days
-  :block
-    :expr
-      +=
-        day
-        1
-    :expr
-      =
-        wday
-        +
-          %
-            wday
-            7
+:block
+  :expr
+    =
+      day
+      "&nbsp"
+  :expr
+    =
+      wday
+      1
+  :while
+    <
+      wday
+      first_weekday
+    :block
+      :if
+        ==
+          wday
           1
-    :if
-      ==
-        wday
-        1
-      @stag
-    @cont
-    :if
-      ==
-        wday
-        7
-      @etag
-:if
-  !=
-    wday
-    7
-  :block
-    :expr
-      =
-        day
-        "&nbsp;"
-    :while
-      !=
-        wday
-        6
-      :block
-        @cont
-        :expr
-          +=
-            wday
+        @stag
+      @cont
+      :expr
+        +=
+          wday
+          1
+  :expr
+    =
+      day
+      0
+  :expr
+    -=
+      wday
+      1
+  :while
+    <
+      day
+      num_days
+    :block
+      :expr
+        +=
+          day
+          1
+      :expr
+        =
+          wday
+          +
+            %
+              wday
+              7
             1
-    @etag
+      :if
+        ==
+          wday
+          1
+        @stag
+      @cont
+      :if
+        ==
+          wday
+          7
+        @etag
+  :if
+    !=
+      wday
+      7
+    :block
+      :expr
+        =
+          day
+          "&nbsp;"
+      :while
+        !=
+          wday
+          6
+        :block
+          @cont
+          :expr
+            +=
+              wday
+              1
+      @etag
 END
-      _test(input, expected, Array)
+      _test(input, expected, BlockStatement)
    end
+
+
 
 end
 

@@ -2,6 +2,11 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-30 rev.26
+	.- [bugfix] [bug:1112388] line number reported when error happened is not correct.
+	.- [bugfix] [bug:1112279] Expressions embedded in attribute is not expanded
+	.- [enhance] add examples
+
 .: 2004-01-29 rev.25
 	.- [enhance] JSTL1.0 support
 	.- [change] new file: todo.txt
