@@ -3,8 +3,6 @@
 ###
 ### KwartzElementTest.php
 ###
-### $Id: KwartzElementTest.php,v 0.1 2004/08/16 14:04:10 kwatch Exp kwatch $
-###
 
 require_once('PHPUnit.php');
 require_once('KwartzElement.inc');

@@ -3,8 +3,6 @@
 ###
 ### KwartzScannerTest.php
 ###
-### $Id: KwartzScannerTest.php,v 0.1 2004/08/16 14:04:46 kwatch Exp kwatch $
-###
 
 require_once('PHPUnit.php');
 require_once('KwartzScanner.inc');

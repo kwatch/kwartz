@@ -3,8 +3,6 @@
 ###
 ### KwartzElement.inc - class definition of Element, Expression, Statement, ...
 ###
-### $Id: KwartzElement.inc,v 0.1 2004/08/16 13:40:23 kwatch Exp kwatch $
-###
 
 
 ###  class hierarchy:

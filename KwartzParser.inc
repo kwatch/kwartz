@@ -3,8 +3,6 @@
 ###
 ### KwartzParser.inc
 ###
-### $Id: KwartzParser.inc,v 0.1 2004/08/16 14:07:20 kwatch Exp kwatch $
-###
 
 require_once('KwartzException.inc');
 require_once('KwartzElement.inc');

@@ -3,8 +3,6 @@
 ###
 ### KwartzScanner.inc
 ###
-### $Id: KwartzScanner.inc,v 0.1 2004/08/16 14:02:49 kwatch Exp kwatch $
-###
 
 require_once('KwartzException.inc');
 require_once('KwartzUtility.inc');

@@ -3,8 +3,6 @@
 ###
 ### KwartzParserTest.php
 ###
-### $Id: KwartzParserTest.php,v 0.1 2004/08/16 14:08:06 kwatch Exp kwatch $
-###
 
 require_once('PHPUnit.php');
 require_once('KwartzParser.inc');

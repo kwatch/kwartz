@@ -1,13 +1,11 @@
-<?PHP
+<?php
 
 ###
-### test.php - test for kwartz.inc
-###
-### $Id: test.php,v 0.1 2004/08/15 08:47:17 kwatch Exp kwatch $
+### test.php - test for Kwartz*Test.php
 ###
 
 require_once('PHPUnit.php');
-//require_once('kwartz.inc');
+require_once('Kwartz.inc');
 
 $filenames = array(
 	'KwartzElementTest.php',
