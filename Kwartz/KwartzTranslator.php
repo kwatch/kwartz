@@ -319,7 +319,11 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     protected function translate_function_expression($expr) {
         $t = $expr->token();
         $op = $this->keyword($t);
-        $this->code .= $expr->funcname() . $this->keyword('(');
+        $func_name = $this->function_name($expr->funcname());
+        if (! $func_name) {
+            $func_name = $expr->funcname();
+        }
+        $this->code .= $func_name . $this->keyword('(');
         $comma = '';
         foreach($expr->arglist() as $arg_expr) {
             $this->code .= $comma;
@@ -329,6 +333,17 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         $this->code .= $this->keyword(')');
     }
     
+    
+    //
+    // convert $func_name into appropriate function name.
+    // eg.
+    //   $func_name     PHP           JSTL1.1
+    //   ---------------------------------------------
+    //   list_length    count         fn:length
+    //   str_length     strlen        fn:length
+    //
+    abstract protected function function_name($func_name);
+
     
     protected function translate_conditional_expression($expr) {
         $t = $expr->token();
@@ -525,6 +540,7 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
             return FALSE;
         }
     }
+    
 }
 
 
@@ -591,6 +607,50 @@ class KwartzPhpTranslator extends KwartzBaseTranslator {
     protected function translate_variable_expression($expr) {
         $this->code .= '$' . $expr->value();
     }
+  
+    private $func_names = array(
+        'list_new'    => 'array',
+        'list_length' => 'count',
+        'list_empty'  => NULL,
+        'hash_new'    => 'array',
+        'hash_keys'   => 'array_keys',
+        'hash_empty'  => NULL,
+        'str_length'  => 'strlen',
+        'str_trim'    => 'trim',
+        'str_tolower' => 'strtolower',
+        'str_toupper' => 'strtoupper',
+        'str_index'   => 'strchr',
+        'str_empty'   => NULL,
+        );
+        
+    protected function function_name($func_name) {
+        if (array_key_exists($func_name, $this->func_names))
+            return $this->func_names[$func_name];
+        return NULL;
+    }
+
+    
+    protected function translate_function_expression($expr) {
+        switch ($expr->funcname()) {
+          case 'list_empty':
+          case 'hash_empty':
+            $arglist = $expr->arglist();
+            $this->code .= '(!(';
+            $this->translate_expression($arglist[0]);
+            $this->code .= ') || count(';
+            $this->translate_expression($arglist[0]);
+            $this->code .= ')==0)';
+            return;
+          case 'str_empty':
+            $arglist = $expr->arglist();
+            $this->code .= '!';
+            $this->translate_expression($arglist[0]);
+            return;
+        }
+        
+        parent::translate_function_expression($expr);
+    }
+
     
     protected function translate_unary_expression($expr) {
         $t = $expr->token();

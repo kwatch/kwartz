@@ -1,6 +1,10 @@
-.: 2004-12-30 (ver 0.3.0) rev.45
+.: 2004-12-30 rev.48
+	.- [enhance] common functions support for PHP and eRuby.
 
-.: 2004-09-23 (ver 0.2.0) rev.44
+.: 2004-12-30 rev.47
+	.- [bugfix] KwartzParser#parse_statement() calls parse_load_stmt()
+
+.: 2004-09-23 rev.44 (ver 0.2.0) 
 	.- [enhance] error reporting enhanced
 	.- [enhance] @C(expr) is not escaped even when the command-line option '-s' or '-e' is specified
 	.- [bugfix] 'flag?true:false' was recognized as ':' + name

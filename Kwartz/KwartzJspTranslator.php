@@ -107,6 +107,10 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
         }
     }
     
+    protected function function_name($func_name) {
+        return NULL;
+    }
+    
     protected function translate_function_expression($expr) {
         $funcname = $expr->funcname();
         $msg = "'$funcname()': JSP doesn't support function call expression.";

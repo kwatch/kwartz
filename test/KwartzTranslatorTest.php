@@ -9,6 +9,7 @@ require_once('Kwartz/KwartzTranslator.php');
 require_once('Kwartz/KwartzErubyTranslator.php');
 require_once('Kwartz/KwartzJspTranslator.php');
 require_once('Kwartz/KwartzParser.php');
+require_once('Kwartz/KwartzUtility.php');
 
 class KwartzTranslatorTest extends PHPUnit_TestCase {
 
@@ -42,6 +43,10 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		if ($flag_test) {
 			$this->assertEquals($expected, $actual);
 		}
+		//if ($expected != $actual) {
+		//	echo "*** debug: ---\n", kwartz_inspect_str($expected), "\n----\n";
+		//	echo "*** debug: ---\n", kwartz_inspect_str($actual), "\n----\n";
+		//}
 		return $translator;
 	}
 	
@@ -1197,6 +1202,75 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test($input, $expected, 'jsp');
 		$input = KwartzTranslatorTest::input_empty1_php;
 		$this->_test($input, $expected, 'jsp');
+	}
+
+
+        
+	const input_func1 = '
+		:set(a = list_new())
+		:if (list_empty(a))
+		  :print("list_length(a) == ", list_length(a), "\n");
+		:end
+		
+		:set(h = hash_new())
+		:if (hash_empty(h))
+		  :print("hash_keys(h) == ", hash_keys(h), "\n");
+		:end
+		
+		:set(len = str_length(s))
+		:print(str_trim(s), str_tolower(s), str_toupper(s), "\n")
+		:if (!str_empty(s))
+		  :set(i = str_index(s, "."))
+		:end
+		:set(slen = str_length(s1 .+ s2))
+		';
+	function test_php_func1() {
+		$expected = '
+		<?php $a = (array()); ?>
+		<?php if ((!($a) || count($a)==0)) { ?>
+		list_length(a) == <?php echo count($a); ?>
+		<?php } ?>
+		<?php $h = (array()); ?>
+		<?php if ((!($h) || count($h)==0)) { ?>
+		hash_keys(h) == <?php echo array_keys($h); ?>
+		<?php } ?>
+		<?php $len = (strlen($s)); ?>
+		<?php echo trim($s); ?><?php echo strtolower($s); ?><?php echo strtoupper($s); ?>
+		<?php if (!(!$s)) { ?>
+		  <?php $i = (strchr($s, ".")); ?>
+		<?php } ?>
+		<?php $slen = (strlen($s1 . $s2)); ?>
+		';
+		$this->_test_php(KwartzTranslatorTest::input_func1, $expected);
+	}
+	function test_eruby_func1() {
+		$expected = '
+		<% a = ([]) %>
+		<% if a.empty? then %>
+		list_length(a) == <%= a.length %>
+		<% end %>
+		<% h = ({}) %>
+		<% if hash_empty(h) then %>
+		hash_keys(h) == <%= h.keys %>
+		<% end %>
+		<% len = (s.length) %>
+		<%= s.trim %><%= s.downcase %><%= s.upcase %>
+		<% if !(s.empty?) then %>
+		  <% i = (s.index(".")) %>
+		<% end %>
+		<% slen = ((s1 + s2).length) %>
+		';
+		$this->_test_eruby(KwartzTranslatorTest::input_func1, $expected);
+	}
+	function test_jsp_func1() {
+		$expected = '
+		';
+		try {
+			$this->_test_jsp(KwartzTranslatorTest::input_func1, $expected);
+			$this->fail("KwartzTranslationError should be happened.");
+		} catch (KwartzTranslationError $ex) {
+			// ok
+		}
 	}
 
 
