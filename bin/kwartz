@@ -71,7 +71,7 @@ module Kwartz
       def main()
          ## parse command-line options
          begin
-            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpo", nil, true)
+            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpi", nil, true)
          rescue Kwartz::Util::OptparseError => ex
             case ex.type
             when :invalid_option
@@ -86,7 +86,7 @@ module Kwartz
                   msg = "-#{ex.optchar.chr}: lang requried."
                when ?p
                   msg = "-#{ex.optchar.chr}: presentation logic file requried."
-               when ?o
+               when ?i
                   msg = "-#{ex.optchar.chr}: contents data file requried."
                else
                   Kwartz::assert(false, "ex.optchar=#{ex.optchar}")
@@ -157,7 +157,7 @@ module Kwartz
          end
          
          ## parse contens data file
-         contents_filenames = options[?o] ? options[?o].split(/,/) : []
+         contents_filenames = options[?i] ? options[?i].split(/,/) : []
          element_list = []
          contents_filenames.each do |filename|
             unless test(?f, filename)
@@ -203,7 +203,7 @@ Usage: #{@command} [..options..] file1 [file2...]
   -l lang    : eruby/erb/php/jstl10/jstl11 (default '#{Kwartz::Config::LANG}')
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   -p file1,file2,...  : presentation logic filenames
-  -c file1,file2,...  : contents data filenames
+  -i file1,file2,...  : import element from outer files
   --escape[=true] : sanitize(escape)
   --rename[=true] : rename local variables (ex. rename 'var' to '_var')
   --charset=name  : add '<%@ page contentType="text/html; charset=name" %>'

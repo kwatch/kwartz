@@ -1,4 +1,4 @@
-.JA	.=title:	プレゼンテーションパターン・カタログ
+.JA	.=title:	プレゼンテーションパターンカタログ
 .EN	.=title:	Presentation Pattern Catalog
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
 .	.?version:	$Rev$
@@ -22,8 +22,8 @@
 .EN	These patterns are called 'Presentation Patterns.'
 .	
 .	
-.JA	このドキュメントでは、プレゼンテーションパターンをいくつか紹介します。
-.EN	This document shows several Presentation Patterns.
+.JA	このドキュメントでは、プレゼンテーションパターンを紹介します。
+.EN	This document shows Presentation Patterns.
 .	
 .	
 .JA	◎目次			| toc*
@@ -35,11 +35,13 @@
 .	.#.-toc:
 .	
 .	
-.JA	◎更新履歴		| changelog*
-.EN	.$$ ChangeLog		| changelog*
-.	
-.	.: 2005-02-14
-.		.- beta release
+.JA	.#◎更新履歴		| changelog*
+.EN	.#.$$ ChangeLog		| changelog*
+.	.#
+.	.#.: 2005-02-19
+.	.#	.- beta2 release
+.	.#.: 2005-02-14
+.	.#	.- beta1 release
 .	
 .	
 .	
@@ -51,9 +53,9 @@
 .EN	.$$ Replace Element by Value Pattern	| replace-elem-by-value
 .	
 .JA	エレメントを、変数や式の値で置き換えることができます。
-.JA	これを「Replace Element by Value」パターンといいます。
+.JA	これを「Replace Element by Valueパターン」といいます。
 .EN	You can replace the element with the value of a variable or an expression.
-.EN	This is named 'Replace Element by Value' pattern.
+.EN	This is named 'Replace Element by Value Pattern.'
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -83,9 +85,9 @@
 .EN	.$$ Replace Content by Value Pattern	| replace-cont-by-value
 .	
 .JA	タグは残したままエレメントの内容だけを式の値で置き換えることができます。
-.JA	これを「Replace Content by Value」パターンといいます。
+.JA	これを「Replace Content by Valueパターン」といいます。
 .EN	You can also replace only the content of the element in the same way.
-.EN	This is named 'Replace Content by Value' pattern.
+.EN	This is named 'Replace Content by Value Pattern.'
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -113,8 +115,8 @@
 .	.--------------------
 .	
 .	
-.JA	なお「Replace Content by Value」パターンは、Kwartzでは次のように書くことができます。
-.EN	The 'Replace Content by Value' pattern is to be described as the following in Kwartz.
+.JA	なお「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
+.EN	The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
 .	
 .	
 .JA	プレゼンテーションロジック：
@@ -134,9 +136,9 @@
 .	
 .	
 .JA	エレメントを別のエレメントに交換することができます。
-.JA	これは「Replace Element by Element」パターンといいます。
+.JA	これは「Replace Element by Elementパターン」といいます。
 .EN	You can replace the element by other element.
-.EN	This pattern is named 'Replace Element by Element' pattern.
+.EN	This pattern is named 'Replace Element by Element Pattern.'
 .	
 .	
 .JA	このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
@@ -181,9 +183,9 @@
 .	.--------------------
 .	
 .	
-.JA	Kwartzにおいて、コマンドラインオプション「{{,-o {{/file/}},{{/file2/}},...,}}」を指定すると、
+.JA	Kwartzにおいて、コマンドラインオプション「{{,-i {{/file/}},{{/file2/}},...,}}」を指定すると、
 .JA	他のファイルのエレメントを利用できます。
-.EN	In Kwartz, Command-line option '{{,-o {{/file/}},{{/file2/}},...,}}' enables you to use elements
+.EN	In Kwartz, Command-line option '{{,-i {{/file/}},{{/file2/}},...,}}' enables you to use elements
 .EN	which are described in other files.
 .	
 .	
@@ -223,13 +225,13 @@
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz -l eruby {{*-o links.html*}} -p page.plogic page.html
+.	$ kwartz -l eruby {{*-i links.html*}} -p page.plogic page.html
 .	.====================
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz -o guide.d/links.html -p guide.d/page.plogic guide.d/page.html
+.	.<<<:! kwartz -i guide.d/links.html -p guide.d/page.plogic guide.d/page.html
 .	.--------------------
 .	
 .	
@@ -240,9 +242,9 @@
 .	
 .	
 .JA	エレメントの内容を、別のエレメントで置き換えることができます。
-.JA	これは「Replace Content by Element」パターンといいます。
+.JA	これは「Replace Content by Elementパターン」といいます。
 .EN	You can replace content of an element by other element.
-.EN	This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern'.
+.EN	This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern.'
 .	
 .	
 .JA	このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
@@ -368,42 +370,42 @@
 .	.--------------------
 .	
 .	
-.JA	Kwartzではコマンドオプション「{{,-o {{/file1,file2,.../}},}}」を指定することで、
+.JA	Kwartzではコマンドオプション「{{,-i {{/file1,file2,.../}},}}」を指定することで、
 .JA	他のファイルのエレメントを読み込むことができます。
-.EN	In Kwartz, the command-line option {{,-o {{/file1,file2,.../}},}} enables to import elements
+.EN	In Kwartz, the command-line option {{,-i {{/file1,file2,.../}},}} enables to import elements
 .EN	which are defined in other files.
 .	
 .	
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz -l eruby  {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
-.	.#$ kwartz -l php    {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
-.	.#$ kwartz -l jstl11 {{*-o contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	$ kwartz -l eruby  {{*-i contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	.#$ kwartz -l php    {{*-i contents.html*}} -p contens.plogic,layout.plogic layout.html
+.	.#$ kwartz -l jstl11 {{*-i contents.html*}} -p contens.plogic,layout.plogic layout.html
 .	.====================
 .	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz -o guide.d/contents.html -p guide.d/contents.plogic,guide.d/layout.plogic guide.d/layout.html
+.	.<<<:! kwartz -i guide.d/contents.html -p guide.d/contents.plogic,guide.d/layout.plogic guide.d/layout.html
 .	.--------------------
 .	
 .	
 .	
 .	
-.JA	●ダミー		| dummy
-.EN	.$ Dummy	| dummy
+.JA	●削除		| deletion
+.EN	.$ Deletion	| deletion
 .	
 .	
-.JA	◎Dummy Elementパターン		| dummy-elem
-.EN	.$$ Dummy Element Pattern	| dummy-elem
+.JA	◎Delete Elementパターン	| delete-elem
+.EN	.$$ Delete Element Pattern	| delete-elem
 .	
 .	
 .JA	プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
-.JA	これは「Dummy Element」パターンといいます。
+.JA	これは「Delete Elementパターン」または「Dummy Elementパターン」といいます。
 .EN	If presentation logic is empty, the element is not printed out.
-.EN	This pattern is named 'Dummy Element' pattern.
+.EN	This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 .	
 .	
 .JA	このパターンは、プレゼンテーションデータにダミーデータを含めるときに使用します。
@@ -439,16 +441,16 @@
 .	
 .	
 .	
-.JA	◎Dummy Tagパターン		| dummy-tag
-.EN	.$$ Dummy Tag Pattern		| dummy-tag
+.JA	◎Delete Tagパターン		| delete-tag
+.EN	.$$ Delete Tag Pattern		| delete-tag
 .	
 .	
 .JA	プレゼンテーションロジックの定義において、「{{,@cont,}}」だけを使用し、
 .JA	「{{,@stag,}}」と「{{,@stag,}}」を使わないようにすると、エレメントのタグを削除できます。
-.JA	これは「Dummy Tag」パターンといいます。
+.JA	これは「Delete Tagパターン」または「Dummy Tagパターン」といいます。
 .EN	If you use only {{,@cont,}} and don't use {{,@stag,}} and {{,@cont,}},
 .EN	you can remove start and end tags of the element.
-.EN	This pattern is named 'Dummy Tag' pattern.
+.EN	This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
 .	
 .	
 .JA	このパターンは、ある条件のときだけタグを出力したい場合に使います。
@@ -595,9 +597,9 @@
 .	
 .	
 .JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
-.JA	これは「Select Element」パターンといいます。
+.JA	これは「Select Elementパターン」といいます。
 .EN	The following is an example to choose a certain element from some elements.
-.EN	This pattern is named 'Select Element' pattern.
+.EN	This pattern is named 'Select Element Pattern.'
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -642,10 +644,10 @@
 .JA	ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、
 .JA	プレゼンテーションロジックでそのエレメントだけを利用します。
 .JA	利用されないエレメントは無視され、出力されません。
-.JA	これは「Pick-up Element」パターンといいます。
+.JA	これは「Pick-up Elementパターン」といいます。
 .EN	If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
 .EN	Elements which are not marked are ignored and not printed.
-.EN	This pattern is named 'Pick-up Element' pattern.
+.EN	This pattern is named 'Pick-up Element Pattern.'
 .	
 .	
 .JA	これは「Dummy Element」パターンと逆の考え方です。
@@ -747,10 +749,10 @@
 .	
 .JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 .JA	ほかは一切表示しないようにすることができます。
-.JA	このパターンは「Extract Element」パターンといいます。
+.JA	このパターンは「Extract Elementパターン」といいます。
 .EN	It is able to extract a certain element form the whole presentation data.
 .EN	Other element and text strings are not printed.
-.EN	This pattern is named 'Extract Element' pattern.
+.EN	This pattern is named 'Extract Element Pattern.'
 .	
 .	
 .JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。

@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-19 rev.48
+	.- [change] command-line option '-o' is renamed to '-i'
+
 .: 2005-02-19 rev.47
 	.- [enhance] rename local var names support
 	.- [change] new file: doc/docstyle.ktag, doc/docstyle.css

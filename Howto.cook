@@ -10,7 +10,7 @@ chmod:
 	chmod a+x bin/kwartz;
 }
 
-text_files = ChangeLog setup.rb README.ja.txt README.en.txt;
+text_files = ChangeLog.txt setup.rb README.ja.txt README.en.txt;
 
 doc_files = 
 	doc/reference.en.html  doc/users-guide.en.html  doc/p-pattern.en.html
@@ -57,5 +57,3 @@ doc/design.css docs/design.html: doc/pattern.en.txt
 {
 	cd doc \; cook [entryname [target]];
 }
-
-

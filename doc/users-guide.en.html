@@ -37,8 +37,6 @@ a template system which realized the concept of 'Separation of Presentation Logi
   <ul>
     <li><a href="#toc">Table of Contents</a>
     </li>
-    <li><a href="#changelog">Changelog</a>
-    </li>
   </ul>
   </li>
   <li><a href="#intro">Introduction to Kwartz</a>
@@ -73,8 +71,6 @@ a template system which realized the concept of 'Separation of Presentation Logi
     </li>
     <li><a href="#topics-analyze">Analyzing Global and Local Variables</a>
     </li>
-    <li><a href="#topics-span">Rename Local Variable Names</a>
-    </li>
     <li><a href="#topics-span">Span Tag Deletion</a>
     </li>
     <li><a href="#topics-append">Appending Expression to Start Tag</a>
@@ -84,21 +80,6 @@ a template system which realized the concept of 'Separation of Presentation Logi
   </ul>
   </li>
 </ul>
-<br>
-
-
-<a name="changelog"></a>
-<h3 class="section2">Changelog</h3>
-<dl class="dl1">
-<dt class="dt1">
-2005-02-14</dt>
-<dd class="dd1">
-	<ul type="circle">
-	<li>beta release
-	</li>
-	</ul>
-</dd>
-</dl>
 <br>
 
 
@@ -973,62 +954,6 @@ Variables <code>title</code> and <code>list</code> are Global Variables because 
 <b>Global: title list</b>
 <b>Local:  ctr item</b>
 </pre>
-<br>
-
-
-<a name="topics-span"></a>
-<h3 class="section2">Rename Local Variable Names</h3>
-<p>In Ruby or PHP, if local variables in template have the same name of variables in main program,
-assignment into local variables effects the control of main program.
-To address this problem, Kwartz have a feature to rename local variable names in template automatically.
-</p>
-<p>The command-line option '<code>--rename</code>' renames all of local variable names in template automatically.
-</p>
-<p>The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
-</p>
-<p>Compile:
-</p>
-<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
-$ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
-$ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
-</pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
-&lt;%= title %&gt;
-&lt;dl&gt;
-&lt;% _ctr = 0 %&gt;
-&lt;% for _item in list do %&gt;
-&lt;%   _ctr += 1 %&gt;
- &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
-&lt;% end %&gt;
-&lt;/dl&gt;
-
-### for PHP
-&lt;?php echo $title; ?&gt;
-&lt;dl&gt;
-&lt;?php $_ctr = 0; ?&gt;
-&lt;?php foreach ($list as $_item) { ?&gt;
-&lt;?php   $_ctr += 1; ?&gt;
- &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
-&lt;?php } ?&gt;
-&lt;/dl&gt;
-
-### for JSTL
-&lt;c:out value="${title}" escapeXml="false"/&gt;
-&lt;dl&gt;
-&lt;c:set var="_ctr" value="0"/&gt;
-&lt;c:forEach var="_item" items="${list}"&gt;
-  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
- &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
-&lt;/c:forEach&gt;
-&lt;/dl&gt;
-</pre>
-<p>Constant RENAME in configuration file specifies whether rename local variable names in default.
-</p>
 <br>
 
 

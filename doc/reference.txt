@@ -12,9 +12,11 @@
 .	
 .	
 .JA	このドキュメントは、Kwartzのリファレンスマニュアルです。
-.JA	プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプションについて説明しています。
+.JA	プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプション、
+.JA	設定オプションについて説明しています。
 .EN	This document is the Kwartz Reference Manual.
-.EN	Presentation language (PL), directives, and the command-line options are described in this document.
+.EN	Presentation language (PL), directives, command-line options, and configuration option are described
+.EN	in this document.
 .	
 .	
 .	
@@ -28,11 +30,13 @@
 .	
 .	
 .	
-.JA	◎更新履歴		| changelog*
-.EN	.$$ ChangeLog		| changelog*
-.	
-.	.: 2005-02-14
-.		.- beta release
+.JA	.#◎更新履歴		| changelog*
+.EN	.#.$$ ChangeLog		| changelog*
+.	.#
+.	.#.: 2005-02-19
+.	.#	.- beta2 release
+.	.#.: 2005-02-14
+.	.#	.- beta1 release
 .	
 .	
 .	
@@ -1576,25 +1580,25 @@
 .	.____________________
 .	
 .	
-.JA	なおコマンドラインオプション「{{,-o {{/file1/}},{{/file2/}},{{/.../}},}}」を指定すると、
+.JA	なおコマンドラインオプション「{{,-i {{/file1/}},{{/file2/}},{{/.../}},}}」を指定すると、
 .JA	他のファイルのエレメントを利用できます。
-.EN	The command-line option '{{,-o {{/file1/}},{{/file2/}},{{/.../}},}}' enables you to use elements
+.EN	The command-line option '{{,-i {{/file1/}},{{/file2/}},{{/.../}},}}' enables you to use elements
 .EN	in other files.
 .	
 .	
 .	
 .	
-.JA	◎プレースホルダ 		| directive-replace
-.EN	.$$ Placeholder			| directive-replace
+.JA	◎プレースホルダ 		| directive-placeholder
+.EN	.$$ Placeholder			| directive-placeholder
 .	
 .	
 .JA	「{{,id="placeholder:{{/name/}}",}}」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
-.JA	通常は、コマンドラインオプション「{{,-o {{/file1/}},{{/file2/}},{{/.../}},}}」とともに使用し、
+.JA	通常は、コマンドラインオプション「{{,-i {{/file1/}},{{/file2/}},{{/.../}},}}」とともに使用し、
 .JA	他のファイルで定義されたエレメントを取り込むために使われます。
 .EN	'{{,id="placeholder:{{/name/}}",}}' replaces content of the element by other element
 .EN	which is already marked with the name {{/name/}}.
 .EN	Usually this directive is used to import elements defined in other files,
-.EN	with the command-line option {{,-o {{/file1/}},{{/file2/}},{{/.../}},}}.
+.EN	with the command-line option {{,-i {{/file1/}},{{/file2/}},{{/.../}},}}.
 .	
 .	
 .JA	プレゼンテーションデータ(article.html)：
@@ -1646,14 +1650,14 @@
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz {{*-o article.html*}} layout.html
+.	$ kwartz {{*-i article.html*}} layout.html
 .	.====================
 .	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! kwartz -o guide.d/directive-placeholder-article.pdata guide.d/directive-placeholder-layout.pdata
+.	.<<<:! kwartz -i guide.d/directive-placeholder-article.pdata guide.d/directive-placeholder-layout.pdata
 .	.____________________
 .	
 .	
@@ -2026,19 +2030,16 @@
 .JA	.#	出力用スクリプトのインデント幅{{/N/}}を指定する。省略時は2。
 .EN	.#	Specifies the indent width ({{/N/}}) of a output script (default 2).
 .	
+.	.[-i {{/file1,file2,.../}}]
+.JA		外部ファイルで定義されたエレメントをインポートする。
+.JA		主にplaceholderディレクティブ（「{{,id="placeholder:{{/name/}},}}」）のために使用される。
+.EN		Import elements defined in outer files.
+.EN		Usually this option is used for 'placeholder' directive ('{{,id="placeholder:{{/name/}},}}').
+.	
 .	.[-l {{/lang/}}]
 .JA		ターゲット言語を指定。指定できるのは
 .EN		Target language of the output script. {{/lang/}} may be
 .		eruby, erb, php, jstl11, jstl10.
-.	
-.	.[-o {{/file1,file2,.../}}]
-.JA		外部ファイル名。外部ファイルで定義されたエレメントは、
-.JA		プレゼンテーションロジックやプレゼンテーションデータで使用できる。
-.JA		主にplaceholderディレクティブ（「{{,id="placeholder:{{/name/}},}}」）のために使用される。
-.EN		Outer filename.
-.EN		Elements which are defined in outer files are available to use in presentation logic
-.EN		and presentaion data.
-.EN		Usually this option is used for 'placeholder' directive ('{{,id="placeholder:{{/name/}},}}').
 .	
 .	.[-p {{/plogic-file/}}]
 .JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。
@@ -2102,9 +2103,9 @@
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
 .	
-.	.[--rename={{/true/}}|{{/false/}}]
-.JA		ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
-.EN		Specify rename or not local variable names.  Regarded as true when value is omitted.
+.	.#.[--rename={{/true/}}|{{/false/}}]
+.JA	.#	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
+.EN	.#	Specify rename or not local variable names.  Regarded as true when value is omitted.
 .	
 .	
 .	
@@ -2171,15 +2172,15 @@
 .JA		インデントとして使う空白文字列を指定します。
 .EN		Specify a string which represents indent of output script.
 .	
-.	.[ RENAME ]
-.JA		ローカル変数の名前を変更するかどうかを指定します。
-.JA		trueなら、ローカル変数名の頭に「_」をつけます。
-.EN		Specify whether rename local variable names. 
-.EN		If true, '_' is added to beginning of local variable name.
-.	
-.	.[ RENAME_PREFIX ]
-.JA		ローカル変数の頭につける文字列を指定します。
-.EN		Specify the prefix of local variable name when RENAME is true.
+.	.#.[ RENAME ]
+.JA	.#	ローカル変数の名前を変更するかどうかを指定します。
+.JA	.#	trueなら、ローカル変数名の頭に「_」をつけます。
+.EN	.#	Specify whether rename local variable names. 
+.EN	.#	If true, '_' is added to beginning of local variable name.
+.	.#
+.	.#.[ RENAME_PREFIX ]
+.JA	.#	ローカル変数の頭につける文字列を指定します。
+.EN	.#	Specify the prefix of local variable name when RENAME is true.
 .	
 .	.[ LANG ]
 .JA		デフォルトの出力用言語を指定します。

@@ -24,14 +24,14 @@ conditional branching) from the presentation data (HTML file).
 	.* Supports auto-sanitizing and partial-sanitizing
 
 .% Download
-	.* {{<kwartz-ruby_2.0.0-beta1.tar.bz2|download.html>}} (sourceforge.net) (2005-02-14 released)
+	.* {{<kwartz-ruby_2.0.0-beta2.tar.bz2|download.html>}} (sourceforge.net) (2005-02-14 released)
 
 .% Documents
 	.* README           ({{<English|README.en.html>}}      | {{<Japanese|README.ja.html>}})
 	.* Users' Guide     ({{<English|users-guide.en.html>}} | {{<Japanese|users-guide.ja.html>}})
 	.* Reference Manual ({{<English|reference.en.html>}}   | {{<Japanese|reference.ja.html>}})
 	.* Presentation Pattern Catalog ({{<English|p-pattern.en.html>}} | {{<Japanese|p-pattern.ja.html>}})
-	.* {{<ChangeLog|ChangeLog.html>}}
+	.* {{<ChangeLog|ChangeLog.txt>}}
 
 .% License
 	.* {{<GNU General Public License|http://www.gnu.org/copyleft/gpl.html>}}

@@ -22,7 +22,8 @@
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
 <p>This document is the Kwartz Reference Manual.
-Presentation language (PL), directives, and the command-line options are described in this document.
+Presentation language (PL), directives, command-line options, and configuration option are described
+in this document.
 </p>
 <a name="toc"></a>
 <h3 class="section2">Table of Contents</h3>
@@ -30,8 +31,6 @@ Presentation language (PL), directives, and the command-line options are describ
   <li><a href="#preface">Preface</a>
   <ul>
     <li><a href="#toc">Table of Contents</a>
-    </li>
-    <li><a href="#changelog">ChangeLog</a>
     </li>
   </ul>
   </li>
@@ -107,7 +106,7 @@ Presentation language (PL), directives, and the command-line options are describ
     </li>
     <li><a href="#directive-replace">Replacement of Elements</a>
     </li>
-    <li><a href="#directive-replace">Placeholder</a>
+    <li><a href="#directive-placeholder">Placeholder</a>
     </li>
     <li><a href="#directive-notes">Notes</a>
     </li>
@@ -118,21 +117,6 @@ Presentation language (PL), directives, and the command-line options are describ
   <li><a href="#config">Configuration options</a>
   </li>
 </ul>
-<br>
-
-
-<a name="changelog"></a>
-<h3 class="section2">ChangeLog</h3>
-<dl class="dl1">
-<dt class="dt1">
-2005-02-14</dt>
-<dd class="dd1">
-	<ul type="circle">
-	<li>beta release
-	</li>
-	</ul>
-</dd>
-</dl>
 <br>
 
 
@@ -1989,18 +1973,18 @@ which is already marked with the name <i>name</i>.
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p>The command-line option '<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>' enables you to use elements
+<p>The command-line option '<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>' enables you to use elements
 in other files.
 </p>
 <br>
 
 
-<a name="directive-replace"></a>
+<a name="directive-placeholder"></a>
 <h3 class="section2">Placeholder</h3>
 <p>'<code>id="placeholder:<i>name</i>"</code>' replaces content of the element by other element
 which is already marked with the name <i>name</i>.
 Usually this directive is used to import elements defined in other files,
-with the command-line option <code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>.
+with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>.
 </p>
 <p>Presentation Data(article.html):
 </p>
@@ -2046,7 +2030,7 @@ with the command-line option <code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code
 </pre>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz <b>-o article.html</b> layout.html
+<pre class="terminal">$ kwartz <b>-i article.html</b> layout.html
 </pre>
 <p>Output Script:
 </p>
@@ -2204,20 +2188,18 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--l <i>lang</i></b></dt>
+-i <i>file1,file2,...</i></b></dt>
 <dd class="dd3">
-	Target language of the output script. <i>lang</i> may be
-	eruby, erb, php, jstl11, jstl10.
+	Import elements defined in outer files.
+	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<i>name</i></code>').
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--o <i>file1,file2,...</i></b></dt>
+-l <i>lang</i></b></dt>
 <dd class="dd3">
-	Outer filename.
-	Elements which are defined in outer files are available to use in presentation logic
-	and presentaion data.
-	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<i>name</i></code>').
+	Target language of the output script. <i>lang</i> may be
+	eruby, erb, php, jstl11, jstl10.
 </dd>
 </dl>
 <dl class="dl3">
@@ -2292,13 +2274,6 @@ translate</dt>
 	Odd value. Default is <code>'odd'</code>. Directives FOREACH and LIST will use this value.
 </dd>
 </dl>
-<dl class="dl3">
-<dt class="dt3"><b>
---rename=<i>true</i>|<i>false</i></b></dt>
-<dd class="dd3">
-	Specify rename or not local variable names.  Regarded as true when value is omitted.
-</dd>
-</dl>
 <p>Examples:
 </p>
 <ul type="disc">
@@ -2352,21 +2327,6 @@ NEWLINE </b></dt>
 INDENT </b></dt>
 <dd class="dd3">
 	Specify a string which represents indent of output script.
-</dd>
-</dl>
-<dl class="dl3">
-<dt class="dt3"><b>
-RENAME </b></dt>
-<dd class="dd3">
-	Specify whether rename local variable names. 
-	If true, '_' is added to beginning of local variable name.
-</dd>
-</dl>
-<dl class="dl3">
-<dt class="dt3"><b>
-RENAME_PREFIX </b></dt>
-<dd class="dd3">
-	Specify the prefix of local variable name when RENAME is true.
 </dd>
 </dl>
 <dl class="dl3">

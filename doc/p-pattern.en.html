@@ -27,7 +27,7 @@ SoPL/PD enables to use complex presentation logics without breaking HTML design 
 <p>There are several patterns which help you to separate presentation logic and presentation data well.
 These patterns are called 'Presentation Patterns.'
 </p>
-<p>This document shows several Presentation Patterns.
+<p>This document shows Presentation Patterns.
 </p>
 <a name="toc"></a>
 <h3 class="section2">Table of Contents</h3>
@@ -35,8 +35,6 @@ These patterns are called 'Presentation Patterns.'
   <li><a href="#preface">Preface</a>
   <ul>
     <li><a href="#toc">Table of Contents</a>
-    </li>
-    <li><a href="#changelog">ChangeLog</a>
     </li>
   </ul>
   </li>
@@ -52,11 +50,11 @@ These patterns are called 'Presentation Patterns.'
     </li>
   </ul>
   </li>
-  <li><a href="#dummy">Dummy</a>
+  <li><a href="#deletion">Deletion</a>
   <ul>
-    <li><a href="#dummy-elem">Dummy Element Pattern</a>
+    <li><a href="#delete-elem">Delete Element Pattern</a>
     </li>
-    <li><a href="#dummy-tag">Dummy Tag Pattern</a>
+    <li><a href="#delete-tag">Delete Tag Pattern</a>
     </li>
   </ul>
   </li>
@@ -82,21 +80,6 @@ These patterns are called 'Presentation Patterns.'
 <br>
 
 
-<a name="changelog"></a>
-<h3 class="section2">ChangeLog</h3>
-<dl class="dl1">
-<dt class="dt1">
-2005-02-14</dt>
-<dd class="dd1">
-	<ul type="circle">
-	<li>beta release
-	</li>
-	</ul>
-</dd>
-</dl>
-<br>
-
-
 <br>
 
 
@@ -105,7 +88,7 @@ These patterns are called 'Presentation Patterns.'
 <a name="replace-elem-by-value"></a>
 <h3 class="section2">Replace Element by Value Pattern</h3>
 <p>You can replace the element with the value of a variable or an expression.
-This is named 'Replace Element by Value' pattern.
+This is named 'Replace Element by Value Pattern.'
 </p>
 <p>Presentation Data:
 </p>
@@ -138,7 +121,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-cont-by-value"></a>
 <h3 class="section2">Replace Content by Value Pattern</h3>
 <p>You can also replace only the content of the element in the same way.
-This is named 'Replace Content by Value' pattern.
+This is named 'Replace Content by Value Pattern.'
 </p>
 <p>Presentation Data:
 </p>
@@ -167,7 +150,7 @@ This is named 'Replace Content by Value' pattern.
 ### for JSTL
 &lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
 </pre>
-<p>The 'Replace Content by Value' pattern is to be described as the following in Kwartz.
+<p>The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
 </p>
 <p>Presentation Logic:
 </p>
@@ -181,7 +164,7 @@ This is named 'Replace Content by Value' pattern.
 <a name="replace-elem-by-elem"></a>
 <h3 class="section2">Replace Element by Element Pattern</h3>
 <p>You can replace the element by other element.
-This pattern is named 'Replace Element by Element' pattern.
+This pattern is named 'Replace Element by Element Pattern.'
 </p>
 <p>This pattern is very useful to reuse the element in other place.
 </p>
@@ -221,7 +204,7 @@ This pattern is named 'Replace Element by Element' pattern.
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>In Kwartz, Command-line option '<code>-o <i>file</i>,<i>file2</i>,...</code>' enables you to use elements
+<p>In Kwartz, Command-line option '<code>-i <i>file</i>,<i>file2</i>,...</code>' enables you to use elements
 which are described in other files.
 </p>
 <p>Presentation Data(links.html):
@@ -256,7 +239,7 @@ which are described in other files.
 </pre>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz -l eruby <b>-o links.html</b> -p page.plogic page.html
+<pre class="terminal">$ kwartz -l eruby <b>-i links.html</b> -p page.plogic page.html
 </pre>
 <p>Output Script:
 </p>
@@ -276,7 +259,7 @@ which are described in other files.
 <a name="replace-cont-by-elem"></a>
 <h3 class="section2">Replace Content by Element Pattern</h3>
 <p>You can replace content of an element by other element.
-This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern'.
+This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern.'
 </p>
 <p>This pattern is very useful to import elements marked in other presentation data files.
 </p>
@@ -389,12 +372,12 @@ This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Patte
   }
 }
 </pre>
-<p>In Kwartz, the command-line option <code>-o <i>file1,file2,...</i></code> enables to import elements
+<p>In Kwartz, the command-line option <code>-i <i>file1,file2,...</i></code> enables to import elements
 which are defined in other files.
 </p>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz -l eruby  <b>-o contents.html</b> -p contens.plogic,layout.plogic layout.html
+<pre class="terminal">$ kwartz -l eruby  <b>-i contents.html</b> -p contens.plogic,layout.plogic layout.html
 </pre>
 <p>Output Script:
 </p>
@@ -453,12 +436,12 @@ which are defined in other files.
 <br>
 
 
-<a name="dummy"></a>
-<h2 class="section1">Dummy</h2>
-<a name="dummy-elem"></a>
-<h3 class="section2">Dummy Element Pattern</h3>
+<a name="deletion"></a>
+<h2 class="section1">Deletion</h2>
+<a name="delete-elem"></a>
+<h3 class="section2">Delete Element Pattern</h3>
 <p>If presentation logic is empty, the element is not printed out.
-This pattern is named 'Dummy Element' pattern.
+This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 </p>
 <p>This pattern enables you to use dummy data in presentation data.
 </p>
@@ -499,11 +482,11 @@ This pattern is named 'Dummy Element' pattern.
 <br>
 
 
-<a name="dummy-tag"></a>
-<h3 class="section2">Dummy Tag Pattern</h3>
+<a name="delete-tag"></a>
+<h3 class="section2">Delete Tag Pattern</h3>
 <p>If you use only <code>@cont</code> and don't use <code>@stag</code> and <code>@cont</code>,
 you can remove start and end tags of the element.
-This pattern is named 'Dummy Tag' pattern.
+This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
 </p>
 <p>This pattern is very useful if you want to print tags according to condition.
 </p>
@@ -678,7 +661,7 @@ This pattern is named 'Iterate Content' pattern.
 <a name="select-elem"></a>
 <h3 class="section2">Select Element Pattern</h3>
 <p>The following is an example to choose a certain element from some elements.
-This pattern is named 'Select Element' pattern.
+This pattern is named 'Select Element Pattern.'
 </p>
 <p>Presentation Data:
 </p>
@@ -740,7 +723,7 @@ This pattern is named 'Select Element' pattern.
 <h3 class="section2">Pick-up Element Pattern</h3>
 <p>If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
 Elements which are not marked are ignored and not printed.
-This pattern is named 'Pick-up Element' pattern.
+This pattern is named 'Pick-up Element Pattern.'
 </p>
 <p>'Pick-up Element' pattern is opposite of 'Dummy Element' pattern.
 In 'Dummy Element' pattern, dummy elements are marked and removed so that necessary elements are leaved.
@@ -855,7 +838,7 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 <h3 class="section2">Extract Element Pattern</h3>
 <p>It is able to extract a certain element form the whole presentation data.
 Other element and text strings are not printed.
-This pattern is named 'Extract Element' pattern.
+This pattern is named 'Extract Element Pattern.'
 </p>
 <p>This pattern is very useful to extract HTML fragments and make them libraries.
 The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.

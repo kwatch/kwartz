@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
-  <title>プレゼンテーションパターン・カタログ</title>
+  <title>プレゼンテーションパターンカタログ</title>
   <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
@@ -13,7 +13,7 @@
   <blockquote>
    <div class="mainbody">
 
-    <div align="left"><h1>プレゼンテーションパターン・カタログ</h1></div>
+    <div align="left"><h1>プレゼンテーションパターンカタログ</h1></div>
     <div align="left">
       Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
       last update: $Date$<br>
@@ -27,7 +27,7 @@
 <p>またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。
 これらのパターンを「プレゼンテーションパターン」といいます。
 </p>
-<p>このドキュメントでは、プレゼンテーションパターンをいくつか紹介します。
+<p>このドキュメントでは、プレゼンテーションパターンを紹介します。
 </p>
 <a name="toc"></a>
 <h3 class="section2">目次</h3>
@@ -35,8 +35,6 @@
   <li><a href="#preface">はじめに</a>
   <ul>
     <li><a href="#toc">目次</a>
-    </li>
-    <li><a href="#changelog">更新履歴</a>
     </li>
   </ul>
   </li>
@@ -52,11 +50,11 @@
     </li>
   </ul>
   </li>
-  <li><a href="#dummy">ダミー</a>
+  <li><a href="#deletion">削除</a>
   <ul>
-    <li><a href="#dummy-elem">Dummy Elementパターン</a>
+    <li><a href="#delete-elem">Delete Elementパターン</a>
     </li>
-    <li><a href="#dummy-tag">Dummy Tagパターン</a>
+    <li><a href="#delete-tag">Delete Tagパターン</a>
     </li>
   </ul>
   </li>
@@ -82,21 +80,6 @@
 <br>
 
 
-<a name="changelog"></a>
-<h3 class="section2">更新履歴</h3>
-<dl class="dl1">
-<dt class="dt1">
-2005-02-14</dt>
-<dd class="dd1">
-	<ul type="circle">
-	<li>beta release
-	</li>
-	</ul>
-</dd>
-</dl>
-<br>
-
-
 <br>
 
 
@@ -105,7 +88,7 @@
 <a name="replace-elem-by-value"></a>
 <h3 class="section2">Replace Element by Valueパターン</h3>
 <p>エレメントを、変数や式の値で置き換えることができます。
-これを「Replace Element by Value」パターンといいます。
+これを「Replace Element by Valueパターン」といいます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -138,7 +121,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-cont-by-value"></a>
 <h3 class="section2">Replace Content by Valueパターン</h3>
 <p>タグは残したままエレメントの内容だけを式の値で置き換えることができます。
-これを「Replace Content by Value」パターンといいます。
+これを「Replace Content by Valueパターン」といいます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -167,7 +150,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 ### for JSTL
 &lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
 </pre>
-<p>なお「Replace Content by Value」パターンは、Kwartzでは次のように書くことができます。
+<p>なお「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
 </p>
 <p>プレゼンテーションロジック：
 </p>
@@ -181,7 +164,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-elem-by-elem"></a>
 <h3 class="section2">Replace Element by Elementパターン</h3>
 <p>エレメントを別のエレメントに交換することができます。
-これは「Replace Element by Element」パターンといいます。
+これは「Replace Element by Elementパターン」といいます。
 </p>
 <p>このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
 </p>
@@ -221,7 +204,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>Kwartzにおいて、コマンドラインオプション「<code>-o <i>file</i>,<i>file2</i>,...</code>」を指定すると、
+<p>Kwartzにおいて、コマンドラインオプション「<code>-i <i>file</i>,<i>file2</i>,...</code>」を指定すると、
 他のファイルのエレメントを利用できます。
 </p>
 <p>プレゼンテーションデータ(links.html)：
@@ -256,7 +239,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 </pre>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz -l eruby <b>-o links.html</b> -p page.plogic page.html
+<pre class="terminal">$ kwartz -l eruby <b>-i links.html</b> -p page.plogic page.html
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -276,7 +259,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-cont-by-elem"></a>
 <h3 class="section2">Replace Content by Elementパターン</h3>
 <p>エレメントの内容を、別のエレメントで置き換えることができます。
-これは「Replace Content by Element」パターンといいます。
+これは「Replace Content by Elementパターン」といいます。
 </p>
 <p>このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
 </p>
@@ -389,12 +372,12 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
   }
 }
 </pre>
-<p>Kwartzではコマンドオプション「<code>-o <i>file1,file2,...</i></code>」を指定することで、
+<p>Kwartzではコマンドオプション「<code>-i <i>file1,file2,...</i></code>」を指定することで、
 他のファイルのエレメントを読み込むことができます。
 </p>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz -l eruby  <b>-o contents.html</b> -p contens.plogic,layout.plogic layout.html
+<pre class="terminal">$ kwartz -l eruby  <b>-i contents.html</b> -p contens.plogic,layout.plogic layout.html
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -453,12 +436,12 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="dummy"></a>
-<h2 class="section1">ダミー</h2>
-<a name="dummy-elem"></a>
-<h3 class="section2">Dummy Elementパターン</h3>
+<a name="deletion"></a>
+<h2 class="section1">削除</h2>
+<a name="delete-elem"></a>
+<h3 class="section2">Delete Elementパターン</h3>
 <p>プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
-これは「Dummy Element」パターンといいます。
+これは「Delete Elementパターン」または「Dummy Elementパターン」といいます。
 </p>
 <p>このパターンは、プレゼンテーションデータにダミーデータを含めるときに使用します。
 </p>
@@ -499,11 +482,11 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <br>
 
 
-<a name="dummy-tag"></a>
-<h3 class="section2">Dummy Tagパターン</h3>
+<a name="delete-tag"></a>
+<h3 class="section2">Delete Tagパターン</h3>
 <p>プレゼンテーションロジックの定義において、「<code>@cont</code>」だけを使用し、
 「<code>@stag</code>」と「<code>@stag</code>」を使わないようにすると、エレメントのタグを削除できます。
-これは「Dummy Tag」パターンといいます。
+これは「Delete Tagパターン」または「Dummy Tagパターン」といいます。
 </p>
 <p>このパターンは、ある条件のときだけタグを出力したい場合に使います。
 </p>
@@ -678,7 +661,7 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <a name="select-elem"></a>
 <h3 class="section2">Select Elementパターン</h3>
 <p>複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
-これは「Select Element」パターンといいます。
+これは「Select Elementパターン」といいます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -741,7 +724,7 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <p>ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、
 プレゼンテーションロジックでそのエレメントだけを利用します。
 利用されないエレメントは無視され、出力されません。
-これは「Pick-up Element」パターンといいます。
+これは「Pick-up Elementパターン」といいます。
 </p>
 <p>これは「Dummy Element」パターンと逆の考え方です。
 「Dummy Element」パターンでは不要なエレメントをマーキングして削除することで必要なものだけを残しますが、
@@ -856,7 +839,7 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <h3 class="section2">Extract Elementパターン</h3>
 <p>プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 ほかは一切表示しないようにすることができます。
-このパターンは「Extract Element」パターンといいます。
+このパターンは「Extract Elementパターン」といいます。
 </p>
 <p>このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
 例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。

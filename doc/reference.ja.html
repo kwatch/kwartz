@@ -22,7 +22,8 @@
 <a name="preface"></a>
 <h2 class="section1">はじめに</h2>
 <p>このドキュメントは、Kwartzのリファレンスマニュアルです。
-プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプションについて説明しています。
+プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプション、
+設定オプションについて説明しています。
 </p>
 <a name="toc"></a>
 <h3 class="section2">目次</h3>
@@ -30,8 +31,6 @@
   <li><a href="#preface">はじめに</a>
   <ul>
     <li><a href="#toc">目次</a>
-    </li>
-    <li><a href="#changelog">更新履歴</a>
     </li>
   </ul>
   </li>
@@ -107,7 +106,7 @@
     </li>
     <li><a href="#directive-replace">エレメントの置換</a>
     </li>
-    <li><a href="#directive-replace">プレースホルダ</a>
+    <li><a href="#directive-placeholder">プレースホルダ</a>
     </li>
     <li><a href="#directive-notes">注意事項</a>
     </li>
@@ -118,21 +117,6 @@
   <li><a href="#config">設定オプション</a>
   </li>
 </ul>
-<br>
-
-
-<a name="changelog"></a>
-<h3 class="section2">更新履歴</h3>
-<dl class="dl1">
-<dt class="dt1">
-2005-02-14</dt>
-<dd class="dd1">
-	<ul type="circle">
-	<li>beta release
-	</li>
-	</ul>
-</dd>
-</dl>
 <br>
 
 
@@ -1968,16 +1952,16 @@ elseやelseifも使用できます。
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p>なおコマンドラインオプション「<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>」を指定すると、
+<p>なおコマンドラインオプション「<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>」を指定すると、
 他のファイルのエレメントを利用できます。
 </p>
 <br>
 
 
-<a name="directive-replace"></a>
+<a name="directive-placeholder"></a>
 <h3 class="section2">プレースホルダ</h3>
 <p>「<code>id="placeholder:<i>name</i>"</code>」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
-通常は、コマンドラインオプション「<code>-o <i>file1</i>,<i>file2</i>,<i>...</i></code>」とともに使用し、
+通常は、コマンドラインオプション「<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>」とともに使用し、
 他のファイルで定義されたエレメントを取り込むために使われます。
 </p>
 <p>プレゼンテーションデータ(article.html)：
@@ -2024,7 +2008,7 @@ elseやelseifも使用できます。
 </pre>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz <b>-o article.html</b> layout.html
+<pre class="terminal">$ kwartz <b>-i article.html</b> layout.html
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -2181,19 +2165,18 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--l <i>lang</i></b></dt>
+-i <i>file1,file2,...</i></b></dt>
 <dd class="dd3">
-	ターゲット言語を指定。指定できるのは
-	eruby, erb, php, jstl11, jstl10.
+	外部ファイルで定義されたエレメントをインポートする。
+	主にplaceholderディレクティブ（「<code>id="placeholder:<i>name</i></code>」）のために使用される。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
--o <i>file1,file2,...</i></b></dt>
+-l <i>lang</i></b></dt>
 <dd class="dd3">
-	外部ファイル名。外部ファイルで定義されたエレメントは、
-	プレゼンテーションロジックやプレゼンテーションデータで使用できる。
-	主にplaceholderディレクティブ（「<code>id="placeholder:<i>name</i></code>」）のために使用される。
+	ターゲット言語を指定。指定できるのは
+	eruby, erb, php, jstl11, jstl10.
 </dd>
 </dl>
 <dl class="dl3">
@@ -2269,13 +2252,6 @@ transalte</dt>
 	奇数のときの値。デフォルトは「<code>'odd'</code>」。ディレクティブFOREACHとLISTで使われる。
 </dd>
 </dl>
-<dl class="dl3">
-<dt class="dt3"><b>
---rename=<i>true</i>|<i>false</i></b></dt>
-<dd class="dd3">
-	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
-</dd>
-</dl>
 <p>使い方の例です。
 </p>
 <ul type="disc">
@@ -2329,21 +2305,6 @@ NEWLINE </b></dt>
 INDENT </b></dt>
 <dd class="dd3">
 	インデントとして使う空白文字列を指定します。
-</dd>
-</dl>
-<dl class="dl3">
-<dt class="dt3"><b>
-RENAME </b></dt>
-<dd class="dd3">
-	ローカル変数の名前を変更するかどうかを指定します。
-	trueなら、ローカル変数名の頭に「_」をつけます。
-</dd>
-</dl>
-<dl class="dl3">
-<dt class="dt3"><b>
-RENAME_PREFIX </b></dt>
-<dd class="dd3">
-	ローカル変数の頭につける文字列を指定します。
 </dd>
 </dl>
 <dl class="dl3">
