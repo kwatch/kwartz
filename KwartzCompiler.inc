@@ -34,7 +34,7 @@ require_once('KwartzTranslator.inc');
 			if ($this->plogic_code) {
 				$scanner = new KwartzScanner($this->plogic_code);
 				$parser  = new KwartzParser($scanner);
-				$plogic_block = $parser->parse_all();
+				$plogic_block = $parser->parse();
 			}
 			
 			## merge blocks and create a new block
@@ -50,7 +50,7 @@ require_once('KwartzTranslator.inc');
 			
 			## translate block into PHP code
 			$translator = new KwartzPhpTranslator($block);
-			$code = $translator->translate_all();
+			$code = $translator->translate();
 			
 			return $code;
 		}

@@ -8,7 +8,7 @@ require_once('PHPUnit.php');
 //require_once('Kwartz.inc');
 
 $filenames = array(
-	'KwartzElementTest.php',
+	'KwartzNodeTest.php',
 	'KwartzScannerTest.php',
 	'KwartzParserTest.php',
 	'KwartzConverterTest.php',

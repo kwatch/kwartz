@@ -5,7 +5,7 @@
 ###
 
 require_once('KwartzException.inc');
-require_once('KwartzElement.inc');
+require_once('KwartzNode.inc');
 require_once('KwartzUtility.inc');
 
 
@@ -23,10 +23,10 @@ require_once('KwartzUtility.inc');
 
 	abstract class KwartzTranslator {
 		## should return code string
-		abstract function translate(&$expr_or_stmt, &$code="");
+		abstract function translate_node(&$expr_or_stmt, &$code="");
 
 		## should return code string
-		abstract function translate_all();
+		abstract function translate();
 	}
 
 	abstract class KwartzBaseTranslator extends KwartzTranslator {
@@ -110,14 +110,14 @@ require_once('KwartzUtility.inc');
 		}
 
 
-		function translate(&$expr_or_stmt, &$code='') {
+		function translate_node(&$expr_or_stmt, &$code='') {
 			$class_name = get_class($expr_or_stmt);
 			$method_name = $this->dispatcher[$class_name];
 			return $this->$method_name($expr_or_stmt, $code);
 		}
 
 
-		function translate_all() {
+		function translate() {
 			//$i = -1;
 			$statements = $this->block->statements();
 			foreach ($statements as $stmt) {
@@ -127,17 +127,17 @@ require_once('KwartzUtility.inc');
 					//unset($block->statements()[$i]);
 				}
 			}
-			return $this->translate($this->block);
+			return $this->translate_node($this->block);
 		}
 
 
 		protected function translate_expr(&$expr, &$code, &$parent_token, &$child_token) {
 			if ($this->priorities[$parent_token] > $this->priorities[$child_token]) {
 				$code .= '(';
-				$this->translate($expr, $code);
+				$this->translate_node($expr, $code);
 				$code .= ')';
 			} else {
-				$this->translate($expr, $code);
+				$this->translate_node($expr, $code);
 			}
 			return $code;
 		}
@@ -227,7 +227,7 @@ require_once('KwartzUtility.inc');
 				}
 				$this->translate_expr($expr->left(), $code, $t, $expr->left()->token());
 				$code .= $this->keyword($t1);
-				$this->translate($expr->right(), $code);
+				$this->translate_node($expr->right(), $code);
 				$code .= $this->keyword($t2);
 				break;
 
@@ -260,7 +260,7 @@ require_once('KwartzUtility.inc');
 			foreach($expr->arglist() as $arg_expr) {
 				$code .= $comma;
 				$comma = ', ';
-				$this->translate($arg_expr, $code);
+				$this->translate_node($arg_expr, $code);
 			}
 			$code .= ')';
 			return $code;
@@ -270,7 +270,7 @@ require_once('KwartzUtility.inc');
 		protected function translate_conditional_expression(&$expr, &$code="") {
 			$t = $expr->token();
 			$op = $this->keyword($t);
-			$this->translate($expr->condition(), $code);
+			$this->translate_node($expr->condition(), $code);
 			$code .= ' ? ';
 			$this->translate_expr($expr->left(), $code, $t, $expr->left()->token());
 			$code .= ' : ';
@@ -312,7 +312,7 @@ require_once('KwartzUtility.inc');
 					$code .= $expr->value();
 				} else {
 					$code .= '<?php echo ';
-					$this->translate($expr, $code);
+					$this->translate_node($expr, $code);
 					$code .= '; ?>';
 				}
 			}
@@ -322,27 +322,27 @@ require_once('KwartzUtility.inc');
 		protected function translate_set_statement(&$stmt, &$code) {
 			$expr = $stmt->assign_expr();
 			$code .= "<?php ";
-			$this->translate($expr, $code);
+			$this->translate_node($expr, $code);
 			$code .= "; ?>\n";
 			return $code;
 		}
 
 		protected function translate_if_statement(&$stmt, &$code) {
 			$code .= "<?php if (";
-			$this->translate($stmt->condition(), $code);
+			$this->translate_node($stmt->condition(), $code);
 			$code .= ") ?>\n";
-			$this->translate($stmt->then_block(), $code);
+			$this->translate_node($stmt->then_block(), $code);
 			$st = $stmt;
 			while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
 				$code .= "<?php } elseif (";
-				$this->translate($st->condition(), $code);
+				$this->translate_node($st->condition(), $code);
 				$code .= ") { ?>\n";
-				$this->translate($st->then_block(), $code);
+				$this->translate_node($st->then_block(), $code);
 			}
 			if ($st) {
 				//assert($st.token() == ':block');
 				$code .= "<?php } else { ?>\n";
-				$this->translate($st, $code);
+				$this->translate_node($st, $code);
 			}
 			$code .= "<?php } ?>\n";
 			return $code;
@@ -350,20 +350,20 @@ require_once('KwartzUtility.inc');
 
 		protected function translate_foreach_statement(&$stmt, &$code) {
 			$code .= "<?php foreach (";
-			$this->translate($stmt->list_expr(), $code);
+			$this->translate_node($stmt->list_expr(), $code);
 			$code .= " as ";
-			$this->translate($stmt->loopvar_expr(), $code);
+			$this->translate_node($stmt->loopvar_expr(), $code);
 			$code .= ") { ?>\n";
-			$this->translate($stmt->body_block(), $code);
+			$this->translate_node($stmt->body_block(), $code);
 			$code .= "<?php } ?>\n";
 			return $code;
 		}
 
 		protected function translate_while_statement(&$stmt, &$code) {
 			$code .= "<?php while (";
-			$this->translate($stmt->condition(), $code);
+			$this->translate_node($stmt->condition(), $code);
 			$code .= ") { ?>\n";
-			$this->translate($stmt->body_block(), $code);
+			$this->translate_node($stmt->body_block(), $code);
 			$code .= "<?php } ?>\n";
 			return $code;
 		}
@@ -380,13 +380,13 @@ require_once('KwartzUtility.inc');
 				$msg = "macro '{$stmt->macro_name()}' not defined.";
 				throw new KwartzTranslationError($msg, $this);
 			}
-			$this->translate($block, $code);
+			$this->translate_node($block, $code);
 			return $code;
 		}
 
 		protected function translate_block_statement(&$block_stmt, &$code) {
 			foreach ($block_stmt->statements() as $stmt) {
-				$this->translate($stmt, $code);
+				$this->translate_node($stmt, $code);
 			}
 			return $code;
 		}

@@ -1007,7 +1007,7 @@ END;
             'etag_foo'
 
 END;
-		$this->_test_stmt($input, $expected, 'parse_all');
+		$this->_test_stmt($input, $expected, 'parse');
 	}
 
 }

@@ -5,7 +5,7 @@
 ###
 
 require_once('KwartzException.inc');
-require_once('KwartzElement.inc');
+require_once('KwartzNode.inc');
 require_once('KwartzScanner.inc');
 
 //namespace Kwartz {
@@ -42,7 +42,7 @@ require_once('KwartzScanner.inc');
 	##   $input   = "if ($foo > 0) { echo $foo; }";
 	##   $scanner = new KwartzScanner($input);
 	##   $parser  = new KwartzParser($scanner);
-	##   $block_stmt = $parser.parse_all();
+	##   $block_stmt = $parser.parse();
 	##
 	class KwartzParser {
 		## instance vars
@@ -377,8 +377,8 @@ require_once('KwartzScanner.inc');
 
 		## * BNF:
 		##    stmt	::= set-stmt | if-stmt | while-stmt | foreach-stmt
-		##		   | print-stmt | macro-stmt | expand-stmt | rawcode-stmt
-		##		   | print2-stmt
+		##		   | print-stmt | macro-stmt | expand-stmt | expand2-stmt
+		##		   | elem-stmt | rawcode-stmt | print2-stmt
 		function parse_statement() {
 			switch ($t = $this->token()) {
 			case ':print':
@@ -492,6 +492,7 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##    while-stmt ::= ':while' '(' assignment ')' stmt-list ':end'
 		function parse_while_stmt() {
@@ -519,6 +520,7 @@ require_once('KwartzScanner.inc');
 			}
 			assert(false);
 		}
+
 
 		## * BNF:
 		##    foreach-stmt ::= ':foreach' '(' expression '=' expression ')'
@@ -559,6 +561,7 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##    print-stmt ::= ':print'  '(' expression { ',' expression } ')'
 		function parse_print_stmt() {
@@ -588,6 +591,7 @@ require_once('KwartzScanner.inc');
 			}
 			assert(false);
 		}
+
 
 		## * BNF:
 		##    macro-stmt ::= ':macro' '(' name ')' stmt-list ':end'
@@ -633,6 +637,7 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##    elem-stmt	 ::= ':elem'  '(' name ')' stmt-list ':end'
 		function parse_elem_stmt() {
@@ -642,9 +647,9 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##    expand-stmt ::= ':expand' '(' name ')'
-		##
 		function parse_expand_stmt() {
 			if ($this->token() == ':expand') {
 				$this->scan();
@@ -669,9 +674,9 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##     expand2-stmt ::= '@' macro-name
-		##
 		function parse_expand2_stmt() {
 			if ($this->token() == '@' || $this->token() == ':rawcode2') {
 				$macro_name = $this->value();
@@ -692,6 +697,7 @@ require_once('KwartzScanner.inc');
 			assert(false);
 		}
 
+
 		## * BNF:
 		##    rawcode ::= ':::' raw-string
 		function parse_rawcode_stmt() {
@@ -702,6 +708,7 @@ require_once('KwartzScanner.inc');
 			}
 			assert(false);
 		}
+
 
 		## * BNF:
 		##    load-stmt ::= ':load' '(' string ')'
@@ -733,15 +740,16 @@ require_once('KwartzScanner.inc');
 				$input	 = file_get_contents($filename);
 				$scanner = new KwartzScanner($input);
 				$parser	 = new KwartzParser($scanner);
-				$block	 = $parser->parse_all();
+				$block	 = $parser->parse();
 				return $block;
 			}
 			assert(false);
 		}
 
-		##
-		##
-		function parse_all() {
+
+		## * BNF:
+		##    program ::= block-stmt
+		function parse_program() {
 			$block = $this->parse_block_stmt();
 			if ($this->token() != NULL) {
 				$msg = "EOF expected but '{$this->token()}'.";
@@ -750,7 +758,18 @@ require_once('KwartzScanner.inc');
 			return $block;
 		}
 
-	}
+
+		##
+		##
+		function parse() {
+			return $this->parse_program();
+		}
+
+		## *obsolete*
+		function parse_all() {
+			return $this->parse();
+		}
+	}  // end of class KwartzParser
 
 //}  // end of namespace Kwartz
 ?>

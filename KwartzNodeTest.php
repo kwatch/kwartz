@@ -1,13 +1,13 @@
 <?php
 
 ###
-### KwartzElementTest.php
+### KwartzNodeTest.php
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzElement.inc');
+require_once('KwartzNode.inc');
 
-class KwartzElementTest extends PHPUnit_TestCase {
+class KwartzNodeTest extends PHPUnit_TestCase {
 
 	var $int_expr;
 	var $float_var;
@@ -312,8 +312,8 @@ END;
 ###
 ### execute test
 ###
-//if ($argv[0] == 'KwartzElementTest.php') {
-	$suite = new PHPUnit_TestSuite('KwartzElementTest');
+//if ($argv[0] == 'KwartzNodeTest.php') {
+	$suite = new PHPUnit_TestSuite('KwartzNodeTest');
 	$result = PHPUnit::run($suite);
 	//echo $result->toHTML();
 	echo $result->toString();

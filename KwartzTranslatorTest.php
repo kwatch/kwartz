@@ -22,9 +22,9 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$scanner = new KwartzScanner($input);
 		$parser  = new KwartzParser($scanner);
-		$block   = $parser->parse_all();
+		$block   = $parser->parse();
 		$translator = new KwartzPhpTranslator($block);
-		$code = $translator->translate_all();
+		$code = $translator->translate();
 		$actual = $code;
 		if ($flag_test) {
 			$this->assertEquals($expected, $actual);

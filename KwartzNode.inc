@@ -1,13 +1,13 @@
 <?php
 
 ###
-### KwartzElement.inc - class definition of Element, Expression, Statement, ...
+### KwartzNode.inc - class definition of Node, Expression, Statement, ...
 ###
 
 
 ###  class hierarchy:
 ###
-###  Element
+###  Node
 ###	Expression
 ###	   Unary
 ###	   Binary
@@ -34,9 +34,9 @@ require_once('KwartzUtility.inc');
 //namespace Kwartz {
 
 	##
-	## Element
+	## Node
 	##
-	abstract class KwartzElement {
+	abstract class KwartzNode {
 		// instance vars
 		private $token;
 
@@ -75,7 +75,7 @@ require_once('KwartzUtility.inc');
 	##
 	## Expression
 	##
-	abstract class KwartzExpression extends KwartzElement {
+	abstract class KwartzExpression extends KwartzNode {
 	}
 
 	class KwartzUnaryExpression extends KwartzExpression {
@@ -319,7 +319,7 @@ require_once('KwartzUtility.inc');
 	##
 	## Statement
 	##
-	abstract class KwartzStatement extends KwartzElement {
+	abstract class KwartzStatement extends KwartzNode {
 	}
 
 	class KwartzBlockStatement extends KwartzStatement {

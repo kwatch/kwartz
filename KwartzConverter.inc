@@ -5,7 +5,7 @@
 ###
 
 require_once('KwartzException.inc');
-require_once('KwartzElement.inc');
+require_once('KwartzNode.inc');
 require_once('KwartzScanner.inc');
 require_once('KwartzParser.inc');
 require_once('KwartzUtility.inc');
