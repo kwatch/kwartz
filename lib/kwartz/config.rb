@@ -23,6 +23,7 @@ module Kwartz
       EVEN            = "'even'"
       DATTR           = "kw:d"
       EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
+      INCLUDE_DIRS    = [ '.' ]        # ex. [ '.', '/project/plogic', '/home/user/plogic' ]
       
       ## converter & element
       NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]

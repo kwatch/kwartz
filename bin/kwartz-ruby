@@ -98,7 +98,13 @@ module Kwartz
          ## help or version
          if options[?h] || options[?v]
             #$stderr.puts "kwartz: #{RELEASE} (rev.#{VERSION}), kwartz.rb: #{Kwartz::RELEASE} (rev.#{Kwartz::VERSION})" if options[?v]
-            $stderr.puts "kwartz: #{RELEASE} (kwartz.rb: #{Kwartz::RELEASE})" if options[?v]
+            if options[?v]
+               if RELEASE == Kwartz::RELEASE
+                  $stderr.puts "kwartz-ruby: #{RELEASE}"
+               else
+                  $stderr.puts "kwartz-ruby: #{RELEASE}, kwartz.rb: #{Kwartz::RELEASE}"
+               end
+            end
             $stderr.puts usage() if options[?h]
             return 0
          end
@@ -118,11 +124,13 @@ module Kwartz
             properties[:escape] = options[?e]
          end
 
-         ## tags which doesn't require end-tag
-         if properties.key?(:noend)
-            properties[:noend] = properties[:noend].split(/,/)
+         ## properties which requires a list as value
+         [ :noend, :include_dirs ].each do |key|
+            next unless properties.key?(key)
+            properties[key] = properties[key].split(/,/)
          end
 
+         ## target language
          lang = (options[?l] || Kwartz::Config::LANG)
 
          ## add JSP directives
@@ -213,6 +221,7 @@ Usage: #{@command} [..options..] file1 [file2...]
   --header=text   : header text
   --footer=text   : footer text
   --extract=name  : extract an marked element
+  --include-dirs=dir1,dir2,...  : directories for 'include:' directive
 END
          return s
       end

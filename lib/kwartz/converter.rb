@@ -39,8 +39,7 @@ module Kwartz
          #@delete_id_attr = properties[:delete_id_attr] || false
          @even       = properties[:even]  || Kwartz::Config::EVEN     # "'even'"
          @odd        = properties[:odd]   || Kwartz::Config::ODD      # "'odd'"
-         @noend_tags = properties[:noend] || Kwartz::Config::NOEND  # %w(input br meta img hr)
-         @filename   = properties[:filename]
+         @noend_tags = properties[:noend] || Kwartz::Config::NOEND    # ['input', 'br', 'meta', 'img', 'hr']
          @parser = Parser.new('', properties)
       end
       attr_reader :stmt_list, :elem_list
@@ -48,6 +47,7 @@ module Kwartz
 
       def reset(input)
          @input = input
+         @filename = @properties[:filename]
          @parser.reset(input)
          @linenum = 1
          @delta   = 0
@@ -283,20 +283,19 @@ module Kwartz
             marking = directive_arg
             hash = staginfo[:attr_values]
             hash.each do |aname, avalue|
-               if avalue.is_a?(String)
-                  list = expand_embed_expr(avalue, linenum)
-                  if list.empty?
-                     expr = StringExpression.new("")
-                  else
-                     expr = list.shift
-                     while !list.empty?
-                        left = expr
-                        right = list.shift
-                        expr = ArithmeticExpression.new('.+', left, right)
-                     end
+               Kwartz::assert unless avalue.is_a?(String)
+               list = expand_embed_expr(avalue, linenum)
+               if list.empty?
+                  expr = StringExpression.new("")
+               else
+                  expr = list.shift
+                  while !list.empty?
+                     left = expr
+                     right = list.shift
+                     expr = ArithmeticExpression.new('.+', left, right)
                   end
-                  hash[aname] = expr
                end
+               hash[aname] = expr
             end
             @elem_list << Element.create_from_taginfo(marking, staginfo, etaginfo, body_stmt_list)
             stmt_list << ExpandStatement.new(:element, marking)
@@ -415,6 +414,40 @@ module Kwartz
             stmt_list << ExpandStatement.new(:element, name)
             stmt_list << last_stmt
 
+         when :include, :Include, :INCLUDE
+            basename = directive_arg
+            if basename =~ /\A"(.*)"\z/
+               basename = $1
+            elsif basename =~ /\A'(.*)'\z/
+               basename = $1
+            end
+
+            pathlist = @properties[:include_dirs] || Kwartz::Config::INCLUDE_DIRS || ['.']
+            filename = nil
+            pathlist.each do |path|
+               filename = path + '/' + basename
+               break if test(?f, filename)
+               filename = nil
+            end
+            unless filename
+               raise ConvertionError.new("'#{basename}': include file not found.", linenum, @filename)
+            end
+
+            pdata = File.open(filename) { |f| f.read() }
+            properties = @properties.dup()
+            properties[:filename] = filename
+            converter = Kwartz::Converter.new(properties)
+            block_stmt = converter.convert(pdata)
+
+            stmt_list.concat(body_stmt_list) if directive_name == :INCLUDE
+            block_stmt.statements.each do |stmt|
+               stmt_list << stmt
+            end
+            stmt_list.concat(body_stmt_list) if directive_name == :Include
+
+            element_list = converter.element_list
+            @elem_list.concat(element_list)
+
          else
             raise ConvertionError.new("'#{directive_name}': invalid directive", linenum, @filename)
          end
@@ -470,6 +503,26 @@ module Kwartz
       end
 
 
+      DIRECTIVES = {
+         :attr    =>  true,     :Attr    =>  true,     :ATTR    =>  true,
+         :append  =>  true,     :Append  =>  true,     :APPEND  =>  true,
+         :foreach =>  true,     :Foreach =>  true,     :FOREACH =>  true,
+         :loop    =>  true,     :Loop    =>  true,     :LOOP    =>  true,
+         :list    =>  true,     :List    =>  true,     :LIST    =>  true,
+         :include =>  true,     :Include =>  true,     :INCLUDE =>  true,
+         :value   =>  true,     :Value   =>  true,     :VALUE   =>  true,
+         :if      =>  true,
+         :elsif   =>  true,
+         :elseif  =>  true,
+         :else    =>  true,
+         :set     =>  true,
+         :while   =>  true,
+         :mark    =>  true,
+         :dummy   =>  true,
+         :replace =>  true,
+         :placeholder =>  true,
+      }
+
       def parse_attr_kdvalue(attr_value)
          directive_name = directive_arg = nil
          attr_value.split(/;/).each do |str|
@@ -483,6 +536,10 @@ module Kwartz
             end
             d_name = $1.intern		# directive name
             d_arg  = $2			# directive arg
+
+            unless DIRECTIVES[d_name]
+               raise ConvertionError.new("'#{d_name}': invalid directive name.", @linenum, @filename)
+            end
             case d_name
             when :attr, :Attr, :ATTR
                if d_arg !~ /^([-_\w]+(?::[-_\w]+)?)[:=](.*)$/
@@ -498,17 +555,12 @@ module Kwartz
             when :append, :Append, :APPEND
                e1, e2 = @@escape_matrix[d_name]
                @append_exprs << parse_expression("#{e1}#{d_arg}#{e2}", @linenum)
-            when :value, :Value, :VALUE, \
-               :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST, \
-               :if, :elsif, :elseif, :else, \
-               :set, :while, :mark, :dummy, :replace, :placeholder
+            else
                if directive_name != nil
                   msg = "directive '#{directive_name}' and '#{d_name}': cannot specify two or more directives in an element."
                   raise ConvertionError.new(msg, self)
                end
                directive_name = d_name;  directive_arg  = d_arg
-            else
-               raise ConvertionError.new("'#{directive_name}': invalid directive name.", self)
             end
          end
          return directive_name, directive_arg

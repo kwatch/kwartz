@@ -3,10 +3,15 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-03-06 rev.51
+	.- [enhance] include directive support
+	.- [bugfix] filename is not reported when error happened in Convertion
+
 .: 2005-02-20 rev.50
 	.- [change] 'kd' attribute is renamed to 'kw:d'
 	.- [enhance] new file kwartz-ruby.gemspec added
 	.- [change] bin/kwartz is rewrited as ruby script
+	.- [enhance] new file COPYING
 
 .: 2005-02-20 rev.49
 	.- [change] rename bin/kwartz to bin/kwartz-ruby

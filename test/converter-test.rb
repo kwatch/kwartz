@@ -1672,6 +1672,163 @@ END
     end
 
 
+    def test_convert_include1	# include pdata file
+	input = <<-'END'
+		<html>
+		  <body>
+		    ... main contents ...
+		
+		    <div id="include:footer.html">
+		      ... include pdata instead of element ...
+		    </div>
+		
+		    <div id="Include:footer.html">
+		      ... include pdata before element ...
+		    </div>
+		
+		    <div id="INCLUDE:footer.html">
+		      ... include pdata after element ...
+		    </div>
+		
+		  </body>
+		</html>
+	END
+	pdata = <<-'END'
+		<!-- begin footer -->
+		<center id="mark:copyright">
+		  copyright&copy; <span id="value:year">2005</span> kuwata-lab all rights reserverd
+		</center>
+		<!-- end footer -->
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<html>\n"
+		  :print
+		    "  <body>\n"
+		  :print
+		    "    ... main contents ...\n\n"
+		  :print
+		    "<!-- begin footer -->\n"
+		  @element(copyright)
+		  :print
+		    "<!-- end footer -->\n"
+		  :print
+		    "\n"
+		  :print
+		    "<!-- begin footer -->\n"
+		  @element(copyright)
+		  :print
+		    "<!-- end footer -->\n"
+		  :print
+		    "    <div>\n"
+		  :print
+		    "      ... include pdata before element ...\n"
+		  :print
+		    "    </div>\n"
+		  :print
+		    "\n"
+		  :print
+		    "    <div>\n"
+		  :print
+		    "      ... include pdata after element ...\n"
+		  :print
+		    "    </div>\n"
+		  :print
+		    "<!-- begin footer -->\n"
+		  @element(copyright)
+		  :print
+		    "<!-- end footer -->\n"
+		  :print
+		    "\n"
+		  :print
+		    "  </body>\n"
+		  :print
+		    "</html>\n"
+		===== marking=copyright =====
+		[tagname]
+		center
+		[attrs]
+		[content]
+		:block
+		  :print
+		    "  copyright&copy;"
+		  :print
+		    " "
+		  :print
+		    year
+		  :print
+		    " "
+		  :print
+		    "kuwata-lab all rights reserverd\n"
+		[spaces]
+		["", "\n", "", "\n"]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=copyright =====
+		[tagname]
+		center
+		[attrs]
+		[content]
+		:block
+		  :print
+		    "  copyright&copy;"
+		  :print
+		    " "
+		  :print
+		    year
+		  :print
+		    " "
+		  :print
+		    "kuwata-lab all rights reserverd\n"
+		[spaces]
+		["", "\n", "", "\n"]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=copyright =====
+		[tagname]
+		center
+		[attrs]
+		[content]
+		:block
+		  :print
+		    "  copyright&copy;"
+		  :print
+		    " "
+		  :print
+		    year
+		  :print
+		    " "
+		  :print
+		    "kuwata-lab all rights reserverd\n"
+		[spaces]
+		["", "\n", "", "\n"]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+	END
+        begin
+           dirname  = '_test_include'
+           filename = 'footer.html'
+           pdata.gsub!(/^\t\t/, '')
+           Dir.mkdir(dirname)
+           File.open(dirname + "/" + filename, 'w') { |f| f.write(pdata) }
+           _test_convert(input, expected, { :include_dirs => [ '.', dirname ] })
+        ensure
+           File.delete(dirname + "/" + filename)
+           Dir.rmdir(dirname)
+        end
+    end
+
+
     def test_convert_properties1	# 'even' and 'odd'
 	input = <<-'END'
 		<tbody kw:d="LOOP:item:list">
