@@ -1,76 +1,139 @@
-
 /*
- *  variables
+ *  release number
  */
-tagfile = 'html-css';
+release = '0.3.0';
+
+
+
+/* ------------------------------------------------------------ */
+
+/*
+ *  default target
+ */
+help:
+{
+	[print '  Help:'];
+	[print '     * cook help'];
+	[print '     * cook all'];
+	[print '     * cook clean'];
+	[print '     * cook exam'];
+	[print '     * cook users-guide.{en,ja}.01.html'];
+	[print '     * cook reference.{en,ja}.01.html'];
+	[print '     * cook index.html'];
+	[print '     * cook package.xml'];
+	[print '  -------------------------------------'];
+	[print '  Notice:']
+	[print '     * type \'. .bashrc.local\' for setting environment variables'];
+	/*
+	[print '     * add '.' to your $PATH for output.php and m18n.rb'];
+	[print '     * add path to "kuwata-lab.ktag" to your $KWASER_PATH'];
+	*/
+	
+}
 
 
 
 /*
- * default target
+ *  all target
  */
 all: tgz;
 
 
 
 /*
- *  documents
+ *  ex.
+ *    [generate 'users-guide', 'en', 'kuwata-lab', '-s -b -n', true ];
  */
-users-guide.%.html:  users-guide.txt
+function generate =
 {
-	if [matches % 'ja'] then
+	local basename = [@1];
+	local lang     = [@2];
+	local tagfile  = [@3];
+	local kwartz_opts   = [@4];
+	local flag_separate = [@5];
+	
+	if [matches [lang] 'ja'] then
 		tagfile = [tagfile]',euc';
-	ruby m18n.rb -l [upcase %] users-guide.txt > users-guide.%.txt;
+	ruby m18n.rb -l [upcase [lang]] [basename].txt > [basename].[lang].txt;
 	mkdir -p guide.d;
 	rm -rf 'guide.d/*';
-	retrieve -d guide.d users-guide.%.txt;
-	kwaser -t [tagfile] -T users-guide.%.txt > users-guide.%.toc.html;
-	kwaser -t [tagfile]    users-guide.%.txt > users-guide.%.html;
-	rm users-guide.%.toc.html;
+	retrieve -d guide.d [basename].[lang].txt;
+	/* -b: .profile and breadcrumbs, -s: separate, -n: number */
+	kwaser -t [tagfile] [kwartz_opts] -T [basename].[lang].txt > [basename].[lang].toc.html;
+	/* if [matches -s% [kwartz_opts]] then */
+	if [flag_separate] then
+		kwaser -t [tagfile] [kwartz_opts]    [basename].[lang].txt;
+	else
+		kwaser -t [tagfile] [kwartz_opts]    [basename].[lang].txt > [basename].[lang].html;
+	rm [basename].[lang].toc.html;
+}
+
+
+/*
+ *  documents
+ */
+
+users-guide.%.01.html:  users-guide.txt
+{
+	local lang = %;
+	[generate 'users-guide' [lang] 'kuwata-lab' '-b -s -n' true];
+	mv guide.d/design.html guide.d/design.css .;
+}
+
+reference.%.01.html: reference.txt
+{
+	local lang = %;
+	[generate 'reference' [lang] 'kuwata-lab' '-b -s -n' true];
+}
+
+users-guide.%.html:  users-guide.txt
+{
+	local lang = %;
+	[generate 'users-guide' [lang] 'html-css', ''];
 	mv guide.d/design.html guide.d/design.css .;
 }
 
 reference.%.html: reference.txt
 {
-	if [matches % 'ja'] then
-		tagfile = [tagfile]',euc';
-	ruby m18n.rb -l [upcase %] reference.txt > reference.%.txt;
-	mkdir -p guide.d;
-	rm -rf 'guide.d/*';
-	retrieve -d guide.d reference.%.txt;
-	kwaser -t [tagfile] -T reference.%.txt > reference.%.toc.html;
-	kwaser -t [tagfile]    reference.%.txt > reference.%.html;
-	rm reference.%.toc.html;
+	local lang = %;
+	[generate 'reference' [lang] 'html-css', ''];
 }
 
-
-gdir = 'guide.d';
-
-examples.%.html: examples.txt
-{
-	if [matches % 'ja'] then
-		tagfile = [tagfile]',euc';
-	ruby m18n.rb -l [upcase %] examples.txt > examples.%.txt;
-	mkdir -p [gdir];
-	rm -rf [gdir]/'*';
-	retrieve -d [gdir] examples.%.txt;
-	kwaser -t [tagfile] -T examples.%.txt > examples.%.toc.html;
-	kwaser -t [tagfile]    examples.%.txt > examples.%.html;
-	rm examples.%.toc.html;
-
-	kwartz-php -l php -p [gdir]/calendar-month.plogic [gdir]/calendar-month.html > [gdir]/calendar-month.view ;
-	kwartz-php -l php -p [gdir]/calendar-page.plogic  [gdir]/calendar-page.html  > [gdir]/calendar-page.view ;
-	php -q -d 'include_path='[gdir] [gdir]/calendar.php > calendar.html ;
-}
-
-
-/*
- *  Other documents
- */
 README.ja.txt README.en.txt: README.txt
 {
 	ruby m18n.rb -l EN README.txt > README.en.txt;
 	ruby m18n.rb -l JA README.txt > README.ja.txt;
+}
+
+index.html:	index.txt
+{
+	kwaser -t kuwata-lab -b [need] > [target];
+}
+
+/*
+ *examples.%.html: examples.txt
+ *{
+ *	local lang = %;
+ *	[generate 'examples' [lang] 'html-css' ''];
+ *	kwartz-php -l php -p guide.d/calendar-month.plogic guide.d/calendar-month.html > guide.d/calendar-month.view ;
+ *	kwartz-php -l php -p guide.d/calendar-page.plogic  guide.d/calendar-page.html  > guide.d/calendar-page.view ;
+ *	php -q -d 'include_path=guide.d' guide.d/calendar.php > calendar.html ;
+ *}
+ */
+
+
+/*
+ *  examples
+ */
+
+examples = [glob 'examples/[a-z]*'];
+
+exam:
+{
+	loop d = [examples]
+	{
+		cd [d] \; make;
+	}
 }
 
 
@@ -79,22 +142,19 @@ README.ja.txt README.en.txt: README.txt
  */
 clean:
 {
-	rm -f	users-guide.*.txt  users-guide.*.html
-		reference.*.txt reference.*.html
-		examples.*.txt  examples.*.html
-		calendar.html guide.d/'*'
+	rm -rf	users-guide.*.txt users-guide.*.html
+		reference.*.txt   reference.*.html
+		examples.*.txt 	  examples.*.html
 		README.*.txt
+		design.css design.html
+		calendar.html
+		guide.d
 		package.view package.xml
 		;
-
-	cd examples/border1 \;     make clean ;
-	cd examples/border2 \;     make clean ;
-	cd examples/border3 \;     make clean ;
-	cd examples/breadcrumbs \; make clean ;
-	cd examples/calendar \;    make clean ;
-	cd examples/form1 \;       make clean ;
-	cd examples/thumbnail \;   make clean ;
-
+	loop d = [examples]
+	{
+		cd [d] \; make clean;
+	}
 }
 
 
@@ -113,40 +173,13 @@ package.view: package.pdata package.plogic
  
 
 
-/*
- *  
- */
-
-examples = 
-	examples/border1
-	examples/border2
-	examples/border3
-	examples/breadcrumbs
-	examples/calendar
-	examples/form1
-	examples/thumbnail
-	;
-
-
-exam:
-{
-	cd examples/border1 \;     make clean ;
-	cd examples/border2 \;     make clean ;
-	cd examples/border3 \;     make clean ;
-	cd examples/breadcrumbs \; make clean ;
-	cd examples/calendar \;    make clean ;
-	cd examples/form1 \;       make clean ;
-	cd examples/thumbnail \;   make clean ;
-}
-
-
 
 /*
  *  archive
  */
 /*date = '2004-09-15';*/
 /*mydir = 'kwartz-php_'[date];*/
-mydir = KwartzPHP-0.2.0;
+mydir = KwartzPHP-[release];
 
 manuals = users-guide.en.html users-guide.ja.html reference.en.html reference.ja.html;
 texts   = README.en.txt README.ja.txt COPYING ChangeLog;
@@ -157,25 +190,26 @@ tgz: [manuals] [texts] package.php package.view
 	mkdir [mydir];
 
 	mkdir -p [mydir]/Kwartz;
-	cp Kwartz.php [mydir];
-	cp Kwartz/'*'.php [mydir]/Kwartz;
+	cp -a Kwartz.php [mydir];
+	cp -a Kwartz/'*'.php [mydir]/Kwartz;
 
-	cp kwartz-php mkmethod-php [mydir];
+	cp -a kwartz-php mkmethod-php [mydir];
 
 	mkdir [mydir]/doc;
-	cp [manuals] [mydir]/doc;
-	cp design.html design.css html-css.css [mydir]/doc;
+	cp -a [manuals] [mydir]/doc;
+	cp -a design.html design.css html-css.css [mydir]/doc;
 
 	cp -a examples [mydir];
 
 	cp -a test [mydir];
-	rm -rf [mydir]/.svn;
 
-	cp [texts] [mydir];
+	cp -a [texts] [mydir];
+
+	find [mydir] -name '.svn' | xargs rm -rf;
 
 	find [mydir] -type f | xargs chmod -R 644;
 	chmod 755 [mydir]/kwartz-php [mydir]/mkmethod-php;
-	
+
 	php -q package.php > package.xml;
 
 	tar czf [mydir].tgz package.xml [mydir];

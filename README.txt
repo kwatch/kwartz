@@ -46,8 +46,8 @@
 .	
 .EN	  .% Installation with PEAR Installer:
 .JA	  .% PEARインストーラを使う場合
-.EN		Just type 'pear install KwartzPHP*.tbz'.
-.JA		'pear install KwartzPHP*.tbz' とタイプするだけです。
+.EN		Just type 'pear install KwartzPHP*.tgz'.
+.JA		'pear install KwartzPHP*.tgz' とタイプするだけです。
 .EN		.====================
 .EN		$ su -
 .EN		# pear install KwartzPHP*.tgz

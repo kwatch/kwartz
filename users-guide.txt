@@ -10,7 +10,7 @@
 .	
 .	
 .JA	このドキュメントでは、テンプレートシステムKwartz-php{{(Kwartz-phpの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けています。)}}のユーザーズガイドです。
-.EN	This is the user's guide to Kwartz-php{{(Development of Kwartz-php is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
+.EN	This is the users' guide to Kwartz-php{{(Development of Kwartz-php is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
 .EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data.'
 .
 .	
@@ -755,10 +755,10 @@
 .	      V
 .	
 .	   echo "<table>\n";
-.	   {{*:foreach ($itemlist as $item) {*}}
-.	     {{*:expand(stag_list);*}}
-.	     {{*:expand(cont_list);*}}
-.	     {{*:expand(etag_list);*}}
+.	   {{*foreach ($itemlist as $item) {*}}
+.	     {{*expand(stag_list);*}}
+.	     {{*expand(cont_list);*}}
+.	     {{*expand(etag_list);*}}
 .	   {{*}*}}
 .	   echo "</table>\n";
 .	
@@ -769,9 +769,9 @@
 .	
 .	   echo "<table>\n";
 .	   foreach ($item as $item) {
-.	     {{*:echo " <tr id=\"list\">\n";*}}
-.	     {{*:echo "  <td>", $item, "</td>\n";*}}
-.	     {{*:echo " </tr>\n");*}}
+.	     {{*echo " <tr id=\"list\">\n";*}}
+.	     {{*echo "  <td>", $item, "</td>\n";*}}
+.	     {{*echo " </tr>\n");*}}
 .	   }
 .	   echo "</table>\n";
 .	
@@ -1126,7 +1126,7 @@
 .JA	●プレゼンテーションパターン	| pattern
 .EN	.$ Presentation Pattern		| pattern
 .	
-.JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を実現した初めてのテンプレートシステムです。
+.JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を初めて実現したテンプレートシステムです。
 .JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するためのテクニックが存在します。
 .JA	これは「プレゼンテーションパターン」と呼ばれます{{(「プレゼンテーションパターン」という名前がついていますが、これらのテクニックはプレゼンテーション層だけに限定されるわけではありません。しかし最もよく使われるのはプレゼンテーション層においてであるため、このような名前にしています。)}}。
 .JA	この章では、プレゼンテーションパターンをいくつか紹介します。
@@ -1939,7 +1939,7 @@
 .EN	Kwartz-php have a function to analyze presentation data/logic files and inspect variables.
 .	
 .JA	Kwartz-phpでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
-.JA	プレートの中でだけ使用される変数をローカル変数と呼んでいます。
+.JA	テンプレートの中でだけ使用される変数をローカル変数と呼んでいます。
 .JA	Kwartz-phpは、変数がグローバルかローカルかを調べて報告する機能があります。
 .EN	In Kwartz-php, variables are called Global variables if they are set in the main program and are passed to output script.
 .EN	Variables are called Local variables if they are used only in the template.

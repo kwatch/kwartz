@@ -1,0 +1,2 @@
+export PATH=$PATH:.
+export KWASER_PATH=$KWASER_PATH:$HOME/work/kuwata-lab

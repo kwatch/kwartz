@@ -1,0 +1,43 @@
+.=title:	Kwartz-php
+.#.?author:	kwa(at)kuwata-lab.com
+.#.?keywords:	kwartz,html,xml,template,Ruby,PHP,JSP,Velocity,eRuby,ERB,erbscan
+
+Welcome to the Kwartz-php home page.
+
+Kwartz-php is a template system which realized the concept 'Separation of Presentaion Logic and Presentation Data'.
+
+Kwartz-php has the following features.
+
+    .* Kwartz-php can separate presentation logic from a template.
+    .* Kwartz-php runs very fast.
+    .* Kwartz-php can be available in Ruby, PHP and Java.
+    .* Kwartz-php doesn't break HTML design at all.
+    .* Kwartz-php can handle any type of text file.
+    .* Kwartz-php can sanitize automatically.
+
+.#See {{<Brief Overview|kwartz-overview/index.php?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
+
+.% Download
+	.* {{<KwartzPHP-0.2.0.tgz>}}
+	.#.* {{<KwartzPHP-0.1.0.tgz>}}
+
+.% Documents
+	.* Users' Guide     ({{<English|users-guide.en.html>}} | {{<Japanese|users-guide.ja.html>}})
+	.* Reference Manual ({{<English|reference.en.html>}}   | {{<Japanese|reference.ja.html>}})
+
+.% License
+	.* {{<GNU General Public License|http://www.gnu.org/copyleft/gpl.html>}}
+
+.% Author
+	.* Makoto Kuwata <kwa(at)kuwata-lab.com>.^
+	   (If you send me a mail, please make it's title starting with '[Kwartz-php]'.
+	    If not, I may miss your mail.)
+
+.% Other
+	.* This project is subsidized by Exploratory Software Project of
+	   {{<IPA|http://www.ipa.go.jp/about/english/index.html>}}
+	   (Information-Technology Promotion Agency Japan).
+
+.#.% ChangeLog
+.#	See ChangeLog ({{<English|ChangeLog.en.html>}}/{{<Japanese|ChangeLog.ja.html>}}) for detail.
+

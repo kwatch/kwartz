@@ -1,0 +1,163 @@
+body	       {
+		/* background-color:#FFCC66; */
+		background-color:#FFFFFF;
+	       }
+.mainbody      {
+		color:#443333;
+		background-color:#FFFFFF;
+		line-height:150%;
+		margin: 10 20 10 40;
+	       }
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+	       }
+a:visited      {
+		color:#DD9900;
+	       }
+
+p	       {
+		color:#443333;
+		line-height:150%;
+	       }
+
+pre	       {
+		/* width: 97%; */
+		line-height:130%;
+		white-space:pre;
+	       }
+.terminal      {
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#665533;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+	       }
+.program       {
+		border-style:solid;
+		border-width:2;
+		border-color:#FFEEAA;
+		color:#665533;
+		background-color:#FFEEAA;
+		padding:8 9 8 9;
+		margin:0;
+	       }
+.output	       {
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC
+		color:#665533;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+	       }
+
+ul,ol,dl       {
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#443333;
+		line-height:130%;
+	       }
+
+.table1       {
+		padding:2;
+		color:#443333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+	       }
+.th1, .th2     {
+		padding:1;
+		color:#443333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+	       }
+.td1, .th2     {
+		padding:1;
+		color:#443333;
+		background-color:#EEEEDD;
+		line-height:130%;
+	       }
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#443333;
+	       }
+.table2	       {
+		padding:1;
+		color:#443333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+	       }
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		Xbackground-color:#FFCC66;
+		Xcolor:#FFFFFF;
+		Xcolor:#CC9933;
+		color:#885533;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+	       }
+h2, .section   {
+		Xfont-size:16pt;
+		color:#443333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#FFCC66;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+	       }
+h3, .subsection {
+		Xfont-size:12pt;
+		color:#443333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#FFCC66;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+	       }
+
+.em	       {
+		font-weight:bold;
+	       }
+
+.toc, .table_of_contents {
+		Xfont-size:10pt;
+		line-height:100%;
+	       }
+
+.figure	       {
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+	       }
+
+.note	       {
+		background-color: #FFFFDD;
+		border-style: solid;
+		border-width: 0 1 0 1;
+		border-color: #DDDD66;
+		color: #333300;
+		line-height:120%;
+		padding: 5 20 5 20;
+	       }
+.dt2	       {
+		font-weight:bold;
+	       }
+.footnote      {
+		font-size:small;
+	       }
+.navilink      {
+		font-size:large;
+		font-weight:bold;
+	       }
