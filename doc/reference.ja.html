@@ -108,6 +108,10 @@
     </li>
     <li><a href="#kd-placeholder">プレースホルダ</a>
     </li>
+    <li><a href="#kd-include">プレゼンテーションデータファイルの読み込み</a>
+    </li>
+    <li><a href="#kd-idkd">id属性とkw:d属性について</a>
+    </li>
     <li><a href="#kd-notes">注意事項</a>
     </li>
   </ul>
@@ -2039,6 +2043,109 @@ elseやelseifも使用できます。
 <br>
 
 
+<a name="kd-include"></a>
+<h3 class="section2">プレゼンテーションデータファイルの読み込み</h3>
+<p>「<code>id="include:<i>filename</i>"</code>」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
+読み込まれる側のファイルでも、ディレクティブを使用できます。
+</p>
+<p>プレゼンテーションデータ(copyright.html)：
+</p>
+<a name="copyright.html"></a>
+<pre class="program">&lt;!-- begin footer --&gt;
+&lt;center&gt;
+  copyright&amp;copy; &lt;span id="value:year"&gt;2005&lt;/span&gt; kuwata-lab all rights reserverd
+&lt;/center&gt;
+&lt;!-- end footer --&gt;
+</pre>
+<p>プレゼンテーションデータ(mainpage.html)：
+</p>
+<a name="mainpage.html"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    ... main contents ...
+
+    &lt;div id="include:copyright.html"&gt;
+      ... copyright ...
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">$ kwartz -l eruby mainpage.html &gt; mainpage.view
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+
+    ... main contents ...
+
+&lt;!-- begin footer --&gt;
+&lt;center&gt;
+  copyright&amp;copy; &lt;%= year %&gt; kuwata-lab all rights reserverd
+&lt;/center&gt;
+&lt;!-- end footer --&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>「<code>include</code>」ディレクティブのほかに、「<code>Include</code>」と「<code>INCLUDE</code>」が使用できます。
+</p>
+<ul type="disc">
+<li>「<code>include</code>」ディレクティブは、読み込んだファイルでそのエレメントを置き換えます。
+</li>
+<li>「<code>Include</code>」ディレクティブは、読み込んだファイルをそのエレメントの前に追加します。
+</li>
+<li>「<code>INCLUDE</code>」ディレクティブは、読み込んだファイルをそのエレメントの後ろに追加します。
+</li>
+</ul>
+<p><code>include</code>ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
+ファイルが置いてあるディレクトリは、コマンドラインオプション <code>--incdirs=<i>dir1</i>,<i>dir2</i>,...</code>
+または設定ファイルの <code>INCDIRS</code> で指定できます。
+</p>
+<br>
+
+
+<a name="kd-idkd"></a>
+<h3 class="section2">id属性とkw:d属性について</h3>
+<p>Kwartzでは、ディレクティブを記述するのにid属性とkw:d属性が使用できます。
+ここでは、両者の使い分けについて説明します。
+</p>
+<ul type="disc">
+<li>id属性もkw:d属性も、機能としては同じです。
+</li>
+</ul>
+<p>今までid属性で説明していましたが、すべてkw:d属性に書いても動作します。
+</p>
+<ul type="disc">
+<li>ひとつのタグにid属性とkw:d属性の両方を記述した場合、kw:d属性のほうが優先されます。
+   例えば「<code>id="name" kw:d="foreach:item=list"</code>」とした場合、kw:d属性のほうが有効となります。
+</li>
+</ul>
+<ul type="disc">
+<li>ただし、kw:d属性に記述したディレクティブが<code>attr</code>のみの場合は、
+   id属性のディレクティブも有効となります。
+   例えば「<code>id="name" kw:d="attr:href=url"</code>」とした場合、そのエレメントは名前<code>name</code>を使ってマーキングされます。
+</li>
+</ul>
+<ul type="disc">
+<li>HTMLの仕様では、id属性の値に含めることのできる記号はアンダーバー（<code>_</code>）、コロン（<code>:</code>）、ピリオド（<code>.</code>）、ハイフン（<code>-</code>）のみです。
+   そのため、<code>id="foreach:item=list"</code> や <code>id="attr:name=value"</code> という記述はHTMLの仕様からみると正しくありませんので、<code>id="foreach:item:list"</code> や <code>id="attr:name:value"</code> と書くほうがよいでしょう。
+</li>
+</ul>
+<ul type="disc">
+<li>kw:d属性の名前は、コマンドラインオプション <code>--dattr=<i>xxx</i></code> で変更することができます。
+   例えばkw:d属性のかわりにstyle属性を使う場合は、 --dattr=style としてください。
+   また設定ファイルの <code>DATTR</code> でも変更できます。
+</li>
+</ul>
+<br>
+
+
 <a name="kd-notes"></a>
 <h3 class="section2">注意事項</h3>
 <p>ディレクティブを使用する際の注意事項です。
@@ -2247,6 +2354,13 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+--incdirs=<i>dir1</i>,<i>dir2</i>,...</b></dt>
+<dd class="dd3">
+	<code>include</code>ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --odd=<i>value</i></b></dt>
 <dd class="dd3">
 	奇数のときの値。デフォルトは「<code>'odd'</code>」。ディレクティブFOREACHとLISTで使われる。
@@ -2356,7 +2470,7 @@ EVEN </b></dt>
 <dt class="dt3"><b>
 DATTR </b></dt>
 <dd class="dd3">
-	ディレクティブで使用する属性名を指定します。デフォルトはkw:dです。
+	ディレクティブで使用する属性名を指定します。デフォルトは<code>kw:d</code>です。
 </dd>
 </dl>
 <dl class="dl3">
@@ -2378,6 +2492,14 @@ CHARSET </b></dt>
 EMBED_PATTERN </b></dt>
 <dd class="dd3">
 	プレゼンテーションデータ中に式を埋め込むためのパターンを指定します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+INCDIRS </b></dt>
+<dd class="dd3">
+	「<code>include:</code>」ディレクティブで読み込むファイルを探すディレクトリを指定します。
+	デフォルトは [ "." ] つまりカレントディレクトリです。
 </dd>
 </dl>
 <br>

@@ -13,7 +13,7 @@ spec = Gem::Specification.new do |s|
   ## package information
   s.name        = 'kwartz-ruby'
   s.author      = 'Makoto Kuwata'
-  s.version     = ("$Release: 2.0.0 $" =~ /Release: (\S+)/) && $1
+  s.version     = ("$Release: 2.0.0-beta3 $" =~ /Release: ([\.\d]+)/) && $1
   s.platform    = Gem::Platform::RUBY
   s.homepage    = 'http://www.kuwata-lab.com/kwartz'
   s.summary     = "a template system for Ruby, PHP, and Java"

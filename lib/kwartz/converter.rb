@@ -422,7 +422,7 @@ module Kwartz
                basename = $1
             end
 
-            pathlist = @properties[:include_dirs] || Kwartz::Config::INCLUDE_DIRS || ['.']
+            pathlist = @properties[:incdirs] || Kwartz::Config::INCDIRS || ['.']
             filename = nil
             pathlist.each do |path|
                filename = path + '/' + basename

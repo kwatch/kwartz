@@ -4,6 +4,10 @@
 .?lastupdate:	$Date$
 
 .: 2005-03-06 rev.51
+	.- [change] --include-dirs is renamed to --incdirs
+	.- [change] users' guide and reference manual updated
+
+.: 2005-03-06 rev.51
 	.- [enhance] include directive support
 	.- [bugfix] filename is not reported when error happened in Convertion
 

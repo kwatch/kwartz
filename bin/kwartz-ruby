@@ -125,7 +125,7 @@ module Kwartz
          end
 
          ## properties which requires a list as value
-         [ :noend, :include_dirs ].each do |key|
+         [ :noend, :incdirs ].each do |key|
             next unless properties.key?(key)
             properties[key] = properties[key].split(/,/)
          end

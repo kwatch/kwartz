@@ -1821,7 +1821,7 @@ END
            pdata.gsub!(/^\t\t/, '')
            Dir.mkdir(dirname)
            File.open(dirname + "/" + filename, 'w') { |f| f.write(pdata) }
-           _test_convert(input, expected, { :include_dirs => [ '.', dirname ] })
+           _test_convert(input, expected, { :incdirs => [ '.', dirname ] })
         ensure
            File.delete(dirname + "/" + filename)
            Dir.rmdir(dirname)

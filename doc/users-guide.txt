@@ -30,6 +30,8 @@
 .JA	.#¡ı¹¹¿·ÍúÎò		| changelog*
 .EN	.#.$$ Changelog		| changelog*
 .	.#
+.	.#.: 2005-03-07
+.	.#	.- beta3 release
 .	.#.: 2005-02-19
 .	.#	.- beta2 release
 .	.#.: 2005-02-14

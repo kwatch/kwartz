@@ -108,6 +108,10 @@ in this document.
     </li>
     <li><a href="#kd-placeholder">Placeholder</a>
     </li>
+    <li><a href="#kd-include">Including Presentation Data Files</a>
+    </li>
+    <li><a href="#kd-idkd">id and kw:d Attributes</a>
+    </li>
     <li><a href="#kd-notes">Notes</a>
     </li>
   </ul>
@@ -2061,6 +2065,109 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 <br>
 
 
+<a name="kd-include"></a>
+<h3 class="section2">Including Presentation Data Files</h3>
+<p><code>id="include:<i>filename</i>"</code> is a directive to read and to include another presentation data file (HTML file).
+Included data file can contain directives.
+</p>
+<p>Presentation Data (copyright.html) :
+</p>
+<a name="copyright.html"></a>
+<pre class="program">&lt;!-- begin footer --&gt;
+&lt;center&gt;
+  copyright&amp;copy; &lt;span id="value:year"&gt;2005&lt;/span&gt; kuwata-lab all rights reserverd
+&lt;/center&gt;
+&lt;!-- end footer --&gt;
+</pre>
+<p>Presentation Data (mainpage.html) :
+</p>
+<a name="mainpage.html"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    ... main contents ...
+
+    &lt;div id="include:copyright.html"&gt;
+      ... copyright ...
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz -l eruby mainpage.html &gt; mainpage.view
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+
+    ... main contents ...
+
+&lt;!-- begin footer --&gt;
+&lt;center&gt;
+  copyright&amp;copy; &lt;%= year %&gt; kuwata-lab all rights reserverd
+&lt;/center&gt;
+&lt;!-- end footer --&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>'<code>Include</code>' and '<code>INCLUDE</code>' directives are also available.
+</p>
+<ul type="disc">
+<li>'<code>include</code>' directive replaces the element by presentation data included.
+</li>
+<li>'<code>Include</code>' directive inserts the presentation data included before the element.
+</li>
+<li>'<code>INCLUDE</code>' directive inserts the presentation data included after the element.
+</li>
+</ul>
+<p>When presentation data files to be included are placed in other directories,
+you can specify those directories with the command-line option <code>--incdirs=<i>dir1</i>,<i>dir2</i>,...</code>
+or the constant <code>INCDIRS</code> in configuration file.
+</p>
+<br>
+
+
+<a name="kd-idkd"></a>
+<h3 class="section2">id and kw:d Attributes</h3>
+<ul type="disc">
+<li>The kw:d attribute is equivalent to the id attribute in Kwartz.
+   Anything that can go in an id attribute can also be placed in a kw:d attribute.
+</li>
+</ul>
+<ul type="disc">
+<li>If a tag has both an id attribute and a kw:d attribte,
+   Kwartz overrides the former with the latter.
+   For example, if you write '<code>id="name" kw:d="foreach:item=list"</code>',
+</li>
+</ul>
+<ul type="disc">
+<li>However, if the kw:d attribute has only <code>attr</code> directives,
+   then the id attribute is not overwritten.
+   For example, if you write '<code>id="name" kw:d="attr:href=url"</code>,
+   the element is marked with the name <code>name</code>.
+</li>
+</ul>
+<ul type="disc">
+<li>The HTML Specification defines that the id attribute value can contain only alphanumeric characters, underscores (<code>_</code>), colons(<code>:</code>), hyphens(<code>-</code>) and periods(<code>.</code>).
+   Other characters cannot be in the id attribute.
+   This means that <code>id="foreach:item=list"</code> or <code>id="attr:name=value"</code> are not valid according to the HTML Specification.
+   Therefore, it is recommended to write <code>id="foreach:item:list"</code> or <code>id="attr:name:value"</code> instead.
+</li>
+</ul>
+<ul type="disc">
+<li>You can change the kw:d attribte name with the command-line option <code>--dattr=<i>xxx</i></code>.
+   For example, <code>--dattr=style</code> make Kwartz to use 'style' attributes instead of 'kw:d' attributes.
+   Constant <code>DATTR</code> in configuration file also enables you to change 'kw:d' attribute name.
+</li>
+</ul>
+<br>
+
+
 <a name="kd-notes"></a>
 <h3 class="section2">Notes</h3>
 <p>These are some notes on the use of directives.
@@ -2269,6 +2376,13 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+--incdirs=<i>dir1</i>,<i>dir2</i>,...</b></dt>
+<dd class="dd3">
+	Specify directories from which '<code>include</code>' directive includes.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --odd=<i>value</i></b></dt>
 <dd class="dd3">
 	Odd value. Default is <code>'odd'</code>. Directives FOREACH and LIST will use this value.
@@ -2378,7 +2492,7 @@ EVEN </b></dt>
 <dt class="dt3"><b>
 DATTR </b></dt>
 <dd class="dd3">
-	Specify an attribute name for directives. Default is 'kw:d'.
+	Specify an attribute name for directives. Default is '<code>kw:d</code>'.
 </dd>
 </dl>
 <dl class="dl3">
@@ -2400,6 +2514,14 @@ CHARSET </b></dt>
 EMBED_PATTERN </b></dt>
 <dd class="dd3">
 	Specify a pattern to embed expression into presentation data.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+INCDIRS </b></dt>
+<dd class="dd3">
+	Specify a list of directories from which '<code>include</code>' directive includes.
+	Default is [ "." ].
 </dd>
 </dl>
 <br>

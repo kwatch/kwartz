@@ -22,8 +22,8 @@ module Kwartz
       ODD             = "'odd'"
       EVEN            = "'even'"
       DATTR           = "kw:d"
+      INCDIRS         = [ '.' ]      # directories from which 'include' directive includes
       EMBED_PATTERN   = /@\{(.*?)\}@/  # or /\#\{(.*?)\}\#/
-      INCLUDE_DIRS    = [ '.' ]        # ex. [ '.', '/project/plogic', '/home/user/plogic' ]
       
       ## converter & element
       NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]

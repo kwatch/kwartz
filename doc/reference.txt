@@ -33,6 +33,8 @@
 .JA	.#◎更新履歴		| changelog*
 .EN	.#.$$ ChangeLog		| changelog*
 .	.#
+.	.#.: 2005-03-07
+.	.#	.- beta3 release
 .	.#.: 2005-02-19
 .	.#	.- beta2 release
 .	.#.: 2005-02-14
@@ -1662,51 +1664,94 @@
 .	
 .	
 .	
-.JA	.#◎プレゼンテーションデータファイルの読み込み	| kd-include
-.EN	.#.$$ Including Presentation Data Files		| kd-include
-.	.#
-.	.#
-.JA	.#「{{,id="include:{{/filename/}}",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
-.JA	.#.#通常は{{,<span/>,}}タグを使用して「{{,<span id="include:{{/filename/}}"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
-.EN	.#{{,id="include:{{/filename/}}",}} is a directive to read and to include another presentation data file (HTML file).
-.EN	.#.#Usually, the {{,<span/>,}} tag is used, like such: {{,<span id="include:{{/filename/}}"/>,}}.	
-.EN	.#.#(In Kwartz, {{,<span>,}} tags which contain only directives are deleted automatically.)
-.	.#
-.	.#
-.JA	.#プレゼンテーションデータ(tab.html)：
-.EN	.#Presentation Data (tab.html) :
-.	.#.-------------------- tab.html
+.JA	◎プレゼンテーションデータファイルの読み込み	| kd-include
+.EN	.$$ Including Presentation Data Files		| kd-include
+.	
+.	
+.JA	「{{,id="include:{{/filename/}}",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
+.JA	読み込まれる側のファイルでも、ディレクティブを使用できます。
+.JA	.#通常は{{,<span/>,}}タグを使用して「{{,<span id="include:{{/filename/}}"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
+.EN	{{,id="include:{{/filename/}}",}} is a directive to read and to include another presentation data file (HTML file).
+.EN	Included data file can contain directives.
+.EN	.#Usually, the {{,<span/>,}} tag is used, like such: {{,<span id="include:{{/filename/}}"/>,}}.	
+.EN	.#(In Kwartz, {{,<span>,}} tags which contain only directives are deleted automatically.)
+.	
+.	
+.JA	プレゼンテーションデータ(copyright.html)：
+.EN	Presentation Data (copyright.html) :
+.	.-------------------- copyright.html
 .	.#<span style="border-width:1 1 0 1; border-style:solid; padding:1 5 1 5">
 .	.#  <a href="@{tab['url']}@" style="text-decoration:none">@{tab['name']}@</a>
 .	.#</span>
-.	.#.--------------------
-.	.#
-.JA	.#プレゼンテーションデータ(tab-main.html)：
-.EN	.#Presentation Data (tab-main.html) :
-.	.#.-------------------- tab-main.html
+.	<!-- begin footer -->
+.	<center>
+.	  copyright&copy; <span id="value:year">2005</span> kuwata-lab all rights reserverd
+.	</center>
+.	<!-- end footer -->
+.	.--------------------
+.	
+.JA	プレゼンテーションデータ(mainpage.html)：
+.EN	Presentation Data (mainpage.html) :
+.	.-------------------- mainpage.html
+.	<html>
+.	  <body>
+.	
+.	    ... main contents ...
+.	
+.	    <div id="include:copyright.html">
+.	      ... copyright ...
+.	    </div>
+.	
+.	  </body>
+.	</html>
 .	.#<div id="loop:tab=tablist">
 .	.#  <span {{*kd:php="include:tab.html"*}}/>
 .	.#</div>
-.	.#.--------------------
-.	.#
+.	.--------------------
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ kwartz -l eruby mainpage.html > mainpage.view
+.	.====================
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! ./output.rb -l eruby --incdirs=guide.d guide.d/mainpage.html
+.	.--------------------
+.	
 .JA	.#中間コード：
 .EN	.#Intermediate Code:
 .	.#.____________________
 .	.#.<<<:! kwartz -a convert --include-path=guide.d guide.d/tab-main.html
 .	.#.____________________
-.	.#
-.	.#
-.JA	.#{{,include,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
-.JA	.#ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--include-path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
-.EN	.#When presentation data files to be included are placed in other directories,
-.EN	.#you can specify those directories with the command-line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
-.EN	.#.#Presentation data files included are to be placed in other directory.
-.EN	.#.#You can specify directories with a command line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
+.	
+.	
+.JA	「{{,include,}}」ディレクティブのほかに、「{{,Include,}}」と「{{,INCLUDE,}}」が使用できます。
+.JA	.* 「{{,include,}}」ディレクティブは、読み込んだファイルでそのエレメントを置き換えます。
+.JA	.* 「{{,Include,}}」ディレクティブは、読み込んだファイルをそのエレメントの前に追加します。
+.JA	.* 「{{,INCLUDE,}}」ディレクティブは、読み込んだファイルをそのエレメントの後ろに追加します。
+.EN	'{{,Include,}}' and '{{,INCLUDE,}}' directives are also available.
+.EN	.* '{{,include,}}' directive replaces the element by presentation data included.
+.EN	.* '{{,Include,}}' directive inserts the presentation data included before the element.
+.EN	.* '{{,INCLUDE,}}' directive inserts the presentation data included after the element.
+.	
+.	
+.	
+.JA	{{,include,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
+.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--incdirs={{/dir1/}},{{/dir2/}},...,}}
+.JA	または設定ファイルの {{,INCDIRS,}} で指定できます。
+.EN	When presentation data files to be included are placed in other directories,
+.EN	you can specify those directories with the command-line option {{,--incdirs={{/dir1/}},{{/dir2/}},...,}}
+.EN	or the constant {{,INCDIRS,}} in configuration file.
+.EN	.#Presentation data files included are to be placed in other directory.
+.EN	.#You can specify directories with a command line option {{,--incdirs={{/dir1/}},{{/dir2/}},...,}}.
 .	.#
 .	.#.====================
 .	.#$ kwartz --include-path=dir1,dir2 tab-main.html
 .	.#.====================
-.	.#
+.	
 .	
 .	
 .	
@@ -1790,64 +1835,71 @@
 .	
 .	
 .	
-.JA	.#◎id属性とkw:d属性について	| kd-idkd
-.EN	.#.$$ id and kw:d Attributes	| kd-idkd
-.	.#
-.	.#
-.JA	.#Kwartzでは、ディレクティブを記述するのにid属性とkw:d属性が使用できます。
-.JA	.#ここでは、両者の使い分けについて説明します。
-.	.#
-.	.#
-.JA	.#.* id属性もkw:d属性も、機能としては同じです。
-.JA	.#今までid属性で説明していましたが、すべてkw:d属性に書いても動作します。
-.EN	.#.* The kw:d attribute is equivalent to the id attribute in Kwartz.
-.EN	.#   Anything that can go in an id attribute can also be placed in a kw:d attribute.
-.	.#
-.	.#
-.JA	.#.* ひとつのタグにid属性とkw:d属性の両方を記述した場合、kw:d属性のほうが優先されます。
-.JA	.#   例えば「{{,id="name" kw:d="foreach:item=list",}}」とした場合、kw:d属性のほうが有効となります。
-.EN	.#.* If a tag has both an id attribute and a kw:d attribte,
-.EN	.#   Kwartz overrides the former with the latter.
-.EN	.#   For example, if you write '{{,id="name" kw:d="foreach:item=list",}}',
-.#N	.#    the kw:d attribute is enabled but not the id attribute.
-.	.#
-.	.#
-.JA	.#.* ただし、kw:d属性に記述したディレクティブが{{,attr,}}のみの場合は、
-.JA	.#   id属性のディレクティブも有効となります。
-.JA	.#   例えば「{{,id="name" kw:d="attr:href=url",}}」とした場合、そのエレメントは名前{{,name,}}を使ってマーキングされます。
-.EN	.#.* However, if the kw:d attribute has only {{,attr,}} directives,
-.EN	.#   then the id attribute is not overwritten.
-.EN	.#   For example, if you write '{{,id="name" kw:d="attr:href=url",}},
-.EN	.#   the element is marked with the name {{,name,}}.
-.	.#
-.	.#
-.JA	.#.* HTMLの仕様では、id属性の値に含めることのできる記号はアンダーバー（{{,_,}}）、コロン（{{,:,}}）、ピリオド（{{,.,}}）、ハイフン（{{,-,}}）のみです。
-.JA	.#   そのため、{{,id="foreach:item=list",}} や {{,id="attr:name=value",}} という記述はHTMLの仕様からみると正しくありませんので、{{,id="foreach:item:list",}} や {{,id="attr:name:value",}} と書くほうがよいでしょう。
-.JA	.#   .#そのため、{{,id="foreach:item=list",}} や {{,id="value:item['user']",}} という記述は、HTMLの仕様からみると正しくありません。ご注意ください。
-.EN	.#.* The HTML Specification defines that the id attribute value can contain only alphanumeric characters, underscores ({{,_,}}), colons({{,:,}}), hyphens({{,-,}}) and periods({{,.,}}).
-.EN	.#   Other characters cannot be in the id attribute.
-.EN	.#   This means that {{,id="foreach:item=list",}} or {{,id="attr:name=value",}} are not valid according to the HTML Specification.
-.EN	.#   Therefore, it is recommended to write {{,id="foreach:item:list",}} or {{,id="attr:name:value",}} instead.
-.EN	.#   .#It means that {{,id="foreach:item=list",}} or {{,id="value:item['user'],}} is not valid in HTML specification.
-.EN	.#   .#You should remember it.
-.	.#
-.	.#
+.JA	◎id属性とkw:d属性について	| kd-idkd
+.EN	.$$ id and kw:d Attributes	| kd-idkd
+.	
+.	
+.JA	Kwartzでは、ディレクティブを記述するのにid属性とkw:d属性が使用できます。
+.JA	ここでは、両者の使い分けについて説明します。
+.	
+.	
+.JA	.* id属性もkw:d属性も、機能としては同じです。
+.JA	今までid属性で説明していましたが、すべてkw:d属性に書いても動作します。
+.EN	.* The kw:d attribute is equivalent to the id attribute in Kwartz.
+.EN	   Anything that can go in an id attribute can also be placed in a kw:d attribute.
+.	
+.	
+.JA	.* ひとつのタグにid属性とkw:d属性の両方を記述した場合、kw:d属性のほうが優先されます。
+.JA	   例えば「{{,id="name" kw:d="foreach:item=list",}}」とした場合、kw:d属性のほうが有効となります。
+.EN	.* If a tag has both an id attribute and a kw:d attribte,
+.EN	   Kwartz overrides the former with the latter.
+.EN	   For example, if you write '{{,id="name" kw:d="foreach:item=list",}}',
+.#N	    the kw:d attribute is enabled but not the id attribute.
+.	
+.	
+.JA	.* ただし、kw:d属性に記述したディレクティブが{{,attr,}}のみの場合は、
+.JA	   id属性のディレクティブも有効となります。
+.JA	   例えば「{{,id="name" kw:d="attr:href=url",}}」とした場合、そのエレメントは名前{{,name,}}を使ってマーキングされます。
+.EN	.* However, if the kw:d attribute has only {{,attr,}} directives,
+.EN	   then the id attribute is not overwritten.
+.EN	   For example, if you write '{{,id="name" kw:d="attr:href=url",}},
+.EN	   the element is marked with the name {{,name,}}.
+.	
+.	
+.JA	.* HTMLの仕様では、id属性の値に含めることのできる記号はアンダーバー（{{,_,}}）、コロン（{{,:,}}）、ピリオド（{{,.,}}）、ハイフン（{{,-,}}）のみです。
+.JA	   そのため、{{,id="foreach:item=list",}} や {{,id="attr:name=value",}} という記述はHTMLの仕様からみると正しくありませんので、{{,id="foreach:item:list",}} や {{,id="attr:name:value",}} と書くほうがよいでしょう。
+.JA	   .#そのため、{{,id="foreach:item=list",}} や {{,id="value:item['user']",}} という記述は、HTMLの仕様からみると正しくありません。ご注意ください。
+.EN	.* The HTML Specification defines that the id attribute value can contain only alphanumeric characters, underscores ({{,_,}}), colons({{,:,}}), hyphens({{,-,}}) and periods({{,.,}}).
+.EN	   Other characters cannot be in the id attribute.
+.EN	   This means that {{,id="foreach:item=list",}} or {{,id="attr:name=value",}} are not valid according to the HTML Specification.
+.EN	   Therefore, it is recommended to write {{,id="foreach:item:list",}} or {{,id="attr:name:value",}} instead.
+.EN	   .#It means that {{,id="foreach:item=list",}} or {{,id="value:item['user'],}} is not valid in HTML specification.
+.EN	   .#You should remember it.
+.	
+.	
 .JA	.#.* kw:d属性は、HTMLの仕様にはない独自の属性です。
-.JA	.#   そのため、そのままでは{{<W3C Markup Vaidation Service|http://validator.w3.org>}}のようなHTML検証ツールでエラーとなります。
-.JA	.#   そこで、kw:d属性を取り除いたうえで{{<W3C Markup Vaidation Service|http://validator.w3.org>}}に送信するCGI/PHPスクリプトを用意しました。
+.JA	.#   そのため、そのままでは {{<W3C Markup Vaidation Service|http://validator.w3.org>}} 
+.JA	.#   のようなHTML検証ツールでエラーとなります。
+.JA	.#   そこで、kw:d属性を取り除いたうえで {{<W3C Markup Vaidation Service|http://validator.w3.org>}} 
+.JA	.#   に送信するCGI/PHPスクリプトを用意しました。
 .JA	.#   スクリプトはKwartzのアーカイブの中に含まれています。
 .JA	.#   また{{<こちら|<http://www.kuwata-ab.com/webtech/kwartz/validator.php>}}でも実行できます。
 .EN	.#.* The kw:d attribute is unique to Kwartz and it is not in the HTML Specification.
-.EN	.#   So, you will get errors when you use {{<W3C Markup Vaidation Service|http://validator.w3.org>}} with HTML files which contain kw:d attributes.
-.EN	.#   Kwartz gives you a CGI/PHP script which deletes kw:d attributes from your HTML file and then sends it to {{<W3C Markup Vaidation Service|http://validator.w3.org>}}.
-.EN	.#   They are included in the Kwartz archive, and is available at {{<here|<http://www.kuwata-ab.com/kwartz/validator.php>}}.
-.	.#
-.	.#
-.JA	.#.* kw:d属性の名前は、コマンドラインオプション {{,--attr-name={{/xxx/}},}} で変更することができます。
-.JA	.#   例えばkw:d属性のかわりにstyle属性を使う場合は、 --attr-name=style としてください。
-.EN	.#.* You can change the kw:d attribte name with the command-line option {{,--attr-name={{/xxx/}},}}.
-.EN	.#   For example, {{,--attr-name=style,}} make Kwartz to use 'style' attributes instead of 'kw:d' attributes.
-.	.#
+.EN	.#   So, you will get errors when you use {{<W3C Markup Vaidation Service|http://validator.w3.org>}}
+.EN	.#   with HTML files which contain kw:d attributes.
+.EN	.#   Kwartz gives you a CGI/PHP script which deletes kw:d attributes from your HTML file and then
+.EN	.#   sends it to {{<W3C Markup Vaidation Service|http://validator.w3.org>}}.
+.EN	.#   They are included in the Kwartz archive, and is available at
+.EN	.#   {{<here|<http://www.kuwata-ab.com/kwartz/validator.php>}}.
+.	
+.	
+.JA	.* kw:d属性の名前は、コマンドラインオプション {{,--dattr={{/xxx/}},}} で変更することができます。
+.JA	   例えばkw:d属性のかわりにstyle属性を使う場合は、 --dattr=style としてください。
+.JA	   また設定ファイルの {{,DATTR,}} でも変更できます。
+.EN	.* You can change the kw:d attribte name with the command-line option {{,--dattr={{/xxx/}},}}.
+.EN	   For example, {{,--dattr=style,}} make Kwartz to use 'style' attributes instead of 'kw:d' attributes.
+.EN	   Constant {{,DATTR,}} in configuration file also enables you to change 'kw:d' attribute name.
+.	
 .	
 .	
 .	
@@ -2090,12 +2142,11 @@
 .JA		出力用スクリプトのインデントを指定する。
 .EN		Specifies the indent space of output script.
 .	
+.	.[--incdirs={{/dir1/}},{{/dir2/}},...]
+.JA		{{,include,}}ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
+.EN		Specify directories from which '{{,include,}}' directive includes.
 .	
-.	.#.[--include-path={{/dir1/}},{{/dir2/}}],...
-.JA	.#	{{,include,}}ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
-.EN	.#	Specify directories from which '{{,include,}}' directive includes.
-.	
-.	.#.[--load-path={{/dir1/}},{{/dir2/}}],...
+.	.#.[--load-dirs={{/dir1/}},{{/dir2/}},...]
 .JA	.#	{{,load,}}ディレクティブや{{,:load(),}}文で読み込むファイル（プレゼンテーションロジックファイル）のディレクトリを指定する。
 .EN	.#	Specify directories from which '{{,load,}}' directive or {{,:load(),}} statement loads.
 .	
@@ -2199,8 +2250,8 @@
 .EN		This is used by {{,id="FOREACH:{{/var/}}={{/list/}}",}} and {{,id="LOOP:{{/var/}}={{/list/}}",}}.
 .	
 .	.[ DATTR ]
-.JA		ディレクティブで使用する属性名を指定します。デフォルトはkw:dです。
-.EN		Specify an attribute name for directives. Default is 'kw:d'.
+.JA		ディレクティブで使用する属性名を指定します。デフォルトは{{,kw:d,}}です。
+.EN		Specify an attribute name for directives. Default is '{{,kw:d,}}'.
 .	
 .	.[ NOEND ]
 .JA		終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。
@@ -2213,6 +2264,12 @@
 .	.[ EMBED_PATTERN ]
 .JA		プレゼンテーションデータ中に式を埋め込むためのパターンを指定します。
 .EN		Specify a pattern to embed expression into presentation data.
+.	
+.	.[ INCDIRS ]
+.JA		「{{,include:,}}」ディレクティブで読み込むファイルを探すディレクトリを指定します。
+.JA		デフォルトは [ "." ] つまりカレントディレクトリです。
+.EN		Specify a list of directories from which '{{,include,}}' directive includes.
+.EN		Default is [ "." ].
 .	
 .	
 .	

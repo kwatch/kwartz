@@ -1,9 +1,9 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 
 filename = nil
 ENV['PATH'].split(/:/).each do |path|
-   filename = "#{path}/kwartz"
+   filename = "#{path}/kwartz-ruby"
    break if test(?f, filename)
    filename = nil
 end

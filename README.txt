@@ -91,9 +91,9 @@
 .EN		Readme file (in English/Japanese).
 .JA		Readmeファイル（英語、日本語）
 .		
-.	  .% bin/kwartz
-.EN		Command file
-.JA		コマンドファイル
+.	  .% bin/kwartz, bin/kwartz-ruby
+.EN		Command file.  'bin/kwartz' only invokes 'bin/kwartz-ruby'.
+.JA		コマンドファイル。「bin/kwartz」は「bin/kwartz-ruby」を呼び出すだけ。
 .		
 .	  .% lib/kwartz.rb, lib/kwartz/*
 .EN		Library files.
