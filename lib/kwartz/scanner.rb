@@ -11,7 +11,7 @@ module Kwartz
 
    class ScanError < BaseError
       def initialize(errmsg, linenum, filename)
-	 super(errmsg, linenum, filename)
+         super(errmsg, linenum, filename)
       end
    end
 
@@ -70,31 +70,27 @@ module Kwartz
 
 
       @@keywords = {
-         ':end'	     =>	   :end,
+         'expand'   =>   :expand,
+         'element'  =>   :element,
+         'value:'   =>   :value,
+         'attr:'    =>   :attr,
+         'append:'  =>   :append,
+         'remove:'  =>   :remove,
+         'tagname:' =>   :tagname,
 
-         ':macro'    =>	   :macro,
-         ':expand'   =>	   :expand,
-         ':elem'     =>	   :elem,
-         ':element'  =>	   :element,
+         'print'    =>   :print,
+         'while'    =>   :while,
+         'foreach'  =>   :foreach,
+         'in'       =>   :in,
+         'if'       =>   :if,
+         'else'     =>   :else,
+         'elseif'   =>   :elseif,
+         'require'  =>   :require,
 
-         ':print'    =>	   :print,
-         ':set'	     =>	   :set,
-         ':while'    =>	   :while,
-         ':foreach'  =>	   :foreach,
-         ':load'     =>	   :load,
-         ':rawcode'  =>	   :rawcode,
-         ':rubycode' =>	   :rubycode,
-
-         ':if'	     =>	   :if,
-         ':else'     =>	   :else,
-         ':elsif'    =>	   :elsif,
-         ':elseif'   =>	   :elseif,
-
-         'true'	     =>	   :true,
-         'false'     =>	   :false,
-         'null'	     =>	   :null,
-         'nil'	     =>	   :null,
-         'empty'     =>	   :empty,
+         'true'	    =>   :true,
+         'false'    =>   :false,
+         'null'	    =>   :null,
+         'empty'    =>   :empty,
       }
 
 
@@ -219,26 +215,11 @@ module Kwartz
          ##
          if ch == ?:
             ch = getchar()
-            if ch == ?:
-               if (ch = getchar()) == ?:
-                  getchar()
-                  return @token = ':::'
-               else
-                  return @token = '::'
-               end
-            end
-            if (is_alpha(ch))
-               s = ':' + ch.chr
-               while (ch = getchar()) != nil && is_alpha(ch)
-                  s << ch.chr
-               end
-               unless @@keywords[s]
-                  msg = "'#{s}': invalid keyword."
-                  raise ScanError.new(msg, @linenum, @filename)
-               end
-               return @token = @@keywords[s]
-            end
-            return ':'
+            return ':' if ch != ?:
+            ch = getchar()
+            return '::' if ch != ?:
+            getchar()
+            return ':::'
          end
 
          ##
@@ -248,7 +229,14 @@ module Kwartz
                s << ch.chr
             end
             @value = s
-            @token = (w = @@keywords[s]) != nil ? w : :name
+            
+            if w = @keywords[@token]
+               @token = w
+            elsif ch == ?: && (w = @keywords[@token + ':'])
+               @token = w
+            else
+               @token = :name
+            end
             return @token
          end
 
