@@ -44,7 +44,11 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     protected $nl = "\n";			// newline char ("\n" or "\r\n")
     protected $indent_spaces;
     protected $max_depth;
-    protected $priorities = array(
+    protected $flag_supress_begin = FALSE;	// supress BEGIN macro
+    protected $flag_supress_end   = FALSE;	// supress END macro
+    
+    // class vars
+    static $priorities = array(
         'variable' => 100,
         'number'   => 100,
         'boolean'  => 100,
@@ -93,7 +97,7 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         '.+='	   =>  10,
         );
     
-    protected $dispatcher = array(
+    static $dispatcher = array(
         // expression
         'KwartzUnaryExpression'	      => 'translate_unary_expression',
         'KwartzBinaryExpression'      => 'translate_binary_expression',
@@ -161,7 +165,7 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     
     //function translate_node($expr_or_stmt, $depth) {
     //	$class_name = get_class($expr_or_stmt);
-    //	$method_name = $this->dispatcher[$class_name];
+    //	$method_name = KwartzBaseTranslator::$dispatcher[$class_name];
     //	return $this->$method_name($expr_or_stmt, $depth);
     //}
     
@@ -235,12 +239,12 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     
     function translate_expression($expr) {
         $class_name = get_class($expr);
-        $method_name = $this->dispatcher[$class_name];
+        $method_name = KwartzBaseTranslator::$dispatcher[$class_name];
         $this->$method_name($expr);
     }
     
     protected function translate_expr($expr, $parent_token, $child_token) {
-        if ($this->priorities[$parent_token] > $this->priorities[$child_token]) {
+        if (KwartzBaseTranslator::$priorities[$parent_token] > KwartzBaseTranslator::$priorities[$child_token]) {
             $this->code .= '(';
             $this->translate_expression($expr);
             $this->code .= ')';
@@ -367,7 +371,7 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     
     function translate_statement($stmt, $depth) {
         $class_name = get_class($stmt);
-        $method_name = $this->dispatcher[$class_name];
+        $method_name = KwartzBaseTranslator::$dispatcher[$class_name];
         if (! is_string($method_name)) {
             throw new exception();
         }

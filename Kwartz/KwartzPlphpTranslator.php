@@ -64,6 +64,13 @@ class KwartzPlphpTranslator extends KwartzBaseTranslator {
         );
     
     function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+        if ($toppings == NULL) {
+            $toppings = array();
+        }
+        if (!array_key_exists('indent_width', $toppings)
+            || $toppings['indent_width'] == 0) {
+            $toppings['indent_width'] = 2;
+        }
         parent::__construct($block, $flag_escape, $toppings);
         $this->flag_supress_begin = TRUE;
         $this->flag_supress_end   = TRUE;

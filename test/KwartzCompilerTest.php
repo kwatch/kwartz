@@ -46,7 +46,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, $toppings, FALSE);
 	}
 	
-	function _test_escape($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
+	function _test_escape($pdata, $plogic, $expected, $lang, $flag_test=TRUE, $toppings=NULL) {
 		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, $toppings, TRUE);
 	}
 

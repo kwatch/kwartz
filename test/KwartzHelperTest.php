@@ -79,7 +79,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 	
 	function test_compile_template1() {	# output script is not exist
 		unlink($this->output_filename);
-		kwartz_compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->output;
@@ -89,7 +89,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 	function test_compile_template2() {	# output script is the newest
 		sleep(1);
 		touch($this->output_filename);
-		kwartz_compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->dummy;
@@ -99,7 +99,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 	function test_compile_template3() {	# output script is older than pdata file
 		sleep(1);
 		touch($this->pdata_filename);
-		kwartz_compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->output;
@@ -109,7 +109,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 	function test_compile_template4() {	# output script is older than plogic file
 		sleep(1);
 		touch($this->plogic_filename);
-		kwartz_compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, $this->plogic_filename, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->output;
@@ -119,7 +119,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 	function test_compile_template5() {	# plogic and output is not exist
 		unlink($this->plogic_filename);
 		unlink($this->output_filename);
-		kwartz_compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->output_without_plogic;
@@ -132,7 +132,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 		touch($this->pdata_filename);
 		//echo "*** debug: filemtime(pdata_filename)="  , filemtime($this->pdata_filename) ,"\n";
 		//echo "*** debug: filemtime(output_filename)=" , filemtime($this->output_filename) , "\n";
-		kwartz_compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->output_without_plogic;
@@ -145,7 +145,7 @@ class KwartzHelperTest extends PHPUnit_TestCase {
 		touch($this->output_filename);
 		//echo "*** debug: filemtime(pdata_filename)="  , filemtime($this->pdata_filename) ,"\n";
 		//echo "*** debug: filemtime(output_filename)=" , filemtime($this->output_filename) , "\n";
-		kwartz_compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
+		KwartzHelper::compile_template($this->pdata_filename, NULL, $this->output_filename, FALSE);
 		$output = file_get_contents($this->output_filename);
 		//echo $output;
 		$expected = $this->dummy;

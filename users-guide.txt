@@ -119,7 +119,7 @@
 .		
 .		
 .JA	.%  自動サニタイズ機能をサポート
-.EN	.%  Auto-Sanitizing Support
+.EN	.%  Auto-Sanitizing and Partial-Sanitizing Support
 .		
 .JA		Kwartz-phpでは、サニタイズを自動的に行うようにすることができます。
 .JA		つまり、いちいち「{{,htmlspecialchars($var),}}」と書く必要がありません。
@@ -145,11 +145,11 @@
 .	
 .	
 .JA	まずプレゼンテーションデータの例です。
-.JA	.* 「{{,id="xxx",}}」はそのエレメントにxxxという名前で「目印」をつけること、つまり操作対象とすることを表します。
+.JA	.* 「{{,id="values",}}」はそのエレメントにvaluesという名前で「目印」をつけること、つまり操作対象とすることを表します。
 .JA	.* 「{{,@{$var}@,}}」は変数$varの値を出力することを表します。
 .JA	   「{{,@{...}@,}}」の中には任意の式を記述できます。
 .EN	This is an example of a presentation data file.
-.EN	.* {{*{{,id="xxx",}}*}} means "I'll operate this element in presentation logic" (called 'marking').
+.EN	.* {{*{{,id="values",}}*}} means "I'll operate this element in presentation logic" (called 'marking').
 .EN	.* {{*{{,@{$var}@,}}*}} means "Output the value of variable '$var'."
 .EN	   You can describe any expression in {{,@{...}@,}}.
 .	
@@ -157,7 +157,7 @@
 .EN	Presentation data file(example.html):
 .	.-------------------- example.html
 .	<table>
-.	  <tr {{*id="xxx"*}}>
+.	  <tr {{*id="values"*}}>
 .	    <td>{{*@{$var}@*}}</td>
 .	  </tr>
 .	</table>
@@ -166,7 +166,7 @@
 .	
 .JA	次はプレゼンテーションロジックの例です。
 .JA	プレゼンテーションロジックでは、プレゼンテーションデータにつけた「目印」に対して操作を行います。
-.JA	.* 「{{,element xxx { ... },}}」は「xxx」という名前で目印がつけられたエレメント（Element, ここでは{{,<tr>,}}から{{,</tr>,}}まで）を表します。
+.JA	.* 「{{,element values { ... },}}」は「values」という名前で目印がつけられたエレメント（Element, ここでは{{,<tr>,}}から{{,</tr>,}}まで）を表します。
 .JA	.* 「{{,@stag,}}」は開始タグ（Start tag, ここでは{{,<tr>,}}）を表します。
 .JA	.* 「{{,@cont,}}」は内容（Content, ここでは{{,<td>@{$user}@</td>,}}）を表します。
 .JA	.* 「{{,@etag,}}」は終了タグ（End tag, ここでは{{,</tr>,}}）を表します。
@@ -174,7 +174,7 @@
 .JA	    つまり、開始タグから終了タグまでを繰り返すようにエレメントの定義を変更しているわけです。
 .EN	And the following is an example of presentation logic.
 .EN	In presentation logic, you can operate on elements which are marked in presentation data.
-.EN	.* {{*{{,element xxx { ... },}}*}} represents an element marked with name 'xxx' (= '<tr>...</tr>').
+.EN	.* {{*{{,element values { ... },}}*}} represents an element marked with name 'values' (= '<tr>...</tr>').
 .EN	.* {{*{{,@stag,}}*}} represents a start tag (= '<tr>').
 .EN	.* {{*{{,@cont,}}*}} represents content(= '<td>@{$user}@</td>').
 .EN	.* {{*{{,@etag,}}*}} represents an end tag(= '</tr>').
@@ -187,17 +187,17 @@
 .	.-------------------- example.plogic
 .JA	## 繰り返しを行うようにエレメントを定義しなおす。
 .EN	## Re-define an element to iterate start tag, content and end tag.
-.	element xxx {		## element
+.	element values {		## element
 .	  foreach ($list as $var) {
-.	    @stag		## start tag
-.	    @cont		## content
-.	    @etag		## end tag
+.	    @stag;          ## start tag
+.	    @cont;          ## content
+.	    @etag;          ## end tag
 .	  }
 .	}
 .	.--------------------
 .	
 .	
-.JA	Kwartz-phpはこの2つから各言語用の出力用スクリプトを自動生成します。
+.JA	Kwartz-phpはこの2つから各言語(PHP, eRuby, JSP)用の出力用スクリプトを自動生成します。
 .JA	これをコンパイルといいます。
 .JA	コンパイルするにはコマンドラインで次のようにします。
 .EN	Kwartz-php creates output scripts automatically for PHP, eRuby, and JSP from the above two files.
@@ -207,11 +207,11 @@
 .	### for PHP
 .	$ kwartz-php -p example.plogic example.html > example.php
 .	
-.	### for Ruby(eRuby)
-.	$ kwartz -l eruby -p example.plogic example.html > example.rhtml
+.	### for eRuby
+.	$ kwartz-php -l eruby -p example.plogic example.html > example.rhtml
 .	
 .	### for JSP
-.	$ kwartz -l jsp  -p example.plogic example.html > example.jsp
+.	$ kwartz-php -l jsp  -p example.plogic example.html > example.jsp
 .	.====================
 .	
 .	
@@ -241,8 +241,8 @@
 .	
 .JA	またコンパイル時にコマンドオプション -s をつけると、サニタイズされた出力用スクリプトが生成されます。
 .JA	サニタイズには、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSPでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
-.EN	Using the command-line option -s when compiling, Kwartz-php will output sanitized scripts (except for Velocity).
-.EN	For sanitizing, {{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in Ruby, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSP.
+.EN	Using the command-line option {{,-s,}} or {{,-e,}} when compiling, Kwartz-php will output sanitized scripts.
+.EN	For sanitizing, {{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSP.
 .	
 .	
 .JA	これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
@@ -286,13 +286,13 @@
 .	
 .	.____________________
 .	<table>
-.	  <tr id="xxx">
+.	  <tr id="values">
 .	    <td>apple</td>
 .	  </tr>
-.	  <tr id="xxx">
+.	  <tr id="values">
 .	    <td>orange</td>
 .	  </tr>
-.	  <tr id="xxx">
+.	  <tr id="values">
 .	    <td>banana</td>
 .	  </tr>
 .	</table>
@@ -300,12 +300,12 @@
 .	
 .	
 .	
-.JA	この出力結果をみると、属性{{,id="xxx",}}が残っているのが気になります。
-.JA	これを消す場合は、{{,id="mark:xxx",}}と記述するか、コマンドラインオプション{{,--delete_idattr=true,}}をつけてください。
+.JA	この出力結果をみると、属性{{,id="values",}}が残っているのが気になります。
+.JA	これを消す場合は、{{,id="mark:values",}}と記述するか、コマンドラインオプション{{,--delete_idattr=true,}}をつけてください。
 .JA	id属性が出力されないようになります。
 .EN	You may not prefere that id attributes appear in each <tr></tr>.
-.EN	You can remove then from the output with {{,id="mark:xxx",}},
-.EN	which is equivalent to {{,id="xxx",}}, but with auto-removal of the id attributes themselves.
+.EN	You can remove then from the output with {{,id="mark:values",}},
+.EN	which is equivalent to {{,id="values",}}, but with auto-removal of the id attributes themselves.
 .EN	The command-line option {{,--delete_idattr=true,}} also removes the id attributes.
 .	
 .	
@@ -474,7 +474,8 @@
 .	
 .	
 .JA	プレゼンテーションロジックは、先ほどとまったく同じです。
-.EN	There is not difference about presentation logic with the previous one.
+.EN	.#There is not difference about presentation logic with the previous one.
+.EN	The presentation logic is the same as the previous one.
 .	
 .JA	プレゼンテーションロジック(table2.plogic)：
 .	.-------------------- table2.plogic
@@ -551,7 +552,7 @@
 .EN	To mark a region which you want to change or replace in presentation data is called 'marking'.
 .EN	.#It is called 'marking' to mark a region which you want to change or replace in the presentation data.
 .EN	You can mark with the attributes 'id', like {{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}}.
-.EN	.#{{(The attribute name is derived from 'Kwartz-php Directive'. You can change the name of attribute with the command-line option {{,--attr_name={{/name/}},}}.)}}
+.EN	.#{{(The attribute name is derived from 'Kwartz-php Directive'. You can change the name of attribute with the command-line option {{,--attr_name={{/name/}},}}.)}}.
 .	
 .	
 .JA	マーキングの例：
@@ -657,7 +658,7 @@
 .JA	この例ではマーキングとして「{{,id="list",}}」を用いたので、id属性が残ったままになっています。
 .JA	これを「{{,id="mark:list",}}」または「{{,kd:php="mark(list)",}}」とするか、コマンドラインオプションに {{,--delete_idattr=true,}}をつけると、中間コード変換時にid属性が取り除かれます。
 .EN	{{,id="list",}} will be left in intermediate code.
-.EN	If you want to delete it, use {{,id="mark:list",}} or {{,kd:php="mark(list)",}} instead, or add the command-line option {{,--delete_idattr=true,}}
+.EN	If you want to delete it, use {{,id="mark:list",}} or {{,kd:php="mark(list)",}} instead, or add the command-line option {{,--delete_idattr=true,}}.
 .	
 .	
 .JA	なお、この中間言語は「PL-php」といいます（PLはPresentation Languageの意味です）。
@@ -683,11 +684,11 @@
 .	
 .	
 .JA	次がプレゼンテーションロジックの例です。
-.JA	マクロelem_listを上書きし、開始タグから終了タグまでを繰り返しています。
+.JA	マクロelement_listを上書きし、開始タグから終了タグまでを繰り返しています。
 .EN	The following is an example of presentation logic.
-.EN	This example overwrites the macro 'elem_list' to iterate from start tag to end tag.
+.EN	This example overwrites the macro 'element_list' to iterate from start tag to end tag.
 .	.--------------------
-.	macro elem_list {
+.	macro element_list {
 .JA	  foreach ($itemlist as $item) {    ## foreach文による繰り返し
 .JA	    expand(stag_item);              ## 開始タグ
 .JA	    expand(cont_item);              ## 内容
@@ -706,7 +707,7 @@
 .EN	You can also write the above presentation logic as the following.
 .EN	The Kwartz-php parser will treat it as same as the code above.
 .	.--------------------
-.JA	element list {               ## macro elem_item  と同じ
+.JA	element list {               ## macro element_item  と同じ
 .JA	  foreach ($itemlist as $item) {
 .JA	    @stag;                   ## expand(stag_item) と同じ
 .JA	    @cont;                   ## expand(cont_item) と同じ
@@ -741,7 +742,7 @@
 .	.____________________
 .	   
 .	   echo "<table>\n";
-.	   expand(elem_list);
+.	   expand(element_list);
 .	   echo "</table>\n";
 .	
 .	      |
@@ -884,7 +885,7 @@
 .JA	.* 内容だけを繰り返すことができます。<dl></dl>で使うのに向いています。
 .EN	.* You can choose to iterate only contents. This is useful for <dl></dl>.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  expand(stag_list);
 .		  foreach ($itemlist as $item) {
 .		    expand(cont_list);
@@ -906,7 +907,7 @@
 .JA	.* 内容のかわりに、変数や式などの値を出力することができます。
 .EN	.* You can print a value of a variable or an expression instead of a static content string.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  expand(stag_list);
 .		  echo $item['key'];
 .		  expand(etag_list);
@@ -924,7 +925,7 @@
 .JA	.* エレメントのかわりに、変数や式などの値を出力することができます。
 .EN	.* You can print a value of a variable or an expression instead of an element.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  echo $item['key'];
 .		}
 .		.--------------------
@@ -938,7 +939,7 @@
 .JA	.* エレメント全体を、別のマクロで置き換えることができます。
 .EN	.* You can replace an element by calling other macros.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  expand(other_macro);
 .		}
 .		macro other_macro {
@@ -961,7 +962,7 @@
 .JA	   そのためには、開始タグと終了タグをコメントアウトします。
 .EN	.* You can delete the start tag and the end tag by commenting them out.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  ## expand(stag_list);
 .		  expand(cont_list);
 .		  ## expand(etag_list);
@@ -979,7 +980,7 @@
 .JA	.* エレメント全体を消すことができます。これは、ダミーデータを消すときに便利です。
 .EN	.* You can delete an element. This is useful for delete dummy data.
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  ## expand(stag_list);
 .		  ## expand(cont_list);
 .		  ## expand(etag_list);
@@ -997,7 +998,7 @@
 .JA	.* 複雑なプレゼンテーションロジックを含めることができます。
 .EN	.* You can include a complex presentation logic like this:
 .		.--------------------
-.		macro elem_list {
+.		macro element_list {
 .		  $ctr = 0;
 .		  foreach ($itemlist as $item)
 .JA		    $ctr += 1;		## $ctr++ や ++$ctr は 使えない
@@ -2098,20 +2099,20 @@
 .	
 .JA	自動コンパイルを行うには、{{,kwartz_compile_template(),}}を使用します。
 .JA	メインプログラムは、例えば次のようになります。
-.EN	You can use auto-compile with {{,kwartz_compile_template(),}}.
+.EN	You can use auto-compile with {{,KwartzHelper::compile_template(),}}.
 .EN	Here is an example of the main program:
 .	.--------------------
 .JA	$pdata  = 'example.html';      # プレゼンテーションデータ
 .JA	$plogic = 'example.plogic';    # プレゼンテーションロジック
-.JA	$view   = 'example.view';       # 出力用スクリプトファイル
+.JA	$view   = 'example.view';      # 出力用スクリプトファイル
 .JA	$flag_escape = TRUE;           # サニタイズをする/しない
 .EN	$pdata  = 'example.html';      # presentation data file
 .EN	$plogic = 'example.plogic';    # presentation logic file
-.EN	$view   = 'example.view';       # output script file
+.EN	$view   = 'example.view';      # output script file
 .EN	$flag_escape = TRUE;           # flag of sanitizing
 .	
-.	{{*require_once('Kwartz.php');*}}   ## or Kwartz/KwartzHelper.php
-.	{{*Kwartz-php::compile($pdata, $plogic, $view, $flag_escape)*}}
+.	{{*require_once('Kwartz/KwartzHelper.php');*}}
+.	{{*KwartzHelper::compile_template($pdata, $plogic, $view, $flag_escape)*}}
 .	
 .	include($view);
 .	.--------------------

@@ -115,7 +115,7 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
     
     protected function translate_property_expression($expr) {
         if ($expr->arglist() !== NULL && count($expr->arglist()) > 0) {
-            $msg = "JSTL doesn't support property with arguments.";
+            $msg = "JSTL doesn't support method-call with arguments.";
             throw new KwartzTranslationError($msg, $this);
         }
         $t = $expr->token();

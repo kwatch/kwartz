@@ -36,7 +36,11 @@ try {
 		$name = $names[$lang];
 		echo "### for {$name}\n";
 		$kwartz = new KwartzCommand($args);
-		echo $kwartz->main();
+		$s = $kwartz->main();
+                echo $s;
+		if ($s[strlen($s)-1] != "\n") {
+			echo "\n";
+		}
 	}
 } catch (KwartzException $ex) {
 	fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
