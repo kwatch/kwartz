@@ -1053,6 +1053,56 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 
 
+
+	const input_empty1 = 
+		':set(v = s==empty ? \'checked\' : \'\')
+		:print(s!=empty ? "aaa":"bbb", "\n")
+		';
+	function test_empty1_php() {
+		$input = KwartzTranslatorTest::input_empty1;
+		$expected =
+		'<?php $v = ($s == "") ? "checked" : ""; ?>
+		<?php echo ($s != "") ? "aaa" : "bbb"; ?>
+		';
+		$this->_test($input, $expected, 'php');
+	}
+	function test_empty1_eruby() {
+		$input = KwartzTranslatorTest::input_empty1;
+		$expected =
+		'<% v = (s == nil || s == "") ? "checked" : "" %>
+		<%= (s != nil && s != "") ? "aaa" : "bbb" %>
+		';
+		$this->_test($input, $expected, 'eruby');
+	}
+	function test_empty1_jsp() {
+		$input = KwartzTranslatorTest::input_empty1;
+		$expected =
+		'<c:choose>
+		  <c:when test="${(empty s)}">
+		    <c:set var="v" value="checked"/>
+		  </c:when>
+		  <c:otherwise>
+		    <c:set var="v" value=""/>
+		  </c:otherwise>
+		</c:choose>
+		<c:choose>
+		  <c:when test="${!(empty s)}">
+		aaa
+		  </c:when>
+		  <c:otherwise>
+		bbb
+		  </c:otherwise>
+		</c:choose>
+		';
+		$this->_test($input, $expected, 'jsp');
+	}
+
+
+	const input_empty1_php = 
+		'$v = $s==empty ? "checked" : "";
+		 echo $s != empty ? "aaa" : "bbb", "\n";
+		';
+
 }
 
 

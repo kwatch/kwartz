@@ -93,12 +93,12 @@ require_once('KwartzNode.inc');
 		protected function translate_unary_expression($expr) {
 			$t = $expr->token();
 			switch ($t) {
-			case ':empty':
+			case 'empty':
 				$this->code .= '(empty ';
 				$this->translate_expression($expr->child());
 				$this->code .= ')';
 				break;
-			case ':notempty':
+			case 'notempty':
 				$this->code .= '!(empty ';
 				$this->translate_expression($expr->child());
 				$this->code .= ')';

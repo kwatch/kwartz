@@ -61,6 +61,21 @@ require_once('KwartzTranslator.inc');
 			return array_key_exists($token, $this->keywords) ? $this->keywords[$token] : $token;
 		}
 
+		protected function translate_unary_expression($expr) {
+			$t = $expr->token();
+			if ($t == 'empty' || $t == 'notempty') {
+				if ($t == 'empty') {  $op1 = '==';  $op2 = '||'; }
+				else               {  $op1 = '!=';  $op2 = '&&'; }
+				$this->code .= '(';
+				$expr1 = new KwartzBinaryExpression($op1, $expr->child(), new KwartzNullExpression("nil"));
+				$expr2 = new KwartzBinaryExpression($op1, $expr->child(), new KwartzStringExpression(""));
+				$expr3 = new KwartzBinaryExpression($op2, $expr1, $expr2);
+				$this->translate_binary_expression($expr3);
+				$this->code .= ')';
+				return;
+			}
+			parent::translate_unary_expression($expr);
+		}
 
 		protected function translate_property_expression($expr) {
 			$t = $expr->token();

@@ -1391,6 +1391,46 @@ END;
 		$this->_test_stmt($input, $expected, 'parse');
 	}
 
+
+
+	const input_empty1 =
+		':set(v = s==empty ? \'checked\' : \'\')
+		:print(s!=empty ? "aaa":"bbb")
+		';
+	const input_empty1_php =
+		'$v = $s==empty ? \'checked\' : \'\';
+		echo $s!=empty ? "aaa":"bbb";
+		';
+	const expected_empty1 =
+		'<<block>>
+		  :set
+		    =
+		      v
+		      ?
+		        empty
+		          s
+		        "checked"
+		        ""
+		  :print
+		    ?
+		      notempty
+		        s
+		      "aaa"
+		      "bbb"
+		';
+
+	function test_empty1() {
+		$input    = KwartzParserTest::input_empty1;
+		$expected = KwartzParserTest::expected_empty1;
+		$this->_test_stmt($input, $expected, 'parse');
+	}
+
+	function test_empty1_php() {
+		$input    = KwartzParserTest::input_empty1_php;
+		$expected = KwartzParserTest::expected_empty1;
+		$this->_test_stmt($input, $expected, 'parse');
+	}
+
 }
 
 

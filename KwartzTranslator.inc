@@ -49,6 +49,8 @@ require_once('KwartzUtility.inc');
 
 				'-.'	   =>  80,
 				'!'	   =>  80,
+				'empty'    =>  80,
+				'notempty' =>  80,
 
 				'*'	   =>  70,
 				'/'	   =>  70,
@@ -539,6 +541,19 @@ require_once('KwartzUtility.inc');
 
 		protected function translate_variable_expression($expr) {
 			$this->code .= '$' . $expr->value();
+		}
+
+		protected function translate_unary_expression($expr) {
+			$t = $expr->token();
+			if ($t == 'empty' || $t == 'notempty') {
+				$op = $t == 'empty' ? '==' : '!=';
+				$expr = new KwartzBinaryExpression($op, $expr->child(), new KwartzStringExpression(""));
+				$this->code .= '(';
+				$this->translate_binary_expression($expr);
+				$this->code .= ')';
+				return;
+			}
+			parent::translate_unary_expression($expr);
 		}
 
 		protected function translate_foreach_statement($stmt, $depth) {

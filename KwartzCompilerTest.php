@@ -149,11 +149,14 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<c:set var="i" value="0"/>
 		<c:forEach var="user" items="${user_list}">
 		  <c:set var="i" value="${i + 1}"/>
-		  <c:choose><c:when test="${i % 2 == 0}">
-		    <c:set var="klass" value="even"/>
-		  </c:when><c:otherwise>
-		    <c:set var="klass" value="odd"/>
-		  </c:otherwise></c:choose>
+		  <c:choose>
+		    <c:when test="${i % 2 == 0}">
+		      <c:set var="klass" value="even"/>
+		    </c:when>
+		    <c:otherwise>
+		      <c:set var="klass" value="odd"/>
+		    </c:otherwise>
+		  </c:choose>
 		   <tr class="<c:out value="${klass}" escapeXml="false"/>">
 		    <td><c:out value="${user[\'name\']}" escapeXml="false"/></td>
 		    <td><c:out value="${user[\'mail\']}" escapeXml="false"/></td>
@@ -257,10 +260,13 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const expected_compile2_jsp = '
-		<c:choose><c:when test="${url != null}">
+		<c:choose>
+		  <c:when test="${url != null}">
 		<a href="<c:out value="${url}" escapeXml="false"/>">next page</a>
-		</c:when><c:otherwise>
-		next page</c:otherwise></c:choose>
+		  </c:when>
+		  <c:otherwise>
+		next page</c:otherwise>
+		</c:choose>
 		';
 
 	function test_compile2_php() {
@@ -753,28 +759,34 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	const expected_escape1_jsp = '
 		<html>
 		  <body>
-		<c:choose><c:when test="${flag_error}">
+		<c:choose>
+		  <c:when test="${flag_error}">
 		      <div class="error">
 		<c:out value="${error_msg}"/>      </div>
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		      <table>
 		        <tbody>
-		  <c:set var="user_ctr" value="0"/>
-		  <c:forEach var="user" items="${user_list}">
-		    <c:set var="user_ctr" value="${user_ctr + 1}"/>
-		    <c:choose><c:when test="${user_ctr % 2 == 0}">
-		      <c:set var="user_tgl" value="even"/>
-		    </c:when><c:otherwise>
-		      <c:set var="user_tgl" value="odd"/>
-		    </c:otherwise></c:choose>
+		    <c:set var="user_ctr" value="0"/>
+		    <c:forEach var="user" items="${user_list}">
+		      <c:set var="user_ctr" value="${user_ctr + 1}"/>
+		      <c:choose>
+		        <c:when test="${user_ctr % 2 == 0}">
+		          <c:set var="user_tgl" value="even"/>
+		        </c:when>
+		        <c:otherwise>
+		          <c:set var="user_tgl" value="odd"/>
+		        </c:otherwise>
+		      </c:choose>
 		          <tr class="<c:out value="${user_tgl}"/>">
 		            <td><c:out value="${user[\'name\']}"/></td>
 		          </tr>
-		  </c:forEach>
+		    </c:forEach>
 		        </tbody>
 		      </table>
 		      <p>total:<c:out value="${user_ctr}"/></p>
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		  </body>
 		</html>
 		';

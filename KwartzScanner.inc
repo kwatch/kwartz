@@ -64,6 +64,7 @@ require_once('KwartzUtility.inc');
 			'false'	   => 'false',
 			'null'	   => 'null',
 			'nil'	   => 'null',
+			'empty'	   => 'empty',
 			':set'	   => ':set',
 			':end'	   => ':end',
 			':load'	   => ':load',
@@ -86,7 +87,6 @@ require_once('KwartzUtility.inc');
 			'NULL'	   => 'null',
 			'nil'	   => 'null',
 			'load'	   => 'load',
-			
 		);
 
 		//const EOF = -1;
