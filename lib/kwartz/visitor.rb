@@ -135,7 +135,7 @@ module Kwartz
       def visit_if_statement(stmt, depth=0)
          stmt.condition.accept(self, depth+1)
          stmt.then_stmt.accept(self, depth+1)
-         stmt.else_stmt.accept(self, depth+1)
+         stmt.else_stmt.accept(self, depth+1) if stmt.else_stmt
       end
 
       def visit_foreach_statement(stmt, depth=0)

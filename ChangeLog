@@ -3,7 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2005-03-29 rev.59
+.: 2005-03-30 rev.60
+	.- [bugfix] Visitor#visit_if_statement() fails when else_stmt is null
+	.- [bugfix] MainCommand#execute() returns extra 0 when -h or -v is specified
+
+.: 2005-03-29 rev.59 (release 2.0.0-beta4)
 	.- [bugfix] add some missing files
 
 .: 2005-03-28 rev.58

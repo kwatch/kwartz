@@ -108,7 +108,7 @@ module Kwartz
                end
             end
             $stderr.puts usage() if options[?h]
-            return 0
+            #return 0
          end
 
          ## action
