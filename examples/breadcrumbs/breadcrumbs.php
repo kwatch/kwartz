@@ -8,7 +8,7 @@ $breadcrumbs[] = array('path' => '/kwartz-php/examples/', 'name' => 'Examples');
 $breadcrumbs[] = array('path' => '/kwartz-php/examples/breacrumbs', 'name' => 'Breadcrumbs');
 
 // set title
-$title = 'Example: Breadcrumbs';
+$title = 'Result';
 
 // output
 include('breadcrumbs.view');

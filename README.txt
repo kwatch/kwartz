@@ -126,8 +126,9 @@
 .JA		リファレンスマニュアル
 .		
 .	  .% examples/
-.EN		Examples
-.JA		サンプル
+.EN		Examples. You have to install Kwartz-php before trying
+.EN		these examples.
+.JA		サンプル。Kwartz-phpをインストールしてから実行してください。
 .		
 .	  .% test/
 .EN		UnitTest Programs

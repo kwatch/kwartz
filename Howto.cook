@@ -2,7 +2,7 @@
 /*
  *  variables
  */
-tagfile = 'html-css,euc';
+tagfile = 'html-css';
 
 
 
@@ -18,6 +18,8 @@ all: tgz;
  */
 users-guide.%.html:  users-guide.txt
 {
+	if [matches % 'ja'] then
+		tagfile = [tagfile]',euc';
 	ruby m18n.rb -l [upcase %] users-guide.txt > users-guide.%.txt;
 	mkdir -p guide.d;
 	rm -rf 'guide.d/*';
@@ -30,6 +32,8 @@ users-guide.%.html:  users-guide.txt
 
 reference.%.html: reference.txt
 {
+	if [matches % 'ja'] then
+		tagfile = [tagfile]',euc';
 	ruby m18n.rb -l [upcase %] reference.txt > reference.%.txt;
 	mkdir -p guide.d;
 	rm -rf 'guide.d/*';
@@ -44,6 +48,8 @@ gdir = 'guide.d';
 
 examples.%.html: examples.txt
 {
+	if [matches % 'ja'] then
+		tagfile = [tagfile]',euc';
 	ruby m18n.rb -l [upcase %] examples.txt > examples.%.txt;
 	mkdir -p [gdir];
 	rm -rf [gdir]/'*';
@@ -145,7 +151,7 @@ mydir = KwartzPHP-0.1.0;
 manuals = users-guide.en.html users-guide.ja.html reference.en.html reference.ja.html;
 texts   = README.en.txt README.ja.txt COPYING ChangeLog;
 
-tgz: [manuals] [texts] package.xml
+tgz: [manuals] [texts] package.php package.view
 {
 	rm -rf [mydir];
 	mkdir [mydir];
@@ -169,6 +175,8 @@ tgz: [manuals] [texts] package.xml
 
 	find [mydir] -type f | xargs chmod -R 644;
 	chmod 755 [mydir]/kwartz-php;
+	
+	php -q package.php > package.xml;
 
 	tar czf [mydir].tgz package.xml [mydir];
 }
