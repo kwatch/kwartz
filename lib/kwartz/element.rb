@@ -11,12 +11,13 @@ module Kwartz
          @name     = name
          @tagname  = tagname
          @content  = content_stmt
-         @attrs    = attrs
-         @append   = append_expr
+         @attrs    = attrs       || {}
+         @append   = append_expr || []
          @is_empty = is_empty
          @spaces   = spaces
          list = [ ExpandStatement.new(:stag), ExpandStatement.new(:cont), ExpandStatement.new(:etag) ]
          @plogic   = BlockStatement.new(list)
+         @remove   = []
       end
       attr_accessor :name, :tagname, :content, :attrs, :append, :is_empty, :spaces, :plogic
       alias :marking :name
@@ -24,11 +25,12 @@ module Kwartz
       def swallow(elem_decl)
          return unless @name == elem_decl.name
          @tagname = elem_decl.tagname if elem_decl.tagname
-         @content = elem_decl.value if elem_decl.value
+         @content = PrintStatement.new([elem_decl.value]) if elem_decl.value
          elem_decl.attrs.each do |key,val|
             @attrs[key] = val
          end if elem_decl.attrs
          @append.concat(elem_decl.append) if elem_decl.append
+         @remove.concat(elem_decl.remove) if elem_decl.remove
          @plogic = elem_decl.plogic if elem_decl.plogic
       end
       
@@ -48,30 +50,34 @@ module Kwartz
       end
       
       def stag_stmt(properties={})
-         arglist = []
+         arguments = []
          if @tagname.is_a?(String)
-            arglist << StringExpression.new("#{@spaces[0]}<#{@tagname}")
+            arguments << StringExpression.new("#{@spaces[0]}<#{@tagname}")
          elsif @tagname.is_a?(Expression)
-            arglist << StringExpression.new("#{@spaces[0]}<")
-            arglist << @tagname
+            arguments << StringExpression.new("#{@spaces[0]}<")
+            arguments << @tagname
          else
             Kwartz::assert(false)
          end
          @attrs.each do |aname, avalue|
-            if avalue.is_a?(String)
-               arglist << StringExpression.new(" #{aname}=\"#{avalue}\"")
+            if @remove && @remove.include?(aname)
+               next
+            elsif avalue.is_a?(String)
+               arguments << StringExpression.new(" #{aname}=\"#{avalue}\"")
             elsif avalue.is_a?(Expression)
-               arglist << StringExpression.new(" #{aname}=\"")
-               arglist << avalue
-               arglist << StringExpression.new("\"")
+               arguments << StringExpression.new(" #{aname}=\"")
+               arguments << avalue
+               arguments << StringExpression.new("\"")
             else
                Kwartz::assert(false)
             end
          end
          s = (@is_empty && properties[:html] != true) ? ' /' : ''
-         arglist << StringExpression.new("#{s}>#{spaces[1]}")
-         arglist << @append if @append
-         return PrintStatement.new(arglist)
+         arguments << StringExpression.new("#{s}>#{spaces[1]}")
+         @append.each do |expr|
+            arguments << expr
+         end if @append
+         return PrintStatement.new(arguments)
       end
       
       def cont_stmt(properties={})
@@ -81,17 +87,31 @@ module Kwartz
          
       def etag_stmt(properties={})
          return nil if @is_empty
-         arglist = []
+         arguments = []
          if @tagname.is_a?(String)
-            arglist << StringExpression.new("#{@spaces[3]}</#{@tagname}")
+            arguments << StringExpression.new("#{@spaces[2]}</#{@tagname}>#{@spaces[3]}")
          elsif @tagname.is_a?(Expression)
-            arglist << StringExpression.new("#{@spaces[3]}</")
-            arglist << @tagname
-            arglist << StringExpression.new(">#{@space[4]}")
+            arguments << StringExpression.new("#{@spaces[2]}</")
+            arguments << @tagname
+            arguments << StringExpression.new(">#{@space[3]}")
          else
             Kwartz::assert(false)
          end
-         return PrintStatement.new(arglist)
+         return PrintStatement.new(arguments)
+      end
+
+      
+      def statement(properties={})
+         list = []
+         list << stag_stmt(properties)
+         stmt = cont_stmt(properties)
+         if stmt.token == :block
+            list.concat(stmt.statements)
+         else
+            list << stmt
+         end
+         list << etag_stmt(properties)
+         return BlockStatement.new(list)
       end
       
       def _inspect()
@@ -102,14 +122,39 @@ module Kwartz
          @attrs.each do |key,val|
             s << "#{key}=" << (val.is_a?(Expression) ? val._inspect : '"'+val.to_s+"\"\n")
          end
-         s << "[append]\n"
-         @append.each do |expr|
-            s << expr._inspect
-         end if @append
+         if @append && !@append.empty?
+            s << "[append]\n"
+            @append.each do |expr|
+               s << expr._inspect
+            end
+         end
+         if @remove && !@remove.empty?
+            s << "[remove]\n"
+            @remove.each_with_index do |str, i|
+               s << " " if i > 0
+               s << str.dump
+            end
+            s << "\n"
+         end
          s << "[content]\n" << @content._inspect       if @content
          s << "[spaces]\n"  << @spaces.inspect << "\n" if @spaces
          s << "[plogic]\n"  << @plogic._inspect        if @plogic
          return s
+      end
+
+      ## returns element_table (hash of element.name => element)
+      def self.merge(element_list, element_decl_list)
+         decl_table = {}
+         element_decl_list.each do |decl|
+            decl_table[decl.name] = decl
+         end if element_decl_list
+         element_table = {}
+         element_list.each do |elem|
+            decl = decl_table[elem.name]
+            elem.swallow(decl) if decl
+            element_table[elem.name] = elem
+         end if element_list
+         return element_table
       end
       
    end
@@ -165,5 +210,3 @@ module Kwartz
    end
 
 end
-
-

@@ -3,7 +3,7 @@
 ###
 ### kwartz -- a template system which can separate presentation logic from template
 ###
-### Copyright (C) 2004 kuwata-lab
+### Copyright (C) 2004-2005 kuwata-lab
 ### All rights reserved.
 ### author::  kwa(at)kuwata-lab.com
 ### id::      $Id$
@@ -32,95 +32,95 @@ module Kwartz
 
    class CommandOptionError < KwartzError
       def initialize(errmsg)
-	 super(errmsg)
+         super(errmsg)
       end
    end
 
 
    class MainCommand
 
-      VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)+/ && $&)
+      VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)*/ && $&)
       LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
 
       def initialize(argv=ARGV)
-	 @argv = ARGV
-	 @command = File::basename($0)
-	 @options    = {}
-	 @properties = {}
+         @argv = ARGV
+         @command = File::basename($0)
+         @options    = {}
+         @properties = {}
       end
-
-
+      
+      
       def main()
-	 parse_argv()
-	 
-	 flag_exit = false
-	 if @options['-v']
-	    print "#{VERSION} (#{LAST_UPDAT})\n"
-	    flag_exit = true
-	 end
-	 if @options['-h']
-	    print usage()
-	    flag_exit = true
-	 end
-	 if flag_exit
-	    return 0
-	 end
-	 
-	 action = @options['-a'] || 'compile'
-	 case action
-	 when 'compile', 'convert', 'parse', 'translate', 'scan'
-	    # nothing
-	 else
-	    raise CommandOptionError.new("#{action}: invalid action.")
-	 end
+         parse_argv()
+         
+         flag_exit = false
+         if @options['-v']
+            print "Rev.#{VERSION} (#{LAST_UPDATE})\n"
+            flag_exit = true
+         end
+         if @options['-h']
+            print usage()
+            flag_exit = true
+         end
+         if flag_exit
+            return 0
+         end
+         
+         action = @options['-a'] || 'compile'
+         case action
+         when 'compile', 'convert', 'parse', 'translate', 'scan'
+            # nothing
+         else
+            raise CommandOptionError.new("#{action}: invalid action.")
+         end
+         
+         if @options['-s'] || @options['-e']
+            @properties[:escape] = true
+         end
+         
+         lang = @options['-l'] || 'ruby'
+         
+         compiler = Kwartz::Compiler.new(@properties)
+         
+         plogic_filenames = @options['-p'] ? @options['-p'].split(/,/) : []
+         element_decl_list = []
+         plogic_filenames.each do |filename|
+            unless test(?f, filename)
+               raise CommandOptionError.new("'#{filename}': not found.")
+            end
+            File.open(filename) do |file|
+               plogic_str = file.read()
+               list = compiler.parse_plogic(plogic_str, filename)
+               element_decl_list.concat(list) if list
+            end
+         end
 
-	 if @options['-s'] || @options['-e']
-	    @properties[:escape] = true
-	 end
-	 
-	 lang = @options['-l'] || 'ruby'
-	 
-	 plogic_filenames = @options['-p'] ? @options['-p'].split(/,/) : []
-	 plogic_block = nil
-	 plogic_filenames.each do |filename|
-	    unless test(?f, filename)
-	       raise CommandOptionError.new("'#{filename}': not found.")
-	    end
-	    File.open(filename) do |file|
-	       plogic = file.read()
-	       @properties[:filename] = filename
-	       parser = Parser.new(plogic, @properties)
-	       block = parser.parse()
-	       plogic_block  = plogic_block ? plogic_block.merge(block) : block
-	    end
-	 end
-	 
-	 output = ''
-	 if @argv.empty?
-	    input = ARGF.read()
-	    output = do_action(action, input, plogic_block, lang, @properties)
-	 else
-	    @argv.each do |filename|
-	       unless test(?f, filename)
-		  raise CommandOptionError.new("'#{filename}': not found.")
-	       end
-	       File.open(filename) do |file|
-		  input = file.read()
-		  @properties[:filename] = filename
-		  output << do_action(action, input, plogic_block, lang, @properties)
-	       end
-	    end
-	 end
-	 print output
-	 return 0
+         output = ''
+         if @argv.empty?
+            input = ARGF.read()
+            filename = ARGF.filename
+            output = perform(action, compiler, input, filename, element_decl_list, lang)
+         else
+            @argv.each do |filename|
+               unless test(?f, filename)
+                  raise CommandOptionError.new("'#{filename}': not found.")
+               end
+               File.open(filename) do |file|
+                  input = file.read()
+                  output << perform(action, compiler, input, filename, element_decl_list, lang)
+               end
+            end
+         end
+         print output
+         return 0
       end
-
+      
       
       private
-
+      
       
       def usage()
-	 s = <<END
+         s = <<END
 Usage: #{@command} [..options..] file1 [file2...]
   -h, --help : help
   -v         : version
@@ -132,65 +132,92 @@ Usage: #{@command} [..options..] file1 [file2...]
   --even_value=value     : even value in FOREACH or LIST (default "'even'")
   --attr_name=attr       : use attribute name as marking (default 'kd')
 END
-	 return s
+         return s
       end
 
       
       def parse_argv()
-	 argv = @argv
-	 while !argv.empty? && argv[0][0] == ?-
-	    opt = argv.shift
-	    case opt
-	    when '-h', '-v', '-s', '-e'
-	       @options[opt] = true
-	    when '-a', '-l', '-p'
-	       if argv.empty?
-		  raise CommandOptionError.new("'#{opt}' requires argument.")
-	       end
-	       @options[opt] = argv.shift
-	    when '--help'
-	       @options['-h'] = true
-	    when /^--([-\w]+)(?:=(.*))?$/
-	       value = $2
-	       name  = $1.gsub(/-/, '_')
-	       case value
-	       when 'true', 'yes'
-		  value = true
-	       when 'false', 'no'
-		  value = false
-	       when 'null', 'nil'
-		  value = nil
-	       when /^\d+$/
-		  value = value.to_i
-	       when /^\d+\.\d+$/
-		  value = value.to_f
-	       when /^\/.*\/$/
-		  value = eval value
-	       when /^'.*'$/
-		  value = eval value
-	       when /^".*"$/
-		  value = eval value
-	       end
-	       @properties[name.intern] = value
-	    else
-	       raise CommandOptionError.new("'#{opt}': invalid option.")
-	    end
-	 end
+         argv = @argv
+         while !argv.empty? && argv[0][0] == ?-
+            opt = argv.shift
+            case opt
+            when '-h', '-v', '-s', '-e'
+               @options[opt] = true
+            when '-a', '-l', '-p'
+               if argv.empty?
+                  raise CommandOptionError.new("'#{opt}' requires argument.")
+               end
+               @options[opt] = argv.shift
+            when '--help'
+               @options['-h'] = true
+            when /^--([-\w]+)(?:=(.*))?$/
+               value = $2
+               name  = $1.gsub(/-/, '_')
+               case value
+               when 'true', 'yes'
+                  value = true
+               when 'false', 'no'
+                  value = false
+               when 'null', 'nil'
+                  value = nil
+               when /^\d+$/
+                  value = value.to_i
+               when /^\d+\.\d+$/
+                  value = value.to_f
+               when /^\/.*\/$/
+                  value = eval value
+               when /^'.*'$/
+                  value = eval value
+               when /^".*"$/
+                  value = eval value
+               end
+               @properties[name.intern] = value
+            else
+               raise CommandOptionError.new("'#{opt}': invalid option.")
+            end
+         end
       end
-
-
-      def do_action(action, input, plogic_block, lang, properties)
-	 case action
-	 when 'convert'
-	    converter = Converter.new(input, properties)
-	    output = converter.convert()
-	 when 'scan'
-	    scanner = Scanner.new(input, properties)
-	    output = scanner.scan_all()
-	 else
-	    raise CommandOptionError.new("#{action}: not implemented yet.")
-	 end
-	 return output
+      
+      
+      def perform(action, compiler, input, filename, elem_decl_list, lang)
+         case action
+         when 'convert'
+            pdata_str = input
+            block_stmt, element_list = compiler.convert(pdata_str, filename)
+            output = block_stmt._inspect()
+         when 'parse-plogic', 'parse_plogic'
+            plogic_str = input
+            elem_decl_list = compiler.parse_plogic(plogic_str, filename)
+            output = elem_decl_list.collect { |decl| decl._inspect() }.join
+         when 'parse-program', 'parse_program', 'parse'
+            program_str = input
+            block_stmt = compiler.parse_program(program_str, filename)
+            output = block_stmt._inspect()
+         when 'expand'
+            pdata_str = input
+            block_stmt, element_list = compiler.convert(pdata_str, filename)
+            element_table = compiler.merge(element_list, elem_decl_list)
+            compiler.expand(block_stmt, element_table)
+            output = block_stmt._inspect()
+         when 'translate'
+            program_str = input
+            block_stmt = compiler.parse_program(program_str, filename)
+            code = compiler.translate(block_stmt, lang)
+            output = code
+         when 'compile'
+            pdata_str = input
+            block_stmt, element_list = compiler.convert(pdata_str, filename)
+            element_table = compiler.merge(element_list, elem_decl_list)
+            compiler.expand(block_stmt, element_table)
+            code = compiler.translate(block_stmt, lang)
+            output = code
+         when 'scan'
+            scanner = Scanner.new(input)
+            output = scanner.scan_all()
+         else
+            raise CommandOptionError.new("#{action}: not supported yet.")
+         end
+         return output
       end
 
    end

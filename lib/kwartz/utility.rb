@@ -28,13 +28,16 @@ module Kwartz
    ## exception class for assertion
    ##
    class AssertionError < KwartzError
+      def initialize(msg)
+         super(msg)
+      end
    end
 
 
    ##
    ## assertion
    ##
-   def self.assert(condition, message=nil)
+   def self.assert(condition, message='')
       unless condition
 	 raise AssertionError.new(message)
       end

@@ -86,12 +86,12 @@ class ExpressionTest < Test::Unit::TestCase
 
    ##
    def test_function_expr1
-      arglist = [
+      arguments = [
          StringExpression.new("arg1"),
          VariableExpression.new("arg2"),
          BinaryExpression.new("!=", VariableExpression.new("arg3"), NullExpression.new()),
       ]
-      expr = FunctionExpression.new('f1', arglist)
+      expr = FunctionExpression.new('f1', arguments)
       expected = <<END
 f1()
   "arg1"
@@ -105,12 +105,12 @@ END
 
    ##
    def test_property_expr1
-      arglist = [
+      arguments = [
          StringExpression.new("arg1"),
          VariableExpression.new("arg2"),
          BinaryExpression.new("!=", VariableExpression.new("arg3"), NullExpression.new()),
       ]
-      expr = PropertyExpression.new(VariableExpression.new('obj'), 'p1', arglist)
+      expr = PropertyExpression.new(VariableExpression.new('obj'), 'p1', arguments)
       expected = <<END
 .
   obj
@@ -158,12 +158,12 @@ class StatementTest < Test::Unit::TestCase
 
    ##
    def test_print_stmt1
-      arglist = [
+      arguments = [
          StringExpression.new("<li>"),
          VariableExpression.new("item"),
          StringExpression.new("</li>\n"),
       ]
-      stmt = PrintStatement.new(arglist)
+      stmt = PrintStatement.new(arguments)
       expected = <<'END'
 :print
   "<li>"
@@ -339,7 +339,7 @@ END
       _test(stmt, expected)
    end
 
-   
+
    ##
    def test_expand_stmt2
       stmt = ExpandStatement.new(:element, 'name')

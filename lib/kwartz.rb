@@ -1,9 +1,11 @@
 ###
 ### kwartz.rb
 ###
+### $Id$
+###
 
+require 'kwartz/parser'
 require 'kwartz/converter'
-#require 'kwartz/parser'
-require 'kwartz/scanner'
-#require 'kwartz/translator'
-#require 'kwartz/compiler'
+require 'kwartz/expander'
+require 'kwartz/translator'
+require 'kwartz/compiler'

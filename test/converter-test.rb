@@ -55,28 +55,28 @@ class ConverterTest < Test::Unit::TestCase
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		linenum+delta: 2+0
 		tagname:       body
 		before_text:   ""
 		before_space:  " "
 		attr_str:      ""
 		after_space:   ""
-		
+
 		linenum+delta: 2+1
 		tagname:       /body
 		before_text:   ""
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		linenum+delta: 3+1
 		tagname:       /html
 		before_text:   ""
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		rest:          ""
 		linenum:       4
 	END
@@ -97,28 +97,28 @@ class ConverterTest < Test::Unit::TestCase
 		before_space:  ""
 		attr_str:      " id=\"user\""
 		after_space:   "\n"
-		
+
 		linenum+delta: 2+0
 		tagname:       li
 		before_text:   ""
 		before_space:  " "
 		attr_str:      " kd=\"value:user\""
 		after_space:   ""
-		
+
 		linenum+delta: 2+1
 		tagname:       /li
 		before_text:   "foo"
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		linenum+delta: 3+1
 		tagname:       /ul
 		before_text:   ""
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		rest:          ""
 		linenum:       4
 	END
@@ -138,7 +138,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_fetch(input, expected)
     end
-    
+
 
 
     def test_fetch4	# tags with several lines
@@ -159,28 +159,28 @@ class ConverterTest < Test::Unit::TestCase
 		before_space:  ""
 		attr_str:      ""
 		after_space:   ""
-		
+
 		linenum+delta: 3+1
 		tagname:       /b
 		before_text:   "foo"
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		linenum+delta: 4+2
 		tagname:       i
 		before_text:   "ddd"
 		before_space:  ""
 		attr_str:      "\n  kd=\"bar\""
 		after_space:   "\n"
-		
+
 		linenum+delta: 7+1
 		tagname:       /i
 		before_text:   "BAR\n"
 		before_space:  ""
 		attr_str:      ""
 		after_space:   "\n"
-		
+
 		rest:          "eee\n"
 		linenum:       8
 	END
@@ -996,7 +996,7 @@ END
 		<tr class="odd" kd="if:ctr%2==1">
 		  <td>#{data}#</td>
 		</tr>
-		
+
 		<tr class="even" kd="else:">
 		  <td>#{data}#</td>
 		</tr>
@@ -1098,7 +1098,6 @@ END
 		[tagname]
 		tr
 		[attrs]
-		[append]
 		[content]
 		:block
 		  :print
@@ -1132,7 +1131,7 @@ END
 	#	  :expand(cont_user)
 	#	  :expand(etag_user)
 	#	:end
-	#	
+	#
 	#	:print("<table>\n")
 	#	:expand(element_user)
 	#	:print("</table>\n")
@@ -1161,7 +1160,6 @@ END
 		tr
 		[attrs]
 		id="user"
-		[append]
 		[content]
 		:block
 		  :print
@@ -1195,7 +1193,7 @@ END
 	#	  :expand(cont_user)
 	#	  :expand(etag_user)
 	#	:end
-	#	
+	#
 	#	:print("<table>\n")
 	#	:expand(element_user)
 	#	:print("</table>\n")
@@ -1307,7 +1305,6 @@ END
 		[tagname]
 		tr
 		[attrs]
-		[append]
 		[content]
 		:block
 		  :print
@@ -1328,7 +1325,6 @@ END
 		tbody
 		[attrs]
 		id="loop"
-		[append]
 		[content]
 		:block
 		  @element(user)
@@ -1371,7 +1367,7 @@ END
 	#	  :expand(cont_loop)
 	#	  :expand(etag_loop)
 	#	:end
-	#	
+	#
 	#	:print("<table>\n")
 	#	:expand(element_loop)
 	#	:print("</table>\n")
@@ -1402,7 +1398,6 @@ END
 		type="radio"
 		id="male"
 		value="M"
-		[append]
 		[content]
 		:block
 		[spaces]
@@ -1428,7 +1423,7 @@ END
 	#	  :expand(cont_male)
 	#	  :expand(etag_male)
 	#	:end
-	#	
+	#
 	#	:print("<label for=\"male\">")
 	#	:print("Male:")
 	#	:print("</label>\n")
@@ -1551,7 +1546,7 @@ END
 		:block
 	END
 	#expected = <<-'END'
-	#	
+	#
 	#END
 	_test_convert(input, expected)
     end
@@ -1574,7 +1569,7 @@ END
     end
 
 
-    def test_property1	# 'even' and 'odd'
+    def test_properties1	# 'even' and 'odd'
 	input = <<-'END'
 		<tbody kd="LOOP:item:list">
 		 <tr bgcolor="#CCCCCC" id="attr:bgcolor:item_tgl">
@@ -1638,11 +1633,11 @@ END
 	#	:end
 	#	:print("</tbody>\n")
 	#END
-	_test_convert(input, expected, {:even_value=>"#FFCCCC", :odd_value=>"#CCCCFF"})
+	_test_convert(input, expected, {:even_value=>'"#FFCCCC"', :odd_value=>'"#CCCCFF"'})
     end
 
 
-    def test_property2	# delete_id_attr
+    def test_properties2	# delete_id_attr
 	input = <<-'END'
 		<tr id="foo">
 		 <td>#{item}#</td>
@@ -1656,7 +1651,6 @@ END
 		tr
 		[attrs]
 		id="foo"
-		[append]
 		[content]
 		:block
 		  :print
@@ -1690,14 +1684,14 @@ END
 	#	  :expand(cont_foo)
 	#	  :expand(etag_foo)
 	#	:end
-	#	
+	#
 	#	:expand(element_foo)
 	#END
 	_test_convert(input, expected, {:delete_id_attr=>true})
     end
 
 
-    def test_property3	# attr_name
+    def test_properties3	# attr_name
 	input = <<-'END'
 		<td kd:kwartz="value:item">foo</td>
 	END

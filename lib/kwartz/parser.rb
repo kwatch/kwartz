@@ -95,16 +95,16 @@ module Kwartz
       ##               ::=  [ expression { ',' expression } ]
       ##
       def parse_arguments
-         arglist = []
-         return arglist if token() == ')'
+         arguments = []
+         return arguments if token() == ')'
          expr = parse_expression()
-         arglist << expr
+         arguments << expr
          while token() == ','
             scan()
             expr = parse_expression()
-            arglist << expr
+            arguments << expr
          end
-         return arglist
+         return arguments
       end
 
 
@@ -119,11 +119,11 @@ module Kwartz
             tkn = scan()
             if tkn == '('
                scan()
-               arglist = parse_arguments()
+               arguments = parse_arguments()
                check_token(')', "missing ')' of '#{name}()' (current token='#{tkn}').")
                scan()
                scan()
-               return FunctionExpression.new(name, arglist)
+               return FunctionExpression.new(name, arguments)
             else
                return VariableExpression.new(name)
             end
@@ -200,13 +200,13 @@ module Kwartz
                scan()
                if token() == '('
                   scan()
-                  arglist = parse_arguments()
+                  arguments = parse_arguments()
                   check_token(')', "')' expected (property '#{prop_name}()' is not closed by ')').")
                   scan()
                else
-                  arglist = nil
+                  arguments = nil
                end
-               return PropertyExpression.new(expr, prop_name, arglist)
+               return PropertyExpression.new(expr, prop_name, arguments)
             else
                return expr
             end
@@ -382,12 +382,12 @@ module Kwartz
          tkn = scan()
          check_token('(', "print-statement requires '('.") unless tkn != '('
          scan()
-         arglist = parse_arguments()
+         arguments = parse_arguments()
          check_token(')', "print-statement requires ')'.") unless token() != ')'
          tkn = scan()
          check_token(';', "print-statement requires ';'.") unless tkn != ';'
          scan()
-         return PrintStatement.new(arglist)
+         return PrintStatement.new(arguments)
       end
       
       

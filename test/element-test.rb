@@ -37,8 +37,8 @@ class ElementTest < Test::Unit::TestCase
       append  = []
       is_empty = false
       element = Kwartz::Element.new(marking, tagname, content, attrs, append)
-      
-      value = Kwartz::PrintStatement.new( [ Kwartz::VariableExpression.new("user") ] )
+
+      value = Kwartz::VariableExpression.new("user")
       attrs = { "bgcolor" => Kwartz::VariableExpression.new('color') }
       append = [ Kwartz::StringExpression.new(" checked") ]
       remove = [ "id" ]
@@ -55,8 +55,7 @@ class ElementTest < Test::Unit::TestCase
       expected1 = <<'END'
 #user_list {
   value:
-    :print
-      user
+    user
   attrs:
     "bgcolor" color
   append:
@@ -81,7 +80,6 @@ li
 bgcolor="color"
 class="user"
 id="user_list"
-[append]
 [content]
 :print
   "foo"
@@ -103,6 +101,8 @@ class="user"
 id="user_list"
 [append]
 " checked"
+[remove]
+"id"
 [content]
 :print
   user
@@ -121,7 +121,7 @@ END
       assert_equal_with_diff(expected2, element._inspect)
       element.swallow(elem_decl)
       assert_equal_with_diff(expected3, element._inspect)
-      
+
       #print "------- elem_decl ---------\n"
       #print elem_decl._inspect
       #print "------- before ---------\n"

@@ -99,13 +99,13 @@ class ScannerTest < Test::Unit::TestCase
 	END
 	_test(input, expected)
     end
-    
+
     def test_scan_keywords
        input = <<-'END'
 		expand
 		element
 		macro
-		
+
 		value:
 		attr:
 		append:
@@ -118,7 +118,7 @@ class ScannerTest < Test::Unit::TestCase
 		remove
 		tagname
 		plogic
-		
+
 		print
 		while
 		foreach
@@ -128,7 +128,7 @@ class ScannerTest < Test::Unit::TestCase
 		else
 		elseif
 		require
-		
+
 		true
 		false
 		null
@@ -167,11 +167,11 @@ class ScannerTest < Test::Unit::TestCase
        _test(input, expected)
     end
 
-    
+
     def test_scan_operators1
        input = <<-'END'
 		+-*/%!=<><=>===!=+=-=*=/=%=
-		
+
        END
        expected = <<-'END'
 		+
@@ -199,7 +199,7 @@ class ScannerTest < Test::Unit::TestCase
     def test_scan_operators2
        input = <<-'END'
 		{}[][:][:if]()
-		
+
        END
        expected = <<-'END'
 		{
@@ -216,17 +216,17 @@ class ScannerTest < Test::Unit::TestCase
        END
        _test(input, expected)
     end
-    
-    
+
+
     def test_scan_chars1
     	input = <<-'END'
 		!^&&||:;,.?
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 	END
 	expected = <<-'END'
 		!
@@ -263,7 +263,7 @@ class ScannerTest < Test::Unit::TestCase
           _test('|foo', "")
        end
     end
-    
+
 
     def test_scan_string1
     	input = <<-'END'
@@ -306,8 +306,8 @@ class ScannerTest < Test::Unit::TestCase
           _test(input, expected)
        end
     end
-    
-    
+
+
     def test_scan_space1  # bug: empty text
        input = "   "
        expected = ''

@@ -1,3 +1,16 @@
+.=title:	ChangeLog
+.?version:	$Rev$
+.?lastupdate:	$Date$
+
+
+.: 2004-01-25 rev.21
+	.- [enhance] new file: expander.rb, expander-test.rb
+	.- [enhance] new file: translator.rb, translator-test.rb
+	.- [enhance] new file: comiler.rb, compiler-test.rb
+	.- [change] kwartz: changed to use new Compiler class
+	.- [change] rename LeafExpression to LiteralExpression
+	.- [change] VariableExpression is now subclass of Expression, not LeafExpression
+
 .: 2005-01-24  rev.20
 	.- [enhance] Element#swallog() added
 	.- [enhance] element-test.rb: new test added

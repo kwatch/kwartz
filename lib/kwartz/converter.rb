@@ -38,14 +38,15 @@ module Kwartz
          @kd_attr    = properties[:attr_name] || 'kd'   # or 'kd::kwartz'
          #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
          #@delete_id_attr = properties[:delete_id_attr] || false
-         @even_value = properties[:even_value] || 'even'
-         @odd_value  = properties[:odd_value]  || 'odd'
+         @even_value = properties[:even_value] || "'even'"
+         @odd_value  = properties[:odd_value]  || "'odd'"
          @filename   = properties[:filename]
          @parser = Parser.new('', properties)
          @stmt_list = []
          @elem_list = []
       end
       attr_reader :stmt_list, :elem_list
+      alias :element_list :elem_list
       
       FETCH_PATTERN = /([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?)/	#"
       
@@ -236,7 +237,7 @@ module Kwartz
                ctr_name = $1 + "_ctr"
                tgl_name = $1 + "_tgl"
                stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
-               body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? \"#{@even_value}\" : \"#{@odd_value}\";"))
+               body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even_value} : #{@odd_value};"))
                body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
                stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
             end
@@ -474,27 +475,27 @@ module Kwartz
 
 
       def create_print_node(str, linenum)
-         arglist = []
+         arguments = []
          while str =~ /\#\{(.*?)\}\#/
             expr_str = $1
             before_text = $`
             after_text = $'
             if before_text && !before_text.empty?
-               arglist << StringExpression.new(before_text)
+               arguments << StringExpression.new(before_text)
             end
             if expr_str && !expr_str.empty?
-               arglist << parse_expression(expr_str, linenum)
+               arguments << parse_expression(expr_str, linenum)
             end
             str = after_text
          end
          if str && !str.empty?
-            arglist << StringExpression.new(str)
+            arguments << StringExpression.new(str)
          end
-         return PrintStatement.new(arglist)
+         return PrintStatement.new(arguments)
       end
 
       def build_print_node()
-         arglist = []
+         arguments = []
          #flag_expr_exist = false
          #if @attr_values.values.find { |val| val.is_a?(Expression) }
          #   flag_expr_exist = true
@@ -502,39 +503,39 @@ module Kwartz
          #   flag_expr_exist = true
          #end
          #if !flag_expr_exist
-         #   arglist << StringExpression.new(@tag_str)
-         #   return PrintStatement.new(arglist)
+         #   arguments << StringExpression.new(@tag_str)
+         #   return PrintStatement.new(arguments)
          #end
-         arglist << StringExpression.new("#{@before_space}<#{@slash_etag}#{@tagname}")
+         arguments << StringExpression.new("#{@before_space}<#{@slash_etag}#{@tagname}")
          @attr_names.each do |aname|
             avalue = @attr_values[aname]
             aspace = @attr_spaces[aname] || ' '
             if avalue.is_a?(Expression)
-               arglist << StringExpression.new("#{aspace}#{aname}=\"")
-               arglist << avalue
-               arglist << StringExpression.new("\"")
+               arguments << StringExpression.new("#{aspace}#{aname}=\"")
+               arguments << avalue
+               arguments << StringExpression.new("\"")
             else
-               arglist << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
+               arguments << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
             end
          end
-         arglist.concat(@append_exprs) unless @append_exprs.empty?
-         arglist << StringExpression.new("#{@extra_space}#{@slash_empty}>#{@after_space}")
+         arguments.concat(@append_exprs) unless @append_exprs.empty?
+         arguments << StringExpression.new("#{@extra_space}#{@slash_empty}>#{@after_space}")
          #
-         arglist2 = []
+         arguments2 = []
          expr = nil
-         arglist.each do |arg|
+         arguments.each do |arg|
             if arg.is_a?(StringExpression)
                expr = expr ? StringExpression.new(expr.value + arg.value) : arg
             else
                if expr
-                  arglist2 << expr
+                  arguments2 << expr
                   expr = nil
                end
-               arglist2 << arg
+               arguments2 << arg
             end
          end
-         arglist2 << expr if expr
-         return PrintStatement.new(arglist2)
+         arguments2 << expr if expr
+         return PrintStatement.new(arguments2)
       end
 
       def build_tag_str

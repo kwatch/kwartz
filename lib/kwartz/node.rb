@@ -12,8 +12,8 @@
 ##	   Binary
 ##	   Function
 ##	   Property
-##	   Leaf
-##	     Variable
+##	   Variable
+##	   Literal
 ##	     Numeric
 ##	     String
 ##	     Boolean
@@ -52,7 +52,7 @@ module Kwartz
       end
       protected :indent
 
-      def accept(visitor)
+      def accept(visitor, depth=0)
          raise Kwartz::NotImplemenetedError("#{self.class.name}#accept(): not implemented yet.")
       end
    end
@@ -66,8 +66,8 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_expression(self, depth)
       end
    end
 
@@ -86,8 +86,8 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_unary_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_unary_expression(self, depth)
       end
    end
 
@@ -108,61 +108,61 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_binary_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_binary_expression(self, depth)
       end
    end
 
 
    ##
    class FunctionExpression < Expression
-      def initialize(funcname, arglist=[])
+      def initialize(funcname, arguments=[])
          super(:function)
          @funcname = funcname
-         @arglist = arglist
+         @arguments = arguments
       end
-      attr_accessor :funcname, :arglist
+      attr_accessor :funcname, :arguments
 
       def _inspect(depth=0, s='')
          indent(depth, s)
          s << @funcname << "()\n"
-         @arglist.each do |expr|
+         @arguments.each do |expr|
             expr._inspect(depth+1, s)
          end
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_funtion_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_funtion_expression(self, depth)
       end
    end
 
 
    ##
    class PropertyExpression < Expression
-      def initialize(object_expr, propname, arglist=nil)
+      def initialize(object_expr, propname, arguments=nil)
          super('.')
          @object = object_expr
          @propname = propname
-         @arglist = arglist
+         @arguments = arguments
       end
-      attr_accessor :object, :propname, :arglist
+      attr_accessor :object, :propname, :arguments
 
       def _inspect(depth=0, s='')
          super(depth, s)
          @object._inspect(depth+1, s)
          indent(depth+1, s)
          s << @propname << "\n"
-         if arglist
-            arglist.each do |expr|
+         if arguments
+            arguments.each do |expr|
                expr._inspect(depth+2, s)
             end
          end
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_property_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_property_expression(self, depth)
       end
    end
 
@@ -185,8 +185,28 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_conditional_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_conditional_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class VariableExpression < Expression
+      def initialize(variable_name)
+         super(:variable)
+         @name = variable_name
+      end
+      attr_accessor :name
+
+      def _inspect(depth=0, s='')
+         indent(depth, s)
+         s << @name << "\n"
+         return s
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_variable_expression(self, depth)
       end
    end
 
@@ -194,8 +214,8 @@ module Kwartz
    ## ----------------------------------------
 
 
-   ## abstract class which doesn't have child expressions
-   class LeafExpression < Expression
+   ## abstract class
+   class LiteralExpression < Expression
       def initialize(token, value)
          super(token)
          @value = value
@@ -208,38 +228,26 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_leaf_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_literal_expression(self, depth)
       end
    end
 
 
    ##
-   class VariableExpression < LeafExpression
-      def initialize(variable_name)
-         super(:variable, variable_name)
-      end
-
-      def accept(visitor)
-         return visitor.visit_variable_expression(self)
-      end
-   end
-
-
-   ##
-   class NumericExpression < LeafExpression
+   class NumericExpression < LiteralExpression
       def initialize(numeric_str)
          super(:numeric, numeric_str)
       end
 
-      def accept(visitor)
-         return visitor.visit_numeric_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_numeric_expression(self, depth)
       end
    end
 
 
    ##
-   class StringExpression < LeafExpression
+   class StringExpression < LiteralExpression
       def initialize(string)
          super(:string, string)
       end
@@ -250,32 +258,32 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_string_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_string_expression(self, depth)
       end
    end
 
 
    ##
-   class BooleanExpression < LeafExpression
+   class BooleanExpression < LiteralExpression
       def initialize(value)
          super(:boolean, value)
       end
 
-      def accept(visitor)
-         return visitor.visit_boolean_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_boolean_expression(self, depth)
       end
    end
 
 
    ##
-   class NullExpression < LeafExpression
+   class NullExpression < LiteralExpression
       def initialize(value='null')
          super(:null, value)
       end
 
-      def accept(visitor)
-         return visitor.visit_null_expression(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_null_expression(self, depth)
       end
    end
 
@@ -284,8 +292,8 @@ module Kwartz
 
    ## abstract class for statement
    class Statement < Node
-      def accept(visitor)
-         return visitor.visit_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_statement(self, depth)
       end
 
       def _inspect(depth=0, s='')
@@ -297,42 +305,42 @@ module Kwartz
 
    ##
    class PrintStatement < Statement
-      def initialize(arglist=[])
+      def initialize(arguments=[])
          super(:print)
-         @arglist = arglist
+         @arguments = arguments
       end
-      attr_accessor :arglist
+      attr_accessor :arguments
 
       def _inspect(depth=0, s='')
          super(depth, s)
-         arglist.each do |expr|
+         arguments.each do |expr|
             expr._inspect(depth+1, s)
          end
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_print_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_print_statement(self, depth)
       end
    end
 
 
    ##
    class ExprStatement < Statement
-      def initialize(assign_expr)
+      def initialize(expression)
          super(:expr)
-         @expr = assign_expr
+         @expression = expression
       end
-      attr_accessor :expr
+      attr_accessor :expression
 
       def _inspect(depth=0, s='')
          super(depth, s)
-         @expr._inspect(depth+1, s)
+         @expression._inspect(depth+1, s)
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_expr_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_expr_statement(self, depth)
       end
    end
 
@@ -353,8 +361,8 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_block_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_block_statement(self, depth)
       end
 
       ## ex.
@@ -383,76 +391,76 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_if_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_if_statement(self, depth)
       end
    end
 
 
    ##
    class ForeachStatement < Statement
-      def initialize(loopvar_expr, list_expr, body_block)
+      def initialize(loopvar_expr, list_expr, body_stmt)
          super(:foreach)
-         @loopvar = loopvar_expr
-         @list    = list_expr
-         @body    = body_block
+         @loopvar_expr = loopvar_expr
+         @list_expr    = list_expr
+         @body_stmt    = body_stmt
       end
-      attr_accessor :loopvar, :list, :body
+      attr_accessor :loopvar_expr, :list_expr, :body_stmt
 
       def _inspect(depth=0, s='')
          super(depth, s)
-         @loopvar._inspect(depth+1, s)
-         @list._inspect(depth+1, s)
-         @body._inspect(depth+1, s)
+         @loopvar_expr._inspect(depth+1, s)
+         @list_expr._inspect(depth+1, s)
+         @body_stmt._inspect(depth+1, s)
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_foreach_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_foreach_statement(self, depth)
       end
    end
 
 
    ##
    class WhileStatement < Statement
-      def initialize(condition_expr, body_block)
+      def initialize(condition_expr, body_stmt)
          super(:while)
          @condition = condition_expr
-         @body    = body_block
+         @body_stmt = body_stmt
       end
-      attr_accessor :condition, :body
+      attr_accessor :condition, :body_stmt
 
       def _inspect(depth=0, s='')
          super(depth, s)
          @condition._inspect(depth+1, s)
-         @body._inspect(depth+1, s)
+         @body_stmt._inspect(depth+1, s)
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_while_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_while_statement(self, depth)
       end
    end
 
 
    ##
    class MacroStatement < Statement
-      def initialize(macro_name, body_block)
+      def initialize(macro_name, body_stmt)
          super(:macro)
          @macro_name = macro_name
-         @body       = body_block
+         @body_stmt  = body_stmt
       end
-      attr_accessor :macro_name, :body
+      attr_accessor :macro_name, :body_stmt
 
       def _inspect(depth=0, s='')
          indent(depth, s)
          s << ':macro(' << @macro_name << ")\n"
-         @body._inspect(depth+1, s)
+         @body_stmt._inspect(depth+1, s)
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_macro_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_macro_statement(self, depth)
       end
    end
 
@@ -476,8 +484,8 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_expand_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_expand_statement(self, depth)
       end
    end
 
@@ -497,8 +505,8 @@ module Kwartz
          return s
       end
 
-      def accept(visitor)
-         return visitor.visit_rawcode_statement(self)
+      def accept(visitor, depth=0)
+         return visitor.visit_rawcode_statement(self, depth)
       end
    end
    

@@ -35,7 +35,7 @@ class ParseExpressionTest < Test::Unit::TestCase
       testmethod = $1
       method_name = testmethod.sub(/\Atest_/, '').sub(/\d*\z/, '')
       #$stderr.puts "*** debug: method_name=#{method_name.inspect}"
-      parser = Parser.new(input, properties)
+      parser = Kwartz::Parser.new(input, properties)
       expr = parser.__send__(method_name)
       assert_equal(klass, expr.class)
       assert_equal_with_diff(expected, expr._inspect())
@@ -43,10 +43,10 @@ class ParseExpressionTest < Test::Unit::TestCase
 
    ##
    def _test_parse_arguments(input, expected, properties={})
-      parser = Parser.new(input, {})
-      arglist = parser.parse_arguments
-      assert_equal(Array, arglist.class)
-      actual = arglist.collect { |expr| expr._inspect() }.join()
+      parser = Kwartz::Parser.new(input, {})
+      arguments = parser.parse_arguments
+      assert_equal(Array, arguments.class)
+      actual = arguments.collect { |expr| expr._inspect() }.join()
       assert_equal_with_diff(expected, actual)
    end
 

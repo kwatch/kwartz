@@ -28,4 +28,10 @@ suite << ParseDeclarationTest.suite()
 require 'element-test'
 suite << ElementTest.suite()
 
+require 'translator-test'
+suite << TranslatorTest.suite()
+
+require 'compiler-test'
+suite << CompilerTest.suite()
+
 Test::Unit::UI::Console::TestRunner.run(suite)
