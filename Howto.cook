@@ -1,0 +1,39 @@
+/*
+ * Usage:  cook compile   or   cook test
+ *
+ * $Id$
+ */
+ 
+
+help:
+{
+	[print '  cook compile:    generate *.java and compile (requires jikes)'];
+	[print '  cook test:       compile test case and execute it (requires jikes)'];
+}
+
+
+all: compile test;
+
+source    = kwartz-java.rb;
+package   = 'com.kuwata_lab.kwartz';
+src_root  = 'src/java';
+test_root = 'src/test';
+src_path  = [src_root]'/'[subst . / [package]];
+test_path = [test_root]'/'[subst . / [package]];
+
+junit_jar = /usr/local/java/j2sdk/jre/lib/ext/junit.jar;
+
+
+compile:
+{
+	ruby [source];
+	jikes [src_path]/'*'.java;
+}
+
+classpath = '.:'[src_root]':'[test_root]':'[junit_jar];
+
+test:
+{
+	jikes -classpath [classpath] [test_path]/'*'.java;
+	java  -classpath [classpath] [package].KwartzTest;
+}
