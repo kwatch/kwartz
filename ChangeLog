@@ -2,6 +2,9 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-02-06 rev.34
+	.- [enhance] Compiler#compile() and Compiler#analyze() supports #DOCUMENT declaration
+
 .: 2004-02-06 rev.33
 	.- [enhance] can parse #DOCUMENT declaration
 	.- [change] class ElementDeclaration is deleted and new class Declaration is added

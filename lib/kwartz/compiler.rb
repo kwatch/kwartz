@@ -24,9 +24,9 @@ module Kwartz
    ##  ## parse presentation logic
    ##  plogic_filename = 'xxx.plogic'
    ##  plogic_str = File.open(filename) { |f| f.read() }
-   ##  elem_decl_list = compiler.parse_plogic(plogic_str, plogic_filename)
+   ##  decl_list = compiler.parse_plogic(plogic_str, plogic_filename)
    ##  ## merge element and element-declaration
-   ##  element_table = compiler.merge(element_list, elem_decl_list)
+   ##  element_table = compiler.merge(element_list, decl_list)
    ##  ## expand '@element(foo)', '@stag', '@cont', and '@etag'
    ##  compiler.expand(block_stmt, element_table)
    ##  ## translate into a target language code
@@ -39,6 +39,7 @@ module Kwartz
       end
       attr_reader :properties
 
+
       ## ex.
       ##   block_stmt, element_list = compiler.convert(ARGF.read(), ARGF.filename)
       def convert(pdata_str, filename=nil)
@@ -50,18 +51,20 @@ module Kwartz
          return block_stmt, elem_list
       end
 
+
       ## ex.
       ##  filename = 'xxx.plogic'
       ##  plogic_str = File.open(filename) { |f| f.read() }
-      ##  elem_decl_list = compiler.parse_plogic(plogic_str, filename)
+      ##  decl_list = compiler.parse_plogic(plogic_str, filename)
       def parse_plogic(plogic_str, filename=nil)
          @properties[:filename] = filename if filename
          parser = Kwartz::Parser.new(plogic_str, @properties)
-         elem_decl_list = parser.parse_plogic()
+         decl_list = parser.parse_plogic()
          @properties.delete(:filename) if filename
-         return elem_decl_list
+         return decl_list
       end
-      
+
+
       ## ex.
       ##  str = ARGF.read()
       ##  filename = ARGF.filename
@@ -74,11 +77,23 @@ module Kwartz
          return block_stmt
       end
 
+
       ## ex.
-      ##  element_table = compiler.merge(element_list, elem_decl_list)
-      def merge(element_list, element_decl_list=[])
-         return Kwartz::Element.merge(element_list, element_decl_list)
+      ##  element_table = compiler.merge(element_list, decl_list)
+      def merge(element_list, decl_list=[])
+         return Kwartz::Element.merge(element_list, decl_list)
       end
+      
+      
+      ##
+      def handle_doc_decl(block_stmt, doc_decl)
+         begin_block = doc_decl.part[:begin]
+         end_block   = doc_decl.part[:end]
+         block_stmt.statements.unshift(begin_block) if begin_block
+         block_stmt.statements.push(end_block)      if end_block
+         return block_stmt
+      end
+
 
       ## ex.
       ##  compiler.expand(block_stmt, element_table)
@@ -88,6 +103,7 @@ module Kwartz
          return stmt
       end
 
+
       ## ex.
       ##   lang='eruby'
       ##   code = compiler.translate(block_stmt, lang)
@@ -96,16 +112,19 @@ module Kwartz
          code = translator.translate(node)
          return code
       end
-      
-      
+
+
       ## facade method
       def compile(pdata_str='', plogic_str='', lang=Kwartz::Config::LANG, pdata_filename=nil, plogic_filename=nil)
          ## convert
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic
-         elem_decl_list = parse_plogic(plogic_str, plogic_filename)
+         decl_list = parse_plogic(plogic_str, plogic_filename)
          ## merge
-         element_table = merge(elem_list, elem_decl_list)
+         element_table = merge(elem_list, decl_list)
+         ## handle 'begin:' and 'end:'
+         doc_decl = decl_list.find { |decl| decl.name == 'DOCUMENT' }
+         handle_doc_decl(block_stmt, doc_decl) if doc_decl
          ## expand
          expand(block_stmt, element_table)
          ## translate
@@ -113,18 +132,22 @@ module Kwartz
          return code
       end
 
+
       ## facade method
-      def analyze(pdata_str='', plogic_str='', pdata_filename=nil, plogic_filename=nil)
+      def analyze(pdata_str='', plogic_str='', name='scope', pdata_filename=nil, plogic_filename=nil)
          ## convert
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic
-         elem_decl_list = parse_plogic(plogic_str, plogic_filename)
+         decl_list = parse_plogic(plogic_str, plogic_filename)
          ## merge
-         element_table = merge(elem_list, elem_decl_list)
+         element_table = merge(elem_list, decl_list)
+         ## handle 'begin:' and 'end:'
+         doc_decl = decl_list.find { |decl| decl.name == 'DOCUMENT' }
+         handle_doc_decl(block_stmt, doc_decl) if doc_decl
          ## expand
          expand(block_stmt, element_table)
          ## analye
-         analyzer = Analyzer.new(properties)
+         analyzer = Analyzer.create(name, properties)
          analyzer.analyze(block_stmt)
          return analyzer.result()
       end

@@ -180,6 +180,12 @@ module Kwartz
 
 
       ##
+      def visit_string_expression(expr, depth=0)
+         @code << Kwartz::Util.quote_str(expr.value)
+      end
+
+
+      ##
       def visit_if_statement(stmt, depth)
 
          if ! stmt.else_stmt

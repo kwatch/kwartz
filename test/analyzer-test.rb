@@ -25,21 +25,8 @@ class AnalyzerTest < Test::Unit::TestCase
    def _test(pdata_str, plogic_str, expected, properties={})
       return if @flag_suspend
       compiler = Kwartz::Compiler.new(properties)
-      
-      ## convert
-      block_stmt, element_list = compiler.convert(pdata_str)
-      ## parse presentation logic
-      elem_decl_list = compiler.parse_plogic(plogic_str)
-      ## merge
-      element_table = compiler.merge(element_list, elem_decl_list)
-      ## expand
-      compiler.expand(block_stmt, element_table)
-      #print block_stmt._inspect
-      
-      ## analyze
-      analyzer = Kwartz::Analyzer.create('scope', properties)
-      analyzer.analyze(block_stmt)
-      actual = analyzer.result
+      result = compiler.analyze(pdata_str, plogic_str, 'scope')
+      actual = result
       assert_equal_with_diff(expected, actual)
    end
 
@@ -94,7 +81,7 @@ END
 
 
    ## ---------------------------------------- use global var as loopvar in foreach-stmt
-   
+
    def test_analyze2	# use global var as loopvar in foreach-stmt
       pdata = <<'END'
 <div id="value:item">hoge</div>
@@ -126,7 +113,7 @@ END
 
 
    ## ---------------------------------------- assignment into a global variable
-   
+
    def test_analyze3	# use global var as loopvar in foreach-stmt
       pdata = <<'END'
 <div id="value:user_ctr">hoge</div>
@@ -149,7 +136,7 @@ END
 
 
    ## ---------------------------------------- unsupported funcion
-   
+
    def test_analyze4	# unsupported function
       pdata = <<'END'
 <div id="value:list_length(list)">foo</div>
@@ -167,7 +154,7 @@ END
 
 
    ## ---------------------------------------- i += 1 ; j = j+1
-   
+
    def test_analyze5	# unsupported function
       pdata = <<'END'
 <div id="foo">foo</div>
@@ -188,5 +175,41 @@ Warning: assignment into a global variable 'j'.
 END
       _test(pdata, plogic, expected)
    end
-   
+
+
+   ## ---------------------------------------- #DOCUMENT { begin: {...} end: {...} }
+   def test_analyze6	# unsupported function
+      pdata = <<'END'
+<tr kd="mark:list">
+  <td kd="value:item">foo</td>
+</tr>
+END
+      plogic = <<'END'
+#DOCUMENT {
+   begin: {
+      list = context['list'];
+   }
+   end : {
+      print('<!-- copyright ', copyright, ' --!>');
+   }
+   global: context, args;
+}
+#list {
+   plogic: {
+      foreach (item in list) {
+         @stag;
+         @cont;
+         @etag;
+      }
+   }
+}
+END
+      expected = <<'END'
+Global variable(s): context copyright
+Local  variable(s): list item
+END
+      _test(pdata, plogic, expected)
+   end
+
+
 end

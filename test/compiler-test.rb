@@ -273,7 +273,7 @@ END
 	}
 }
 END
-   def test_compile4_eruby
+   def test_compile4_eruby	# attr
       expected = <<'END'
 <table id="table" summary="<%= title %>">
 <% i = 0 %>
@@ -294,7 +294,7 @@ END
       _test(@@pdata4, @@plogic4, expected)
    end
 
-   def test_compile4_php
+   def test_compile4_php	# attr
       expected = <<'END'
 <table id="table" summary="<?php echo $title; ?>">
 <?php $i = 0; ?>
@@ -315,7 +315,7 @@ END
       _test(@@pdata4, @@plogic4, expected)
    end
 
-   def test_compile4_jstl11
+   def test_compile4_jstl11	# attr
       expected = <<'END'
 <table id="table" summary="<c:out value="${title}" escapeXml="false"/>">
 <c:set var="i" value="0"/>
@@ -327,8 +327,8 @@ END
     <c:set var="color" value="#CCCCFF"/>
   </c:otherwise></c:choose>
  <tr bgcolor="<c:out value="${color}" escapeXml="false"/>">
-  <td><c:out value="${user["name"]}" escapeXml="false"/></td>
-  <td><c:out value="${user["email"]}" escapeXml="false"/></td>
+  <td><c:out value="${user['name']}" escapeXml="false"/></td>
+  <td><c:out value="${user['email']}" escapeXml="false"/></td>
  </tr>
 </c:forEach>
 </table>
@@ -401,7 +401,7 @@ END
 
    def test_compile6_jstl11	# empty tag and append
       expected = <<'END'
-checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox"<c:out value="${flag ? " checked=\"checked\"" : ""}" escapeXml="false"/> />
+checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox"<c:out value="${flag ? ' checked="checked"' : ''}" escapeXml="false"/> />
 END
       _test(@@pdata6, @@plogic6, expected)
    end
@@ -416,7 +416,6 @@ checkbox:<c:choose><c:when test="${flag}">
 END
       _test(@@pdata6, @@plogic6, expected)
    end
-
 
 
 
@@ -484,7 +483,93 @@ END
    end
 
 
+
+   ## -------------------- #DOCUMENT
+   @@pdata8 = <<'END'
+<tr kd="mark:list">
+  <td kd="value:item">foo</td>
+</tr>
+END
+   @@plogic8 = <<'END'
+#DOCUMENT {
+   begin: {
+      print("<!-- document -->\n");
+      list = context['list'];
+   }
+   end : {
+      print('<!-- /document -->', "\n");
+   }
+   global: context, args;
+}
+#list {
+   plogic: {
+      foreach (item in list) {
+         @stag;
+         @cont;
+         @etag;
+      }
+   }
+}
+END
+
+   def test_compile8_eruby	#DOCUMENT
+      expected = <<END
+<!-- document -->
+<% list = context["list"] %>
+<% for item in list do %>
+<tr>
+  <td><%= item %></td>
+</tr>
+<% end %>
+<!-- /document -->
+END
+      _test(@@pdata8, @@plogic8, expected)
+   end
+
+   def test_compile8_php	#DOCUMENT
+      expected = <<END
+<!-- document -->
+<?php $list = $context["list"]; ?>
+<?php foreach ($list as $item) { ?>
+<tr>
+  <td><?php echo $item; ?></td>
+</tr>
+<?php } ?>
+<!-- /document -->
+END
+      _test(@@pdata8, @@plogic8, expected)
+   end
+
+   def test_compile8_jstl11	#DOCUMENT
+      expected = <<END
+<!-- document -->
+<c:set var="list" value="${context['list']}"/>
+<c:forEach var="item" items="${list}">
+<tr>
+  <td><c:out value="${item}" escapeXml="false"/></td>
+</tr>
+</c:forEach>
+<!-- /document -->
+END
+      _test(@@pdata8, @@plogic8, expected)
+   end
+
+   def test_compile8_jstl10	#DOCUMENT
+      expected = <<END
+<!-- document -->
+<c:set var="list" value="${context['list']}"/>
+<c:forEach var="item" items="${list}">
+<tr>
+  <td><c:out value="${item}" escapeXml="false"/></td>
+</tr>
+</c:forEach>
+<!-- /document -->
+END
+      _test(@@pdata8, @@plogic8, expected)
+   end
+
 end
+
 
 ## ========================================
 
@@ -495,7 +580,7 @@ class SpanTest < Test::Unit::TestCase
       actual = compiler.compile(pdata, plogic, 'eruby')
       assert_equal_with_diff(expected, actual)
    end
-   
+
    ## ----------------------------------------
    def test_span1
       pdata = <<'END'
@@ -513,7 +598,7 @@ END
       _test(pdata, '', expected)
    end
 
-   
+
    ## ----------------------------------------
    def test_span2
       pdata = <<'END'
@@ -562,7 +647,7 @@ END
       _test(pdata, plogic, expected)
    end
 
-   
+
    ## ----------------------------------------
    def test_span4
       pdata = <<'END'
@@ -650,7 +735,7 @@ END
       _test(pdata, plogic, expected)
    end
 
-   
+
 end
 
 

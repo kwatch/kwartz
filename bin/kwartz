@@ -211,6 +211,8 @@ END
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
             element_table = compiler.merge(element_list, elem_decl_list)
+            doc_decl = elem_decl_list.find { |decl| decl.name == 'DOCUMENT' }
+            compiler.handle_doc_decl(block_stmt, doc_decl)
             compiler.expand(block_stmt, element_table)
             if action == :compile
                code = compiler.translate(block_stmt, lang)

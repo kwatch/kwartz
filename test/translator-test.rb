@@ -88,11 +88,13 @@ class TranslatorTest < Test::Unit::TestCase
       _test_expr(@@literal2, expected)
    end
    def test_literal2_jstl11
-      expected = '"str\'s\r\n"'
+      #expected = '"str\'s\r\n"'
+      expected = "'str\\'s\r\n'"
       _test_expr(@@literal2, expected)
    end
    def test_literal2_jstl10
-      expected = '"str\'s\r\n"'
+      #expected = '"str\'s\r\n"'
+      expected = "'str\\'s\r\n'"
       _test_expr(@@literal2, expected)
    end
 
@@ -355,7 +357,7 @@ class TranslatorTest < Test::Unit::TestCase
       _test_expr(@@function5, expected)
    end
    def test_function5_jstl11
-      expected = 'fn:join(fn:join(fn:join(fn:trim(s),fn:toUpperCase(s)),fn:toLowerCase(s)),fn:indexOf(s, "x"))'
+      expected = 'fn:join(fn:join(fn:join(fn:trim(s),fn:toUpperCase(s)),fn:toLowerCase(s)),fn:indexOf(s, \'x\'))'
       _test_expr(@@function5, expected)
    end
 

@@ -166,11 +166,11 @@ module Kwartz
 
 
       ## returns element_table (hash of element.name => element)
-      def self.merge(element_list, element_decl_list)
+      def self.merge(element_list, decl_list)
          decl_table = {}
-         element_decl_list.each do |decl|
+         decl_list.each do |decl|
             decl_table[decl.name] = decl
-         end if element_decl_list
+         end if decl_list
          element_table = {}
          element_list.each do |elem|
             decl = decl_table[elem.name]

@@ -21,7 +21,15 @@ module Kwartz
          #str.gsub!(/\#/, '\\#')
          return "\"#{str}\""
       end
-      
+
+      ## quote string
+      def self.quote_str(str)
+         str = str.dup
+         str.gsub!(/\\/, '\\\\\\\\')		# wow!
+         str.gsub!(/'/, "\\\\\'")	#"
+         return "'#{str}'"
+      end
+
    end
 
 end
