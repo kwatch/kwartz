@@ -1,6 +1,7 @@
 .	.=title:	README
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
 .	.?revision:	$Rev$
+.	.?release:	$Release$
 .	.?lastupdate:	$Date$
 .	
 .	

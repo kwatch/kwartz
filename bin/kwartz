@@ -47,6 +47,7 @@ module Kwartz
 
       VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)*/ && $&)
       LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
+      RELEASE     = ('$Release: 2.0.0-pre1$' =~ /Release: (.*)\$/ && $1)
 
       def initialize(argv=ARGV)
          @argv = argv
@@ -93,7 +94,7 @@ module Kwartz
          end
 
          if options[?h] || options[?v]
-            $stderr.puts "kwartz: Rev.#{VERSION} (#{LAST_UPDATE})" if options[?v]
+            $stderr.puts "kwartz: #{RELEASE} (rev.#{VERSION}), kwartz.rb: #{Kwartz::RELEASE} (rev.#{Kwartz::VERSION})" if options[?v]
             $stderr.puts usage() if options[?h]
             return 0
          end
@@ -179,7 +180,7 @@ END
          return s
       end
 
-      def perform(action, compiler, input, filename, elem_decl_list, lang)
+      def perform(action, compiler, input, filename, decl_list, lang)
          case action
          when :scan
             scanner = Scanner.new(input)
@@ -190,8 +191,8 @@ END
             output = block_stmt._inspect()
          when :parse_plogic
             plogic_str = input
-            elem_decl_list = compiler.parse_plogic(plogic_str, filename)
-            output = elem_decl_list.collect { |decl| decl._inspect() }.join
+            decl_list = compiler.parse_plogic(plogic_str, filename)
+            output = decl_list.collect { |decl| decl._inspect() }.join
          when :parse_program
             program_str = input
             block_stmt = compiler.parse_program(program_str, filename)
@@ -199,7 +200,7 @@ END
          when :expand
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
-            element_table = compiler.merge(element_list, elem_decl_list)
+            element_table = compiler.merge(element_list, decl_list)
             compiler.expand(block_stmt, element_table)
             output = block_stmt._inspect()
          when :translate
@@ -210,9 +211,8 @@ END
          when :compile, :analyze
             pdata_str = input
             block_stmt, element_list = compiler.convert(pdata_str, filename)
-            element_table = compiler.merge(element_list, elem_decl_list)
-            doc_decl = elem_decl_list.find { |decl| decl.name == 'DOCUMENT' }
-            compiler.handle_doc_decl(block_stmt, doc_decl)
+            element_table = compiler.merge(element_list, decl_list)
+            compiler.handle_doc_decl(block_stmt, decl_list)
             compiler.expand(block_stmt, element_table)
             if action == :compile
                code = compiler.translate(block_stmt, lang)

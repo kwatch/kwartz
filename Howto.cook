@@ -1,8 +1,6 @@
 
-
 README.%.txt:   README.txt
 {
-	
 	ruby m18n.rb -l [upcase %] [need] > [target];
 }
 
@@ -12,18 +10,20 @@ chmod:
 	chmod a+x bin/kwartz;
 }
 
-archive_dir = kwartz_[shell date '+%F'];
-
 files = ChangeLog setup.rb README.ja.txt README.en.txt;
 
-archive:  README.ja.txt README.en.txt
+kwartz_%:  README.ja.txt README.en.txt
 {
+	release = %;
+	archive_dir = kwartz_[release];
 	rm -rf [archive_dir];
 	mkdir -p [archive_dir];
 	cp -a lib bin test doc [files] [archive_dir];
 	cd examples \; make clean;
 	cp -a examples [archive_dir];
 	find [archive_dir] -name '.svn' | xargs rm -rf ;
+	find [archive_dir] -type f | xargs ruby -pi -e '\'gsub(/\\$Release.*?\\$/, "$Release: '[release]'$")\'';
 	find [archive_dir] -type f | xargs chmod 644;
 	chmod 755 [archive_dir]/bin/'*';
+	tar cjf [archive_dir].tar.bz2 [archive_dir];
 }

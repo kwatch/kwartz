@@ -1461,6 +1461,63 @@ END
     end
 
 
+    def test_convert_mark7	# marking and inline expr in attr
+	input = <<-'END'
+		<table>
+		  <tr bgcolor="#{color}#" id="mark:users">
+		   <td><a href="mailto:#{email}#" id="mark:user">#{name}#</a></td>
+		  </tr>
+		</table>
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<table>\n"
+		  @element(users)
+		  :print
+		    "</table>\n"
+		===== marking=user =====
+		[tagname]
+		a
+		[attrs]
+		href=.+
+		  "mailto:"
+		  email
+		[content]
+		:block
+		  :print
+		    name
+		[spaces]
+		["", "", "", ""]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=users =====
+		[tagname]
+		tr
+		[attrs]
+		bgcolor=color
+		[content]
+		:block
+		  :print
+		    "   <td>"
+		  @element(user)
+		  :print
+		    "</td>\n"
+		[spaces]
+		["  ", "\n", "  ", "\n"]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+	END
+	_test_convert(input, expected)
+    end
+
+
     def test_convert_while1	# while
     	input = <<-'END'
 		<div kd="while:data=d.fetch">

@@ -2,6 +2,7 @@
 ### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
+### $Release$
 ###
 
 require 'kwartz/config'
@@ -278,12 +279,29 @@ module Kwartz
          case directive_name
          when :mark
             marking = directive_arg
+            hash = staginfo[:attr_values]
+            hash.each do |aname, avalue|
+               if avalue.is_a?(String)
+                  list = expand_embed_expr(avalue, linenum)
+                  if list.empty?
+                     expr = StringExpression.new("")
+                  else
+                     expr = list.shift
+                     while !list.empty?
+                        left = expr
+                        right = list.shift
+                        expr = ArithmeticExpression.new('.+', left, right)
+                     end
+                  end
+                  hash[aname] = expr
+               end
+            end
             @elem_list << Element.create_from_taginfo(marking, staginfo, etaginfo, body_stmt_list)
             stmt_list << ExpandStatement.new(:element, marking)
 
          when :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST
-            is_loop = (directive_name != :foreach && directive_name != :Foreach && directive_name != :FOREACH)
-            if is_loop && !etaginfo
+            flag_loop, flag_counter, flag_toggle = @@flag_matrix[directive_name]
+            if flag_loop && !etaginfo
                msg = "directive '#{directive_name}' cannot use with empty tag."
                raise ConvertionError.new(msg, linenum, @filename)
             end
@@ -295,27 +313,29 @@ module Kwartz
             list_str = $2
             loopvar_expr = VariableExpression.new(var_name)
             list_expr = parse_expression(list_str, linenum)
-            if is_loop
+            if flag_loop
                first_stmt = body_stmt_list.shift
                last_stmt  = body_stmt_list.pop
             end
-            stmt_list << first_stmt if is_loop
-            if directive_name == :foreach || directive_name == :loop || directive_name == :list
+            stmt_list << first_stmt if flag_loop
+            if !flag_counter && !flag_toggle
                stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            elsif directive_name == :Foreach || directive_name == :Loop || directive_name == :List
+            elsif flag_counter && !flag_toggle
                ctr_name = $1 + "_ctr"
                stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
                body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
                stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            elsif directive_name == :FOREACH || directive_name == :LOOP || directive_name == :LIST
+            elsif flag_counter && flag_toggle
                ctr_name = $1 + "_ctr"
                tgl_name = $1 + "_tgl"
                stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
                body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even} : #{@odd};"))
                body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
                stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
+            else
+               Kwartz::assert
             end
-            stmt_list << last_stmt if is_loop
+            stmt_list << last_stmt if flag_loop
 
          when :value, :Value, :VALUE
             if !etaginfo

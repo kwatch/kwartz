@@ -22,13 +22,15 @@
 .- [_] mkmethod
 .- [v] macro C() S() D()
 .- [v] eol auto-detect
-.- [_] load statement
+.- [x] load statement
 .- [_] include directive
 .- [v] #DOCUMENT
-.- [v] begin: end:
+.- [v] begin: {...} end: {...}
+.- [v] require: "file1";
 .- [v] jsp header
 .- [_] --header, --footer
 .- [_] auto-compile
 .- [_] retrieve or extract (-r name)
 .- [_] /* comment */
 .- [_] parse type appropriately in 'vartype { type var; }'
+.- [_] ruby gems

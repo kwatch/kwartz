@@ -2,7 +2,13 @@
 ### kwartz.rb
 ###
 ### $Id$
+### $Release$
 ###
+
+module Kwartz
+   VERSION     = ('$Rev: 36$' =~ /\d+(?:\.\d+)*/ && $&)
+   RELEASE     = ('$Release: 2.0.0-pre1$' =~ /Release: (.*)\$/ && $1)
+end
 
 require 'kwartz/config'
 require 'kwartz/exception'

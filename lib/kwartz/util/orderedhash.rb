@@ -2,6 +2,7 @@
 ### copyright(c) 2005 kuwata-lab all rights reserved
 ###
 ### $Id$
+### $Release$
 ###
 
 module Kwartz
