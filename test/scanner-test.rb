@@ -111,11 +111,13 @@ class ScannerTest < Test::Unit::TestCase
 		append:
 		remove:
 		tagname:
+		plogic:
 		value
 		attr
 		append
 		remove
 		tagname
+		plogic
 		
 		print
 		while
@@ -141,11 +143,13 @@ class ScannerTest < Test::Unit::TestCase
 		:append
 		:remove
 		:tagname
+		:plogic
 		value
 		attr
 		append
 		remove
 		tagname
+		plogic
 		:print
 		:while
 		:foreach

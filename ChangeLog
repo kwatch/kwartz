@@ -1,5 +1,10 @@
+.: 2005-01-24  rev.18
+	.- [enhance] parser.rb: declaration support
+	.- [enhance] element.rb: new file
+
 .: 2005-01-24  rev.17
 	.- [enhance] parser.rb: statement support
+
 .: 2005-01-23  rev.16
 	.- [enhance] scanner.rb rewrited
 

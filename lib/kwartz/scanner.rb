@@ -78,6 +78,7 @@ module Kwartz
          'append:'  =>   :append,
          'remove:'  =>   :remove,
          'tagname:' =>   :tagname,
+         'plogic:'  =>   :plogic,
 
          'print'    =>   :print,
          'while'    =>   :while,
@@ -104,7 +105,7 @@ module Kwartz
             end
             return @token = nil unless @line
 
-            while @line && @line =~ /\A\s*\#/
+            while @line && @line =~ /\A\s*\/\//		# comment
                @line = getline()
             end
             return @token = nil unless @line
@@ -406,7 +407,7 @@ module Kwartz
          end
 
          case ch
-         when ?] , ?, , ?(, ?), ??, ?{, ?}, ?;
+         when ?# , ?] , ?, , ?(, ?), ??, ?{, ?}, ?;
             getchar()
             return ch.chr
          end

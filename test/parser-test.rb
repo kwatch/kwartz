@@ -96,7 +96,7 @@ END
       expected = "+\n  x\n  y\n"
       _test(input, expected, BinaryExpression)
    end
-
+   
    ##
    def test_parse_literal_expr1
       input = "123"
@@ -131,6 +131,12 @@ END
       assert_raise(Kwartz::SyntaxError) do
          _test(input, expected, Expression)
       end
+   end
+   
+   def test_parse_literal_expr5		# bug: Parser#parse_literal()
+      input = "'foo' bar"
+      expected = '"foo"' + "\n"
+      _test(input, expected, StringExpression)
    end
 
    ##
@@ -801,8 +807,8 @@ END
    end
 
 
-    ##
-    def test_parse_stmt_list1
+   ##
+   def test_parse_stmt_list1
        @flag_suspend = false
        input = <<'END'
  day = 'foo';
@@ -936,6 +942,370 @@ END
 end
 
 
+##
+## parse declaration test
+##
+class ParseDeclarationTest < Test::Unit::TestCase
+
+   def setup
+      @flag_suspend = false
+   end
+
+
+   def _test(input, expected, klass=nil, properties={})
+      return if @flag_suspend
+      s = caller().first
+      s =~ /in `(.*)'/		#'
+      testmethod = $1
+      method_name = testmethod.sub(/\Atest_/, '').sub(/\d*\z/, '')
+      #$stderr.puts "*** debug: method_name=#{method_name.inspect}"
+      parser = Parser.new(input, properties)
+      obj = parser.__send__(method_name)
+      assert_equal(klass, obj.class) if klass
+      actual = ""
+      if klass == Array
+         actual << obj.collect { |str| str.inspect() }.join(',')
+      elsif klass == Hash
+         actual << obj.keys.sort.collect { |key| "[#{key}]\n#{obj[key]._inspect}" }.join()
+      elsif klass == nil
+         actual = obj
+      else
+         actual << obj._inspect()
+      end
+      assert_equal_with_diff(expected.to_s, actual.to_s)
+   end
+
+   
+   ##
+   def test_parse_value_decl1
+      input = "value: foo;"
+      expected = "foo\n"
+      _test(input, expected, VariableExpression)
+   end
+
+   
+   ##
+   def test_parse_value_decl2
+      input = "value: 'mailto:'.+user.email;"
+      expected = <<'END'
+.+
+  "mailto:"
+  .
+    user
+    email
+END
+      _test(input, expected, BinaryExpression)
+   end
+   
+   
+   ##
+   def test_parse_value_decl3
+      input = "value: 'mailto:'.+user.email attr:"
+      expected = nil
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected)
+      end
+   end
+
+
+   ##
+   def test_parse_value_decl4
+      @flag_suspend = false
+      input = "value: ;"
+      expected = ''
+      _test(input, expected)
+   end
+
+
+   ##
+   def test_parse_attr_decl1
+      input = 'attr: "foo" bar; '
+      expected = "[foo]\nbar\n"
+      _test(input, expected, Hash)
+   end
+
+   ##
+   def test_parse_attr_decl2
+      input = 'attr: "class" klass, "href" user.url; '
+      expected = "[class]\nklass\n[href]\n.\n  user\n  url\n"
+      _test(input, expected, Hash)
+   end
+
+   ##
+   def test_parse_attr_decl3
+      input = 'attr: "class" klass, "href" user.url '
+      expected = ""
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+   end
+
+   ##
+   def test_parse_append_decl1
+      input = 'append: flag ? " checked=\"checked\"" : "";'
+      expected = "?:\n  flag\n  \" checked=\\\"checked\\\"\"\n  \"\"\n"
+      _test(input, expected, ConditionalExpression)
+   end
+
+   ##
+   def test_parse_append_decl2
+      input = 'append: flag ? " checked=\"checked\"" : ""'
+      expected = "?:\n  flag\n  \" checked=\\\"checked\\\"\"\n  \"\"\n"
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+   end
+
+   ##
+   def test_parse_tagname_decl1
+      input = 'tagname: "html:html";'
+      expected = '"html:html"' + "\n"
+      _test(input, expected, StringExpression)
+   end
+
+   ##
+   def test_parse_tagname_decl2
+      input = 'tagname: "html:html"'
+      expected = '"html:html"' + "\n"
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+   end
+   
+   ##
+   def test_parse_remove_decl1
+      input = 'remove: "id";'
+      expected = '"id"'
+      _test(input, expected, Array)
+   end
+
+   ##
+   def test_parse_remove_decl2
+      input = 'remove: "id" "class" \'foo\';'
+      expected = '"id","class","foo"'
+      _test(input, expected, Array)
+   end
+
+   ##
+   def test_parse_remove_decl3
+      input = 'remove: "id"'
+      expected = nil
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+   end
+
+   ##
+   def test_parse_plogic_decl1
+      input = 'plogic: { }'
+      expected = ":block\n"
+      _test(input, expected, BlockStatement)
+   end
+
+   ##
+   def test_parse_plogic_decl2
+      input = 'plogic: { @stag; @cont; @etag; }'
+      expected = ":block\n  @stag\n  @cont\n  @etag\n"
+      _test(input, expected, BlockStatement)
+   end
+
+   ##
+   def test_parse_plogic_decl3
+      input = <<'END'
+      plogic: {
+       @stag;
+       foreach (item in list)
+         @cont;
+       @etag;
+       }
+END
+      expected = <<'END'
+:block
+  @stag
+  :foreach
+    item
+    list
+    @cont
+  @etag
+END
+      _test(input, expected, BlockStatement)
+   end
+   
+   ##
+   def test_parse_plogic_decl4
+      input = 'plogic: ;'
+      expected = nil
+      assert_raise(Kwartz::SyntaxError) do
+         _test(input, expected, nil)
+      end
+   end
+   
+   ##
+   def test_parse_sub_decl_list
+      input = <<'END'
+value:   user.name;
+attr:    "class" klass, "bgcolor" color;
+append:  flag ? ' checked="checked"' : '';
+remove:  "id";
+tagname: tag;
+plogic: {
+	@stag;
+	foreach (item in list) {
+	  @cont;
+	}
+	@etag;
+}
+END
+      expected = <<'END'
+append:
+?:
+  flag
+  " checked=\"checked\""
+  ""
+attr:
+bgcolor=color
+class=klass
+plogic:
+:block
+  @stag
+  :foreach
+    item
+    list
+    :block
+      @cont
+  @etag
+remove:
+id
+tagname:
+tag
+value:
+.
+  user
+  name
+END
+      parser = Kwartz::Parser.new(input)
+      hash = parser.parse_sub_decl_list()
+      s = ''
+      hash.keys.collect{|k| k.to_s}.sort.each do |key|
+         key = key.intern
+         value = hash[key]
+         s << "#{key}:\n"
+         case key
+         when :value, :append, :tagname, :plogic
+            s << value._inspect if value
+         when :attr
+            value.keys.sort.each do |k|
+               v = value[k]
+               s << "#{k}=#{v._inspect}"
+            end
+         when :remove
+            s << value.collect{|v| "#{v}"}.join(",") << "\n"
+         else
+            fail("invalid key(='#{key.inspect}')")
+         end
+      end
+      assert_equal_with_diff(expected, s)
+   end
+
+   ##
+   def test_parse_element_decl1
+      input = <<'END'
+#foo {
+	value:   user.name;
+	attr:    "class" klass, "bgcolor" color;
+	append:  flag ? ' checked="checked"' : '';
+	remove:  "id";
+	tagname: tag;
+	plogic: {
+		@stag;
+		foreach (item in list)
+		  @cont;
+		@etag;
+	}
+}
+END
+      expected = <<'END'
+#foo {
+  value:
+    .
+      user
+      name
+  attr:
+    "bgcolor" color
+    "class" klass
+  append:
+    ?:
+      flag
+      " checked=\"checked\""
+      ""
+  remove:
+    "id"
+  tagname:
+    tag
+  plogic:
+    :block
+      @stag
+      :foreach
+        item
+        list
+        @cont
+      @etag
+}
+END
+      _test(input, expected, Element)
+   end
+
+
+   ##
+   def test_parse_plogic
+      input = <<'END'
+#foo {
+	value:   user;
+	attr:    "class" klass, "bgcolor" color;
+	plogic: {
+		@stag;
+		foreach (item in list)
+		  @cont;
+		@etag;
+	}
+}
+
+#bar {
+   plogic: {
+      @cont;
+   }
+}
+END
+      expected = <<'END'
+[bar]
+#bar {
+  plogic:
+    :block
+      @cont
+}
+[foo]
+#foo {
+  value:
+    user
+  attr:
+    "bgcolor" color
+    "class" klass
+  plogic:
+    :block
+      @stag
+      :foreach
+        item
+        list
+        @cont
+      @etag
+}
+END
+      _test(input, expected, Hash)
+   end
+   
+
+end
+
 
 ##
 ## main
@@ -943,6 +1313,7 @@ end
 if $0 == __FILE__
     Test::Unit::UI::Console::TestRunner.run(ParseExpressionTest)
     Test::Unit::UI::Console::TestRunner.run(ParseStatementTest)
+    Test::Unit::UI::Console::TestRunner.run(ParseDeclarationTest)
     #suite = Test::Unit::TestSuite.new()
     #suite << ParseExpressionTest.suite()
     #suite << ParseStatementTest.suite()

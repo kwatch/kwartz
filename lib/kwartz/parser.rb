@@ -7,6 +7,7 @@
 require 'kwartz/exception'
 require 'kwartz/scanner'
 require 'kwartz/node'
+require 'kwartz/element'
 
 module Kwartz
 
@@ -147,17 +148,21 @@ module Kwartz
          tkn = token()
          case tkn
          when :numeric
+            val = value()
             scan()
-            return NumericExpression.new(value())
+            return NumericExpression.new(val)
          when :string
+            val = value()
             scan()
-            return StringExpression.new(value())
+            return StringExpression.new(val)
          when :true, :false
+            val = value()
             scan()
-            return BooleanExpression.new(value())
+            return BooleanExpression.new(val)
          when :null
+            val = value()
             scan()
-            return NullExpression.new(value())
+            return NullExpression.new(val)
          when :empty
             syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
          end
@@ -561,6 +566,173 @@ module Kwartz
       end
 
 
+      ## ------------------------------------------------------------
+      
+      ##
+      ## plogic ::= { element_decl }
+      ##
+      def parse_plogic
+         elem_table = {}
+         while token() == '#'
+            elem = parse_element_decl()
+            elem_table[elem.name] = elem
+         end
+         check_token(nil, "plogic is not ended.") unless token() == nil
+         return elem_table
+      end
+      
+      ##
+      ## element-decl  ::= '#' name '{' sub-decl-list '}'
+      ## sub-decl-list ::= sub-decl | sub-decl-list sub-decl | e
+      ## sub-decl      ::= value-decl | attr-decl | append-decl | remove-decl | tagname-decl | plogic-decl
+      ##
+      def parse_element_decl()
+         Kwartz::assert(token() == '#')
+         tkn = scan()
+         check_token(:name, "'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
+         name = value()
+         tkn = scan()
+         check_token('{', "'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
+         scan()
+         hash = parse_sub_decl_list()
+         check_token('}', "'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
+         scan()
+         return Element.new(name, hash)
+      end
+      
+      def parse_sub_decl_list()
+         hash = {}
+         while true
+            key, obj = parse_sub_decl()
+            break unless key
+            hash[key] = obj
+         end
+         return hash
+      end
+      
+      def parse_sub_decl()
+         obj = nil
+         case key = token()
+         when :value
+            obj = parse_value_decl()
+         when :attr
+            obj = parse_attr_decl()
+         when :append
+            obj = parse_append_decl()
+         when :remove
+            obj = parse_remove_decl()
+         when :tagname
+            obj = parse_tagname_decl()
+         when :plogic
+            obj = parse_plogic_decl()
+         else
+            key = nil
+            obj = nil
+         end
+         return key, obj
+      end
+      
+      ##
+      ##  value_dec  ::= 'value:' [ expression ] ';'
+      ##
+      def parse_value_decl()
+         Kwartz::assert(token() == :value)
+         tkn = scan()
+         if tkn == ';'
+            scan()
+            return nil
+         end
+         expr = parse_expression()
+         check_token(';', "value-declaration requires ';'.") unless token() == ';'
+         scan()
+         return expr
+      end
+      
+      ##
+      ##  attr_decl ::= 'attr:' [ string expression { ',' string expression } ] ';'
+      ##
+      def parse_attr_decl()
+         Kwartz::assert(token() == :attr)
+         attrs = {}
+         tkn = scan()
+         if tkn == ';'
+            scan()
+            return attrs
+         end
+         while true
+            aname_expr = parse_expression()
+            check_token(:string, "attr-declaration requires attribute names as string.") unless aname_expr.token == :string
+            aname = aname_expr.value
+            avalue_expr = parse_expression()
+            attrs[aname] = avalue_expr
+            break if token() != ','
+            scan()
+         end
+         check_token(';', "attr-declaration requires ';'.") unless token() == ';'
+         scan()
+         return attrs
+      end
+      
+      ##
+      ## append_decl ::= 'append:' [ expression ] ';'
+      ##
+      def parse_append_decl()
+         Kwartz::assert(token() == :append)
+         tkn = scan()
+         if tkn == ';'
+            scan()
+            return nil
+         end
+         expr = parse_expression()
+         check_token(';', "append-declaration requires ';'.") unless token() == ';'
+         scan()
+         return expr
+      end
+
+      ##
+      ## remove_decl ::= 'remove:' { string } ';'
+      ##
+      def parse_remove_decl()
+         list = []
+         Kwartz::assert(token() == :remove)
+         while (tkn = scan()) == :string
+            list << value()
+         end
+         check_token(';', "append-declaration requires ';'.") unless token() == ';'
+         scan()
+         return list
+      end
+      
+      ##
+      ## tagname_decl ::= 'tagname:' [ expression ] ';'
+      ##
+      def parse_tagname_decl()
+         Kwartz::assert(token() == :tagname)
+         tkn = scan()
+         if tkn == ';'
+            scan()
+            return nil
+         end
+         expr = parse_expression()
+         check_token(';', "tagname-declaration requires ';'.") unless token() == ';'
+         scan()
+         return expr
+      end
+      
+      ##
+      ## plogic_decl ::= 'plogic:' block-stmt
+      ##
+      def parse_plogic_decl()
+         Kwartz::assert(token() == :plogic)
+         tkn = scan()
+         check_token('{', "plogic-declaration requires '{'.") unless tkn == '{'
+         block_stmt = parse_block_stmt()
+         return block_stmt
+      end
+      
+      
+      ##
+      ##
       ##
 
       def parse_program()
@@ -590,8 +762,12 @@ end
 if __FILE__ == $0
    input = ARGF.read()
    parser = Kwartz::Parser.new(input)
-   expr = parser.parse_expression()
-   print expr._inspect()
+   #--
+   
+   #--
+   #expr = parser.parse_expression()
+   #print expr._inspect()
+   #--
    #stmt_list = parser.parse_stmt_list()
    #stmt_list.each do |stmt|
    #   print stmt._inspect()

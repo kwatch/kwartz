@@ -22,6 +22,7 @@ suite << StatementTest.suite()
 
 require 'parser-test'
 suite << ParseExpressionTest.suite()
-#suite << ParseStatementTest.suite()
+suite << ParseStatementTest.suite()
+suite << ParseDeclarationTest.suite()
 
 Test::Unit::UI::Console::TestRunner.run(suite)
