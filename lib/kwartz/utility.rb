@@ -23,7 +23,7 @@ module Kwartz
    ##
    ## exception class for assertion
    ##
-   class AssertionError < BaseError
+   class AssertionError < KwartzError
    end
 
    

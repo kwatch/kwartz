@@ -116,7 +116,7 @@ module Kwartz
    ##
    class FunctionExpression < Expression
       def initialize(funcname, arglist=[])
-         super('<fcall>')
+         super(:function)
          @funcname = funcname
          @arglist = arglist
       end
@@ -150,8 +150,8 @@ module Kwartz
       def _inspect(depth=0, s='')
          super(depth, s)
          @object._inspect(depth+1, s)
-         indent(depth, s)
-         s << @propname << (arglist ? "()\n" : "\n")
+         indent(depth+1, s)
+         s << @propname << "\n"
          if arglist
             arglist.each do |expr|
                expr._inspect(depth+2, s)
@@ -170,7 +170,7 @@ module Kwartz
    class ConditionalExpression < Expression
       def initialize(condition_expr, left_expr, right_expr)
          super('?:')
-         @condition = cond_expr
+         @condition = condition_expr
          @left = left_expr
          @right = right_expr
       end
@@ -216,7 +216,7 @@ module Kwartz
    ##
    class VariableExpression < LeafExpression
       def initialize(variable_name)
-         super('<var>', variable_name)
+         super(:variable, variable_name)
       end
 
       def accept(visitor)
@@ -228,7 +228,7 @@ module Kwartz
    ##
    class NumericExpression < LeafExpression
       def initialize(numeric_str)
-         super('<num>', numeric_str)
+         super(:numeric, numeric_str)
       end
 
       def accept(visitor)
@@ -240,7 +240,7 @@ module Kwartz
    ##
    class StringExpression < LeafExpression
       def initialize(string)
-         super('<str>', string)
+         super(:string, string)
       end
 
       def _inspect(depth=0, s='')
@@ -258,7 +258,7 @@ module Kwartz
    ##
    class BooleanExpression < LeafExpression
       def initialize(value)
-         super('<bool>', value)
+         super(:boolean, value)
       end
 
       def accept(visitor)
@@ -270,7 +270,7 @@ module Kwartz
    ##
    class NullExpression < LeafExpression
       def initialize(value='null')
-         super('<null>', value)
+         super(:null, value)
       end
 
       def accept(visitor)

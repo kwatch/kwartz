@@ -3,7 +3,7 @@ module Kwartz
    ##
    ## abstract root error class
    ##
-   class BaseError < StandardError
+   class KwartzError < StandardError
       def initialize(message)
          super(message)
       end
@@ -12,7 +12,7 @@ module Kwartz
       end
    end
    
-   class NotImplementedError < BaseError
+   class NotImplementedError < KwartzError
       def initialize(message="not implemented yet.")
          super(message)
       end
