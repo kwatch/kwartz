@@ -250,6 +250,7 @@ require_once('KwartzUtility.inc');
 					//	$append_str .= ' #{X(' . $darg . ')}#';
 					//	break;
 					case 'append':  case 'Append':  case 'APPEND':
+						$darg = $this->expand_csd($darg);
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	# 'E(' ')' or 'X(' ')'
 						$append_str .= " #{{$e1}{$darg}{$e2}}#";
 						break;
@@ -344,10 +345,12 @@ require_once('KwartzUtility.inc');
 					//	$append_str .= ' @{X(' . $darg . ')}@';
 					//	break;
 					case 'append':  case 'Append':  case 'APPEND':
+						$darg = $this->expand_csd($darg);
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	// 'E(' ')' or 'X(' ')'
 						$append_str .= " @{{$e1}{$darg}{$e2}}@";
 						break;
-					case 'echo':  case 'Echo':  case 'ECHO':
+					//case 'echo':  case 'Echo':  case 'ECHO':
+					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
 					case 'replace':
 					case 'if':  case 'elseif':  case 'else':
@@ -415,18 +418,20 @@ require_once('KwartzUtility.inc');
 					$list[] = new KwartzStringExpression($text);
 				}
 				if ($value) {
-					if (preg_match('/^@([CSD])\((.*)\)$/', $value, $m=array())) {
-						switch ($m[1]) {
-						case 'C':  $csd = 'checked="checked"'  ;  break;
-						case 'S':  $csd = 'selected="selected"';  break;
-						case 'D':  $csd = 'disabled="disabled"';  break;
-						}
-						$cond_expr = $this->parse_expression($m[2], $flag_php_mode);
-						$expr = new KwartzConditionalExpression('?', $cond_expr,
-								new KwartzStringExpression($csd), new KwartzStringExpression(''));
-					} else {
-						$expr = $this->parse_expression($value, $flag_php_mode);
-					}
+					//if (preg_match('/^@([CSD])\((.*)\)$/', $value, $m=array())) {
+					//	switch ($m[1]) {
+					//	case 'C':  $csd = 'checked="checked"'  ;  break;
+					//	case 'S':  $csd = 'selected="selected"';  break;
+					//	case 'D':  $csd = 'disabled="disabled"';  break;
+					//	}
+					//	$cond_expr = $this->parse_expression($m[2], $flag_php_mode);
+					//	$expr = new KwartzConditionalExpression('?', $cond_expr,
+					//			new KwartzStringExpression($csd), new KwartzStringExpression(''));
+					//} else {
+					//	$expr = $this->parse_expression($value, $flag_php_mode);
+					//}
+					$newvalue = $this->expand_csd($value);
+					$expr = $this->parse_expression($newvalue, $flag_php_mode);
 					$list[] = $expr;
 				}
 				$s = $rest;
@@ -540,9 +545,9 @@ require_once('KwartzUtility.inc');
 			'value'   => 'handle_directive_value',
 			'Value'   => 'handle_directive_value',
 			'VALUE'   => 'handle_directive_value',
-			'echo'    => 'handle_directive_value',
-			'Echo'    => 'handle_directive_value',
-			'ECHO'    => 'handle_directive_value',
+			//'echo'    => 'handle_directive_value',
+			//'Echo'    => 'handle_directive_value',
+			//'ECHO'    => 'handle_directive_value',
 
 			'if'      => 'handle_directive_if',
 			'unless'  => 'handle_directive_if',
@@ -649,7 +654,8 @@ require_once('KwartzUtility.inc');
 
 		private function handle_directive_value($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span) {
 			$expr = $this->parse_expression($directive_arg, $flag_php_mode);
-			if ($directive_name == 'Value' || $directive_name == 'Echo') {
+			//if ($directive_name == 'Value' || $directive_name == 'Echo') {
+			if ($directive_name == 'Value') {
 				$expr = new KwartzFunctionExpression('E', array($expr));
 			} elseif ($directive_name == 'VALUE' || $directive_name == 'ECHO') {
 				$expr = new KwartzFunctionExpression('X', array($expr));
@@ -788,6 +794,22 @@ require_once('KwartzUtility.inc');
 			$expr = $this->parser->parse_expression_strictly($flag_php_mode);
 			return $expr;
 		}
+		
+		## @C(...)  ==> (...) ? 'checked="checked"'   : ''
+		## @S(...)  ==> (...) ? 'selected="selected"' : ''
+		## @D(...)  ==> (...) ? 'disabled="disabled"' : ''
+		private function expand_csd($str) {
+			if (preg_match('/^@([CSD])\((.*)\)$/', $str, $m=array())) {
+				switch ($m[1]) {
+				case 'C':  $csd = 'checked="checked"'  ;  break;
+				case 'S':  $csd = 'selected="selected"';  break;
+				case 'D':  $csd = 'disabled="disabled"';  break;
+				}
+				$str = "({$m[2]}) ? '{$csd}' : ''";
+			}
+			return $str;
+		}
+
 	}
 
 // }  // end of namespace Kwartz

@@ -276,13 +276,13 @@ END;
 
 	function test_parse_directive_phpstr1() {
 		$converter = new KwartzConverter('');
-		$directive_str = "attr('class'=>\$klass,'id'=>\$item);echo(\$expr)";
+		$directive_str = "attr('class'=>\$klass,'id'=>\$item);value(\$expr)";
 		$attr_exprs = array();
 		$append_exprs = array();
 		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $append_exprs);
 		$this->assertEquals('@{$klass}@', $attr_exprs['class']);
 		$this->assertEquals('@{$item}@', $attr_exprs['id']);
-		$this->assertEquals('echo', $directive[0]);
+		$this->assertEquals('value', $directive[0]);
 		$this->assertEquals('$expr', $directive[1]);
 		//echo var_dump($attr_exprs);
 		//echo var_dump($directive);
@@ -295,7 +295,8 @@ END;
 		$attr_hash = array();
 		$append_str = '';
 		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $append_str);
-		$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $append_str);
+		//$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $append_str);
+		$this->assertEquals(' #{E(foo)}# #{(flag!=\'\') ? \'checked="checked"\' : \'\'}#', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -305,7 +306,8 @@ END;
 		$attr_hash = array();
 		$append_str = '';
 		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $append_str);
-		$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $append_str);
+		//$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $append_str);
+		$this->assertEquals(' @{E(\$foo)}@ @{(\$flag!=\'\') ? \'checked="checked"\' : \'\'}@', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -553,7 +555,7 @@ END;
 		<td kd="value:hash['key']">hoge</td>
 END;
 		$input2 = <<<END
-		<td kd:php="echo(\$hash['key'])">hoge</td>
+		<td kd:php="value(\$hash['key'])">hoge</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -1166,7 +1168,7 @@ END;
 <span id="value:day" class="holiday">&nbsp;</span>
 END;
 		$input2 = <<<END
-<span kd:php="echo(\$day)" class="holiday">&nbsp;</span>
+<span kd:php="value(\$day)" class="holiday">&nbsp;</span>
 END;
 		$expected = <<<END
 <<block>>
@@ -1442,9 +1444,9 @@ END;
 
 	function test_convert_escape1_php() {
 		$input = <<<END
-		<td kd:php="echo(\$a[0])">foo</td>
-		<td kd:php="Echo(\$a[1])">bar</td>
-		<td kd:php="ECHO(\$a[2])">baz</td>
+		<td kd:php="value(\$a[0])">foo</td>
+		<td kd:php="Value(\$a[1])">bar</td>
+		<td kd:php="VALUE(\$a[2])">baz</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -1516,6 +1518,97 @@ END;
 	}
 	
 
+
+	function test_convert_csd2() {	# APPEND(@C(expr))
+		$input1 = 
+		'<input type="radio"  kd:php="Append(@C($v==\'M\'))"/>
+		<option value="key2"  kd:php="Append(@S($v==\'M\'))">Man</option>
+		<input type="submit"  kd:php="Append(@D($v==\'M\'))"/>
+		';
+		$input2 = 
+		'<input type="radio"  kd:php="APPEND(@C($v==\'M\'))"/>
+		<option value="key2"  kd:php="APPEND(@S($v==\'M\'))">Man</option>
+		<input type="submit"  kd:php="APPEND(@D($v==\'M\'))"/>
+		';
+		$expected1 =
+		'<<block>>
+		  :print
+		    "<input type=\"radio\" "
+		    E()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "checked=\"checked\""
+		        ""
+		    "/>\n"
+		  :print
+		    "<option value=\"key2\" "
+		    E()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "selected=\"selected\""
+		        ""
+		    ">"
+		  :print
+		    "Man"
+		  :print
+		    "</option>\n"
+		  :print
+		    "<input type=\"submit\" "
+		    E()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "disabled=\"disabled\""
+		        ""
+		    "/>\n"
+		';
+		$expected2 = 
+		'<<block>>
+		  :print
+		    "<input type=\"radio\" "
+		    X()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "checked=\"checked\""
+		        ""
+		    "/>\n"
+		  :print
+		    "<option value=\"key2\" "
+		    X()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "selected=\"selected\""
+		        ""
+		    ">"
+		  :print
+		    "Man"
+		  :print
+		    "</option>\n"
+		  :print
+		    "<input type=\"submit\" "
+		    X()
+		      ?
+		        ==
+		          v
+		          "M"
+		        "disabled=\"disabled\""
+		        ""
+		    "/>\n"
+		';
+		$this->_test_convert($input1, $expected1);
+		$this->_test_convert($input2, $expected2);
+	}
+	
+
 	function test_convert_practice1() {
 		$input = <<<END
 		<table>
@@ -1540,8 +1633,8 @@ END;
 		  <tbody kd:php="loop(\$user_list as \$user)">
 		    <span kd:php="\$ctr+=1"/>
 		    <tr class="odd" kd:php="attr('class'=>\$klass);\$klass=\$user_ctr%2==0?'even':'odd'">
-		      <td kd:php="echo(\$user['name'])">Foo</td>
-		      <td kd:php="echo(\$user['mail'])">foo@mail.org</td>
+		      <td kd:php="value(\$user['name'])">Foo</td>
+		      <td kd:php="value(\$user['mail'])">foo@mail.org</td>
 		    </tr>
 		    <tr class="even" kd:php="dummy(d1)">
 		      <td>Bar</td>
@@ -1752,7 +1845,7 @@ END;
 		$filename = '_test.plogic';
 		$pdata =
 		'<div kd:php="foreach($list as $item)">
-		  <span kd:php="echo($item)">foo</span>
+		  <span kd:php="value($item)">foo</span>
 		</div>
 		';
 		$pdata = preg_replace('/^\t\t/m', '', $pdata);
@@ -1894,10 +1987,10 @@ END;
 		'<table>
 		  <tbody kd:php="Loop($user_list as $user)">
 		    <tr class="odd" kd:php="if($user_ctr%2==1)">
-		      <td kd:php="echo($user)">foo</td>
+		      <td kd:php="value($user)">foo</td>
 		    </tr>
 		    <tr class="even" kd:php="else()">
-		      <td kd:php="echo($user)">bar</td>
+		      <td kd:php="value($user)">bar</td>
 		    </tr>
 		  </tbody>
 		</table>
@@ -1986,13 +2079,13 @@ END;
 		'<table>
 		  <tbody kd:php="Loop($user_list as $user)">
 		    <tr class="line1" kd:php="if($user_ctr%3==1)">
-		      <td kd:php="echo($user)">foo</td>
+		      <td kd:php="value($user)">foo</td>
 		    </tr>
 		    <tr class="line2" kd:php="elseif($user_ctr%3==2)">
-		      <td kd:php="echo($user)">bar</td>
+		      <td kd:php="value($user)">bar</td>
 		    </tr>
 		    <tr class="line3" kd:php="else()">
-		      <td kd:php="echo($user)">bar</td>
+		      <td kd:php="value($user)">bar</td>
 		    </tr>
 		  </tbody>
 		</table>

@@ -185,25 +185,25 @@ require_once('KwartzAnalyzer.inc');
 			case 'convert':
 				$converter = new KwartzConverter($input, $toppings);
 				$block = $converter->convert();
-				$translator = new KwartzPlphpTranslator($block, $toppings);
+				$translator = new KwartzPlphpTranslator($block, $flag_escape, $toppings);
 				$output = $translator->translate();
 				break;
 
 			case 'translate':
-				$parser = new KwartzParser($input, $flag_escape, $toppings);
+				$parser = new KwartzParser($input, $toppings);
 				$block = $parser->parse();
 				switch ($lang) {
 				case 'php':
-					$translator = new KwartzPhpTranslator($block, $toppings);
+					$translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
 					break;
 				case 'eruby':
-					$translator = new KwartzErubyTranslator($block, $toppings);
+					$translator = new KwartzErubyTranslator($block, $flag_escape, $toppings);
 					break;
 				case 'jsp':
-					$translator = new KwartzJspTranslator($block, $toppings);
+					$translator = new KwartzJspTranslator($block, $flag_escape, $toppings);
 					break;
 				case 'plphp':
-					$translator = new KwartzPlphpTranslator($block, $toppings);
+					$translator = new KwartzPlphpTranslator($block, $flag_escape, $toppings);
 					break;
 				}
 				$output = $translator->translate();

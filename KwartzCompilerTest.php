@@ -68,8 +68,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		 <body>
 		  <table>
 		   <tr class="odd" kd:php="mark(user);attr(\'class\'=>$klass)">
-		    <td kd:php="echo($user[\'name\'])">foo</td>
-		    <td kd:php="echo($user[\'mail\'])">foo@mail.com</td>
+		    <td kd:php="value($user[\'name\'])">foo</td>
+		    <td kd:php="value($user[\'mail\'])">foo@mail.com</td>
 		   </tr>
 		   <tr class="even" kd:php="dummy(d1)">
 		    <td>bar</td>
@@ -410,7 +410,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	const pdata_compile3_php = '
 		<table cellpadding="2" summary="">
 		  <caption>
-		    <i kd:php="echo($month)">Jan</i>&nbsp;<i kd:php="echo($year)">20XX</i>
+		    <i kd:php="value($month)">Jan</i>&nbsp;<i kd:php="value($year)">20XX</i>
 		  </caption>
 		  <thead>
 		    <tr bgcolor="#CCCCCC">
@@ -818,8 +818,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	const pdata_escape2 = '
 		<li kd="Value:x">bar</li>
 		<li kd="VALUE:x">baz</li>
-		<li kd:php="Echo($x)">bar</li>
-		<li kd:php="ECHO($x)">baz</li>
+		<li kd:php="Value($x)">bar</li>
+		<li kd:php="VALUE($x)">baz</li>
 		';
 	
 	const plogic_escape2 = '';
