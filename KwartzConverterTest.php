@@ -266,8 +266,8 @@ END;
 		$attr_exprs = array();
 		$embed_exprs = array();
 		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $embed_exprs);
-		$this->assertEquals('klass', $attr_exprs['class']);
-		$this->assertEquals('X(item)', $attr_exprs['id']);
+		$this->assertEquals('#{klass}#', $attr_exprs['class']);
+		$this->assertEquals('#{X(item)}#', $attr_exprs['id']);
 		$this->assertEquals('value', $directive[0]);
 		$this->assertEquals('expr', $directive[1]);
 		//echo var_dump($attr_exprs);
@@ -280,8 +280,8 @@ END;
 		$attr_exprs = array();
 		$embed_exprs = array();
 		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $embed_exprs);
-		$this->assertEquals('$klass', $attr_exprs['class']);
-		$this->assertEquals('$item', $attr_exprs['id']);
+		$this->assertEquals('@{$klass}@', $attr_exprs['class']);
+		$this->assertEquals('@{$item}@', $attr_exprs['id']);
 		$this->assertEquals('echo', $directive[0]);
 		$this->assertEquals('$expr', $directive[1]);
 		//echo var_dump($attr_exprs);
@@ -292,24 +292,20 @@ END;
 	function test_parse_directive_kdstr2() {
 		$converter = new KwartzConverter('');
 		$directive_str = "Embed:foo;embed:@C(flag!='')";
-		$attr_exprs = array();
-		$embed_exprs = array();
-		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_exprs, $embed_exprs);
-		$this->assertEquals(2, count($embed_exprs));
-		$this->assertEquals("E(foo)", $embed_exprs[0]);
-		$this->assertEquals("@C(flag!='')", $embed_exprs[1]);
+		$attr_hash = array();
+		$embed_str = '';
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $embed_str);
+		$this->assertEquals($embed_str, " #{E(foo)}# #{@C(flag!='')}#");
 		$this->assertEquals(NULL, $directive);
 	}
 
 	function test_parse_directive_phpstr2() {
 		$converter = new KwartzConverter('');
 		$directive_str = "Embed(\$foo);embed(@C(\$flag!=''))";
-		$attr_exprs = array();
-		$embed_exprs = array();
-		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_exprs, $embed_exprs);
-		$this->assertEquals(2, count($embed_exprs));
-		$this->assertEquals("E(\$foo)", $embed_exprs[0]);
-		$this->assertEquals("@C(\$flag!='')", $embed_exprs[1]);
+		$attr_hash = array();
+		$embed_str = '';
+		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $embed_str);
+		$this->assertEquals($embed_str, " @{E(\$foo)}@ @{@C(\$flag!='')}@");
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -320,13 +316,11 @@ END;
   <td id="value:klass">hoge</td>
 </tr>
 END;
+		$expected = ' id="foo" class="#{klass}#" align="#{item.align}#"';
 		$converter = new KwartzConverter($input);
 		$tag_name = $converter->fetch();
-		//echo "*** debug: before:" . $converter->_attr_str() . "\n";
 		$directive = $converter->_parse_attr_str($converter->_attr_str());
-		//echo "*** debug: after:" . $converter->_attr_str() . "\n";
-		$this->assertEquals(' id="foo" class="#{klass}#" align="#{item.align}#"', $converter->_attr_str());
-		//echo var_dump($directive);
+		$this->assertEquals($expected, $converter->_attr_str());
 		$this->assertEquals("set", $directive[0]);
 		$this->assertEquals("klass=ctr%2==0?'even':'odd'", $directive[1]);
 	}
@@ -364,13 +358,11 @@ END;
   <td id="value:klass">hoge</td>
 </tr>
 END;
+		$expected = ' id="foo" class="#{E(klass)}#" #{flag?\'checked\':\'\'}#';
 		$converter = new KwartzConverter($input);
 		$tag_name = $converter->fetch();
-		//echo "*** debug: before:" . $converter->_attr_str() . "\n";
 		$directive = $converter->_parse_attr_str($converter->_attr_str());
-		//echo "*** debug: after:" . $converter->_attr_str() . "\n";
-		$this->assertEquals(' id="foo" class="#{E(klass)}#" #{flag?\'checked\':\'\'}#', $converter->_attr_str());
-		//echo var_dump($directive);
+		$this->assertEquals($expected, $converter->_attr_str());
 		$this->assertEquals("set", $directive[0]);
 		$this->assertEquals("klass=ctr%2==0?'even':'odd'", $directive[1]);
 	}

@@ -97,97 +97,65 @@ require_once('KwartzUtility.inc');
 				$attr_str = $this->attr_str;
 			}
 			$pattern = '/(\s+)([:\w]+)="(.*?)"/';
-			$m = array();
-			preg_match_all($pattern, $attr_str, $m);
+			preg_match_all($pattern, $attr_str, $m = array());
 			$spaces	     = $m[1];
 			$attr_names  = $m[2];
 			$attr_values = $m[3];
-			$kd_value = NULL;
-			$id_value = NULL;
-			$php_value = NULL;
-			$i = -1;
+
+			$attr_hash   = array();
+			$i = 0;
 			foreach ($attr_names as $name) {
-				$i++;
-				if ($name == 'id') {
-					$id_value  = $attr_values[$i];
-				} elseif ($name == 'kd') {
-					$kd_value  = $attr_values[$i];
-				} elseif ($name == 'php') {
-					$php_value = $attr_values[$i];
-				}
+				$attr_hash[$name] = $attr_values[$i++];
 			}
+
+			$kd_value = $id_value = $php_value = NULL;
+			if (array_key_exists('id',  $attr_hash)) { $id_value  = $attr_hash['id'];  }
+			if (array_key_exists('kd',  $attr_hash)) { $kd_value  = $attr_hash['kd'];  }
+			if (array_key_exists('php', $attr_hash)) { $php_value = $attr_hash['php']; }
+			
 			$directive = NULL;	// or tuple
 			if ($id_value !== NULL || $kd_value !== NULL || $php_value !== NULL) {
-				$kd_attr_exprs = array();	// hash
-				$php_attr_exprs = array();	// hash
-				$kd_embed_exprs = array();	// array
-				$php_embed_exprs = array();	// array
+				$embed_str = '';
 				$id_directive = $kd_directive = $php_directive = NULL;
 				$directive = NULL;
 				if ($id_value !== NULL) {
-					$id_directive = $this->parse_directive_kdstr($id_value, $kd_attr_exprs, $kd_embed_exprs);
+					$id_directive = $this->parse_directive_kdstr($id_value, $attr_hash, $embed_str);
 					if ($id_directive) { $directive = $id_directive; }
 				}
 				if ($kd_value !== NULL) {
-					$kd_directive = $this->parse_directive_kdstr($kd_value, $kd_attr_exprs, $kd_embed_exprs);
+					$kd_directive = $this->parse_directive_kdstr($kd_value, $attr_hash, $embed_str);
 					if ($kd_directive) { $directive = $kd_directive; }
 				}
 				if ($php_value != NULL) {
-					$php_directive = $this->parse_directive_phpstr($php_value, $php_attr_exprs, $php_embed_exprs);
+					$php_directive = $this->parse_directive_phpstr($php_value, $attr_hash, $embed_str);
 					if ($php_directive) { $directive = $php_directive; }
 				}
 
-				## deploy attribute expression strings which are specified as directive.
-				$this->deploy_attr_exprs($kd_attr_exprs,  $spaces, $attr_names, $attr_values, '#{', '}#');
-				$this->deploy_attr_exprs($php_attr_exprs, $spaces, $attr_names, $attr_values, '@{', '}@');
-
 				## rebuild $this->attr_str, excepting kd/id/php attributes.
 				$s = '';
-				$i = -1;
+				$i = 0;
 				foreach ($attr_names as $attr_name) {
-					$i++;
-					$value = $attr_values[$i];
-					if ($attr_name == 'php' || $attr_name == 'kd' || ($attr_name == 'id' && !preg_match('/^[-\w]+$/', $value))) {
+					$attr_value = $attr_hash[$attr_name];
+					if ($attr_name == 'php' || $attr_name == 'kd' || ($attr_name == 'id' && !preg_match('/^[-\w]+$/', $attr_value))) {
 						# nothing
 					} else {
 						$space = $spaces[$i];
-						$s .= "{$space}{$attr_name}=\"{$value}\"";
+						$s .= "{$space}{$attr_name}=\"{$attr_value}\"";
+					}
+					unset($attr_hash[$attr_name]);
+					$i++;
+				}
+				if (count($attr_hash) > 0) {
+					foreach ($attr_hash as $attr_name => $attr_value) {
+						$s .= " {$attr_name}=\"{$attr_value}\"";
 					}
 				}
-				foreach ($kd_embed_exprs as $expr_str) {
-					$s .= " #{" . $expr_str . "}#";
-				}
-				foreach ($php_embed_exprs as $expr_str) {
-					$s .= " @{" . $expr_str . "}@";
+				if ($embed_str) {
+					$s .= $embed_str;
 				}
 				$this->attr_str = $s;
 			}
 			return $directive;
-		}
-
-
-		## deploy attribute expression string.
-		##   - replace 'attr="value"' by 'attr="#{expr}#"'
-		##   - add 'attr="#{expr}#"'
-		private function deploy_attr_exprs(&$attr_exprs, &$spaces, &$attr_names, &$attr_values, $prefix, $postfix) {
-			if (count($attr_exprs) == 0) {
-				return;
-			}
-			$i = -1;
-			foreach ($attr_names as $attr_name) {
-				$i++;
-				if (array_key_exists($attr_name, $attr_exprs)) {
-					$expr_str = $attr_exprs[$attr_name];
-					$new_value = $prefix . $expr_str . $postfix;
-					$attr_values[$i] = $new_value;
-					unset($attr_exprs[$attr_name]);
-				}
-			}
-			foreach ($attr_exprs as $attr_name => $expr_str) {
-				$spaces[] = ' ';
-				$attr_names[] = $attr_name;
-				$attr_values[] = $prefix . $expr_str . $postfix;
-			}
 		}
 
 
@@ -207,35 +175,35 @@ require_once('KwartzUtility.inc');
 		##		ex. array('flag ? "checked" : ""')
 		## - return: a tuple of directive name and argument.
 		##		ex. array('foreach', 'item=list')
-		private function parse_directive_kdstr(&$str, &$attr_exprs, &$embed_exprs) {
+		private function parse_directive_kdstr(&$str, &$attr_hash, &$embed_str) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
 				if (preg_match('/^\w+$/', $s)) {
 					$directive = array('mark', $s);
 				} elseif (preg_match('/^(\w+):(.*)$/', $s, $matches = array())) {
-					$name  = $matches[1];
-					$value = trim($matches[2]);
-					switch ($name) {
+					$dname = $matches[1];		// directive name
+					$darg  = trim($matches[2]);	// directive arg
+					switch ($dname) {
 					case 'attr':  case 'Attr':  case 'ATTR':
-						if (! preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $value, $m=array())) {
-							$msg = "'attr:\"'{$value}\"': invalid directive.";
+						if (! preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $darg, $m=array())) {
+							$msg = "'attr:\"'{$darg}\"': invalid directive.";
 							throw new KwartzConvertionError($msg, $this);
 						}
 						$attr_name = $m[1];
 						$expr_str  = $m[2];
-						if     ($name == 'Attr') { $expr_str = "E($expr_str)"; }
-						elseif ($name == 'ATTR') { $expr_str = "X($expr_str)"; }
-						$attr_exprs[$attr_name] = $expr_str;
+						if     ($dname == 'Attr') { $attr_hash[$attr_name] = '#{E(' . $expr_str . ')}#'; }
+						elseif ($dname == 'ATTR') { $attr_hash[$attr_name] = '#{X(' . $expr_str . ')}#'; }
+						else                      { $attr_hash[$attr_name] = '#{'   . $expr_str .  '}#'; }
 						break;
 					case 'embed':
-						$embed_exprs[] = $value;
+						$embed_str .= ' #{'   . $darg .  '}#';
 						break;
 					case 'Embed':
-						$embed_exprs[] = "E($value)";
+						$embed_str .= ' #{E(' . $darg . ')}#';
 						break;
 					case 'EMBED':
-						$embed_exprs[] = "X($value)";
+						$embed_str .= ' #{X(' . $darg . ')}#';
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
@@ -244,27 +212,27 @@ require_once('KwartzUtility.inc');
 					case 'while':
 					case 'include':
 					case 'dummy':
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					case 'set':
-						if (preg_match('/^\w+:/', $value)) {
-							$value = preg_replace('/:/', '=', $value);
+						if (preg_match('/^\w+:/', $darg)) {
+							$darg = preg_replace('/:/', '=', $darg);
 						}
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					case 'foreach': case 'Foreach': case 'FOREACH':
 					case 'loop':	case 'Loop':	case 'LOOP':
-						if (preg_match('/^\w+:/', $value)) {
-							$value = preg_replace('/:/', '=', $value);
+						if (preg_match('/^\w+:/', $darg)) {
+							$darg = preg_replace('/:/', '=', $darg);
 						}
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					case 'include':  case 'load':
-						if (! preg_match('/^\'(.*)\'$/', $value, $m=array())) {
-							$msg = "directive '$name' requires filename as string.";
+						if (! preg_match('/^\'(.*)\'$/', $darg, $m=array())) {
+							$msg = "directive '$dname' requires filename as string.";
 							throw new KwartzConvertionError($msg, $this);
 						}
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					default:
 						$msg = "'$s': invalid directive.";
@@ -292,19 +260,18 @@ require_once('KwartzUtility.inc');
 		##		ex. array('$flag ? "checked" : ""')
 		## - return: a tuple of directive name and argument.
 		##		ex. array('foreach', '$list as $item')
-		private function parse_directive_phpstr(&$str, &$attr_exprs, &$embed_exprs) {
+		private function parse_directive_phpstr(&$str, &$attr_hash, &$embed_str) {
 			$strs = preg_split('/;/', $str);
 			$directive = NULL;
 			foreach ($strs as $s) {
 				if (preg_match('/^\w+$/', $s)) {
 					$directive = $s == 'else' ? array('else', NULL) : array('mark', $s);
 				} elseif (preg_match('/^(\w+)\((.*)\)$/', $s, $matches = array())) {
-					$name  = $matches[1];
-					$value = trim($matches[2]);
-					switch ($name) {
+					$dname = $matches[1];
+					$darg  = trim($matches[2]);
+					switch ($dname) {
 					case 'attr':  case 'Attr':  case 'ATTR':
-						$flag_escape = $name != 'ATTR';
-						$pairs = preg_split('/,/', $value);
+						$pairs = preg_split('/,/', $darg);
 						foreach ($pairs as $pair) {
 							if (!preg_match('/^\'([-:\w]+)\'=>(.*)/', $pair, $m=array())) {
 								$msg = "'attr:\"'{$pair}\"': invalid directive.";
@@ -312,19 +279,19 @@ require_once('KwartzUtility.inc');
 							}
 							$attr_name = $m[1];
 							$expr_str  = $m[2];
-							if     ($name == 'Attr') { $expr_str = "E($expr_str)"; }
-							elseif ($name == 'ATTR') { $expr_str = "X($expr_str)"; }
-							$attr_exprs[$attr_name] = $expr_str;
+							if     ($dname == 'Attr') { $expr_str = "E($expr_str)"; }
+							elseif ($dname == 'ATTR') { $expr_str = "X($expr_str)"; }
+							$attr_hash[$attr_name] = '@{' . $expr_str . '}@';
 						}
 						break;
 					case 'embed':
-						$embed_exprs[] = $value;
+						$embed_str .= ' @{'   . $darg .  '}@';
 						break;
 					case 'Embed':
-						$embed_exprs[] = "E($value)";
+						$embed_str .= ' @{E(' . $darg . ')}@';
 						break;
 					case 'EMBED':
-						$embed_exprs[] = "X($value)";
+						$embed_str .= ' @{X(' . $darg . ')}@';
 						break;
 					case 'echo':  case 'Echo':  case 'ECHO':
 					case 'mark':
@@ -335,17 +302,17 @@ require_once('KwartzUtility.inc');
 					case 'foreach': case 'Foreach': case 'FOREACH':
 					case 'loop':	case 'Loop':	case 'LOOP':
 					case 'dummy':
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					case 'include':  case 'load':
-						if (!preg_match('/^\'(.*)\'$/', $value, $m=array())) {
-							$msg = "directive '$name' requires filename as string.";
+						if (!preg_match('/^\'(.*)\'$/', $darg, $m=array())) {
+							$msg = "directive '$dname' requires filename as string.";
 							throw new KwartzConvertionError($msg, $this);
 						}
-						$directive = array($name, $value);
+						$directive = array($dname, $darg);
 						break;
 					default:
-						$msg = "'$name': invalid directive.";
+						$msg = "'$dname': invalid directive.";
 						throw new KwartzConvertionError($msg, $this);
 					}
 				} else {
