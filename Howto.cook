@@ -160,7 +160,7 @@ tgz: [manuals] [texts] package.php package.view
 	cp Kwartz.php [mydir];
 	cp Kwartz/'*'.php [mydir]/Kwartz;
 
-	cp kwartz-php [mydir];
+	cp kwartz-php mkmethod-php [mydir];
 
 	mkdir [mydir]/doc;
 	cp [manuals] [mydir]/doc;
@@ -174,7 +174,7 @@ tgz: [manuals] [texts] package.php package.view
 	cp [texts] [mydir];
 
 	find [mydir] -type f | xargs chmod -R 644;
-	chmod 755 [mydir]/kwartz-php;
+	chmod 755 [mydir]/kwartz-php [mydir]/mkmethod-php;
 	
 	php -q package.php > package.xml;
 

@@ -70,7 +70,7 @@
 .		
 .EN		### copy command script
 .JA		### コマンドスクリプトをコピーする
-.		$ cp -a kwartz-php /usr/local/bin
+.		$ cp -a kwartz-php mkmethod-php /usr/local/bin
 .		.====================
 .	
 .	
@@ -108,6 +108,10 @@
 .	  .% kwartz-php
 .EN		Command file
 .JA		コマンドファイル
+.		
+.	  .% mkmethod-php
+.EN		Utility script to generate PHP function from templates.
+.JA		テンプレートからPHPの関数を生成するユーティリティ。
 .		
 .	  .% Kwartz.php, Kwartz/*.php
 .EN		Library files.
@@ -157,7 +161,7 @@
 .	
 .	
 .EN	.$ Special Thanks
-.JA	●お礼
+.JA	●Special Thanks
 .	
 .EN	.* Shu-yu Guo - He corrected my English of users' guide. Very Thanks!
 .JA	.* Shu-yu Guo - ユーザーズガイドの英語を直してくれました。多謝。
