@@ -47,25 +47,45 @@ require_once('KwartzUtility.inc');
 		private $next_token_str;
 
 		private $reserved = array(
-			'if'	   => 'if',
-			'elseif'   => 'elseif',
-			'elsif'	   => 'elseif',
-			'else'	   => 'else',
-			'foreach'  => 'foreach',
-			'for'	   => 'for',
-			'while'	   => 'while',
-			'echo'	   => 'print',
-			'print'	   => 'print',
-			'macro'	   => 'macro',
-			'expand'   => 'expand',
-			'elem'	   => 'elem',
+			':if'	   => ':if',
+			':elseif'  => ':elseif',
+			':elsif'   => ':elseif',
+			':else'	   => ':else',
+			':foreach' => ':foreach',
+			#':for'	   => ':for',
+			':while'   => ':while',
+			':print'   => ':print',
+			':macro'   => ':macro',
+			':expand'  => ':expand',
+			':elem'	   => ':element',
+			':element' => ':element',
 			'true'	   => 'true',
 			'false'	   => 'false',
 			'null'	   => 'null',
 			'nil'	   => 'null',
-			'set'	   => 'set',
-			'end'	   => 'end',
+			':set'	   => ':set',
+			':end'	   => ':end',
+			':load'	   => ':load',
+
+			'if'	   => 'if',
+			'elseif'   => 'elseif',
+			#'elsif'   => 'elseif',
+			'else'	   => 'else',
+			'foreach'  => 'foreach',
+			#'for'	   => 'for',
+			'while'	   => 'while',
+			'echo'	   => 'echo',
+			#'print'   => 'print',
+			'macro'	   => 'macro',
+			'expand'   => 'expand',
+			'elem'	   => 'element',
+			'element'  => 'element',
+			'TRUE'	   => 'true',
+			'FALSE'	   => 'false',
+			'NULL'	   => 'null',
+			'nil'	   => 'null',
 			'load'	   => 'load',
+			
 		);
 
 		//const EOF = -1;
@@ -226,12 +246,10 @@ require_once('KwartzUtility.inc');
 
 			if ($c == '<') {
 				$c = $this->read();
-				switch ($c) {
-				case '=':
+				if ($c == '=') {
 					$this->read();
 					return $this->token = '<=';
-				case '?':
-				case '%':
+				} elseif ($c == '?' || $c == '%') {
 					$s = '<' . $c;
 					while (($c = $this->read()) != EOF && $c != "\n") {
 						$s .= $c;
@@ -249,7 +267,6 @@ require_once('KwartzUtility.inc');
 					$c = $this->read();
 					$op .= '=';
 				}
-				//$this->token_str = $op;
 				return $this->token = $op;
 			}
 
@@ -260,11 +277,32 @@ require_once('KwartzUtility.inc');
 					$c = $this->read();
 					$op .= '=';
 				}
-				//$this->token_str = $op;
 				return $this->token = $op;
 			}
 
-			if ($c == '+' || $c == '-' || $c == '*' || $c == '/' || $c == '%' || $c == '^') {
+			if ($c == '-') {
+				$c = $this->read();
+				if ($c == '>') {
+					$this->read();  return $this->token = '->';
+				} elseif ($c == '=') {
+					$this->read();  return $this->token = '-=';
+				} elseif ($c == '-') {
+					$this->read();  return $this->token = '--';
+				}
+				return $this->token = '-';
+			}
+			
+			if ($c == '+') {
+				$c = $this->read();
+				if ($c == '=') {
+					$this->read();  return $this->token = '+=';
+				} elseif ($c == '+') {
+					$this->read();  return $this->token = '++';
+				}
+				return $this->token = '+';
+			}
+			
+			if ($c == '*' || $c == '/' || $c == '%' || $c == '^') {
 				$op = $c;
 				$c = $this->read();
 				if ($c == '=') {
@@ -277,66 +315,70 @@ require_once('KwartzUtility.inc');
 
 			if ($c == '.') {
 				if (($c = $this->read()) != '+') {
-					//$this->token_str = '.';
 					return $this->token = '.';
 				} elseif (($c = $this->read()) != '=') {
-					//$this->token_str = '.+';
 					return $this->token = '.+';
-				} else {
-					$c = $this->read();
-					//$this->token_str = '.+=';
-					return $this->token = '.+=';
 				}
+				$c = $this->read();
+				return $this->token = '.+=';
 			}
 
 			if ($c == '&' || $c == '|') {
 				$op = $c;
 				if (($c = $this->read()) == $op) {
 					$c = $this->read();
-					//$this->token_str = $op . $op;
 					return $this->token = $op . $op;
 				}
+				//return $c;
+				throw new KwartzScannerError("'{$op}': invalid character.", $this);
 			}
 
 			if ($c == ':') {
-				$s = '';
-
 				$c = $this->read();
 				if ($c == ':') {
+					## '::'
 					$c = $this->read();
-					if ($c == ':') {
-						while (($c = $this->read()) != EOF && $c != "\n") {
-							$s .= $c;
-						}
-						$this->token_str = $s;
-						return $this->token = ':::';	# rawcode
+					if ($c != ':') {
+						return $this->token = '::';
 					}
-					return $this->token = '::';
-				}
-				if (ctype_alpha($c)) {
-					while (ctype_alpha($c)) {
+					## ':::'
+					$s = '';
+					while (($c = $this->read()) != EOF && $c != "\n") {
 						$s .= $c;
-						$c = $this->read();
 					}
-					if (array_key_exists($s, $this->reserved)) {
-						return $this->token = ':' . $s;
-					} else {
-						//throw new KwartzScannerError("invalid identifier.", $this);
-						$this->next_token = 'name';
-						$this->next_token_str = $s;
-						return $this->token = ':';
-					}
+					$this->token_str = $s;
+					return $this->token = ':::';	# rawcode
 				}
+				
+				## ':'
+				if (! ctype_alpha($c)) {
+					return $this->token = ':';
+				}
+				
+				## ':foreach', ':if', ':end', ...
+				$s = ':';
+				while (ctype_alpha($c)) {
+					$s .= $c;
+					$c = $this->read();
+				}
+				if (array_key_exists($s, $this->reserved)) {
+					return $this->token = $this->reserved[$s];
+				}
+				
+				## ':' and variable
+				//throw new KwartzScannerError("invalid identifier.", $this);
+				$this->next_token = 'name';
+				$this->next_token_str = substr($s, 1);
 				return $this->token = ':';
 			}
 
 			if ($c == '[') {
 				$c = $this->read();
-				if ($c == ':') {
-					$this->read();
-					return $this->token = '[:';
+				if ($c != ':') {
+					return $this->token = '[';
 				}
-				return $this->token = '[';
+				$this->read();
+				return $this->token = '[:';
 			}
 
 			if ($c == '@') {

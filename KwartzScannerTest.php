@@ -94,7 +94,7 @@ x
 0
 )
 {
-print
+echo
 $
 hoge
 ;

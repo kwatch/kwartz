@@ -60,6 +60,20 @@ END;
 		  :end
 		:end
 END;
+
+
+		$plogic_php = <<<END
+		element user {
+		  \$i = 0;
+		  foreach (\$user_list as \$user) {
+		    \$i += 1;
+		    \$klass = \$i % 2 == 0 ? 'even' : 'odd';
+		    @stag;
+		    @cont;
+		    @etag;
+		  }
+		}
+END;
 		$expected = <<<END
 		<html>
 		 <body>
@@ -78,6 +92,7 @@ END;
 		</html>
 END;
 		$this->_test($pdata, $plogic, $expected);
+		$this->_test($pdata, $plogic_php, $expected);
 
 	}
 
@@ -98,6 +113,19 @@ END;
 		  :end
 		:end
 END;
+
+		$plogic_php = <<<END
+		element link {
+		  if (\$url != NULL) {
+		    @stag;
+		    @cont;
+		    @etag;
+		  } else {
+		    @cont;
+		  }
+		}
+END;
+
 		$expected = <<<END
 		<?php if (\$url != NULL) { ?>
 		<a href="<?php echo \$url; ?>">next page</a>
@@ -105,7 +133,8 @@ END;
 		next page<?php } ?>
 
 END;
-		$this->_test($pdata, $plogic, $expected);
+		$this->_test($pdata, $plogic,     $expected);
+		$this->_test($pdata, $plogic_php, $expected);
 	}
 
 
@@ -160,7 +189,7 @@ END;
 		$plogic = <<<END
 		:elem(week)
 		
-		  :set(day = '&nbsp')
+		  :set(day = '&nbsp;')
 		  :set(wday = 1)
 		  :while(wday < first_weekday)
 		    :if(wday == 1)
@@ -206,6 +235,58 @@ END;
 		:end
 
 END;
+
+		$plogic_php = <<<END
+		element week {
+		
+		    \$day = '&nbsp;';
+		    \$wday = 1;
+		    while (\$wday < \$first_weekday) {
+		        if (\$wday == 1) {
+		            @stag;
+		        }
+		        @cont;
+		        \$wday += 1;
+		    }
+		
+		    \$day = 0;
+		    \$wday -= 1;
+		    while (\$day < \$num_days) {
+		        \$day += 1;
+		        \$wday = \$wday % 7 + 1;
+		        if (\$wday == 1) {
+		            @stag;
+		        }
+		        @cont;
+		        if (\$wday == 7) {
+		            @etag;
+		        }
+		    }
+		
+		    if (\$wday != 7) {
+		        \$day = '&nbsp;';
+		        while (\$wday != 6) {
+		            \$wday += 1;
+		            @cont;
+		        }
+		        @etag;
+		    }
+		
+		}
+		
+		element day {
+		    if (\$wday == 1) {
+			@stag
+			echo \$day;
+			@etag;
+		    } else {
+			echo \$day;
+		    }
+		}
+
+END;
+
+
 		$expected = <<<END
 		<table cellpadding="2" summary="">
 		  <caption>
@@ -218,7 +299,7 @@ END;
 		    </tr>
 		  </thead>
 		  <tbody>
-		<?php \$day = "&nbsp"; ?>
+		<?php \$day = "&nbsp;"; ?>
 		<?php \$wday = 1; ?>
 		<?php while (\$wday < \$first_weekday) { ?>
 		  <?php if (\$wday == 1) { ?>
@@ -262,7 +343,8 @@ END;
 		&nbsp;
 
 END;
-		$this->_test($pdata, $plogic, $expected);
+		$this->_test($pdata, $plogic,     $expected);
+		$this->_test($pdata, $plogic_php, $expected);
 	}
 
 
