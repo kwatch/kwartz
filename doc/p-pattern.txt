@@ -35,9 +35,16 @@
 .	.#.-toc:
 .	
 .	
-.JA	.#◎更新履歴		| changelog*
-.EN	.#.$$ ChangeLog		| changelog*
-.	.#
+.JA	◎更新履歴		| changelog*
+.EN	.$$ ChangeLog		| changelog*
+.	
+.	.: 2005-03-21
+.JA		.- Kwartzディレクティブについての説明を追加
+.JA		.- すべてのパターンにおいて「説明」「適用場面」「サンプルコード」「補足」の見出しを追加
+.JA		.- 「Replace Element by Valueパターン」の補足を追加
+.EN		.- add text for Kwartz directives.
+.EN		.- add subsubsection title for all patterns.
+.EN		.- add 'supplement' subsubsection for 'Replace Element by Value Pattern'.
 .	.#.: 2005-02-19
 .	.#	.- beta2 release
 .	.#.: 2005-02-14
@@ -52,20 +59,35 @@
 .JA	◎Replace Element by Valueパターン	| replace-elem-by-value
 .EN	.$$ Replace Element by Value Pattern	| replace-elem-by-value
 .	
+.	
+.JA	○説明					| replace-elem-by-value-desc
+.EN	.$$$ Description			| replace-elem-by-value-desc
+.	
 .JA	エレメントを、変数や式の値で置き換えることができます。
 .JA	これを「Replace Element by Valueパターン」といいます。
 .EN	You can replace the element with the value of a variable or an expression.
 .EN	This is named 'Replace Element by Value Pattern.'
 .	
+.	
+.JA	○適用場面					| replace-elem-by-value-situation
+.EN	.$$$ Situation				| replace-elem-by-value-situation
+.	
+.JA	このパターンは、テキスト中に変数や式の値を出力するときに便利です。
+.EN	This pattern is very useful to print out the value of a variable or an expression as text.
+.	
+.	
+.JA	○サンプルコード			| replace-elem-by-value-example
+.EN	.$$$ Example Code			| replace-elem-by-value-example
+.	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-replace2.pdata
+.	.-------------------- teq-replace1.pdata
 .	Hello <span {{*id="mark:user"*}}>World</span>!
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-replace2.plogic
+.	.-------------------- teq-replace1.plogic
 .	#user {
 .	  plogic: {
 .JA	    {{*print(username);*}}  // エレメントのかわりに変数usernameを出力する
@@ -77,27 +99,73 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
+.	.<<<:! ./output.rb -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
 .	.--------------------
+.	
+.	
+.JA	○補足					| replace-elem-by-value-suppliment
+.EN	.$$$ Supplement				| replace-elem-by-value-suppliment
+.	
+.JA	値がnullまたは空文字列のときに、コンテンツテキストをデフォルト値として出力したい場合は次のようにします。
+.JA	これは「Replace Element by Valueパターン」と「Delete Tagパターン」の組み合わせです。
+.EN	The following is an example to print content text as default value when value is null or empty.
+.EN	This examples is an combination of 'Replace Element by Value Pattern' and 'Delete Tag Pattern'.
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- teq-replace2b.plogic
+.	#user {
+.	  plogic: {
+.JA	    // 変数usernameの値を出力する。
+.JA	    // 値がnullまたは空文字列なら 'guest' と出力する。
+.EN	    // Print out value of variable 'username'.
+.EN	    // Print 'guest' as a default value when 'username' is null or empty string.
+.	    if (username == empty) {
+.JA	      {{*@cont;*}}           // コンテンツテキストを出力する
+.EN	      {{*@cont;*}}           // print out content text
+.	    } else {
+.JA	      {{*print(username);*}} // 変数の値を出力する
+.EN	      {{*print(username);*}} // print out value of variable
+.	    }
+.	  }
+.	}
+.	.--------------------
+.	
+.	
 .	
 .	
 .JA	◎Replace Content by Valueパターン	| replace-cont-by-value
 .EN	.$$ Replace Content by Value Pattern	| replace-cont-by-value
+.	
+.	
+.JA	○説明					| replace-cont-by-value-desc
+.EN	.$$$ Description			| replace-cont-by-value-desc
 .	
 .JA	タグは残したままエレメントの内容だけを式の値で置き換えることができます。
 .JA	これを「Replace Content by Valueパターン」といいます。
 .EN	You can also replace only the content of the element in the same way.
 .EN	This is named 'Replace Content by Value Pattern.'
 .	
+.	
+.JA	○適用場面					| replace-cont-by-value-situation
+.EN	.$$$ Situation				| replace-cont-by-value-situation
+.	
+.JA	エレメントの内容を式の値で置き換える場面は非常に多いため、このパターンはよく使われます。
+.EN	This pattern is used frequently because the situation to replace the content by value is very popular.
+.	
+.	
+.JA	○サンプルコード			| replace-cont-by-value-example
+.EN	.$$$ Example Code			| replace-cont-by-value-example
+.	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-replace1.pdata
+.	.-------------------- teq-replace2.pdata
 .	<h1 {{*id="mark:title"*}}>Example</h1>
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-replace1.plogic
+.	.-------------------- teq-replace2.plogic
 .	#title {
 .	  plogic: {
 .	    @stag;
@@ -111,13 +179,15 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
+.	.<<<:! ./output.rb -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
 .	.--------------------
 .	
 .	
-.JA	なお「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
-.EN	The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
+.JA	○補足					| replace-elem-by-value-suppliment
+.EN	.$$$ Supplement				| replace-elem-by-value-suppliment
 .	
+.JA	「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
+.EN	The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -128,6 +198,16 @@
 .	}
 .	.--------------------
 .	
+.JA	またディレクティブ「{{,id="value:{{/expression/}}",}}」を使うと、
+.JA	プレゼンテーションデータファイルだけでパターンを使用できます。
+.EN	Kwartz Directive '{{,id="value:{{/expression/}}",}}' lets you to use this pattern without presentation logic file.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- teq-replace2b.pdata
+.	<h1 {{*id="value:title"*}}>Example</h1>
+.	.--------------------
+.	
 .	
 .	
 .	
@@ -135,15 +215,24 @@
 .EN	.$$ Replace Element by Element Pattern	| replace-elem-by-elem
 .	
 .	
+.JA	○説明					| replace-elem-by-elem-desc
+.EN	.$$$ Description			| replace-elem-by-elem-desc
+.	
 .JA	エレメントを別のエレメントに交換することができます。
 .JA	これは「Replace Element by Elementパターン」といいます。
 .EN	You can replace the element by other element.
 .EN	This pattern is named 'Replace Element by Element Pattern.'
 .	
 .	
+.JA	○適用場面					| replace-elem-by-elem-situation
+.EN	.$$$ Situation				| replace-elem-by-elem-situation
+.	
 .JA	このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
 .EN	This pattern is very useful to reuse the element in other place.
 .	
+.	
+.JA	○サンプルコード			| replace-elem-by-elem-example
+.EN	.$$$ Example Code			| replace-elem-by-elem-example
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -183,11 +272,28 @@
 .	.--------------------
 .	
 .	
-.JA	Kwartzにおいて、コマンドラインオプション「{{,-i {{/file/}},{{/file2/}},...,}}」を指定すると、
-.JA	他のファイルのエレメントを利用できます。
-.EN	In Kwartz, Command-line option '{{,-i {{/file/}},{{/file2/}},...,}}' enables you to use elements
-.EN	which are described in other files.
+.JA	○補足					| replace-elem-by-elem-supplement
+.EN	.$$$ Supplement				| replace-elem-by-elem-supplement
 .	
+.JA	Kwartzでは、ディレクティブ「{{,id="replace:{{/name/}}",}}」を使うと、
+.JA	プレゼンテーションロジックファイルなしでこのパターンが使用できます。
+.EN	Directive '{{,id="replace:{{/name/}}",}}' lets you to use this pattern without presentation logic file.
+.	.--------------------
+.	<div {{*id="mark:links"*}}>
+.	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
+.	</div>
+.	
+.	<p>Welcome to my Home Page!</p>
+.	
+.	<div {{*id="replace:links"*}}>
+.	  Home | Document | FAQ
+.	</div>
+.	.--------------------
+.	
+.JA	またコマンドラインオプション「{{,-i {{/file/}},{{/file2/}},...,}}」を指定すると、
+.JA	他のファイルのエレメントを利用できます。
+.EN	The command-line option '{{,-i {{/file/}},{{/file2/}},...,}}' enables you to use elements
+.EN	which are described in other files.
 .	
 .JA	プレゼンテーションデータ(links.html)：
 .EN	Presentation Data(links.html):
@@ -241,15 +347,33 @@
 .EN	.$$ Replace Content by Element Pattern	| replace-cont-by-elem
 .	
 .	
+.JA	○説明					| replace-cont-by-elem-desc
+.EN	.$$$ Description			| replace-cont-by-elem-desc
+.	
 .JA	エレメントの内容を、別のエレメントで置き換えることができます。
-.JA	これは「Replace Content by Elementパターン」といいます。
+.JA	これは「Replace Content by Elementパターン」または「Placeholderパターン」といいます。
 .EN	You can replace content of an element by other element.
 .EN	This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Pattern.'
 .	
 .	
-.JA	このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
-.EN	This pattern is very useful to import elements marked in other presentation data files.
+.JA	○適用場面					| replace-cont-by-elem-situation
+.EN	.$$$ Situation				| replace-cont-by-elem-situation
 .	
+.JA	.#このパターンは、他のファイルでマーキングされたエレメントを取り込むときに使用されます。
+.JA	このパターンは、表示するコンテンツと、全体のレイアウトを別にした場合によく利用されます。
+.EN	.#This pattern is very useful to import elements marked in other presentation data files.
+.EN	This pattern is very useful to separate contents data and design layout into separate files.
+.	
+.	
+.JA	○サンプルコード			| replace-cont-by-elem-example
+.EN	.$$$ Example Code			| replace-cont-by-elem-example
+.	
+.JA	この例では、次のようなファイルを使用します。
+.JA	.* contens.html, contents.plogic - 表示するコンテンツデータを表します。
+.JA	.* layout.html, layout.plogic - 全体のレイアウトを表します。
+.EN	The following example contains four files.
+.EN	.* contents.html, contents.plogic - repsesents contents data.
+.EN	.* layout.html, layout.plogic - represents desing layout.
 .	
 .JA	プレゼンテーションデータ(contents.html)：
 .EN	Presentation Data(contents.html):
@@ -275,7 +399,6 @@
 .	</html>
 .	.--------------------
 .	
-.	
 .JA	プレゼンテーションロジック(contents.plogic)：
 .EN	Presentation Logic(contents.plogic):
 .	.-------------------- contents.plogic
@@ -294,7 +417,6 @@
 .	  attr:  "href" item['url'];
 .	}
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションデータ(layout.html)：
 .EN	Presentation Data(layout.html):
@@ -346,7 +468,6 @@
 .	</html>
 .	.--------------------
 .	
-.	
 .JA	プレゼンテーションロジック(layout.plogic)：
 .EN	Presentation Logic(layout.plogic):
 .	.-------------------- layout.plogic
@@ -369,12 +490,10 @@
 .	}
 .	.--------------------
 .	
-.	
-.JA	Kwartzではコマンドオプション「{{,-i {{/file1,file2,.../}},}}」を指定することで、
-.JA	他のファイルのエレメントを読み込むことができます。
-.EN	In Kwartz, the command-line option {{,-i {{/file1,file2,.../}},}} enables to import elements
-.EN	which are defined in other files.
-.	
+.JA	コンパイルするときには他のファイルのエレメントを読み込むために、
+.JA	コマンドオプション「{{,-i {{/file1,file2,.../}},}}」を指定します。
+.EN	Compilation requires the command-line option {{,-i {{/file1,file2,.../}},}}
+.EN	which enables to import elements defined in other files.
 .	
 .JA	コンパイル：
 .EN	Compile:
@@ -384,11 +503,47 @@
 .	.#$ kwartz -l jstl11 {{*-i contents.html*}} -p contens.plogic,layout.plogic layout.html
 .	.====================
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
 .	.<<<:! kwartz -i guide.d/contents.html -p guide.d/contents.plogic,guide.d/layout.plogic guide.d/layout.html
+.	.--------------------
+.	
+.	
+.JA	○補足					| replace-cont-by-elem-supplement
+.EN	.$$$ Supplement				| replace-cont-by-elem-supplement
+.	
+.JA	Kwartzでは、ディレクティブ「{{,id="placeholder:{{/name/}}",}}」を使うと、
+.JA	プレゼンテーションロジックファイル(layout.plogic)なしでこのパターンが使用できます。
+.EN	Kwartz Directive '{{,id="placeholder:{{/name/}}",}}' lets you to use this pattern without presentation logic file(layout.plogic).
+.	
+.JA	プレゼンテーションデータ(layout.html)：
+.EN	Presentation Data(layout.html):
+.	.--------------------
+.	             :
+.	             :
+.	        <!-- menu part -->
+.	        <td width="100" valign="top">
+.	          <div class="menu" {{*id="placeholder:menu"*}}>
+.	            <ul>
+.	              <li>menu1</li>
+.	              <li>menu2</li>
+.	              <li>menu3</li>
+.	            </ul>
+.	          </div>
+.	        </td>
+.	        
+.	        <!-- article part -->
+.	        <td width="400" valign="top">
+.	          <div class="article" {{*id="placeholder:article"*}}>
+.	            aaa<br>
+.	            bbb<br>
+.	            ccc<br>
+.	            ddd<br>
+.	          </div>
+.	        </td>
+.	             :
+.	             :
 .	.--------------------
 .	
 .	
@@ -402,15 +557,24 @@
 .EN	.$$ Delete Element Pattern	| delete-elem
 .	
 .	
+.JA	○説明					| delete-elem-desc
+.EN	.$$$ Description			| delete-elem-desc
+.	
 .JA	プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
 .JA	これは「Delete Elementパターン」または「Dummy Elementパターン」といいます。
 .EN	If presentation logic is empty, the element is not printed out.
 .EN	This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 .	
 .	
+.JA	○適用場面					| delete-elem-situation
+.EN	.$$$ Situation				| delete-elem-situation
+.	
 .JA	このパターンは、プレゼンテーションデータにダミーデータを含めるときに使用します。
 .EN	This pattern enables you to use dummy data in presentation data.
 .	
+.	
+.JA	○サンプルコード			| delete-elem-example
+.EN	.$$$ Example Code			| delete-elem-example
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -420,7 +584,6 @@
 .	  <li {{*id="dummy"*}}>bar</li>
 .	</ul>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -432,7 +595,6 @@
 .	}
 .	.--------------------
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
@@ -440,10 +602,31 @@
 .	.--------------------
 .	
 .	
+.JA	○補足					| delete-elem-supplement
+.EN	.$$$ Supplement				| delete-elem-supplement
+.	
+.JA	Kwartzではディレクティブ「{{,id="dummy:{{/str/}}",}}」を使うことで、
+.JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
+.EN	Kwartz directive '{{,id="dummy:{{/str/}}",}}' lets you to use this pattern without presentation logic file.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.--------------------
+.	<ul>
+.	  <li>foo</li>
+.	  <li {{*id="dummy:d1"*}}>bar</li>
+.	</ul>
+.	.--------------------
+.	
+.	
+.	
 .	
 .JA	◎Delete Tagパターン		| delete-tag
 .EN	.$$ Delete Tag Pattern		| delete-tag
 .	
+.	
+.JA	○説明					| delete-tag-desc
+.EN	.$$$ Description			| delete-tag-desc
 .	
 .JA	プレゼンテーションロジックの定義において、「{{,@cont,}}」だけを使用し、
 .JA	「{{,@stag,}}」と「{{,@stag,}}」を使わないようにすると、エレメントのタグを削除できます。
@@ -453,25 +636,31 @@
 .EN	This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
 .	
 .	
+.JA	○適用場面					| delete-tag-situation
+.EN	.$$$ Situation				| delete-tag-situation
+.	
 .JA	このパターンは、ある条件のときだけタグを出力したい場合に使います。
 .EN	This pattern is very useful if you want to print tags according to condition.
 .	
 .	
+.JA	○サンプルコード			| delete-tag-example
+.EN	.$$$ Example Code			| delete-tag-example
+.	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- dummy-tag.pdata
-.	<a href="@{url}@" {{*id="mark:next"*}}>Next</a>
+.	<a href="..." {{*id="mark:next"*}}>Next</a>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
 .	.-------------------- dummy-tag.plogic
 .	#next {
+.	  attr: "href" url;
 .	  plogic: {
 .	    if (url == null) {
-.JA	      {{*@cont;*}}   // タグを出力しない
-.EN	      {{*@cont;*}}   // don't print tags
+.JA	      {{*@cont;*}}   // urlがnullのときはタグを出力しない
+.EN	      {{*@cont;*}}   // don't print tags when url is null
 .	    } else {
 .	      @stag;
 .	      @cont;
@@ -480,7 +669,6 @@
 .	  }
 .	}
 .	.--------------------
-.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
@@ -498,11 +686,25 @@
 .EN	.$$ Iterate Element Pattern	| iterate-elem
 .	
 .	
+.JA	○説明					| iterate-elem-desc
+.EN	.$$$ Description			| iterate-elem-desc
+.	
 .JA	繰り返しの中に「{{,@stag,}}」と「{{,@cont,}}」と「{{,@etag,}}」を含めると、エレメント全体を繰り返すことになります。
 .JA	これを「Iterate Element」パターンといいます。
 .EN	Iteration which contains {{,@stag,}}, {{,@cont,}}, and {{,@etag,}} represents to iterate the element.
 .EN	This pattern is named 'Iterate Element' pattern.
 .	
+.	
+.JA	○適用場面					| iterate-elem-situation
+.EN	.$$$ Situation				| iterate-elem-situation
+.	
+.JA	リストの要素を出力する場面ならどこでも、このパターンが使用できます。
+.EN	The situation is very popular which requres to print list items.
+.EN	This pattern is very useful for all these situations.
+.	
+.	
+.JA	○サンプルコード			| iterate-elem-example
+.EN	.$$$ Example Code			| iterate-elem-example
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -513,7 +715,6 @@
 .	  </tr>
 .	</table>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -531,7 +732,6 @@
 .	}
 .	.--------------------
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
@@ -539,9 +739,32 @@
 .	.--------------------
 .	
 .	
+.JA	○補足					| iterate-elem-supplement
+.EN	.$$$ Supplement				| iterate-elem-supplement
+.	
+.JA	Kwartzではディレクティブ「{{,id="foreach:{{/item/}}={{/list/}}",}}」を使うことで、
+.JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
+.EN	Kwartz directive {{,id="foreach:{{/item/}}={{/list/}}",}} lets you to use this pattern without presentation logic file.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.--------------------
+.	<table>
+.	  <tr {{*id="foreach:item=list"*}}>
+.	   <td>@{item}@</td>
+.	  </tr>
+.	</table>
+.	.--------------------
+.	
+.	
+.	
+.	
 .JA	◎Iterate Contentパターン	| iterate-cont
 .EN	.$$ Iterate Content Pattern	| iterate-cont
 .	
+.	
+.JA	○説明					| iterate-cont-desc
+.EN	.$$$ Description			| iterate-cont-desc
 .	
 .JA	繰り返しの中に「{{,@cont,}}」を含めると、内容だけを繰り返すことになります。
 .JA	これを「Iterate Content」パターンといいます。
@@ -549,9 +772,15 @@
 .EN	This pattern is named 'Iterate Content' pattern.
 .	
 .	
-.JA	これは<dl></dl>の内容だけを繰り返したいときに、特に有効です。
-.EN	This pattern is very useful when creating <dl></dl> list.
+.JA	○適用場面					| iterate-cont-situation
+.EN	.$$$ Situation				| iterate-cont-situation
 .	
+.JA	これは<dl></dl>の内容だけを繰り返したいときや、テーブルにおいて複数の行を繰り返したい場合に、特に有効です。
+.EN	This pattern is very useful when creating <dl></dl> list or table which repeats several rows.
+.	
+.	
+.JA	○サンプルコード			| iterate-cont-example
+.EN	.$$$ Example Code			| iterate-cont-example
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -561,7 +790,6 @@
 .	  <dd>@{item.desc}@</dd>
 .	</ul>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -579,12 +807,26 @@
 .	}
 .	.--------------------
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
 .	.<<<:! ./output.rb -p guide.d/iterate-elem.plogic guide.d/iterate-elem.pdata
 .	.--------------------
+.	
+.	
+.JA	○補足					| iterate-cont-supplement
+.EN	.$$$ Supplement				| iterate-cont-supplement
+.	
+.JA	Kwartzではディレクティブ「{{,id="loop:{{/item/}}={{/list/}}",}}」を使うことで、
+.JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
+.EN	Kwartz directive {{,id="loop:{{/item/}}={{/list/}}",}} lets you to use this pattern without presentation logic file.
+.	.--------------------
+.	<ul {{*id="loop:item=list"*}}>
+.	  <dt>@{item.text}@</dt>
+.	  <dd>@{item.desc}@</dd>
+.	</ul>
+.	.--------------------
+.	
 .	
 .	
 .	
@@ -596,11 +838,24 @@
 .EN	.$$ Select Element Pattern	| select-elem
 .	
 .	
+.JA	○説明					| select-elem-desc
+.EN	.$$$ Description			| select-elem-desc
+.	
 .JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
 .JA	これは「Select Elementパターン」といいます。
 .EN	The following is an example to choose a certain element from some elements.
 .EN	This pattern is named 'Select Element Pattern.'
 .	
+.	
+.JA	○適用場面					| select-elem-situation
+.EN	.$$$ Situation				| select-elem-situation
+.	
+.JA	このパターンは、条件に応じて内容を変更したい場合に特に有効です。
+.EN	This pattern is very useful when you want to change data according to conditions.
+.	
+.	
+.JA	○サンプルコード			| select-elem-example
+.EN	.$$$ Example Code			| select-elem-example
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -611,7 +866,6 @@
 .	  <font color="black" {{*id="mark:good"*}}>No error.</font>
 .	</div>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -629,7 +883,6 @@
 .	}
 .	.--------------------
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
@@ -637,9 +890,33 @@
 .	.--------------------
 .	
 .	
+.JA	○補足					| select-elem-supplement
+.EN	.$$$ Supplement				| select-elem-supplement
+.	
+.JA	Kwartzではディレクティブ「{{,id="if:{{/condition/}}",}}」「{{,id="elseif:{{/condition/}}",}}」「{{,id="else:",}}」を使うことで、
+.JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
+.EN	Kwartz directive '{{,id="if:{{/condition/}}",}}', '{{,id="elseif:{{/condition/}}",}}', and '{{,id="else:",}}'
+.EN	let you to use this pattern without presentation logic file.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.--------------------
+.	<div>
+.	  <font color="red"   {{*id="if:status=='error'"*}}>ERROR!</font>
+.	  <font color="blue"  {{*id="elseif:status=='warning'"*}}>Warning:</font>
+.	  <font color="black" {{*id="else"*}}>No error.</font>
+.	</div>
+.	.--------------------
+.	
+.	
+.	
+.	
 .JA	◎Pick-up Elementパターン	| pickup-elem
 .EN	.$$ Pick-up Element Pattern	| pickup-elem
 .	
+.	
+.JA	○説明					| pickup-elem-desc
+.EN	.$$$ Description			| pickup-elem-desc
 .	
 .JA	ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、
 .JA	プレゼンテーションロジックでそのエレメントだけを利用します。
@@ -658,6 +935,16 @@
 .EN	In 'Pick-up Element' pattern, necessary elements are marked and leaved so that dummy elements are removed.
 .	
 .	
+.JA	○適用場面					| pickup-elem-situation
+.EN	.$$$ Situation				| pickup-elem-situation
+.	
+.JA	このパターンは、ダミーデータが多い場合に使われます。
+.EN	This pattern is useful when many dummy datas are exist.
+.	
+.	
+.JA	○サンプルコード			| pickup-elem-example
+.EN	.$$$ Example Code			| pickup-elem-example
+.	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- pickup-elem.pdata
@@ -675,7 +962,6 @@
 .	</html>
 .	.--------------------
 .	
-.	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
 .	.-------------------- pickup-elem.plogic
@@ -690,7 +976,6 @@
 .	}
 .	.--------------------
 .	
-.	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
@@ -698,9 +983,8 @@
 .	.--------------------
 .	
 .	
-.JA	上の例は、次のように書くこともできます。
+.JA	この例では「{{,@{...}@,}}」を使用しましたが、これを使わないようにすると次のようになります。
 .EN	The above example should be described as following.
-.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
@@ -718,7 +1002,6 @@
 .	  </body>
 .	</html>
 .	.--------------------
-.	
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
@@ -743,9 +1026,13 @@
 .	
 .	
 .	
+.	
 .JA	◎Extract Elementパターン	| extract-elem
 .EN	.$$ Extract Element Pattern	| extract-elem
 .	
+.	
+.JA	○説明					| pickup-elem-desc
+.EN	.$$$ Description			| pickup-elem-desc
 .	
 .JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 .JA	ほかは一切表示しないようにすることができます。
@@ -755,11 +1042,18 @@
 .EN	This pattern is named 'Extract Element Pattern.'
 .	
 .	
-.JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
-.JA	例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
-.EN	This pattern is very useful to extract HTML fragments and make them libraries.
-.EN	The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
+.JA	○適用場面					| pickup-elem-situation
+.EN	.$$$ Situation				| pickup-elem-situation
 .	
+.JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
+.EN	This pattern is very useful to extract HTML fragments and make them libraries.
+.	
+.	
+.JA	○サンプルコード			| pickup-elem-example
+.EN	.$$$ Example Code			| pickup-elem-example
+.	
+.JA	次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
+.EN	The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
 .	
 .	.#++++++
 .JA	スタイルシート(design.css)：
@@ -982,6 +1276,9 @@
 .	.--------------------
 .	
 .	
-.JA	なお、コマンドラインオプション「{{,--extract={{/name/}},}}」でも、{{,{{/name/}},}}でマーキングされたエレメントを抽出できます。
-.EN	The command-line option {{,--extract={{/name/}},}} extracts the element marked with name {{,{{/name/}},}}.
+.JA	○補足					| pickup-elem-supplement
+.EN	.$$$ Supplement				| pickup-elem-supplement
+.	
+.JA	Kwartzでは、コマンドラインオプション「{{,--extract={{/name/}},}}」でも、{{,{{/name/}},}}でマーキングされたエレメントを抽出できます。
+.EN	The command-line option {{,--extract={{/name/}},}} extracts the element marked with {{,{{/name/}},}} in Kwartz.
 .	

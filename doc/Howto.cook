@@ -7,11 +7,14 @@ U = users-guide;
 R = reference;
 P = p-pattern;
 
-all: [U].en.html [U].ja.html
-     [R].en.html [R].ja.html
-     [P].en.html [P].ja.html
-     design.html design.css
-     ;
+products = [U].en.html [U].ja.html [R].en.html [R].ja.html [P].en.html [P].ja.html;
+
+all: [products] design.html design.css;
+
+clear:
+{
+	rm -rf [products] design.html design.css;
+}
 
 %1.%2.html: %1.%2.txt
 {
