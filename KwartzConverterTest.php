@@ -291,21 +291,21 @@ END;
 
 	function test_parse_directive_kdstr2() {
 		$converter = new KwartzConverter('');
-		$directive_str = "Embed:foo;embed:@C(flag!='')";
+		$directive_str = 'Embed:foo;embed:@C(flag!=\'\')';
 		$attr_hash = array();
 		$embed_str = '';
 		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $embed_str);
-		$this->assertEquals($embed_str, " #{E(foo)}# #{@C(flag!='')}#");
+		$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $embed_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
 	function test_parse_directive_phpstr2() {
 		$converter = new KwartzConverter('');
-		$directive_str = "Embed(\$foo);embed(@C(\$flag!=''))";
+		$directive_str = 'Embed(\$foo);embed(@C(\$flag!=\'\'))';
 		$attr_hash = array();
 		$embed_str = '';
 		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $embed_str);
-		$this->assertEquals($embed_str, " @{E(\$foo)}@ @{@C(\$flag!='')}@");
+		$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $embed_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -2002,7 +2002,7 @@ END;
 		        20
 		      "checked"
 		      ""
-		    "/>\n"
+		    " />\n"
 		';
 	function test_embed1() {
 		$input    = KwartzConverterTest::input_embed1;
@@ -2035,7 +2035,7 @@ END;
 		        20
 		      "checked=\"checked\""
 		      ""
-		    "/>\n"
+		    " />\n"
 		';
 	function test_embed2() {
 		$input    = KwartzConverterTest::input_embed2;
