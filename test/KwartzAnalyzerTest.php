@@ -5,11 +5,11 @@
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzAnalyzer.inc');
-require_once('KwartzParser.inc');
-require_once('KwartzNode.inc');
-require_once('KwartzParser.inc');
-require_once('KwartzConverter.inc');
+require_once('Kwartz/KwartzAnalyzer.php');
+require_once('Kwartz/KwartzParser.php');
+require_once('Kwartz/KwartzNode.php');
+require_once('Kwartz/KwartzParser.php');
+require_once('Kwartz/KwartzConverter.php');
 
 class KwartzAnalyzerTest extends PHPUnit_TestCase {
 

@@ -1,11 +1,11 @@
 <?php
 
 ###
-### KwartzHelper.inc
+### KwartzHelper.php
 ###
 
-require_once('KwartzException.inc');
-require_once('KwartzCompiler.inc');
+require_once('Kwartz/KwartzException.php');
+require_once('Kwartz/KwartzCompiler.php');
 
 //namespace Kwartz {
 

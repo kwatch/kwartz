@@ -1,12 +1,12 @@
 <?php
 
 ###
-### KwartzJspTranslator.inc
+### KwartzJspTranslator.php
 ###
 
-require_once('KwartzTranslator.inc');
-require_once('KwartzVisitor.inc');
-require_once('KwartzNode.inc');
+require_once('Kwartz/KwartzTranslator.php');
+require_once('Kwartz/KwartzVisitor.php');
+require_once('Kwartz/KwartzNode.php');
 
 // namespace Kwartz {
 

@@ -5,7 +5,7 @@
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzNode.inc');
+require_once('Kwartz/KwartzNode.php');
 
 class KwartzNodeTest extends PHPUnit_TestCase {
 

@@ -1,17 +1,17 @@
 <?php
 
 ###
-### KwartzCompiler.inc
+### KwartzCompiler.php
 ###
 
-require_once('KwartzException.inc');
-require_once('KwartzParser.inc');
-require_once('KwartzConverter.inc');
-require_once('KwartzTranslator.inc');
-require_once('KwartzErubyTranslator.inc');
-require_once('KwartzJspTranslator.inc');
-require_once('KwartzPlphpTranslator.inc');
-require_once('KwartzUtility.inc');
+require_once('Kwartz/KwartzException.php');
+require_once('Kwartz/KwartzParser.php');
+require_once('Kwartz/KwartzConverter.php');
+require_once('Kwartz/KwartzTranslator.php');
+require_once('Kwartz/KwartzErubyTranslator.php');
+require_once('Kwartz/KwartzJspTranslator.php');
+require_once('Kwartz/KwartzPlphpTranslator.php');
+require_once('Kwartz/KwartzUtility.php');
 
 
 //namespace Kwartz {

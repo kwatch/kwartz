@@ -5,7 +5,7 @@
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzConverter.inc');
+require_once('Kwartz/KwartzConverter.php');
 
 class KwartzConverterTest extends PHPUnit_TestCase {
 

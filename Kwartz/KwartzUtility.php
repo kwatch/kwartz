@@ -1,7 +1,7 @@
 <?php
 
 ###
-### KwartzUtility.inc
+### KwartzUtility.php
 ###
 
 //namespace Kwartz {

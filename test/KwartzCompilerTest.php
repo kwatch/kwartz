@@ -5,7 +5,7 @@
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzCompiler.inc');
+require_once('Kwartz/KwartzCompiler.php');
 
 class KwartzCompilerTest extends PHPUnit_TestCase {
 

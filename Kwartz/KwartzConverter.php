@@ -1,13 +1,13 @@
 <?php
 
 ###
-### KwartzConverter.inc
+### KwartzConverter.php
 ###
 
-require_once('KwartzException.inc');
-require_once('KwartzNode.inc');
-require_once('KwartzParser.inc');
-require_once('KwartzUtility.inc');
+require_once('Kwartz/KwartzException.php');
+require_once('Kwartz/KwartzNode.php');
+require_once('Kwartz/KwartzParser.php');
+require_once('Kwartz/KwartzUtility.php');
 
 // namespace Kwartz {
 

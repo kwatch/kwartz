@@ -9,7 +9,7 @@ tagfile = 'html-css,euc';
 /*
  * default target
  */
-all: tutorial.ja.html tutorial.en.html;
+all: users-guide.ja.html users-guide.en.html;
 
 
 
@@ -58,6 +58,15 @@ examples.%.html: examples.txt
 }
 
 
+/*
+ *  Other documents
+ */
+README.ja.txt README.en.txt: README.txt
+{
+	ruby m18n.rb -l EN README.txt > README.en.txt;
+	ruby m18n.rb -l JA README.txt > README.ja.txt;
+}
+
 
 /*
  *  clean
@@ -67,7 +76,9 @@ clean:
 	rm -f	users-guide.*.txt  users-guide.*.html
 		reference.*.txt reference.*.html
 		examples.*.txt  examples.*.html
-		calendar.html guide.d/'*';
+		calendar.html guide.d/'*'
+		README.*.txt;
+		;
 }
 
 
@@ -88,33 +99,38 @@ package.view: package.pdata package.plogic
 /*
  *  archive
  */
-date = '2004-09-15';
-mydir = 'kwartz-php_'[date];
+/*date = '2004-09-15';*/
+/*mydir = 'kwartz-php_'[date];*/
+mydir = KwartzPHP_0.1.0;
 
-tar.bz2:
+
+manuals = users-guide.en.html users-guide.ja.html reference.en.html reference.ja.html;
+texts   = README.en.txt README.en.txt COPYING ChangeLog;
+
+tgz: [manuals] [docs_misc]
 {
 	rm -rf [mydir];
 	mkdir [mydir];
 
-	mkdir -p [mydir]/lib/kwartz;
-	cp Kwartz*.inc [mydir]/lib/kwartz;
-	chmod 644 [mydir]/lib/kwartz/'*';
-	mv [mydir]/lib/kwartz/Kwartz.inc [mydir]/lib;
+	mkdir -p [mydir]/Kwartz;
+	cp Kwartz.php [mydir];
+	cp Kwartz/'*'.php [mydir]/Kwartz;
+	chmod 644 [mydir]/Kwartz.php [mydir]/Kwartz/'*'.php;
 
-	mkdir [mydir]/bin;
-	cp kwartz.php [mydir]/bin;
-	chmod 755 [mydir]/bin/'*';
+	cp kwartz-php [mydir];
+	chmod 755 [mydir]/kwartz-php;
 
-	mkdir [mydir]/documents;
-	cp users-guide.*.html reference.*.html examples.*.html [mydir]/documents;
+	mkdir [mydir]/doc;
+	cp [manuals] [mydir]/doc;
 
 	cp -a examples [mydir];
 
-	mkdir [mydir]/test;
-	cp Kwartz*.Test.php test.php [mydir]/test;
+	cp -a test [mydir];
+	rm -rf [mydir]/.svn;
 	chmod 644 [mydir]/test/'*';
 
-	cp README.txt MANIFEST ChangeLog [mydir];
+	chmod 644 [texts];
+	cp [texts] [mydir];
 
-	tar cf - [mydir] | bzip2 > [mydir].tar.bz2;
+	tar cjf [mydir].tgz [mydir];
 }

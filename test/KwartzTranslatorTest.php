@@ -5,10 +5,10 @@
 ###
 
 require_once('PHPUnit.php');
-require_once('KwartzTranslator.inc');
-require_once('KwartzErubyTranslator.inc');
-require_once('KwartzJspTranslator.inc');
-require_once('KwartzParser.inc');
+require_once('Kwartz/KwartzTranslator.php');
+require_once('Kwartz/KwartzErubyTranslator.php');
+require_once('Kwartz/KwartzJspTranslator.php');
+require_once('Kwartz/KwartzParser.php');
 
 class KwartzTranslatorTest extends PHPUnit_TestCase {
 

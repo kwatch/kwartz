@@ -4,8 +4,8 @@
 ### KwartzAnalyser
 ###
 
-require_once('KwartzNode.inc');
-require_once('KwartzVisitor.inc');
+require_once('Kwartz/KwartzNode.php');
+require_once('Kwartz/KwartzVisitor.php');
 
 //namespace Kwartz {
 

@@ -6,6 +6,8 @@
 ###
 ### Type 'php kwartz.php --help' for help. 
 ###
+### $Id$
+###
 
 //if (PHP_SAPI == 'cgi') {	# no effect (;_;)
 //	# ignore HTTP Header
@@ -14,17 +16,7 @@
 //	ob_end_clean();
 //}
 
-require_once('KwartzException.inc');
-require_once('KwartzNode.inc');
-require_once('KwartzScanner.inc');
-require_once('KwartzParser.inc');
-require_once('KwartzConverter.inc');
-require_once('KwartzTranslator.inc');
-require_once('KwartzErubyTranslator.inc');
-require_once('KwartzJspTranslator.inc');
-require_once('KwartzPlphpTranslator.inc');
-require_once('KwartzCompiler.inc');
-require_once('KwartzAnalyzer.inc');
+require_once('Kwartz.php');
 
 
 //namespace Kwartz {
@@ -37,21 +29,21 @@ require_once('KwartzAnalyzer.inc');
 
 	class KwartzCommand {
 		## constants
-		const revision   = '$Rev$';
-		const lastupdate = '$Date$';
-	
+		const REVISION   = '$Rev$';
+		const LASTUPDATE = '$Date$';
+
 		## instance vars
 		private $args;
 		private $command_name;
 		private $options = array();
 		private $toppings = array();
-		
+
 		# for test
 		function _args() { return $this->args; }
 		function _command_name() { return $this->command_name; }
 		function _options() { return $this->options; }
 		function _toppings() { return $this->toppings; }
-		
+
 		## constructor
 		function __construct(&$args) {
 			$this->args = $args;
@@ -327,9 +319,22 @@ END;
 		}
 
 		function version() {
-			$revision   = KwartzCommand::revision;
-			$lastupdate = KwartzCommand::lastupdate;
-			return "kwartz.php: $revision ($date)";
+			$s = '';
+			$filename = basename(__FILE__);
+			$version = $this->_version_match(KwartzCommand::REVISION, KwartzCommand::LASTUPDATE);
+			$s .= "$filename: $version";
+			$filename = 'Kwartz.php';
+			$version = $this->_version_match(Kwartz::REVISION, Kwartz::LASTUPDATE);
+			$s .= ", $filename: $version\n";
+			return $s;
+		}
+		
+		private function _version_match($revision_str, $date_str) {
+			preg_match('/Rev:\s*(\d+)/', $revision_str, $m=array());
+			$revision = $m[1];
+			preg_match('/\d+-\d\d-\d\d\s*\d\d:\d\d:\d\d/', $date_str, $m=array());
+			$lastupdate = $m[0];
+			return "$revision ($lastupdate)";
 		}
 
 

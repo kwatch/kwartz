@@ -1,7 +1,7 @@
 <?php
 
 ###
-### KwartzNode.inc - class definition of Node, Expression, Statement, ...
+### KwartzNode.php - class definition of Node, Expression, Statement, ...
 ###
 
 
@@ -29,7 +29,7 @@
 ###	   Rawcode
 ###
 
-require_once('KwartzUtility.inc');
+require_once('Kwartz/KwartzUtility.php');
 
 //namespace Kwartz {
 

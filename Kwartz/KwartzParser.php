@@ -1,12 +1,12 @@
 <?php
 
 ###
-### KwartzParser.inc
+### KwartzParser.php
 ###
 
-require_once('KwartzException.inc');
-require_once('KwartzNode.inc');
-require_once('KwartzScanner.inc');
+require_once('Kwartz/KwartzException.php');
+require_once('Kwartz/KwartzNode.php');
+require_once('Kwartz/KwartzScanner.php');
 
 //namespace Kwartz {
 
