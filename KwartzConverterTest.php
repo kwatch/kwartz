@@ -296,7 +296,7 @@ END;
 		$append_str = '';
 		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_hash, $append_str);
 		//$this->assertEquals(' #{E(foo)}# #{@C(flag!=\'\')}#', $append_str);
-		$this->assertEquals(' #{E(foo)}# #{(flag!=\'\') ? \'checked="checked"\' : \'\'}#', $append_str);
+		$this->assertEquals('#{E(foo)}##{(flag!=\'\') ? \' checked="checked"\' : \'\'}#', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -307,7 +307,7 @@ END;
 		$append_str = '';
 		$directive = $converter->_parse_directive_phpstr($directive_str, $attr_hash, $append_str);
 		//$this->assertEquals(' @{E(\$foo)}@ @{@C(\$flag!=\'\')}@', $append_str);
-		$this->assertEquals(' @{E(\$foo)}@ @{(\$flag!=\'\') ? \'checked="checked"\' : \'\'}@', $append_str);
+		$this->assertEquals('@{E(\$foo)}@@{(\$flag!=\'\') ? \' checked="checked"\' : \'\'}@', $append_str);
 		$this->assertEquals(NULL, $directive);
 	}
 
@@ -356,11 +356,11 @@ END;
 
 	function test_parse_attr_str2() {
 		$input = <<<END
-<tr id="foo" class="odd" kd="Attr:class:klass;append:flag?'checked':'';set:klass=ctr%2==0?'even':'odd'">
+<tr id="foo" class="odd" kd="Attr:class:klass;append:flag?' checked':'';set:klass=ctr%2==0?'even':'odd'">
   <td id="value:klass">hoge</td>
 </tr>
 END;
-		$expected = ' id="foo" class="#{E(klass)}#" #{flag?\'checked\':\'\'}#';
+		$expected = ' id="foo" class="#{E(klass)}#"#{flag?\' checked\':\'\'}#';
 		$converter = new KwartzConverter($input);
 		$tag_name = $converter->fetch();
 		$directive = $converter->_parse_attr_str($converter->_attr_str());
@@ -372,12 +372,12 @@ END;
 
 	function test_parse_attr_str2_php() {
 		$input = <<<END
-<tr id="foo" class="odd" kd:php="Attr('class'=>\$klass);append(\$flag?'checked':'');foreach(\$list as \$item)">
+<tr id="foo" class="odd" kd:php="Attr('class'=>\$klass);append(\$flag?' checked':'');foreach(\$list as \$item)">
   <td id="value:klass">hoge</td>
 </tr>
 END;
-		$expected1 = ' id="foo" class="odd" kd:php="Attr(\'class\'=>$klass);append($flag?\'checked\':\'\');foreach($list as $item)"';
-		$expected2 = ' id="foo" class="@{E($klass)}@" @{$flag?\'checked\':\'\'}@';
+		$expected1 = ' id="foo" class="odd" kd:php="Attr(\'class\'=>$klass);append($flag?\' checked\':\'\');foreach($list as $item)"';
+		$expected2 = ' id="foo" class="@{E($klass)}@"@{$flag?\' checked\':\'\'}@';
 
 		$converter = new KwartzConverter($input);
 		$tag_name = $converter->fetch();
@@ -1484,33 +1484,33 @@ END;
 
 	function test_convert_csd1() {
 		$input = 
-		'<input type="radio"  #{@C(params[:key1])}#/>
-		<option value="key2" #{@S(params[:key2])}#/>
-		<input type="submit" #{@D(params[:key3])}#/>
+		'<input type="radio"#{@C(params[:key1])}#/>
+		<option value="key2"#{@S(params[:key2])}#/>
+		<input type="submit"#{@D(params[:key3])}#/>
 		';
 		$expected = 
 		'<<block>>
 		  :print
-		    "<input type=\"radio\"  "
+		    "<input type=\"radio\""
 		    ?
 		      [:]
 		        params
 		        "key1"
-		      "checked=\"checked\""
+		      " checked=\"checked\""
 		      ""
-		    "/>\n<option value=\"key2\" "
+		    "/>\n<option value=\"key2\""
 		    ?
 		      [:]
 		        params
 		        "key2"
-		      "selected=\"selected\""
+		      " selected=\"selected\""
 		      ""
-		    "/>\n<input type=\"submit\" "
+		    "/>\n<input type=\"submit\""
 		    ?
 		      [:]
 		        params
 		        "key3"
-		      "disabled=\"disabled\""
+		      " disabled=\"disabled\""
 		      ""
 		    "/>\n"
 		';
@@ -1533,23 +1533,23 @@ END;
 		$expected1 =
 		'<<block>>
 		  :print
-		    "<input type=\"radio\" "
+		    "<input type=\"radio\""
 		    E()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "checked=\"checked\""
+		        " checked=\"checked\""
 		        ""
 		    "/>\n"
 		  :print
-		    "<option value=\"key2\" "
+		    "<option value=\"key2\""
 		    E()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "selected=\"selected\""
+		        " selected=\"selected\""
 		        ""
 		    ">"
 		  :print
@@ -1557,36 +1557,36 @@ END;
 		  :print
 		    "</option>\n"
 		  :print
-		    "<input type=\"submit\" "
+		    "<input type=\"submit\""
 		    E()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "disabled=\"disabled\""
+		        " disabled=\"disabled\""
 		        ""
 		    "/>\n"
 		';
 		$expected2 = 
 		'<<block>>
 		  :print
-		    "<input type=\"radio\" "
+		    "<input type=\"radio\""
 		    X()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "checked=\"checked\""
+		        " checked=\"checked\""
 		        ""
 		    "/>\n"
 		  :print
-		    "<option value=\"key2\" "
+		    "<option value=\"key2\""
 		    X()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "selected=\"selected\""
+		        " selected=\"selected\""
 		        ""
 		    ">"
 		  :print
@@ -1594,13 +1594,13 @@ END;
 		  :print
 		    "</option>\n"
 		  :print
-		    "<input type=\"submit\" "
+		    "<input type=\"submit\""
 		    X()
 		      ?
 		        ==
 		          v
 		          "M"
-		        "disabled=\"disabled\""
+		        " disabled=\"disabled\""
 		        ""
 		    "/>\n"
 		';
@@ -2173,10 +2173,10 @@ END;
 	
 	
 	const input_append1 =
-		'<input type="radio" kd="attr:value:item[\'value\'];append:item[\'age\']<20?\'checked\':\'\'" />
+		'<input type="radio" kd="attr:value:item[\'value\'];append:item[\'age\']<20?\' checked\':\'\'" />
 		';
 	const input_append1_php =
-		'<input type="radio" kd:php="attr(\'value\'=>$item[\'value\']);append($item[\'age\']<20?\'checked\':\'\')" />
+		'<input type="radio" kd:php="attr(\'value\'=>$item[\'value\']);append($item[\'age\']<20?\' checked\':\'\')" />
 		';
 	const expected_append1 =
 		'<<block>>
@@ -2185,14 +2185,14 @@ END;
 		    []
 		      item
 		      "value"
-		    "\" "
+		    "\""
 		    ?
 		      <
 		        []
 		          item
 		          "age"
 		        20
-		      "checked"
+		      " checked"
 		      ""
 		    " />\n"
 		';
@@ -2218,14 +2218,14 @@ END;
 	const expected_append2 = 
 		'<<block>>
 		  :print
-		    "<input type=\"radio\" "
+		    "<input type=\"radio\""
 		    ?
 		      <
 		        []
 		          item
 		          "age"
 		        20
-		      "checked=\"checked\""
+		      " checked=\"checked\""
 		      ""
 		    " />\n"
 		';

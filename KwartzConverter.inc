@@ -155,19 +155,19 @@ require_once('KwartzUtility.inc');
 			
 			$directive = NULL;	// or tuple
 			if ($id_value !== NULL || $kd_value !== NULL || $php_value !== NULL) {
-				$embed_str = '';
+				$append_str = '';
 				$id_directive = $kd_directive = $php_directive = NULL;
 				$directive = NULL;
 				if ($id_value !== NULL) {
-					$id_directive = $this->parse_directive_kdstr($id_value, $attr_hash, $embed_str);
+					$id_directive = $this->parse_directive_kdstr($id_value, $attr_hash, $append_str);
 					if ($id_directive) { $directive = $id_directive; }
 				}
 				if ($kd_value !== NULL) {
-					$kd_directive = $this->parse_directive_kdstr($kd_value, $attr_hash, $embed_str);
+					$kd_directive = $this->parse_directive_kdstr($kd_value, $attr_hash, $append_str);
 					if ($kd_directive) { $directive = $kd_directive; }
 				}
 				if ($php_value != NULL) {
-					$php_directive = $this->parse_directive_phpstr($php_value, $attr_hash, $embed_str);
+					$php_directive = $this->parse_directive_phpstr($php_value, $attr_hash, $append_str);
 					if ($php_directive) { $directive = $php_directive; }
 				}
 
@@ -192,8 +192,8 @@ require_once('KwartzUtility.inc');
 						$s .= " {$attr_name}=\"{$attr_value}\"";
 					}
 				}
-				if ($embed_str) {
-					$s .= $embed_str;
+				if ($append_str) {
+					$s .= $append_str;
 				}
 				$this->attr_str = $s;
 			}
@@ -252,7 +252,7 @@ require_once('KwartzUtility.inc');
 					case 'append':  case 'Append':  case 'APPEND':
 						$darg = $this->expand_csd($darg);
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	# 'E(' ')' or 'X(' ')'
-						$append_str .= " #{{$e1}{$darg}{$e2}}#";
+						$append_str .= "#{{$e1}{$darg}{$e2}}#";
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
@@ -347,7 +347,7 @@ require_once('KwartzUtility.inc');
 					case 'append':  case 'Append':  case 'APPEND':
 						$darg = $this->expand_csd($darg);
 						list($e1, $e2) = KwartzConverter::$escapes[$dname];	// 'E(' ')' or 'X(' ')'
-						$append_str .= " @{{$e1}{$darg}{$e2}}@";
+						$append_str .= "@{{$e1}{$darg}{$e2}}@";
 						break;
 					//case 'echo':  case 'Echo':  case 'ECHO':
 					case 'value':  case 'Value':  case 'VALUE':
@@ -801,9 +801,9 @@ require_once('KwartzUtility.inc');
 		private function expand_csd($str) {
 			if (preg_match('/^@([CSD])\((.*)\)$/', $str, $m=array())) {
 				switch ($m[1]) {
-				case 'C':  $csd = 'checked="checked"'  ;  break;
-				case 'S':  $csd = 'selected="selected"';  break;
-				case 'D':  $csd = 'disabled="disabled"';  break;
+				case 'C':  $csd = ' checked="checked"'  ;  break;
+				case 'S':  $csd = ' selected="selected"';  break;
+				case 'D':  $csd = ' disabled="disabled"';  break;
 				}
 				$str = "({$m[2]}) ? '{$csd}' : ''";
 			}

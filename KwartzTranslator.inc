@@ -35,6 +35,8 @@ require_once('KwartzUtility.inc');
 		protected $flag_escape = false;
 		protected $macro_stmt_hash = array();
 		protected $nl = "\n";			// newline char ("\n" or "\r\n")
+		protected $indent_spaces;
+		protected $max_depth;
 		protected $priorities = array(
 				'variable' => 100,
 				'number'   => 100,
@@ -109,21 +111,6 @@ require_once('KwartzUtility.inc');
 				'KwartzRawcodeStatement'      => 'translate_rawcode_statement',
 			);
 
-		protected $indent = array(
-			0 => "",
-			1 => "  ",
-			2 => "    ",
-			3 => "      ",
-			4 => "        ",
-			5 => "          ",
-			6 => "            ",
-			7 => "              ",
-			8 => "                ",
-			9 => "                  ",
-			);
-		protected $max_depth = 9;
-
-
 		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
 			$this->block       = $block->rearrange();
 			$this->flag_escape = $flag_escape;
@@ -135,7 +122,21 @@ require_once('KwartzUtility.inc');
 				$this->print_key    = ':print';
 				$this->endprint_key = ':endprint';
 			}
+			$indent_width = $this->topping('indent_width');
+			$indent_space = '';
+			for ($i = 0; $i < $indent_width; $i++) {
+				$indent_space .= ' ';
+			}
+			//$this->indent_width = $indent_width;
+			$this->indent_space = $indent_space;
+			$this->max_depth = 10;
+			$this->_init_indent_spaces($indent_space, $this->max_depth);
 		}
+
+
+		### --------------------
+		### utility funcitions
+		### --------------------
 
 		function topping($name) {
 			if (array_key_exists($name, $this->toppings)) {
@@ -156,12 +157,6 @@ require_once('KwartzUtility.inc');
 		//	$method_name = $this->dispatcher[$class_name];
 		//	return $this->$method_name($expr_or_stmt, $depth);
 		//}
-		
-
-
-		### --------------------
-		### utility funcitions
-		### --------------------
 
 		protected function add_macro($macro_name, $block) {
 			$this->macro_stmt_hash[$macro_name] = $block;
@@ -174,13 +169,22 @@ require_once('KwartzUtility.inc');
 			return NULL;
 		}
 		
+		function _init_indent_spaces($indent_space, $max_depth) {
+			$this->_indent_spaces = array();
+			$s = '';
+			for ($i = 0; $i < $max_depth; $i++) {
+				$this->_indent_spaces[] = $s;
+				$s .= $indent_space;
+			}
+		}
+
 		protected function indent($depth) {
 			if ($depth <= $this->max_depth) {
-				return $this->indent[$depth];
+				return $this->_indent_spaces[$depth];
 			}
 			$s = '';
 			for ($i = 0; $i < $depth; $i++) {
-				$s .= '  ';
+				$s .= $this->indent_space;
 			}
 			return $s;
 		}

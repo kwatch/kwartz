@@ -17,19 +17,23 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test($input, $expected, $lang, $flag_test=true, $flag_escape=FALSE) {
+	function _test($input, $expected, $lang, $flag_test=true, $flag_escape=FALSE, $toppings=NULL) {
 		$input    = preg_replace('/^\t\t/m',  '',  $input);
 		$input    = preg_replace('/^\n/',     '',  $input);
 		$expected = preg_replace('/^\t\t/m',  '',  $expected);
 		$expected = preg_replace('/^\n/',     '',  $expected);
-		$parser  = new KwartzParser($input);
+		$parser  = new KwartzParser($input, $toppings);
 		$block   = $parser->parse();
+		if ($toppings == NULL) {
+			$toppings = array();
+		}
+		$toppings['indent_width'] = 2;
 		if ($lang == 'php') {
-			$translator = new KwartzPhpTranslator($block, $flag_escape);
+			$translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
 		} elseif ($lang == 'eruby') {
-			$translator = new KwartzErubyTranslator($block, $flag_escape);
+			$translator = new KwartzErubyTranslator($block, $flag_escape, $toppings);
 		} elseif ($lang == 'jsp') {
-			$translator = new KwartzJspTranslator($block, $flag_escape);
+			$translator = new KwartzJspTranslator($block, $flag_escape, $toppings);
 		} else {
 			assert(false);
 		}

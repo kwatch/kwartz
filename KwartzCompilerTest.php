@@ -14,7 +14,7 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 	}
 
 
-	function __test($pdata, $plogic, $expected, $lang, $flag_test, $flag_escape) {
+	function __test($pdata, $plogic, $expected, $lang, $flag_test, $toppings, $flag_escape) {
 		//if (! $flag_test) { return; }
 		$pdata    = preg_replace('/^\t\t/m', '', $pdata);
 		$pdata    = preg_replace('/^\n/',    '', $pdata);
@@ -22,7 +22,13 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		$plogic   = preg_replace('/^\n/',    '', $plogic);
 		$expected = preg_replace('/^\t\t/m', '', $expected);
 		$expected = preg_replace('/^\n/',    '', $expected);
-		$compiler = new KwartzCompiler($pdata, $plogic, $lang, $flag_escape);
+		if ($toppings == NULL) {
+			$toppings = array();
+		}
+		if (!array_key_exists('indent_width', $toppings)) {
+			$toppings['indent_width'] = 2;
+		}
+		$compiler = new KwartzCompiler($pdata, $plogic, $lang, $flag_escape, $toppings);
 		$code = $compiler->compile();
 		$actual = $code;
 		if ($flag_test) {
@@ -36,12 +42,12 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		return $compiler;
 	}
 	
-	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
-		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, FALSE);
+	function _test($pdata, $plogic, $expected, $lang, $flag_test=TRUE, $toppings=NULL) {
+		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, $toppings, FALSE);
 	}
 	
 	function _test_escape($pdata, $plogic, $expected, $lang, $flag_test=TRUE) {
-		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, TRUE);
+		return $this->__test($pdata, $plogic, $expected, $lang, $flag_test, $toppings, TRUE);
 	}
 
 	
