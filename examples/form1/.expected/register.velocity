@@ -1,0 +1,60 @@
+<html>
+ <head>
+  <style type="text/css">
+   <!--
+     .label {
+        /* font-weight:bold; */
+        background-color:#CCFFCC;
+        text-align:right;
+     }
+    -->
+  </style>
+ </head>
+ <body>
+  <form action="register.rbx" method="POST">
+
+#if(! $error_list)
+  #foreach($error in $error_list)
+    <font color="#FF0000">
+     $!esc.html($error)<br>
+    </font>
+  #end
+#else
+    Enter your personal information:
+#end
+
+   <table border="0" cellspacing="1" cellpadding="5">
+
+    <tr>
+     <td class="label">Name:</td>
+     <td>
+      <input type="text" name="name" size="20" id="name" value="$!esc.html($name)" />
+     </td>
+    </tr>
+
+    <tr>
+     <td class="label">Gender:</td>
+     <td>
+#if($gender == "M")
+      <input type="radio" name="gender" value="M" checked="checked" />#else
+      <input type="radio" name="gender" value="M" />#end
+Man
+      &nbsp;
+#if($gender == "M")
+      <input type="radio" name="gender" value="W" checked="checked" />#else
+      <input type="radio" name="gender" value="W" />#end
+Woman
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" align="center">
+      <input type="submit" value=" Regist ">
+      <input type="reset"  value="reset">
+     </td>
+    </tr>
+
+   </table>
+  </form>
+ </body>
+</html>

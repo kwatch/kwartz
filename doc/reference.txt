@@ -2178,7 +2178,7 @@
 .	.[-l {{/lang/}}]
 .JA		ターゲット言語を指定。指定できるのは
 .EN		Target language of the output script. {{/lang/}} may be
-.		eruby, erb, php, jstl11, jstl10.
+.		eruby, erb, php, jstl11, jstl10, velocity.
 .	
 .	.[-p {{/plogic-file/}}]
 .JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。

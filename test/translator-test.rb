@@ -239,6 +239,9 @@ class TranslatorTest < Test::Unit::TestCase
       assert_raise(Kwartz::TranslationError) do
          _test_expr(@@expression2, expected)
       end
+      input = "a * (b + c) % d"
+      expected = '$a * ($b + $c) % $d'
+      _test_expr(input, expected)
    end
 
 
@@ -314,10 +317,12 @@ class TranslatorTest < Test::Unit::TestCase
 #      expected = 'a[i] *= a[i - 2] + a[i - 1]'
 #      _test_expr(@@assign3, expected)
 #   end
-#   def test_assign3_velocity
-#      expected = '$a[$i] *= $a[$i - 2] + $a[$i - 1]'
-#      _test_expr(@@assign3, expected)
-#   end
+   def test_assign3_velocity
+      #expected = '$a[$i] *= $a[$i - 2] + $a[$i - 1]'
+      input = 'a[i-2]'
+      expected = '$a[$i - 2]'
+      _test_expr(input, expected)
+   end
 
 
    @@assign4 = "a[:name] .+= 's1'.+'s2'"
@@ -590,60 +595,62 @@ class TranslatorTest < Test::Unit::TestCase
    end
 
 
-   @@epxr_stmt4 = "max = x>y ? x : y;"
+   @@epxr_stmt4 = "min = x<y ? x : y;"
    def test_expr_stmt4_eruby	# conditinal expr
-      expected = "<% max = x > y ? x : y %>\n"
+      expected = "<% min = x < y ? x : y %>\n"
       _test_stmt(@@epxr_stmt4, expected)
    end
    def test_expr_stmt4_php	# conditinal expr
-      expected = "<?php $max = $x > $y ? $x : $y; ?>\n"
+      expected = "<?php $min = $x < $y ? $x : $y; ?>\n"
       _test_stmt(@@epxr_stmt4, expected)
    end
    def test_expr_stmt4_jstl11
-      expected = '<c:set var="max" value="${x gt y ? x : y}"/>' + "\n"
+      expected = '<c:set var="min" value="${x lt y ? x : y}"/>' + "\n"
       _test_stmt(@@epxr_stmt4, expected)
    end
    def test_expr_stmt4_jstl10
       expected = <<'END'
-<c:choose><c:when test="${x gt y}">
-  <c:set var="max" value="${x}"/>
+<c:choose><c:when test="${x lt y}">
+  <c:set var="min" value="${x}"/>
 </c:when><c:otherwise>
-  <c:set var="max" value="${y}"/>
+  <c:set var="min" value="${y}"/>
 </c:otherwise></c:choose>
 END
       _test_stmt(@@epxr_stmt4, expected)
    end
    def test_expr_stmt4_velocity	# conditinal expr
       expected = <<'END'
-#if($x > $y)
-  #set($max = $x)
+#if($x < $y)
+  #set($min = $x)
 #else
-  #set($max = $y)
+  #set($min = $y)
 #end
 END
       _test_stmt(@@epxr_stmt4, expected)
    end
 
 
-   @@epxr_stmt5 = "max = x>y ? x : y;"
+   @@epxr_stmt5 = "max = x>y ? x : y>z? y : z;"
    def test_expr_stmt5_eruby	# conditinal expr
-      expected = "<% max = x > y ? x : y %>\n"
+      expected = "<% max = x > y ? x : y > z ? y : z %>\n"
       _test_stmt(@@epxr_stmt5, expected)
    end
    def test_expr_stmt5_php	# conditinal expr
-      expected = "<?php $max = $x > $y ? $x : $y; ?>\n"
+      expected = "<?php $max = $x > $y ? $x : $y > $z ? $y : $z; ?>\n"
       _test_stmt(@@epxr_stmt5, expected)
    end
    def test_expr_stmt5_jstl11
-      expected = '<c:set var="max" value="${x gt y ? x : y}"/>' + "\n"
+      expected = '<c:set var="max" value="${x gt y ? x : y gt z ? y : z}"/>' + "\n"
       _test_stmt(@@epxr_stmt5, expected)
    end
    def test_expr_stmt5_jstl10
       expected = <<'END'
 <c:choose><c:when test="${x gt y}">
   <c:set var="max" value="${x}"/>
-</c:when><c:otherwise>
+</c:when><c:when test="${y gt z}">
   <c:set var="max" value="${y}"/>
+</c:when><c:otherwise>
+  <c:set var="max" value="${z}"/>
 </c:otherwise></c:choose>
 END
       _test_stmt(@@epxr_stmt5, expected)
@@ -652,8 +659,10 @@ END
       expected = <<'END'
 #if($x > $y)
   #set($max = $x)
-#else
+#elseif($y > $z)
   #set($max = $y)
+#else
+  #set($max = $z)
 #end
 END
       _test_stmt(@@epxr_stmt5, expected)
@@ -780,6 +789,7 @@ END
    end
 
 
+
    @@print_stmt2 = 'print(E(e), X(x), default);'
    def test_print_stmt2_eruby
       expected = "<%= CGI::escapeHTML((e).to_s) %><%= x %><%= default %>"
@@ -799,6 +809,7 @@ END
    end
 
 
+
    @@print_stmt3 = 'print(E(e), X(x), default);'
    def test_print_stmt3_eruby
       expected = "<%= CGI::escapeHTML((e).to_s) %><%= x %><%= CGI::escapeHTML((default).to_s) %>"
@@ -816,6 +827,57 @@ END
       expected = "$!esc.html($e)$!{x}$!esc.html($default)"
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
+
+   
+   
+   @@print_stmt4 = 'print("http://" .+ url .+ "?param=" .+ value);'
+   def test_print_stmt4_eruby
+   	#expected = '<% "http://" + url + "?param=" + value %>'
+   	expected = "http://<%= url %>?param=<%= value %>"
+	_test_stmt(@@print_stmt4, expected)
+   end
+   def test_print_stmt4_php
+   	#expected = '<?php echo "http://" . $url . "?param=" . $value; ?>'
+   	expected = "http://<?php echo $url; ?>?param=<?php echo $value; ?>"
+	_test_stmt(@@print_stmt4, expected)
+   end
+   def test_print_stmt4_jstl11
+   	expected = 'http://<c:out value="${url}" escapeXml="false"/>?param=<c:out value="${value}" escapeXml="false"/>'
+	_test_stmt(@@print_stmt4, expected)
+   end
+   def test_print_stmt4_jstl10
+   	expected = 'http://<c:out value="${url}" escapeXml="false"/>?param=<c:out value="${value}" escapeXml="false"/>'
+	_test_stmt(@@print_stmt4, expected)
+   end
+   def test_print_stmt4_velocity
+   	expected = 'http://$!{url}?param=$!{value}'
+	_test_stmt(@@print_stmt4, expected)
+   end
+
+
+
+   @@print_stmt5 = 'print("http://" .+ url .+ "?param=" .+ value);'
+   def test_print_stmt5_eruby
+   	expected = "http://<%= CGI::escapeHTML((url).to_s) %>?param=<%= CGI::escapeHTML((value).to_s) %>"
+	_test_stmt(@@print_stmt5, expected, {:escape=>true})
+   end
+   def test_print_stmt5_php
+   	expected = "http://<?php echo htmlspecialchars($url); ?>?param=<?php echo htmlspecialchars($value); ?>"
+	_test_stmt(@@print_stmt5, expected, {:escape=>true})
+   end
+   def test_print_stmt5_jstl11
+   	expected = 'http://<c:out value="${url}"/>?param=<c:out value="${value}"/>'
+	_test_stmt(@@print_stmt5, expected, {:escape=>true})
+   end
+   def test_print_stmt5_jstl10
+   	expected = 'http://<c:out value="${url}"/>?param=<c:out value="${value}"/>'
+	_test_stmt(@@print_stmt5, expected, {:escape=>true})
+   end
+   def test_print_stmt5_velocity
+   	expected = 'http://$!esc.html($url)?param=$!esc.html($value)'
+	_test_stmt(@@print_stmt5, expected, {:escape=>true})
+   end
+
 
 
 

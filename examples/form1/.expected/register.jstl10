@@ -1,0 +1,61 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<html>
+ <head>
+  <style type="text/css">
+   <!--
+     .label {
+        /* font-weight:bold; */
+        background-color:#CCFFCC;
+        text-align:right;
+     }
+    -->
+  </style>
+ </head>
+ <body>
+  <form action="register.rbx" method="POST">
+
+<c:choose><c:when test="${error_list ne null}">
+  <c:forEach var="error" items="${error_list}">
+    <font color="#FF0000">
+     <c:out value="${error}"/><br>
+    </font>
+  </c:forEach>
+</c:when><c:otherwise>
+    Enter your personal information:
+</c:otherwise></c:choose>
+
+   <table border="0" cellspacing="1" cellpadding="5">
+
+    <tr>
+     <td class="label">Name:</td>
+     <td>
+      <input type="text" name="name" size="20" id="name" value="<c:out value="${name}"/>" />
+     </td>
+    </tr>
+
+    <tr>
+     <td class="label">Gender:</td>
+     <td>
+<c:choose><c:when test="${gender eq 'M'}">
+      <input type="radio" name="gender" value="M" checked="checked" /></c:when><c:otherwise>
+      <input type="radio" name="gender" value="M" /></c:otherwise></c:choose>
+Man
+      &nbsp;
+<c:choose><c:when test="${gender eq 'M'}">
+      <input type="radio" name="gender" value="W" checked="checked" /></c:when><c:otherwise>
+      <input type="radio" name="gender" value="W" /></c:otherwise></c:choose>
+Woman
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" align="center">
+      <input type="submit" value=" Regist ">
+      <input type="reset"  value="reset">
+     </td>
+    </tr>
+
+   </table>
+  </form>
+ </body>
+</html>

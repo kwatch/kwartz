@@ -38,4 +38,7 @@ suite << SpanTest.suite()
 require 'analyzer-test'
 suite << AnalyzerTest.suite()
 
+require 'examples-test'
+suite << ExamplesTest.suite()
+
 Test::Unit::UI::Console::TestRunner.run(suite)

@@ -1,0 +1,28 @@
+<html>
+  <body>
+
+    <table>
+      <thead>
+	<th>Name</th><th>E-Mail</th>
+      </thead>
+      <tbody>
+#set($i = 0)
+#foreach($user in $user_list)
+  #set($i = $i + 1)
+  #if($i % 2 == 0)
+    #set($color = "#CCCCFF")
+  #else
+    #set($color = "#FFCCCC")
+  #end
+  #set($name = $user["name"])
+  #set($email = $user["email"])
+	<tr bgcolor="$!{color}">
+	  <td>$!{name}</td>
+	  <td><a href="mailto:$!{email}">$!{email}</a></td>
+	</tr>
+#end
+      </tbody>
+    </table>
+    
+  </body>
+</html>

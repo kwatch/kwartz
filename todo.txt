@@ -17,7 +17,7 @@
 .- [v] translator/erb.rb
 .- [v] translator/jstl10.rb
 .- [v] translator/jstl11.rb
-.- [_] translator/velocity.rb
+.- [v] translator/velocity.rb
 .- [_] translator/pl.rb
 .- [_] translator/template-toolkit.rb
 .- [_] translator/dtml.rb

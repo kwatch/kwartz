@@ -213,3 +213,14 @@ END
 
 
 end
+
+
+##
+## main
+##
+if $0 == __FILE__
+    Test::Unit::UI::Console::TestRunner.run(AnalyzerTest)
+    #suite = Test::Unit::TestSuite.new()
+    #suite << AnalyzerTest.suite()
+    #Test::Unit::UI::Console::TestRunner.run(suite)
+end

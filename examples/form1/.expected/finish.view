@@ -1,0 +1,14 @@
+<html>
+ <body>
+  Registration has finished with the following data:<br>
+  <br>
+  Name:
+   <%= CGI::escapeHTML((name).to_s) %><br>
+  Gender:
+<% if gender == "M" then %>
+   Man
+<% else %>
+   Woman
+<% end %>
+ </body>
+</html>

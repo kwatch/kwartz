@@ -4,6 +4,9 @@
 .?lastupdate:	$Date$
 
 
+.: 2005-03-28 rev.58
+	.- [enhance] new test script 'examples-test.rb'
+
 .: 2005-03-24 rev.57
 	.- [enhance] 'var==null' => '$var' and 'var!=null' => '! $var' in VelocityTranslator
 	.- [change] 'print(var)' is translated into '$!{var}' (not '$var') in VelocityTranslator

@@ -1,0 +1,24 @@
+<html>
+  <body>
+
+    <table>
+      <thead>
+	<th>Name</th><th>E-Mail</th>
+      </thead>
+      <tbody>
+<% i = 0 %>
+<% for user in user_list do %>
+<%   i += 1 %>
+<%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %>
+<%   name = user["name"] %>
+<%   email = user["email"] %>
+	<tr bgcolor="<%= color %>">
+	  <td><%= name %></td>
+	  <td><a href="mailto:<%= email %>"><%= email %></a></td>
+	</tr>
+<% end %>
+      </tbody>
+    </table>
+    
+  </body>
+</html>

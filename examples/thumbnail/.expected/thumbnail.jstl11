@@ -1,0 +1,112 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1">
+    <title>Kwartz - a template system for Ruby, PHP and Java (brief overview)</title>
+    <style type="text/css">
+      <!--
+	body   {background-color:#FFFFFF;}
+	-->
+    </style>
+  </head>
+  
+  <body>
+    
+<c:if test="${page gt 0}">
+    <div align="center">
+  <c:choose><c:when test="${not empty first_url}">
+      <a href="<c:out value="${first_url}" escapeXml="false"/>">|&lt;&lt; First</a>
+  </c:when><c:otherwise>
+|&lt;&lt; First  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty prev_url}">
+      <a href="<c:out value="${prev_url}" escapeXml="false"/>">&lt; Prev</a>
+  </c:when><c:otherwise>
+&lt; Prev  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty index_url}">
+      <a href="<c:out value="${index_url}" escapeXml="false"/>">Index</a>
+  </c:when><c:otherwise>
+Index  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty next_url}">
+      <a href="<c:out value="${next_url}" escapeXml="false"/>"><b>Next &gt;</b></a>
+  </c:when><c:otherwise>
+<b>Next &gt;</b>  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty last_url}">
+      <a href="<c:out value="${last_url}" escapeXml="false"/>">Last &gt;&gt;|</a>
+  </c:when><c:otherwise>
+Last &gt;&gt;|  </c:otherwise></c:choose>
+    </div>
+</c:if>
+
+<c:if test="${page eq 0}">
+  <c:set var="i" value="0"/>
+  <c:forEach var="thumb" items="${thumb_list}">
+    <c:set var="i" value="${i + 1}"/>
+    <c:set var="link_url" value="${thumb['link_url']}"/>
+    <c:set var="image_url" value="${thumb['image_url']}"/>
+      <a href="<c:out value="${link_url}" escapeXml="false"/>"><img src="<c:out value="${image_url}" escapeXml="false"/>"
+	width="200" height="150" /></a>
+    <c:if test="${i % 3 eq 0}">
+      <br />
+</c:if>
+  </c:forEach>
+</c:if>
+    </div>
+      
+<c:if test="${page ne 0}">
+    <div id="main_image" align="center">
+      <br>
+      <table border="1">
+	<tr>
+	  <td>
+	    <img src="<c:out value="${image_url}" escapeXml="false"/>" alt="presentaion image" />
+	  </td>
+	</tr>
+      </table>
+      <br>
+    </div>
+</c:if>
+    
+<c:if test="${page gt 0}">
+    <div align="center">
+  <c:choose><c:when test="${not empty first_url}">
+      <a href="<c:out value="${first_url}" escapeXml="false"/>">|&lt;&lt; First</a>
+  </c:when><c:otherwise>
+|&lt;&lt; First  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty prev_url}">
+      <a href="<c:out value="${prev_url}" escapeXml="false"/>">&lt; Prev</a>
+  </c:when><c:otherwise>
+&lt; Prev  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty index_url}">
+      <a href="<c:out value="${index_url}" escapeXml="false"/>">Index</a>
+  </c:when><c:otherwise>
+Index  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty next_url}">
+      <a href="<c:out value="${next_url}" escapeXml="false"/>"><b>Next &gt;</b></a>
+  </c:when><c:otherwise>
+<b>Next &gt;</b>  </c:otherwise></c:choose>
+      &nbsp;
+  <c:choose><c:when test="${not empty last_url}">
+      <a href="<c:out value="${last_url}" escapeXml="false"/>">Last &gt;&gt;|</a>
+  </c:when><c:otherwise>
+Last &gt;&gt;|  </c:otherwise></c:choose>
+    </div>
+</c:if>
+
+    <!--
+    <div id="counter" align="right">
+      <img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&dd=A&ft=0&tr=T&trgb=000000&prgb=CCCCCC&md=7"
+        alt="counter image file">
+    </div>
+      -->
+    
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <title><c:out value="${title}" escapeXml="false"/></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="design.css">
+  </head>
+  <body>
+
+    <table border="0">
+      <tr>
+        
+        <!-- menu part -->
+        <td width="100" valign="top">
+          <div class="menu">
+    <ul>
+<c:forEach var="item" items="${menu_list}">
+      <li><a href="<c:out value="${item['url']}" escapeXml="false"/>"><c:out value="${item['name']}" escapeXml="false"/></a></li>
+</c:forEach>
+    </ul>
+          </div>
+        </td>
+        
+        <!-- article part -->
+        <td width="400" valign="top">
+          <div class="article">
+    <div>
+      <h2>What is Kwartz?</h2>
+      <p>Kwartz is a template system, which realized the
+         concept <strong>`Separation of Presentation Logic
+         and Presentation Data'(SoPL/PD)</strong>.
+      </p>
+    </div>
+          </div>
+        </td>
+        
+      </tr>
+
+      <!-- footer part -->
+      <tr>
+        <td colspan="2" class="copyright">
+          copyright&copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        </td>
+      </tr>
+    </table>
+    
+  </body>
+</html>

@@ -1,0 +1,14 @@
+<html>
+ <body>
+  Registration has finished with the following data:<br>
+  <br>
+  Name:
+   $!esc.html($name)<br>
+  Gender:
+#if($gender == "M")
+   Man
+#else
+   Woman
+#end
+ </body>
+</html>

@@ -1,0 +1,13 @@
+<html>
+  <body>
+
+    <div id="breadcrumbs">
+<% for crumb in breadcrumbs do %>
+      <a href="<%= crumb[:path] %>"><%= crumb[:name] %></a>
+      &gt;
+<% end %>
+      <%= title %>
+    </div>
+
+  </body>
+</html>

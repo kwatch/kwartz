@@ -1,12 +1,15 @@
 $Release$
 $Id$
 
-2.0.0 (2005-03-19)
+2.0.0-beta4 (2005-03-28)
 	* [enhance] New action 'defun' support.
 		It is equivalent to 'mkmethod' script of Kwartz1.0, and
 		it generates Ruby/PHP function from templates.
 		See:
 		- doc/users-guide.en.html#defun
+	* [enhance] 'Velocity' support.
+		Kwartz-ruby now support Velocity, a template system in Java.
+		The command-line option '-l velocity' generates velocity script.
 	* [enhance] RubyGem support
 		If you have installed rubygem, type 'gem install kwartz-ruby'.
 

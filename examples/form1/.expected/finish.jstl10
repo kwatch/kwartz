@@ -1,0 +1,15 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<html>
+ <body>
+  Registration has finished with the following data:<br>
+  <br>
+  Name:
+   <c:out value="${name}"/><br>
+  Gender:
+<c:choose><c:when test="${gender eq 'M'}">
+   Man
+</c:when><c:otherwise>
+   Woman
+</c:otherwise></c:choose>
+ </body>
+</html>
