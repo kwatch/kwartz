@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-10 rev.49
+	.- [change] rename bin/kwartz to bin/kwartz-ruby
+	.- [change] add new shell script bin/kwartz which invoke bin/kwartz-ruby
+
 .: 2005-02-19 rev.48
 	.- [change] command-line option '-o' is renamed to '-i'
 

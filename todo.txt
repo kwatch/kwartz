@@ -43,3 +43,4 @@
 .- [v] placeholder
 .- [_] rewrite Scanner.rb
 .- [_] integrate element definition and declaration
+.- [_] bin/kwartz -> bin/kwartz-ruby and create new bin/kwartz

@@ -27,7 +27,8 @@ help:
  *  recipes for kuwata-lab.com
  */
 
-website_products = index.html README.en.html README.ja.html ChangeLog.html
+website_products = index.html README.en.html README.ja.html
+		ChangeLog.txt /* ChangeLog.html */
                 [U].en.01.html [U].ja.01.html
                 [R].en.01.html [R].ja.01.html
 		[P].en.01.html [P].ja.01.html
@@ -101,8 +102,13 @@ index.html:     index.txt
         kwaser -t [website_tagfile] -b [need] > [target];
 }
 
-
+/*
 ChangeLog.html: ../ChangeLog
 {
         kwaser -t [website_tagfile] -b [need] > [target];
+}*/
+
+ChangeLog.txt: ../ChangeLog.txt
+{
+	cp -a [need] [target];
 }
