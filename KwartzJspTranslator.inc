@@ -14,11 +14,17 @@ require_once('KwartzNode.inc');
 		protected $condfind_visitor;
 		protected $deepcopy_visitor;
 		private	$keywords = array(
-			':if'	      => '<c:choose><c:when test="${',
-			':then'	      => '}">',
-			':elseif'     => '</c:when><c:when test="${',
-			':else'	      => '</c:when><c:otherwise>',
-			':endif'      => '</c:when></c:choose>',
+			//':if'         => '<c:choose><c:when test="${',
+			//':then'       => '}">',
+			//':elseif'     => '</c:when><c:when test="${',
+			//':else'       => '</c:when><c:otherwise>',
+			//':endif'      => '</c:when></c:choose>',
+
+			//':if2'        => '<c:if test="${',
+			//':then2'      => '}">',
+			//':elseif'     => NULL,
+			//':else'       => NULL,
+			//':endif2'     => '</c:if>',
 
 			':while'      => NULL,
 			':dowhile'    => NULL,
@@ -121,34 +127,78 @@ require_once('KwartzNode.inc');
 		}
 
 		protected function translate_if_statement($stmt, $depth) {
-			$this->add_indent($depth);
-			$this->code .= $this->keyword(':if');
-			$this->translate_expression($stmt->condition());
-			$this->code .= $this->keyword(':then');
-			$this->code .= $this->nl;
-			$this->translate_statement($stmt->then_block(), $depth+1);
-			$st = $stmt;
-			while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
-				$this->add_indent($depth);
-				$this->code .= $this->keyword(':elseif');
-				$this->translate_expression($st->condition());
-				$this->code .= $this->keyword(':then');
+			if (! $stmt->else_stmt()) {
+				$this->add_tag('<c:if test="${', $depth, FALSE);
+				$this->translate_expression($stmt->condition());
+				$this->code .= '}">';
 				$this->code .= $this->nl;
-				$this->translate_statement($st->then_block(), $depth+1);
+				$this->translate_statement($stmt->then_block(), $depth+1);
+				$this->add_tag('</c:if>', $depth);
+			} else {
+				$this->add_tag('<c:choose>',       $depth);
+				$this->add_tag('<c:when test="${', $depth+1, false);
+				$this->translate_expression($stmt->condition());
+				$this->code .= '}">';
+				$this->code .= $this->nl;
+				$this->translate_statement($stmt->then_block(), $depth+2);
+				$st = $stmt;
+				while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
+					$this->add_tag('</c:when>',  $depth+1);
+					$this->add_tag('<c:when test="${', $depth+1, false);
+					$this->translate_expression($st->condition());
+					$this->code .= '}">';
+					$this->code .= $this->nl;
+					$this->translate_statement($st->then_block(), $depth+2);
+				}
+				if ($st) {
+					//assert($st.token() == '<<block>>');
+					$this->add_tag('</c:when>',      $depth+1);
+					$this->add_tag('<c:otherwise>',  $depth+1);
+					$this->translate_statement($st,  $depth+2);
+					$this->add_tag('</c:otherwise>', $depth+1);
+					$this->add_tag('</c:choose>',    $depth);
+				} else {
+					$this->add_tag('</c:when>',  $depth+1);
+					$this->add_tag('</c:choose>', $depth);
+				}
 			}
-			if ($st) {
-				//assert($st.token() == '<<block>>');
-				$this->add_indent($depth);
-				$this->code .= $this->keyword(':else');
+
+			//$this->add_indent($depth);
+			//$this->code .= $this->keyword(':if');
+			//$this->translate_expression($stmt->condition());
+			//$this->code .= $this->keyword(':then');
+			//$this->code .= $this->nl;
+			//$this->translate_statement($stmt->then_block(), $depth+1);
+			//$st = $stmt;
+			//while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
+			//	$this->add_indent($depth);
+			//	$this->code .= $this->keyword(':elseif');
+			//	$this->translate_expression($st->condition());
+			//	$this->code .= $this->keyword(':then');
+			//	$this->code .= $this->nl;
+			//	$this->translate_statement($st->then_block(), $depth+1);
+			//}
+			//if ($st) {
+			//	//assert($st.token() == '<<block>>');
+			//	$this->add_indent($depth);
+			//	$this->code .= $this->keyword(':else');
+			//	$this->code .= $this->nl;
+			//	$this->translate_statement($st, $depth+1);
+			//	$this->add_indent($depth);				#
+			//	$this->code .= '</c:otherwise></c:choose>';		#
+			//} else {							#
+			//	$this->add_indent($depth);				#
+			//	$this->code .= '</c:when></c:choose>';			#
+			//}								#
+			//$this->code .= $this->nl;
+		}
+		
+		protected function add_tag($tag, $depth, $flag_newline=TRUE) {
+			$this->add_indent($depth);
+			$this->code .= $tag;
+			if ($flag_newline) { 
 				$this->code .= $this->nl;
-				$this->translate_statement($st, $depth+1);
-				$this->add_indent($depth);				#
-				$this->code .= '</c:otherwise></c:choose>';		#
-			} else {							#
-				$this->add_indent($depth);				#
-				$this->code .= '</c:when></c:choose>';			#
-			}								#
-			$this->code .= $this->nl;
+			}
 		}
 
 

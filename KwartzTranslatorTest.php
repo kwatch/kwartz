@@ -17,7 +17,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
-	function _test($input, $expected, $lang, $flag_test=TRUE, $flag_escape=FALSE) {
+	function _test($input, $expected, $lang, $flag_test=true, $flag_escape=FALSE) {
 		$input    = preg_replace('/^\t\t/m',  '',  $input);
 		$input    = preg_replace('/^\n/',     '',  $input);
 		$expected = preg_replace('/^\t\t/m',  '',  $expected);
@@ -45,15 +45,15 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		return $this->_test($input, $expected, $lang, $flag_test, $flag_escape);
 	}
 
-	function _test_php($input, $expected, $flag_test=TRUE) {
+	function _test_php($input, $expected, $flag_test=true) {
 		$this->_test($input, $expected, 'php', $flag_test);
 	}
 
-	function _test_eruby($input, $expected, $flag_test=TRUE) {
+	function _test_eruby($input, $expected, $flag_test=true) {
 		$this->_test($input, $expected, 'eruby', $flag_test);
 	}
 
-	function _test_jsp($input, $expected, $flag_test=TRUE) {
+	function _test_jsp($input, $expected, $flag_test=true) {
 		$this->_test($input, $expected, 'jsp', $flag_test);
 	}
 
@@ -125,11 +125,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_jsp_condop1() {
 		$expected = '
-		<c:choose><c:when test="${x > y}">
-		  <c:set var="hash[\'key\']" value="${x + 1}"/>
-		</c:when><c:otherwise>
-		  <c:set var="hash[\'key\']" value="${y - 1}"/>
-		</c:otherwise></c:choose>
+		<c:choose>
+		  <c:when test="${x > y}">
+		    <c:set var="hash[\'key\']" value="${x + 1}"/>
+		  </c:when>
+		  <c:otherwise>
+		    <c:set var="hash[\'key\']" value="${y - 1}"/>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_condop1, $expected);
 	}
@@ -159,11 +162,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	function test_jsp_arigh3() {
 		$expected = '
 		<c:out value="${-(x + y) * (x - y) % z}" escapeXml="false"/>
-		<c:choose><c:when test="${a[i] > 0}">
-		  <c:set var="a[i + 1]" value="${(x - 1) * 2}"/>
-		</c:when><c:otherwise>
-		  <c:set var="a[i + 1]" value="${y * 2}"/>
-		</c:otherwise></c:choose>
+		<c:choose>
+		  <c:when test="${a[i] > 0}">
+		    <c:set var="a[i + 1]" value="${(x - 1) * 2}"/>
+		  </c:when>
+		  <c:otherwise>
+		    <c:set var="a[i + 1]" value="${y * 2}"/>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_arith2, $expected);
 	}
@@ -305,11 +311,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_jsp_boolean1() {
 		$expected = '
-		<c:choose><c:when test="${(a or b) and c}">
-		  <c:set var="x" value="${true}"/>
-		</c:when><c:otherwise>
-		  <c:set var="x" value="${false}"/>
-		</c:otherwise></c:choose>
+		<c:choose>
+		  <c:when test="${(a or b) and c}">
+		    <c:set var="x" value="${true}"/>
+		  </c:when>
+		  <c:otherwise>
+		    <c:set var="x" value="${false}"/>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_boolean1, $expected);
 	}
@@ -335,13 +344,16 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 	function test_jsp_null1() {
-		$expected = '
-		<c:choose><c:when test="${x == null}">
-		</c:when><c:otherwise>
-		<c:out value="${x}" escapeXml="false"/></c:otherwise></c:choose>
-
+		$expected = 
+		'<c:choose>
+		  <c:when test="${x == null}">
+		  </c:when>
+		  <c:otherwise>
+		<c:out value="${x}" escapeXml="false"/></c:otherwise>
+		</c:choose>
+		
 		';
-		$this->_test_jsp(KwartzTranslatorTest::input_null1, $expected);
+		$this->_test_jsp(KwartzTranslatorTest::input_null1, $expected, true);
 	}
 
 
@@ -548,9 +560,9 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_jsp_if1() {
 		$expected = 
-		'<c:choose><c:when test="${cond1}">
+		'<c:if test="${cond1}">
 		cond1
-		</c:when></c:choose>
+		</c:if>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_if1, $expected);
 	}
@@ -589,11 +601,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_jsp_if2() {
 		$expected = 
-		'<c:choose><c:when test="${cond1}">
+		'<c:choose>
+		  <c:when test="${cond1}">
 		aaa
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		bbb
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_if2, $expected);
 	}
@@ -642,15 +657,20 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_jsp_if3() {
 		$expected = '
-		<c:choose><c:when test="${cond1}">
+		<c:choose>
+		  <c:when test="${cond1}">
 		aaa
-		</c:when><c:when test="${cond2}">
+		  </c:when>
+		  <c:when test="${cond2}">
 		bbb
-		</c:when><c:when test="${cond3}">
+		  </c:when>
+		  <c:when test="${cond3}">
 		ccc
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		ddd
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_jsp(KwartzTranslatorTest::input_if3, $expected);
 	}
@@ -885,13 +905,17 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<c:set var="ctr" value="0"/>
 		<c:forEach var="item" items="${list}">
 		  <c:set var="ctr" value="${ctr + 1}"/>
-		  <c:choose><c:when test="${ctr % 2 == 0}">
-		    <c:set var="klass" value="even"/>
-		  </c:when><c:when test="${ctr % 2 == 1}">
-		    <c:set var="klass" value="odd"/>
-		  </c:when><c:otherwise>
-		    <c:set var="klass" value="never"/>
-		  </c:otherwise></c:choose>
+		  <c:choose>
+		    <c:when test="${ctr % 2 == 0}">
+		      <c:set var="klass" value="even"/>
+		    </c:when>
+		    <c:when test="${ctr % 2 == 1}">
+		      <c:set var="klass" value="odd"/>
+		    </c:when>
+		    <c:otherwise>
+		      <c:set var="klass" value="never"/>
+		    </c:otherwise>
+		  </c:choose>
 		  <tr class="<c:out value="${klass}" escapeXml="false"/>">
 		    <td><c:out value="${item}" escapeXml="false"/></td>
 		  </tr>
@@ -931,11 +955,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$expected = '
 		<c:out value="${data}"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}"/>bbb
-		<c:choose><c:when test="${x > y}">
+		<c:choose>
+		  <c:when test="${x > y}">
 		<c:out value="${x}"/>
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		<c:out value="${y}"/>
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'jsp');
 	}
@@ -970,11 +997,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$expected = '
 		<c:out value="${data}" escapeXml="false"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
-		<c:choose><c:when test="${x > y}">
+		<c:choose>
+		  <c:when test="${x > y}">
 		<c:out value="${x}" escapeXml="false"/>
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		<c:out value="${y}" escapeXml="false"/>
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'jsp');
 	}
@@ -1009,11 +1039,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$expected = '
 		<c:out value="${data}"/>
 		aaa<c:out value="${array[i]}"/><c:out value="${x + y}" escapeXml="false"/>bbb
-		<c:choose><c:when test="${x > y}">
+		<c:choose>
+		  <c:when test="${x > y}">
 		<c:out value="${x}"/>
-		</c:when><c:otherwise>
+		  </c:when>
+		  <c:otherwise>
 		<c:out value="${y}"/>
-		</c:otherwise></c:choose>
+		  </c:otherwise>
+		</c:choose>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jsp');
 	}
