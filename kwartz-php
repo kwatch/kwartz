@@ -326,11 +326,11 @@ class KwartzCommand {
         
         // indent width
         $indent_width = $this->option('i');
-        if ($indent_width === NULL) {
-            $indent_width = 0;
-        } elseif ($indent_width === TRUE) {
+        if ($indent_width === NULL || $indent_width === TRUE) {
             $indent_width = 2;		# default
-            }
+        } else {
+            $indent_width = 0 + $indent_width;
+        }
         $this->set_topping('indent_width', $indent_width);
     }
     
@@ -341,10 +341,10 @@ Usage: {$this->command_name} [-p file.plogic] [..options..] file.html
   -h, --help	 : help
   -v		 : version
   -p file.plogic : presentation logic file
-  -l lang	 : php/eruby/jstl/jstl10 (default 'php')
+  -l lang	 : php/eruby/jstl11/jstl10 (default 'php')
   -a action	 : compile/parse/translate/convert/analyze (default 'compile')
-  -e, -s         : escape(sanitize)
-  -i[N]          : indent (default N=2)
+  -e, -s         : escape(sanitize) (this is equivarent to '--escape=true')
+  -i[N]          : indent width (default N=2)
   --escape=true  : escape(sanitize)
   --header=text  : header text (default '<%@ taglib ...>' when jstl/jstl10)
   --footer=text  : footer text
@@ -433,7 +433,7 @@ END;
                     }
                     break;
                 } elseif (strpos($argoptional, $optch) !== FALSE) {
-                    $this->options[$optch] = $optstr ? $optstr : TRUE;
+                    $this->options[$optch] = $optstr == NULL ? TRUE : $optstr;
                     break;
                 } else {
                     $error_msg = "'-${optch}${optstr}': invalid option.";

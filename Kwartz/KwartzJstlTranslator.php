@@ -13,6 +13,9 @@ abstract class KwartzJstlTranslator extends KwartzBaseTranslator {
     protected $condfind_visitor;
     protected $deepcopy_visitor;
     private   $keywords = array(
+        ':prefix'    => '',
+        ':postfix'   => '',
+    
         //':if'         => '<c:choose><c:when test="${',
         //':then'       => '}">',
         //':elseif'     => '</c:when><c:when test="${',

@@ -129,8 +129,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		  <table>
 		<?php $i = 0; ?>
 		<?php foreach ($user_list as $user) { ?>
-		  <?php $i += 1; ?>
-		  <?php $klass = $i % 2 == 0 ? "even" : "odd"; ?>
+		<?php   $i += 1; ?>
+		<?php   $klass = $i % 2 == 0 ? "even" : "odd"; ?>
 		   <tr class="<?php echo $klass; ?>">
 		    <td><?php echo $user["name"]; ?></td>
 		    <td><?php echo $user["mail"]; ?></td>
@@ -147,8 +147,8 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		  <table>
 		<% i = 0 %>
 		<% for user in user_list do %>
-		  <% i += 1 %>
-		  <% klass = i % 2 == 0 ? "even" : "odd" %>
+		<%   i += 1 %>
+		<%   klass = i % 2 == 0 ? "even" : "odd" %>
 		   <tr class="<%= klass %>">
 		    <td><%= user["name"] %></td>
 		    <td><%= user["mail"] %></td>
@@ -589,40 +589,40 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<?php $day = "&nbsp;"; ?>
 		<?php $wday = 1; ?>
 		<?php while ($wday < $first_weekday) { ?>
-		  <?php if ($wday == 1) { ?>
+		<?php   if ($wday == 1) { ?>
 		    <tr>
-		  <?php } ?>
+		<?php   } ?>
 		      <td><?php if ($wday == 1) { ?>
 		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
 		<?php echo $day; ?><?php } ?>
 		</td>
-		  <?php $wday += 1; ?>
+		<?php   $wday += 1; ?>
 		<?php } ?>
 		<?php $day = 0; ?>
 		<?php $wday -= 1; ?>
 		<?php while ($day < $num_days) { ?>
-		  <?php $day += 1; ?>
-		  <?php $wday = $wday % 7 + 1; ?>
-		  <?php if ($wday == 1) { ?>
+		<?php   $day += 1; ?>
+		<?php   $wday = $wday % 7 + 1; ?>
+		<?php   if ($wday == 1) { ?>
 		    <tr>
-		  <?php } ?>
+		<?php   } ?>
 		      <td><?php if ($wday == 1) { ?>
 		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
 		<?php echo $day; ?><?php } ?>
 		</td>
-		  <?php if ($wday == 7) { ?>
+		<?php   if ($wday == 7) { ?>
 		    </tr>
-		  <?php } ?>
+		<?php   } ?>
 		<?php } ?>
 		<?php if ($wday != 7) { ?>
-		  <?php $day = "&nbsp;"; ?>
-		  <?php while ($wday != 6) { ?>
-		    <?php $wday += 1; ?>
+		<?php   $day = "&nbsp;"; ?>
+		<?php   while ($wday != 6) { ?>
+		<?php     $wday += 1; ?>
 		      <td><?php if ($wday == 1) { ?>
 		<span class="holiday"><?php echo $day; ?></span><?php } else { ?>
 		<?php echo $day; ?><?php } ?>
 		</td>
-		  <?php } ?>
+		<?php   } ?>
 		    </tr>
 		<?php } ?>
 		  </tbody>
@@ -645,40 +645,40 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<% day = "&nbsp;" %>
 		<% wday = 1 %>
 		<% while wday < first_weekday do %>
-		  <% if wday == 1 then %>
+		<%   if wday == 1 then %>
 		    <tr>
-		  <% end %>
+		<%   end %>
 		      <td><% if wday == 1 then %>
 		<span class="holiday"><%= day %></span><% else %>
 		<%= day %><% end %>
 		</td>
-		  <% wday += 1 %>
+		<%   wday += 1 %>
 		<% end %>
 		<% day = 0 %>
 		<% wday -= 1 %>
 		<% while day < num_days do %>
-		  <% day += 1 %>
-		  <% wday = wday % 7 + 1 %>
-		  <% if wday == 1 then %>
+		<%   day += 1 %>
+		<%   wday = wday % 7 + 1 %>
+		<%   if wday == 1 then %>
 		    <tr>
-		  <% end %>
+		<%   end %>
 		      <td><% if wday == 1 then %>
 		<span class="holiday"><%= day %></span><% else %>
 		<%= day %><% end %>
 		</td>
-		  <% if wday == 7 then %>
+		<%   if wday == 7 then %>
 		    </tr>
-		  <% end %>
+		<%   end %>
 		<% end %>
 		<% if wday != 7 then %>
-		  <% day = "&nbsp;" %>
-		  <% while wday != 6 do %>
-		    <% wday += 1 %>
+		<%   day = "&nbsp;" %>
+		<%   while wday != 6 do %>
+		<%     wday += 1 %>
 		      <td><% if wday == 1 then %>
 		<span class="holiday"><%= day %></span><% else %>
 		<%= day %><% end %>
 		</td>
-		  <% end %>
+		<%   end %>
 		    </tr>
 		<% end %>
 		  </tbody>
@@ -792,14 +792,14 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		<?php } else { ?>
 		      <table>
 		        <tbody>
-		  <?php $user_ctr = 0; ?>
-		  <?php foreach ($user_list as $user) { ?>
-		    <?php $user_ctr += 1; ?>
-		    <?php $user_tgl = $user_ctr % 2 == 0 ? "even" : "odd"; ?>
+		<?php   $user_ctr = 0; ?>
+		<?php   foreach ($user_list as $user) { ?>
+		<?php     $user_ctr += 1; ?>
+		<?php     $user_tgl = $user_ctr % 2 == 0 ? "even" : "odd"; ?>
 		          <tr class="<?php echo htmlspecialchars($user_tgl); ?>">
 		            <td><?php echo htmlspecialchars($user[\'name\']); ?></td>
 		          </tr>
-		  <?php } ?>
+		<?php   } ?>
 		        </tbody>
 		      </table>
 		      <p>total:<?php echo htmlspecialchars($user_ctr); ?></p>
@@ -813,21 +813,21 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		  <body>
 		<% if flag_error then %>
 		      <div class="error">
-		<%= CGI.escapeHTML((error_msg).to_s) %>      </div>
+		<%= CGI::escapeHTML((error_msg).to_s) %>      </div>
 		<% else %>
 		      <table>
 		        <tbody>
-		  <% user_ctr = 0 %>
-		  <% for user in user_list do %>
-		    <% user_ctr += 1 %>
-		    <% user_tgl = user_ctr % 2 == 0 ? "even" : "odd" %>
-		          <tr class="<%= CGI.escapeHTML((user_tgl).to_s) %>">
-		            <td><%= CGI.escapeHTML((user[:name]).to_s) %></td>
+		<%   user_ctr = 0 %>
+		<%   for user in user_list do %>
+		<%     user_ctr += 1 %>
+		<%     user_tgl = user_ctr % 2 == 0 ? "even" : "odd" %>
+		          <tr class="<%= CGI::escapeHTML((user_tgl).to_s) %>">
+		            <td><%= CGI::escapeHTML((user[:name]).to_s) %></td>
 		          </tr>
-		  <% end %>
+		<%   end %>
 		        </tbody>
 		      </table>
-		      <p>total:<%= CGI.escapeHTML((user_ctr).to_s) %></p>
+		      <p>total:<%= CGI::escapeHTML((user_ctr).to_s) %></p>
 		<% end %>
 		  </body>
 		</html>
@@ -943,9 +943,9 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		';
 
 	const expected_escape2_eruby = '
-		<li><%= CGI.escapeHTML((x).to_s) %></li>
+		<li><%= CGI::escapeHTML((x).to_s) %></li>
 		<li><%= x %></li>
-		<li><%= CGI.escapeHTML((x).to_s) %></li>
+		<li><%= CGI::escapeHTML((x).to_s) %></li>
 		<li><%= x %></li>
 		';
 

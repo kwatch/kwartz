@@ -23,8 +23,8 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$input    = preg_replace('/^\n/',     '',  $input);
 		$expected = preg_replace('/^\t\t/m',  '',  $expected);
 		$expected = preg_replace('/^\n/',     '',  $expected);
-		$parser  = new KwartzParser($input, $toppings);
-		$block   = $parser->parse();
+		$parser   = new KwartzParser($input, $toppings);
+		$block    = $parser->parse();
 		if ($toppings == NULL) {
 			$toppings = array();
 		}
@@ -615,7 +615,6 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	}
 
 
-
 	const input_if2 = '
 		:if(cond1)
 		  :print("aaa\n")
@@ -906,14 +905,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<table>
 		<?php $ctr = 0; ?>
 		<?php foreach ($list as $item) { ?>
-		  <?php $ctr += 1; ?>
-		  <?php if ($ctr % 2 == 0) { ?>
-		    <?php $klass = "even"; ?>
-		  <?php } elseif ($ctr % 2 == 1) { ?>
-		    <?php $klass = "odd"; ?>
-		  <?php } else { ?>
-		    <?php $klass = "never"; ?>
-		  <?php } ?>
+		<?php   $ctr += 1; ?>
+		<?php   if ($ctr % 2 == 0) { ?>
+		<?php     $klass = "even"; ?>
+		<?php   } elseif ($ctr % 2 == 1) { ?>
+		<?php     $klass = "odd"; ?>
+		<?php   } else { ?>
+		<?php     $klass = "never"; ?>
+		<?php   } ?>
 		  <tr class="<?php echo $klass; ?>">
 		    <td><?php echo $item; ?></td>
 		  </tr>
@@ -928,14 +927,14 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		<table>
 		<% ctr = 0 %>
 		<% for item in list do %>
-		  <% ctr += 1 %>
-		  <% if ctr % 2 == 0 then %>
-		    <% klass = "even" %>
-		  <% elsif ctr % 2 == 1 then %>
-		    <% klass = "odd" %>
-		  <% else %>
-		    <% klass = "never" %>
-		  <% end %>
+		<%   ctr += 1 %>
+		<%   if ctr % 2 == 0 then %>
+		<%     klass = "even" %>
+		<%   elsif ctr % 2 == 1 then %>
+		<%     klass = "odd" %>
+		<%   else %>
+		<%     klass = "never" %>
+		<%   end %>
 		  <tr class="<%= klass %>">
 		    <td><%= item %></td>
 		  </tr>
@@ -991,9 +990,9 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_eruby_escape1() {
 		$expected = '
-		<%= CGI.escapeHTML((data).to_s) %>
-		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= CGI.escapeHTML((x + y).to_s) %>bbb
-		<%= CGI.escapeHTML((x > y ? x : y).to_s) %>
+		<%= CGI::escapeHTML((data).to_s) %>
+		aaa<%= CGI::escapeHTML((array[i]).to_s) %><%= CGI::escapeHTML((x + y).to_s) %>bbb
+		<%= CGI::escapeHTML((x > y ? x : y).to_s) %>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape1, $expected, 'eruby');
 	}
@@ -1043,7 +1042,7 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 	function test_eruby_escape2() {
 		$expected = '
 		<%= data %>
-		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= x + y %>bbb
+		aaa<%= CGI::escapeHTML((array[i]).to_s) %><%= x + y %>bbb
 		<%= x > y ? x : y %>
 		';
 		$this->_test(KwartzTranslatorTest::input_escape2, $expected, 'eruby');
@@ -1091,9 +1090,9 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_eruby_escape3() {
 		$expected = '
-		<%= CGI.escapeHTML((data).to_s) %>
-		aaa<%= CGI.escapeHTML((array[i]).to_s) %><%= x + y %>bbb
-		<%= CGI.escapeHTML((x > y ? x : y).to_s) %>
+		<%= CGI::escapeHTML((data).to_s) %>
+		aaa<%= CGI::escapeHTML((array[i]).to_s) %><%= x + y %>bbb
+		<%= CGI::escapeHTML((x > y ? x : y).to_s) %>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'eruby');
 	}
@@ -1150,10 +1149,10 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 
 	function test_eruby_escape4() {
 		$expected = '
-		<%= CGI.escapeHTML((a > b ? a : b).to_s) %>
+		<%= CGI::escapeHTML((a > b ? a : b).to_s) %>
 		<%= x > y ? true : false %>
 		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
-		<input type="checkbox"<%= CGI.escapeHTML((gender == "M" ? " checked=\"checked\"" : "").to_s) %>/>
+		<input type="checkbox"<%= CGI::escapeHTML((gender == "M" ? " checked=\"checked\"" : "").to_s) %>/>
 		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
 		';
 		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'eruby');

@@ -1,6 +1,10 @@
+.: 2004-12-30 rev.50
+	.- [change] indent format out output script is changed
+	.- [bugfix] command-line option '-i0' is now recognized
+
 .: 2004-12-30 rev.49
 	.- [enhance] class KwartzJstlTranslator is divided into JSTL1.1 and JSTL1.0
-	.- [enhance] common functions support for JSTL11
+	.- [enhance] common functions support for JSTL1.1 except list_new() and has_new() and hash_keys()
 	.- [enhance] kwartz-php supports new directives of JSTL1.1
 	
 .: 2004-12-30 rev.48

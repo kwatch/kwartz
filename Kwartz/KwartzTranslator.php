@@ -203,6 +203,22 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         }
     }
     
+    protected function add_prefix($depth) {
+        if ($this->code && $this->code[strlen($this->code)-1] == "\n") {
+            $this->code .= $this->keyword(':prefix');
+            $this->code .= $this->indent($depth);
+        } else {
+            $this->code .= $this->keyword(':prefix');
+        }
+    }
+    
+    protected function add_postfix($flag_newline=true) {
+        $this->code .= $this->keyword(':postfix');
+        if ($flag_newline) {
+            $this->code .= $this->nl;
+        }
+    }
+    
     
     
     // --------------------
@@ -429,70 +445,78 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     }
     
     protected function translate_set_statement($stmt, $depth) {
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $expr = $stmt->assign_expr();
         $this->code .= $this->keyword(':set');
         $this->translate_expression($expr);
         $this->code .= $this->keyword(':endset');
-        $this->code .= $this->nl;
+        $this->add_postfix();
     }
     
     protected function translate_if_statement($stmt, $depth) {
-        $this->add_indent($depth);
+        //$this->add_prefix($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':if');
         $this->translate_expression($stmt->condition());
         $this->code .= $this->keyword(':then');
-        $this->code .= $this->nl;
+        //$this->add_postfix();
+        $this->add_postfix();
         $this->translate_statement($stmt->then_block(), $depth+1);
         $st = $stmt;
         while (($st = $st->else_stmt()) != NULL && $st->token() == ':if') {
-            $this->add_indent($depth);
+            //$this->add_prefix($depth);
+            $this->add_prefix($depth);
             $this->code .= $this->keyword(':elseif');
             $this->translate_expression($st->condition());
             $this->code .= $this->keyword(':then');
-            $this->code .= $this->nl;
+            //$this->add_postfix();
+            $this->add_postfix();
             $this->translate_statement($st->then_block(), $depth+1);
         }
         if ($st) {
             //assert($st.token() == '<<block>>');
-            $this->add_indent($depth);
+            //$this->add_prefix($depth);
+            $this->add_prefix($depth);
             $this->code .= $this->keyword(':else');
-            $this->code .= $this->nl;
+            //$this->add_postfix();
+            $this->add_postfix();
             $this->translate_statement($st, $depth+1);
         }
-        $this->add_indent($depth);
+        //$this->add_prefix($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':endif');
-        $this->code .= $this->nl;
+        //$this->add_postfix();
+        $this->add_postfix();
     }
     
     protected function translate_foreach_statement($stmt, $depth) {
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':foreach');
         $this->translate_expression($stmt->loopvar_expr());
         $this->code .= $this->keyword(':in');
         $this->translate_expression($stmt->list_expr());
         $this->code .= $this->keyword(':doforeach');
-        $this->code .= $this->nl;
+        $this->add_postfix();
         $this->translate_statement($stmt->body_block(), $depth+1);
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':endforeach');
-        $this->code .= $this->nl;
+        $this->add_postfix();
     }
     
     protected function translate_while_statement($stmt, $depth) {
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':while');
         $this->translate_expression($stmt->condition());
         $this->code .= $this->keyword(':dowhile');
-        $this->code .= $this->nl;
+        $this->add_postfix();
         $this->translate_statement($stmt->body_block(), $depth+1);
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':endwhile');
-        $this->code .= $this->nl;
+        $this->add_postfix();
     }
     
     protected function translate_macro_statement($stmt, $depth) {
-        //$this->add_indent($depth);
+        //$this->add_prefix($depth);
         //$this->add_macro($stmt->macro_name(), $stmt->body_block());
         // do nothing
     }
@@ -549,34 +573,36 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
  */
 class KwartzPhpTranslator extends KwartzBaseTranslator {
     private	$keywords = array(
-        ':if'         => '<?php if (',
-        ':then'       => ') { ?>',
-        ':else'       => '<?php } else { ?>',
-        ':elseif'     => '<?php } elseif (',
-        ':endif'      => '<?php } ?>',
+        ':prefix'     => '<?php ',	// statement prefix
+        ':postfix'    => ' ?>',		// statement postfix
         
-        ':while'      => '<?php while (',
-        ':dowhile'    => ') { ?>',
-        ':endwhile'   => '<?php } ?>',
+        ':if'         => 'if (',
+        ':then'       => ') {',
+        ':else'       => '} else {',
+        ':elseif'     => '} elseif (',
+        ':endif'      => '}',
         
-        ':foreach'    => '<?php foreach (',
+        ':while'      => 'while (',
+        ':dowhile'    => ') {',
+        ':endwhile'   => '}',
+        
+        ':foreach'    => 'foreach (',
         ':in'         => ' as ',
-        ':doforeach'  => ') { ?>',
-        ':endforeach' => '<?php } ?>',
+        ':doforeach'  => ') {',
+        ':endforeach' => '}',
         
-        ':set'        => '<?php ',
-        ':endset'     => '; ?>',
+        ':set'        => '',
+        ':endset'     => ';',
         
-        ':print'      => '<?php echo ',
-        ':endprint'   => '; ?>',
-        
-        ':print'      => '<?php echo ',
-        ':endprint'   => '; ?>',
+        // ':print' statement doesn't print prefix and suffix,
+        // so you should include prefix and suffix in ':print'/':endprint' keywords
+        ':print'      => '<?php echo ',		
+        ':endprint'   => '; ?>',		
         ':eprint'     => '<?php echo htmlspecialchars(',
         ':endeprint'  => '); ?>',
         
-        ':include'    => '<?php include(',
-        ':endinclude' => '); ?>',
+        ':include'    => 'include(',
+        ':endinclude' => ');',
         
         'true'        => 'TRUE',
         'false'       => 'FALSE',
@@ -666,17 +692,17 @@ class KwartzPhpTranslator extends KwartzBaseTranslator {
     }
     
     protected function translate_foreach_statement($stmt, $depth) {
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':foreach');
         $this->translate_expression($stmt->list_expr());
         $this->code .= $this->keyword(':in');
         $this->translate_expression($stmt->loopvar_expr());
         $this->code .= $this->keyword(':doforeach');
-        $this->code .= $this->nl();
+        $this->add_postfix();
         $this->translate_statement($stmt->body_block(), $depth+1);
-        $this->add_indent($depth);
+        $this->add_prefix($depth);
         $this->code .= $this->keyword(':endforeach');
-        $this->code .= $this->nl();
+        $this->add_postfix();
     }
     
 }

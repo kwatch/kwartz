@@ -30,7 +30,7 @@
 //namespace Kwartz {
 
 /**
- *  
+ *   
  */
 class Kwartz {
     const REVISION   = '$Rev$';

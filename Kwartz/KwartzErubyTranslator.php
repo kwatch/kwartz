@@ -11,32 +11,35 @@ require_once('Kwartz/KwartzTranslator.php');
  *  translate node tree into eRuby code
  */
 class KwartzErubyTranslator extends KwartzBaseTranslator {
-    private	$keywords = array(
-        ':if'         => '<% if ',
-        ':then'       => ' then %>',
-        ':else'       => '<% else %>',
-        ':elseif'     => '<% elsif ',
-        ':endif'      => '<% end %>',
+    private $keywords = array(
+        ':prefix'     => '<% ',
+        ':postfix'    => ' %>',
         
-        ':while'      => '<% while ',
-        ':dowhile'    => ' do %>',
-        ':endwhile'   => '<% end %>',
+        ':if'         => 'if ',
+        ':then'       => ' then',
+        ':else'       => 'else',
+        ':elseif'     => 'elsif ',
+        ':endif'      => 'end',
         
-        ':foreach'    => '<% for ',
+        ':while'      => 'while ',
+        ':dowhile'    => ' do',
+        ':endwhile'   => 'end',
+        
+        ':foreach'    => 'for ',
         ':in'         => ' in ',
-        ':doforeach'  => ' do %>',
-        ':endforeach' => '<% end %>',
+        ':doforeach'  => ' do',
+        ':endforeach' => 'end',
         
-        ':set'        => '<% ',
-        ':endset'     => ' %>',
+        ':set'        => '',
+        ':endset'     => '',
         
         ':print'      => '<%= ',
         ':endprint'   => ' %>',
-        ':eprint'     => '<%= CGI.escapeHTML((',
+        ':eprint'     => '<%= CGI::escapeHTML((',
         ':endeprint'  => ').to_s) %>',
         
-        ':include'    => '<% include(',
-        ':endinclude' => '); %>',
+        ':include'    => 'include(',
+        ':endinclude' => ')',
         
         'true'        => 'true',
         'false'       => 'false',
@@ -51,7 +54,7 @@ class KwartzErubyTranslator extends KwartzBaseTranslator {
         ':]'   => "]",
         ','    => ", ",
         
-        'E('   => 'CGI.escapeHTML((',
+        'E('   => 'CGI::escapeHTML((',
         'E)'   => ').to_s)',
         );
     
