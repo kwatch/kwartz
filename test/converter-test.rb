@@ -13,6 +13,13 @@ require 'test/unit/ui/console/testrunner'
 require 'assert-diff.rb'
 require 'kwartz/converter'
 
+module Kwartz
+   class Converter
+      public :parse_attr_str
+      attr_reader :attr_str
+   end
+end
+
 class ConverterTest < Test::Unit::TestCase
 
     $flag_test = true		# do test or not
@@ -230,17 +237,15 @@ class ConverterTest < Test::Unit::TestCase
     ### --------------------
     ### Converter#convert()
     ### --------------------
-    def _test_convert(input, expected, flag_test=$flag_test)
+    def _test_convert(input, expected, properties={}, flag_test=$flag_test)
     	return if !flag_test
 	input.gsub!(/^\t\t/, '')
 	expected.gsub!(/^\t\t/, '')
-	converter = Kwartz::Converter.new(input)
+	converter = Kwartz::Converter.new(input, properties)
 	actual = converter.convert()
 	#assert_equal(expected, actual)
 	assert_equal_with_diff(expected, actual)
     end
-
-
 
 
     def test_convert01	# text only
@@ -257,6 +262,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert02	# '#{...}#'
     	input = <<-'END'
 		aaa#{expr1}##{expr2}#bbb
@@ -268,6 +274,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert03	# tag without directive
     	input = <<-'END'
@@ -285,6 +292,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert04	# attr
     	input = <<-'END'
 		<tr class="odd" kd="attr:class:klass;Attr:bgcolor=color;ATTR:align=align">
@@ -296,6 +304,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert05	# embed
     	input = <<-'END'
@@ -309,6 +318,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert06	# invalid directive
     	input = <<-'END'
 		<div kd="foo=bar">foobar</div>
@@ -319,6 +329,7 @@ class ConverterTest < Test::Unit::TestCase
 	    _test_convert(input, expected)
 	}
     end
+
 
     def test_convert11	# value
     	input = <<-'END'
@@ -331,6 +342,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert12	# value,Value,VALUE
     	input = <<-'END'
@@ -352,6 +364,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert13	# value with <span>
     	input = <<-'END'
 		<span kd="value:user">foo</span>
@@ -363,6 +376,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert14	# value with empty element
     	input = <<-'END'
@@ -414,6 +428,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert23	# FOREACH
     	input = <<-'END'
 		<tr kd="FOREACH:user:list">
@@ -435,6 +450,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert24	# loop
     	input = <<-'END'
 		<tr kd="loop:user=list">
@@ -452,6 +468,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert25	# Loop
     	input = <<-'END'
@@ -472,6 +489,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert26	# LOOP
     	input = <<-'END'
@@ -507,6 +525,7 @@ class ConverterTest < Test::Unit::TestCase
 	}
     end
 
+
     def test_convert28	# invalid foreach
     	input = <<-'END'
 		<tr kd="loop:user">
@@ -518,6 +537,7 @@ class ConverterTest < Test::Unit::TestCase
 	    _test_convert(input, expected)
 	}
     end
+
 
     def test_convert29	# loop with empty element
     	input = <<-'END'
@@ -545,6 +565,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert32	# else
     	input = <<-'END'
@@ -741,6 +762,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert44	# id and directive
     	input = <<-'END'
 		<table>
@@ -830,6 +852,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert52	# set
     	input = <<-'END'
 		<div kd="set:ctr=0"/>
@@ -847,6 +870,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert53	# set with <span>
     	input = <<-'END'
 		<span kd="set:ctr+=1"/>
@@ -857,6 +881,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert54	# set & attr
     	input = <<-'END'
@@ -869,6 +894,7 @@ class ConverterTest < Test::Unit::TestCase
 	_test_convert(input, expected)
     end
 
+
     def test_convert55	# dummy
     	input = <<-'END'
 		<td id="dummy:d1">
@@ -880,6 +906,7 @@ class ConverterTest < Test::Unit::TestCase
 	END
 	_test_convert(input, expected)
     end
+
 
     def test_convert56	# replace
     	input = <<-'END'
@@ -894,8 +921,76 @@ class ConverterTest < Test::Unit::TestCase
     end
 
 
+    def test_property1	# 'even' and 'odd'
+	input = <<-'END'
+		<tbody kd="LOOP:item:list">
+		 <tr bgcolor="#CCCCCC" id="attr:bgcolor:item_tgl">
+		  <td>#{item}#</td>
+		 </tr>
+		</tbody>
+	END
+	expected = <<-'END'
+		:print("<tbody>\n")
+		:set(item_ctr = 0)
+		:foreach(item=list)
+		  :set(item_ctr += 1)
+		  :set(item_tgl = item_ctr%2==0 ? '#FFCCCC' : '#CCCCFF')
+		  :print(" <tr bgcolor=\"", item_tgl, "\">\n")
+		  :print("  <td>")
+		  :print(item)
+		  :print("</td>\n")
+		  :print(" </tr>\n")
+		:end
+		:print("</tbody>\n")
+	END
+	_test_convert(input, expected, {:even_value=>"#FFCCCC", :odd_value=>"#CCCCFF"})
+    end
 
-    def test_convert91	# practical example
+
+    def test_property2	# delete_id_attr
+	input = <<-'END'
+		<tr id="foo">
+		 <td>#{item}#</td>
+		</tr>
+	END
+	expected = <<-'END'
+		:macro(stag_foo)
+		  :print("<tr>\n")
+		:end
+		:macro(etag_foo)
+		  :print("</tr>\n")
+		:end
+		:macro(cont_foo)
+		  :print(" <td>")
+		  :print(item)
+		  :print("</td>\n")
+		:end
+		:macro(element_foo)
+		  :expand(stag_foo)
+		  :expand(cont_foo)
+		  :expand(etag_foo)
+		:end
+		
+		:expand(element_foo)
+	END
+	_test_convert(input, expected, {:delete_id_attr=>true})
+    end
+
+
+    def test_property3	# attr_name
+	input = <<-'END'
+		<td kd:kwartz="value:item">foo</td>
+	END
+	expected = <<-'END'
+		:print("<td>")
+		:print(item)
+		:print("</td>\n")
+	END
+	_test_convert(input, expected, {:attr_name=>'kd:kwartz'})
+    end
+
+
+    def test_example1	# practical example
     	input = <<-'END'
 		<table>
 		 <tbody id="Loop:user:user_list">
@@ -989,6 +1084,7 @@ class ConverterTest < Test::Unit::TestCase
     end
 
 end
+
 
 if $0 == __FILE__
     Test::Unit::UI::Console::TestRunner.run(ConverterTest)
