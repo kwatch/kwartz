@@ -66,7 +66,7 @@ require_once('KwartzCompiler.inc');
 			}
 			
 			## flag escape
-			$flag_escape = ($this->option('-s') || $this->option('-e'))
+			$flag_escape = ($this->option('-s') || $this->option('-e'));
 
 			## determine which action to do (default: 'compile')
 			$action = 'compile';

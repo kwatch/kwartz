@@ -314,17 +314,34 @@ require_once('KwartzUtility.inc');
 			$pattern = '/((?:.|\n)*?)(?:\#\{(.*?)\}\#|@\{(.*?)\}@)((?:.|\n)*)/m';
 			while (preg_match($pattern, $s, $m = array())) {
 				$text     = $m[1];
-				$value    = $m[2];
-				$phpvalue = $m[3];
+				//$value    = $m[2];
+				//$phpvalue = $m[3];
 				$rest     = $m[4];
+				if ($m[2]) {
+					$value = $m[2];
+					$flag_php_mode = false;
+				} elseif ($m[3]) {
+					$value = $m[3];
+					$flag_php_mode = true;
+				} else {
+					$value = NULL;
+				}
 				if ($text)  {
 					$list[] = new KwartzStringExpression($text);
 				}
 				if ($value) {
-					$expr = $this->parse_expression($value, false);
-					$list[] = $expr;
-				} elseif ($phpvalue) {
-					$expr = $this->parse_expression($phpvalue, true);
+					if (preg_match('/^@([CSD])\((.*)\)$/', $value, $m=array())) {
+						switch ($m[1]) {
+						case 'C':  $csd = 'checked="checked"'  ;  break;
+						case 'S':  $csd = 'selected="selected"';  break;
+						case 'D':  $csd = 'disabled="disabled"';  break;
+						}
+						$cond_expr = $this->parse_expression($m[2], $flag_php_mode);
+						$expr = new KwartzConditionalExpression('?', $cond_expr,
+								new KwartzStringExpression($csd), new KwartzStringExpression(''));
+					} else {
+						$expr = $this->parse_expression($value, $flag_php_mode);
+					}
 					$list[] = $expr;
 				}
 				$s = $rest;
@@ -549,9 +566,6 @@ require_once('KwartzUtility.inc');
 					$stmt_list[] = new KwartzPrintStatement(array($expr));
 					$stmt_list[] = $block->pop();	 //array_pop($block->statements());	// etag
 				}
-				//echo "*** debug: stmt_list[0]={$stmt_list[0]->inspect()}\n";
-				//echo "*** debug: stmt_list[1]={$stmt_list[1]->inspect()}\n";
-				//echo "*** debug: stmt_list[2]={$stmt_list[2]->inspect()}\n";
 				break;
 
 			case 'if':

@@ -1288,6 +1288,41 @@ END;
 	}
 
 
+	function test_convert_csd1() {
+		$input = 
+		'<input type="radio"  #{@C(params[:key1])}#/>
+		<option value="key2" #{@S(params[:key2])}#/>
+		<input type="submit" #{@D(params[:key3])}#/>
+		';
+		$expected = 
+		'<<block>>
+		  :print
+		    "<input type=\"radio\"  "
+		    ?
+		      [:]
+		        params
+		        "key1"
+		      "checked=\"checked\""
+		      ""
+		    "/>\n<option value=\"key2\" "
+		    ?
+		      [:]
+		        params
+		        "key2"
+		      "selected=\"selected\""
+		      ""
+		    "/>\n<input type=\"submit\" "
+		    ?
+		      [:]
+		        params
+		        "key3"
+		      "disabled=\"disabled\""
+		      ""
+		    "/>\n"
+		';
+		$this->_test_convert($input, $expected);
+	}
+	
 
 	function test_convert_practice1() {
 		$input = <<<END
