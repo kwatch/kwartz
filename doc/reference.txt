@@ -1,8 +1,8 @@
 .JA	.=title:	Kwartzリファレンスマニュアル
 .EN	.=title:	Kwartz Reference Manual
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.	.?lastupdate:	$Date: 2005-01-01 12:08:50 +0900 (Sat, 01 Jan 2005) $
-.	.?version:	$Rev: 52 $
+.	.?lastupdate:	$Date$
+.	.?version:	$Rev$
 .	.?release:	$Release$
 .	
 .	
@@ -31,12 +31,12 @@
 .EN	.$$ ChangeLog		| changelog*
 .	
 .	.: 2005-02-14
-.		.- alpha release
+.		.- beta release
 .	
 .	
 .	
 .JA	●プレゼンテーション用言語「PL」	| pl
-.EN	.$ PL -- Presentation Language	| pl
+.EN	.$ PL - Presentation Language	| pl
 .	
 .	
 .JA	PLとは、Kwartzにおいてプレゼンテーションロジックを記述するのに利用される言語です。
@@ -704,23 +704,30 @@
 .EN	.$$ Document declaration	| pl-doc
 .	
 .	
-.	{{,#DOCUMENT { {{/.../}} },}} is a special element declaration for document.
-.	It represents document information and takes the following declaration parts.
+.JA	{{,#DOCUMENT { {{/.../}} },}}は、ドキュメントのための特殊なエレメント宣言です。
+.JA	この宣言はドキュメント全体の情報を表し、次の宣言部を使用します。
+.EN	{{,#DOCUMENT { {{/.../}} },}} is a special element declaration for document.
+.EN	It represents document information and takes the following declaration parts.
 .	
 .	.[ {{,begin: { {{/.../}} },}} ]
-.		Represents PL code which is added at the beginning of the output script.
+.JA		出力用スクリプトの先頭に、指定されたPLコードを追加します。
+.EN		Represents PL code which is added at the beginning of the output script.
 .	
 .	.[ {{,end: { {{/.../}} },}} ]
-.		Represents PL code which is added at the end of the output script.
+.JA		出力用スクリプトの末尾に、指定されたPLコードを追加します。
+.EN		Represents PL code which is added at the end of the output script.
 .	
 .	.[ {{,require: "{{/filename1/}}" , "{{/filename2/}}", {{/.../}} ;,}} ]
-.		Load presentation logic file.
+.JA		プレゼンテーションロジックファイルを読み込みます。
+.EN		Load presentation logic file.
 .	
 .	.[ {{,global: {{/varname1/}} , {{/varname2/}} , {{/.../}} ;,}} ]
-.		List of global variables. Currently this part have no means but will be used in future release.
+.JA		グローバル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
+.EN		List of global variables. Currently this part have no means but will be used in future release.
 .	
 .	.[ {{,local: {{/varname1/}} , {{/varname2/}} , {{/.../}} ;,}} ]
-.		List of local variables. Currently this part have no means but will be used in future release.
+.JA		ローカル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
+.EN		List of local variables. Currently this part have no means but will be used in future release.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -915,15 +922,15 @@
 .EN	.#.* Nested macro definitions/expansion will result in an infinite loop when compiling.
 .EN	.#   Please take care not to define nested macros.
 .	.#	.--------------------
-.	.#	:macro(elem_foo)
-.	.#	  :expand(stag_foo)
-.JA	.#	  :expand(elem_foo)		## 入れ子になっている
-.EN	.#	  :expand(elem_foo)		## nested macro
-.	.#	  :expand(etag_foo)
-.	.#	:end
+.	.#	#foo {
+.	.#	  plogic: {
+.JA	.#	    @element(foo);		## 入れ子になっている
+.EN	.#	    @element(foo);		## nested macro
+.	.#	  }
+.	.#	}
 .	.#	
-.JA	.#	:expand(elem_foo)		## 無限ループ
-.EN	.#	:expand(elem_foo)		## infinite-loop
+.JA	.#	@element(foo);			## 無限ループ
+.EN	.#	@element(foo);			## infinite-loop
 .	.#	.--------------------
 .	
 .	
@@ -979,7 +986,7 @@
 .EN	why does Kwartz allow me to embed presentation logic into presentation data? 
 .	
 .	
-.JA	それは、開発者の好みに応じてどちらも選べるようにするため、つまり「{{*選択可能性*}}」を高めるためです。
+.JA	それは、開発者の好みに応じてどちらも選べるようにするため、つまり「{{*選択可能性(choosability)*}}」を高めるためです。
 .JA	Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 .JA	分離するほうが望ましいのであれば分離すればよいし、一体化するほうが好みであれば一体化すればよいのです。
 .EN	The answer is {{*choosability*}} - to make it possible for developers to choose either approach.
@@ -992,7 +999,7 @@
 .JA	しかし一体化してもなお、Kwartzは他のテンプレートと比べて次のような利点があります。
 .JA	.* HTMLデザインを崩しません（{{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}}や{{<Template-Toolkit|http://www.template-toolkit.org/>}}と比べてみてください）。
 .JA	.* 複雑なプログラミングが必要ありません（DOMプログラミングが必要な{{<Enhydra XMLC|http://xmlc.objectweb.org/>}}と比べてみてください）。
-.JA	.* 実行時の動作が軽くて高速です（{{http://amrita.sourceforge.jp/>}}と比べてみてください）。
+.JA	.* 実行時の動作が軽くて高速です（{{<amrita|http://amrita.sourceforge.jp/>}}と比べてみてください）。
 .JA	.* XMLやHTMLだけでなく、どのようなテキスト形式でも利用できます（{{<Enhydra XMLC|http://xmlc.objectweb.org/>}}や{{<amrita|http://amrita.sourceforge.jp/>}}と比べて見てください）。
 .JA	.* 各種のプログラミング言語で使用できます（このようなテンプレートシステムは他にありません！）。
 .EN	You may wonder whether Kwartz becomes an ordinary template system if presentation logic is embedded into presentation data.
@@ -1016,7 +1023,7 @@
 .EN	 with a name {{,{{/name/}},}}.  This is called 'marking'.
 .	
 .	
-.JA	「{{,id="{{/name/}}",}}」と「{{,id="mark:{{/name/}}",}}」との違いは、中間コードにコンバートされるときに前者ではid属性が残るのに対し後者は取り除かれるという点です。
+.JA	「{{,id="{{/name/}}",}}」と「{{,id="mark:{{/name/}}",}}」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
 .JA	またkd属性は必ず取り除かれます。
 .EN	The difference between '{{,id="{{/name/}}",}}' and '{{,id="mark:{{/name/}}",}}' is
 .EN	 that the former is left in but the latter is removed when compiling.
@@ -1194,9 +1201,8 @@
 .	.-------------------- directive-append.pdata
 .	<option name="lang" value="ruby"
 .	       {{*id="append:lang=='ruby'?' selected':''"*}}>Ruby</option>
-.	
 .	<input type="radio" name="gender" value="M"
-.	       {{*id="append:gender=='M'?' checked':''"*}} />
+.	       {{*id="append:gender=='M'?' checked':''"*}}>
 .	.--------------------
 .	
 .JA	出力用スクリプト：
@@ -1206,7 +1212,7 @@
 .	.--------------------
 .	
 .	
-.JA	なお「checked="checked"」「selected="selected"」「disabled="disabled"」の出力を簡単にするための機能として、関数「{{,C({{/expr/}}),}}」「{{,S({{/expr/}}),}}」「{{,D({{/expr/}}),}}」が用意されています。
+.JA	なお「{{,checked="checked",}}」「{{,selected="selected",}}」「{{,disabled="disabled",}}」の出力を簡単にするための機能として、関数「{{,C({{/expr/}}),}}」「{{,S({{/expr/}}),}}」「{{,D({{/expr/}}),}}」が用意されています。
 .JA	これらは、式{{,{{/expr/}},}}が真のときにそれぞれ「{{,checked="checked",}}」「{{,selected="selected",}}」「{{,disabled="disabled",}}」を出力します。
 .EN	A function to output {{,'checked="checked"',}}, {{,'selected="selected"',}} and {{,'disabled="disabled"',}} easily for HTML/XHTML is available in Kwartz.
 .EN	{{,C({{/expr/}}),}}, {{,S({{/expr/}}),}}, and {{,D({{/expr/}}),}} print {{,' checked="checked"',}}, {{,' selected="selected"',}} and {{,' disabled="disabled"',}} respectively when expression {{,{{/expr/}},}} is true.
@@ -1236,7 +1242,7 @@
 .JA	◎変数への代入	| directive-set
 .EN	.$$ Assignment	| directive-set
 .	
-.JA	「{{,id="set:{{/var/}}={{/value/}}",}}」は、変数{{/$var/}}に値{{/value/}}を設定します。
+.JA	「{{,id="set:{{/var/}}={{/value/}}",}}」は、変数{{/var/}}に値{{/value/}}を設定します。
 .JA	「{{,=,}}」だけでなく「{{,+=,}}」「{{,-=,}}」「{{,*=,}}」「{{,/=,}}」「{{,.=,}}」が使用できます。
 .EN	'{{,id="set:{{/var/}}={{/value/}}",}}' is a directive for assigning values into variables.
 .EN	Other than '{{,=,}}', '{{,+=,}}', '{{,-=,}}', '{{,*=,}}', '{{,/=,}}', '{{,.=,}}' are also available.
@@ -1296,7 +1302,7 @@
 .JA	◎繰り返し(foreach) | directive-foreach
 .EN	.$$ Iteration (foreach)	| directive-foreach
 .	
-.JA	「{{,id="foreach:{{/loopvar/}}={{/list/}}:",}}」（または「{{,id="foreach:{{/loopvar/}}:{{/list/}}:",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら、繰り返しを行います。
+.JA	「{{,id="foreach:{{/loopvar/}}={{/list/}}",}}」（または「{{,id="foreach:{{/loopvar/}}:{{/list/}}",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら、繰り返しを行います。
 .JA	.#繰り返すのは開始タグ、内容、終了タグです。
 .EN	'{{,id="foreach:{{/loopvar/}}={{/list/}})",}}' (or '{{,id="foreach:{{/loopvar/}}:{{/list/}})",}}') is a directive for iteration, assigning each value in the array into a variable each time through the loop.
 .EN	.#Start tag, contents and end tag are iterated.
@@ -1320,7 +1326,7 @@
 .JA	◎繰り返し(loop) 	| directive-loop
 .EN	.$$ Iteration(loop)	| directive-loop
 .	
-.JA	「{{,id="loop:{{/loopvar/}}={{/list/}})",}}」（または「{{,id="loop:{{/loopvar/}}:{{/list/}})",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら繰り返しを行います。
+.JA	「{{,id="loop:{{/loopvar/}}={{/list/}}",}}」（または「{{,id="loop:{{/loopvar/}}:{{/list/}}",}}」）とすることで、リスト{{,{{/list/}},}}の要素をひとつずつ変数{{,{{/loopvar/}},}}に代入しながら繰り返しを行います。
 .JA	「{{,id="foreach:{{/loopvar/}}={{/list/}})",}}」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
 .JA	<dl></dl>で使うと非常に便利です。
 .EN	'{{,id="loop:{{/loopvar/}}={{/list/}}",}}' (or '{{,id="loop:{{/loopvar/}}:{{/list/}}",}}') is a directive for iteration.
@@ -1521,10 +1527,10 @@
 .EN	.#.$$ Including Presentation Data Files		| directive-include
 .	.#
 .	.#
-.JA	.#「{{,kd:php="include('{{/filename/}}')",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
-.JA	.#.#通常は{{,<span/>,}}タグを使用して「{{,<span kd:php="include('{{/filename/}}')"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
-.EN	.#{{,kd:php="include('{{/filename/}}')",}} is a directive to read and to include another presentation data file (HTML file).
-.EN	.#.#Usually, the {{,<span/>,}} tag is used, like such: {{,<span kd:php="include('{{/filename/}}')"/>,}}.	
+.JA	.#「{{,id="include:{{/filename/}}",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
+.JA	.#.#通常は{{,<span/>,}}タグを使用して「{{,<span id="include:{{/filename/}}"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
+.EN	.#{{,id="include:{{/filename/}}",}} is a directive to read and to include another presentation data file (HTML file).
+.EN	.#.#Usually, the {{,<span/>,}} tag is used, like such: {{,<span id="include:{{/filename/}}"/>,}}.	
 .EN	.#.#(In Kwartz, {{,<span>,}} tags which contain only directives are deleted automatically.)
 .	.#
 .	.#
@@ -1532,15 +1538,15 @@
 .EN	.#Presentation Data (tab.html) :
 .	.#.-------------------- tab.html
 .	.#<span style="border-width:1 1 0 1; border-style:solid; padding:1 5 1 5">
-.	.#  <a href="@{$tab['url']}@" style="text-decoration:none">@{$tab['name']}@</a>
+.	.#  <a href="#{tab['url']}#" style="text-decoration:none">#{tab['name']}#</a>
 .	.#</span>
 .	.#.--------------------
 .	.#
 .JA	.#プレゼンテーションデータ(tab-main.html)：
 .EN	.#Presentation Data (tab-main.html) :
 .	.#.-------------------- tab-main.html
-.	.#<div kd:php="loop($tablist as $tab)">
-.	.#  <span {{*kd:php="include('tab.html')"*}}/>
+.	.#<div id="loop:tab=tablist">
+.	.#  <span {{*kd:php="include:tab.html"*}}/>
 .	.#</div>
 .	.#.--------------------
 .	.#
@@ -1569,25 +1575,21 @@
 .EN	.#.$$ Load presentation logic file		| directive-load
 .	.#
 .	.#
-.JA	.#「{{,kd:php="load('{{/filename/}}')",}}」で他のプレゼンテーションロジックファイルを読み込むことができます。
-.JA	.#.#通常は{{,<span/>,}}タグを使用して「{{,<span kd:php="load('{{/filename/}}')"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
-.EN	{{,kd:php="load('{{/filename/}}')",}} is a directive to read and to include other presentation logic files.
-.EN	.#.#Usually, {{,<span/>,}} tag is used, like such: {{,<span kd:php="load('{{/filename/}}')"/>,}}.	
+.JA	.#「{{,kd:php="require:{{/filename/}}",}}」で他のプレゼンテーションロジックファイルを読み込むことができます。
+.JA	.#.#通常は{{,<span/>,}}タグを使用して「{{,<span id="require:{{/filename/}}"/>,}}」のようにします（Kwartzでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
+.EN	{{,id="require:{{/filename/}}",}} is a directive to read and to include other presentation logic files.
+.EN	.#.#Usually, {{,<span/>,}} tag is used, like such: {{,<span kd:php="require:{{/filename/}}"/>,}}.	
 .EN	.#.#(In Kwartz, {{,<span>,}} tags which contain only directives are deleted automatically.)
 .	.#
 .	.#
 .JA	.#通常、「どのプレゼンテーションロジックファイルを使用するか？」はコマンドオプション{{,-p,}}で指定します。
-.JA	.#しかし{{,load,}}ディレクティブを用いると、それをプレゼンテーションデータの中で指定することができます。
-.JA	.#また{{,load,}}ディレクティブとコマンドオプションとを同時に使用することもできます。
+.JA	.#しかし{{,require,}}ディレクティブを用いると、それをプレゼンテーションデータの中で指定することができます。
+.JA	.#また{{,require,}}ディレクティブとコマンドオプションとを同時に使用することもできます。
 .EN	.#Usually, the name of a presentation logic file is specified by the command-line option '{{,-p,}}'.
-.EN	.#The {{,load,}} directive is equal to these comamnd-line options.
-.EN	.#In other words, you can specify the name of a presentation logic file with the {{,load,}} directive as well as the command-line options.
-.EN	.#Conversely, the {{,load,}} directive is available with command-line options.
+.EN	.#The {{,require,}} directive is equal to these comamnd-line options.
+.EN	.#In other words, you can specify the name of a presentation logic file with the {{,require,}} directive as well as the command-line options.
+.EN	.#Conversely, the {{,require,}} directive is available with command-line options.
 .	.#
-.JA	.#{{,load,}}ディレクティブはプレゼンテーションデータファイルの最後に書いてください。
-.JA	.#さもないと、読み込んだプレゼンテーションロジックがプレゼンテーションデータファイルによって上書きされることがあります。
-.EN	.#{{,load,}} directives should be at the end of a presentation data file.
-.EN	.#Otherwise, the presentation logic that is loaded may be overwritten by the presentation data file.
 .	.#
 .	.#
 .JA	.#プレゼンテーションロジック(load-lib.plogic)：
@@ -1918,6 +1920,10 @@
 .JA		偶数のときの値。デフォルトは「{{,'even',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Even value. Default is {{,'even',}}. Directives FOREACH and LIST will use this value.
 .	
+.	.[--extract={{/name/}}]
+.JA		指定された名前でマーキングされたエレメントだけを抽出する。
+.EN		Extract an element which is marked with name {{/name/}}.
+.	
 .	.[--footer={{/string/}}]
 .JA		フッター文字列。
 .EN		Footer string.
@@ -1951,11 +1957,6 @@
 .	.[--odd={{/value/}}]
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
-.	
-.	.#.[--php-attr-name={{/name/}}]
-.JA	.#	ディレクティブで使用する属性名。デフォルトは 'kd:php'。
-.EN	.#	Attribute name used as a directive. Default is 'kd:php'.
-.	
 .	
 .	
 .	

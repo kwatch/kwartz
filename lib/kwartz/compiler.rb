@@ -154,6 +154,10 @@ module Kwartz
          handle_doc_decl(block_stmt, decl_list)
          ## merge
          element_table = merge(elem_list, decl_list)
+         ## extract element
+         if elem_name = @properties[:extract]
+            block_stmt = parse_program("@element(#{elem_name});")
+         end
          ## expand
          expand(block_stmt, element_table)
          ## translate

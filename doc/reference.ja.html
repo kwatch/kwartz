@@ -194,10 +194,16 @@ h3, .subsection	{
 <p>このドキュメントは、Kwartzのリファレンスマニュアルです。
 プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプションについて説明しています。
 </p>
-目次：
-<div class="toc">
+<a name="toc"></a>
+<h3 class="section2">目次</h3>
 <ul>
   <li><a href="#はじめに">はじめに</a>
+  <ul>
+    <li><a href="#toc">目次</a>
+    </li>
+    <li><a href="#changelog">更新履歴</a>
+    </li>
+  </ul>
   </li>
   <li><a href="#pl">プレゼンテーション用言語「PL」</a>
   <ul>
@@ -278,7 +284,24 @@ h3, .subsection	{
   <li><a href="#config">設定オプション</a>
   </li>
 </ul>
-</div>
+<br>
+
+
+<a name="changelog"></a>
+<h3 class="section2">更新履歴</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-02-14</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>beta release
+	</li>
+	</ul>
+</dd>
+</dl>
+<br>
+
+
 <br>
 
 
@@ -1121,42 +1144,42 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 
 <a name="pl-doc"></a>
 <h3 class="section2">ドキュメント宣言</h3>
-<p><code>#DOCUMENT { <i>...</i> }</code> is a special element declaration for document.
-It represents document information and takes the following declaration parts.
+<p><code>#DOCUMENT { <i>...</i> }</code>は、ドキュメントのための特殊なエレメント宣言です。
+この宣言はドキュメント全体の情報を表し、次の宣言部を使用します。
 </p>
 <dl class="dl3">
 <dt class="dt3"><b>
 <code>begin: { <i>...</i> }</code> </b></dt>
 <dd class="dd3">
-	Represents PL code which is added at the beginning of the output script.
+	出力用スクリプトの先頭に、指定されたPLコードを追加します。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
 <code>end: { <i>...</i> }</code> </b></dt>
 <dd class="dd3">
-	Represents PL code which is added at the end of the output script.
+	出力用スクリプトの末尾に、指定されたPLコードを追加します。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
 <code>require: "<i>filename1</i>" , "<i>filename2</i>", <i>...</i> ;</code> </b></dt>
 <dd class="dd3">
-	Load presentation logic file.
+	プレゼンテーションロジックファイルを読み込みます。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
 <code>global: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
 <dd class="dd3">
-	List of global variables. Currently this part have no means but will be used in future release.
+	グローバル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
 <code>local: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
 <dd class="dd3">
-	List of local variables. Currently this part have no means but will be used in future release.
+	ローカル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
 </dd>
 </dl>
 <p>プレゼンテーションデータ：
@@ -1328,7 +1351,7 @@ Kwartzでは、ディレクティブはid属性またはid属性を使用します（使い方はどちらも同じ
 </p>
 <p>Kwartzではせっかくプレゼンテーションデータとプレゼンテーションロジックとを分離することができるのに、なぜ両者を一体化するような機能も用意されているのでしょう？
 </p>
-<p>それは、開発者の好みに応じてどちらも選べるようにするため、つまり「<b>選択可能性</b>」を高めるためです。
+<p>それは、開発者の好みに応じてどちらも選べるようにするため、つまり「<b>選択可能性(choosability)</b>」を高めるためです。
 Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 分離するほうが望ましいのであれば分離すればよいし、一体化するほうが好みであれば一体化すればよいのです。
 </p>
@@ -1340,7 +1363,7 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 </li>
 <li>複雑なプログラミングが必要ありません（DOMプログラミングが必要な<a href="http://xmlc.objectweb.org/">Enhydra XMLC</a>と比べてみてください）。
 </li>
-<li>実行時の動作が軽くて高速です（{{http://amrita.sourceforge.jp/&gt;}}と比べてみてください）。
+<li>実行時の動作が軽くて高速です（<a href="http://amrita.sourceforge.jp/">amrita</a>と比べてみてください）。
 </li>
 <li>XMLやHTMLだけでなく、どのようなテキスト形式でも利用できます（<a href="http://xmlc.objectweb.org/">Enhydra XMLC</a>や<a href="http://amrita.sourceforge.jp/">amrita</a>と比べて見てください）。
 </li>
@@ -1355,7 +1378,7 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 <p>「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」とすることで、マーキングを行います。
 マーキングとは、エレメントに対してその名前で目印をつけることです。
 </p>
-<p>「<code>id="<i>name</i>"</code>」と「<code>id="mark:<i>name</i>"</code>」との違いは、中間コードにコンバートされるときに前者ではid属性が残るのに対し後者は取り除かれるという点です。
+<p>「<code>id="<i>name</i>"</code>」と「<code>id="mark:<i>name</i>"</code>」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
 またkd属性は必ず取り除かれます。
 </p>
 <p>プレゼンテーションデータ：
@@ -1550,28 +1573,24 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 <a name="directive-append.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
        <b>id="append:lang=='ruby'?' selected':''"</b>&gt;Ruby&lt;/option&gt;
-
 &lt;input type="radio" name="gender" value="M"
-       <b>id="append:gender=='M'?' checked':''"</b> /&gt;
+       <b>id="append:gender=='M'?' checked':''"</b>&gt;
 </pre>
 <p>出力用スクリプト：
 </p>
 <pre class="program">### for eRuby
 &lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
 
 ### for PHP
 &lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt;&gt;
 
 ### for JSTL 1.1
 &lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
 &lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt;&gt;
 
 ### for JSTL 1.0
 &lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
@@ -1579,14 +1598,13 @@ Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
 &lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
 &lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
 Ruby&lt;/option&gt;
-
 &lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked /&gt;
+&lt;input type="radio" name="gender" value="M" checked&gt;
 &lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M" /&gt;
+&lt;input type="radio" name="gender" value="M"&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
-<p>なお「checked="checked"」「selected="selected"」「disabled="disabled"」の出力を簡単にするための機能として、関数「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」が用意されています。
+<p>なお「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」の出力を簡単にするための機能として、関数「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」が用意されています。
 これらは、式<code><i>expr</i></code>が真のときにそれぞれ「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」を出力します。
 </p>
 <p>プレゼンテーションデータ：
@@ -1648,7 +1666,7 @@ Windows
 
 <a name="directive-set"></a>
 <h3 class="section2">変数への代入</h3>
-<p>「<code>id="set:<i>var</i>=<i>value</i>"</code>」は、変数<i>$var</i>に値<i>value</i>を設定します。
+<p>「<code>id="set:<i>var</i>=<i>value</i>"</code>」は、変数<i>var</i>に値<i>value</i>を設定します。
 「<code>=</code>」だけでなく「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>.=</code>」が使用できます。
 </p>
 <p>プレゼンテーションデータ：
@@ -1752,7 +1770,7 @@ elseやelseifも使用できます。
 
 <a name="directive-foreach"></a>
 <h3 class="section2">繰り返し(foreach)</h3>
-<p>「<code>id="foreach:<i>loopvar</i>=<i>list</i>:"</code>」（または「<code>id="foreach:<i>loopvar</i>:<i>list</i>:"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら、繰り返しを行います。
+<p>「<code>id="foreach:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="foreach:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら、繰り返しを行います。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -1789,7 +1807,7 @@ elseやelseifも使用できます。
 
 <a name="directive-loop"></a>
 <h3 class="section2">繰り返し(loop)</h3>
-<p>「<code>id="loop:<i>loopvar</i>=<i>list</i>)"</code>」（または「<code>id="loop:<i>loopvar</i>:<i>list</i>)"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
+<p>「<code>id="loop:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="loop:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
 「<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
 &lt;dl&gt;&lt;/dl&gt;で使うと非常に便利です。
 </p>
@@ -2258,6 +2276,13 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+--extract=<i>name</i></b></dt>
+<dd class="dd3">
+	指定された名前でマーキングされたエレメントだけを抽出する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --footer=<i>string</i></b></dt>
 <dd class="dd3">
 	フッター文字列。
@@ -2370,6 +2395,13 @@ EVEN </b></dt>
 DATTR </b></dt>
 <dd class="dd3">
 	ディレクティブで使用する属性名を指定します。デフォルトはkdです。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+NOEND </b></dt>
+<dd class="dd3">
+	終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。
 </dd>
 </dl>
 <dl class="dl3">

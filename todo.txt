@@ -28,11 +28,12 @@
 .- [v] begin: {...} end: {...}
 .- [v] require: "file1";
 .- [v] jsp header
-.- [_] --header, --footer
+.- [v] --header, --footer
 .- [_] auto-compile
-.- [_] retrieve or extract (-r name)
+.- [v] retrieve or extract (-r name)
 .- [_] /* comment */
 .- [_] parse type appropriately in 'vartype { type var; }'
 .- [_] ruby gems
 .- [_] load library path
 .- [_] include file path
+.- [_] change #{...}# to @{...}@

@@ -10,20 +10,20 @@
 .JA	●KwartzとKwartz-rubyについて
 .	
 .EN	  Kwartz is a template system which realized the concept
-.EN	  'Separation of Presentation Data and Presentation Logic'.
+.EN	  'Separation of Presentation Logic and Presentation Data'.
 .EN	  It has the following features:
-.JA	  Kwartzとは、『プレゼンテーションデータとプレゼンテーションロジックの分離』と
+.JA	  Kwartzとは、『プレゼンテーションロジックとプレゼンテーションデータの分離』と
 .JA	  いう概念を実現したテンプレートシステムです。
 .JA	  次のような特徴があります。
 .	
 .EN	   .* Separate presentation logics from presentation data
-.EN	   .* Multi programing language (Ruby, PHP, and Java)
+.EN	   .* Multi programing language: Ruby(eRuby), PHP, and Java(JSP)
 .EN	   .* Runs Very fast
 .EN	   .* Auto-Sanitizing and Partially Sanitizing
 .EN	   .* Doesn't break HTML design at all
 .EN	   .* Can handle any text file
 .JA	   .* プレゼンテーションデータからプレゼンテーションロジックを分離できます。
-.JA	   .* 複数のプログラミング言語に対応します（Ruby, PHP, Java）。
+.JA	   .* 複数のプログラミング言語に対応します: Ruby(eRuby), PHP, and Java(JSP)
 .JA	   .* 高速に動作します。
 .JA	   .* 自動サニタイズ機能があります。
 .JA	   .* HTMLデザインをまったく崩しません。
@@ -34,8 +34,8 @@
 .JA	  Kwartz-rubyは、Rubyで作られたKwartzの実装です。
 .JA	  Kwartz-phpとKwartz-javaも現在開発中です。
 .	
-.EN	  See the Users' Guide for details.
-.JA	  詳しくはユーザーズガイドをご覧ください。
+.EN	  See the Users' Guide and Reference Manual for details.
+.JA	  詳しくはユーザーズガイドとリファレンスマニュアルをご覧ください。
 .	
 .	
 .	
@@ -95,10 +95,6 @@
 .EN		Command file
 .JA		コマンドファイル
 .		
-.	  .% bin/mkmethod-php
-.EN		Utility script to generate PHP function from templates.
-.JA		テンプレートからPHPの関数を生成するユーティリティ。
-.		
 .	  .% lib/kwartz.rb, lib/kwartz/*
 .EN		Library files.
 .JA		ライブラリファイル
@@ -114,6 +110,10 @@
 .	  .% doc/reference.*.html
 .EN		Reference Manual
 .JA		リファレンスマニュアル
+.		
+.	  .% doc/p-pattern.*.html
+.EN		Presentation Pattern Catalog
+.JA		プレゼンテーションパターン・カタログ
 .		
 .	  .% examples/
 .EN		Examples. You have to install Kwartz-ruby before trying
@@ -149,7 +149,7 @@
 .EN	.$ Special Thanks
 .JA	●Special Thanks
 .	
-.EN	.* Shu-yu Guo - He corrected my English of users' guide. Very Thanks!
-.JA	.* Shu-yu Guo - ユーザーズガイドの英語を直してくれました。多謝。
+.EN	.* Shu-yu Guo - He corrected my English of documents. Very Thanks!
+.JA	.* Shu-yu Guo - ドキュメントの英語を直してくれました。多謝。
 .	
 .#@EOF

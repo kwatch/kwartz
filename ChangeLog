@@ -3,8 +3,13 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-02-13 rev.41
+	.- [enhance] new property --extract=name
+	.- [change] documents updated
+
 .: 2005-02-13 rev.40
 	.- [enhance] p-pattern.{en,ja}.html
+	.- [change] Kwartz::Config::EMPTY_TAGS is renamed to NOEND
 
 .: 2005-02-13 rev.39
 	.- [enhance] users-guide.{en,ja}.html

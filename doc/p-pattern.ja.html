@@ -191,17 +191,14 @@ h3, .subsection	{
 
 <a name="preface"></a>
 <h2 class="section1">はじめに</h2>
-<p>Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を実現したテンプレートシステムです。
-またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するためのテクニックが存在します。
-これは「プレゼンテーションパターン」と呼ばれます<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>。
-この章では、プレゼンテーションパターンをいくつか紹介します。
+<p>Kwartzは、<b>「プレゼンテーションロジックとプレゼンテーションデータの分離」</b>という概念を実現したテンプレートシステムです。
+プレゼンテーションロジックとプレゼンテーションデータを分離すると、HTMLデザインをまったく崩すことなく、複雑なプレゼンテーションロジックを利用することができます。
 </p>
-<div class="footnote">
- <dl compact>
-  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
-  <dd>「プレゼンテーションパターン」という名前がついていますが、これらのテクニックはプレゼンテーション層だけに限定されるわけではありません。しかし最もよく使われるのはプレゼンテーション層においてであるため、このような名前にしています。</dd>
- </dl>
-</div>
+<p>またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。
+これらのパターンを「プレゼンテーションパターン」といいます。
+</p>
+<p>このドキュメントでは、プレゼンテーションパターンをいくつか紹介します。
+</p>
 <a name="toc"></a>
 <h3 class="section2">目次</h3>
 <ul>
@@ -210,6 +207,14 @@ h3, .subsection	{
     <li><a href="#toc">目次</a>
     </li>
     <li><a href="#changelog">更新履歴</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#replacement">置換</a>
+  <ul>
+    <li><a href="#replace-elem-by-value">Replace Element by Valueパターン</a>
+    </li>
+    <li><a href="#replace-cont-by-value">Replace Content by Valueパターン</a>
     </li>
     <li><a href="#replace-elem-by-elem">Replace Element by Elementパターン</a>
     </li>
@@ -249,18 +254,24 @@ h3, .subsection	{
 <h3 class="section2">更新履歴</h3>
 <dl class="dl1">
 <dt class="dt1">
-2005-02-13</dt>
+2005-02-14</dt>
 <dd class="dd1">
 	<ul type="circle">
-	<li>alpha release
+	<li>beta release
 	</li>
 	</ul>
 </dd>
 </dl>
-<p>.●置換			| replacement
-</p>
-<p>.◎Replace Element by Valueパターン	| replace-elem-by-value
-</p>
+<br>
+
+
+<br>
+
+
+<a name="replacement"></a>
+<h2 class="section1">置換</h2>
+<a name="replace-elem-by-value"></a>
+<h3 class="section2">Replace Element by Valueパターン</h3>
 <p>エレメントを、変数や式の値で置き換えることができます。
 これを「Replace Element by Value」パターンといいます。
 </p>
@@ -289,10 +300,13 @@ Hello&lt;?php echo $username; ?&gt;!
 ### for JSTL
 Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 </pre>
-<p>.◎Replace Content by Valueパターン	| replace-cont-by-value
-</p>
+<br>
+
+
+<a name="replace-cont-by-value"></a>
+<h3 class="section2">Replace Content by Valueパターン</h3>
 <p>タグは残したままエレメントの内容だけを式の値で置き換えることができます。
-これを「Replace Content by Value」といいます。
+これを「Replace Content by Value」パターンといいます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -335,7 +349,9 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-elem-by-elem"></a>
 <h3 class="section2">Replace Element by Elementパターン</h3>
 <p>エレメントを別のエレメントに交換することができます。
-これは「Replace element by element」パターンといいます。
+これは「Replace Element by Element」パターンといいます。
+</p>
+<p>このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -396,8 +412,6 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
-</p>
 <br>
 
 
@@ -409,7 +423,9 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="dummy-elem"></a>
 <h3 class="section2">Dummy Elementパターン</h3>
 <p>プレゼンテーションロジックの定義を空欄にすると、エレメント全体を出力しないことになります。
-これは「Dummy element」パターンといいます。
+これは「Dummy Element」パターンといいます。
+</p>
+<p>このパターンは、プレゼンテーションデータにダミーデータを含めるときに使用します。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -452,7 +468,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <h3 class="section2">Dummy Tagパターン</h3>
 <p>プレゼンテーションロジックの定義において、「<code>@cont</code>」だけを使用し、
 「<code>@stag</code>」と「<code>@stag</code>」を使わないようにすると、エレメントのタグを削除できます。
-これは「Dummy tag」パターンといいます。
+これは「Dummy Tag」パターンといいます。
 </p>
 <p>このパターンは、ある条件のときだけタグを出力したい場合に使います。
 </p>
@@ -565,7 +581,8 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <h3 class="section2">Iterate Contentパターン</h3>
 <p>繰り返しの中に「<code>@cont</code>」を含めると、内容だけを繰り返すことになります。
 これを「Iterate Content」パターンといいます。
-これは&lt;dl&gt;&lt;/dl&gt;の内容だけを繰り返したいときに、特に有効です。
+</p>
+<p>これは&lt;dl&gt;&lt;/dl&gt;の内容だけを繰り返したいときに、特に有効です。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -686,8 +703,14 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 
 <a name="pickup-elem"></a>
 <h3 class="section2">Pick-up Elementパターン</h3>
-<p>ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、プレゼンテーションロジックでそのエレメントだけを利用します。
+<p>ある特定のエレメントだけを利用するには、利用したいエレメントだけをマーキングし、
+プレゼンテーションロジックでそのエレメントだけを利用します。
+利用されないエレメントは無視され、出力されません。
 これは「Pick-up Element」パターンといいます。
+</p>
+<p>これは「Dummy Element」パターンと逆の考え方です。
+「Dummy Element」パターンでは必要でないエレメントをマーキングして削除することで必要なものだけを残しますが、
+「Pick-up Element」パターンでは必要なエレメントだけマーキングして取り出すことで必要でないものを削除します。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -796,8 +819,9 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 
 <a name="extract-elem"></a>
 <h3 class="section2">Extract Elementパターン</h3>
-<p>プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、ほかは一切表示しないようにすることができます。
-このパターンは「Extract element」パターンといいます。
+<p>プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
+ほかは一切表示しないようにすることができます。
+このパターンは「Extract Element」パターンといいます。
 </p>
 <p>このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
 例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
@@ -994,6 +1018,8 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>
+<p>なお、コマンドラインオプション「<code>--extract=<i>name</i></code>」でも、<code><i>name</i></code>でマーキングされたエレメントを抽出できます。
+</p>
 <br>
 
 

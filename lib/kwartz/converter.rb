@@ -546,7 +546,7 @@ module Kwartz
       
       def expand_embed_expr(str, linenum)
          list = []
-         while str =~ /\#\{(.*?)\}\#/
+         while str =~ /\#\{(.*?)\}\#/			## *pattern*
             front     = $`
             following = $'
             expr_str  = $1

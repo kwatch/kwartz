@@ -202,8 +202,6 @@ a template system which realized the concept of 'Separation of Presentation Logi
 </div>
 <a name="toc"></a>
 <h3 class="section2">Table of Contents</h3>
-Table of Contents:
-<div class="toc">
 <ul>
   <li><a href="#preface">Preface</a>
   <ul>
@@ -252,7 +250,6 @@ Table of Contents:
   </ul>
   </li>
 </ul>
-</div>
 <br>
 
 
@@ -260,10 +257,10 @@ Table of Contents:
 <h3 class="section2">Changelog</h3>
 <dl class="dl1">
 <dt class="dt1">
-2005-02-06</dt>
+2005-02-14</dt>
 <dd class="dd1">
 	<ul type="circle">
-	<li>alpha1 release
+	<li>beta release
 	</li>
 	</ul>
 </dd>
@@ -674,7 +671,7 @@ $ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
 &lt;?php } ?&gt;
 &lt;/table&gt;
 
-### for JSTL 1.1 &amp; 1.0
+### for JSTL
 &lt;table&gt;
 &lt;c:set var="i" value="0"/&gt;
 &lt;c:forEach var="member" items="${member_list}"&gt;
@@ -888,7 +885,7 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 &lt;?php } ?&gt;
 &lt;/table&gt;
 
-### for JSTL 1.1 &amp; 1.0
+### for JSTL
 &lt;table&gt;
 &lt;c:forEach var="member" items="${member_list}"&gt;
   &lt;tr&gt;
@@ -952,7 +949,7 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
   &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
 
-### for JSTL 1.1 &amp; 1.0
+### for JSTL
 &lt;tr bgcolor="&lt;c:out value="${color}"/&gt;"&gt;
   &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
 &lt;/tr&gt;
@@ -1014,7 +1011,7 @@ $ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
  &lt;/tr&gt;
 &lt;/table&gt;
 
-### for JSTL 1.1 &amp; 1.0
+### for JSTL
 &lt;table&gt;
  &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
    &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
@@ -1032,7 +1029,7 @@ These are equivalent to <code>id="value:E(<i>expr</i>)"</code>, <code>id="attr:<
 <a name="sanitizing-config"></a>
 <h3 class="section2">Configuration for sanitizing</h3>
 <p>File 'kwartz/config.rb' is a configuration file for Kwartz-ruby.
-If you want to sanitize in default, change value of constant <code>Kwartz::Config::ESCAPE</code> to true in the configuration file.
+If you want to sanitize in default, change value of constant <code>ESCAPE</code> to true in the configuration file.
 </p>
 <br>
 
@@ -1064,7 +1061,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <pre class="program">&lt;!-- &lt;/input/&gt; is omitted but Kwartz can parse correctly. --&gt;
 &lt;input type="text" name="user" id="user"&gt;
 </pre>
-   Constant Kwartz::Config::EMPTY lists these tag names in file kwartz/config.rb.
+   Constant NOEND lists these tag names in file kwartz/config.rb.
    Upper-case and lower-case are distinguished.
 </li>
 </ul>

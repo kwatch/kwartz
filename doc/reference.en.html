@@ -194,12 +194,18 @@ h3, .subsection	{
 <p>This document is the Kwartz Reference Manual.
 Presentation language (PL), directives, and the command-line options are described in this document.
 </p>
-Table of Contents:
-<div class="toc">
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
 <ul>
   <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+    <li><a href="#changelog">ChangeLog</a>
+    </li>
+  </ul>
   </li>
-  <li><a href="#pl">PL -- Presentation Language</a>
+  <li><a href="#pl">PL - Presentation Language</a>
   <ul>
     <li><a href="#pl-comment">Comments</a>
     </li>
@@ -278,12 +284,29 @@ Table of Contents:
   <li><a href="#config">Configuration options</a>
   </li>
 </ul>
-</div>
+<br>
+
+
+<a name="changelog"></a>
+<h3 class="section2">ChangeLog</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-02-14</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>beta release
+	</li>
+	</ul>
+</dd>
+</dl>
+<br>
+
+
 <br>
 
 
 <a name="pl"></a>
-<h2 class="section1">PL -- Presentation Language</h2>
+<h2 class="section1">PL - Presentation Language</h2>
 <p>PL is a language which is used to describe presentation logic in Kwartz.
 This section shows how to write in PL.
 </p>
@@ -1568,28 +1591,24 @@ This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... select
 <a name="directive-append.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
        <b>id="append:lang=='ruby'?' selected':''"</b>&gt;Ruby&lt;/option&gt;
-
 &lt;input type="radio" name="gender" value="M"
-       <b>id="append:gender=='M'?' checked':''"</b> /&gt;
+       <b>id="append:gender=='M'?' checked':''"</b>&gt;
 </pre>
 <p>Output Script:
 </p>
 <pre class="program">### for eRuby
 &lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
 
 ### for PHP
 &lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt;&gt;
 
 ### for JSTL 1.1
 &lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
 &lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt;&gt;
 
 ### for JSTL 1.0
 &lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
@@ -1597,11 +1616,10 @@ This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... select
 &lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
 &lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
 Ruby&lt;/option&gt;
-
 &lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked /&gt;
+&lt;input type="radio" name="gender" value="M" checked&gt;
 &lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M" /&gt;
+&lt;input type="radio" name="gender" value="M"&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
 <p>A function to output <code>'checked="checked"'</code>, <code>'selected="selected"'</code> and <code>'disabled="disabled"'</code> easily for HTML/XHTML is available in Kwartz.
@@ -2105,7 +2123,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p><code>kd:php="load('<i>filename</i>')"</code> is a directive to read and to include other presentation logic files.
+<p><code>id="require:<i>filename</i>"</code> is a directive to read and to include other presentation logic files.
 </p>
 <br>
 
@@ -2280,6 +2298,13 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+--extract=<i>name</i></b></dt>
+<dd class="dd3">
+	Extract an element which is marked with name <i>name</i>.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --footer=<i>string</i></b></dt>
 <dd class="dd3">
 	Footer string.
@@ -2391,6 +2416,13 @@ EVEN </b></dt>
 DATTR </b></dt>
 <dd class="dd3">
 	Specify an attribute name for directives. Default is 'kd'.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+NOEND </b></dt>
+<dd class="dd3">
+	List of tag name which doesn't require end tag. Default is [ "input", "br", "meta", "img", "hr" ].
 </dd>
 </dl>
 <dl class="dl3">

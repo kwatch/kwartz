@@ -10,18 +10,24 @@ chmod:
 	chmod a+x bin/kwartz;
 }
 
-files = ChangeLog setup.rb README.ja.txt README.en.txt;
+text_files = ChangeLog setup.rb README.ja.txt README.en.txt;
 
-kwartz-ruby_%:  README.ja.txt README.en.txt
+doc_files = 
+	doc/reference.en.html  doc/users-guide.en.html  doc/p-pattern.en.html
+	doc/reference.ja.html  doc/users-guide.ja.html  doc/p-pattern.ja.html
+	doc/BNF.txt  doc/design.css  doc/design.html
+	;
+
+kwartz-ruby_%:  [text_files] [doc_files]
 {
 	release = %;
 	archive_dir = [target];
 	rm -rf [archive_dir];
 	mkdir -p [archive_dir];
-	cp -a lib bin test [files] [archive_dir];
+	cp -a lib bin test [text_files] [archive_dir];
 	mkdir -p [archive_dir]/doc;
-	cp doc/BNF.txt doc/reference.??.html doc/users-guide.??.html [archive_dir]/doc;
-	cd examples \; make clean;
+	cp -a [doc_files] [archive_dir]/doc;
+	cd examples \; make -s clean;
 	cp -a examples [archive_dir];
 	find [archive_dir] -name '.svn' | xargs rm -rf ;
 	find [archive_dir] -type f | xargs ruby -pi -e '\'gsub(/\\$Release.*?\\$/, "$Release: '[release]'$")\'';
@@ -29,3 +35,25 @@ kwartz-ruby_%:  README.ja.txt README.en.txt
 	chmod 755 [archive_dir]/bin/'*';
 	tar cjf [archive_dir].tar.bz2 [archive_dir];
 }
+
+/*
+doc/%.en.html doc/%.ja.html: doc/%.txt
+{
+	cd doc \; cook [entryname [target]];
+}*/
+
+doc/%.en.html: doc/%.txt
+{
+	cd doc \; cook %.en.html;
+}
+
+doc/%.ja.html: doc/%.txt
+{
+	cd doc \; cook %.ja.html;
+}
+
+doc/design.css docs/design.html: doc/pattern.en.txt
+{
+	cd doc \; cook [entryname [target]];
+}
+

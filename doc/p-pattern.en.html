@@ -191,17 +191,14 @@ h3, .subsection	{
 
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>Kwartz-php is the template system which realized the concept of '<b>Separation of Presentation Logic and Presentation Data (SoPL/PD)</b>.'
-There are several techniques to help you to separate presentation logic and presentation data excellently.
-These techniques are called 'Presentation Patterns.'<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>
-This document shows several Presentation Patterns.
+<p>Kwartz is the template system which realized the concept of '<b>Separation of Presentation Logic and Presentation Data (SoPL/PD)</b>.'
+SoPL/PD enables to use complex presentation logics without breaking HTML design at all.
 </p>
-<div class="footnote">
- <dl compact>
-  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
-  <dd>'Presentation Patterns' are not limited in presentation layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.'</dd>
- </dl>
-</div>
+<p>There are several patterns which help you to separate presentation logic and presentation data well.
+These patterns are called 'Presentation Patterns.'
+</p>
+<p>This document shows several Presentation Patterns.
+</p>
 <a name="toc"></a>
 <h3 class="section2">Table of Contents</h3>
 <ul>
@@ -257,10 +254,10 @@ This document shows several Presentation Patterns.
 <h3 class="section2">ChangeLog</h3>
 <dl class="dl1">
 <dt class="dt1">
-2005-02-13</dt>
+2005-02-14</dt>
 <dd class="dd1">
 	<ul type="circle">
-	<li>alpha release
+	<li>beta release
 	</li>
 	</ul>
 </dd>
@@ -276,7 +273,7 @@ This document shows several Presentation Patterns.
 <a name="replace-elem-by-value"></a>
 <h3 class="section2">Replace Element by Value pattern</h3>
 <p>You can replace the element with the value of a variable or an expression.
-This pattern is named 'Replace element by value.'
+This pattern is named 'Replace Element by Value.'
 </p>
 <p>Presentation Data:
 </p>
@@ -309,7 +306,7 @@ Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
 <a name="replace-cont-by-value"></a>
 <h3 class="section2">Replace Content by Value pattern</h3>
 <p>You can also replace only the content of the element in the same way.
-This pattern is named 'Replace content by value.'
+This pattern is named 'Replace Content by Value.'
 </p>
 <p>Presentation Data:
 </p>
@@ -352,7 +349,9 @@ This pattern is named 'Replace content by value.'
 <a name="replace-elem-by-elem"></a>
 <h3 class="section2">Replace Element by Element pattern</h3>
 <p>You can replace the element by other element.
-This pattern is named 'Replace element by element.'
+This pattern is named 'Replace Element by Element.'
+</p>
+<p>This pattern is very useful to reuse the element in other place.
 </p>
 <p>Presentation Data:
 </p>
@@ -413,8 +412,6 @@ This pattern is named 'Replace element by element.'
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>This pattern is very useful to reuse the element in other place.
-</p>
 <br>
 
 
@@ -426,7 +423,9 @@ This pattern is named 'Replace element by element.'
 <a name="dummy-elem"></a>
 <h3 class="section2">Dummy Element pattern</h3>
 <p>If presentation logic is empty, the element is not printed out.
-This pattern is named 'Dummy element'.
+This pattern is named 'Dummy Element'.
+</p>
+<p>This pattern enables you to use dummy data in presentation data.
 </p>
 <p>Presentation Data:
 </p>
@@ -469,7 +468,7 @@ This pattern is named 'Dummy element'.
 <h3 class="section2">Dummy Tag pattern</h3>
 <p>If you use only <code>@cont</code> and don't use <code>@stag</code> and <code>@cont</code>,
 you can remove start and end tags of the element.
-This pattern is named 'Dummy tag'.
+This pattern is named 'Dummy Tag'.
 </p>
 <p>This pattern is very useful if you want to print tags according to condition.
 </p>
@@ -524,7 +523,7 @@ Next&lt;/c:when&gt;&lt;c:otherwise&gt;
 <a name="iterate-elem"></a>
 <h3 class="section2">Iterate Element pattern</h3>
 <p>Iteration which contains <code>@stag</code>, <code>@cont</code>, and <code>@etag</code> represents to iterate the element.
-This pattern is named 'Iterate element'.
+This pattern is named 'Iterate Element'.
 </p>
 <p>Presentation Data:
 </p>
@@ -581,7 +580,9 @@ This pattern is named 'Iterate element'.
 <a name="iterate-cont"></a>
 <h3 class="section2">Iterate Content pattern</h3>
 <p>Iteration which contains only <code>@cont</code> represents to iterate the content.
-This pattern is named 'Iterate content' and this is very useful when creating &lt;dl&gt;&lt;/dl&gt; list.
+This pattern is named 'Iterate Content'.
+</p>
+<p>This pattern is very useful when creating &lt;dl&gt;&lt;/dl&gt; list.
 </p>
 <p>Presentation Data:
 </p>
@@ -703,7 +704,12 @@ This pattern is named 'Select Element.'
 <a name="pickup-elem"></a>
 <h3 class="section2">Pick-up Element pattern</h3>
 <p>If you want to use certain elemnts, do marking the elements and use only them in presentation logic.
+Elements which are not marked are ignored and not printed.
 This pattern is named 'Pick-up Element.'
+</p>
+<p>'Pick-up Element' pattern is opposite of 'Dummy Element' pattern.
+In 'Dummy Element' pattern, dummy elements are marked and removed so that necessary elements are leaved.
+In 'Pick-up Element' pattern, necessary elements are marked and leaved so that dummy elements are removed.
 </p>
 <p>Presentation Data:
 </p>
@@ -813,7 +819,7 @@ This pattern is named 'Pick-up Element.'
 <a name="extract-elem"></a>
 <h3 class="section2">Extract Element pattern</h3>
 <p>It is able to extract a certain element form the whole presentation data.
-Other text strings are not printed.
+Other element and text strings are not printed.
 This pattern is named 'Extract Element.'
 </p>
 <p>This pattern is very useful to extract HTML fragments and make them libraries.
@@ -1011,6 +1017,8 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>
+<p>The command-line option <code>--extract=<i>name</i></code> extracts the element marked with name <code><i>name</i></code>.
+</p>
 <br>
 
 

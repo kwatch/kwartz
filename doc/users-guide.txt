@@ -1,8 +1,8 @@
 .JA	.=title:	Kwartzユーザーズガイド
 .EN	.=title:	Kwartz Users' Guide
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.	.?lastupdate:	$Date: 2005-01-01 12:08:50 +0900 (Sat, 01 Jan 2005) $
-.	.?version:	$Rev: 52 $
+.	.?lastupdate:	$Date$
+.	.?version:	$Rev$
 .	.?release:	$Release$
 .	
 .	
@@ -20,18 +20,17 @@
 .JA	◎目次			| toc*
 .EN	.$$ Table of Contents	| toc*
 .	
-.	.+toc:
+.	.#.+toc:
 .JA	   .<<< users-guide.ja.toc
 .EN	   .<<< users-guide.en.toc
-.	.-toc:
+.	.#.-toc:
 .	
 .	
 .JA	◎更新履歴		| changelog*
 .EN	.$$ Changelog		| changelog*
 .	
-.	.: 2005-02-06
-.JA		.- alpha1 release
-.EN		.- alpha1 release
+.	.: 2005-02-14
+.		.- beta release
 .	
 .	
 .	
@@ -841,9 +840,9 @@
 .EN	.$$ Configuration for sanitizing	| sanitizing-config
 .	
 .JA	kwartz/config.rbはKwartz-rubyの動作を設定しているファイルです。
-.JA	デフォルトでサニタイズを行うように設定するには、この中で定数{{,Kwartz::Config::ESCAPE,}}の値をtrueに変更します。
+.JA	デフォルトでサニタイズを行うように設定するには、この中で定数{{,ESCAPE,}}の値をtrueに変更します。
 .EN	File 'kwartz/config.rb' is a configuration file for Kwartz-ruby.
-.EN	If you want to sanitize in default, change value of constant {{,Kwartz::Config::ESCAPE,}} to true in the configuration file.
+.EN	If you want to sanitize in default, change value of constant {{,ESCAPE,}} to true in the configuration file.
 .	
 .	
 .	
@@ -883,9 +882,9 @@
 .EN	   <!-- </input/> is omitted but Kwartz can parse correctly. -->
 .	   <input type="text" name="user" id="user">
 .	   .--------------------
-.JA	   なおこれらのタグ名はkwartz/config.rbの中で定数{{,Kwartz::Config::EMPTY,}}に設定されています。
+.JA	   なおこれらのタグ名はkwartz/config.rbの中で定数{{,NOEND,}}に設定されています。
 .JA	   また大文字と小文字は区別されます。
-.EN	   Constant Kwartz::Config::EMPTY lists these tag names in file kwartz/config.rb.
+.EN	   Constant NOEND lists these tag names in file kwartz/config.rb.
 .EN	   Upper-case and lower-case are distinguished.
 .	
 .JA	.* 属性値は必ず「{{,",}}」で囲ってください。また「'」で囲っても認識されません。
