@@ -98,11 +98,8 @@ li
 [attrs]
 bgcolor=color
 class="user"
-id="user_list"
 [append]
 " checked"
-[remove]
-"id"
 [content]
 :print
   user
@@ -131,4 +128,8 @@ END
       #print element._inspect
    end
 
+end
+
+if $0 == __FILE__
+    Test::Unit::UI::Console::TestRunner.run(ElementTest)
 end

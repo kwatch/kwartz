@@ -1,0 +1,121 @@
+#navi {
+	plogic: {
+	    if (page > 0) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    }
+	}
+}
+
+
+#navi_first {
+	attr:  "href" first_url;
+	plogic: {
+	    if (first_url != empty) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    } else {
+	        @cont;
+	    }
+	}
+}
+
+
+#navi_last {
+	attr:  "href" last_url;
+	plogic: {
+	    if (last_url != empty) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    } else {
+	        @cont;
+	    }
+	}
+}
+
+
+#navi_prev {
+	attr:  "href" prev_url;
+	plogic: {
+	    if (prev_url != empty) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    } else {
+	        @cont;
+	    }
+	}
+}
+
+
+#navi_next {
+	attr:  "href" next_url;
+	plogic: {
+	    if (next_url != empty) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    } else {
+	        @cont;
+	    }
+	}
+}
+
+
+#navi_index {
+	attr:  "href" index_url;
+	plogic: {
+	    if (index_url != empty) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    } else {
+	        @cont;
+	    }
+	}
+}
+
+
+#index {
+	plogic: {
+	    if (page == 0) {
+	        i = 0;
+	        foreach (thumb in thumb_list) {
+	            i += 1;
+	            link_url  = thumb[:link_url];
+	            image_url = thumb[:image_url];
+	            @element(thumbnail);
+	            if (i % 3 == 0) {
+	                @element(br);
+	            }
+	        }
+	    }
+	    @etag;
+	}
+}
+
+
+#thumbnail {
+	attr: "href" link_url;
+}
+
+
+#main_image {
+	plogic: {
+	    if (page != 0) {
+	        @stag;
+	        @cont;
+	        @etag;
+	    }
+	}
+}
+
+
+#navi2 {
+	plogic: {
+	    @element(navi);
+	}
+}

@@ -1,0 +1,11 @@
+#name {
+	attr: "value" name;
+}
+
+#gender_m {
+	append: gender == 'M' ? ' checked="checked"' : '';
+}
+
+#gender_w {
+	append: gender == 'W' ? ' checked="checked"' : '';
+}

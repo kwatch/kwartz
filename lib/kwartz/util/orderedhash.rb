@@ -51,6 +51,10 @@ module Kwartz
          def key?(key)
             return @hash.key?(key)
          end
+         
+         def empty?
+            return @hash.empty?
+         end
 
       end
 

@@ -6,6 +6,7 @@
 
 require 'kwartz/exception'
 require 'kwartz/utility'
+require 'kwartz/util/orderedhash'
 require 'kwartz/node'
 require 'kwartz/parser'
 
@@ -59,22 +60,41 @@ module Kwartz
          @before_text  = $`
          @before_space = $1
          @slash_etag   = $2		# "" or "/"
-         @tagname     = $3
+         @tagname      = $3
          @attr_str     = $4
          @extra_space  = $5
          @slash_empty  = $6		# "" or "/"
          @after_space  = $7
+         @after_text   = $'
 
          @linenum  += @delta
          @linenum  += $`.count("\n")
          @delta    =  $&.count("\n")
 
          @attr_names  = []
-         @attr_values = {}
+         @attr_values = Kwartz::Util::OrderedHash.new
          @attr_spaces = {}
          @append_exprs = []
+         
+         if ! @before_text.empty?
+            @is_begline = @before_text[-1] == ?\n
+         else
+            @is_begline = @prev_last_char == ?\n || ! @prev_last_char
+         end
+         @is_endline = @tag_str[-1] == ?\n
+         @is_whole_line = @is_begline && @is_endline
+         @prev_last_char = @tag_str[-1]
+         
+         #if @is_begline && @is_endline
+         #   # nothing
+         #else
+         #   @before_text += @before_space
+         #   @before_space = ''
+         #   @after_text   = @after_space + @after_text
+         #   @after_space  = ''
+         #end
 
-         @input    = $'
+         @input    = @after_text
          return @tagname
       end
 
@@ -143,8 +163,9 @@ module Kwartz
             :after_space   => @after_space,
             :extra_space   => @extra_space,
             :linenum       => @linenum,
-            :is_begline    => (@before_text || @before_text[-1] == ?\n),
-            :is_endline    => (@after_space && @after_space[-1] == ?\n),
+            :is_whole_line => @is_whole_line,
+            #:is_begline    => @is_begline,
+            #:is_endline    => @is_endline,
          }
          return hash
       end
@@ -154,7 +175,23 @@ module Kwartz
          start_linenum = @linenum
          if etagname
             Kwartz::assert unless @tagname == etagname
-            stmt_list << build_print_node() if flag_print_tag
+            #if flag_print_tag
+            #   if @tagname == 'span' && @attr_values.empty?
+            #      stmt_list << create_print_node('', @linenum)
+            #   else
+            #      stmt_list << build_print_node()
+            #   end
+            #end
+            if flag_print_tag
+               if @tagname == 'span' && @attr_values.empty?
+                  flag_spantag = true
+                  s = @is_whole_line ? '' : @before_space + @after_space
+                  stmt_list << create_print_node(s, @linenum)
+               else
+                  flag_spantag = false
+                  stmt_list << build_print_node()
+               end
+            end
          end
 
          while tagname = fetch()
@@ -164,7 +201,21 @@ module Kwartz
 
             if @slash_etag == '/'		# end-tag
                if @tagname == etagname
-                  stmt_list << create_print_node(@tag_str, @linenum) if flag_print_tag
+                  #if flag_print_tag
+                  #   if @tagname == 'span' && @attr_values.empty?
+                  #      stmt_list << create_print_node('', @linenum)
+                  #   else
+                  #      stmt_list << build_print_node()
+                  #   end
+                  #end
+                  if flag_print_tag
+                     if flag_spantag
+                        s = @is_whole_line ? '' : @before_space + @after_space
+                        stmt_list << create_print_node(s, @linenum)
+                     else
+                        stmt_list << create_print_node(@tag_str, @linenum)
+                     end
+                  end
                   return stmt_list
                else
                   stmt_list << create_print_node(@tag_str, @linenum)
@@ -174,6 +225,10 @@ module Kwartz
                if directive_name
                   if directive_name == :mark
                      body_stmt_list = []
+                  elsif @tagname == 'span' && @attr_values.empty?
+                     s = @is_whole_line ? '' : @before_space + @after_space
+                     body_stmt = create_print_node(s, @linenum)
+                     body_stmt_list = [ body_stmt ]
                   else
                      body_stmt = build_print_node()
                      body_stmt_list = [ body_stmt ]

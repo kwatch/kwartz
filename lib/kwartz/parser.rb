@@ -598,10 +598,10 @@ module Kwartz
          syntax_error("'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
          marking = value()
          tkn = scan()
-         syntax_erro("'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
+         syntax_error("'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
          scan()
          hash = parse_sub_decl_list()
-         syntax_erro("'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
+         syntax_error("'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
          scan()
          return ElementDeclaration.create_from_hash(marking, hash)
       end

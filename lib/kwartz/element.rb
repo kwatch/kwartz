@@ -7,7 +7,7 @@
 module Kwartz
 
    class Element
-      def initialize(name, tagname, content_stmt, attrs={}, append_expr=[], is_empty=false, spaces=['','','',''])
+      def initialize(name, tagname, content_stmt, attrs={}, append_expr=[], is_empty=false, spaces=['','','',''], stag_whole_line=false, etag_whole_line=false)
          @name     = name
          @tagname  = tagname
          @content  = content_stmt
@@ -15,9 +15,10 @@ module Kwartz
          @append   = append_expr || []
          @is_empty = is_empty
          @spaces   = spaces
+         @stag_whole_line = stag_whole_line
+         @etag_whole_line = etag_whole_line
          list = [ ExpandStatement.new(:stag), ExpandStatement.new(:cont), ExpandStatement.new(:etag) ]
          @plogic   = BlockStatement.new(list)
-         @remove   = []
       end
       attr_accessor :name, :tagname, :content, :attrs, :append, :is_empty, :spaces, :plogic
       alias :marking :name
@@ -29,11 +30,13 @@ module Kwartz
          elem_decl.attrs.each do |key,val|
             @attrs[key] = val
          end if elem_decl.attrs
+         elem_decl.remove.each do |aname|
+            @attrs.delete(aname)
+         end if elem_decl.remove
          @append.concat(elem_decl.append) if elem_decl.append
-         @remove.concat(elem_decl.remove) if elem_decl.remove
          @plogic = elem_decl.plogic if elem_decl.plogic
       end
-      
+
       def self.create_from_taginfo(name, staginfo, etaginfo, body_stmt_list)
          Kwartz::assert unless !etaginfo || staginfo[:tagname] == etaginfo[:tagname]
          tagname      = staginfo[:tagname]
@@ -41,18 +44,24 @@ module Kwartz
          attrs        = staginfo[:attr_values]
          append_expr  = staginfo[:append_expr]
          is_empty     = staginfo[:is_empty]
-         spaces       = [  staginfo[:before_space],
-                           staginfo[:after_space],
-                           etaginfo ? etaginfo[:before_space] : '',
-                           etaginfo ? etaginfo[:after_space]  : '',
-                        ]
-         stag_begend  = [ staginfo[:is_begline], staginfo[:is_endline ], ]
-         etag_begend  = etaginfo ? [ etaginfo[:is_begline], etaginfo[:is_endline ], ] : nil
-         return Element.new(name, tagname, content, attrs, append_expr, is_empty, spaces)
+         spaces       = [
+            staginfo[:before_space],
+            staginfo[:after_space],
+            etaginfo ? etaginfo[:before_space] : '',
+            etaginfo ? etaginfo[:after_space]  : '',
+         ]
+         stag_whole_line  = staginfo[:is_whole_line]
+         etag_whole_line  = etaginfo ? etaginfo[:is_whole_line] : nil
+         return Element.new(name, tagname, content, attrs, append_expr, is_empty, spaces, stag_whole_line, etag_whole_line)
       end
-      
+
       def stag_stmt(properties={})
          arguments = []
+         if @tagname == 'span' && @attrs.empty? && @append.empty?
+            s = @stag_whole_line ? '' : spaces[0] + spaces[1]
+            arguments << StringExpression.new(s) if !s.empty?
+            return PrintStatement.new(arguments)
+         end
          if @tagname.is_a?(String)
             arguments << StringExpression.new("#{@spaces[0]}<#{@tagname}")
          elsif @tagname.is_a?(Expression)
@@ -62,9 +71,7 @@ module Kwartz
             Kwartz::assert
          end
          @attrs.each do |aname, avalue|
-            if @remove && @remove.include?(aname)
-               next
-            elsif avalue.is_a?(String)
+            if avalue.is_a?(String)
                arguments << StringExpression.new(" #{aname}=\"#{avalue}\"")
             elsif avalue.is_a?(Expression)
                arguments << StringExpression.new(" #{aname}=\"")
@@ -81,16 +88,21 @@ module Kwartz
          arguments << StringExpression.new("#{s}>#{spaces[1]}")
          return PrintStatement.new(arguments)
       end
-      
+
       def cont_stmt(properties={})
          #Kwartz::assert unless @is_empty && @content
          return @content
       end
-         
+
       def etag_stmt(properties={})
          #return nil if @is_empty
          return BlockStatement.new([]) if @is_empty   # for bug 1110250
          arguments = []
+         if @tagname == 'span' && @attrs.empty? && @append.empty?
+            s = @etag_whole_line ? '' : spaces[2] + spaces[3]
+            arguments << StringExpression.new(s) if !s.empty?
+            return PrintStatement.new(arguments)
+         end
          if @tagname.is_a?(String)
             arguments << StringExpression.new("#{@spaces[2]}</#{@tagname}>#{@spaces[3]}")
          elsif @tagname.is_a?(Expression)
@@ -103,7 +115,7 @@ module Kwartz
          return PrintStatement.new(arguments)
       end
 
-      
+
       def statement(properties={})
          list = []
          list << stag_stmt(properties)
@@ -116,7 +128,7 @@ module Kwartz
          list << etag_stmt(properties)
          return BlockStatement.new(list)
       end
-      
+
       def _inspect()
          s = ''
          s << "===== marking=#{@name} =====\n"
@@ -159,7 +171,7 @@ module Kwartz
          end if element_list
          return element_table
       end
-      
+
    end
 
    class ElementDeclaration
@@ -175,7 +187,7 @@ module Kwartz
 
       attr_reader :name, :value, :attrs, :append, :remove, :tagname, :plogic
       alias :marking :name
-   
+
       def self.create_from_hash(name, hash)
          name    = name
          value   = hash[:value]
@@ -209,7 +221,7 @@ module Kwartz
          s << "}\n"
          return s
       end
-      
+
    end
 
 end

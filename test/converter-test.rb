@@ -1421,10 +1421,10 @@ END
 		[tagname]
 		input/
 		[attrs]
-		name="gender"
 		type="radio"
-		id="male"
+		name="gender"
 		value="M"
+		id="male"
 		[content]
 		:block
 		[spaces]

@@ -1,0 +1,15 @@
+#user_list {
+	attr:    "bgcolor" color;
+	plogic: {
+		i = 0;
+		foreach (user in user_list) {
+			i += 1;
+			color = i%2==0 ? '#CCCCFF' : '#FFCCCC';
+			name  = user['name'];
+			email = user['email'];
+			@stag;
+			@cont;
+			@etag;
+		}
+	}
+}

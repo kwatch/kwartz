@@ -98,7 +98,7 @@ module Kwartz
       
       
       ## facade method
-      def compile(lang='eruby', pdata_str='', plogic_str='', pdata_filename=nil, plogic_filename=nil)
+      def compile(pdata_str='', plogic_str='', lang='eruby', pdata_filename=nil, plogic_filename=nil)
          ## convert
          block_stmt, elem_list = convert(pdata_str, pdata_filename)
          ## parse plogic

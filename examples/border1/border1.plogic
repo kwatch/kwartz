@@ -1,0 +1,29 @@
+#user_list {
+	attr:    "bgcolor" color;
+	remove:  "id";
+	plogic: {
+		i = 0;
+		foreach (user in user_list) {
+			i += 1;
+			color = i%2==0 ? '#CCCCFF' : '#FFCCCC';
+			@stag;
+			@cont;
+			@etag;
+		}
+	}
+}
+
+#name {
+	value:   user['name'];
+	remove:  "id";
+}
+
+#email {
+	value:   user['email'];
+	remove:  "id";
+	attr:    "href" 'mailto:' .+ user['email'];
+}
+
+#dummy {
+	plogic: { }
+}

@@ -33,6 +33,7 @@ suite << TranslatorTest.suite()
 
 require 'compiler-test'
 suite << CompilerTest.suite()
+suite << SpanTest.suite()
 
 require 'analyzer-test'
 suite << AnalyzerTest.suite()

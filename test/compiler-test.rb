@@ -38,7 +38,7 @@ class CompilerTest < Test::Unit::TestCase
       end
       return if @flag_suspend
       compiler = Kwartz::Compiler.new(properties)
-      actual = compiler.compile(lang, pdata_str, plogic_str)
+      actual = compiler.compile(pdata_str, plogic_str, lang)
       assert_equal_with_diff(expected, actual)
    end
 
@@ -351,21 +351,21 @@ END
 
    def test_compile5_eruby	# empty tag
       expected = <<'END'
-<input name="username" size="30" type="text" id="username" value="<%= user.name %>" />
+<input type="text" size="30" name="username" id="username" value="<%= user.name %>" />
 END
       _test(@@pdata5, @@plogic5, expected)
    end
 
    def test_compile5_php	# empty tag
       expected = <<'END'
-<input name="username" size="30" type="text" id="username" value="<?php echo $user->name; ?>" />
+<input type="text" size="30" name="username" id="username" value="<?php echo $user->name; ?>" />
 END
       _test(@@pdata5, @@plogic5, expected)
    end
 
    def test_compile5_jstl11	# empty tag
       expected = <<'END'
-<input name="username" size="30" type="text" id="username" value="<c:out value="${user.name}" escapeXml="false"/>" />
+<input type="text" size="30" name="username" id="username" value="<c:out value="${user.name}" escapeXml="false"/>" />
 END
       _test(@@pdata5, @@plogic5, expected)
       _test(@@pdata5, @@plogic5, expected, {}, 'jstl10')
@@ -386,21 +386,21 @@ END
 
    def test_compile6_eruby	# empty tag and append
       expected = <<'END'
-checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<%= flag ? " checked=\"checked\"" : "" %> />
+checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox"<%= flag ? " checked=\"checked\"" : "" %> />
 END
       _test(@@pdata6, @@plogic6, expected)
    end
 
    def test_compile6_php	# empty tag and append
       expected = <<'END'
-checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<?php echo $flag ? " checked=\"checked\"" : ""; ?> />
+checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox"<?php echo $flag ? " checked=\"checked\"" : ""; ?> />
 END
       _test(@@pdata6, @@plogic6, expected)
    end
 
    def test_compile6_jstl11	# empty tag and append
       expected = <<'END'
-checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<c:out value="${flag ? " checked=\"checked\"" : ""}" escapeXml="false"/> />
+checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox"<c:out value="${flag ? " checked=\"checked\"" : ""}" escapeXml="false"/> />
 END
       _test(@@pdata6, @@plogic6, expected)
    end
@@ -408,9 +408,9 @@ END
    def test_compile6_jstl10	# empty tag and append
       expected = <<'END'
 checkbox:<c:choose><c:when test="${flag}">
-  <input name="chkbox" size="30" type="checkbox" id="chkbox" checked="checked" />
+  <input type="checkbox" size="30" name="chkbox" id="chkbox" checked="checked" />
 </c:when><c:otherwise>
-  <input name="chkbox" size="30" type="checkbox" id="chkbox" />
+  <input type="checkbox" size="30" name="chkbox" id="chkbox" />
 </c:otherwise></c:choose>
 END
       _test(@@pdata6, @@plogic6, expected)
@@ -420,6 +420,173 @@ END
 end
 
 
+class SpanTest < Test::Unit::TestCase
+
+   def _test(pdata, plogic, expected, properties={})
+      compiler = Kwartz::Compiler.new(properties)
+      actual = compiler.compile(pdata, plogic, 'eruby')
+      assert_equal_with_diff(expected, actual)
+   end
+   
+   ## ----------------------------------------
+   def test_span1
+      pdata = <<'END'
+  <div id="foreach:item:list">
+    <span id="value:item">foo</span>
+  </div>
+END
+      expected = <<'END'
+<% for item in list do %>
+  <div>
+    <%= item %>
+  </div>
+<% end %>
+END
+      _test(pdata, '', expected)
+   end
+
+   
+   ## ----------------------------------------
+   def test_span2
+      pdata = <<'END'
+  <span id="foreach:item:list">
+    <div id="value:item">foo</div>
+  </span>
+END
+      expected = <<'END'
+<% for item in list do %>
+    <div><%= item %></div>
+<% end %>
+END
+      _test(pdata, '', expected)
+   end
+
+
+   ## ----------------------------------------
+   def test_span3
+      pdata = <<'END'
+  <div id="mark:list">
+    <span id="mark:item">foo</span>
+  </div>
+END
+      plogic = <<'END'
+#list {
+	plogic: {
+	    @stag;
+	    foreach (item in list) {
+		@cont;
+	    }
+	    @etag;
+	}
+}
+
+#item {
+	value: item;
+}
+END
+      expected = <<'END'
+  <div>
+<% for item in list do %>
+    <%= item %>
+<% end %>
+  </div>
+END
+      _test(pdata, plogic, expected)
+   end
+
+   
+   ## ----------------------------------------
+   def test_span4
+      pdata = <<'END'
+  <span id="mark:list">
+    <div id="mark:item">foo</div>
+  </span>
+END
+      plogic = <<'END'
+#list {
+	plogic: {
+	    foreach (item in list) {
+		@stag;
+		@cont;
+		@etag;
+	    }
+	}
+}
+
+#item {
+	value: item;
+}
+END
+      expected = <<'END'
+<% for item in list do %>
+    <div><%= item %></div>
+<% end %>
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+
+   ## ----------------------------------------
+   def test_span4	# empty tag, set stmt
+      pdata = <<'END'
+  <span id="set:item=list">
+    <div id="mark:item">foo</div>
+    <span id="set:a=b"/>
+  </span>
+END
+      plogic = ''
+      expected = <<'END'
+<% item = list %>
+    <div>foo</div>
+<% a = b %>
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+   ## ----------------------------------------
+   def test_span5	# undelete span tag if other attr is exist
+      pdata = <<'END'
+  <span id="loop:item=list" class="list">
+    <span id="item">foo</span>
+  </span>
+END
+      plogic = ''
+      expected = <<'END'
+  <span class="list">
+<% for item in list do %>
+    <span id="item">foo</span>
+<% end %>
+  </span>
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+   ## ----------------------------------------
+   def test_span6	# uppercase span tag
+      pdata = <<'END'
+  <SPAN id="loop:item=list">
+    <SPAN id="value:item">foo</SPAN>
+  </SPAN>
+END
+      plogic = ''
+      expected = <<'END'
+  <SPAN>
+<% for item in list do %>
+    <SPAN><%= item %></SPAN>
+<% end %>
+  </SPAN>
+END
+      _test(pdata, plogic, expected)
+   end
+
+   
+end
+
+
 if $0 == __FILE__
     Test::Unit::UI::Console::TestRunner.run(CompilerTest)
+    Test::Unit::UI::Console::TestRunner.run(SpanTest)
 end
