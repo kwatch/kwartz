@@ -1,2 +1,8 @@
+.: 2004-09-23 (ver 0.2.0)
+	.- [enhance] error reporting enhanced
+	.- [enhance] @C(expr) is not escaped even when the command-line option '-s' or '-e' is specified
+	.- [bugfix] 'flag?true:false' was recognized as ':' + name
+	.- [bugfix] several conditional expression is correctly translated when lang is 'jsp'
+
 .: 2004-09-19 (ver 0.1.0)
 	.- Public Beta Release

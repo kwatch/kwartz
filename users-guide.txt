@@ -29,6 +29,10 @@
 .JA	◎更新履歴		| changelog*
 .EN	.$$ Changelog		| changelog*
 .	
+.	.: 2004-09-23
+.JA		.- 条件演算子を含む式のサニタイズについての説明を追加
+.EN		.- add description about sanitizing of conditional expresssions
+.	
 .	.: 2004-09-19
 .JA		.- public release
 .EN		.- public release
@@ -1865,6 +1869,13 @@
 .EN	The command-line options {{,-s,}} and {{,-e,}} sanitizes the direcives such as {{,kd:php="value({{/expression/}})",}} and {{,kd:php="attr('{{/name/}}'=>{{/value/}})",}}.
 .	
 .	
+.JA	式が文字列や数値のような定数の場合は、サニタイズされません。
+.JA	また「{{,$flag ? 'checked' : '',}}」のような条件演算子では、{{,$flag,}}の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
+.EN	Constant string and constant number are not sanitized.
+.EN	Conditional expression such as {{,$flag ? 'checked' : '',}} is not sanitized because the result is constant string whether the value of {{,$flag,}} is true or false.
+.	
+.	
+.	
 .	
 .JA	◎部分サニタイズ		| sanitizing-partial
 .EN	.$$ Partially Sanitizing	| sanitizing-partial
@@ -1914,6 +1925,8 @@
 .	.--------------------
 .	.<<<:! output.php guide.d/sanitize-partial2.pdata
 .	.--------------------
+.	
+.	
 .	
 .	
 .JA	●その他の話題		| topics

@@ -17,12 +17,12 @@
       <role>lead</role>
     </maintainer>
   </maintainers>
-  <release id="mark:release">
-    <version kd="value:version">1.0.0</version>
-    <date kd="value:date">2004-09-17</date>
-    <license kd="value:license">GPL ver.2</license>
-    <state kd="value:state">beta</state>
-    <notes kd="value:notes">First public beta version.</notes>
+  <release>
+    <version>0.2.0</version>
+    <date>2004-09-23</date>
+    <license>GPL ver.2</license>
+    <state>beta</state>
+    <notes>public beta</notes>
     <filelist>
       <file role="script" baseinstalldir="/" md5sum="#{md5sum}#" name="#{name}#" id="mark:script">
         <replace from="/usr/local/bin" to="PHP_BINDIR" type="php-const"/>
@@ -33,16 +33,23 @@
       <file role="php" baseinstalldir="#{dir}#" md5sum="#{md5sum}#" name="#{name}#" kd="mark:file"/>
     </filelist>
   </release>
-  <changelog id="mark:changelog">
+  <changelog>
     <release>
-      <version kd="value:version">0.1.0beta</version>
-      <date kd="value:date">2002-07-26</date>
-      <state kd="value:state">beta</state>
-      <notes kd="value:notes">It's not perfect at all. Here's some known bugs:
-- needs PHP4.03dev+
-- variable warnings are thrown before information inheritance takes place
-- @todo and @exclude do not work
+      <version>0.2.0</version>
+      <date>2004-09-23</date>
+      <state>beta</state>
+      <notes>
+- [enhance] error reporting enhanced
+- [enhance] @C(expr) is not escaped even when the command-line option '-s' or '-e' is specified
+- [bugfix] 'flag?true:false' was recognized as ':' + name
+- [bugfix] several conditional expression is correctly translated when lang is 'jsp'
 </notes>
+    </release>
+    <release>
+      <version>0.1.0</version>
+      <date>2004-09-19</date>
+      <state>beta</state>
+      <notes>public beta release</notes>
     </release>
   </changelog>
 </package>

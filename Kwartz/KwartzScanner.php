@@ -398,10 +398,15 @@ class KwartzScanner {
                 return $this->token = KwartzScanner::$reserved[$s];
             }
             
-            // ':' and variable
-            //throw new KwartzScannerError("invalid identifier.", $this->linenum, $this->filename);
-            $this->next_token = 'name';
-            $this->next_token_str = substr($s, 1);
+            // ':' + reserved word or ':' + variable
+            $word = substr($s, 1);
+            if (array_key_exists($word, KwartzScanner::$reserved)) {	// ':' + reserved word
+                $this->next_token = KwartzScanner::$reserved[$word];
+                //$this->next_token_str = $word;
+            } else {							// ':' + variable
+                $this->next_token = 'name';
+                $this->next_token_str = $word;
+            }
             return $this->token = ':';
         }
         

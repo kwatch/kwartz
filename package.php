@@ -36,27 +36,6 @@ foreach ($files as $file) {
 }
 
 
-$changelog_list = array();
-$changelog_list[] = array(
-	'version' => '0.1.0',
-	'date'    => '2004-09-19',
-	'state'   => 'beta',
-	'notes'   => 'public beta release',
-);
-
-$last_changelog = $changelog_list[0];
-
-$release = array();
-//$release['version']   = '0.1.0';
-//$release['date']      = '2004-09-19';
-//$release['state']     = 'beta';
-$release['version']   = $last_changelog['version'];
-$release['date']      = $last_changelog['date'];
-$release['state']     = $last_changelog['state'];
-$release['license']   = 'GPL ver.2';
-$release['notes']     = 'First public beta version.';
-
-
 include('package.view');
 
 ?>

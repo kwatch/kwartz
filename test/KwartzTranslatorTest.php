@@ -1055,6 +1055,93 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		$this->_test_escape(KwartzTranslatorTest::input_escape3, $expected, 'jsp');
 	}
 
+	const input_escape4 = '
+		echo $a > $b ? $a : $b, "\n", $x > $y ? true : false, "\n";
+		echo "<input type=\"checkbox\"", $gender == "M" ? " checked=\"checked\"" : "", "/>\n";
+		echo "<input type=\"checkbox\"", E($gender == "M" ? " checked=\"checked\"" : ""), "/>\n";
+		echo "<input type=\"checkbox\"", X($gender == "M" ? " checked=\"checked\"" : ""), "/>\n";
+	';
+	//const input_escape4 = '
+	//#{a>b?a:b}#
+	//#{x>y?true:false}#
+	//<input type="checkbox" kd="append:@C(gender==\'M\')"/>
+	//<input type="checkbox" kd="Append:@C(gender==\'M\')"/>
+	//<input type="checkbox" kd="APPEND:@C(gender==\'M\')"/>
+	//';
+
+	function test_php_escape4() {
+		$expected = '
+		<?php echo htmlspecialchars($a > $b ? $a : $b); ?>
+		<?php echo $x > $y ? TRUE : FALSE; ?>
+		<input type="checkbox"<?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?>/>
+		<input type="checkbox"<?php echo htmlspecialchars($gender == "M" ? " checked=\"checked\"" : ""); ?>/>
+		<input type="checkbox"<?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?>/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'php');
+	}
+
+	function test_eruby_escape4() {
+		$expected = '
+		<%= CGI.escapeHTML((a > b ? a : b).to_s) %>
+		<%= x > y ? true : false %>
+		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
+		<input type="checkbox"<%= CGI.escapeHTML((gender == "M" ? " checked=\"checked\"" : "").to_s) %>/>
+		<input type="checkbox"<%= gender == "M" ? " checked=\"checked\"" : "" %>/>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'eruby');
+	}
+
+	function test_jsp_escape4() {
+		$expected = '
+		<c:choose>
+		  <c:when test="${a > b}">
+		    <c:choose>
+		      <c:when test="${x > y}">
+		<c:out value="${a}"/>
+		<c:out value="${true}" escapeXml="false"/>
+		      </c:when>
+		      <c:otherwise>
+		<c:out value="${a}"/>
+		<c:out value="${false}" escapeXml="false"/>
+		      </c:otherwise>
+		    </c:choose>
+		  </c:when>
+		  <c:when test="${x > y}">
+		<c:out value="${b}"/>
+		<c:out value="${true}" escapeXml="false"/>
+		  </c:when>
+		  <c:otherwise>
+		<c:out value="${b}"/>
+		<c:out value="${false}" escapeXml="false"/>
+		  </c:otherwise>
+		</c:choose>
+		<c:choose>
+		  <c:when test="${gender == \'M\'}">
+		<input type="checkbox" checked="checked"/>
+		  </c:when>
+		  <c:otherwise>
+		<input type="checkbox"/>
+		  </c:otherwise>
+		</c:choose>
+		<c:choose>
+		  <c:when test="${gender == \'M\'}">
+		<input type="checkbox"<c:out value="${\' checked="checked"\'}"/>/>
+		  </c:when>
+		  <c:otherwise>
+		<input type="checkbox"<c:out value="${\'\'}"/>/>
+		  </c:otherwise>
+		</c:choose>
+		<c:choose>
+		  <c:when test="${gender == \'M\'}">
+		<input type="checkbox"<c:out value="${\' checked="checked"\'}" escapeXml="false"/>/>
+		  </c:when>
+		  <c:otherwise>
+		<input type="checkbox"<c:out value="${\'\'}" escapeXml="false"/>/>
+		  </c:otherwise>
+		</c:choose>
+		';
+		$this->_test_escape(KwartzTranslatorTest::input_escape4, $expected, 'jsp');
+	}
 
 
 
@@ -1062,24 +1149,32 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		':set(v = s==empty ? \'checked\' : \'\')
 		:print(s!=empty ? "aaa":"bbb", "\n")
 		';
+	const input_empty1_php = 
+		'$v = $s==empty ? "checked" : "";
+		 echo $s != empty ? "aaa" : "bbb", "\n";
+		';
 	function test_empty1_php() {
 		$input = KwartzTranslatorTest::input_empty1;
 		$expected =
 		'<?php $v = ($s == "") ? "checked" : ""; ?>
 		<?php echo ($s != "") ? "aaa" : "bbb"; ?>
 		';
+		$input = KwartzTranslatorTest::input_empty1;
+		$this->_test($input, $expected, 'php');
+		$input = KwartzTranslatorTest::input_empty1_php;
 		$this->_test($input, $expected, 'php');
 	}
 	function test_empty1_eruby() {
-		$input = KwartzTranslatorTest::input_empty1;
 		$expected =
 		'<% v = (s == nil || s == "") ? "checked" : "" %>
 		<%= (s != nil && s != "") ? "aaa" : "bbb" %>
 		';
+		$input = KwartzTranslatorTest::input_empty1;
+		$this->_test($input, $expected, 'eruby');
+		$input = KwartzTranslatorTest::input_empty1_php;
 		$this->_test($input, $expected, 'eruby');
 	}
 	function test_empty1_jsp() {
-		$input = KwartzTranslatorTest::input_empty1;
 		$expected =
 		'<c:choose>
 		  <c:when test="${(empty s)}">
@@ -1098,14 +1193,12 @@ class KwartzTranslatorTest extends PHPUnit_TestCase {
 		  </c:otherwise>
 		</c:choose>
 		';
+		$input = KwartzTranslatorTest::input_empty1;
+		$this->_test($input, $expected, 'jsp');
+		$input = KwartzTranslatorTest::input_empty1_php;
 		$this->_test($input, $expected, 'jsp');
 	}
 
-
-	const input_empty1_php = 
-		'$v = $s==empty ? "checked" : "";
-		 echo $s != empty ? "aaa" : "bbb", "\n";
-		';
 
 }
 

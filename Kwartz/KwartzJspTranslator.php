@@ -293,7 +293,7 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
         $visitor->set_option(NULL);
         
         // return if-statement
-        return new KwartzIfStatement($cond_expr->condition(), $then_block, $else_stmt);
+        return new KwartzIfStatement($cond_expr->condition(), $then_block, $this->expand_conditional_expr($else_stmt));
     }
 }
 

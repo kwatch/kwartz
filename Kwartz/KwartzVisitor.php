@@ -108,10 +108,10 @@ class KwartzDeepCopyVisitor extends KwartzVisitor {
     }
     function visit_function_expr($expr) {
         $list = array();
-        foreach ($expr->arglist as $expr) {
-            $list[] = $expr->accept($this);
+        foreach ($expr->arglist() as $arg_expr) {
+            $list[] = $arg_expr->accept($this);
         }
-        return new KwartzFunctionExpression($expr->funcname, $list);
+        return new KwartzFunctionExpression($expr->funcname(), $list);
     }
     function visit_conditional_expr($expr) {
         $left  = $expr->left()->accept($this);

@@ -1,0 +1,41 @@
+.- [v] support property with arguments
+.- [v] directive 'replace'
+.- [v] PHP-like parser
+.- [v] PHP-like converter
+.- [_] batch mode support
+.- [v] toppings support
+.- [v] eruby translator
+.- [v] JSP translator
+.- [_] Velocity translator
+.- [v] function E()
+.- [v] function X()
+.- [-] function R()
+.- [v] directive 'include'
+.- [v] directive 'load'
+.- [v] Scanner#clear($input)
+.- [v] Parser#clear($input)
+.- [v] indent
+.- [_] ':elseif' and ':elsif'
+.- [v] analyse
+.- [v] rename ':elem' to ':element'
+.- [v] rename 'elem_' to 'element_'
+.- [_] constant, which is 'FOO', not '$FOO'
+.- [v] escape
+.- [v] @C(), @S(), @D()
+.- [v] newline
+.- [v] embed($flag ? 'checked="checked"' : '')
+.- [v] empty operation
+.- [v] macro BEGIN, END
+.- [_] php2
+.- [v] PLTranslator
+.- [_] KWARTZ_OPTIONS
+.- [v] <c:if test="..."></c:if>
+.- [v] filename for Scanner & Converter
+.- [_] single statement (ex. while (...) echo "hoge";)
+.- [_] rename toppings to properties
+.- [v] --indent=false support
+.- [_] is_const() support
+.- [v] auto-compiler
+.- [_] [bugfix] assign into properties
+.- [v] [bugfix] incorrect error message when name is appeared as a invalid token 
+.- [_] rename local variables '$var' to '$var__'

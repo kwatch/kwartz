@@ -374,27 +374,37 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     
     protected function translate_print_statement($stmt, $depth) {
         foreach ($stmt->arglist() as $expr) {
-            if (($t = $expr->token()) == 'string') {
+            $t = $expr->token();
+            if ($t == 'string' || $t == 'number') {
                 $this->code .= $expr->value();
             } else {
                 $startkey = $endkey = NULL;
                 if ($expr->token() == 'function') {
                     $fname = $expr->funcname();
-                    if ($fname == 'E') {
-                        $startkey = ':eprint';
-                        $endkey   = ':endeprint';
+                    if ($fname == 'E' || $fname == 'X') {
+                        if ($fname == 'E') {
+                            $startkey = ':eprint';
+                            $endkey   = ':endeprint';
+                        } else {
+                            $startkey = ':print';
+                            $endkey   = ':endprint';
+                        }
                         $arglist = $expr->arglist();
-                        $expr = $arglist[0];
-                    } elseif ($fname == 'X') {
-                        $startkey = ':print';
-                        $endkey   = ':endprint';
-                        $arglist = $expr->arglist();
+                        if ($arglist == NULL || count($arglist) != 1) {
+                            $msg = "number of arguments of '{$funcname}()' is not 1.";
+                            throw new KwartzTranslationError($msg);
+                        }
                         $expr = $arglist[0];
                     }
                 }
                 if (! $startkey) {
-                    $startkey = $this->print_key;
-                    $endkey   = $this->endprint_key;
+                    if (KwartzBaseTranslator::is_const($expr)) {
+                        $startkey = ':print';
+                        $endkey   = ':endprint';
+                    } else {
+                        $startkey = $this->print_key;
+                        $endkey   = $this->endprint_key;
+                    }
                 }
                 $this->code .= $this->keyword($startkey);	// 'print' or 'eprint'
                 $this->translate_expression($expr);
@@ -493,6 +503,28 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         $this->code .= $this->nl;
     }
     
+    // --------------------
+    // utility function
+    // --------------------
+    function is_const($expr) {
+        $t = $expr->token();
+        switch ($t) {
+          case 'string':
+          case 'number':
+          //case 'true':
+          //case 'false':
+          case 'boolean':
+          case 'null':
+            return TRUE;
+          case '?':
+            if (! KwartzBaseTranslator::is_const($expr->left())) {
+                return FALSE;
+            }
+            return  KwartzBaseTranslator::is_const($expr->right());
+          default:
+            return FALSE;
+        }
+    }
 }
 
 
