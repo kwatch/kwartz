@@ -25,16 +25,33 @@ class KwartzConverterTest extends PHPUnit_TestCase {
 		return $converter;
 	}
 
+
 	function test_fetch1() {
 		$input = <<<END
 		<span>
 		</span>
 
 END;
+#		$expected = <<<END
+#		"" "" <span ""> "\\n"
+#		"" "" </span ""> "\\n"
+#		""
+#END;
 		$expected = <<<END
-		"" "" <span ""> "\\n"
-		"" "" </span ""> "\\n"
-		""
+		before_text:  ""
+		before_space: ""
+		tag:          <span>
+		attr_str:     ""
+		after_space:  "\\n"
+		
+		before_text:  ""
+		before_space: ""
+		tag:          </span>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
 END;
 		$this->_test_fetch($input, $expected);
 	}
@@ -48,10 +65,21 @@ END;
 		<span>
 
 END;
+#		$expected = <<<END
+#		"hoge\\ngeji\\n" "" <span ""> "\\n"
+#		""
+#END;
 		$expected = <<<END
-		"hoge\\ngeji\\n" "" <span ""> "\\n"
-		""
+		before_text:  "hoge\\ngeji\\n"
+		before_space: ""
+		tag:          <span>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
 END;
+
 		$this->_test_fetch($input, $expected);
 	}
 
@@ -65,6 +93,16 @@ END;
 		"" " " <span ""/> "\\n"
 		""
 END;
+		$expected = <<<END
+		before_text:  ""
+		before_space: " "
+		tag:          <span/>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
+END;
 		$this->_test_fetch($input, $expected);
 	}
 
@@ -75,11 +113,28 @@ END;
 		<span kd="value:foo">hello</span>
 
 END;
+#		$expected = <<<END
+#		"" "" <span " kd=\\"value:foo\\""> ""
+#		"hello" "" </span ""> "\\n"
+#		""
+#END;
 		$expected = <<<END
-		"" "" <span " kd=\\"value:foo\\""> ""
-		"hello" "" </span ""> "\\n"
-		""
+		before_text:  ""
+		before_space: ""
+		tag:          <span>
+		attr_str:     " kd=\"value:foo\""
+		after_space:  ""
+		
+		before_text:  "hello"
+		before_space: ""
+		tag:          </span>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
 END;
+
 		$this->_test_fetch($input, $expected);
 	}
 
@@ -90,10 +145,26 @@ END;
 		      kd="attr:class=ctr%2==0?'even':'odd'">hello</span>
 
 END;
+#		$expected = <<<END
+#		"" "" <span " id=\\"foo\\" class=\\"foo\\"\\n      kd=\\"attr:class=ctr%2==0?'even':'odd'\\""> ""
+#		"hello" "" </span ""> "\\n"
+#		""
+#END;
 		$expected = <<<END
-		"" "" <span " id=\\"foo\\" class=\\"foo\\"\\n      kd=\\"attr:class=ctr%2==0?'even':'odd'\\""> ""
-		"hello" "" </span ""> "\\n"
-		""
+		before_text:  ""
+		before_space: ""
+		tag:          <span>
+		attr_str:     " id=\"foo\" class=\"foo\"\\n      kd=\"attr:class=ctr%2==0?'even':'odd'\""
+		after_space:  ""
+		
+		before_text:  "hello"
+		before_space: ""
+		tag:          </span>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
 END;
 		$this->_test_fetch($input, $expected);
 	}
@@ -105,14 +176,83 @@ END;
 		      php="attr('class'=>\$user->ctr%2==0?'even':'odd')">hello</span>
 
 END;
+#		$expected = <<<END
+#"" "" <span " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""> ""
+#"hello" "" </span ""> "\\n"
+#""
+#END;
 		$expected = <<<END
-"" "" <span " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""> ""
-"hello" "" </span ""> "\\n"
-""
+		before_text:  ""
+		before_space: ""
+		tag:          <span>
+		attr_str:     " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""
+		after_space:  ""
+		
+		before_text:  "hello"
+		before_space: ""
+		tag:          </span>
+		attr_str:     ""
+		after_space:  "\\n"
+		rest:         ""
+
+
 END;
 		$this->_test_fetch($input, $expected);
 	}
 
+
+	function test_fetch7() {
+		$input = <<<END
+		<div kd="mark:foo">
+		 <div id="bar">
+		  <div id="baz">
+		   test
+		  </div>
+		 </div>
+		</div>
+END;
+		$expected = <<<END
+		before_text:  ""
+		before_space: ""
+		tag:          <div>
+		attr_str:     " kd=\"mark:foo\""
+		after_space:  "\\n"
+		
+		before_text:  ""
+		before_space: " "
+		tag:          <div>
+		attr_str:     " id=\"bar\""
+		after_space:  "\\n"
+		
+		before_text:  ""
+		before_space: "  "
+		tag:          <div>
+		attr_str:     " id=\"baz\""
+		after_space:  "\\n"
+		
+		before_text:  "   test\\n"
+		before_space: "  "
+		tag:          </div>
+		attr_str:     ""
+		after_space:  "\\n"
+		
+		before_text:  ""
+		before_space: " "
+		tag:          </div>
+		attr_str:     ""
+		after_space:  "\\n"
+		
+		before_text:  ""
+		before_space: ""
+		tag:          </div>
+		attr_str:     ""
+		after_space:  ""
+		rest:         ""
+
+
+END;
+		$this->_test_fetch($input, $expected, true);
+	}
 
 
 	###
@@ -159,7 +299,7 @@ END;
 </tr>
 END;
 		$expected1 = ' id="foo" class="odd" php="attr(\'class\'=>$klass,\'align\'=>$item->align);foreach($list as $item)"';
-		$expected2 = " id=\"foo\" class=\"<?php echo \$klass; ?" . ">\" align=\"<?php echo \$item->align; ?" . ">\"";
+		$expected2 = ' id="foo" class="@{$klass}@" align="@{$item->align}@"';
 
 		$converter = new KwartzConverter($input);
 		$tag_name = $converter->fetch();
@@ -778,7 +918,9 @@ END;
 		      var3
 		      value3
 		  :print
-		    "<span class=\"<?php echo \$var3; $c>\"/>"
+		    "<span class=\""
+		    var3
+		    "\"/>"
 
 END;
 
@@ -1189,7 +1331,9 @@ END;
 		            "even"
 		            "odd"
 		      :print
-		        "    <tr class=\"<?php echo \$klass; ?>\">\\n"
+		        "    <tr class=\""
+		        klass
+		        "\">\\n"
 		      :print
 		        "      <td>"
 		      :print
@@ -1217,7 +1361,6 @@ END;
 
 		$this->_test_convert($input2, $expected2);
 	}
-
 
 }
 

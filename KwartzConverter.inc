@@ -26,7 +26,6 @@ require_once('KwartzUtility.inc');
 	class KwartzConverter {
 		private $input;		// string
 		private $before_text;
-		private $after_text;
 		private $before_space;
 		private $after_space;
 		private $flag_etag;
@@ -35,15 +34,7 @@ require_once('KwartzUtility.inc');
 		private $attr_str;
 
 		private $macro_stmt_list;
-
-		//function _input()	   { return $this->input; }
-		//function _before_text()  { return $this->before_text; }
-		//function _after_text()   { return $this->after_text; }
-		//function _before_space() { return $this->before_space; }
-		//function _after_space()  { return $this->after_space; }
-		//function _flag_etag()	   { return $this->flag_etag; }
-		//function _flag_single()  { return $this->flag_single; }
-		//function _tag_name()	   { return $this->tag_name; }
+		
 		function _attr_str()	   { return $this->attr_str; }		// for unit-test
 
 
@@ -53,12 +44,12 @@ require_once('KwartzUtility.inc');
 		}
 
 
+		//const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)((?:.|\n)*)/';
+		//const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)/';
+		const fetch_pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)/';
+
 		function fetch() {
-			//$pattern = '/(.*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]=".*?")*)(\/?)>([ \t]*\r?\n?)(.*)/m';
-			//$pattern = '/(.*)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]=".*?")*)(\/?)>([ \t]*\r?\n?)(.*)/m';
-			$pattern = '/((?:.|\n)*?)([ \t]*)<(\/?)([:\w]+)((?:\s+[:\w]+=".*?")*)(\/?)>([ \t]*\r?\n?)((?:.|\n)*)/';
-			$m = array();
-			if (preg_match($pattern, $this->input, $m)) {
+			if (preg_match(KwartzConverter::fetch_pattern, $this->input, $m = array())) {
 				$this->before_text  = $m[1];
 				$this->before_space = $m[2];
 				$this->flag_etag    = $m[3];
@@ -66,35 +57,25 @@ require_once('KwartzUtility.inc');
 				$this->attr_str	    = $m[5];
 				$this->flag_single  = $m[6];
 				$this->after_space  = $m[7];
-				$this->after_text   = $m[8];
-				$this->input = $this->after_text;
-			} else {
-				//$this->before_text  = NULL;
-				//$this->before_space = NULL;
-				//$this->flag_etag    = NULL;
-				$this->tag_name	    = NULL;
-				//$this->attr_str     = NULL;
-				//$this->flag_single  = NULL;
-				//$this->after_space  = NULL;
-				//$this->after_text   = NULL;
+				$matched_length = strlen($m[0]);
+				$this->input = substr($this->input, $matched_length);
+				return $this->tag_name;
 			}
-			return $this->tag_name;
+			return $this->tag_name = NULL;
 		}
 
 
 		function fetch_all() {
 			$s = '';
 			while (($tag_name = $this->fetch()) != NULL) {
-				$s .= kwartz_inspect_str($this->before_text);
-				$s .= ' ' . kwartz_inspect_str($this->before_space);
-				$s .= ' <' . ($this->flag_etag ? '/' : '') . $tag_name;
-				$s .= ' ' . kwartz_inspect_str($this->attr_str);
-				$s .= ($this->flag_single ? '/' : '') . '> ';
-				$s .= kwartz_inspect_str($this->after_space);
-				$s .= "\n";
-				//$s .= kwartz_inspect_str($this->after_text) . "\n";
+				if ($s) { $s .= "\n"; }
+				$s .= "before_text:  " . kwartz_inspect_str($this->before_text) . "\n";
+				$s .= "before_space: " . kwartz_inspect_str($this->before_space). "\n";
+				$s .= "tag:          " . "<" .  ($this->flag_etag ? '/' : '') . $tag_name . ($this->flag_single ? '/' : '') . ">\n";
+				$s .= "attr_str:     " . kwartz_inspect_str($this->attr_str) . "\n";
+				$s .= "after_space:  " . kwartz_inspect_str($this->after_space) . "\n";
 			}
-			$s .= kwartz_inspect_str($this->input);
+			$s .= "rest:         " . kwartz_inspect_str($this->input) . "\n\n";
 			return $s;
 		}
 
@@ -144,8 +125,8 @@ require_once('KwartzUtility.inc');
 				}
 
 				## deploy attribute expression strings which are specified as directive.
-				$this->deploy_attr_exprs($kd_attr_exprs,  $spaces, $attr_names, $attr_values, '#{',	     '}#');
-				$this->deploy_attr_exprs($php_attr_exprs, $spaces, $attr_names, $attr_values, '<?php echo ', '; ?>');
+				$this->deploy_attr_exprs($kd_attr_exprs,  $spaces, $attr_names, $attr_values, '#{', '}#');
+				$this->deploy_attr_exprs($php_attr_exprs, $spaces, $attr_names, $attr_values, '@{', '}@');
 
 				## rebuild $this->attr_str, excepting kd/id/php attributes.
 				$s = '';
@@ -328,16 +309,20 @@ require_once('KwartzUtility.inc');
 			}
 			$list = array();
 			$s = $str;
-			$pattern = '/((?:.|\n)*?)\#\{(.*?)\}\#((?:.|\n)*)/m';
+			$pattern = '/((?:.|\n)*?)(?:\#\{(.*?)\}\#|@\{(.*?)\}@)((?:.|\n)*)/m';
 			while (preg_match($pattern, $s, $m = array())) {
-				$text  = $m[1];
-				$value = $m[2];
-				$rest  = $m[3];
+				$text     = $m[1];
+				$value    = $m[2];
+				$phpvalue = $m[3];
+				$rest     = $m[4];
 				if ($text)  {
 					$list[] = new KwartzStringExpression($text);
 				}
 				if ($value) {
-					$expr = $this->parse_expression($value);
+					$expr = $this->parse_expression($value, false);
+					$list[] = $expr;
+				} elseif ($phpvalue) {
+					$expr = $this->parse_expression($phpvalue, true);
 					$list[] = $expr;
 				}
 				$s = $rest;
