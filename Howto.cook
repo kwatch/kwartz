@@ -12,10 +12,10 @@ chmod:
 
 files = ChangeLog setup.rb README.ja.txt README.en.txt;
 
-kwartz_%:  README.ja.txt README.en.txt
+kwartz-ruby_%:  README.ja.txt README.en.txt
 {
 	release = %;
-	archive_dir = kwartz_[release];
+	archive_dir = [target];
 	rm -rf [archive_dir];
 	mkdir -p [archive_dir];
 	cp -a lib bin test doc [files] [archive_dir];

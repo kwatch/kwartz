@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2004-02-06 rev.38
+	.- [enhance] add users-guide.txt and reference.txt
+
 .: 2004-02-06 rev.37
 	.- [enhance] property 'empty_tags' and Config::EMPTY_TAGS support
 

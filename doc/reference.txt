@@ -1,0 +1,2551 @@
+.JA	.=title:	Kwartz-phpリファレンスマニュアル
+.EN	.=title:	Kwartz-php Reference Manual
+.	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.	.?lastupdate:	$Date: 2005-01-01 12:08:50 +0900 (Sat, 01 Jan 2005) $
+.	.?version:	$Rev: 52 $
+.	
+.	
+.JA	●はじめに
+.EN	.$ Preface	| preface*
+.	
+.	
+.JA	このドキュメントは、Kwartz-phpのリファレンスマニュアルです。
+.JA	プレゼンテーション用言語「PL-php」、ディレクティブ、コマンドラインオプションについて説明しています。
+.EN	This document is the Kwartz-php Reference Manual.
+.EN	Presentation Language (PL-php), Directives, and the Command-Line options are described in this document.
+.	
+.	
+.	.+toc:
+.JA	.<<< reference.ja.toc.html
+.EN	.<<< reference.en.toc.html
+.	.-toc:
+.	
+.	
+.	
+.	
+.JA	●プレゼンテーション用言語「PL-php」	| pl
+.EN	.$ PL-php -- Presentation Language	| pl
+.	
+.	
+.JA	PL-phpとは、Kwartz-phpにおいてプレゼンテーションロジックを記述するのに利用される言語です。
+.JA	またプレゼンテーションデータを表す中間言語としても利用されます。
+.JA	PL-phpの文法はPHPによく似ています。
+.EN	PL-php is a language which is used to describe presentation logic in Kwartz-php.
+.EN	PL-php is also used as an intermediate language which represents presentation data.
+.EN	It's syntax is very similar to PHP.
+.	
+.JA	Kwartz-phpではもうひとつ、PL-Kwartzという言語でもプレゼンテーションロジックを記述できます。
+.JA	こちらの文法はオリジナルですが、能力はPL-phpと同じです。
+.EN	There is another language, named PL-Kwartz, which is available in Kwartz-php.
+.EN	It's syntax is original and It's ability or capability is equal to PL-php.
+.	
+.JA	.#この章ではPL-phpについて説明します。PL-Kwartzについては最後に説明します。
+.EN	.#This section shows how to write in PL-php. The last subsection shows PL-Kwartz.
+.JA	この章では、PL-phpの書き方について説明します。
+.JA	PL-Kwartzについては最後に説明します。
+.EN	This section shows how to write using PL-php.
+.EN	PL-Kwartz is shown at the end of the section.
+.	
+.	
+.JA	.#Kwartz-phpが使用している中間言語を、PL(Presentation Language)といいます。
+.JA	.#PLは、次の2つの用途で使用されます。
+.JA	.#.* プレゼンテーションデータから自動生成した中間コードを表すため
+.JA	.#.* プレゼンテーションロジックを記述するため
+.EN	.#Kwartz-php uses an intern intermediate language.
+.EN	.#This intermediate language is named PL (Presentation Language).
+.EN	.#PL is used for two purposes in Kwartz-php:
+.EN	.#.* To describe intermediate code (which is automatically generated from the presentation data)
+.EN	.#.* To describe presentation logic
+.	.#
+.	.#
+.JA	.#.#つまり、Kwartz-phpではプレゼンテーションデータもプレゼンテーションロジックもPLで表現されるわけです。
+.EN	.#.#In fact, Kwartz-php describes both presentation data and presentation logic in PL.
+.	.#
+.	.#
+.JA	.#Kwartz-phpでは、2種類のPLが使用できます。どちらも記述能力は同じです。
+.JA	.#.[ PL-php ]
+.JA	.#	PHPによく似た文法のPLです。
+.JA	.#.[ PL-Kwartz ]
+.JA	.#	独自文法のPLです。
+.EN	.#Kwartz-php has two presentation languages. There is no difference about ability between two languages.
+.EN	.#.[ PL-php]
+.EN	.#	A language which is similar to PHP.
+.EN	.#.[ PL-Kwartz ]
+.EN	.#	An language which has original syntax.
+.	.#
+.	.#
+.JA	.#次はPL-phpとPL-Kwartzのサンプルです。
+.JA	.#書き方に違いはありますが、どちらも同じ内容です。
+.EN	.#The followings are examples of PL-php and PL-Kwartz.
+.EN	.#Syntaxs are differenct but the contents are equal.
+.	.#
+.JA	.#プレゼンテーションロジック(PL-php)：
+.EN	.#Presentation Logic (PL-php):
+.	.#.--------------------
+.	.#element userlist {
+.	.#  $ctr = 0;
+.	.#  foreach ($user_list as $user) {
+.	.#    $ctr += 1;
+.	.#    $color = $user_ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF";
+.	.#    @stag;
+.	.#    @cont;
+.	.#    @etag;
+.	.#  }
+.	.#}
+.	.#.--------------------
+.	.#
+.JA	.#プレゼンテーションロジック(PL-Kwartz)：
+.EN	.#Presentation Logic (PL-Kwartz):
+.	.#.--------------------
+.	.#:element(userlist)
+.	.#  :set(ctr = 0)
+.	.#  :foreach(user = user_list)
+.	.#    :set(ctr += 1)
+.	.#    :set(color = user_ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF")
+.	.#    @stag
+.	.#    @cont
+.	.#    @etag
+.	.#  :end
+.	.#:end
+.	.#.--------------------
+.	.#
+.	.#
+.JA	.#この章では、PL-phpの書き方について説明します。
+.JA	.#PL-Kwartzについては最後に説明します。
+.EN	.#This section shows how to write using PL-php.
+.EN	.#PL-Kwartz is shown at the end of the section.
+.	
+.	
+.	
+.	
+.JA	◎コメント	| pl-comment
+.EN	.$$ Comments	| pl-comment
+.	
+.JA	「{{,#,}}」から改行まではコメントになります。
+.JA	ただし、将来は「{{,#*,}}」や「{{,#@,}}」などを特別扱いする可能性があります。
+.JA	そのため、できればコメントは「{{,##,}}」にしてください。
+.EN	Characters following '{{,#,}}' in a line is a comment.
+.EN	You should use '{{,##,}}' instead of '{{,#,}}',
+.EN	because '{{,#*,}}' or '{{,#@,}}' may have special functions in the future.
+.	
+.	.--------------------
+.JA	## ここはコメント
+.EN	## comment
+.	.--------------------
+.	
+.	
+.	
+.JA	◎文字列 | pl-string
+.EN	.$$ Strings | pl-string
+.	
+.	
+.JA	文字列は「{{,"...",}}」または「{{,'...',}}」で表します。
+.JA	前者には改行(Line Feed)「\n」と復改(Carriage Returen)「\r」とタブ(Tab)「\t」を含めることができます。
+.EN	{{,"...",}} or {{,'...',}} represents a string literal.
+.EN	The former can contain special characters: line feed (\n), carriage return (\r) and tab (\t).
+.EN	.#A string starts/ends with a single quote. 
+.EN	.#A string can contain the newline character '{{,\n,}}'.
+
+.	
+.	.--------------------
+.JA	'foo bar'		## 文字列
+.JA	"foo bar\n"		## 改行を含む文字列
+.EN	'foo bar'		## String
+.EN	"foo bar\n"		## String which contains then line feed character
+.	.--------------------
+.	
+.	
+.	
+.JA	◎真偽値、null | pl-boolean
+.EN	.$$ Booleans and Null | pl-boolean
+.	
+.	
+.JA	式の中で {{,true,}}、{{,false,}}、{{,null,}} が使えます。
+.EN	The keywords {{,true,}}, {{,false,}}, {{,null,}} are available in expressions.
+.	
+.	.--------------------
+.	$flag = $obj == null ? true : false;
+.	.#:set(flag = obj == null? true : false)
+.	.--------------------
+.	
+.	
+.JA	{{,true,}}、{{,false,}}、{{,null,}}は各言語において次のように変換されます。
+.EN	{{,true,}}, {{,false,}} and {{,null,}} are translated to the proper keywords in each language.
+.	
+.	.+--------------------
+.JA	変換先言語	., true		., false	., null
+.EN	Language name	., true		., false	., null
+.	.--------------------
+.	PHP		., TRUE		., FALSE	., NULL
+.	eRuby		., true		., false	., nil
+.	JSP(JSTL)	., true		., false	., null
+.	.+--------------------
+.JA		{{,true,}}、{{,false,}}、{{,null,}}の変換
+.EN		Translation of {{,true,}}, {{,false,}} and {{,null,}}
+.	
+.	
+.JA	.#なおVelocityではnullやそれに類するキーワードがありません。
+.JA	.#そのため、nullを含むPLプログラムをVelocityに変換するとエラーになります。
+.JA	.#ただしnullとの比較を行う論理式は、nullを使わない式に変換されます。
+.EN	.#Translating a PL program which contains the keyword {{,null,}} into a Velocity script will cause an error
+.EN	.#because Velocity doesn't have a keyword which is equivalent to {{,null,}}.
+.EN	.#However, Kwartz-php will translate '{{,expr==null,}}' and '{{,expr!=null,}}' to '{{,!expr,}}' and '{{,expr,}}'
+.EN	.#when translating to Velocity.
+.	.#
+.	.#
+.JA	.#PLプログラム：
+.EN	.#PL Program:
+.	.#.-------------------- pl-boolean.plogic
+.	.#:set(flag = obj == null? true : false)
+.	.#
+.	.#:if (expr != null)
+.	.#  :print("expr is not null.\n")
+.	.#:else
+.	.#  :print("epxr is null.\n")
+.	.#:end
+.	.#.--------------------
+.	.#
+.JA	.#出力用スクリプト：
+.EN	.#Output Script:
+.	.#.____________________
+.	.#.<<<:! output.php -a translate -l velocity guide.d/pl-boolean.plogic
+.	.#.____________________
+.	
+.	
+.	
+.JA	◎変数		| pl-variable
+.EN	.$$ Variables	| pl-variable
+.	
+.	
+.JA	変数は「{{,$,}}」で始まり、アルファベットと数字と「{{,_,}}」が連続したものです。
+.JA	ただし変数名の最初の文字はアルファベットまたは「{{,_,}}」でなくてはいけません。
+.EN	A varaible starts with '{{,$,}}' and is followed by alphanumerics or '{{,_,}}'
+.EN	(the first character of a variable name is alphabetic character or '{{,_,}}').
+.	
+.	
+.JA	また変数には型がなく、変数宣言もする必要がありません{{(この性質から、PL-phpまたはPL-Kwartzで書かれたプログラムを、変数に型のある言語や変数宣言が必要な言語に変換するのは困難です。)}}。
+.EN	You need not declare variables nor specify its type{{(Because of this feature, it is very difficult to translate PL-php and PL-Kwartz program into "static languages" such as Java.)}}.
+.	
+.	
+.	
+.JA	◎演算子	| pl-op
+.EN	.$$ Operators	| pl-op
+.	
+.	
+.JA	演算子には次のものが使用できます。基本的には、文字列用と数値用とで演算子を分けてはいません{{(Perlのように文字列用と数値用とで演算子が異なる言語に対しては、Kwartz-phpを対応させるのは困難です。)}}。
+.EN	There are several operators in Kwartz-php. Comparison operators are available for numbers and strings{{(It is very difficult to translate PL-php and PL-Kwartz program into Perl program, because Perl have different operators for numbers and strings ('==' vs 'eq', '!=' vs 'ne', ...).)}}.
+.	
+.JA	.+--------------------
+.JA	  比較演算子	., {{,==  != < <= > >=,}}
+.JA	  論理演算子    ., {{,&& || !,}}	
+.JA	  算術演算子    ., {{,+ - * / %,}}	
+.JA	  文字列の連結  ., {{, . ,}}		
+.JA	  条件演算子    ., {{,?:,}}		
+.JA	.+--------------------
+.EN	.+--------------------
+.EN	  Comparison operators  ., {{,==  != < <= > >=,}}
+.EN	  Logical operators     ., {{,&& || !,}}	
+.EN	  Arithmetic operators  ., {{,+ - * / %,}}	
+.EN	  String Concatenation operators ., {{, . ,}}	
+.EN	  Conditional operators ., {{,?:,}}		
+.EN	.+--------------------
+.	
+.JA	文字列の連結演算子「{{,.,}}」は、PHPでは「{{,.,}}」に、eRubyでは「{{,+,}}」に、
+.JA	JSTL1.1では関数{{,fn:join(),}}に変換されます。
+.JA	JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
+.EN	String concatenation operator ("{{,.,}}") is converted into "{{,.,}}" in PHP, "{{,+,}}" in eRuby,
+.EN	a function "{{,fn:join(),}}" in JSTL1.1.
+.EN	There is no concatenation operator in JSTL1.0, so Kwartz-php converts it into a little tricky code.
+.	
+.JA	PLプログラム(PL-php)：
+.EN	PL Program (PL-php):
+.	.-------------------- pl-concatop.plogic
+.	$filename = $basename . '.plogic';
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-concatop.plogic
+.	.____________________
+.	
+.JA	条件演算子（3項演算子）はPHPやeRubyやJSTL1.1では使用できますが、JSTL1.0では使用できません。
+.JA	そのため条件演算子を含む式は、JSTL1.0ではif文（に相当する<c:choose>）に変換されます。
+.EN	Conditional Operators are available in PHP, eRuby, and JSTL1.1.
+.EN	However, it is not available in JSTL1.1.
+.EN	Therefore, conditional operators will be translated to if statements in JSTL1.0.
+.	
+.JA	PLプログラム(PL-php)：
+.EN	PL Program (PL-php):
+.	.-------------------- pl-condop.plogic
+.	$color = $ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+.	.#:set(color = ctr%2==0 ? '#FFCCCC' : '#CCCCFF')
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-condop.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎出力 | pl-print
+.EN	.$$ Printing | pl-print
+.	
+.	
+.JA	出力は「{{,echo {{/.../}},}}」で表します。
+.JA	引数には任意の式を書くことができます。
+.EN	{{,echo {{/.../}},}}is print statements.
+.EN	Any expression can be in arguments.
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-print.plogic
+.JA	echo 'foo', $bar, "baz\n";    ## 文字列と変数を出力
+.EN	echo 'foo', $bar, "baz\n";    ## print a string and the value of a variable
+.	.--------------------
+.	
+.JA	.#PLプログラム(PL-Kwartz)：
+.EN	.#PL Program (PL-Kwartz):
+.	.#.--------------------
+.JA	.#:print('foo', bar, "baz\n")   ## 文字列と変数を出力
+.EN	.#:print('foo', bar, "baz\n")   ## print a string and the value of a variable
+.	.#.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-print.plogic
+.	.____________________
+.	
+.	
+.JA	自動サニタイズ機能を使用した場合は次のような出力になります。
+.EN	When you enable auto-sanitizing, the output scripts will be one of the following:
+.	.____________________
+.	.<<<:! output.php -a translate -s guide.d/pl-print.plogic
+.	.____________________
+.	
+.	
+.JA	.#また自動サニタイズ機能を使用しても、条件演算子が返す値が文字列または数字である場合は、サニタイズされません。
+.EN	.#If conditional operator returns constant string or number, sanitizing will be off even when using auto-sanitizing.
+.	.#
+.JA	.#PLプログラム：
+.EN	.#PL Program:
+.	.#.-------------------- pl-print2.plogic
+.JA	.### サニタイズされる
+.EN	.### Sanitized.
+.	.#:print("<option ", condition ? var1 : var2, ">\n")
+.JA	.### サニタイズされない（必要がないから）
+.EN	.### Not sanitized.
+.	.#:print("<option ", condition ? 'selected' : '', ">\n")
+.	.#.--------------------
+.	.#
+.JA	.#出力用スクリプト：
+.EN	.#Output Script:
+.	.#.____________________
+.	.#.<<<:! output.php -a translate -s -l ruby,php,eruby,erb guide.d/pl-print2.plogic
+.	.#.____________________
+.	
+.	
+.	
+.JA	◎代入 | pl-set
+.EN	.$$ Assignment | pl-set
+.	
+.	
+.	
+.JA	.#代入は「{{,:set({{/var/}}={{/value/}}),}}」です。
+.JA	.#「{{,(,}}」や「{{,=,}}」の前後に空白を入れても構いません。
+.EN	.#'{{,:set({{/var/}}={{/value/}}),}}' is an assignment statement.
+.EN	.#Spaces around '{{,(,}}' or '{{,=,}}' are allowed.
+.	
+.	
+.JA	代入は「{{,$var = 100;,}}」のように行います。
+.JA	また、「{{,+=,}}」「{{,-=,}}」「{{,*=,}}」「{{,/=,}}」「{{,%=,}}」「{{,.=,}}」も使用できます。
+.EN	Assignment statement is such as {{,$var = 100;,}}.
+.EN	Also '{{,+=,}}', '{{,-=,}}', '{{,*=,}}', '{{,/=,}}', '{{,%=,}}' and '{{,+=,}}' are allowed.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-set.plogic
+.JA	$name = 'Foo';		## 文字列を代入
+.JA	$count += 1;		## 値を1増やす
+.JA	$str .= '.txt';		## 文字列の末尾に追加
+.EN	$name = 'Foo';		## assign a string
+.EN	$count += 1;		## increment the value of the variable
+.EN	$str .= '.txt';		## append a string
+.	.--------------------
+.	
+.JA	.#PLプログラム：
+.EN	.#PL Program:
+.	.#.-------------------- pl-set.plogic
+.JA	.#:set(name = 'Foo')      ## 変数に文字列'Foo'を代入
+.JA	.#:set(count += 1)        ## 変数の値を1増やす
+.JA	.#:set(str .+= '.txt')    ## 文字列の末尾に追加
+.EN	.#:set(name = 'Foo')      ## assign the string 'Foo' into the variable
+.EN	.#:set(count += 1)        ## increment the value of the variable
+.EN	.#:set(str .+= '.txt')    ## append a string
+.	.#.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 -a translate guide.d/pl-set.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎配列、ハッシュ	| pl-array
+.EN	.$$ Arrays and Hashes	| pl-array
+.	
+.	
+.JA	配列は「{{,arr[expr],}}」の形で参照できます。
+.JA	ハッシュも同じ形で参照できます{{(配列とハッシュとで同じ演算子を用いているため、Perlのように異なる演算子を必要とするプログラミング言語への変換は困難です。)}}。
+.EN	You can reference an array element as {{,arr[expr],}}.
+.EN	You can reference a hash element in the same way.{{(Operators for arrays and hashes are the same, therefore it is difficult to support a language, say Perl, which use different operators for arrays and hashes.)}}.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-array.plogic
+.JA	$list[$n] = 10;          ## n番目の要素に代入
+.EN	$list[$n] = 10;          ## assign into n-th element of the array
+.JA	echo $list[$i], "\n";    ## i番目の要素を出力
+.EN	echo $list[$i], "\n";    ## print  i-th element of the array
+.JA	$hash['key'] = 'foo';    ## ハッシュの要素に代入
+.EN	$hash['key'] = 'foo';    ## assign into a hash element
+.JA	echo $hash['key'], "\n"; ## ハッシュの要素を出力
+.EN	echo $hash['key'], "\n"; ## print a hash element
+.	.--------------------
+.	
+.JA	.#PLプログラム：
+.EN	.#PL Program:
+.	.#.-------------------- pl-array.plogic
+.JA	.#:set(list[n] = 10)         ## n番目の要素に代入
+.JA	.#:print(list[i], "\n")      ## i番目の要素を出力
+.JA	.#:set(hash['key'] = 'foo')  ## ハッシュの要素に代入
+.JA	.#:print(hash['key'])        ## ハッシュの要素を出力
+.EN	.#:set(list[n] = 10)         ## assign into n-th element of the array
+.EN	.#:print(list[i], "\n")      ## print i-th element of the array
+.EN	.#:set(hash['key'] = 'foo')  ## assign into a hash element
+.EN	.#:print(hash['key'])        ## print a hash element
+.	.#.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-array.plogic
+.	.____________________
+.	
+.	
+.JA	.#ハッシュは「hash{'key'}」または「hash[:key]」が使用できます。前者は文字列の中に記号を含むことができるのに対し、後者ではキーとして英数字と「{{,_,}}」しか使用できません。ただし、Rubyでは後者はSymbolをキーとして使います。
+.	
+.	
+.JA	ハッシュは、「{{,hash[:key],}}」という形でも参照できます。
+.JA	このとき、「{{,key,}}」は英数字と「{{,_,}}」のみからなる文字列である必要があります。
+.EN	You can reference a hash by '{{,hash[:key],}}'.
+.EN	'{{,key,}}' must be a string which contains only alphpanumerics and '{{,_,}}'.
+.	
+.	
+.JA	「{{,hash[:key],}}」は、各プログラム言語に応じて次のように変換されます。
+.EN	'{{,hash[:key],}}' will be translated according to target programming language:
+.	.+--------------------
+.JA	   ターゲット言語	., 変換結果
+.EN	   Target language	., Result of translation
+.	.---------------------
+.	   PHP			., {{,$hash['key'],}}
+.	   eRuby		., {{,hash[:key],}}
+.	   JSTL			., {{,hash['key'],}}
+.	.# Velocity		., {{,hash.key,}}
+.	.+--------------------
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-hash.plogic
+.	$hash[:key] = 'foo';
+.	echo $hash[:key];
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-hash.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎プロパティとメソッド | pl-property
+.EN	.$$ Properties & Methods | pl-property
+.	
+.	
+.JA	オブジェクトのプロパティは、「{{,{{/object/}}->{{/property/}},}}」の形式で参照します。
+.JA	また「{{,{{/object/}}->{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}」のように引数をつけてメソッドを呼ぶこともできます。
+.JA	ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSTLへの変換時にはエラーになります。
+.JA	.#プロパティはメソッド呼び出しではないので、引数をとることはできません。
+.EN	You can reference a property of an object as '{{,{{/object/}}->{{/property/}},}}'.
+.EN	You can also call a method with arguments such as '{{,{{/object/}}->{{/method/}}({{/arg1/}}, {{/arg2/}}, ..),}}'.
+.EN	Translation of method call into JSTL will raise an error because JSTL's Expression Language doesn't support method call.
+.EN	.#Properties are not methods, so properties cannot accept any arguments.
+.	
+.	
+.JA	またPL-phpではオブジェクトやプロパティを参照することはできても、オブジェクトを自分で生成したりクラスを定義したりすることはできません。
+.JA	それらはPLの外部で（つまりメインプログラムの中で）行われることになります。
+.EN	There is no way to create a new object or define a new class in PL-php.
+.EN	These tasks must be done in the main program.
+.	
+.	
+.JA	PL-phpプログラム：
+.EN	PL-php Program:
+.	.-------------------- pl-property.plogic
+.	.#$user->name = 'Foo';
+.	echo $user->name, "\n";
+.	echo $user->method(10, 20);
+.	.#:print(user.name)
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate -l php,eruby guide.d/pl-property.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎繰り返し	| pl-foreach
+.EN	.$$ Iteration	| pl-foreach
+.	
+.	
+.JA	繰り返しは「{{,foreach({{/array-expr/}} as ${{/var/}}) { ... },}}」で表します。
+.JA	いわゆるforeach文であり、配列{{,{{/array-expr/}},}}の要素をひとつひとつ{{,{{/var/}},}}に代入しながら繰り返しを行います。
+.EN	{{,foreach({{/array-expr/}} as ${{/var/}}) { ... },}} represents a foreach iteration.
+.EN	Items in the array {{,{{/array-expr/}},}} is assigned into the variable {{,{{/$var/}},}} each time through the iteration.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-foreach.plogic
+.JA	foreach($list as $item) {     ## listの要素をitemに代入しながら
+.JA	  echo $item, "\n";           ## 繰り返し出力する
+.JA	}
+.EN	foreach($list as $item) {
+.EN	  echo $item, "\n";
+.EN	}
+.	.--------------------
+.	.#.-------------------- pl-foreach.plogic
+.JA	.#:foreach(item = list)      ## listの要素をitemに代入しながら
+.JA	.#  :print(item, "\n")       ## 繰り返し出力する
+.JA	.#:end
+.EN	.#:foreach(item = list)
+.EN	.#  :print(item, "\n")
+.EN	.#:end
+.	.#.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-foreach.plogic
+.	.____________________
+.	
+.	
+.JA	またwhile文も使用できます。
+.JA	ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSTLへ変換しようとするとエラーになります。
+.JA	.#またVelocityもwhile文に相当するVelocityディレクティブがないため、変換時にエラーとなります。
+.EN	You can also use a while statment.
+.EN	Kwartz-php will raise an error if you try to translate a while statement into a JSTL script,
+.EN	because there is no JSTL tag which is equivalent to the while statment.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-while.plogic
+.	$i = 0;
+.	while($i < $length) {
+.	  echo $list[$i];
+.	  $i += 1;
+.	}
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate -l php,eruby guide.d/pl-while.plogic
+.	.____________________
+.	
+.	
+.JA	なおJavaやCのようなfor文は用意されていません。ご注意ください。
+.EN	for-statements (like in C or Java) are not available.
+.	
+.	
+.	
+.JA	◎条件分岐 | pl-if
+.EN	.$$ Conditional Branching | pl-if
+.	
+.	
+.JA	条件分岐は「{{,if({{/condition/}}) { ... } elseif({{/condition/}}) { ... } else { ... },}}」で表します。
+.EN	'{{,if({{/condition/}}) { ... } elseif({{/condition/}}) { ... } else { ... },}}' represents a  conditional branch.
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.JA	.-------------------- pl-if.plogic
+.JA	if ($ctr % 2 == 0) {      ## 偶数なら
+.JA	  $klass = 'even';        ## 文字列'even'を代入
+.JA	} else {                  ## 奇数なら
+.JA	  $klass = 'odd';         ## 文字列'odd'を代入
+.JA	}
+.JA	.--------------------
+.EN	.-------------------- pl-if.plogic
+.EN	if ($ctr % 2 == 0) {      ## if even
+.EN	  $klass = 'even';        ## then assign a string 'even'
+.EN	} else {                  ## else
+.EN	  $klass = 'odd';         ## assign a string 'odd'
+.EN	}
+.EN	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-if.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎マクロ 	| pl-macro
+.EN	.$$ Macros	| pl-macro
+.	
+.	
+.JA	PLでは、マクロを定義することができます。
+.JA	マクロは「{{,macro {{/macro_name/}} { ... },}}」で定義し、「{{,expand({{/macro_name/}});,}}」または「{{,@{{/macro_name/}};,}}」で展開します。
+.EN	'{{,macro {{/macro_name/}} { ... },}}' represents a macro definition.
+.EN	'{{,expand({{/macro_name/}});,}}' or '{{,@{{/macro_name/}};,}}' represents a macro expansion.
+.	
+.	
+.JA	次の例では、「{{,<li>@{$item}@</li>,}}」を開始タグ、内容、終了タグの3つに分割し、マクロとして定義しています。
+.EN	The following is an example of a macro definition and an expansion.
+.EN	This represents the start-tag, the contents and the end-tag of the element '{{,<li>@{$item}@</li>,}}'.
+.	
+.	
+.	.-------------------- pl-macro.plogic
+.JA	## 3つのマクロを定義
+.EN	## macro definition
+.	macro stag_item {
+.	  echo "<li>";
+.	}
+.	
+.	macro cont_item {
+.	  echo $item;
+.	}
+.	
+.	macro etag_item {
+.	  echo "</li>";
+.	}
+.	
+.JA	## 「<li>@{$item}@</li>」と同じ結果になる
+.EN	## macro expansion (this is equivalent to '<li>@{$item}@</li>')
+.	expand(stag_item);
+.	expand(cont_item);
+.	expand(etag_item);
+.	.--------------------
+.	
+.	
+.JA	マクロ定義の中でマクロ展開を使うことができます。
+.EN	Macro expansions can be in macro definitions.
+.	
+.	.-------------------- pl-macro2.plogic
+.JA	## マクロを定義
+.EN	## macro definition
+.	macro stag_item {
+.	  echo "<li>";
+.	}
+.	
+.	macro cont_item {
+.	  echo $item;
+.	}
+.	
+.	macro etag_item {
+.	  echo "</li>";
+.	}
+.	
+.JA	macro element_item {   ## マクロ展開を含むマクロ定義
+.EN	macro element_item {   ## macro definition containing macro expansion
+.	  expand(stag_item);
+.	  expand(cont_item);
+.	  expand(etag_item);
+.	}
+.	
+.JA	## マクロが展開され、「<li>@{$item}@</li>」と同じ結果になる
+.EN	## equivalent to '<li>@{$item}@</li>'
+.	expand(element_item);
+.	.--------------------
+.	
+.JA	.#またマクロ展開の簡略表記として「{{,@{{/macro_name/}},}}」が使用できます。
+.JA	.#これは「{{,:expand({{/macro_name/}},}}」と同じです。
+.EN	.#You can use {{,@{{/macro_name/}},}} as a short notation of macro expantion.
+.EN	.#{{,@{{/macro_name/}},}} is equal to {{,:expand({{/macro_name/}},}}.
+.	
+.	
+.JA	またエレメント用のマクロ定義をより簡単に書ける構文が用意されています。
+.JA	この構文はエレメント用のマクロ定義でしか使用できません。
+.EN	Special syntax for defining macros of elements is available.
+.EN	The syntax is only for element macro definitions.
+.	.-------------------- pl-macro3.plogic
+.JA	## エレメント用のマクロ定義
+.EN	## Macro definition for an element
+.	element item {
+.	  @stag;
+.	  @cont;
+.	  @etag;
+.	}
+.	
+.JA	## これは次と同じ
+.EN	## The above is equal to the following
+.	macro element_item {
+.	  expand(stag_item);
+.	  expand(cont_item);
+.	  expand(etag_item);
+.	}
+.	.--------------------
+.	
+.	
+.JA	{{,@stag,}}, {{,@cont,}}, {{,@etag,}} は {{,element ... { ... },}} の中でのみ使用可能です。
+.JA	{{,macro ... { ...},}} では使用できません。
+.EN	You can use '{{,@stag,}}', '{{,@cont,}}', and '{{,@etag,}}' only in {{,element ... { ...},}}.
+.EN	Using them in {{,macro ... { ... },}} will raise an error.
+.	.-------------------- pl-macro4.plogic
+.	## NG
+.JA	macro element_item {	## element item としなければならない
+.EN	macro element_item {	## must be 'element item'
+.	  @stag
+.	  @cont
+.	  @etag
+.	}
+.	.--------------------
+.	
+.	
+.JA	.#もうひとつ、エレメントの内容を式の値で置き換えるための専用構文も用意しています。
+.JA	.#これは、ディレクティブでいえば {{,id="value:{{/expr/}}",}} に相当する機能です。
+.EN	.#Kwartz-php provides a special syntax to define a macro of the contents of elements.
+.EN	.#The below is equivalent to the directive {{,id="value:{{/expr/}}",}}.
+.	.#.--------------------
+.JA	.### エレメントの内容を式の値で置き換える
+.EN	.### replace content of element with the expression value
+.	.#:value(item = expr)
+.	.#
+.JA	.### これは次と同じ
+.EN	.### above is equal to the following
+.	.#:macro(cont_item)
+.	.#  :print(expr)
+.	.#:end
+.	.#.--------------------
+.	
+.	
+.JA	なお、引数をとるようなマクロは定義できません。
+.EN	Macros cannot accept any arguments.
+.	
+.	
+.	
+.JA	◎マクロBEGN、END		| pl-begend
+.EN	.$$ The macros BEGIN and END		| pl-begend
+.	
+.	
+.JA	「BEGIN」と「END」は特別なマクロです。
+.JA	このマクロを定義すると、出力用スクリプトの最初と最後に任意のコードを追加できます。
+.EN	'BEGIN' and 'END' are special macros.
+.EN	If you define them, you can add code at the beginning and end of the output script.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation data:
+.	.-------------------- pl-begend.html
+.	  Hello @{$user}@!
+.	.--------------------
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-begend.plogic
+.	macro BEGIN {
+.	  echo "<html>\n";
+.	  echo " <body>\n";
+.	}
+.	macro END {
+.	  echo " </body>\n";
+.	  echo "</html>\n";
+.	}
+.	.--------------------
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output script:
+.	.____________________
+.	.<<<:! output.php -p guide.d/pl-begend.plogic guide.d/pl-begend.html
+.	.____________________
+.	
+.	
+.	
+.	
+.JA	◎関数		| pl-func
+.EN	.$$ Functions	| pl-func
+.	
+.JA	PL-phpでは、以下の関数を使用することができます。
+.EN	You can use the following two functions in PL-php.
+.	.: E({{/expr/}})
+.JA		  式 {{/expr/}} をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+.EN		  Sanitizes the expression {{/expr/}}. Using this function sanitizes even when the command-line option for sanitizing is not specified.
+.	.: X({{/expr/}})
+.JA		  式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X({{/expr/}})で指定された式はサニタイズされません。
+.EN		  Don't sanitize expression {{/expr/}}, even when the command-line option for sanitizing is specified.
+.	.: list_new()
+.JA		  新しいリストを作成します。
+.EN		  Create a new list. 
+.	.: list_length({{/list/}})
+.JA		  リスト{{/list/}}の長さを返します。JSTL1.0では
+.EN		  Return the length of the {{/list/}}.
+.	.: hash_new()
+.JA		  新しいハッシュを作成します。
+.EN		  Create a new hash. 
+.	.: hash_keys({{/hash/}})
+.JA		  ハッシュの全キーをリストで返します。
+.EN		  Return a list which contains all keys of the {{/hash/}}.
+.	.: str_length({{/string/}})
+.JA		  文字列{{/string/}}の長さを返します。
+.EN		  Return the length of the {{/string/}}.
+.	.: str_tolower({{/string/}})
+.JA		  文字列{{/string/}}を小文字にして返します。
+.EN		  Make a {{/string/}} to lowercase and return it.
+.	.: str_toupper({{/string/}})
+.JA		  文字列{{/string/}}を大文字にして返します。
+.EN		  Make a {{/string/}} to uppercase an return it.
+.	.: str_trim({{/string/}})
+.JA		  文字列{{/string/}}の前後から空白を取り除いた文字列を返します。
+.EN		  Strip whitespace from the beginning and end of a {{/string/}} and return it.
+.	.: str_index({{/string/}}, {{/char/}})
+.JA		  文字列{{/string/}}において文字{{/char/}}のある場所を返します。
+.EN		  Return the first positin a {{/char/}} occurs in a {{/string/}}.
+.	
+.JA	.#現在のところ、これら以外の関数をユーザが自由に定義することはできません。
+.EN	.#Currently, you cannot define or use any functions except the above two.
+.	
+.JA	ただし、JSTL1.0では関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+.JA	JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
+.EN	JSTL1.0 doesn't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
+.EN	JSTL1.1 supports some functions but it is limited.
+.EN	In fact, list_new(), hash_new(), and hash_keys() are not supported.
+.	
+.	.+------------------------------------------------------------
+.JA	  関数名                            ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
+.EN	  Functions                         ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
+.	.------------------------------------------------------------                                              
+.	{{,list_new(),}}                    ., {{,array(),}}                    ., {{,[],}}                        ., -   ., -
+.	{{,list_length({{/list/}}),}}       ., {{,array_length({{/list/}}),}}   ., {{,{{/list/}}.length,}}         ., {{,fn:length({{/list/}}),}}  .,  -
+.	{{,hash_new(),}}                    ., {{,array(),}}                    ., {{,{},}}                        ., -  ., -
+.	{{,hash_keys({{/hash/}}),}}         ., {{,array_keys({{/hash/}}),}}     ., {{,{{/hash/}}.keys,}}           ., -  ., -
+.	{{,str_length({{/str/}}),}}         ., {{,strlen({{/str/}}),}}          ., {{,{{/str/}}.lenth,}}           ., {{,fn:length({{/str/}}),}} ., -
+.	{{,str_tolower({{/str/}}),}}        ., {{,strtolower({{/str/}}),}}      ., {{,{{/str/}}.downcase,}}        ., {{,fn:toLowerCase({{/str/}}),}} ., -
+.	{{,str_toupper({{/str/}}),}}        ., {{,strtoupper({{/str/}}),}}      ., {{,{{/str/}}.upcase,}}          ., {{,fn:toUpperCase({{/str/}}),}} ., -
+.	{{,str_index({{/str/}},{{/ch/}}),}} ., {{,strchr({{/str/}},{{/ch/}}),}} ., {{,{{/str/}}.index({{/ch/}}),}} ., {{,fn:indexOf({{/str/}},{{/ch/}}),}} ., -
+.	.+------------------------------------------------------------
+.	
+.	
+.JA	これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
+.JA	JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+.EN	All functions except above are printed "as is" when translating into PHP or eRuby script.
+.EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support user-defined functions.
+.	
+.	
+.	
+.JA	◎empty		| pl-empty
+.EN	.$$ Empty	| pl-empty
+.	
+.JA	値がnullまたは空文字列かどうかを調べるための予約語「{{,empty,}}」を用意しています。
+.JA	「{{,empty,}}」は「{{,==,}}」または「{{,!=,}}」の右辺にのみ置くことができ、左辺がnullか空文字列なら真を、それ以外なら偽を返します。
+.EN	'{{,empty,}}' is a keyword used to check whether a value is either null or an empty string.
+.EN	It can be placed only at the right-side of the operators {{,==,}} and {{,!=,}}.
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-empty.plogic
+.	if ($str1 == empty) {
+.	  echo "str1 is empty.\n";
+.	} elseif ($str2 != empty) {
+.	  echo "str2 is not empty.\n";
+.	}
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate guide.d/pl-empty.plogic
+.	.____________________
+.	
+.	
+.	
+.JA	◎プレゼンテーションロジックファイルの読み込み	| pl-load
+.EN	.$$ Loading Presentation Logic Files 		| pl-load
+.	
+.	
+.JA	「{{,load('{{/filename/}}');,}}」で他のプレゼンテーションロジックファイルを読み込みます。
+.JA	またコマンドラインオプション {{,--load-path={{/dir1/}},{{/dir2/}},...,}} で、読み込むファイルがあるディレクトリを指定できます。
+.EN	{{,load('{{/filename/}}');,}} loads other presentation logic files.
+.EN	You can specify directories from where to load by the command-line option {{,--load-path={{/dir1/}},{{/dir2/}},...,}}.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-load.plogic
+.	load('file.plogic');
+.	.--------------------
+.	
+.JA	なお読み込むことができるのはプレゼンテーションロジックファイルだけです。
+.JA	プレゼンテーションデータファイルや出力プログラムは読み込むことができません。
+.EN	{{,load(),}} can load only presentation logic files.
+.EN	It cannot load presentation data files or output scripts.
+.	
+.	
+.	
+.	
+.JA	◎ターゲット言語のプログラムコード | pl-rawcode
+.EN	.$$ Raw-code | pl-rawcode
+.	
+.	
+.JA	ターゲット言語のプログラムコードを直接記述することもできます。
+.JA	Kwartz-phpでは、「{{,<?,}}」または「{{,<%,}}」で始まる行があれば行末までをターゲット言語のコードと判断し、そのまま出力します。
+.EN	Code in the target program language can be in the PL program.
+.EN	If Kwartz-php find a line starting with {{,<?,}}, Kwartz-php prints the string from '<?' to the end of line directly.
+.	
+.	
+.JA	次の例は、PHPのコードを直接記述した例です。
+.EN	The following is an example which includes PHP code.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-rawcode.plogic
+.	<?php foreach($hash as $key => $value) { ?>
+.	echo "key=", $key, " value=", $value, "\n";
+.	<?php } ?>
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php -a translate -l php guide.d/pl-rawcode.plogic
+.	.____________________
+.	
+.	
+.JA	また「{{,:::{{/raw code/}},}}」とすると、{{,:::,}}の次の文字から行末までをそのまま出力します。
+.EN	'{{,::: {{/raw code/}},}}' also represents code in the target program language.
+.EN	Kwartz-php processes a string after '{{,:::,}}' as raw code.
+.	
+.	
+.JA	ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
+.JA	それでも構わない場合にのみ使用してください。
+.EN	You should remember that writing a raw-code takes portability away.
+.	
+.JA	.#コマンドラインオプション {{,--enable_eruby=true,}} を使用することで、プレゼンテーションロジックの中に複数の言語を埋め込むことができます。
+.JA	.#詳しくは「{{<プレゼンテーションロジック中にeRubyコードを記述する|#tips-eruby>}}」をご覧ください。
+.EN	.#The command-line option '--enable_eruby=true' enables you to embed code from several different languages in the presentation logic file.
+.EN	.#See '{{<Enable eRuby code in presentation logic|#tips-eruby>}}' for more detail.
+.	
+.	
+.	
+.	
+.JA	.#◎変数のスコープ 	| pl-scope
+.EN	.#.$$ Variable scope	| pl-scope
+.	.#
+.	.#
+.JA	.#PLでは「変数のスコープ」という概念はありません。例えば「あるマクロの中だけで有効な変数」は定義できません。
+.JA	.#.#変数はすべてグローバルとして扱います。マクロは関数ではないので、マクロ中でローカルな変数は定義できません。
+.EN	.#There is no concept about 'Variable scope'.
+.EN	.#For example, you cannot define a variable which is enabled only in a certain macro definition.
+.EN	.#It means that if you define a variable, it is able to be referred from anywhere in template.
+.EN	.#.#All variables are global.
+.EN	.#.#A macro is not a function or a procedure, so 'local variables in a funtion/procedure' doesn't exist.
+.	.#
+.	.#
+.JA	.#次の例では、マクロelem_itemで設定した変数itemをマクロcont_itemで使用しています。
+.EN	.#In the following example, macro 'cont_item' use a variable 'item' which is assigned in macro 'elem_item'.
+.	.#
+.	.#.-------------------- pl-scope.plogic
+.	.#:macro(stag_item)
+.	.#  :print("<li id=\"item\">")
+.	.#:end
+.	.#
+.	.#:macro(cont_item)
+.JA	.#  :print(item)                # 変数itemを使用
+.EN	.#  :print(item)                # use a variable 'item'
+.	.#:end
+.	.#
+.	.#:macro(etag_item)
+.	.#  :print("</li>")
+.	.#:end
+.	.#
+.	.#:macro(elem_item)
+.JA	.#  :foreach(item = item_list)  # 変数itemを設定
+.EN	.#  :foreach(item = item_list)  # assign value into a variable 'item'
+.	.#    :expand(stag_item)
+.	.#    :expand(cont_item)
+.	.#    :expand(etag_item)
+.	.#  :end
+.	.#:end
+.	.#
+.	.#
+.JA	.## item_listに 'foo'、'bar'、... が入っているとき、
+.JA	.## <li>foo</li><li>bar</li>... が出力される
+.EN	.## ex. if item_list is 'foo', 'bar', ...
+.EN	.##     then output is <li>foo</li><li>bar</li>...
+.	.#:expand(elem_item)
+.	.#.--------------------
+.	.#
+.	
+.	
+.	
+.JA	◎グローバル変数とローカル変数	 | pl-analyze
+.EN	.$$ Global and Local Variables	 | pl-analyze
+.	
+.	
+.JA	Kwartz-phpでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
+.EN	In Kwartz-php, variables are called Global variables if they are set in the main program and are  passed to output script.
+.EN	Variables are called Local variables if they are used only in the template.
+.	
+.	
+.JA	例えば次のようなプレゼンテーションデータとプレゼンテーションロジックを考えます。
+.EN	Assume the following presentation data and presentation logic:
+.	
+.	
+.JA	プレゼンテーションデータ(analyze.html)：
+.EN	Presentation data (analyze.html) :
+.	.-------------------- analyze.html
+.	<html>
+.	  <body>
+.	    <table>
+.	      <caption kd:php="value({{*$title*}})">Sample</caption>
+.	      <tr id="item_list" bgcolor="@{{{*$color*}}}@">
+.	        <td kd:php="value({{*$item_ctr*}})">1</td>
+.		<td kd:php="value({{*$item*}})">Foo</td>
+.	      </tr>
+.	    </table>
+.	  </body>
+.	</html>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック(analyze.plogic)：
+.EN	Presentation logic (analyze.plogic) :
+.	.-------------------- analyze.plogic
+.	element item_list {
+.	  {{*$item_ctr*}} = 0;
+.	  foreach ({{*$item_list*}} as {{*$item*}}) {
+.	    {{*$item_ctr*}} += 1;
+.	    {{*$color*}} = {{*$item_ctr*}}%2 == 0 ? '#FFCCCC' : '#CCCCFF';
+.	    @stag;
+.	    @cont;
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	いくつかの変数がでてきますが、これらは次のように分類できます。
+.JA	.[ グローバル変数 ]
+.JA		 変数 {{,$title,}} と {{,$item_list,}} は、メインプログラムからテンプレートに渡される変数であり、メインプログラムで値を設定する必要があります。
+.JA		Kwartz-phpではこれをグローバル変数と呼んでいます。
+.JA	.[ ローカル変数 ]
+.JA		変数 {{,$item,}} と {{,$item_ctr,}} と {{,$color,}} はテンプレートの中だけで使用される変数であり、メインプログラムで設定する必要はありません。
+.JA		Kwartz-phpではこれをローカル変数と呼んでいます。
+.EN	There are several variables. They are classified as follows:
+.EN	.[ Global variables ]
+.EN		The variables {{,$title,}} and {{,$item_list,}} need to be set in the main program and be passed to template.
+.EN		These variables are called Global variables in Kwartz-php.
+.EN	.[ Local variables ]
+.EN		The variables {{,$item,}}, {{,$item_ctr,}} and {{,$color,}} are used only in the template.
+.EN		These variables are called Local variables in Kwartz-php.
+.	
+.	
+.JA	kwartzコマンドにオプション {{,-a analyze,}} をつけて起動すると、テンプレートを分析してグローバル変数とローカル変数を報告してくれます。
+.EN	Invoking Kwartz-php with the command-line option {{,-a analyze,}} analyzes the template and reports global/local variables.
+.	.--------------------
+.	$ kwartz -p analyze.plogic -a analyze analyze.html
+.	global variables: {{*$title*}} {{*$item_list*}}
+.	local variables:  {{*$color*}} {{*$item*}} {{*$item_ctr*}}
+.	.--------------------
+.	
+.	
+.JA	このとき、Kwartz-phpは次のようなルールでグローバル変数とローカル変数とを判別しています。
+.JA	.* 変数が初めて現れたときに…
+.JA	    .- 代入文の左辺に現れた変数はローカル変数
+.JA	    .- foreach文のループ変数として現れた変数はローカル変数
+.JA	    .- それ以外はグローバル変数
+.EN	Kwartz-php detemines whether variables are global/local according to the following rule:
+.EN	.* When Kwartz-php finds a new variable ...
+.EN	    .- If it appears in the lefthand-side of an assignment, Kwartz-php recognizes it as a local variable.
+.EN	    .- If it appears as the loop variable of a foreach statement, Kwartz-php recognizes it as a local variable.
+.EN	    .- Otherwize, Kwartz-php recognizes it as a global variable.
+.	
+.	
+.JA	またグローバル変数へ代入したり、グローバル変数をループ変数としていると、分析時に警告を出します。
+.JA	なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりグローバル変数を変更すべきではないからです（変更してよいのはローカル変数のみのはずです）。
+.JA	.#そのほか、初期化されていないローカル変数が使われている場合も分析時に警告が出ます。
+.EN	Kwartz-php reports warnings if global variables appears in the lefthand-side of assignments or are used as loop variables in foreach statements.
+.EN	Because the role of template system is to display global variables, templates should not change or modify global variables.
+.EN	.#In addition, Kwartz-php reports warning when uninitalized local variables are used in templates.
+.	
+.	
+.JA	テンプレート（プレゼンテーションデータとプレゼンテーションロジック）が複雑になると、メインプログラムで設定しなければならない変数がどれか、わかりづらくなることがあります。
+.JA	そのようなときは、この分析機能を利用してください。変数名のタイプミスも見つけやすくなります。
+.EN	Analyzing templates and reporting global/local variables is very useful, especially when the presentation data/logic is large and complex.
+.EN	It also helps you to find typos of variable names.
+.	
+.	
+.	
+.JA	◎PL-phpとPL-Kwartz		| pl-kwartz
+.EN	.$$ PL-php and PL-Kwartz	| pl-kwartz
+.	
+.	
+.JA	Kwartz-phpでは、プレゼンテーションロジックを記述するための言語が2つ用意されています。
+.JA	ひとつはPHPによく似たPL-php、もうひとつは独自文法のPL-Kwartz{{(PL-Kwartzが存在するのは歴史的な理由です。)}}です。
+.JA	どちらも記述できる内容は同じです。
+.EN	There are two languages which are used to describe presentation logics in Kwartz-php.
+.EN	One is 'PL-php' which is similar to PHP. Other is 'PL-Kwartz' which has original syntax.
+.EN	There is no difference between them about ability or capability.
+.	
+.JA	Kwartz-phpでは、プレゼンテーションロジックをどちらの言語で書いても構いません。
+.JA	Kwartz-phpが自動で判定してくれます。
+.JA	もっというと、ひとつのプログラムで両者を混在させて記述することもできます（が、おすすめはしません）。
+.EN	Kwartz-php detects automatically which language is used in a presentation logic file.
+.EN	In addition, you can 'mix' the two languages in a presentation logic file (but it is not recommended.)
+.	
+.	
+.JA	両者の比較は次の通りです。
+.EN	The following shows the syntax difference between the two.
+.	
+.	.+--------------------
+.JA	言語		., PL-php				., PL-Kwartz
+.EN	Languages	., PL-php				., PL-Kwartz
+.	.--------------------
+.JA	文字列		.\
+.EN	Strings		.\
+.			., {{,'str',}} {{,"str\n",}}		., {{,'str',}} {{,"str\n",}}
+.JA	変数		.\
+.EN	Variables	.\
+.			., {{,$var,}}				., {{,var,}}
+.JA	真偽値、null	.\
+.EN	Boolean, Null	.\
+.			., {{,true false null,}}		., {{,true false null,}}
+.JA	empty		.\
+.EN	Empty		.\
+.			., {{,empty,}}				., {{,empty,}}
+.JA	比較演算子	.\
+.EN	Comparison Operators .\
+.			., {{,== != < <= > >=,}}		., {{,== != < <= > >=,}}
+.JA	論理演算子	.\
+.EN	Logical Operators .\
+.			., {{,! && ||,}}			., {{,! && ||,}}
+.JA	算術演算子	.\
+.EN	Arithmetic Operators .\
+.			., {{,+ - * / %,}}			., {{,+ - * / %,}}
+.JA	代入演算子	.\
+.EN	Assignment Operators .\
+.			., {{,= += -= *= /= %=,}}		., {{,= += -= *= /= %=,}}
+.JA	結合演算子	.\
+.EN	Concatenation Operators	.\
+.			., {{, . ,}}				., {{, .+ ,}}
+.JA	3項演算子	.\
+.EN	Conditional Operators .\
+.			., {{,$a > $b ? $a : $b,}}		., {{,a > b ? a : b,}}
+.JA	プロパティ	.\
+.EN	Property	.\
+.			., {{,$obj->property,}}			., {{,obj.property,}}
+.JA	メソッド	.\
+.EN	Method		.\
+.			., {{,$obj->method(...),}}		., {{,obj.method(...),}}
+.JA	配列、ハッシュ	.\
+.EN	Array, Hash	.\
+.			., {{,$array[...],}}			., {{,array[...],}}
+.JA	print文		.\
+.EN	Print Statement	.\
+.			., {{,echo $foo, "bar\n";,}}		., {{,:print(foo, "var\n"),}}
+.JA	代入文		.\
+.EN	Assignment Statement .\
+.			., {{,$x = $y + 1;,}}			., {{,:set(x = y + 1),}}
+.JA	foreach文	.\
+.EN	Foreach Statement .\
+.			., {{,foreach({{/array-expr/}} as ${{/var/}}) { ... },}}	., {{,:foreach({{/var/}} = {{/array-expr/}}) ... :end,}}
+.JA	if文		.\
+.EN	If Statement	.\
+.			., {{,if({{/expr/}}){ ... }.^elseif({{/expr/}}){ ... }.^else { ... },}}	., {{,:if({{/expr/}}) ... .^:elseif({{/expr/}}) ... .^:else ... .^:end,}}
+.JA	while文		.\
+.EN	While Statement	.\
+.			., {{,while({{/expr/}}) { ... },}}	., {{,:while({{/expr/}}) ... :end,}}
+.JA	macro文		.\
+.EN	Macro Definition	.\
+.			., {{,macro {{/name/}} { ... },}}	., {{,:macro({{/name/}}) ... :end,}}
+.JA	element文	.\
+.EN	Element-Macro Definition .\
+.			., {{,element {{/name/}} { ... },}}	., {{,:element({{/name/}}) ... :end,}}
+.JA	expand文	.\
+.EN	Macro Expantion	.\
+.			., {{,expand({{/name/}});,}}.^{{,@{{/name/}},}}.^{{,@stag; @cont; @etag;,}}., {{,:expand({{/name/}}),}}.^{{,@{{/name/}},}}.^{{,@stag @cont @etag,}}
+.JA	load文		.\
+.EN	Load Statement	.\
+.			., {{,load('{{/filename/}}');,}}	., {{,:load('{{/filename/}}'),}}
+.	.+--------------------
+.JA		PL-phpとPL-Kwartzとの比較
+.	
+.	
+.	
+.	
+.	
+.JA	.#◎注意事項	| pl-notes
+.EN	.#.$$ Notes	| pl-notes
+.	.#
+.	.#
+.JA	.#.#.* 文字列は「{{,'...',}}」で表します。「{{,"...",}}」は使えませんので注意してください。
+.EN	.#.#.* Strings are quoted only with {{,'...',}}.  {{,"...",}} causes an error.
+.	.#.#	.--------------------
+.	.#.#	:set(str = "foo")		## NG
+.	.#.#	:set(str = 'foo')		## OK
+.	.#.#	.--------------------
+.	.#
+.	.#
+.JA	.#.* 「{{,:print(condition?v1:v2),}}」や「{{,:set(var=flag?v1:v2),}}」は文法エラーになります。
+.JA	.#   これは、「{{,:v2,}}」が「{{,:print,}}」や「{{,:if,}}」のように文の開始とみなされるからです。
+.JA	.#   そのため、「{{,:v2,}}」をカッコで囲むか、「{{,:,}}」と「{{,v2,}}」の間に空白をいれるようにしてください。
+.EN	.#.* '{{,:print(condition?v1:v2),}}' or '{{,:set(var=flag?v1:v2),}}' will cause a syntax error,
+.EN	.#   because Kwartz-php recognizes '{{,:v2,}}' as the beginning of a statement (like '{{,:print,}}' or '{{,:if,}}').
+.EN	.#   You should surround '{{,:v2,}}' with '{{,(),}}' or insert a space between '{{,:,}}' and '{{,v2,}}'.
+.	.#	.--------------------
+.	.#	:set(var=flag?v1:v2)            ## NG
+.	.#	:set(var=flag?v1:(v2))          ## OK
+.	.#	:set(var=flag?v1: v2)           ## OK
+.	.#	.--------------------
+.	.#
+.	.#
+.JA	.#.* マクロ定義やマクロ展開が入れ子になっていると、コンパイル時に無限ループになってしまいます。
+.JA	.#   入れ子にしないように注意してください。
+.EN	.#.* Nested macro definitions/expansion will result in an infinite loop when compiling.
+.EN	.#   Please take care not to define nested macros.
+.	.#	.--------------------
+.	.#	:macro(elem_foo)
+.	.#	  :expand(stag_foo)
+.JA	.#	  :expand(elem_foo)		## 入れ子になっている
+.EN	.#	  :expand(elem_foo)		## nested macro
+.	.#	  :expand(etag_foo)
+.	.#	:end
+.	.#	
+.JA	.#	:expand(elem_foo)		## 無限ループ
+.EN	.#	:expand(elem_foo)		## infinite-loop
+.	.#	.--------------------
+.	
+.	
+.	
+.JA	◎未実装（または検討中）の機能  | pl-infuture
+.EN	.$$ Features Under Consideration | pl-infuture
+.	
+.JA	以下の機能は実装されていませんが、将来において実装されるかもしれません。
+.EN	The following features are not implemented.
+.EN	They may be implemented in the future release (or not).
+.	
+.JA	.* break, continue
+.JA	.* ユーザ定義関数
+.JA	.#.* メソッド呼び出し
+.JA	.* 引数つきマクロ
+.JA	.* JSTLにおける配列やハッシュの作成
+.EN	.* break, continue
+.EN	.* user-defined functions/procedures
+.EN	.#.* method calls (with arguments)
+.EN	.* macros with arguments
+.EN	.* creating arrays and hashes in JSTL
+.	
+.	
+.	
+.JA	●ディレクティブ	| directive
+.EN	.$ Directives		| directive
+.	
+.	
+.JA	◎ディレクティブとは？		| directive-whatis
+.EN	.$$ What is a Directive?	| directive-whatis
+.	
+.	
+.JA	Kwartz-phpでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
+.JA	そのための命令を「ディレクティブ(Directive)」といいます。
+.EN	Kwartz-php allows presentation logic to be embedded in presentation data.
+.EN	Commands for that purpose are called 'directives'.
+.	
+.	
+.JA	.#ディレクティブとは、プレゼンテーションデータの中に埋め込む命令であり、プレゼンテーションロジックを表します。
+.JA	Kwartz-phpでは、ディレクティブはkd:php属性またはid属性を使用します。
+.JA	kd:php属性ではPHPライクな記述ができ、id属性ではHTMLにやさしい記述ができます。
+.JA	記述スタイルは異なりますが、どちらもできることは同じです。
+.JA	通常は、マーキングにはid属性を使用し、それ以外ではkd:php属性を使用します（kd:php属性でマーキングを行ってもかまいません）。
+.JA	.#今まで見てきたマーキング「{{,id="{{/name/}}",}}」や「{{,id="mark:{{/name/}}",}}」も、ディレクティブのひとつです。
+.JA	.#他に、繰り返しや条件分岐のためのディレクティブが用意されています。
+.EN	'Directives' is a set of commands to embed presentation logic into presentation data.
+.EN	Kwartz-php uses the 'kd:php' attribute and the 'id' attribute to embed directives in presentation data.
+.EN	The kd:php attribute let you to write presentation logic with PHP-like style.
+.EN	The id atribute let you to write with a style which have an affinity for HTML.
+.EN	The styles are different between the kd:php and the id attribute, but the ability of them are equal.
+.EN	Usually the id attribute is used only for element marking. The kd:php attribute is used for any other case.
+.EN	.#Marking ({{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}}) is also a directive.
+.EN	.#There are several directives for iteration, conditional branching, and so on.
+.	
+.	
+.	
+.	
+.JA	Kwartz-phpではせっかくプレゼンテーションデータとプレゼンテーションロジックとを分離することができるのに、なぜ両者を一体化するような機能も用意されているのでしょう？
+.EN	You may have a question: 
+.EN	If it is the most important feature of Kwartz-php that Kwartz-php separates presentation logic from presentation data,
+.EN	why does Kwartz-php allow me to embed presentation logic into presentation data? 
+.	
+.	
+.JA	それは、開発者の好みに応じてどちらも選べるようにするため、つまり選択肢を増やすためです。
+.JA	Kwartz-phpは、開発者にどちらか一方を押しつけるようなことはしません。
+.JA	分離するほうが望ましいのであれば分離すればよいし、一体化するほうが好みであれば一体化すればよいのです。
+.EN	The answer is to make it possible for developers to choose either approach.
+.EN	In other words, to increase options of development styles.
+.EN	Kwartz-php doesn't force you to use one approach.
+.EN	Separate presentation logic and presentation data if you like to separate them, or mix them if you like.
+.	
+.	
+.JA	また両者を一体化すると、他のテンプレートと差別化できないと思われるかもしれません。
+.JA	しかし一体化してもなお、Kwartz-phpは他のテンプレートと比べて次のような利点があります。
+.JA	.* HTMLデザインを崩しません（{{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}}や{{<Template-Toolkit|http://www.template-toolkit.org/>}}と比べてみてください）。
+.JA	.* 複雑なプログラミングが必要ありません（DOMプログラミングが必要な{{<Enhydra XMLC|http://xmlc.objectweb.org/>}}と比べてみてください）。
+.JA	.* 実行時の動作が軽くて高速です（{{<amrita|http://www.brain-tokyo.jp/research/amrita/index_ja.html>}}と比べてみてください）。
+.JA	.* XMLやHTMLだけでなく、どのようなテキスト形式でも利用できます（{{<XMLC|http://xmlc.objectweb.org/>}}や{{<amrita|http://www.brain-tokyo.jp/research/amrita/index_ja.html>}}と比べて見てください）。
+.JA	.* 各種のプログラミング言語で使用できます（このようなテンプレートシステムは他にありません！）。
+.EN	You may wonder whether Kwartz-php becomes an ordinary template system if presentation logic is embedded into presentation data.
+.EN	But Kwartz-php has the following merits compared to other template systems;
+.EN	.* Kwartz-php doesn't break HTML design. Compare to {{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}} or {{<Template-Toolkit|http://www.template-toolkit.org/>}}.
+.EN	.* Kwartz-php doesn't need complex programming. Compare to {{<Enhydra XMLC|http://xmlc.objectweb.org/>}}, which needs complex DOM programming.
+.EN	.* Kwartz-php works very quickly and is light-weight. Compared to {{<amrita|http://www.brain-tokyo.jp/research/amrita/index.html>}}.
+.EN	.* Kwartz-php can handle any type of text. Compare to Enhydra {{<XMLC|http://xmlc.objectweb.org/>}} or {{<amrita|http://www.brain-tokyo.jp/research/amrita/index.html>}}.
+.EN	.* Kwartz-php can be used in several languages. There is no other template system like this!
+.	
+.	
+.	
+.	
+.JA	◎マーキング	| directive-mark
+.EN	.$$ Marking	| directive-mark
+.	
+.	
+.JA	「{{,kd:php="mark({{/name/}})",}}」または「{{,id="{{/name/}}",}}」または「{{,id="mark:{{/name/}}",}}」とすることで、マーキングを行います。
+.JA	マーキングとは、エレメントに対してその名前で目印をつけることです。
+.JA	マーキングされたエレメントは、中間コードにおいてマクロで表現されます。
+.EN	The directive {{,kd:php="mark({{/name/}})",}} or {{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}} marks an element with a name {{,{{/name/}},}}.
+.EN	This is called 'marking'.
+.EN	The marked element is described as macros in intermediate code.
+.	
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-mark.pdata
+.	<li {{*id="item"*}}>foo</li>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	.<<<:! kwartz-php -a convert guide.d/directive-mark.pdata
+.	.____________________
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-mark.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	「{{,id="{{/name/}}",}}」と「{{,id="mark:{{/name/}}",}}」との違いは、中間コードにコンバートされるときに前者ではid属性が残るのに対し後者は取り除かれるという点です。
+.JA	また{{,kd:php,}}属性は必ず取り除かれます。
+.EN	The difference between '{{,id="{{/name/}}",}}' and '{{,id="mark:{{/name/}}",}}' is that the former is left in but the latter is removed when compiling into intermediate code.
+.EN	{{,kd:php,}} attributes are always removed.
+.	
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-mark2.pdata
+.	<li {{*id="mark:item"*}}>foo</li>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	.<<<:! kwartz-php -a convert guide.d/directive-mark2.pdata
+.	.____________________
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-mark2.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎値の出力 | directive-output
+.EN	.$$ Printing Values of Expressions | directive-output
+.	
+.JA	「{{,@{{{/expression/}}}@,}}」は、式の値を出力するコマンドです。
+.JA	PHPの「<?php echo {{,{{/expression/}},}}; ?>」に相当します。
+.EN	{{,@{{{/expression/}}}@,}} is a directive which prints the value of an expression.
+.EN	It is equivalent to '<?php echo {{,{{/expression/}},}}; ?>' in PHP.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-output.html
+.	Hello {{*@{$user->name}@*}}!
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "Hello ", {{*$user->name*}}, "!\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-output.html
+.	.____________________
+.	
+.	
+.JA	コンパイル時に、コマンドオプション{{,-s,}}（または{{,--escape=true,}}）を指定した場合は、式をサニタイズして出力します。
+.JA	このとき、文字列や数値はサニタイズされず、式のみがサニタイズされることに注意してください。
+.EN	Expressions are sanitized if you specified the command-line option {{,-s,}} (or {{,--escape=true,}}) when compiling templates.
+.EN	Notice that all expressions except string and numbers constants are sanitized.
+.	
+.JA	出力用プログラム（コマンドオプション{{,-s,}}をつけた場合）：
+.EN	Output Program (with command-line option {{,-s,}}) :
+.	.____________________
+.	.<<<:! output.php -s guide.d/directive-output.html
+.	.____________________
+.	
+.	
+.	
+.JA	コマンドオプションの有無に関わらずサニタイズをする/しないを指定するには、関数{{,E(),}}と{{,X(),}}を使用します。
+.JA	{{,E({{/expr/}}),}}は式{{,{{/expr/}},}}をサニタイズし、{{,X({{/expr/}}),}}はサニタイズしません。
+.EN	Using the functions {{,E(),}} or {{,X(),}}, you can toggle sanitizing on/off for each expression.
+.EN	{{,E({{/expr/}}),}} means that the expression {{,{{/expr/}},}} is sanitized and {{,X({{/expr/}}),}} means that {{,{{/expr/}},}} is not sanitized.
+.EN	These are not effected by the command-line option {{,-s,}} (or {{,--escape=true,}}).
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-output2.html
+.	With sanitizing:    {{*@{E($var)}@*}}!
+.	Without sanitizing: {{*@{X($var)}@*}}!
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "With sanitizing:    ", {{*E($var)*}}, "\n";
+.	echo "Without sanitizing: ", {{*X($var)*}}, "\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-output2.html
+.	.____________________
+.	
+.	
+.	
+.JA	◎値の出力2 | directive-value
+.EN	.$$ Printing value of expression 2| directive-value
+.	
+.JA	「{{,kd:php="value({{/expression/}})",}}」とすることで、内容のかわりに式の値を出力します。
+.JA	ダミーデータを利用できるため、「{{,@{{{/expression/}}}@,}}」と比べてHTMLデザインがより崩れません。
+.EN	{{,kd:php="value({{/expression/}})",}} is a directive to print the value of expression instead of the content.
+.EN	It is more suitable for HTML design than {{,@{{{/expression/}}}@,}} because it allows for the use of dummy data.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-value.html
+.	<li {{*kd:php="value($hash['name'])"*}}>foo</li>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "<li>", {{*$hash['name']*}}, "</li>\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-value.html
+.	.____________________
+.	
+.	
+.JA	また「{{,kd:php="Value({{/expr/}})",}}」でサニタイズすることを、「{{,kd:php="VALUE({{/expr/}})",}}」でサニタイズしないことを指定できます。
+.JA	これらはそれぞれ「{{,kd:php="value(E({{/expr/}}))",}}」や「{{,kd:php="value(X({{/expr/}}))",}}」と同じです。
+.EN	{{,kd:php="Value({{/expr/}})",}} sanitizes the expression.
+.EN	{{,kd:php="VALUE({{/expr/}})",}} un-sanitizes the expression.
+.EN	These are equal to {{,kd:php="value(E({{/expr/}}))",}} and {{,kd:php="value(X({{/expr/}}))",}}.
+.	
+.	
+.	
+.	
+.JA	◎属性値の設定 | directive-attr
+.EN	.$$ Attribute Values	| directive-attr
+.	
+.JA	「{{,kd:php="attr('{{/name/}}'=>{{/value/}})",}}」とすることで、タグの属性値を設定できます。
+.JA	これを用いると、「{{,@{...}@,}}」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
+.EN	{{,kd:php="attr('{{/name/}}'=>{{/value/}})",}} is a directive to set an attribute value.
+.EN	It overwrites the existing value if attribute {{,{{/name/}},}} is already set.
+.	
+.JA	次の例では、属性classにダミーの属性値 "{{,odd,}}" を設定していますが、実際には変数{{,$klass,}}の値を用いるようにしています。
+.EN	In the following example, attribute 'class' has the dummy value '{{,odd,}}', and the actual value is derived from the variable {{,$klass,}}.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-attr.pdata
+.	<tr class="odd" {{*kd:php="attr('class'=>$klass)"*}}>
+.	  <td>foo</td>
+.	</tr>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "<tr class=\"", {{*$klass*}}, "\">\n";
+.	echo "  <td>foo</td>\n";
+.	echo "</tr>\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-attr.pdata
+.	.____________________
+.	
+.	
+.JA	また「{{,kd:php="Attr('{{/name/}}'=>{{/value/}})",}}」でサニタイズすることを、「{{,kd:php="ATTR('{{/name/}}'=>{{/value/}})",}}」でサニタイズしないことを指定できます。
+.JA	これらはそれぞれ「{{,kd:php="attr('{{/name/}}'=>E({{/value/}}))",}}」や「{{,kd:php="attr('{{/name/}}'=>X({{/value/}}))",}}」と同じです。
+.EN	{{,kd:php="Attr('{{/name/}}'=>{{/value/}})",}} sanitizes the value.
+.EN	{{,kd:php="ATTR('{{/name/}}'=>{{/value/}})",}} un-sanitizes the value.
+.EN	These are equal to {{,kd:php="attr('{{/name/}}'=>E({{/value/}}))",}} and {{,kd:php="attr('{{/name/}}'=>X({{/value/}}))",}}.
+.	
+.	
+.JA	なお「{{,;,}}」で区切ることにより、「{{,attr('{{/name/}}'=>{{/value/}}),}}」を複数設定したり他のテンプレートコマンドと一緒に設定したりできます。
+.EN	Separating with '{{,;,}}', you can have several {{,attr('{{/name/}}'=>{{/value/}}),}} directives in one id attribute.
+.EN	You can enumerate other attributes this way as well.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-attr2.pdata
+.	<font kd:php="if($message){{*;attr('class'=>$klass);attr('bgcolor'=>$color)*}}">
+.	 @{$message}@
+.	</font>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	if ($message) {
+.	  echo "<font class=\"", {{*$klass*}}, "\" bgcolor=\"", {{*$color*}}, "\">\n";
+.	  echo " ", $message, "\n";
+.	  echo "</font>\n";
+.	}
+.	.____________________
+.	
+.JA	.#出力用スクリプト：
+.EN	.#Output Script:
+.	.#.____________________
+.	.#.<<<:! output.php guide.d/directive-attr2.pdata
+.	.#.____________________
+.	
+.	
+.	
+.	
+.JA	◎属性の追加	| directive-append
+.EN	.$$ Appending Attribute Expression | directive-apend
+.	
+.JA	「{{,kd:php="append({{/expression/}})",}}」とすることで、タグの中に式の値を追加できます。
+.JA	これは主に「<input ... checked />」や「<option ... selected></option>」を実現するための機能です。
+.EN	{{,kd:php="append({{/expression/}})",}} is a directive to append expression into a tag.
+.EN	This is useful to output '<input ... checked />' or '<option ... selected></option>'.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-append.pdata
+.	<option name="lang" value="ruby"
+.	       {{*kd:php="append($lang=='ruby'?' selected':'')"*}}>Ruby</option>
+.	
+.	<input type="radio" name="gender" value="M"
+.	       {{*kd:php="append($gender=='M'?' checked':'')"*}} />
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.--------------------
+.	echo "<option name=\"lang\" value=\"ruby\"", {{*$lang == "ruby" ? " selected" : ""*}}, ">";
+.	echo "Ruby";
+.	echo "</option>\n";
+.	echo "\n";
+.	echo "<input type=\"radio\" name=\"gender\" value=\"M\"", {{*$gender == "M" ? " checked" : ""*}}, " />";
+.	echo "Male\n";
+.	.--------------------
+.	
+.JA	なお「checked="checked"」「selected="selected"」「disabled="disabled"」の出力を簡単にするための機能として「{{,@C({{/expr/}}),}}」「{{,@S({{/expr/}}),}}」「{{,@D({{/expr/}}),}}」が用意されています。
+.JA	これらは、式{{,{{/expr/}},}}が真のときにそれぞれ「checked="checked"」「selected="selected"」「disabled="disabled"」を出力します。
+.EN	A function to output 'checked="checked"', 'selected="selected"' and 'disabled="disabled"' easily for HTML/XHTML is available in Kwartz-php.
+.EN	{{,@C({{/expr/}}),}}, {{,@S({{/expr/}}),}}, and {{,@D({{/expr/}}),}} print 'checked="checked"', 'selected="selected"' and 'disabled="disabled"' respectively when expression {{,{{/expr/}},}} is true.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-append.pdata
+.	<option name="lang" value="ruby"
+.	       kd:php="append({{*@S($lang=='ruby')*}})">Ruby</option>
+.	
+.	<input type="radio" name="gender" value="M"
+.	       kd:php="append({{*@C($gender=='M')*}})" />Male
+.	
+.	<input type="radio" name="os" value="win"
+.	       kd:php="append({{*@D($os=='mac')*}})" />Windows
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.--------------------
+.	echo "<option name=\"lang\" value=\"ruby\"", {{*$lang == "ruby" ? " selected=\"selected\"" : ""*}}, ">";
+.	echo "Ruby";
+.	echo "</option>\n";
+.	echo "\n";
+.	echo "<input type=\"radio\" name=\"gender\" value=\"M\"", {{*$gender == "M" ? " checked=\"checked\"" : ""*}}, " />";
+.	echo "Male\n\n";
+.	echo "<input type=\"radio\" name=\"os\" value=\"win\"", {{*$os == "mac" ? " disabled=\"disabled\"" : ""*}}, " />";
+.	echo "Windows\n";
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! output.php -l php,eruby,jstl11,jstl10 guide.d/directive-append.pdata
+.	.--------------------
+.	
+.	
+.	
+.JA	◎変数への代入	| directive-set
+.EN	.$$ Assignment	| directive-set
+.	
+.JA	「{{,kd:php="set({{/$var/}}={{/value/}})",}}」は、変数{{/$var/}}に値{{/value/}}を設定します。
+.JA	「{{,=,}}」だけでなく「{{,+=,}}」「{{,-=,}}」「{{,*=,}}」「{{,/=,}}」「{{,.=,}}」が使用できます。
+.EN	{{,kd:php="set(${{/var/}}={{/value/}})",}} is a directive for assigning values into variables.
+.EN	Other than '{{,=,}}', '{{,+=,}}', '{{,-=,}}', '{{,*=,}}', '{{,/=,}}', '{{,.=,}}' are also available.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-set.pdata
+.	<dt {{*kd:php="set($var=$value)"*}}>foo</dt>
+.	<dd {{*kd:php="set($count+=1)"*}}>123</dd>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	{{*$var = $value;*}}
+.	echo "<dt>";
+.	echo "foo";
+.	echo "</dt>\n";
+.	{{*$count += 1;*}}
+.	echo "<dd>";
+.	echo "123";
+.	echo "</dd>\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-set.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎条件分岐 | directive-if
+.EN	.$$ Conditional Branching	| directive-if
+.	
+.JA	「{{,kd:php="if({{/expression/}})",}}」とすることで、条件分岐を行います。
+.JA	elseやelseifも使用できます。
+.EN	{{,kd:php="if({{/expression/}})",}} is a directive for conditional branching.
+.EN	'{{,else,}}' and '{{,elseif,}}' are also available.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-if.pdata
+.	<div {{*kd:php="if($value > 0)"*}}>
+.	  Value is plus.
+.	</div>
+.	<div {{*kd:php="elseif($value < 0)"*}}>
+.	  Value is minus.
+.	</div>
+.	<div {{*kd:php="else"*}}>
+.	  Value is zero.
+.	</div>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	{{*if ($value > 0) {*}}
+.	  echo "<div>\n";
+.	  echo "  Value is plus.\n";
+.	  echo "</div>\n";
+.	{{*} elseif($value < 0) {*}}
+.	  echo "<div>\n";
+.	  echo "  Value is minus.\n";
+.	  echo "</div>\n";
+.	{{*} else {*}}
+.	  echo "<div>\n";
+.	  echo "  Value is zero.\n";
+.	  echo "</div>\n";
+.	{{*}*}}
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-if.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎繰り返し(foreach) | directive-foreach
+.EN	.$$ Iteration (foreach)	| directive-foreach
+.	
+.JA	「{{,kd:php="foreach({{/array-expr/}} as ${{/var/}})",}}」とすることで、リスト{{,{{/array-expr/}},}}の要素をひとつずつ変数{{,${{/var/}},}}に代入しながら、繰り返しを行います。
+.JA	.#繰り返すのは開始タグ、内容、終了タグです。
+.EN	{{,kd:php="foreach({{/array-expr/}} as ${{/var/}})",}} is a directive for iteration, assigning each value in the array into a variable each time through the loop.
+.EN	.#Start tag, contents and end tag are iterated.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-foreach.pdata
+.	<tr {{*kd:php="foreach($user_list as $user)"*}}>
+.	  <td>@{$user}@</td>
+.	</tr>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	{{*foreach($user_list as $user) {*}}
+.	  echo "<tr>\n";
+.	  echo "  <td>", $user, "</td>\n";
+.	  echo "</tr>\n";
+.	{{*}*}}
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-foreach.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎繰り返し(loop) 	| directive-loop
+.EN	.$$ Iteration(loop)	| directive-loop
+.	
+.JA	「{{,kd:php="loop({{/array-expr/}} as ${{/var/}})",}}」とすることで、リスト{{,{{/array-expr/}},}}の要素をひとつずつ変数{{,${{/var/}},}}に代入しながら繰り返しを行います。
+.JA	「{{,kd:php="foreach({{/array-expr/}} as ${{/var/}})",}}」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
+.JA	<dl></dl>で使うと非常に便利です。
+.EN	{{,kd:php="loop({{/array-expr/}} as ${{/var/}})",}} is a directive for iteration.
+.EN	It iterates only contents. The start tag and the end tag are not iterated.
+.EN	It is very useful especially for <dl></dl> tag.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-loop.pdata
+.	<dl {{*kd:php="loop($user_list as $user)"*}}>
+.	  <dt>@{$user->name}@</dt>
+.	  <dd>@{$user->mail}@</dd>
+.	</dl>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "<dl>\n";
+.	{{*foreach($user_list as $user) {*}}
+.	  echo "  <dt>", $user->name, "</dt>\n";
+.	  echo "  <dd>", $user->mail, "</dd>\n";
+.	{{*}*}}
+.	echo "</dl>\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-loop.pdata
+.	.____________________
+.	
+.	
+.	
+.	
+.JA	◎カウンタつき繰り返し(Foreach,Loop) | directive-foreach2
+.EN	.$$ Iteration with Count	| directive-foreach2
+.	
+.	
+.JA	「{{,kd:php="Foreach({{/array-expr/}} as ${{/var/}})",}}」または「{{,kd:php="Loop({{/array-expr/}} as ${{/var/}})",}}」を使うと、カウンタを増やしながら繰り返しを行います。
+.JA	カウンタは1から始まり、変数名は{{,${{/var/}}_ctr,}}です。
+.EN	{{,kd:php="Foreach({{/array-expr/}} as ${{/var/}})",}} and {{,kd:php="Loop({{/array-expr/}} as ${{/var/}})",}} are directives for iteration with loop counting.
+.EN	The counter variable is ${{,{{/var/}}_ctr,}}. It starts at 1.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-foreach2.pdata
+.	<tr {{*kd:php="Foreach($item_list as $item)"*}}>
+.	  <td>@{$item_ctr}@</td>
+.	  <td>@{$item}@<td>
+.	</tr>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	{{*$item_ctr = 0;*}}
+.	{{*foreach($item_list as $item)*}}
+.	  {{*$item_ctr += 1;*}}
+.	  echo "<tr>\n";
+.	  echo "  <td>", $item_ctr, "</td>\n";
+.	  echo "  <td>", $item, "</td>\n";
+.	  echo "</tr>\n";
+.	{{*}*}}
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-foreach2.pdata
+.	.____________________
+.	
+.	
+.	
+.	
+.JA	◎トグルつき繰り返し(FOREACH,LOOP)	| directive-foreach3
+.EN	.$$ Iteration with a Toggle Switch	| directive-foreach3
+.	
+.	
+.JA	「{{,kd:php="FOREACH({{/array-expr/}} as ${{/var/}})",}}」または「{{,kd:php="LOOP({{/array-expr/}} as ${{/list/}})",}}」とすると、トグルつきの繰り返しを行うことができます。
+.JA	トグルは、繰り返し回数が奇数回か偶数回かによって、値が入れ替わります。
+.JA	トグル変数の名前は{{,${{/var/}}_tgl,}}です。
+.JA	トグルの値はデフォルトで「{{,'odd',}}」と「{{,'even',}}」が使われますが、コマンドオプション --odd-value と --even-value で指定できます。
+.EN	{{,kd:php="FOREACH({{/array-expr/}} as ${{/var/}})",}} and {{,kd:php="LOOP({{/array-expr/}} as ${{/var/}})",}} are directives for iteration with toggle switching.
+.EN	The toggle switch's value changes depending on whether loop counter is odd or even.
+.EN	The toggle switch is named ${{,{{/var/}}_tgl,}}.
+.EN	The value of the toggle switch is {{,'odd',}} or {{,'even',}} by default.
+.EN	You can change them with the command-line option {{,--odd-value={{/value/}},}} and {{,--even-value={{/value/}},}}.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-foreach3.pdata
+.	<table>
+.	  <tbody {{*kd:php="LOOP($item_list as $item)"*}}>
+.	    <tr class="{{*@{$item_tgl}@*}}">
+.	      <td>@{$item}@</td>
+.	    </tr>
+.	  </tbody>
+.	</table>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	echo "<table>\n";
+.	echo "  <tbody>\n";
+.	{{*$item_ctr = 0;*}}
+.	{{*foreach ($item_list as $item) {*}}
+.	  {{*$item_ctr += 1;*}}
+.	  {{*$item_tgl = $item_ctr % 2 == 0 ? "even" : "odd";*}}
+.	  echo "    <tr class=\"", {{*$item_tgl*}}, "\">\n";
+.	  echo "      <td>", $item, "</td>\n";
+.	  echo "    </tr>\n";
+.	{{*}*}}
+.	echo "  </tbody>\n";
+.	echo "</table>\n";
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-foreach3.pdata
+.	.____________________
+.	
+.	
+.	
+.	
+.JA	◎繰り返し(while) | directive-while
+.EN	.$$ Iteration (while)	| directive-while
+.	
+.	
+.JA	「{{,kd:php="while({{/expression/}})",}}」とすることで、繰り返しを行うことができます。
+.JA	.#なおKwartz-phpでは、代入文は式(expression)ではありませんが、whileの条件式に限っては式として代入文を書くことができます。
+.EN	{{,kd:php="while({{/expression/}})",}} is a directive to iterate with a while statement. 
+.EN	.#Assignments are not expressions in Kwartz-php except in a while statement.
+.	
+.	
+.JA	またJSPでは、whileを変換しようとするとエラーになります。
+.JA	これは、whileに対応するカスタムタグがないからです。
+.EN	Kwartz-php will raise an error when compiling a while statement into JSP,
+.EN	because there is no custom tag in JSTL which is equivalent to a while statement.
+.	
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-while.pdata
+.	<tr {{*kd:php="while($row = $sth->fetch())"*}}>
+.	  <td>@{$row[0]}@</td>
+.	</tr>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	{{*while($row = $sth->fetch()) {*}}
+.	  echo "<tr>\n";
+.	  echo "  <td>", row[0], "</td>\n";
+.	  echo "</tr>\n";
+.	{{*}*}}
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php -l php,eruby guide.d/directive-while.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎ダミーデータ | directive-dummy
+.EN	.$$ Dummy data	| directive-dummy
+.	
+.JA	「{{,kd:php="dummy",}}」とすることで、そのノードをダミーデータとみなして読み飛ばします。
+.EN	{{,kd:php="dummy",}} is a directive for ignoring an element.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.--------------------
+.	<tr {{*kd:php="dummy"*}}>
+.	  <td>bar</td>
+.	</tr>
+.	<tr {{*kd:php="dummy"*}}>
+.	  <td>baz</td>
+.	</tr>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.JA	                          ## 何も出力されない
+.EN	                          ## Nothing
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.JA	                          ## 何も出力されない
+.EN	                          ## Nothing
+.	.____________________
+.	
+.	
+.	
+.	
+.JA	◎エレメントの置換 		| directive-replace
+.EN	.$$ Replacement of Elements	| directive-replace
+.	
+.	
+.JA	「{{,kd:php="replace({{/name/}})",}}」とすることで、そのエレメントを別のエレメントに置き換えることができます。
+.EN	'{{,kd:php="replace({{/name/}})",}}' replaces an element with the element which is already marked with the name {{/name/}}.
+.	
+.JA	プレゼンテーションデータ：
+.EN	Presentation Data:
+.	.-------------------- directive-replace.pdata
+.	<html>
+.	  <body>
+.JA	    <!-- ナビゲーション -->
+.EN	    <!-- breadcrumbs navigation -->
+.	    <div {{*id="mark:breadcrumbs"*}}>
+.	      <a href="/">Home</a>
+.	      &gt; <a href="/php">PHP</a>
+.	      &gt; <a href="/php/kwartz-php">Kwartz-php</a>
+.	    </div>
+.	
+.	   ....
+.	
+.	    <div {{*kd:php="replace(breadcrumbs)"*}}>
+.	      Home &gt; PHP &gt; Kwartz-php
+.	    </span>
+.	  </div>
+.	</html
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	.<<<:! kwartz-php -a convert guide.d/directive-replace.pdata
+.	.____________________
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! output.php guide.d/directive-replace.pdata
+.	.____________________
+.	
+.	
+.	
+.JA	◎プレゼンテーションデータファイルの読み込み	| directive-include
+.EN	.$$ Including Presentation Data Files		| directive-include
+.	
+.	
+.JA	「{{,kd:php="include('{{/filename/}}')",}}」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
+.JA	.#通常は{{,<span/>,}}タグを使用して「{{,<span kd:php="include('{{/filename/}}')"/>,}}」のようにします（Kwartz-phpでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
+.EN	{{,kd:php="include('{{/filename/}}')",}} is a directive to read and to include another presentation data file (HTML file).
+.EN	.#Usually, the {{,<span/>,}} tag is used, like such: {{,<span kd:php="include('{{/filename/}}')"/>,}}.	
+.EN	.#(In Kwartz-php, {{,<span>,}} tags which contain only directives are deleted automatically.)
+.	
+.	
+.JA	プレゼンテーションデータ(tab.html)：
+.EN	Presentation Data (tab.html) :
+.	.-------------------- tab.html
+.	<span style="border-width:1 1 0 1; border-style:solid; padding:1 5 1 5">
+.	  <a href="@{$tab['url']}@" style="text-decoration:none">@{$tab['name']}@</a>
+.	</span>
+.	.--------------------
+.	
+.JA	プレゼンテーションデータ(tab-main.html)：
+.EN	Presentation Data (tab-main.html) :
+.	.-------------------- tab-main.html
+.	<div kd:php="loop($tablist as $tab)">
+.	  <span {{*kd:php="include('tab.html')"*}}/>
+.	</div>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	.<<<:! kwartz-php -a convert --include-path=guide.d guide.d/tab-main.html
+.	.____________________
+.	
+.	
+.JA	{{,include,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
+.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--include-path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
+.EN	When presentation data files to be included are placed in other directories,
+.EN	you can specify those directories with the command-line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
+.EN	.#Presentation data files included are to be placed in other directory.
+.EN	.#You can specify directories with a command line option {{,--include-path={{/dir1/}},{{/dir2/}},...,}}.
+.	
+.	.====================
+.	$ kwartz-php --include-path=dir1,dir2 tab-main.html
+.	.====================
+.	
+.	
+.	
+.	
+.JA	◎プレゼンテーションロジックファイルの読み込み	| directive-load
+.EN	.$$ Load presentation logic file		| directive-load
+.	
+.	
+.JA	「{{,kd:php="load('{{/filename/}}')",}}」で他のプレゼンテーションロジックファイルを読み込むことができます。
+.JA	.#通常は{{,<span/>,}}タグを使用して「{{,<span kd:php="load('{{/filename/}}')"/>,}}」のようにします（Kwartz-phpでは、ディレクティブしか含まない{{,<span>,}}タグは自動的に削除されます）。
+.EN	{{,kd:php="load('{{/filename/}}')",}} is a directive to read and to include other presentation logic files.
+.EN	.#Usually, {{,<span/>,}} tag is used, like such: {{,<span kd:php="load('{{/filename/}}')"/>,}}.	
+.EN	.#(In Kwartz-php, {{,<span>,}} tags which contain only directives are deleted automatically.)
+.	
+.	
+.JA	通常、「どのプレゼンテーションロジックファイルを使用するか？」はコマンドオプション{{,-p,}}で指定します。
+.JA	しかし{{,load,}}ディレクティブを用いると、それをプレゼンテーションデータの中で指定することができます。
+.JA	また{{,load,}}ディレクティブとコマンドオプションとを同時に使用することもできます。
+.EN	Usually, the name of a presentation logic file is specified by the command-line option '{{,-p,}}'.
+.EN	The {{,load,}} directive is equal to these comamnd-line options.
+.EN	In other words, you can specify the name of a presentation logic file with the {{,load,}} directive as well as the command-line options.
+.EN	Conversely, the {{,load,}} directive is available with command-line options.
+.	
+.JA	{{,load,}}ディレクティブはプレゼンテーションデータファイルの最後に書いてください。
+.JA	さもないと、読み込んだプレゼンテーションロジックがプレゼンテーションデータファイルによって上書きされることがあります。
+.EN	{{,load,}} directives should be at the end of a presentation data file.
+.EN	Otherwise, the presentation logic that is loaded may be overwritten by the presentation data file.
+.	
+.	
+.JA	プレゼンテーションロジック(load-lib.plogic)：
+.EN	Presentation Logic (load-lib.plogic) :
+.	.-------------------- load-lib.plogic
+.	element item_list {
+.	  @stag;
+.	  foreach ($item_list as $item) {
+.	    @cont;
+.	  }
+.	  @etag;
+.	}
+.	
+.	macro BEGIN {
+.	  echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+.JA	  echo "<html lang=\"ja\">\n";
+.EN	  echo "<html lang=\"en\">\n";
+.	  echo " <body bgcolor=\"#FFFFFF\">\n";
+.	}
+.	
+.	macro END {
+.	  echo " </body>\n";
+.	  echo "<html>\n";
+.	}
+.	.--------------------
+.	.#.-------------------- load-lib.plogic
+.	.#:elem(item)
+.	.#  :foreach(item=itemlist)
+.	.#    @stag
+.	.#    @cont
+.	.#    @etag
+.	.#  :end
+.	.#:end
+.	.#
+.	.#:macro(BEGIN)
+.	.#  :print("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n")
+.JA	.#  :print("<html lang=\"ja\">\n")
+.EN	.#  :print("<html lang=\"en\">\n")
+.	.#  :print(" <body bgcolor=\"#FFFFFF\">\n")
+.	.#:end
+.	.#
+.	.#:macro(END)
+.	.#  :print(" </body>\n")
+.	.#  :print("<html>\n")
+.	.#:end
+.	.#.--------------------
+.	
+.JA	プレゼンテーションデータ(load-main.html)：
+.EN	Presentation Data(load-main.html):
+.	.-------------------- load-main.html
+.	<ul id="mark:user_list">
+.	  <li kd:php="value($item)">foobar</li>
+.	</ul>
+.	<span {{*kd:php="load('load-lib.plogic')"*}}/>
+.	.--------------------
+.	
+.JA	中間コード：
+.EN	Intermediate Code:
+.	.____________________
+.	.<<<:! kwartz-php -a convert --load-path=guide.d guide.d/load-main.html
+.	.____________________
+.	
+.JA	出力用プログラム：
+.EN	Output Program:
+.	.____________________
+.	.<<<:! output.php --load-path=guide.d guide.d/load-main.html
+.	.____________________
+.	
+.	
+.JA	{{,load,}}ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
+.JA	ファイルが置いてあるディレクトリは、コマンドラインオプション {{,--load-path={{/dir1/}},{{/dir2/}},...,}} で指定できます。
+.EN	If presentation logic files to be loaded are placed in another directory,
+.EN	you can specify those directories with the command-line option {{,--load-path={{/dir1/}},{{/dir2/}},...,}}.
+.	
+.	.====================
+.	$ kwartz-php --load-path=dir1,dir2 load-main.html
+.	.====================
+.	
+.	
+.	
+.	
+.	
+.JA	.#◎id属性とkd属性について	| directive-idkd
+.EN	.#.$$ id and kd Attributes	| directive-idkd
+.	.#
+.	.#
+.JA	.#Kwartz-phpでは、ディレクティブを記述するのにid属性とkd属性が使用できます。
+.JA	.#ここでは、両者の使い分けについて説明します。
+.	.#
+.	.#
+.JA	.#.* id属性もkd属性も、機能としては同じです。
+.JA	.#今までid属性で説明していましたが、すべてkd属性に書いても動作します。
+.EN	.#.* The kd attribute is equivalent to the id attribute in Kwartz-php.
+.EN	.#   Anything that can go in an id attribute can also be placed in a kd attribute.
+.	.#
+.	.#
+.JA	.#.* ひとつのタグにid属性とkd属性の両方を記述した場合、kd属性のほうが優先されます。
+.JA	.#   例えば「{{,id="name" kd="foreach:item=list",}}」とした場合、kd属性のほうが有効となります。
+.EN	.#.* If a tag has both an id attribute and a kd attribte,
+.EN	.#   Kwartz-php overrides the former with the latter.
+.EN	.#   For example, if you write '{{,id="name" kd="foreach:item=list",}}',
+.#N	.#    the kd attribute is enabled but not the id attribute.
+.	.#
+.	.#
+.JA	.#.* ただし、kd属性に記述したディレクティブが{{,attr,}}のみの場合は、
+.JA	.#   id属性のディレクティブも有効となります。
+.JA	.#   例えば「{{,id="name" kd="attr:href=url",}}」とした場合、そのエレメントは名前{{,name,}}を使ってマーキングされます。
+.EN	.#.* However, if the kd attribute has only {{,attr,}} directives,
+.EN	.#   then the id attribute is not overwritten.
+.EN	.#   For example, if you write '{{,id="name" kd="attr:href=url",}},
+.EN	.#   the element is marked with the name {{,name,}}.
+.	.#
+.	.#
+.JA	.#.* HTMLの仕様では、id属性の値に含めることのできる記号はアンダーバー（{{,_,}}）、コロン（{{,:,}}）、ピリオド（{{,.,}}）、ハイフン（{{,-,}}）のみです。
+.JA	.#   そのため、{{,id="foreach:item=list",}} や {{,id="attr:name=value",}} という記述はHTMLの仕様からみると正しくありませんので、{{,id="foreach:item:list",}} や {{,id="attr:name:value",}} と書くほうがよいでしょう。
+.JA	.#   .#そのため、{{,id="foreach:item=list",}} や {{,id="value:item['user']",}} という記述は、HTMLの仕様からみると正しくありません。ご注意ください。
+.EN	.#.* The HTML Specification defines that the id attribute value can contain only alphanumeric characters, underscores ({{,_,}}), colons({{,:,}}), hyphens({{,-,}}) and periods({{,.,}}).
+.EN	.#   Other characters cannot be in the id attribute.
+.EN	.#   This means that {{,id="foreach:item=list",}} or {{,id="attr:name=value",}} are not valid according to the HTML Specification.
+.EN	.#   Therefore, it is recommended to write {{,id="foreach:item:list",}} or {{,id="attr:name:value",}} instead.
+.EN	.#   .#It means that {{,id="foreach:item=list",}} or {{,id="value:item['user'],}} is not valid in HTML specification.
+.EN	.#   .#You should remember it.
+.	.#
+.	.#
+.JA	.#.* kd属性は、HTMLの仕様にはない独自の属性です。
+.JA	.#   そのため、そのままでは{{<W3C Markup Vaidation Service|http://validator.w3.org>}}のようなHTML検証ツールでエラーとなります。
+.JA	.#   そこで、kd属性を取り除いたうえで{{<W3C Markup Vaidation Service|http://validator.w3.org>}}に送信するCGI/PHPスクリプトを用意しました。
+.JA	.#   スクリプトはKwartz-phpのアーカイブの中に含まれています。
+.JA	.#   また{{<こちら|<http://www.kuwata-ab.com/webtech/kwartz/validator.php>}}でも実行できます。
+.EN	.#.* The kd attribute is unique to Kwartz-php and it is not in the HTML Specification.
+.EN	.#   So, you will get errors when you use {{<W3C Markup Vaidation Service|http://validator.w3.org>}} with HTML files which contain kd attributes.
+.EN	.#   Kwartz-php gives you a CGI/PHP script which deletes kd attributes from your HTML file and then sends it to {{<W3C Markup Vaidation Service|http://validator.w3.org>}}.
+.EN	.#   They are included in the Kwartz-php archive, and is available at {{<here|<http://www.kuwata-ab.com/kwartz/validator.php>}}.
+.	.#
+.	.#
+.JA	.#.* kd属性の名前は、コマンドラインオプション {{,--attr-name={{/xxx/}},}} で変更することができます。
+.JA	.#   例えばkd属性のかわりにstyle属性を使う場合は、 --attr-name=style としてください。
+.EN	.#.* You can change the kd attribte name with the command-line option {{,--attr-name={{/xxx/}},}}.
+.EN	.#   For example, {{,--attr-name=style,}} make Kwartz-php to use 'style' attributes instead of 'kd' attributes.
+.	.#
+.	
+.	
+.	
+
+.JA	◎kd:php属性とid属性について			| directive-syntax
+.EN	.$$ The kd:php attribute and the id attribute	| directive-syntax
+.	
+.JA	Kwartz-phpでは、ディレクティブを表す属性としてkd:php属性とid属性が使用できます。
+.JA	両者における記述の違いを以下に示します。
+.EN	The kd:php attribute and the id attribute are available to describe directives in Kwartz-php.
+.EN	The following shows the syntax difference between them.
+.	
+.	.+--------------------
+.JA	マーキング		., {{,kd:php="mark(name)",}}			., {{,id="name",}}.^ {{,id="mark:name",}}
+.EN	Marking			., {{,kd:php="mark(name)",}}			., {{,id="name",}}.^ {{,id="mark:name",}}
+.JA	値の出力		., {{,kd:php="value($obj->property)",}}		., {{,id="value:obj.property",}}
+.EN	Output Expression	., {{,kd:php="value($obj->property)",}}		., {{,id="value:obj.property",}}
+.JA	属性値の設定		., {{,kd:php="attr('bgcolor'=>$color)",}}	., {{,id="attr:bgcolor=color",}} .^ {{,id="attr:bgcolor:color",}}
+.EN	Attributes		., {{,kd:php="attr('bgcolor'=>$color)",}}	., {{,id="attr:bgcolor=color",}} .^ {{,id="attr:bgcolor:color",}}
+.JA	属性の追加		., {{,kd:php="append(@C(gender=='M'))",}}	., {{,id="append:@C(gender=='M')",}}
+.EN	Appending Attributes	., {{,kd:php="append(@C(gender=='M'))",}}	., {{,id="append:@C(gender=='M')",}}
+.JA	繰り返し(foreach)	., {{,kd:php="foreach($list as $var)",}}	., {{,id="foreach:var=list",}}   .^ {{,id="foreach:var:list",}}
+.EN	Iteration(foreach)	., {{,kd:php="foreach($list as $var)",}}	., {{,id="foreach:var=list",}}   .^ {{,id="foreach:var:list",}}
+.JA	繰り返し(loop)		., {{,kd:php="loop($list as $var)",}}		., {{,id="loop:var=list",}}      .^ {{,id="loop:var:list",}}
+.EN	Iteration(loop)		., {{,kd:php="loop($list as $var)",}}		., {{,id="loop:var=list",}}      .^ {{,id="loop:var:list",}}
+.JA	繰り返し(while)		., {{,kd:php="while($x>0)",}}			., {{,id="while:x>0",}}
+.EN	Iteration(while)	., {{,kd:php="while($x>0)",}}			., {{,id="while:x>0",}}
+.JA	条件分岐		., {{,kd:php="if($x>0)",}} .^ {{,kd:php="elseif($x<0)",}} .^ {{,kd:php="else",}}  ., {{,id="if:x>0",}} .^ {{,id="elsif:x<0",}} .^ {{,id="else",}}
+.EN	Conditional Branching	., {{,kd:php="if($x>0)",}} .^ {{,kd:php="elseif($x<0)",}} .^ {{,kd:php="else",}}  ., {{,id="if:x>0",}} .^ {{,id="elsif:x<0",}} .^ {{,id="else",}}
+.JA	代入文			., {{,kd:php="set($var=10)",}}			., {{,id="set:var=10",}}         .^ {{,id="set:var:10",}}
+.EN	Assignment		., {{,kd:php="set($var=10)",}}			., {{,id="set:var=10",}}         .^ {{,id="set:var:10",}}
+.JA	エレメントの置換	., {{,kd:php="replace(name)",}}			., {{,id="replace:name",}}
+.EN	Replacing a Eelement	., {{,kd:php="replace(name)",}}			., {{,id="replace:name",}}
+.JA	ダミーエレメント	., {{,kd:php="dummy",}}				., {{,id="dummy:xxx",}}
+.EN	Dummy Element		., {{,kd:php="dummy",}}				., {{,id="dummy:xxx",}}
+.JA	プレゼンテーションデータファイルの読み込み   ., {{,kd:php="include('filename')",}} ., {{,id="include:'filename'",}}
+.EN	Include a Presentation Data File	     ., {{,kd:php="include('filename')",}} ., {{,id="include:'filename'",}}
+.JA	プレゼンテーションロジックファイルの読み込み ., {{,kd:php="load('filename')",}}    ., {{,id="load:'filename'",}}
+.EN	Load a Presentation Logic File		     ., {{,kd:php="load('filename')",}}    ., {{,id="load:'filename'",}}
+.JA	式の埋め込み		.,  {{,@{...}@,}}				., {{,#{...}#,}}
+.EN	Embedded Expression	.,  {{,@{...}@,}}				., {{,#{...}#,}}
+.	.+--------------------
+.	
+.	
+.JA	なお互換性の問題から、「{{,id="loop:var=list",}}」のかわりに「{{,id="list:var=list",}}」も使うことができます。
+.JA	またid属性のかわりにkd属性を使うこともできます。
+.EN	{{,id="list:var=list",}} is available instead of {{,id="loop:var=list",}} for the reason of compatibility.
+.EN	The kd attribute is available instead of the id attribute for the same reason.
+.	
+.	
+.	
+.JA	◎注意事項	| directive-notes
+.EN	.$$ Notes	| directive-notes
+.	
+.	
+.JA	ディレクティブを使用する際の注意事項です。
+.EN	These are some notes on the use of directives.
+.	
+.	
+.JA	.* ひとつのkd:php属性またはid属性にはひとつのディレクティブしか記述できません。
+.JA	   例えば「{{,kd:php="set($var=100);value($var)",}}」のような記述はエラーになります。
+.EN	.* One kd:php or id attribute can have only one directive.
+.EN	   For example, '{{,kd:php="set($var=100);value($var)",}}' causes an error.
+.		.--------------------
+.		## NG
+.		<span kd:php="set($var=100);value($var)">???</span>
+.		.--------------------
+.	
+.	
+.JA	.* ただし、attrディレクティブとappendディレクティブだけは他のディレクティブといっしょに記述できます。
+.JA	   また複数のattrディレクティブとappendディレクティブを設定することもできます。
+.JA	.#   よって「{{,id="foreach:var=list;attr:class=var.class;attr:href=var.href",}}」のような記述が可能です。
+.EN	.* However, the {{,attr,}} directive and the {{,append,}} directive can be used with other directive in an kd:php attribute,
+.EN	   as well as with itself.
+.EN	.#   For example, '{{,id="foreach:var=list;attr:class=var.class;attr:href=var.href",}}' is OK.
+.		.--------------------
+.		## OK
+.		<foo kd:php="foreach($list as $var);attr('class'=>$var->class);attr('href'=>$var->href)">
+.		....
+.		</foo>
+.		.--------------------
+.	
+.	
+.JA	.* タグにディレクティブを含めた場合、終了タグは省略できません。
+.JA	   また{{,<foo .../>,}}のような空要素タグは使用できます。
+.EN	.* You cannot omit end-tags when using Kwartz-php directives.
+.EN	   But you can use empty-element tags, such as '{{,<foo .../>,}}'.
+.		.--------------------
+.		## NG
+.		<ul>
+.		  <li kd:php="value($item)">foo
+.		</ul>
+.		## OK
+.		<a kd:php="attr('name'=>$refname)"/>
+.		.--------------------
+.	
+.	
+.JA	.* ディレクティブしか含まないような<span></span>は、削除されます。
+.JA	   例えば「{{,Hello <span id="value:name">World</span>!,}}」というプレゼンテーションデータは、<span></span>が削除されて「{{,echo 'Hello ', name, '!';,}}」という中間コードに変換されます
+.EN	.* The <span></span> tag is deleted if it has only directives.
+.EN	   For example, the presentation data '{{,Hello <span id="value:name">World</span>!,}}' will be converted into the intermediate code '{{,echo "Hello "; echo $name; echo "!";,}}', deleting <span></span>.
+.		.--------------------
+.JA		## プレゼンテーションデータ
+.EN		## presentation data
+.		Hello <span kd:php="value($name)">World</span>!
+.JA		## 中間コード
+.EN		## intermediate code
+.		echo "Hello ";
+.		echo $name;
+.		echo "!\n";
+.		.--------------------
+.	
+.	
+.JA	.* ディレクティブを含むタグでは、ほかの属性は必ず「{{,{{/attr/}}="{{/value/}}",}}」の形で記述し、属性名や属性値を省略しないようにしてください。
+.JA	   これはHTML/XML以外でもKwartz-phpを使用できるようにするための意図した仕様であり、バグではありません。
+.EN	.* You must describe attributes like {{,{{/attr/}}="{{/value/}}",}} in the start tag which contains directives.
+.EN	   In other words, you cannot omit attribute names or attribute values when using directives.
+.EN	   This is not a bug; it's an intended behavior so as to make Kwartz-php available in any text file.
+.		.--------------------
+.		## NG
+.		<input type="checkbox" kd:php="foreach($list as $item)" checked/>
+.		## OK
+.		<input type="checkbox" kd:php="foreach($list as $item)" checked="checked"/>
+.		
+.		## NG
+.		<option kd:php="attr('value'=>$value)" @{$flag ? 'selected' : ''}@/>
+.		## OK
+.		<option value="@{$value}@" @{$flag ? 'selected' : ''}@>
+.		.--------------------
+.	
+.	
+.JA	.#.* ディレクティブ中では、記号「{{,>,}}」を使わないようにしてください。
+.JA	.#   例えば「{{,<span id="while:i>0">,}}」というタグは、「{{,<span id="while:0<i">,}}」と記述してください。.^
+.JA	.#   これは、Kwartz-phpではプレゼンテーションデータの字句解析を正規表現によるパターンマッチで行っているためです。
+.JA	.#   そのため、「{{,<span id="while:i>0">,}}」は「{{,<span id="while:i>,}}」と「{{,0">,}}」とに分かれて解釈されてしまうので、うまくコンバートできません。
+	.#   注意してください。
+.EN	.#.* A directive which contains the character '{{,>,}}' will fail to compile.
+.EN	.#   For example, '{{,<span id="while:i>0">,}}' will fail to compile.
+.EN	.#   You should write it as '{{,<span id="while:0<i">,}}'. .^
+.EN	.#   Kwartz-php parses presentation data with regular expression matching.
+.EN	.#   Therefore, '{{,<span id="while:i>0">,}}' will be parsed as '{{,<span id="while:i>,}}' and '{{,0">,}}',
+.EN	.#   and conversion will fail.
+.	.#	.--------------------
+.	.#	<span id="while:i>0"> ... </span>         ## NG
+.	.#	<span id="while:0<i"> ... </span>         ## OK
+.	.#	.--------------------
+.	
+.	
+.JA	.#.* 「{{,id="set:var=flag?v1:v2",}}」や「{{,id="value:flag?v1:v2",}}」は文法エラーになります。
+.JA	.#   これは、「{{,:v2,}}」が「{{,:print,}}」や「{{,:if,}}」のように文の開始とみなされるからです。
+.JA	.#   そのため、「{{,:v2,}}」をカッコで囲むか、「{{,:,}}」と「{{,v2,}}」の間に空白をいれるようにしてください。
+.EN	.#.* '{{,id="set:var=flag?v1:v2",}}' or '{{,id="value:flag?v1:v2",}}' will cause syntax error,
+.EN	.#   because kwartz recognize '{{,:v2,}}' as beginning of statement (like '{{,:print,}}' or '{{,:if,}}').
+.EN	.#   You should cover '{{,:v2,}}' with '{{,(),}}' or insert a space between '{{,:,}}' and '{{,v2,}}'.
+.	.#	.--------------------
+.	.#	<span id="set:var=flag?v1:v2"/>          ## NG
+.	.#	<span id="set:var=flag?v1:(v2)"/>        ## OK
+.	.#	<span id="set:var=flag?v1: v2"/>         ## OK
+.	.#	.--------------------
+.	
+.	
+.	
+.	
+.JA	●コマンドラインオプション | command-line
+.EN	.$ Command-line options	   | command-line
+.	
+.JA	テンプレートを出力用プログラムへコンパイルするには、kwartz-phpコマンドを使用します。
+.EN	The script 'kwartz-php' is a commad-line script to convert, translate and compile HTML templates into output scripts.
+.	
+.JA	そのまえに用語のおさらいをしておきます。
+.EN	You remember these terms? OK, I'll show you again.
+.	
+.JA	.[ コンバート(Convert) ]
+.JA		プレゼンテーションデータを中間コードへ変換することです。
+.EN	.[ Convert ]
+.EN		Transform presentation data into intermediate code.
+.	
+.JA	.[ トランスレート(Translate) ]
+.JA		中間コードを出力用プログラムへ変換することです。
+.JA		これには、プレゼンテーションロジックをマージすることも含みます。
+.EN	.[ Translate ]
+.EN		Merge intermediate code and presentation logic, then transform them into output script.
+.	
+.JA	.[ コンパイル(Compile) ]
+.JA		プレゼンテーションデータとプレゼンテーションロジックから、出力用プログラムを生成することです。
+.JA		つまり、コンパイルとはコンバートとトランスレートの両方を行うことです。
+.EN	.[ Compile ]
+.EN		Transform presentation data and presentation logic into output script.
+.EN		'Compile' means 'convert and traslate'.
+.	
+.	
+.JA	コンパイル／コンバート／トランスレートを行うには、kwartz-phpスクリプトを使用します。
+.EN	And here is the usage of the 'kwartz-php' script.
+.	
+.	
+.JA	使い方：
+.EN	Usage:
+.	.% {{,kwartz-php [options...] [-p {{/plogic-file/}}] file.html > file.output,}}
+.JA		ファイルをひとつずつ指定して処理します。
+.EN		Process one file.
+.	
+.	.#.% {{,kwartz -O {{/outfile-suffix/}} [-P {{/plogic-suffix/}}] [options...] *.html,}}
+.JA	.#	複数のファイルをまとめて処理します（バッチモード）。
+.JA	.#	出力ファイルの拡張子を -O で、プレゼンテーションロジックファイルの拡張子を -P で指定します。
+.EN	.#	Process each files (batch mode).
+.EN	.#	You must specify the suffix of output script file with the option -O.
+.EN	.#	And you may specify the suffix of the presentation logic file with the option -P.
+.	
+.	
+.JA	オプションは次の通りです。
+.EN	Options:
+.	.[-h, --help]
+.JA		ヘルプを表示。
+.EN		Print help.
+.	
+.	.[-v]
+.JA		バージョン情報を表示
+.EN		Version information.
+.	
+.	.[-a {{/action/}}]
+.JA		実行する処理。'convert', 'translate', 'compile', 'analyze' のどれか。デフォルトは'compile'。
+.EN		Action to do. {{/action/}} may be 'convert', 'translate', 'compile'(default) or 'analyze'.
+.	
+.	.[-l {{/lang/}}]
+.JA		ターゲット言語を指定。指定できるのは
+.EN		Target language of the output script. {{/lang/}} may be
+.		php, eruby, jsp.
+.	
+.	.[-s , -e]
+.JA		サニタイズを行う。{{,--escape=true,}}と同じ。
+.EN		Enable auto-sanitizing. This option is equal to {{,--escape=true,}}.
+.	
+.	.#.[-i[{{/N/}}]]
+.JA	.#	出力用スクリプトのインデント幅{{/N/}}を指定する。省略時は2。
+.EN	.#	Specifies the indent width ({{/N/}}) of a output script (default 2).
+.	
+.	.[-p {{/plogic-file/}}]
+.JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。
+.EN		Filename of the presentation logics. It is possible to specify several filename using '{{,,,}}' as a separator.
+.	
+.	.[--attr-name={{/name/}}]
+.JA		ディレクティブで使用する属性名。デフォルトは 'kd'。
+.EN		Attribute name used as a directive. Default is 'kd'.
+.	
+.	.[--charset={{/charset/}}]
+.JA		文字コード。JSPにおいて '{{,<%@ page contentType="text/html; charset={{/charset/}} "%>,}}' を出力する。
+.EN		Character set. Kwartz-php will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSP.
+.	
+.	.[--delete-idattr={{/true/}}|{{/false/}}]
+.JA		プレゼンテーションデータから {{,id="name",}} を取り除く。
+.EN		Delete {{,id="name",}} from presentation data.
+.	
+.	.[--escape={{/true/}}|{{/false/}}]
+.JA		式をサニタイズして出力する。
+.EN		Auto-sanitizing.
+.	
+.	.[--even-value={{/value/}}]
+.JA		偶数のときの値。デフォルトは「{{,'even',}}」。ディレクティブFOREACHとLISTで使われる。
+.EN		Even value. Default is {{,'even',}}. Directives FOREACH and LIST will use this value.
+.	
+.	.[--footer={{/string/}}]
+.JA		フッター文字列。
+.EN		Footer string.
+.	
+.	.[--header={{/string/}}]
+.JA		ヘッダー文字列。
+.JA		JSPではデフォルトで '{{,<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>,}}'
+.JA		が設定される。
+.JA		これを出力したくないときは {{,--header='',}} とする。
+.EN		Header string.
+.EN		'{{,<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>,}}' is used as default in JSP.
+.EN		If you don't want to print any header text, use {{,--header='',}}.
+.	
+.	.[--indent-width={{/N/}}]
+.JA		出力用スクリプトのインデント幅{{/N/}}を指定する。
+.EN		Specifies the indent width ({{/N/}}) of a output script.
+.	
+.	.[--include-path={{/dir1/}},{{/dir2/}}],...
+.JA		{{,include,}}ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
+.EN		Specify directories from which '{{,include,}}' directive includes.
+.	
+.	.[--load-path={{/dir1/}},{{/dir2/}}],...
+.JA		{{,load,}}ディレクティブや{{,:load(),}}文で読み込むファイル（プレゼンテーションロジックファイル）のディレクトリを指定する。
+.EN		Specify directories from which '{{,load,}}' directive or {{,:load(),}} statement loads.
+.	
+.	.[--odd-value={{/value/}}]
+.JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
+.EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
+.	
+.	.[--php-attr-name={{/name/}}]
+.JA		ディレクティブで使用する属性名。デフォルトは 'kd:php'。
+.EN		Attribute name used as a directive. Default is 'kd:php'.
+.	
+.	
+.	
+.	
+.	
+.JA	使い方の例です。
+.EN	Examples:
+.	
+.	.#.: file1.html ==> file1.rb
+.JA	.*	プレゼンテーションデータ(file1.html)をコンパイルして、出力用スクリプト(file1.php)に変換する。
+.JA		ターゲット言語はPHP。
+.EN	.*	Compile presentation data file 'file1.html' and get an output script 'file1.php'.
+.EN		The target language is PHP.
+.		.====================
+.		$ kwartz-php -l php file1.html > file1.php
+.		.====================
+.		
+.	
+.	.#.: file1.html + file1.plogic ==> file1.php
+.JA	.*	プレゼンテーションデータ(file1.html)とプレゼンテーションロジック(file1.plogic)から、出力用スクリプト(file1.php)を作成する。
+.JA		ターゲット言語はPHP。
+.EN	.*	Compile presentation data file 'file1.html' and a presentation logic file 'file1.plogic', and get an output script 'file1.php'.
+.EN		The target language is PHP.
+.		.====================
+.		$ kwartz-php -l php -p file1.plogic file1.html > file1.php
+.		.====================
+.		
+.	
+.	.#.: *.html ==> intermediate code
+.JA	.*	プレゼンテーションデータを中間コードにコンバートする。
+.EN	.*	Convert presentation data into intermediate code.
+.		.====================
+.		$ kwartz-php -a convert file1.html | more
+.		.====================
+.		
+.	
+.	
+.	
+.JA	.#●PL(Presentation Language)のBNF		| bnf
+.EN	.#.$ BNF of PL-php (Presentation Language)	| bnf
+.	.#
+.	.#(undocumented)
+.	.#
+.	
