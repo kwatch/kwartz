@@ -3,71 +3,80 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2004-02-06 rev.38
+.: 2005-02-13 rev.39
+	.- [enhance] users-guide.{en,ja}.html
+	.- [enhance] reference.{en,ja}.html
+	.- [bugfix] rename MethodExpression#prop_name() to MethodExpression#method_name()
+	.- [change] Analyzer#result() reports as "Global:" and "Local:"
+	.- [enhance] new command-line option '--header=text'
+	.- [enhance] new command-line option '--footer=text'
+	.- [change] MainCommand#main() returns output string
+
+.: 2005-02-06 rev.38
 	.- [enhance] add users-guide.txt and reference.txt
 
-.: 2004-02-06 rev.37
+.: 2005-02-06 rev.37
 	.- [enhance] property 'empty_tags' and Config::EMPTY_TAGS support
 
-.: 2004-02-06 rev.36
+.: 2005-02-06 rev.36
 	.- [change] add '$Release$' tag for all files.
 	.- [bugfix] [bug:1117151] inline expression in the attribute of the marked tag is not converted
 
-.: 2004-02-06 rev.35
+.: 2005-02-06 rev.35
 	.- [enhance] support 'require:' part
 	.- [change] property '--attr' is renamed to '--dattr'
 
-.: 2004-02-06 rev.34
+.: 2005-02-06 rev.34
 	.- [enhance] Compiler#compile() and Compiler#analyze() supports #DOCUMENT declaration
 
-.: 2004-02-06 rev.33
+.: 2005-02-06 rev.33
 	.- [enhance] can parse #DOCUMENT declaration
 	.- [change] class ElementDeclaration is deleted and new class Declaration is added
 
-.: 2004-02-01 rev.32
+.: 2005-02-01 rev.32
 	.- [change] properties '--odd_value', '--even_value', '--attr_name' is renamed to '--odd', '--even', '--attr' respectively.
 	.- [enhance] Config::ESCAPE added
 
-.: 2004-01-31 rev.31
+.: 2005-01-31 rev.31
 	.- [bugfix] translator for eruby, php, and jstl now handle :empty and :notempty correctly
 	.- [enhance] kwartz: add JSP header when jstl11 and jstl10
 
-.: 2004-01-31 rev.30
+.: 2005-01-31 rev.30
 	.- [enhance] macro C() S() D() support
 	.- [enhance] new file: lib/kwartz/translator/erb.rb
 
-.: 2004-01-31 rev.29
+.: 2005-01-31 rev.29
 	.- [enhance] new file: lib/kwartz/config.rb
 
-.: 2004-01-31 rev.28
+.: 2005-01-31 rev.28
 	.- [enhance] auto-detect newline ("\r\n" or "\n")
 
-.: 2004-01-30 rev.27
+.: 2005-01-30 rev.27
 	.- [enhance] span tag deletion
 	.- [enhance] new file: README.txt m18n.rb
 	.- [enhance] add examples
 
-.: 2004-01-30 rev.26
+.: 2005-01-30 rev.26
 	.- [bugfix] [bug:1112388] line number reported when error happened is not correct.
 	.- [bugfix] [bug:1112279] Expressions embedded in attribute is not expanded
 
-.: 2004-01-29 rev.25
+.: 2005-01-29 rev.25
 	.- [enhance] JSTL1.0 support
 	.- [change] new file: todo.txt
 	.- [change] BinaryExpression is now abstract class.
 	.- [change] new class: ArithmeticExpression, AssginmentExpression, RelationalExpression, LogicalExpression, IndexExpression, MethodExpression
 	.- [change] PropertyExpression is divided into PropertyExpression and MethodExpression
 
-.: 2004-01-28 rev.24
+.: 2005-01-28 rev.24
 	.- [enhance] JSTL1.1 support
 
-.: 2004-01-27 rev.23
+.: 2005-01-27 rev.23
 	.- [enhance] new file: analyzer.rb, analyzer-test.rb
 	.- [refactor] Visitor class rewrited
 	.- [enhance] setup.rb added
 	.- [enhance] new file: util/optparse.rb, util/orderedhash.rb
 
-.: 2004-01-26 rev.22
+.: 2005-01-26 rev.22
 	.- [enhance] new file: translator/eruby.rb
 	.- [enhance] new file: translator/php.rb
 	.- [change] new class: EmptyExpression
@@ -75,7 +84,7 @@
 	.- [change] NullExpression takes no value
 	.- [bugfix] [bug:110250] cannot compile an empty tag
 
-.: 2004-01-25 rev.21
+.: 2005-01-25 rev.21
 	.- [enhance] new file: expander.rb, expander-test.rb
 	.- [enhance] new file: translator.rb, translator-test.rb
 	.- [enhance] new file: comiler.rb, compiler-test.rb

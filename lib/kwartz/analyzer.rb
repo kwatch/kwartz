@@ -120,8 +120,8 @@ module Kwartz
 
       def result
          s = ''
-         s << 'Global variable(s): ' << @global_vars.keys.join(' ') << "\n"
-         s << 'Local  variable(s): ' << @local_vars.keys.join(' ')  << "\n"
+         s << 'Global: ' << @global_vars.keys.join(' ') << "\n"
+         s << 'Local:  ' << @local_vars.keys.join(' ')  << "\n"
          @warnings.each do |warn|
             cause = warn[0];  name = warn[1]
             message = @@warning_messages[cause]

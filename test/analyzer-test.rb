@@ -72,8 +72,8 @@ END
 
 END
       expected = <<'END'
-Global variable(s): title user_list
-Local  variable(s): i user color
+Global: title user_list
+Local:  i user color
 END
       _test(pdata, plogic, expected)
    end
@@ -104,8 +104,8 @@ END
 }
 END
       expected = <<'END'
-Global variable(s): item list
-Local  variable(s): 
+Global: item list
+Local:  
 Warning: using a global variable 'item' as loopvar in foreach-statement.
 END
       _test(pdata, plogic, expected)
@@ -127,8 +127,8 @@ END
 }
 END
       expected = <<'END'
-Global variable(s): user_ctr user_list
-Local  variable(s): user
+Global: user_ctr user_list
+Local:  user
 Warning: assignment into a global variable 'user_ctr'.
 END
       _test(pdata, plogic, expected)
@@ -145,8 +145,8 @@ END
       plogic = <<'END'
 END
       expected = <<'END'
-Global variable(s): list hash
-Local  variable(s): 
+Global: list hash
+Local:  
 Warning: unsupported function 'hash_length' is used.
 END
       _test(pdata, plogic, expected)
@@ -168,8 +168,8 @@ END
 }
 END
       expected = <<'END'
-Global variable(s): i j
-Local  variable(s): 
+Global: i j
+Local:  
 Warning: assignment into a global variable 'i'.
 Warning: assignment into a global variable 'j'.
 END
@@ -205,8 +205,8 @@ END
 }
 END
       expected = <<'END'
-Global variable(s): context copyright
-Local  variable(s): list item
+Global: context copyright
+Local:  list item
 END
       _test(pdata, plogic, expected)
    end

@@ -1,26 +1,26 @@
-.JA	.=title:	Kwartz-phpユーザーズガイド
-.EN	.=title:	Kwartz-php Users' Guide
+.JA	.=title:	Kwartzユーザーズガイド
+.EN	.=title:	Kwartz Users' Guide
 .	.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
 .	.?lastupdate:	$Date: 2005-01-01 12:08:50 +0900 (Sat, 01 Jan 2005) $
 .	.?version:	$Rev: 52 $
+.	.?release:	$Release$
 .	
 .	
 .JA	●はじめに | preface*
 .EN	.$ Preface | preface*
 .	
 .	
-.JA	このドキュメントでは、テンプレートシステムKwartz-php{{(Kwartz-phpの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けています。)}}のユーザーズガイドです。
-.EN	This is the users' guide to Kwartz-php{{(Development of Kwartz-php is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
-.EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data.'
-.
+.JA	このドキュメントは、テンプレートシステムKwartz{{(Kwartzの開発は、{{<情報処理推進機構(IPA)|http://www.ipa.go.jp/>}}による平成15年度{{<未踏ソフトウェア創造事業|http://www.ipa.go.jp/jinzai/esp/>}}の支援を受けています。)}}のユーザーズガイドです。
+.JA	Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』という概念を実現したテンプレートシステムです。
+.EN	This is the users' guide to Kwartz{{(Development of Kwartz is subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
+.EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data (SoPL/PD).'
 .	
 .	
 .	
-.JA	.#◎目次			| toc*
-.EN	.#.$$ Table of Contents	| toc*
+.JA	◎目次			| toc*
+.EN	.$$ Table of Contents	| toc*
 .	
-.JA	.+toc:  目次：
-.EN	.+toc:	Table of Contents:
+.	.+toc:
 .JA	   .<<< users-guide.ja.toc
 .EN	   .<<< users-guide.en.toc
 .	.-toc:
@@ -29,78 +29,90 @@
 .JA	◎更新履歴		| changelog*
 .EN	.$$ Changelog		| changelog*
 .	
-.	.: 2004-12-31
-.JA		.- 0.3.0の新機能（関数のサポート、インデントの変更、JSTL1.1のサポート）について説明を追加
-.EN		.- add description about the new features in 0.3.0 (new functions, indent format, JSTL1.1 supprot, etc)
-.	
-.	.: 2004-09-23
-.JA		.- 条件演算子を含む式のサニタイズについての説明を追加
-.EN		.- add description about sanitizing of conditional expresssions
-.	
-.	.: 2004-09-19
-.JA		.- public release
-.EN		.- public release
+.	.: 2005-02-06
+.JA		.- alpha1 release
+.EN		.- alpha1 release
 .	
 .	
 .	
 .	
-.JA	●Kwartz-phpについて		| intro
-.EN	.$ Introduction to Kwartz-php	| intro
+.JA	●Kwartzについて		| intro
+.EN	.$ Introduction to Kwartz	| intro
 .	
 .	
-.JA	◎Kwartz-phpとは？	| intro-whatis
-.EN	.$$ What's Kwartz-php?	| intro-whatis
+.JA	◎Kwartzとは？		| whatis
+.EN	.$$ What's Kwartz?	| whatis
 .	
 .	
-.JA	Kwartz-php{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、
-.JA	『プレゼンテーションロジックとプレゼンテーションデータの分離(SoPL/PD)』という概念を実現したテンプレートシステムです。
-.JA	次のような特徴があります。
-.EN	Kwartz-php{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
+.JA	Kwartz{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、
+.JA	『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data'(SoPL/PD)』という概念を実現したテンプレートシステムです。
+.EN	Kwartz{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
 .EN	which realized the concept of 'Separation of Presentation Logic and Presentaion Data'(SoPL/PD).
-.EN	It has the following features:
+.	
+.	
+.JA	Kwartz-rubyは、RubyによるKwartzの実装です。
+.JA	このほか、PHPやJavaによる実装も予定されています。
+.EN	Kwartz-ruby is an implemenation of Kwartz in Ruby.
+.EN	There is a plan to implement Kwartz in PHP or Java.
+.	
+.	
+.JA	以降の説明では、「Kwartz」という言葉はテンプレートシステムの仕様を説明するときに使用し、
+.JA	「Kwartz-ruby」という言葉は特定の実装について説明するときに使用します。
+.EN	In the following, the word 'Kwartz' means the specification of the template system
+.EN	 and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+.	
+.	
+.	
+.	
+.JA	◎特徴		| features
+.EN	.$$ Features	| features
+.	
+.	
+.JA	Kwartzには次のような特徴があります。
+.EN	Kwartz has the following features:
 .	
 .	
 .JA	.%  プレゼンテーションデータとプレゼンテーションロジックとが分離可能
 .EN	.%  Separates presentation logic from presentation data.
 .		
 .JA		通常のテンプレートシステムではテンプレートとメインプログラムとを分離します。
-.JA		Kwartz-phpでは更に、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分離します。
+.JA		Kwartzでは更に、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分離します。
 .JA		これにより、プレゼンテーションロジックがHTMLの中に混じることも、またメインプログラムに紛れ込むこともありません。
 .EN		Using template systems such as Smarty, Velocity, XMLC, amrita, etc,
 .EN		you can separate HTML design from business logic as a template.
-.EN		With Kwartz-php, you can separate presentation logic from a template.
-.EN		In other words, Kwartz-php divides a template into 'presentation data' and 'presentation logic'.
+.EN		With Kwartz, you can separate presentation logic from a template.
+.EN		In other words, Kwartz divides a template into 'presentation data' and 'presentation logic'.
 .EN		You need not mix presentation logic into HTML files nor main program.
-.EN		.#In Kwartz-php, you can separate not only business logic but also presentation logic from HTML.
+.EN		.#In Kwartz, you can separate not only business logic but also presentation logic from HTML.
 .		
 .		
 .JA	.%  高速な動作
 .EN	.%  Very fast
 .		
-.JA		Kwartz-phpでは、テンプレート（プレゼンテーションデータとプレゼンテーションロジック）から出力用スクリプトを生成します。
+.JA		Kwartzでは、テンプレート（プレゼンテーションデータとプレゼンテーションロジック）から出力用スクリプトを生成します。
 .JA		これをあらかじめ行っておくため、実行時には出力用プログラムを呼び出すだけでよく、極めて高速に動作します。
 .JA		またDOMツリーのような木構造を使わずに済むため、他のテンプレートシステムよりも高速です。
-.EN		Kwartz-php creates a script from a template (= presentation data and presentaion logic). 
+.EN		Kwartz creates a script from a template (= presentation data and presentaion logic). 
 .EN		All you have to do in main program is to call the output script.
-.EN		Because Kwartz-php doesn't use DOM trees or the like, it is both fast and light-weight.
+.EN		Because Kwartz doesn't use DOM trees or the like, it is both fast and light-weight.
 .		
 .		
 .JA	.%  複数のプログラミング言語に対応
 .EN	.%  Multiple programing languages
 .		
-.JA		Kwartz-phpは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
+.JA		Kwartzは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
 .JA		つまり、ひとつのHTMLテンプレートを様々な言語から使用することができるのです。
 .JA		また使用する言語を変えたとしても、プレゼンテーション層は何も変更する必要がありません。
-.JA		現在のところ、PHP、Ruby(eRuby)、JSTLに対応しています。
-.EN		Kwartz-php can create output scripts for PHP, Ruby(eRuby), and JSTL from a template file,
-.EN		because Kwartz-php uses an internal intermediate language.
+.JA		現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&1.0)に対応しています。
+.EN		Kwartz can create output scripts for Ruby(eRuby), PHP, and JSP(JSTL 1.1 & 1.0) from a template file,
+.EN		because Kwartz uses an internal intermediate language.
 .EN		You don't have to change the presentation layer at all, even if you changed programming language.
 .		
 .		
 .JA	.%  HTMLテンプレートがSGML形式を崩さない
 .EN	.%  Doesn't break HTML design at all
 .		
-.JA		Kwartzでは、HTMLテンプレートにおけるマーキング（印付け）をSGMLのタグ形式で行っています。
+.JA		Kwartzでは、HTMLテンプレートにおけるマーキング（印付け）をid属性で行っています。
 .JA		そのため、 {{<Smarty|http://smarty.php.net/>}} や
 .JA		{{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}} 
 .JA		のようにHTMLテンプレートのデザインを崩してしまうことがありません。
@@ -108,65 +120,63 @@
 .EN		{{,{foreach ...}{/foreach},}} in {{<Smarty|http://smarty.php.net/>}} or
 .EN		{{,#foreach(...),}} in {{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}}.
 .EN		These directives break the HTML design of template.
-.EN		Kwartz-php doesn't break HTML design because Kwartz-php uses tags' attributes for marking in an HTML template.
+.EN		Kwartz doesn't break HTML design because Kwartz uses id attributes for marking in an HTML template.
 .		
 .		
 .JA	.%  任意のテキストファイルで使用可能
 .EN	.%  Can handle any text file
 .		
-.JA		Kwartz-phpでは、専用の属性がついたタグのみを認識し、それ以外のタグはただのプレーンテキストとみなします。
-.JA		またXMLパーサーを使用せず独自のパーサーを使用しています。
-.JA		そのため、{{<Enhydra XMLC|http://xmlc.enhydra.org/>}} や
-.JA		{{<amrita|http://www.brain-tokyo.jp/research/amrita/index.html>}} 
+.JA		Kwartzでは、専用の属性がついたタグのみを認識し、それ以外のタグはただのプレーンテキストとみなします。
+.JA		またHTMLパーサーやXMLパーサーを使用せず、独自に解析を行っています。
+.JA		そのため、{{<Enhydra XMLC|http://xmlc.objectweb.org/>}} や
+.JA		{{<amrita|http://amrita.sourceforge.jp/>}} 
 .JA		のようにXMLやHTMLでしか使用できないということはなく、任意のテキストファイルで使用可能です。
-.EN		Kwartz-php uses an original template parser; not using an XML parser,
+.EN		Kwartz uses an original template parser; not using an HTML or XML parser,
 .EN		it is able to handle any text file (HTML, PostScript, RTF, and so on).
-.EN		This also means that Kwartz-php can handle non-well-formed XML files, as well as well-formed XML files.
-.EN		This is an advantage of Kwartz-php against {{<Enhydra XMLC|http://xmlc.enhydra.org/>}} or
-.EN		{{<amrita|http://www.brain-tokyo.jp/research/amrita/index.html>}}, which handle only XML/HTML files.
+.EN		This also means that Kwartz can handle non-well-formed XML files, as well as well-formed XML files.
+.EN		This is an advantage of Kwartz against {{<Enhydra XMLC|http://xmlc.objectweb.org/>}} or
+.EN		{{<amrita|http://amrita.sourceforge.jp/>}}, which handle only XML/HTML files.
 .		
 .		
 .JA	.%  自動サニタイズ機能をサポート
 .EN	.%  Auto-Sanitizing and Partial-Sanitizing Support
 .		
-.JA		Kwartz-phpでは、サニタイズを自動的に行うようにすることができます。
-.JA		つまり、いちいち「{{,htmlspecialchars($var),}}」と書く必要がありません。
+.JA		Kwartzでは、サニタイズを自動的に行うようにすることができます。
+.JA		つまり、いちいち「CGI::escapeHTML(var)」や「{{,htmlspecialchars($var),}}」と書く必要がありません。
 .JA		またサニタイズ機能はオン/オフすることができます。
 .JA		さらに、ある部分だけをサニタイズする/しないを細かく指定できます。
-.EN		Kwartz-php can do sanitizing automatically.
-.EN		You don't need to write '{{,htmlspecialchars($var),}}'.
+.EN		Kwartz can do sanitizing automatically.
+.EN		You don't need to write '{{,CGI::escapeHTML(var),}}' or '{{,htmlspecialchars($var),}}'.
 .EN		You are free to turn sanitizing on/off, as well specifying which parts of the template to sanitize.
 .	
 .	
 .	
 .	
-.JA	◎簡単な例		| intro-example
-.EN	.$$ Simple Example	| intro-example
+.JA	◎簡単な例		| example1
+.EN	.$$ Simple Example	| example1
 .	
 .	
-.JA	Kwartz-phpは、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分けて記述します。
+.JA	Kwartzは、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分けて記述します。
 .JA	ここではその例を示します。
-.EN	In Kwartz-php, a template is defined as both presentation data and presentation logic.
+.EN	In Kwartz, a template is defined as both presentation data and presentation logic.
 .EN	They may be described in separate files.
 .EN	.#This is an example of a presentation data file and a presentation logic file.
 .EN	.#You should create these two files.
 .	
 .	
 .JA	まずプレゼンテーションデータの例です。
-.JA	.* 「{{,id="values",}}」はそのエレメントにvaluesという名前で「目印」をつけること、つまり操作対象とすることを表します。
-.JA	.* 「{{,@{$var}@,}}」は変数$varの値を出力することを表します。
-.JA	   「{{,@{...}@,}}」の中には任意の式を記述できます。
+.JA	.* 「{{,id="list",}}」はそのエレメントにvaluesという名前で「目印」をつけること、つまり操作対象とすることを表します。Kwartzでは、エレメントに目印をつけることを「マーキング(Marking)」といいます。
+.JA	.* 同様に、「{{,id="item",}}」は<td>エレメントにitemという名前で「目印」をつけています。
 .EN	This is an example of a presentation data file.
-.EN	.* {{*{{,id="values",}}*}} means "I'll operate this element in presentation logic" (called 'marking').
-.EN	.* {{*{{,@{$var}@,}}*}} means "Output the value of variable '$var'."
-.EN	   You can describe any expression in {{,@{...}@,}}.
+.EN	.* '{{*{{,id="list",}}*}}' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
+.EN	.* '{{*{{,id="item",}}*}}' is also an marking.
 .	
-.JA	プレゼンテーションデータ(example.html)：
-.EN	Presentation data file(example.html):
-.	.-------------------- example.html
+.JA	プレゼンテーションデータ(example1.html)：
+.EN	Presentation data file(example1.html):
+.	.-------------------- example1.html
 .	<table>
-.	  <tr {{*id="values"*}}>
-.	    <td>{{*@{$var}@*}}</td>
+.	  <tr {{*id="list"*}}>
+.	    <td {{*id="item"*}}>foo</td>
 .	  </tr>
 .	</table>
 .	.--------------------
@@ -174,86 +184,119 @@
 .	
 .JA	次はプレゼンテーションロジックの例です。
 .JA	プレゼンテーションロジックでは、プレゼンテーションデータにつけた「目印」に対して操作を行います。
-.JA	.* 「{{,element values { ... },}}」は「values」という名前で目印がつけられたエレメント（Element, ここでは{{,<tr>,}}から{{,</tr>,}}まで）を表します。
-.JA	.* 「{{,@stag,}}」は開始タグ（Start tag, ここでは{{,<tr>,}}）を表します。
-.JA	.* 「{{,@cont,}}」は内容（Content, ここでは{{,<td>@{$user}@</td>,}}）を表します。
-.JA	.* 「{{,@etag,}}」は終了タグ（End tag, ここでは{{,</tr>,}}）を表します。
-.JA	.* 「{{,foreach ($list as $var) { ... },}}」は繰り返しを表します。
-.JA	    つまり、開始タグから終了タグまでを繰り返すようにエレメントの定義を変更しているわけです。
+.JA	.* 「{{,#item { ... },}}」は目印「item」がつけられたエレメント（Element, ここでは{{,<td>,}}から{{,<t/d>,}}まで）を表します。
+.JA	    .- 「{{,value: {{/expression/}};,}}」は、エレメントの内容を式{{,{{/expression/}},}}の値（ここでは変数{{,member,}}の値）で置き換えることを表します。
+.JA	    .- 「{{,remove: "id";,}}」は、エレメントからid属性を取り除くことを表します。
+.JA	       なお「{{,id="{{/name/}},}}"」のかわりに「{{,id="mark:{{/name/}}",}}」を使用するとid属性は自動的に削除され、「{{,remove: "id";,}}」をいちいち記述する必要はなくなります。
+.JA	.* 「{{,#list { ... },}}」は目印「list」がつけられたエレメント（Element, ここでは{{,<tr>,}}から{{,</tr>,}}まで）を表します。
+.JA	    .- 「{{,plogic: { ... },}}」で、そのエレメントのプレゼンテーションロジックを定義します。
+.JA	    .- 「{{,@stag,}}」は開始タグ（Start tag, ここでは{{,<tr>,}}）を表します。
+.JA	    .- 「{{,@cont,}}」は内容（Content, ここでは{{,<td id="item">foo</td>,}}）を表します。
+.JA	    .- 「{{,@etag,}}」は終了タグ（End tag, ここでは{{,</tr>,}}）を表します。
+.JA	    .- 「{{,foreach (member in member_list) { ... },}}」は繰り返しを表します。
+.JA	       .#つまり、開始タグから終了タグまでを繰り返すようにエレメントの定義を変更しているわけです。
 .EN	And the following is an example of presentation logic.
 .EN	In presentation logic, you can operate on elements which are marked in presentation data.
-.EN	.* {{*{{,element values { ... },}}*}} represents an element marked with name 'values' (= '<tr>...</tr>').
-.EN	.* {{*{{,@stag,}}*}} represents a start tag (= '<tr>').
-.EN	.* {{*{{,@cont,}}*}} represents content(= '<td>@{$user}@</td>').
-.EN	.* {{*{{,@etag,}}*}} represents an end tag(= '</tr>').
-.EN	.* {{*{{,foreach($list as $var) { ... },}}*}} represents an iteration.
-.EN	   In fact, this presentation logic re-defines the marked element to iterate from start tag to end tag for each var in list.
+.EN	.* '{{*{{,#item { ... },}}*}}' represents an element marked with name 'item' (= '<td>...</td>').
+.EN	    .- '{{*{{,value: {{/expression/}};,}}*}}' represents that the content of the element is replaced by value of {{,{{/expression/}},}}, which is value of a variable {{,member,}} in this case.
+.EN	    .- '{{*{{,remove: "id";,}}*}}' represents that the id attribute is to be deleted.
+.EN	.* '{{*{{,#list { ... },}}*}}' represents an element marked with name 'list' (= '<tr>...</tr>')
+.EN	    .- '{{*{{,plogic: { ... },}}*}}' represents presentation logic of the element.
+.EN	    .- '{{*{{,@stag,}}*}}' represents a start tag (= '<tr>').
+.EN	    .- '{{*{{,@cont,}}*}}' represents content(= '<td id="item">foo</td>').
+.EN	    .- '{{*{{,@etag,}}*}}' represents an end tag(= '</tr>').
+.EN	    .- '{{*{{,foreach ({{/var/}} in {{/list/}}) { ... },}}*}}' represents an iteration.
+.EN	       .#In fact, this presentation logic re-defines the marked element to iterate from start tag to end tag for each {{,{{/var/}},}} in {{,{{/list/}},}}.
 .	
 .	
-.JA	プレゼンテーションロジック(example.plogic)：
-.EN	Presentation logic file(example.plogic):
-.	.-------------------- example.plogic
-.JA	## 繰り返しを行うようにエレメントを定義しなおす。
-.EN	## Re-define an element to iterate start tag, content and end tag.
-.	element values {		## element
-.	  foreach ($list as $var) {
-.	    @stag;          ## start tag
-.	    @cont;          ## content
-.	    @etag;          ## end tag
-.	  }
-.	}
+.JA	プレゼンテーションロジック(example1.plogic)：
+.EN	Presentation logic file(example1.plogic):
+.	.-------------------- example1.plogic
+.JA	#item {            // id="item" がついたエレメント
+.JA	  value: member;      // 内容を変数memberの値で置き換える
+.JA	  remove: "id";       // id属性を取り除く
+.JA	}
+.EN	#item {            // The element which is marked by 'id="item"'
+.EN	  value: member;      // replace the content with value of a variable 'member'
+.EN	  remove: "id";       // remove the id attribte
+.EN	}
+.	
+.JA	#list {            // id="list" がついたエレメント
+.JA	  remove: "id";       // id属性を取り除く
+.JA	  plogic: {           // プレゼンテーションロジックを定義する
+.JA	    foreach (member in member_list) {
+.JA	      @stag;          // タグ(start tag)
+.JA	      @cont;          // 内容(content)
+.JA	      @etag;          // 終了タグ(end tag)
+.JA	    }
+.JA	  }
+.JA	}
+.EN	#list {            // The element which is marked by 'id="list"'
+.EN	  remove: "id";       // remove the id attribute
+.EN	  plogic: {           // define the presentation logic
+.EN	    foreach (member in member_list) {
+.EN	      @stag;          // start tag
+.EN	      @cont;          // content
+.EN	      @etag;          // end tag
+.EN	    }
+.EN	  }
+.EN	}
 .	.--------------------
 .	
 .	
-.JA	Kwartz-phpはこの2つから各言語(PHP, eRuby, JSTL1.1&1.0)用の出力用スクリプトを自動生成します。
+.JA	Kwartzはこの2つから各言語(eRuby, PHP, JSTL1.1&1.0)用の出力用スクリプトを自動生成します。
 .JA	これをコンパイルといいます。
 .JA	コンパイルするにはコマンドラインで次のようにします。
-.EN	Kwartz-php creates output scripts automatically for PHP, eRuby, and JSTL(1.1&1.0) from the above two files.
+.EN	Kwartz creates output scripts automatically for eRuby, PHP, and JSP (JSTL 1.1&1.0) from the above two files.
 .EN	This action is called 'compiling'.
 .EN	To compile, enter one of the following commands:
 .	.====================
-.	### for PHP
-.	$ kwartz-php -p example.plogic example.html > example.php
-.	
 .	### for eRuby
-.	$ kwartz-php -l eruby -p example.plogic example.html > example.rhtml
+.	$ kwartz -l eruby  -p example1.plogic example1.html > example1.rhtml
 .	
-.	### for JSTL1.1
-.	$ kwartz-php -l jstl11  -p example.plogic example.html > example.jsp
+.	### for PHP
+.	$ kwartz -l php    -p example1.plogic example1.html > example1.php
 .	
-.	### for JSTL1.0
-.	$ kwartz-php -l jstl10  -p example.plogic example.html > example.jsp
+.	### for JSTL 1.1
+.	$ kwartz -l jstl11 -p example1.plogic example1.html > example1.jsp
+.	
+.	### for JSTL 1.0
+.	$ kwartz -l jstl10 -p example1.plogic example1.html > example1.jsp
 .	.====================
 .	
 .	
 .JA	以下は自動生成された出力用スクリプトです。
 .EN	The following is the output script for each respective language.
 .	
-.JA	出力用スクリプト for PHP(example.php):
-.EN	Output Script for PHP (example.php):
+.JA	出力用スクリプト for eRuby (example1.rhtml):
+.EN	Output Script for eRuby(example1.rhtml):
+.	.--------------------
+.	.<<<:! kwartz -l eruby -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.rhtml
+.	.--------------------
 .		
-.		.--------------------
-.		.<<<:! kwartz-php -l php -p guide.d/example.plogic guide.d/example.html
-.		.--------------------
+.JA	出力用スクリプト for PHP (example1.php):
+.EN	Output Script for PHP(example1.php):
+.	.--------------------
+.	.<<<:! kwartz -l php -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.php
+.	.--------------------
 .		
-.JA	出力用スクリプト for eRuby(example.rhtml):
-.EN	Output Script for eRuby(example.rhtml):
-.		.--------------------
-.		.<<<:! kwartz-php -l eruby -p guide.d/example.plogic guide.d/example.html
-.		.--------------------
+.JA	出力用スクリプト for JSTL 1.1{{(コマンドラインオプションとして「--charset={{/CHARSET/}}」をつけると、JSTL用出力スクリプトでは「{{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}}」をつけてくれます。)}}(example1.jsp):
+.EN	Output Script for JSTL 1.1{{(if you specify the command-line option '--charset={{/CHARSET/}}', Kwartz will output {{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}} when the language is JSTL.)}}(example1.jsp):
+.	.--------------------
+.	.<<<:! kwartz -l jstl11 -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.jsp
+.	.--------------------
 .		
-.JA	出力用スクリプト for JSTL用{{(コマンドラインオプションとして「--charset={{/CHARSET/}}」をつけると、JSTL用出力スクリプトでは「{{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}}」をつけてくれます。)}}(example.jsp):
-.EN	Output Script for JSP(JSTL){{(if you specify the command-line option '--charset={{/CHARSET/}}', Kwartz-php will output {{,<%@ page contentType="text/html; charset={{/CHARSET/}}" %>,}} when the language is JSTL.)}}(example.jsp):
-.		.--------------------
-.		.<<<:! kwartz-php -l jstl10 -p guide.d/example.plogic guide.d/example.html
-.		.--------------------
-.		
+.JA	出力用スクリプト for JSTL 1.0(example1.jsp):
+.EN	Output Script for JSTL1.0(example1.jsp):
+.	.--------------------
+.	.<<<:! kwartz -l jstl10 -p guide.d/example1.plogic guide.d/example1.html | tee guide.d/example1.jsp
+.	.--------------------
 .	
 .	
-.JA	またコンパイル時にコマンドオプション -s をつけると、サニタイズされた出力用スクリプトが生成されます。
-.JA	サニタイズには、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
-.EN	Using the command-line option {{,-s,}} or {{,-e,}} when compiling, Kwartz-php will output sanitized scripts.
-.EN	For sanitizing, {{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSTL.
+.JA	またコンパイル時にコマンドオプション {{,-e,}} をつけると、サニタイズされた出力用スクリプトが生成されます。
+.JA	サニタイズには、eRubyでは{{,CGI.escapeHTML(),}}が、PHPでは{{,htmlspecialchars(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out/>,}}が使用されます。
+.EN	Using the command-line option '{{,-e,}}' when compiling, Kwartz will output sanitized scripts.
+.EN	For sanitizing, {{,CGI.escapeHTML(),}} is used in eRuby, {{,htmlspecialchars(),}} in PHP, and {{,<c:out/>,}} without {{,escapeXml="false",}} in JSTL.
 .	
 .	
 .JA	これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
@@ -261,157 +304,169 @@
 .EN	Then execute or import these output scripts into your main program, like this:
 .	
 .	
-.JA	メインプログラム(PHP)：
-.EN	Main Program(PHP) :
-.		.--------------------
-.		<?php
-.		   include('example.php');
-.		 ?>
-.		.--------------------
+.JA	メインプログラム(Ruby)：
+.EN	Main Program (Ruby) :
+.	.--------------------
+.JA	## データを用意する
+.EN	## set a data
+.	member_list = [ 'Oboro', 'Ominae', 'Jaquemonde' ]
+.	
+.JA	## ERBを使って出力する
+.EN	## print out using ERB
+.	require 'erb'
+.	require 'cgi'        # for sanitizing
+.	str = File.open('example1.rhtml') { |f| f.read() }
+.	str.untaint
+.	trim_mode = 1
+.	erb = ERB.new(str, $SAFE, trim_mode)
+.	print erb.result(binding())
+.	
+.JA	## またはERubyを使う方法
+.EN	## or print out using ERuby
+.	require 'eruby'
+.	require 'cgi'        # for sanitizing
+.	ERuby::import('example1.rhtml')
+.	.--------------------
 .		
-.JA	メインプログラム(eRuby)：
-.EN	Main Program(eRuby) :
-.		.--------------------
-.		require 'eruby'
-.		require 'cgi'        # for sanitizing
-.		ERuby::import('example.rhtml')
-.		.--------------------
+.JA	メインプログラム(PHP)：
+.EN	Main Program (PHP) :
+.	.--------------------
+.	<?php
+.JA	   // データを用意する
+.EN	   // set a data
+.	   $member_list = array('Oboro', 'Ominae', 'Jaquemonde');
+.	   
+.JA	   // 出力する
+.EN	   // print out
+.	   include('example1.php');
+.	 ?>
+.	.--------------------
 .		
 .JA	メインプログラム(JSTL)：
 .EN	Main Program (JSTL) :
-.		.--------------------
-.		public void doGet(HttpServletRequest request,
-.		                  HttpServletResponse response)
-.		                  throws ServletException, IOException {
-.		   ...
-.		   RequestDispatcher dispatcher = 
-.		       request.getRequestDispatcher('example.jsp');
-.		   dispatcher.include(request, response);
-.JA		   // または dispatcher.forward(request, response);
-.EN		   // or dispatcher.forward(request, response);
-.		}
-.		.--------------------
+.	.--------------------
+.	public void doGet(HttpServletRequest request,
+.	                  HttpServletResponse response)
+.	                  throws ServletException, IOException {
+.	   ...
+.JA	   // データを用意する
+.EN	   // set a data
+.	   java.util.List member_list = new java.util.ArrayList();
+.	   member_list.add("Oboro");
+.	   member_list.add("Ominae");
+.	   member_list.add("Jaquemonde");
+.	
+.JA	   // 出力
+.EN	   // print
+.	   RequestDispatcher dispatcher = 
+.	       request.getRequestDispatcher('example1.jsp');
+.	   dispatcher.include(request, response);
+.JA	   // または dispatcher.forward(request, response);
+.EN	   // or dispatcher.forward(request, response);
+.	}
+.	.--------------------
 .		
 .JA	出力用プログラムを呼び出して実行すると、例えば次のようなWebページが生成されます。
 .EN	Calling or executing the output script, you might get a web page like this:
 .	
 .	.____________________
-.	<table>
-.	  <tr id="values">
-.	    <td>apple</td>
-.	  </tr>
-.	  <tr id="values">
-.	    <td>orange</td>
-.	  </tr>
-.	  <tr id="values">
-.	    <td>banana</td>
-.	  </tr>
-.	</table>
+.	.<<<:! ruby guide.d/example1.rb
 .	.____________________
 .	
 .	
 .	
-.JA	この出力結果をみると、属性{{,id="values",}}が残っているのが気になります。
-.JA	これを消す場合は、{{,id="mark:values",}}と記述するか、コマンドラインオプション{{,--delete-idattr=true,}}をつけてください。
-.JA	id属性が出力されないようになります。
-.EN	You may not prefere that id attributes appear in each <tr></tr>.
-.EN	You can remove then from the output with {{,id="mark:values",}},
-.EN	which is equivalent to {{,id="values",}}, but with auto-removal of the id attributes themselves.
-.EN	The command-line option {{,--delete-idattr=true,}} also removes the id attributes.
+.JA	.#この出力結果をみると、属性{{,id="values",}}が残っているのが気になります。
+.JA	.#これを消す場合は、{{,id="mark:values",}}と記述するか、コマンドラインオプション{{,--delete-idattr=true,}}をつけてください。
+.JA	.#id属性が出力されないようになります。
+.EN	.#You may not prefere that id attributes appear in each <tr></tr>.
+.EN	.#You can remove then from the output with {{,id="mark:values",}},
+.EN	.#which is equivalent to {{,id="values",}}, but with auto-removal of the id attributes themselves.
+.EN	.#The command-line option {{,--delete-idattr=true,}} also removes the id attributes.
 .	
 .	
 .	
 .	
-.JA	.#また、Kwartz-phpではプレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
-.JA	.#つまり、両者を分離することも、一体化することもできるわけです。
-.EN	.#Presentation logic may be embedded into presentation data in Kwartz-php.
-.EN	.#.#In addition, you can 'embed' presentation logic into presentation data in Kwartz-php.
-.EN	.#You can choose to separate or not to sepearate presentation data and presentation logic.
-.	.#
-.	.#
-.JA	.#一体化するには、ディレクティブを用います。
-.JA	.#ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
-.JA	.#Kwartz-phpでは、kd:php属性を用いてディレクティブを記述します。
-.EN	.#To embed presentation logic into presentation data, use directives.
-.EN	.#Directive is a command to embed presentation logic into presentation data.
-.EN	.#In Kwartz-php, 'kd:php' attributes are used to describe directives.
-.	.#
-.	.#
-.JA	.#次はプレゼンテーションロジックをプレゼンテーションデータ中に埋め込んだ例です。
-.JA	.#このサンプルからは、先ほどのと同じ出力用プログラムが自動生成されます。
-.EN	.#The following is an example of embedding presentation logic into presentation data.
-.EN	.#This example's compiled output is identical to the script files above.
-.EN	.#.#This sample is compiled into the same output as the script files in above.
-.	.#
-.	.#.-------------------- example2.html
-.	.#<table>
-.	.#  <tr {{*kd:php="foreach($list as $var)"*}}>
-.	.#    <td {{*id="value($var)"*}}>foo</td>
-.	.#  </tr>
-.	.#.#  <tr {{*id="foreach:var=list"*}}>
-.	.#.#    <td {{*id="value:var"*}}>foo</td>
-.	.#.#  </tr>
-.	.#.#  <tr {{*id="dummy:d1"*}}>
-.	.#.#    <td>bar</td>
-.	.#.#  </tr>
-.	.#</table>
-.	.#.--------------------
-.	
-.	
-.	
-.	
-.JA	◎複雑な例		| intro-complex-example
-.EN	.$$ Complex Example	| intro-complex-example
+.JA	◎複雑な例		| example2
+.EN	.$$ Complex Example	| example2
 .	
 .JA	もう少し複雑な例として、色つきのテーブルを示します。
 .EN	The following is a little complex example which is borderd table.
 .	
 .	
 .JA	プレゼンテーションデータは次のようになります。
-.JA	先ほどとは違って、マーキングは<tr>タグではなく<tbody>タグにつけてみました。
-.EN	The following is the presentation data.
-.EN	Marking is done at '<tbody>' tag and not '<tr>'.
+.JA	マーキングは「{{,id="{{/name/}}",}}」ではなく「{{,id="mark:{{/name/}}",}}」としています。
+.JA	こうするとid属性は自動的に削除されますので、プレゼンテーションロジックファイルでいちいち「{{,remove: "id",}}」と書く必要がなくなります。
+.EN	Marking is done with {{,id="mark:{{/name/}}",}} instead of {{,id="{{/name/}}",}}
+.EN	in the following presentation data.
+.EN	You don't have to write {{,remove: "id",}} in presentation logic file
+.EN	because Kwartz removes {{,id="mark:{{/name/}}",}} automatically.
+.EN	.#The following is the presentation data.
+.EN	.#Marking is done at '<tbody>' tag and not '<tr>'.
 .	
-.JA	プレゼンテーションデータ(table1.html)：
-.EN	Presentation Data (table1.html):
-.	.-------------------- table1.html
+.JA	プレゼンテーションデータ(example2.html)：
+.EN	Presentation Data (example2.html):
+.	.-------------------- example2.html
 .	<table>
-.	  <tbody {{*id="user_list"*}}>
-.	    <tr bgcolor="{{*@{$color}@*}}">
-.	      <td>{{*@{$name}@*}}</td>
-.	      <td><a href="{{*@{$mail}@*}}">{{*@{$mail}@*}}</a></td>
-.	    </tr>
-.	  </tbody>
+.	 <tr bgcolor="#CCCCFF" {{*id="mark:list"*}}>
+.	  <td {{*id="mark:name"*}}>foo</td>
+.	  <td>
+.	   <a href="mailto:foo@mail.com" {{*id="mark:email"*}}>foo@mail.com</a>
+.	  </td>
+.	 </tr>
 .	</table>
 .	.--------------------
 .	
 .	
 .JA	次はプレゼンテーションロジックです。
 .JA	プレゼンテーションロジックでは、繰り返しを行いながら、奇数行か偶数行かの判定を行っています。
-.JA	繰り返しには開始タグと終了タグを含めず、内容だけを繰り返しています。
-.EN	The following is the presentation logic.
+.JA	.#繰り返しには開始タグと終了タグを含めず、内容だけを繰り返しています。
+.EN	The following is the presentation logic file.
 .EN	In the presentation logic, you should detect whether odd or even line in the iteration.
-.EN	Notice that only the content is iterated and the start-tag and the end-tag are not iterated.
+.EN	.#Notice that only the content is iterated and the start-tag and the end-tag are not iterated.
 .	
 .	
-.JA	プレゼンテーションロジック(table1.plogic)：
-.EN	Presentation Logic (table1.plogic):
-.	.-------------------- table1.plogic
-.JA	element user_list {	## エレメント
-.EN	element user_list {	## element
-.JA	  @stag;		## 開始タグ
-.EN	  @stag;		## start-tag
-.	  $ctr = 0;
-.	  foreach ($user_list as $user) {
-.	    $ctr += 1;
-.	    $color = $ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-.	    $name = $user->name();
-.	    $mail = $user->mail();
-.JA	    @cont;		## 内容
-.EN	    @cont;		## content
+.JA	プレゼンテーションロジック(example2.plogic)：
+.EN	Presentation Logic (example2.plogic):
+.	.-------------------- example2.plogic
+.JA	// id="mark:list" がついたエレメント：
+.JA	// bgcolor属性の値として変数colorを出力する。
+.JA	// また繰り返しを行い、奇数行と偶数行で変数colorの値を変える。
+.EN	// an element which is marked by 'id="mark:list"':
+.EN	// * print value of a variable 'color' as bgcolor attribute value.
+.EN	// * change value of a variable 'color' whether odd or even line.
+.	#list {
+.	  attr:  "bgcolor" color;
+.	  plogic: {
+.	    i = 0;
+.	    foreach (member in member_list) {
+.	      i += 1;
+.	      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+.	      @stag;
+.	      @cont;
+.	      @etag;
+.	    }
 .	  }
-.JA	  @etag;		## 終了タグ
-.EN	  @etag;		## end-tag
+.	}
+.	
+.JA	// id="mark:name" がついたエレメント：
+.JA	// 内容として member['name'] の値を出力する。
+.EN	// an element which is marked by 'id="mark:name"':
+.EN	// * print value of member['name'] as content of the element.
+.	#name {
+.	  value: member['name'];
+.	}
+.	
+.JA	// id="mark:email" がついたエレメント：
+.JA	// 内容として member['email'] の値を出力する。
+.JA	// またhref属性は "mailto:" .+ member['email'] の値を出力する。
+.JA	// （「.+」は文字列の連結を行う演算子）
+.EN	// an element marked by 'id="mark:email"':
+.EN	// * print value of member['emal'] as contentn of the element.
+.EN	// * print "mailto:" and member['email'] as href attribute value.
+.EN	//   (operator '.+' means string concatenation.)
+.	#email {
+.	  value: member['email'];
+.	  attr:  "href" ("mailto:" .+ member['email']);
 .	}
 .	.--------------------
 .	
@@ -419,623 +474,161 @@
 .JA	見ておわかりのように、プレゼンテーションロジックにはHTMLタグが一切入らず、またプレゼンテーションデータにはロジックが一切入っていません。
 .JA	つまり、プレゼンテーションデータとプレゼンテーションロジックの分離が実現できていることになります。
 .EN	You will find that there is no HTML tag in the presentation logic and no logic in the presentation data.
-.EN	That is to say, Kwartz-php can separate presentation logic from presentation data.
+.EN	That is to say, Kwartz can separate presentation logic from presentation data.
 .	
-.JA	なおインクリメント演算子（++）は使えませんので、{{,$ctr++,}} のように書くことはできません。
-.EN	Notice that you cannot write {{,$ctr++,}} because incremental operator ({{,++,}}) is not supported.
+.JA	なおインクリメント演算子（++）は使えませんので、{{,ctr++,}} のように書くことはできません。
+.EN	Notice that you cannot write {{,ctr++,}} because incremental operator ({{,++,}}) is not supported.
 .	
 .	
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz-php -p table1.plogic table1.html > table1.php
+.	### for eRuby
+.	$ kwartz -l eruby  -p example2.plogic example2.html > example2.rhtml
+.	
+.	### for PHP
+.	$ kwartz -l php    -p example2.plogic example2.html > example2.php
+.	
+.	### for JSTL 1.1
+.	$ kwartz -l jstl11 -p example2.plogic example2.html > example2.jsp
+.	
+.	### for JSTL 1.0
+.	$ kwartz -l jstl10 -p example2.plogic example2.html > example2.jsp
 .	.====================
 .	
-.JA	出力用スクリプト(table1.php)：
-.EN	Output Script (table1.php):
+.JA	出力用スクリプト：
+.EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/table1.plogic guide.d/table1.html
-.	.--------------------
-.	
-.	
-.JA	またKwartz-phpでは、プレゼンテーションデータにダミーのデータを入れることができます。
-.JA	そのためにはkd:php属性を使用します。
-.EN	Kwartz-php allows you to embed dummy data into presentation data with kd:php attributes.
-.	
-.JA	プレゼンテーションデータ(table2.html)：
-.EN	Presentation Data (table2.html):
-.	.-------------------- table2.html
-.	<table>
-.	  <tbody id="user_list">
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="attr('bgcolor'=>$color)"*}}>
-.	      <td {{*kd:php="value($name)"*}}>Sumire</td>
-.	      <td><a href="amethyst@mail.com"
-.	        {{*kd:php="attr('href'=>$mail);value($mail)"*}}>amethyst@mail.com</a></td>
-.	    </tr>
-.	    <tr bgcolor="#FFCCCC" {{*kd:php="dummy"*}}>
-.	      <td>Nana</td>
-.	      <td><a href="seven@mail.org">seven@mail.org</a></td>
-.	    </tr>
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="dummy"*}}>
-.	      <td>Momoko</td>
-.	      <td><a href="peach@mail.net">peach@mail.net</a></td>
-.	    </tr>
-.	  </tbody>
-.	</table>
-.	.--------------------
-.	
-.JA	kd:php属性について説明します。
-.JA	.* 「{{,kd:php="attr('bgcolor'=>$color)",}}」では、bgcolor属性の値として変数{{,$color,}}の値を使用します。
-.JA	   この例なら「{{,<tr bgcolor="@{$color}@">,}}」と同じです。
-.JA	.* 「{{,kd:php="value($name)",}}」では、内容のかわりに変数{{,$name,}}の値を出力することを表します。
-.JA	   この例なら「{{,<td>@{$name}@</td>,}}」と同じです。
-.JA	.* 「{{,attr('href'=>$mail);kd:php="value($mail)",}}」は、上記2つの組み合わせです。
-.JA	   この例なら「{{,<a href="@{$mail}@">@{$name}@</a>,}}」と同じです。
-.JA	.* 「{{,kd:php="dummy",}}」は、そのエレメント全体がダミーデータであることを表します。
-.JA	   この場合、そのエレメントは出力されません。
-.EN	The following is a description about the kd:php attribute.
-.EN	.* {{,kd:php="attr('bgcolor'=>$color)",}} represents that variable {{,$color,}} is used as value of bgcolor attribute.
-.EN	   That is, it is equal to {{,<tr bgcolor="@{$color}@">,}} in this example.
-.EN	.* {{,kd:php="value($name)",}} represents that variable {{,$name,}} is used as content of the element.
-.EN	   That is, it is equal to {{,<td>@{$name}@</td>,}} in this example.
-.EN	.* {{,attr('href'=>$mail);kd:php="value($mail)",}} is a combination of the above two.
-.EN	   It is equal to {{,<a href="@{$mail}@">@{$name}@</a>,}} in this example.
-.EN	.* {{,kd:php="dummy",}} represents that the element is a dummy data and is ignored.
-.EN	   In this case, the element {{,<tr bgcolor="...">...</tr>,}} is not printed.
-.	
-.	
-.JA	プレゼンテーションロジックは、先ほどとまったく同じです。
-.EN	.#There is not difference about presentation logic with the previous one.
-.EN	The presentation logic is the same as the previous one.
-.	
-.JA	プレゼンテーションロジック(table2.plogic)：
-.	.-------------------- table2.plogic
-.JA	element user_list {	## エレメント
-.EN	element user_list {	## element
-.JA	  @stag;		## 開始タグ
-.EN	  @stag;		## start-tag
-.	  $ctr = 0;
-.	  foreach ($user_list as $user) {
-.	    $ctr += 1;
-.	    $color = $ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-.	    $name = $user->name();
-.	    $mail = $user->mail();
-.JA	    @cont;		## 内容
-.EN	    @cont;		## content
-.	  }
-.JA	  @etag;		## 終了タグ
-.EN	  @etag;		## end-tag
-.	}
-.	.--------------------
-.	
-.JA	コンパイル：
-.EN	Compile:
-.	.====================
-.	$ kwartz-php -p table2.plogic table2.html > table2.php
-.	.====================
-.	
-.JA	出力用スクリプト(table2.php)：
-.EN	Output Script (table2.php):
-.	.--------------------
-.	.<<<:! kwartz-php -i -p guide.d/table2.plogic guide.d/table2.html 
-.	.--------------------
-.	
-.	
-.JA	kd:php属性を用いると、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
-.JA	つまり、両者を分離することも、一体化することもできるわけです。
-.EN	The kd:php attributes allow you to embed presentation logic into presentation data.
-.EN	You can choose to separate or not to sepearate presentation data and presentation logic.
-.	
-.	
-.JA	プレゼンテーションロジックを埋め込むには、ディレクティブを用います。
-.JA	ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むためのコマンドであり、通常はkd:php属性を用いて指定されます。
-.JA	ディレクティブには繰り返しや条件分岐も用意されています。
-.JA	詳細はリファレンスマニュアルをご覧ください。
-.EN	To embed presentation logic into presentation data, use directives.
-.EN	Directives are commands to embed presentation logic into presentation data.
-.EN	In Kwartz-php, 'kd:php' attributes are used to describe directives.
-.EN	There are several directives such as iteration and conditional branching.
-.EN	See reference manual for details.
-.	
-.	
-.	
-.	
-.JA	●動作詳細			| detail
-.EN	.$ How Kwartz-php works		| detail
-.	
-.	
-.JA	◎プレゼンテーションデータ	| detail-pdata
-.EN	.$$ Presentation data		| detail-pdata
-.	
-.	
-.JA	Kwartz-phpは次のようなアプローチで、プレゼンテーションデータとプレゼンテーションロジックとを分離しています。
-.JA	.* プレゼンテーションデータのうち、処理を行いたい箇所に「目印」をつける。
-.JA	.* プレゼンテーションロジックからは、「目印」に対して処理を行う。
-.EN	Kwartz-php separates the presentation layer into 'presentation data' and 'presentation logic' with the following approach.
-.EN	.* In presentation data, mark a part on which you will operate.
-.EN	   You should use {{,id="{{/name/}}",}} to mark.
-.EN	.* In presentation logic, operate on a part which is marked.
-.	
-.	
-.JA	この、プレゼンテーションデータに対して「目印」をつけることをマーキングと呼んでいます。
-.JA	Kwartz-phpでは、マーキングはid属性を用いて「{{,id={{/name/}},}}」または「{{,id=mark:{{/name/}},}}」のように記述します。
-.JA	.#{{('kd'という名前は'Kwartz-php Directive'に由来します。属性名はコマンドラインオプション --attr-name を使って変更できます。)}}）
-.EN	To mark a region which you want to change or replace in presentation data is called 'marking'.
-.EN	.#It is called 'marking' to mark a region which you want to change or replace in the presentation data.
-.EN	You can mark with the attributes 'id', like {{,id="{{/name/}}",}} or {{,id="mark:{{/name/}}",}}.
-.EN	.#{{(The attribute name is derived from 'Kwartz-php Directive'. You can change the name of attribute with the command-line option {{,--attr-name={{/name/}},}}.)}}.
-.	
-.	
-.JA	マーキングの例：
-.EN	Example of marking:
-.	.--------------------
-.	<table>
-.	 <tr {{*id="list"*}}>
-.	  <td>@{$item}@</td>
-.	 </tr>
-.	</table>
-.	.--------------------
-.	
-.	
-.JA	Kwartz-phpでは、マーキングされたエレメントだけが認識され、マーキングされていないエレメントは通常のプレーンテキストとして扱われます。
-.JA	そのため、プレゼンテーションデータはHTMLやXMLである必要はなく、どんなテキストでも扱うことができます。
-.JA	例えば次のような、well-formedでないファイルも問題なく扱えます。
-.EN	Kwartz-php recognizes only marked elements, and regard unmarked elements as a normal text.
-.EN	This means that Kwartz-php can handle any type of text, including non-well-formed XML files. 
-.	
-.	
-.JA	well-formedではないファイルの例：
-.EN	Example of an non-well-formed XML file:
-.	.--------------------
-.	<span id="test">
-.	 aaa <bbb> ccc </ddd>
-.	</span>
+.	.<<<:! ./output.rb -p guide.d/example2.plogic guide.d/example2.html
 .	.--------------------
 .	
 .	
 .	
-.	
-.JA	◎中間コード			| detail-intermed
-.EN	.$$ Intermediate Code		| detail-intermed
-.	
-.	
-.JA	Kwartz-phpは、プレゼンテーションデータをいったん中間コードへ変換します。これをコンバート(Convert)と呼んでいます。
-.EN	Kwartz-php converts presentation data into intermediate code, an action called 'converting'.
+.JA	◎プレゼンテーションロジックの応用例			| pattern
+.EN	.$$ Other Examples of Presentation Logic		| pattern
 .	
 .	
-.JA	このとき、Kwartz-phpはマーキングされたエレメントに対し、次のような4つのマクロを自動生成します。
-.JA	.* マクロ「stag_{{/xxx/}}」 … 開始タグ(start tag)を表します。
-.JA	.* マクロ「cont_{{/xxx/}}」 … 内容(content)を表します。つまり、開始タグと終了タグで囲まれた範囲を表します。
-.JA	.* マクロ「etag_{{/xxx/}}」 … 終了タグ(end tag)を表します。
-.JA	.* マクロ「element_{{/xxx/}}」 … エレメント(element)を表します。エレメントは、開始タグ、内容、終了タグからなります。
-.EN	When converting a presentation data into intermediate code, Kwartz-php creates four macros for each marked element.
-.EN	.* macro 'stag_{{/xxx/}}' represents a start-tag.
-.EN	.* macro 'cont_{{/xxx/}}' represents contents.
-.EN	.* macro 'etag_{{/xxx/}}' represents an end-tag.
-.EN	.* macro 'element_{{/xxx/}}' represents an element, which is constructed with start-tag, contents, and end-tag.
+.JA	Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
+.JA	ここではその例を示します。
+.EN	Kwartz enables you to write complex presentation logic natulally.
+.EN	This section shows some examples.
+.	
+.JA	.#プレゼンテーションデータ：
+.EN	.#Presentation Data:
+.	.#.--------------------
+.	.#<ul id="mark:list">
+.	.# <li>#{member}#</li>
+.	.#</ul>
+.	.#.--------------------
 .	
 .	
-.JA	例えば次のようなプレゼンテーションデータがあるとします。
-.EN	Here is an example of presentation data:
-.	.--------------------
-.	<table>
-.	 <tr id="list">
-.	  <td>@{$item}@</td>
-.	 </tr>
-.	</table>
-.	.--------------------
-.	
-.JA	このプレゼンテーションデータは、Kwartz-phpによって次のような中間コードにコンバートされます。
-.JA	4つのマクロが作成されていること、またそれを利用してプレゼンテーションデータが表現されていることがわかります。
-.EN	Kwartz-php will convert the presentation data into the following intermediate code.
-.EN	You'll find that four macros are defined and presentation data is described with these macros.
-.	
-.	.--------------------
-.JA	macro stag_list {          ## 開始タグのマクロ
-.EN	macro stag_list {          ## start-tag
-.	  echo " <tr id=\"list\">\n";
-.	}
-.	
-.JA	macro cont_list {          ## 内容のマクロ
-.EN	macro cont_list {          ## contents
-.	  echo "  <td>", $item, "</td>\n";
-.	}
-.	
-.JA	macro etag_list {          ## 終了タグのマクロ
-.EN	macro etag_list {          ## end-tag
-.	  echo " </tr>\n";
-.	}
-.	
-.JA	macro element_list {       ## エレメントのマクロ
-.JA	  expand(stag_list);         ## マクロを展開
-.JA	  expand(cont_list);         ## マクロを展開
-.JA	  expand(etag_list);         ## マクロを展開
-.JA	}
-.EN	macro element_list {       ## element
-.EN	  expand(stag_list);         ## expand a macro
-.EN	  expand(cont_list);         ## expand a macro
-.EN	  expand(etag_list);         ## expand a macro
-.EN	}
-.	
-.JA	echo "<table>\n";          ## プレゼンテーションデータ
-.JA	expand(element_list);      ## マクロを展開
-.JA	echo "</table>\n";
-.EN	echo "<table>\n";          ## presentation data
-.EN	expand(element_list);      ## expand a macro
-.EN	echo "</table>\n";
-.	.--------------------
-.	
-.	
-.JA	この例ではマーキングとして「{{,id="list",}}」を用いたので、id属性が残ったままになっています。
-.JA	これを「{{,id="mark:list",}}」または「{{,kd:php="mark(list)",}}」とするか、コマンドラインオプションに {{,--delete-idattr=true,}}をつけると、中間コード変換時にid属性が取り除かれます。
-.EN	{{,id="list",}} will be left in intermediate code.
-.EN	If you want to delete it, use {{,id="mark:list",}} or {{,kd:php="mark(list)",}} instead, or add the command-line option {{,--delete-idattr=true,}}.
-.	
-.	
-.JA	なお、この中間言語は「PL-php」といいます（PLはPresentation Languageの意味です）。
-.JA	PHPによく似ていますが、あくまでKwartz-php独自の言語です。
-.JA	詳細はリファレンスマニュアルを参照してください。
-.EN	Intermediate code is described in an intermediate language, called PL-php ('PL' means 'Presentation Language').
-.EN	It is similar to PHP, but is not PHP.  It is an original language developed for Kwartz-php.
-.EN	.#The language is named 'PL'(Presentation Language).
-.EN	See the reference manual for details.
-.	
-.	
-.	
-.JA	◎プレゼンテーションロジック		| detail-plogic
-.EN	.$$ Presentation Logic			| detail-plogic
-.	
-.	
-.JA	プレゼンテーションロジックは次のようにして記述します。
-.JA	.* PL-phpで記述する。
-.JA	.* マクロを上書きする形で記述する。
-.EN	Presentation logic is/are:
-.EN	.* Described in an presentation language (PL-php).
-.EN	.* Macros which override the automaticly generated macros.
-.	
-.	
-.JA	次がプレゼンテーションロジックの例です。
-.JA	マクロelement_listを上書きし、開始タグから終了タグまでを繰り返しています。
-.EN	The following is an example of presentation logic.
-.EN	This example overwrites the macro 'element_list' to iterate from start tag to end tag.
-.	.--------------------
-.	macro element_list {
-.JA	  foreach ($itemlist as $item) {    ## foreach文による繰り返し
-.JA	    expand(stag_item);              ## 開始タグ
-.JA	    expand(cont_item);              ## 内容
-.JA	    expand(etag_item);              ## 終了タグ
-.JA	  }
-.EN	  foreach ($itemlist as $item) {    ## iteration with foreach statement
-.EN	    expand(stag_item);              ## start-tag
-.EN	    expand(cont_item);              ## contents
-.EN	    expand(etag_item);              ## end-tag
-.EN	  }
-.	}
-.	.--------------------
-.	
-.JA	このプレゼンテーションロジックは、次のように書くこともできます。
-.JA	Kwartz-phpパーサーによって、このプレゼンテーションロジックは上のものと同じように扱われます。
-.EN	You can also write the above presentation logic as the following.
-.EN	The Kwartz-php parser will treat it as same as the code above.
-.	.--------------------
-.JA	element list {               ## macro element_item  と同じ
-.JA	  foreach ($itemlist as $item) {
-.JA	    @stag;                   ## expand(stag_item) と同じ
-.JA	    @cont;                   ## expand(cont_item) と同じ
-.JA	    @etag;                   ## eppand(etag_item) と同じ
-.JA	  }
-.JA	}
-.EN	element list {               ## same as 'macro element_item'
-.EN	  foreach ($itemlist as $item) {
-.EN	    @stag;                   ## same as 'expand(stag_item);'
-.EN	    @cont;                   ## same as 'expand(cont_item);'
-.EN	    @etag;                   ## same as 'eppand(etag_item);'
-.EN	  }
-.EN	}
-.	.--------------------
-.	
-.	
-.	
-.	
-.JA	◎出力用スクリプト		| detail-outscript
-.EN	.$$ Output Script		| detail-outscript
-.	
-.	
-.JA	Kwartz-phpは、プレゼンテーションデータから自動生成した中間コードと、プレゼンテーションロジックとをマージし、マクロを展開することで、出力用スクリプトを生成します。
-.JA	これをトランスレート(Translate)と呼んでいます。
-.EN	Kwartz-php merges intermediate code (which is automatically generated from presentation data) and presentation logic, then expands macros and transforms them into an output script.
-.EN	This action is called 'translation'.
-.	
-.	
-.JA	トランスレートの例を示します。
-.EN	This is an example of translation.
-.	
-.	.____________________
-.	   
-.	   echo "<table>\n";
-.	   expand(element_list);
-.	   echo "</table>\n";
-.	
-.	      |
-.JA	      | マクロを展開
-.EN	      | expand macros
-.	      V
-.	
-.	   echo "<table>\n";
-.	   {{*foreach ($itemlist as $item) {*}}
-.	     {{*expand(stag_list);*}}
-.	     {{*expand(cont_list);*}}
-.	     {{*expand(etag_list);*}}
-.	   {{*}*}}
-.	   echo "</table>\n";
-.	
-.	      |
-.JA	      | マクロを展開
-.EN	      | expand macros
-.	      V
-.	
-.	   echo "<table>\n";
-.	   foreach ($item as $item) {
-.	     {{*echo " <tr id=\"list\">\n";*}}
-.	     {{*echo "  <td>", $item, "</td>\n";*}}
-.	     {{*echo " </tr>\n");*}}
-.	   }
-.	   echo "</table>\n";
-.	
-.	      |
-.JA	      | 出力用プログラムを生成
-.EN	      | output script for each langague
-.	      V
-.	
-.	   ### for PHP
-.	   <table>
-.	   <?php foreach($itemlist as $item) { ?>
-.	    <tr id="list">
-.	     <td><?php echo $item; ?></td>
-.	    </tr>
-.	   <?php } ?>
-.	   </table>
-.	
-.	   ### for eRuby
-.	   <table>
-.	   <% for item in itemlist do %>
-.	    <tr id="list">
-.	     <td><%= item %></td>
-.	    </tr>
-.	   <% end %>
-.	   </table>
-.	
-.	   ### for JSTL
-.	   <table>
-.	   <c:forEach var="item" items="${itemlist}">
-.	    <tr id="list">
-.	     <td><c:out value="${item}" escapeXml="false"/></td>
-.	    </tr>
-.	   </c:forEach>
-.	   </table>
-.	.____________________
-.	
-.	
-.JA	ここまでくれば、あとはメインプログラムからこの出力用プログラムを読み込むなり実行するなりすれば、Webページが生成されます。
-.EN	The remaining task is to call or execute these output scripts in the main program.
-.	
-.	
-.JA	以上がKwartz-phpの動作になります。
-.EN	This is all that Kwartz-php does.
-.EN	.#These are the all what Kwartz-php does.
-.	
-.	
-.	
-.JA	◎出力用スクリプトの呼び出し方			| detail-import
-.EN	.$$ How to Call or Execute Output Script	| detail-import
-.	
-.	
-.JA	メインプログラムから出力用スクリプトを呼び出す方法は、各プログラム言語ごとに異なります。
-.JA	詳しくは他の文献などを参照してください。
-.EN	The way to call or execute output scripts is different for each language.
-.EN	See other documents for details.
-.	
-.	
-.JA	.%  PHPの場合：
-.EN	.%  in PHP:
-.JA		include()関数を使ってください。
-.EN		Use include() function.
+.JA	.* エレメント全体を繰り返すことができます。
+.EN	.* You can choose to iterate an element.
 .		.--------------------
-.		<?php include('example.phtml'); ?>
+.		#list {
+.		  plogic: {
+.		    foreach (member in member_list) {
+.		      @stag;
+.		      @cont;
+.		      @etag;
+.		    }
+.		  }
+.		}
 .		.--------------------
-.	
-.JA	.%  eRubyの場合：
-.EN	.%  in eRuby:
-.JA		ERuby::import()で読み込んでください。サニタイズを行う場合はcgi.rbを読み込んでください。
-.EN		Use ERuby::import() when using eRuby. You have to require cgi.rb when sanitizing.
-.		.--------------------
-.		require 'eruby'
-.		require 'cgi'         # for sanitizing
-.		ERuby::import('example.rhtml')
-.		.--------------------
-.	
-.JA	.%  JSTLの場合：
-.EN	.%  in JSTL (with Servlet):
-.JA		ServletからJSPを呼び出す場合は、RequestDispatcherを用いてください。
-.EN		Use RequestDispatcher#forward() or RequestDispatcher#include().
-.		.--------------------
-.		RequestDispatcher dispatcher = 
-.		    request.getRequestDispatcher("example.jsp");
-.		dispatcher.forward(request, response);
-.		.--------------------
-.	
-.	
-.JA	◎プレゼンテーションロジックの応用例		| detail-appl
-.EN	.$$ Other Examples of Presentation Logic	| detail-appl
-.	
-.	
-.JA	例で示したプレゼンテーションロジックは、開始タグから終了タグまでを繰り返すものでした。
-.JA	ここでは他の例を紹介します。
-.EN	The example shown in the previous section is iterates from start tag to end tag.
-.EN	This section shows some other examples.
-.	
-.	
-.JA	.#.* 内容のかわりに変数の値を出力する場合は、マクロcont_{{/xxx/}}を上書きするのがもっとも簡単です。
-.JA	.#   この方法を使うと、「{{,@{$var}@,}}」という記述を避けることができます。
-.EN	.#.* To print out the value of a variabe in tag contents, overwrite a macro 'cont_{{/xxx/}}'.
-.EN	.#   '{{,@{$var}@,}}' is coded this way.
-.EN	.#   
-.	.#	.--------------------
-.	.#	macro cont_list {
-.JA	.#	  echo $item;        ## もとは echo "foo";
-.EN	.#	  echo $item;        ## original is echo "foo";
-.	.#	}
-.	.#	.--------------------
-.	.#	.--------------------
-.	.#	:macro(cont_list)
-.JA	.#	  :print(item)        ## もとは :print('foo')
-.EN	.#	  :print(item)        ## original is :print('foo')
-.	.#	:end
-.	.#	.--------------------
 .	
 .JA	.* 内容だけを繰り返すことができます。<dl></dl>で使うのに向いています。
 .EN	.* You can choose to iterate only contents. This is useful for <dl></dl>.
 .		.--------------------
-.		macro element_list {
-.		  expand(stag_list);
-.		  foreach ($itemlist as $item) {
-.		    expand(cont_list);
+.		#list {
+.		  plogic: {
+.		    @stag;
+.		    foreach (member in member_list) {
+.		      @cont;
+.		    }
+.		    @etag;
 .		  }
-.		  expand(etag_list);
-.		}
-.		.--------------------
-.		or
-.		.--------------------
-.		element list {
-.		  @stag;
-.		  foreach ($itemlist as $item) {
-.		    @cont;
-.		  }
-.		  @etag;
 .		}
 .		.--------------------
 .	
 .JA	.* 内容のかわりに、変数や式などの値を出力することができます。
 .EN	.* You can print a value of a variable or an expression instead of a static content string.
 .		.--------------------
-.		macro element_list {
-.		  expand(stag_list);
-.		  echo $item['key'];
-.		  expand(etag_list);
+.		#list {
+.		  plogic: {
+.		    @stag;
+.		    print("Hello!");
+.		    @etag;
+.		  }
 .		}
 .		.--------------------
-.		or
+.JA	   これは次と同じです。
+.EN	   This is equal to the following.
 .		.--------------------
-.		element list {
-.		  @stag;
-.		  echo $item['key'];
-.		  @etag;
+.		#list {
+.		  value: "Hello!";
 .		}
 .		.--------------------
 .	
 .JA	.* エレメントのかわりに、変数や式などの値を出力することができます。
 .EN	.* You can print a value of a variable or an expression instead of an element.
 .		.--------------------
-.		macro element_list {
-.		  echo $item['key'];
-.		}
-.		.--------------------
-.		or
-.		.--------------------
-.		element list {
-.		  echo $item['key'];
-.		}
-.		.--------------------
-.	
-.JA	.* エレメント全体を、別のマクロで置き換えることができます。
-.EN	.* You can replace an element by calling other macros.
-.		.--------------------
-.		macro element_list {
-.		  expand(other_macro);
-.		}
-.		macro other_macro {
-.		  echo "...";
-.		  echo "...";
-.		}
-.		.--------------------
-.		or
-.		.--------------------
-.		element list {
-.		  expand(other_macro);
-.		}
-.		macro other_macro {
-.		  echo "...";
-.		  echo "...";
+.		#list {
+.		  plogic: {
+.		    print("<b>Hello!</b>");
+.		  }
 .		}
 .		.--------------------
 .	
 .JA	.* 内容だけを残し、開始タグと終了タグを消すことができます。
-.JA	   そのためには、開始タグと終了タグをコメントアウトします。
-.EN	.* You can delete the start tag and the end tag by commenting them out.
+.EN	.* You can delete the start tag and the end tag.
 .		.--------------------
-.		macro element_list {
-.		  ## expand(stag_list);
-.		  expand(cont_list);
-.		  ## expand(etag_list);
-.		}
-.		.--------------------
-.		or
-.		.--------------------
-.		element list {
-.		  ## @stag;
-.		  @cont;
-.		  ## @etag;
+.		#list {
+.		  plogic: {
+.		    @cont;
+.		  }
 .		}
 .		.--------------------
 .	
 .JA	.* エレメント全体を消すことができます。これは、ダミーデータを消すときに便利です。
 .EN	.* You can delete an element. This is useful for delete dummy data.
 .		.--------------------
-.		macro element_list {
-.		  ## expand(stag_list);
-.		  ## expand(cont_list);
-.		  ## expand(etag_list);
+.		#list {
+.		  plogic: {
+.		  }
 .		}
 .		.--------------------
-.		or
+.	
+.JA	.* エレメント全体を、別のエレメントで置き換えることができます。
+.EN	.* You can replace an element by other element marked.
 .		.--------------------
-.		element item {
-.		  ## @stag;
-.		  ## @cont;
-.		  ## @etag;
+.		#list {
+.		  plogic: {
+.JA		    @element(foo);  // 「foo」とマーキングされたエレメントを展開する
+.EN		    @element(foo);  // expand other element marked with name 'foo'
+.		  }
 .		}
 .		.--------------------
 .	
 .JA	.* 複雑なプレゼンテーションロジックを含めることができます。
 .EN	.* You can include a complex presentation logic like this:
 .		.--------------------
-.		macro element_list {
-.		  $ctr = 0;
-.		  foreach ($itemlist as $item)
-.JA		    $ctr += 1;		## $ctr++ や ++$ctr は 使えない
-.EN		    $ctr += 1;		## $ctr++ and ++$ctr are unsupported
-.		    $color = $ctr % 2 == 0 ? 'red' : 'blue';
-.		    expand(stag_item);
-.		    expand(cont_item);
-.		    expand(etag_item);
-.		  }
-.		}
-.		.--------------------
-.		or
-.		.--------------------
-.		element list {
-.		  $ctr = 0;
-.		  foreach($itemlist as $item) {
-.JA		    $ctr += 1;		## $ctr++ や ++$ctr は 使えない
-.EN		    $ctr += 1;		## $ctr++ and ++$ctr are unsupported
-.		    $color = $ctr % 2 == 0 ? 'red' : 'blue';
+.		#list {
+.		  plogic: {
+.		  i = 0;
+.		  foreach (member in member_list) {
+.JA		    i += 1;		// 注意：i++ や ++i は使えません
+.EN		    i += 1;		// notice: i++ and ++i are unsupported
+.		    if (i % 2 == 0) {
+.		      color = 'red';
+.		    } else {
+.		      color = 'blue';
+.		    }
 .		    @stag;
 .		    @cont;
 .		    @etag;
 .		  }
 .		}
 .		.--------------------
-.	
 .	
 .JA	ここで重要なのは、{{*プレゼンテーションロジックにはタグ名や属性名が一切出てきていない*}}という点です。
 .JA	プレゼンテーションデータのほうでどんなにタグを変更したとしても、プレゼンテーションロジックはまったく変更する必要はありません。
@@ -1045,792 +638,91 @@
 .	
 .	
 .JA	つまり、プレゼンテーションデータとプレゼンテーションロジックとが完全に分離されているわけです。
-.EN	Kwartz-php separates presentation logic from presentation data.
-.EN	.#It means that Kwartz-php separates presentation logic from presentation data.
+.EN	Kwartz separates presentation logic from presentation data.
+.EN	.#It means that Kwartz separates presentation logic from presentation data.
 .	
 .	
 .	
 .	
-.JA	◎内部処理			| detail-process
-.EN	.$$ Internal Processing		| detail-process
+.JA	●ディレクティブ 	| directives
+.EN	.$ Directives		| directives
 .	
 .	
-.JA	kwartsの内部動作です。
-.JA	名前の終わりに「*」がついているものは自動的に生成されるもの、それ以外は開発者が手動で作成するものです。
-.EN	This is a flowchart of how Kwartz-php works.
-.EN	In this chart, '*' represents a file which is created automatically,
-.EN	Nodes without '*' represents a file which have to be created manually by a developer.
+.JA	Kwartzでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
+.JA	つまり、両者を分離することも、一体化することもできるわけです。
+.EN	Presentation logic may be embedded into presentation data in Kwartz.
+.EN	.#In addition, you can 'embed' presentation logic into presentation data in Kwartz.
+.EN	You can choose to separate or not to sepearate presentation data and presentation logic.
 .	
-.	.____________________
-.	  Presentation Data           Presentation Logic
-.	    (HTML)                    (Presentation Language)
-.	       |                            |
-.	       | convert                    | parse
-.	       |                            |
-.	       V                            V
-.	Intermediate Code*            Intermediate Code*
-.	(Abstract Syntax Tree)        (Abstract Syntax Tree)
-.	       |                            |
-.	       |                            |
-.	       +-------------+--------------+
-.	                     | translate
-.	                     |
-.	                     V            call/import
-.	              Output Script*    <============= Main Program
-.	              (PHP/eRuby/JSP)                 (PHP/Ruby/Servlet)
-.	                     |
-.	                     | output
-.	                     |
-.	                     V
-.	                 Web Page*
-.	                  (HTML)
-.	.____________________
 .	
+.JA	プレゼンテーションロジックをプレゼンテーションデータの中に埋め込むには、ディレクティブを用います。
+.JA	ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
+.JA	Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
+.EN	To embed presentation logic into presentation data, use directives.
+.EN	Directive is a command to embed presentation logic into presentation data.
+.EN	In Kwartz, 'id' and 'kd' attributes are used to describe directives.
 .	
-.JA	開発者が手動で作成するもの：
-.JA	.* プレゼンテーションデータ（HTMLファイル）
-.JA	.* プレゼンテーションロジック
-.JA	.* メインプログラム
-.EN	The following files are created by a developer manually:
-.EN	.* presentation data file (HTML file)
-.EN	.* presentation logic file
-.EN	.* main program
 .	
+.JA	次はディレクティブを使った例です：
+.JA	.* 「{{,id="foreach:{{/var/}}={{/list/}}",}}」は、繰り返しを表します。
+.JA	.* 「{{,id="value:{{/expression/}}",}}」は、内容のかわりに式の値を出力することを表します。
+.JA	.* 「{{,id="dummy:{{/str/}}",}}」は、そのエレメントがダミーであることを表します（つまり出力されません）。
+.JA	    ここで{{,{{/str/}},}}はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
+.JA	.* 「{{,#{{{/expression/}}}#,}}」は、式の値を出力するためのディレクティブです。
+.EN	The following is an example to use directives.
+.EN	.* Directive '{{,id="foreach:{{/var/}}={{/list/}}",}}' means to iterate the element.
+.EN	.* Directive '{{,id="value:{{/expression/}}",}} means to print value of expression as content of the element.
+.EN	.* Directive '{{,id="dummy:{{/str/}}",}}' means that the element is a dummy and is not printed out.
+.EN	   ({{/Str/}} is a string only to keep unique value of id attribute.)
+.EN	.* '{{,#{{{/expression/}}}#,}}' is also a directive to print out expression value.
 .	
-.JA	自動生成されるもの：
-.JA	.* 中間コード
-.JA	.* 出力用プログラム
-.JA	.* Webページ
-.EN	Kwartz-php creates these automatically:
-.EN	.* intermediate code
-.EN	.* output script
-.EN	.* web page
 .	
-.	
-.JA	用語：
-.JA	.[コンバート(Convert)]
-.JA		テンプレートファイルを中間コード（を表す抽象構文木）に変換すること。
-.JA	.[パース(Parse)]
-.JA		プレゼンテーションロジックプログラムを中間コード（を表す抽象構文木）に変換すること。
-.JA	.[トランスレート(Translate)]
-.JA		中間コード（を表す抽象構文木）を出力用プログラムに変換すること。
-.JA	.[コンパイル(Compile)]
-.JA		コンバート＋パース＋トランスレートのこと。
-.JA		つまりプレゼンテーションデータとプレゼンテーションロジックから出力用ファイルを生成すること。
-.EN	Terms:
-.EN	.[Convert]
-.EN		To transform presentation data into an abstract syntax tree which represents intermediate code.
-.EN	.[Parse]
-.EN		To transform presentation logic into an abstract syntax tree which represents intermediate code.
-.EN	.[Translate]
-.EN		To transform abstract syntax trees which represents intermediate code into an output script.
-.EN	.[Compile]
-.EN		'Convert' and 'Parse' then 'Translate', that is, transform presentation data and presenstaion logics into an output script.
-.	
-.	
-.	
-.
-.JA	●プレゼンテーションパターン	| pattern
-.EN	.$ Presentation Pattern		| pattern
-.	
-.JA	Kwartz-phpは、「プレゼンテーションデータとプレゼンテーションロジックの分離」という概念を初めて実現したテンプレートシステムです。
-.JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するためのテクニックが存在します。
-.JA	これは「プレゼンテーションパターン」と呼ばれます{{(「プレゼンテーションパターン」という名前がついていますが、これらのテクニックはプレゼンテーション層だけに限定されるわけではありません。しかし最もよく使われるのはプレゼンテーション層においてであるため、このような名前にしています。)}}。
-.JA	この章では、プレゼンテーションパターンをいくつか紹介します。
-.EN	Kwartz-php is the first template system which realized the concept of 'Separation of Presentation Data and Presentation Logic.'
-.EN	There are several techniques to help you to separate presentation logic and presentation data excellently.
-.EN	These techniques are called 'Presentation Patterns.'{{('Presentation Patterns' are not limited in Presentation Layer. They are also useful in other domain. But the most popular domain in which these patterns are used is the Presentation Layer, so they are named 'Presentation Patterns.')}}
-.EN	This section shows several Presentation Patterns.
-.JA	.#この章では、プレゼンテーションデータとプレゼンテーションロジックをうまく分離するための、便利なパターンを紹介します。
-.JA	.#この章ではそれらを紹介します。
-.EN	.#There are several patterns in the presentation layer which help you to separate presentation data and presentation logic excellently.
-.EN	.#This section shows these great patterns.
-.	
-.	
-.JA	◎置換			| pattern-replacement
-.JA	.#◎式による置換
-.EN	.$$ Replacement		| pattern-prelacement
-.EN	.#$$ Replacement (by Expression)
-.	
-.JA	エレメントを、変数や式の値で置き換えることができます。
-.EN	You can replace the element with the value of a variable or an expression.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-replace2.pdata
-.	Hello <span {{*id="mark:user"*}}>World</span>!
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-replace2.plogic
-.	element user {
-.JA	  {{*echo $username;*}}    ## エレメントのかわりに変数$usernameを出力する
-.EN	  {{*echo $username;*}}    ## print the value of $username instead of the element
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
-.	.--------------------
-.	
-.	
-.JA	同様に、タグは残したままエレメントの内容だけを置き換えることができます。
-.EN	You can also replace only the content of the element in the same way.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-replace1.pdata
-.	<h1 {{*id="mark:title"*}}>Example</h1>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-replace1.plogic
-.	element title {
-.	  @stag;
-.JA	  {{*echo $title;*}}     ## 内容(@cont)のかわりに$titleを出力する
-.EN	  {{*echo $title;*}}     ## print $title instead of content
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
-.	.--------------------
-.	
-.	
-.JA	なおKwartz-phpでは、式の値で内容を置き換えるための機能を用意しています。
-.JA	そのためには、プレゼンテーションデータで「{{,kd:php="value({{/expression/}})",}}」とします。
-.JA	こうすると、プレゼンテーションロジックを書くことなしに、上と同じ出力用スクリプトが得られます。
-.EN	Kwartz-php provides you a function to replace the content with expression's value easily.
-.EN	{{,kd:php="value({{/expression/}})",}} replaces the content with the value of {{/expression/}}.
-.EN	You can get the same output script as the above without a presentation logic file.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.--------------------
-.	<h1 {{*kd:php="value($title)"*}}>Example</h1>
-.	.--------------------
-.	
-.JA	このkd:php属性によるコマンドをディレクティブといいます。
-.JA	ディレクティブとは、プレゼンテーションデータ中にプレゼンテーションロジックを埋め込むための機能です。
-.JA	value()ディレクティブは内容を式の値で置き換えるものですが、他に繰り返しや条件分岐もあります。
-.JA	詳しくはリファレンスマニュアルをご覧ください。
-.EN	This is one of the 'directives'.
-.EN	Directives are commands to embed presentation logics into presentation data.
-.EN	Directives are described with the {{,kd:php,}} attribute in Kwartz-php.
-.EN	Directive {{,value(),}} provides a function to replace the content with expression's value.
-.EN	There are several directives such as iteration and conditional branching.
-.EN	See the reference manual for details.
-.	
-.	
-.	
-.JA	◎交換			| pattern-substitution
-.JA	.#◎他のエレメントによる置換
-.EN	.$$ Substitution	| pattern-substitution
-.EN	.#$$ Replacement by Other Element
-.	
-.JA	エレメントを別のエレメントに交換することができます。
-.EN	You can substitute the element with other element.
-.	
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-substitute.pdata
-.	<div {{*id="mark:links"*}}>
-.	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
-.	</div>
-.	
-.	<p>Welcome to my Home Page!</p>
-.	
-.	<div {{*id="mark:links2"*}}>
-.	  Home | Document | FAQ
-.	</div>
-.	.--------------------
-.	
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-substitute.plogic
-.	element links2 {
-.JA	  {{*@element_links;*}}   ## エレメントlins2をエレメントlinksで置き換える
-.EN	  {{*@element_links;*}}   ## substitute the element 'links2' with the element 'links'
-.	}
-.	.--------------------
-.	
-.JA	ここで「{{,@element_{{/name/}},}}」は、「{{,id="mark:{{/name/}}",}}」や「{{,id="{{/name/}}",}}」でマーキングされたエレメントを表しています。
-.EN	{{,@element_{{/name/}},}} represents the element which is marked by {{,id="mark:{{/name/}}",}} or {{,id="{{/name/}}",}}.
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-substitute.plogic guide.d/teq-substitute.pdata
-.	.--------------------
-.	
-.JA	このパターンは、ある場所で定義したエレメントを別の場所で再使用するのに便利です。
-.EN	This pattern is very useful to reuse the element in other place.
-.	
-.	.#なおKwartz-phpでは、エレメントを別のエレメントで置き換えるためのディレクティブ{{,replace(),}}を用意しています。
-.	.#これを用いると、プレゼンテーションロジックファイルなしで上と同じ出力用スクリプトを得ることができます。
-.	.#Kwartz-php provieds the directive {{,replace(),}} which replaces the element with other element.
-.	.#You can get the same output script without presentation logic file if you use this directive.
-.	.#
-.	.#.-------------------- teq-replace4.pdata
-.	.#<div id="mark:links">
-.	.# <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
-.	.#</div>
-.	.#
-.	.#<p>Welcome to my Home Page!</p>
-.	.#
-.	.#<div {{*kd:php="replace(links)"*}}>
-.	.#  Home | Document | FAQ
-.	.#</div>
-.	.#.--------------------
-.	
-.	
-.	
-.JA	◎削除		| pattern-deletion
-.EN	.$$ Deletion	| pattern-deletion
-.	
-.JA	エレメントの定義において、「{{,@stag,}}」と「{{,@etag,}}」をコメントアウトすれば、開始タグと終了タグを削除したことになります。
-.JA	また「{{,@cont,}}」もコメントアウトすれば、エレメント全体を削除したことになります。
-.EN	You can delete the start tag and the end tag by commenting out {{,@stag,}} and {{,@etag,}} in the element definition.
-.EN	You can delete the element whole if you commented out {{,@cont,}} in addition to {{,@stag,}} and {{,@etag,}}.
-.	
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-delete.pdata
-.	<p id="mark:dummy">
-.	  This is a pen.
-.	</p>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-delete.plogic
-.	element dummy {
-.	  {{*##*}} @stag;
-.	  {{*##*}} @cont;
-.	  {{*##*}} @etag;
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.JA	              ## 何も出力されない
-.EN	              ## Nothis is printed.
-.	.--------------------
-.	
-.JA	これを用いると、HTMLファイル中にいくらでもダミーデータを含めることができるので、大変便利です。
-.EN	This pattern is very useful to delete dummy elements in HTML file.
-.	
-.JA	ある条件のときだけエレメントを削除するには次のようにします。
-.EN	The following is an example to delete the element according to a condition.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-delete2.pdata
-.	<a href="@{$next_url}@" {{*id="mark:link"*}}>
-.	  Next Page&lt;&lt;
-.	</a>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-delete2.plogic
-.	element link {
-.	  {{*if ($next_url != null) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*}*}}
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-delete2.plogic guide.d/teq-delete2.pdata
-.	.--------------------
-.	
-.JA	また内容を残したまま、タグだけを削除することもできます。
-.EN	You can delete only the start tag and the end tag, leaving the content.
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-delete3.plogic
-.	element link {
-.	  {{*if ($next_url != null) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*} else {*}}
-.	    {{*##*}}@stag;
-.	    @cont;
-.	    {{*##*}}@etag;
-.	  {{*}*}}
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-delete3.plogic guide.d/teq-delete2.pdata
-.	.--------------------
-.	
-.JA	なおエレメントを削除するためのディレクティブ{{,dummy,}}が用意されています。
-.JA	このディレクティブが指定されたエレメントは、出力されません。
-.EN	Kwartz-php provides a directive {{,dummy,}} which suppress the output of the element.
-.EN	The element which has a directive {{,dummy,}} is ignored by Kwartz-php.
-.	
-.	.--------------------
-.	<p {{*kd:php="dummy"*}}>
-.	  This is a dummy element.
-.	</p>
-.	.--------------------
-.	
-.	
-.JA	◎繰り返し	| pattern-iteration
-.EN	.$$ Iteration	| patetrn-iteration
-.	
-.JA	Kwartz-phpでは、次のような繰り返しを行うことができます。
-.JA	.* エレメント全体を繰り返す
-.JA	.* 内容だけを繰り返す。タグは1回だけ出力する。
-.JA	.* 内容だけを繰り返す。タグは出力しない。
-.EN	There are several situation in the iteration.
-.EN	.* Iterate the element.
-.EN	.* Iterate the content. Start/End tags are printed once.
-.EN	.* Iterate the content. Start/End tags are not printed.
-.	
-.JA	エレメント全体を繰り返す：
-.EN	Iterating the element:
-.	.-------------------- teq-iterate1.plogic
-.	element name {
-.	  {{*foreach ($list as $item) {*}}
-.	    @stag;
-.	    @cont;
-.	    @etag;
-.	  {{*}*}}
-.	}
-.	.--------------------
-.	
-.JA	内容だけを繰り返す。タグは1回だけ出力する。
-.EN	Iterating the content, with printng the start/end tags once.
-.	.-------------------- teq-iterate2.plogic
-.	element name {
-.	  @stag;
-.	  {{*foreach ($list as $item) {*}}
-.	    @cont;
-.	  {{*}*}}
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	内容だけを繰り返し、タグは出力しない。
-.EN	Iterating the content, ignoreing the start/end tags.
-.	.-------------------- teq-iterate3.plogic
-.	element name {
-.	  {{*##*}}@stag;
-.	  {{*foreach ($list as $item) {*}}
-.	    @cont;
-.	  {{*}*}}
-.	  {{*##*}}@etag;
-.	}
-.	.--------------------
-.	
-.	
-.JA	もちろん、繰り返し中に条件分岐や代入など、複雑なロジックを入れても構いません。
-.JA	次の例は、奇数行と偶数行とで色を変えたテーブルです。
-.JA	.* 「{{,kd:php="attr('bgcolor'=>$color)",}}」は、属性bgcolorの値として変数$colorを用いるためのディレクティブです。
-.JA	.* 「{{,kd:php="value($user)",}}」は、そのエレメントの内容を変数$userの値で置き換えるためのディレクティブです。
-.JA	.* 「{{,kd:php="dummy",}}」は、ダミーエレメントを出力しないためのディレクティブです。
-.EN	It is able to contain conditional branchings or assignments in the iteration.
-.EN	The following is an example of a table with colored borders.
-.EN	.* {{,kd:php="attr('bgcolor'=>$color)",}} is a directive to replace the bgcolor attribute with the value of $color.
-.EN	.* {{,kd:php="value($user)",}} is a directive to replace the content with the value of $user.
-.EN	.* {{,kd:php="dummy",}} is a directive which represents that the element is a dummy and Kwartz-php ignores it.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- teq-iterate4.pdata
+.JA	プレゼンテーションデータ(example3.html)：
+.EN	Presentation Data(example3.html):
+.	.-------------------- example3.html
 .	<table>
-.	  <tbody {{*id="mark:user_list"*}}>
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="attr('bgcolor'=>$color)"*}}>
-.	      <td {{*kd:php="value($ctr)"*}}>1</td>
-.	      <td {{*kd:php="value($user)"*}}>Foo</td>
-.	    </tr>
-.	    <tr bgcolor="#FFCCCC" {{*kd:php="dummy"*}}>
-.	      <td>2</td>
-.	      <td>Bar</td>
-.	    </tr>
-.	    <tr bgcolor="#CCCCFF" {{*kd:php="dummy"*}}>
-.	      <td>3</td>
-.	      <td>Baz</td>
-.	    </tr>
-.	  </tbody>
+.	  <tr {{*id="foreach:member=member_list"*}}>
+.	    <td {{*id="value:member['name']"*}}>foo</td>
+.	    <td><a href="mailto:{{*#{member['email']}#*}}">
+.	         {{*#{member['email']}#*}}</a></td>
+.	  </tr>
+.	  <tr {{*id="dummy:d1"*}}>
+.	    <td>bar</td>
+.	    <td><a href="mailto:bar@mail.org">bar@mail.org</a></td>
+.	  </tr>
+.	  <tr {{*id="dummy:d2"*}}>
+.	    <td>baz</td>
+.	    <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
+.	  </tr>
 .	</table>
 .	.--------------------
 .	
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- teq-iterate4.plogic
-.	element user_list {
-.	  @stag;
-.	  {{*$ctr = 0;*}}
-.	  {{*foreach ($user_list as $user) {*}}
-.	    {{*$ctr += 1;*}}
-.	    {{*$color = $ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';*}}
-.	    @cont;
-.	  {{*}*}}
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-iterate4.plogic guide.d/teq-iterate4.pdata
-.	.--------------------
-.	
-.	
-.	
-.JA	◎選択		| pattern-choice
-.EN	.$$ Choice	| pattern-choice
-.	
-.JA	複数のエレメントからひとつだけを選んで出力する場合は、次のようにします。
-.EN	The following is an example to choose a certain element from some elements.
-.	
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- pat-choice.pdata
-.	<div {{*id="mark:message"*}}>
-.	  <font color="red"   {{*id="mark:error"*}}>ERROR!</font>
-.	  <font color="blue"  {{*id="mark:warning"*}}>Warning:</font>
-.	  <font color="black" {{*id="mark:good"*}}>No error.</font>
-.	</div>
-.	.--------------------
-.	
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- pat-choice.plogic
-.	element message {
-.	  @stag;
-.	  {{*if ($error) {*}}
-.	    {{*@element_error;*}}       ## ERROR!
-.	  {{*} elseif ($warning) {*}}
-.	    {{*@element_warning;*}}     ## Warning:
-.	  {{*} else {*}}
-.	    {{*@element_good;*}}        ## No error.
-.	  {{*}*}}
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/pat-choice.plogic guide.d/pat-choice.pdata
-.	.--------------------
-.	
-.	
-.JA	なお条件分岐を行うためのディレクティブも用意されています。
-.JA	これを使うと、プレゼンテーションなしで上と同じ出力用スクリプトが得られます。
-.EN	There are directives for conditional branching.
-.EN	You can get the same output script without presentation logic file when you use these directives.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.--------------------
-.	<div>
-.	  <font color="red"   {{*kd:php="if($error)"*}}>ERROR!</font>
-.	  <font color="blue"  {{*kd:php="elseif($warning)"*}}>Warning:</font>
-.	  <font color="black" {{*kd:php="else"*}}>No error.</font>
-.	</div>
-.	.--------------------
-.	
-.	
-.	
-.JA	◎抽出		| pattern-extraction
-.EN	.$$ Extraction	| pattern-extraction
-.	
-.JA	プレゼンテーションデータ全体から、ある一部だけを抜き出すことができます。
-.EN	It is able to extract a certain element form the whole presentation data.
-.	
-.JA	例えば次の例では、エレメント'breadcrumbs'からエレメント'crumb'と'separator'だけを抜き出して使用しています。
-.JA	それ以外のデータは表示されません。
-.EN	The following is an example to extract and use only the element 'crumb' and 'separator' from the element 'breadcrumbs'.
-.EN	Other text strings are not printed.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- pat-extract1.pdata
-.	<div {{*id="mark:breadcrumbs"*}}>
-.	  <a {{*id="mark:crumb"*}} href="@{$href}@">Home</a>
-.	  <span {{*id="mark:separator"*}}> &lt; </span>
-.	  <a href="/aaa/">AAA</a> &lt;
-.	  <a href="/aaa/bbb/">BBB</a> &lt;
-.	  <a href="/aaa/bbb/ccc/">CCC</a> &lt;
-.	</div>
-.	<span kd:php="value($title)">DDD</span>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- pat-extract1.plogic
-.	element breadcrumbs {
-.	  @stag;
-.	  foreach ($breadcrumbs as $crumb) {
-.JA	    {{*@element_crumb;*}}        ## <a href="">...</a>を出力
-.JA	    {{*@element_separator;*}}    ## &lt; を出力
-.EN	    {{*@element_crumb;*}}        ## print <a href="">...</a>
-.EN	    {{*@element_separator;*}}    ## print &lt;
-.	  }
-.	  @etag;
-.	}
-.	
-.	element crumb {
-.	  $href = $crumb['href'];
-.	  @stag;
-.JA	  echo $crumb['title'];    ## 内容の変わりに式の値を出力
-.EN	  echo $crumb['title'];    ## print expression instead of content
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/pat-extract1.plogic guide.d/pat-extract1.pdata
-.	.--------------------
-.	
-.	
-.JA	.#このパターンは、HTMLファイルから部品化したいエレメントだけを抜き出すのに便利です。
-.JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
-.JA	例えば次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
-.EN	This pattern is very useful to extract HTML fragments and make them libraries.
-.EN	The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
-.	
-.	.#++++++
-.JA	スタイルシート(design.css)：
-.EN	Style Sheet (design.css):
-.	.-------------------- design.css
-.	.tabs a {
-.		border-style: solid;
-.		border-color: #006699;
-.		border-width: 1px 1px 0px 1px;
-.		color: #006699;
-.		font-weight: bold;
-.		text-decoration:none;
-.		padding: 4px 10px 1px 10px;
-.		margin: 0px 0px 0px 20px;
-.	}
-.	.tabs a.selected {
-.		background-color:#006699;
-.		color:#FFFFFF;
-.	}
-.	.tabs a:hover, .tabs a:active {
-.		background-color: #CCEEFF;
-.	}
-.	.tabsline {
-.		border-style:solit;
-.		background-color:#006699;
-.		padding:2px;
-.		border-width:0;
-.	}
-.	.menus  {
-.		border-style: solid;
-.		border-color: #006699;
-.		border-width: 1px 1px 1px 1px;
-.		width:120;
-.	}
-.	.menus a {
-.		color:#006699;
-.		padding: 4px 10px 1px 10px;
-.		text-decoration:none;
-.	}
-.	.menus a.selected {
-.		font-weight:bold;
-.	}
-.	.menus a:hover, .menus a:active {
-.		text-decoration:underline;
-.	}
-.	.menu_title {
-.		color:#FFFFFF;
-.		background-color:#006699;
-.		font-weight:bold;
-.		padding:3 10 2 10;
-.		width:120;
-.	}
-.	.copyright {
-.		font-size:small;
-.		color:#999999;
-.	}
-.	.--------------------
-.	.#------
-.	
-.JA	プレゼンテーションデータ({{<design.html>}})：
-.EN	Presentation Data ({{<design.html>}}):
-.	.-------------------- design.html
-.	<html {{*id="mark:whole"*}}>
-.	  <head>
-.	    <title>Design Examples</title>
-.	    <link rel="stylesheet" href="design.css" type="text/css">
-.	  </head>
-.	  <body>
-.	
-.	    <div {{*id="mark:tablist"*}}>
-.	      <div class="tabs" id="mark:tabs">
-.	        <a href="{{*@{$tab_href}@*}}" class="{{*@{$tab_class}@*}}" {{*id="mark:tab"*}}>Home</a>
-.	        <a href="/product/" class="selected">Product</a>
-.	        <a href="/download/" class="">Download</a>
-.	        <a href="/support/" class="">Support</a>
-.	      </div>
-.	      <div class="tabsline">
-.	      </div>
-.	    </div>
-.	
-.	    <br>
-.	
-.	    <div {{*id="mark:menulist"*}}>
-.	      <span class="menu_title" {{*id="mark:menu_title"*}}>MenuList</span>
-.	      <div class="menus" {{*id="mark:menus"*}}>
-.	        <a href="email.cgi" class="" {{*id="mark:menu"*}}
-.		  {{*kd:php="attr('href'=>$menu_href,'class'=>$menu_class)"*}}>E-Mail</a>
-.		<span {{*id="mark:menu_separator"*}}><br></span>
-.	        <a href="board.cgi" class="selected">MesgBoard</a><br>
-.	        <a href="photo.cgi" class="">PhotoAlbum</a><br>
-.	        <a href="greeting.cgi" class="">GreetingCard</a><br>
-.	      </div>
-.	    </div>
-.	    <br>
-.	      
-.	    <p> ..... </p>
-.	    <p> ..... </p>
-.	    <p> ..... </p>
-.	    
-.	    <div align="center" class="copyright" {{*id="mark:copyright"*}}>
-.	      Copyright&copy; 2004 kuwata-lab. All Rights Reserved.
-.	    </div>
-.	    
-.	  </body>
-.	</html>
-.	.--------------------
-.	
-.	
-.JA	プレゼンテーションロジック(copyright.plogic)：
-.EN	Presentation Logic (copyright.plogic):
-.	.-------------------- copyright.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_copyright;*}}   ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'whole'
-.EN	  {{*@element_copyright;*}}   ## with the element what you want to extract
-.EN	{{*}*}}
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック(tablist.plogic)：
-.EN	Presentation Logic (tablist.plogic):
-.	.-------------------- tablist.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_tablist;*}}     ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'all'
-.EN	  {{*@element_tablist;*}}     ## with the element what you want to extract
-.EN	{{*}*}}
-.	
-.	element tabs {
-.	  foreach ($tablist as $tab) {
-.	    @element_tab;
-.	  }
-.	}
-.	
-.	element tab {
-.	  $tab_href = $tab['href'];
-.	  $tab_name = $tab['name'];
-.	  $klass = $current_tab == $tab_name ? 'selected' : '';
-.	  @stag;
-.	  echo $tab_name;
-.	  @etag;
-.	}
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック(menulist.plogic)：
-.EN	Presentation Logic (menulist.plogic):
-.	.-------------------- menulist.plogic
-.JA	{{*element whole {*}}         ## 全体を表すエレメントwholeを
-.JA	  {{*@element_menulist;*}}    ## 抽出したいエレメントで置き換える
-.JA	{{*}*}}
-.EN	{{*element whole {*}}         ## replace the element 'whole'
-.EN	  {{*@element_menulist;*}}    ## with the element what you want to extract
-.EN	{{*}*}}
-.	
-.	element menu_title {
-.	  @stag;
-.	  echo $menu_title;
-.	  @etag;
-.	}
-.	
-.	element menus {
-.	  foreach ($menulist as $menu) {
-.	    @stag;
-.	    @element_menu;
-.	    @element_menu_separator;
-.	    @etag;
-.	  }
-.	}
-.	
-.	element menu {
-.	  $menu_href = $menu['href'];
-.	  $menu_name = $menu['name'];
-.	  $menu_class = $menu_name == $current_menu ? 'selected' : '';
-.	  @stag;
-.	  echo $menu_name;
-.	  @etag;
-.	}
-.	.--------------------
-.	
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	### copyright
-.	$ kwartz-php -p copyright.plogic design.pdata > copyright.php
+.	### for eRuby
+.	$ kwartz -l eruby   example3.html > example3.rhtml
 .	
-.	### tablist
-.	$ kwartz-php -p tablist.plogic   design.pdata > tablist.php
+.	### for PHP
+.	$ kwartz -l php     example3.html > example3.php
 .	
-.	### menulist
-.	$ kwartz-php -p menulist.plogic  design.pdata > menulist.php
+.	### for JSTL1.1
+.	$ kwartz -l jstl11  example3.html > example3.jsp
 .	.====================
 .	
 .	
-.JA	出力用スクリプト(copyright.php)：
-.EN	Output Script (copyright.php):
+.JA	出力用スクリプト：
+.EN	Output script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/copyright.plogic guide.d/design.html
-.	.--------------------
-.	
-.JA	出力用スクリプト(tablist.php)：
-.EN	Output Script (tablist.php):
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/tablist.plogic guide.d/design.html
+.	.<<<:! ./output.rb guide.d/example3.html
 .	.--------------------
 .	
-.JA	出力用スクリプト(menulist.php)：
-.EN	Output Script (menulist.php):
-.	.--------------------
-.	.<<<:! kwartz-php -p guide.d/menulist.plogic guide.d/design.html
-.	.--------------------
+.	
+.JA	このほか、条件分岐を行うディレクティブなども用意されています。
+.JA	詳細はリファレンスマニュアルをご覧ください。
+.EN	There are several directives such as conditional branching.
+.EN	See reference manual for details.
 .	
 .	
 .	
@@ -1838,48 +730,59 @@
 .EN	.$ Sanitizing		| sanitizing
 .	
 .	
-.JA	Kwartz-phpでは、自動でサニタイズを行うことができます。
+.JA	Kwartzでは、自動でサニタイズを行うことができます。
 .JA	またある部分だけをサニタイズする/しないを選択することもできます。
-.EN	Kwartz-php supports Automatic Sanitizing and Partially Sanitizing.
+.EN	Kwartz supports Automatic Sanitizing and Partially Sanitizing.
+.	
 .	
 .	
 .JA	◎自動サニタイズ	 | sanitizing-auto
 .EN	.$$ Automatic Sanitizing | sanitizing-auto
 .	
-.JA	コマンドラインオプション {{,-s,}} または {{,-e,}} をつけると、出力スクリプトをサニタイズします。
-.JA	サニタイズでは、PHPでは{{,htmlspecialchars(),}}が、eRubyでは{{,CGI.escapeHTML(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out>,}}がそれぞれ使用されます。
-.EN	{{,-s,}} and {{,-e,}} are the command-line optin to generate output script with sanitizing.
-.EN	{{,htmlspecialchars(),}} is used in PHP, {{,CGI.escapeHTML(),}} in eRuby, and {{,<c:out>,}} tag without {{,escapeXml="false",}} in JSTL.
+.	
+.JA	コマンドラインオプション {{,-e,}} をつけると、出力スクリプトをサニタイズします。
+.JA	サニタイズでは、eRubyでは{{,CGI.escapeHTML(),}}が、ERBでは{{,h(),}}が、PHPでは{{,htmlspecialchars(),}}が、JSTLでは{{,escapeXml="false",}}なしの{{,<c:out>,}}がそれぞれ使用されます。
+.EN	{{,-e,}} is the command-line optin to generate output script with sanitizing.
+.EN	{{,CGI.escapeHTML(),}} is used in eRuby for sanitizing, {{,htmlspecialchars(),}} in PHP, and {{,<c:out/>,}} tag without {{,escapeXml="false",}} in JSTL.
+.	
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data (sanitize1.html):
 .	.-------------------- sanitize1.html
-.	Name: @{$name}@<br>
-.	Mail: @{$mail}@<br>
+.	<tr bgcolor="#{color}#">
+.	  <td id="value:str">foo</td>
+.	</tr>
 .	.--------------------
+.	
 .	
 .JA	コンパイル：
 .EN	Compile:
 .	.====================
-.	$ kwartz-php -s -l php   sanitize1.html > sanitize1.php
-.	$ kwartz-php -s -l eruby sanitize1.html > sanitize1.rhtml
-.	$ kwartz-php -s -l jsp   sanitize1.html > sanitize1.jsp
+.	### for eRuby
+.	$ kwartz -e -l eruby  sanitize1.html > sanitize1.rhtml
+	
+.	### for ERB
+.	$ kwartz -e -l erb    sanitize1.html > sanitize1.rhtml
+	
+.	### for PHP
+.	$ kwartz -e -l php    sanitize1.html > sanitize1.php
+	
+.	### for JSTL 1.1
+.	$ kwartz -e -l jstl11 sanitize1.html > sanitize1.jsp
 .	.====================
+.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Scirpt:
 .	.--------------------
-.	.<<<:! output.php -s guide.d/sanitize1.html
+.	.<<<:! ./output.rb -s -l eruby,erb,php,jstl guide.d/sanitize1.html
 .	.--------------------
-.	
-.JA	「{{,kd:php="value({{/expression/}})",}}」や「{{,kd:php="attr('{{/name/}}'=>{{/value/}})",}}」といったディレクティブもサニタイズされます。
-.EN	The command-line options {{,-s,}} and {{,-e,}} sanitizes the direcives such as {{,kd:php="value({{/expression/}})",}} and {{,kd:php="attr('{{/name/}}'=>{{/value/}})",}}.
 .	
 .	
 .JA	式が文字列や数値のような定数の場合は、サニタイズされません。
 .JA	また「{{,$flag ? 'checked' : '',}}」のような条件演算子では、{{,$flag,}}の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
 .EN	Constant string and constant number are not sanitized.
-.EN	Conditional expression such as {{,$flag ? 'checked' : '',}} is not sanitized because the result is constant string whether the value of {{,$flag,}} is true or false.
+.EN	Conditional expression such as '{{,flag ? " checked" : "",}}' is not sanitized because the result is constant string whether the value of '{{,flag,}}' is true or false.
 .	
 .	
 .	
@@ -1889,68 +792,124 @@
 .	
 .JA	関数{{,E({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズします。
 .JA	また関数{{,X({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズしません。
-.EN	The function {{,E({{/expr/}}),}} always sanitizes expression {{,{{/expr/}},}} even when '-s' is not specified.
-.EN	The function {{,X({{/expr/}}),}} doesn't sanitize expression {{,{{/expr/}},}} even when '-s' is specified.
+.EN	The function {{,E({{/expr/}}),}} always sanitizes expression {{,{{/expr/}},}} even when '-e' is not specified.
+.EN	The function {{,X({{/expr/}}),}} doesn't sanitize expression {{,{{/expr/}},}} even when '-e' is specified.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentaion Data:
 .	.-------------------- sanitize-partial1.pdata
 .	<table>
-.	 <tr bgcolor="{{*@{X($color)}@*}}">
-.	   <td>User:</td><td>{{*@{E($user)}@*}}</td>
+.	 <tr bgcolor="{{*#{X(color)}#*}}">
+.	   <td {{*id="value:E(str)"*}}>foo</td>
 .	 </tr>
 .	</table>
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! output.php guide.d/sanitize-partial1.pdata
-.	.--------------------
-.	
-.JA	またコマンドラインオプションに関係なく、「{{,kd:php="Value({{/expr/}})",}}」や「{{,kd:php="Attr('{{/name/}}'=>{{/expr/}})",}}」は式{{,{{/expr/}},}}を必ずサニタイズします。
-.JA	逆に、「{{,kd:php="VALUE({{/expr/}})",}}」や「{{,kd:php="ATTR('{{/name/}}'=>{{/expr/}})",}}」は式{{,{{/expr/}},}}を必ずサニタイズしません。
-.JA	これらはそれぞれ、「{{,kd:php="value(E({{/expr/}}))",}}」や「{{,kd:php="attr('{{/name/}}'=>X({{/expr/}}))",}}」と同じです。
-.EN	Directives {{,kd:php="Value({{/expr/}})",}} and {{,kd:php="Attr('{{/name/}}'=>{{/expr/}})",}} always sanitize expression {{,{{/expr/}},}} even when the sanitizing command-line option is not specified.
-.EN	Directives {{,kd:php="VALUE({{/expr/}})",}} and {{,kd:php="ATTR('{{/name/}}'=>{{/expr/}})",}} doesn't sanitize expression {{,{{/expr/}},}} even when the sanitizing command-line option is specified.
-.EN	These are equivalent to {{,kd:php="value(E({{/expr/}}))",}}, {{,kd:php="attr('{{/name/}}'=>E({{/expr/}}))",}}, 
-.EN	{{,kd:php="value(X({{/expr/}}))",}}, and {{,kd:php="attr('{{/name/}}'=>X({{/expr/}}))",}}.
-.	
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentaion Data:
-.	.-------------------- sanitize-partial2.pdata
-.	<table>
-.	 <tr bgcolor="#CCCCFF" {{*kd:php="ATTR('bgcolor'=>$color)"*}}>
-.	   <td>User:</td><td {{*kd:php="Value($user)"*}}>Foo</td>
-.	 </tr>
-.	</table>
-.	.--------------------
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	### for eRuby
+.	$ kwartz -e -l eruby  sanitize1.html > sanitize1.rhtml
+	
+.	### for ERB
+.	$ kwartz -e -l erb    sanitize1.html > sanitize1.rhtml
+	
+.	### for PHP
+.	$ kwartz -e -l php    sanitize1.html > sanitize1.php
+	
+.	### for JSTL 1.1
+.	$ kwartz -e -l jstl11 sanitize1.html > sanitize1.jsp
+.	.====================
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! output.php guide.d/sanitize-partial2.pdata
+.	.<<<:! ./output.rb -l eruby,erb,php,jstl guide.d/sanitize-partial1.pdata
 .	.--------------------
 .	
+.JA	またコマンドラインオプションに関係なく、「{{,id="Value:{{/expr/}}",}}」や「{{,id="Attr:{{/name/}}={{/expr/}})",}}」は式{{,{{/expr/}},}}を必ずサニタイズします。
+.JA	逆に、「{{,id="VALUE:{{/expr/}}",}}」や「{{,id="ATTR:{{/name/}}={{/expr/}}",}}」は式{{,{{/expr/}},}}を必ずサニタイズしません。
+.JA	これらはそれぞれ、「{{,id="value:E({{/expr/}})",}}」や「{{,id="attr:{{/name/}}=X({{/expr/}})",}}」と同じです。
+.EN	Directives {{,id="Value:{{/expr/}}",}} and {{,id="Attr:{{/name/}}={{/expr/}}",}} always sanitize expression {{,{{/expr/}},}} even when the sanitizing command-line option is not specified.
+.EN	Directives {{,id="VALUE:{{/expr/}}:",}} and {{,id="ATTR:{{/name/}}={{/expr/}}",}} doesn't sanitize expression {{,{{/expr/}},}} even when the sanitizing command-line option is specified.
+.EN	These are equivalent to {{,id="value:E({{/expr/}})",}}, {{,id="attr:{{/name/}}=E({{/expr/}})",}}, 
+.EN	{{,id="value:X({{/expr/}})",}}, and {{,id="attr:{{/name/}}=X({{/expr/}})",}}.
+.	
+.	
+.	
+.JA	◎サニタイズの設定	| sanitizing-config
+.EN	.$$ Configuration for sanitizing	| sanitizing-config
+.	
+.JA	kwartz/config.rbはKwartz-rubyの動作を設定しているファイルです。
+.JA	デフォルトでサニタイズを行うように設定するには、この中で定数{{,Kwartz::Config::ESCAPE,}}の値をtrueに変更します。
+.EN	File 'kwartz/config.rb' is a configuration file for Kwartz-ruby.
+.EN	If you want to sanitize in default, change value of constant {{,Kwartz::Config::ESCAPE,}} to true in the configuration file.
 .	
 .	
 .	
 .JA	●その他の話題		| topics
 .EN	.$ Other Topics		| topics
 .	
+.	
+.	
+.JA	◎制限事項		| restriction
+.EN	.$$ Restrictions	| restriction
+.	
+.JA	Kwartzでは、HTMLパーサやXMLパーサを用いず、正規表現によるパターンマッチでHTMLファイルを解析しています。
+.JA	そのため、HTMLではないテキストファイルでも利用できるという利点がありますが、次のような制限事項もあります。
+.EN	Kwartz parses presentation data file by regular expression pattern matching.
+.EN	It means that Kwartz doesn't use HTML parser nor XML parser for parsing presentation data.
+.EN	This approach enables Kwartz to handle any type of text file, and also brings the following restrictions to Kwartz.
+.	
+.JA	.* id属性がついたタグは、終了タグを省略できません。
+.EN	.* Cannot omit end tag if id attribute is specified.
+.	   .--------------------
+.JA	   <!-- </li> が指定されていないので解析できない -->
+.EN	   <!-- Kwartz cannot parse the following because </li> is omitted. -->
+.	   <ul>
+.	    <li id="foo">foo
+.	   </ul>
+.	   .--------------------
+.JA	   また内容を持たない場合は、{{,<foo id="..."/>,}}のような空タグとしてください。
+.EN	   An Element which doesn't have any content is to be written as an empty tag such as {{,<foo id="..."/>,}}.
+.	
+.JA	.* ただし、{{,<input>,}}と{{,<br>,}}と{{,<meta>,}}と{{,<img>,}}と{{,<hr>,}}は、終了タグを省略できます。
+.JA	   また空タグにする必要もありません。
+.JA	   .#そのかわりに、これらのタグでは内容をもつことができません。
+.EN	.* However, {{,<input>,}}, {{,<br>,}}, {{,<meta>,}}, {{,<img>,}}, and {{,<hr>,}} are allowed to omit end tag.
+.EN	   And these doesn't have to be written as an empty tag.
+.	   .--------------------
+.JA	   <!-- </input> が省略されているが、正しく解析される -->
+.EN	   <!-- </input/> is omitted but Kwartz can parse correctly. -->
+.	   <input type="text" name="user" id="user">
+.	   .--------------------
+.JA	   なおこれらのタグ名はkwartz/config.rbの中で定数{{,Kwartz::Config::EMPTY,}}に設定されています。
+.JA	   また大文字と小文字は区別されます。
+.EN	   Constant Kwartz::Config::EMPTY lists these tag names in file kwartz/config.rb.
+.EN	   Upper-case and lower-case are distinguished.
+.	
+.JA	.* 属性値は必ず「{{,",}}」で囲ってください。また「'」で囲っても認識されません。
+.EN	.* Attribute values should be surrounded with '{{,",}}'.
+.	   .--------------------
+.JA	   <!-- 属性値が「"」で囲まれていないので、解析できない -->
+.EN	   <!-- Kwartz fails parsing because attribute value is not surrounded with '"'. -->
+.	   <h1 id="value:title" class=title>title</h1>
+.	   .--------------------
+.	
+.	
+.	
 .JA	◎グローバル変数とローカル変数		 | topics-analyze
 .EN	.$$ Analyzing Global and Local Variables | topics-analyze
 .	
-.JA	Kwartz-phpには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
-.EN	Kwartz-php have a function to analyze presentation data/logic files and inspect variables.
+.JA	Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
+.EN	Kwartz have a function to analyze presentation data/logic files and inspect variables.
 .	
-.JA	Kwartz-phpでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
+.JA	Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
 .JA	テンプレートの中でだけ使用される変数をローカル変数と呼んでいます。
-.JA	Kwartz-phpは、変数がグローバルかローカルかを調べて報告する機能があります。
-.EN	In Kwartz-php, variables are called Global variables if they are set in the main program and are passed to output script.
+.JA	Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
+.EN	In Kwartz, variables are called Global variables if they are set in the main program and are passed to output script.
 .EN	Variables are called Local variables if they are used only in the template.
-.EN	Kwartz-php have a function to detect whether variables are global or local and report the result.
+.EN	Kwartz have a function to detect whether variables are global or local and report the result.
 .	
 .JA	次の例をご覧ください。
 .EN	Assume the following presentation data and presentation logic:
@@ -1958,74 +917,74 @@
 .JA	プレゼンテーションデータ(analyze.html)：
 .EN	Presentation Data (analyze.html):
 .	.-------------------- analyze.html
-.	<span kd:php="value({{*$title*}})">Analyzer Example</span>
-.	<dl id="mark:list">
-.	 <dt kd:php="value({{*$item_ctr*}})"></dt>
-.	 <dd kd:php="value({{*$item)*}}">Foo</dd>
+.	<span kd="value:{{*title*}}">Analyzer Example</span>
+.	<dl id="mark:items">
+.	 <dt kd="value:{{*ctr*}}"></dt>
+.	 <dd kd="value:{{*item*}}">Foo</dd>
 .	</dl>
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック(analyze.plogic)：
 .EN	Presentation Logic (analyze.plogic):
 .	.-------------------- analyze.plogic
-.	element list {
-.	  @stag;
-.	  {{*$item_ctr*}} = 0;
-.	  foreach ({{*$item_list*}} as {{*$item*}}) {
-.	    {{*$item_ctr*}} += 1;
-.	    @cont;
+.	#items {
+.	  plogic: {
+.	    @stag;
+.	    {{*ctr*}} = 0;
+.	    foreach ({{*item*}} in {{*list*}}) {
+.	      {{*ctr*}} += 1;
+.	      @cont;
+.	    }
+.	    @etag;
 .	  }
-.	  @etag;
 .	}
 .	.--------------------
 .	
 .JA	この例では4つの変数があります。
-.JA	このうち、$itemと$item_ctrはテンプレート中でだけ使われるのでローカル変数、
-.JA	$titleと$item_listはメインプログラムで設定されて出力用スクリプトに渡されるのでグローバル変数です。
-.EN	In this case, variables $item_ctr and $item are Local Variables because they are used only in the template.
-.EN	Variables $title and $item_list are Global Variables because they are set in the main program and passed to output script.
+.JA	このうち、{{,item,}}と{{,ctr,}}はテンプレート中でだけ使われるのでローカル変数、
+.JA	{{,title,}}と{{,list,}}はメインプログラムで設定されて出力用スクリプトに渡されるのでグローバル変数です。
+.EN	In this case, variables {{,ctr,}} and {{,item,}} are Local Variables because they are used only in the template.
+.EN	Variables {{,title,}} and {{,list,}} are Global Variables because they are set in the main program and passed to output script.
 .	
-.JA	kwartz-phpをコマンドランオプション {{,-a analyze,}} をつけて起動すると、グローバル変数とローカル変数を報告してくれます。
-.EN	.#Kwartz-php can detect whether variables are global or local.
-.EN	Invoking kwartz-php with the command-line option {{,-a analyze,}} reports global/local variables.
+.JA	kwartzをコマンドランオプション {{,-a analyze,}} をつけて起動すると、グローバル変数とローカル変数を報告してくれます。
+.EN	.#Kwartz can detect whether variables are global or local.
+.EN	Invoking kwartz with the command-line option {{,-a analyze,}} reports global/local variables.
 .	
 .JA	実行例：
 .EN	Analyzing Example:
 .	.====================
-.	$ kwartz-php -a convert -p analyze.plogic analyze.html
-.	{{*global variable(s): title item_list*}}
-.	{{*local variable(s):  item_ctr item*}}
+.	$ kwartz -a analyze -p analyze.plogic analyze.html
+.	{{*Global: title list*}}
+.	{{*Local:  ctr item*}}
 .	.====================
 .	
 .	
 .JA	◎spanタグの削除	| topics-span
 .EN	.$$ Span Tag Deletion	| topics-span
 .	
-.JA	Kwartz-phpでは、{{,id="mark:{{/name/}},}}またはディレクティブしか含まないspanタグは、ダミータグとみなされて自動的に削除されます。
-.EN	The span tags which contains only {{,id="mark:{{/name/}}",}} or directives are regarded as dummy tags and deleted automatically.
+.JA	Kwartzでは、ディレクティブしか含まないようなspanタグは、ダミータグとみなされて自動的に削除されます。
+.EN	The span tags which contains only directives are regarded as dummy tags and deleted automatically.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- topics-span1.pdata
 .	<h1><span id="mark:title">title</span></h1>
 .	
-.	Hello <span kd:php="value($user)">World</span>!
+.	Hello <span id="value:user">World</span>!
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
 .	.-------------------- topics-span1.plogic
-.	element title {
-.	  @stag;
-.	  echo $title;
-.	  @etag;
+.	#title {
+.	  value: title;
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
+.JA	出力用スクリプト(for eRuby)：
+.EN	Output Script(for eRuby):
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/topics-span1.plogic guide.d/topics-span1.pdata
+.	.<<<:! kwartz -l eruby -p guide.d/topics-span1.plogic guide.d/topics-span1.pdata
 .	.--------------------
 .	
 .	
@@ -2037,76 +996,90 @@
 .	.-------------------- topics-span2.pdata
 .	<h1><span id="mark:title" class="title">title</span></h1>
 .	
-.	Hello <span kd:php="value($user)" style="color:black">World</span>!
+.	Hello <span kd="value:user" style="color:black">World</span>!
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
+.JA	出力用スクリプト(for eRuby)：
+.EN	Output Script(for eRuby):
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/topics-span1.plogic guide.d/topics-span2.pdata
+.	.<<<:! kwartz -p guide.d/topics-span1.plogic guide.d/topics-span2.pdata
 .	.--------------------
 .	
 .	
 .JA	◎タグに式の値を追加する	 | topics-append
 .EN	.$$ Appending Expression to Tag  | topics-append
 .	
-.JA	「{{,<input type="..." checked>,}}」のように属性名を省略する場合は、次のようにします。
+.JA	「{{,<input type="..." checked>,}}」のようにする場合は、次のようにします。
 .EN	The following is an example to print only attribute variable such as {{,<input type="..." checked>,}}.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- topics-append1.pdata
-.	Do you like Kwartz-php?
-.	<input type="radio" name="ans" value="Y"{{*@{$ans=='Y'?' checked':''}@*}}>Yes
-.	<input type="radio" name="ans" value="N"[{*@{$ans=='N'?' checked':''}@*}}>No
+.	<input type="checkbox" name="foo" value="Y" id="foo" />
+.	.--------------------
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- topics-append1.plogic
+.	#foo {
+.	  append: flag ? ' checked' : '';
+.	}
 .	.--------------------
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php guide.d/topics-append1.pdata
+.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -p guide.d/topics-append1.plogic guide.d/topics-append1.pdata
 .	.--------------------
 .	
-.JA	ディレクティブ {{,append({{/expr/}}),}} を使うと、式{{,{{/expr/}},}}の値をタグに追加することができます。
+.JA	ディレクティブ {{,id="append:{{/expr/}}",}} でも同じことができます。
 .EN	A directive {{,append({{/expr/}}),}} appends the value of the expression {{,{{/expr/}},}} in the element tag.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- topics-append2.pdata
-.	Do you like Kwartz-php?
-.	<input type="radio" name="ans" value="Y"
-.	       {{*kd:php="append($ans=='Y'?' checked':'')"*}}/>Yes
-.	<input type="radio" name="ans" value="N"
-.	       {{*kd:php="append($ans=='N'?' checked':'')"*}}/>No
+.	<input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" />
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! kwartz-php guide.d/topics-append2.pdata
-.	.--------------------
+.JA	.#出力用スクリプト：
+.EN	.#Output Script:
+.	.#.--------------------
+.	.#.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 guide.d/topics-append2.pdata
+.	.#.--------------------
 .	
-.JA	また{{,checked="checked",}}や{{,selected="selected",}}を簡単に出力するための機能を用意しています。
-.JA	「{{,@C({{/expr/}},}}」「{{,@S({{/expr/}},}}」「{{,@D({{/expr/}},}}」は式{{,{{/expr/}},}}が真だった場合に、
+.JA	また{{,checked="checked",}}や{{,selected="selected",}}を簡単に出力するための関数を用意しています。
+.JA	「{{,C({{/expr/}}),}}」「{{,S({{/expr/}}),}}」「{{,D({{/expr/}}),}}」は式{{,{{/expr/}},}}が真だった場合に、
 .JA	それぞれ「{{, checked="checked",}}」「{{, selected="selected",}}」「{{, disabled="disabled",}}」を出力します。
-.EN	There is a function to print {{,checked="checked",}} or {{,selected="selected",}} easily.
-.EN	{{,@C({{/expr/}}),}}, {{,@S({{/expr/}}),}}, {{,@D({{/expr/}}),}} prints 
+.EN	There are useful functions to print {{,checked="checked",}} or {{,selected="selected",}} easily.
+.EN	{{,C({{/expr/}}),}}, {{,S({{/expr/}}),}}, {{,D({{/expr/}}),}} prints 
 .EN	{{, checked="checked",}}, {{, selected="selected",}}, {{, disabled="disabled",}} respectively
 .EN	when the expression {{,{{/expr/}},}} is true.
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
 .	.-------------------- topics-append3.pdata
-.	Do you like Kwartz-php?
-.	<input type="radio" name="ans" value="Y" {{*kd:php="append(@C($ans=='Y'))"*}}/>Yes
-.	<input type="radio" name="ans" value="N" {{*kd:php="append(@C($ans=='N'))"*}}/>No
+.	<input type="checkbox" name="foo" value="Y" id="foo" />
+.	.--------------------
+.	
+.JA	プレゼンテーションロジック：
+.EN	Presentation Logic:
+.	.-------------------- topics-append3.plogic
+.	#foo {
+.	  append: C(foo == 100);
+.	}
 .	.--------------------
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php guide.d/topics-append3.pdata
+.	.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 -p guide.d/topics-append3.plogic guide.d/topics-append3.pdata
 .	.--------------------
+.	
+.	
+.	
+.	
+.	
+.	.#@EOF
 .	
 .	
 .	
@@ -2162,7 +1135,7 @@
 .	.-------------------- hoge1.html
 .	Hello @{$user}@ !
 .	<ul id="mark:list">
-.	  <li kd:php="value($item)">xxx</li>
+.	  <li kd="value($item)">xxx</li>
 .	</ul>
 .	.--------------------
 .	
@@ -2197,7 +1170,7 @@
 .	.-------------------- hoge1.php
 .	<?php
 .	// set $args
-.	$user = "Kwartz-php";
+.	$user = "Kwartz";
 .	$list = array('Foo', 'Bar', 'Baz');
 .	{{*$args*}} = array('user'=>$user, 'list'=>$list);
 .	
@@ -2222,3 +1195,17 @@
 .EN	See the help of mkmethod-php (type {{,mkmethod-php -h,}}) for details.
 .	
 .	
+.	.#@EOF
+.	.-------------------- example1.rb
+.	#!/usr/bin/ruby
+.		member_list = [ 'Oboro', 'Ominae', 'Jaquemonde' ]
+.		## ERBを使う方法
+.		## use ERB
+.		require 'erb'
+.		require 'cgi'        # for sanitizing
+.		str = File.open('guide.d/example.rhtml') { |f| f.read() }
+.		str.untaint
+.		trim_mode = 1
+.		erb = ERB.new(str, $SAFE, trim_mode)
+.		print erb.result(binding())
+.	.--------------------

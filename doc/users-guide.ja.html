@@ -1,0 +1,1263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  <title>Kwartzユーザーズガイド</title>
+  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <style type="text/css">
+   <!--
+
+body		{
+		background-color:#FFFFFF;
+		}
+.mainbody	{
+		color:#333333;
+		line-height:150%;
+		}
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+		}
+a:visited	{
+		color:#DD9900;
+		}
+
+p		{
+		color:#333333;
+		line-height:150%;
+		}
+
+pre		{
+		width: 100%;
+		line-height:130%;
+		white-space:pre;
+		}
+.program	{
+		border-style:solid;
+		border-width:2;
+		border-color:#6699FF;
+		color:#333333;
+		background-color:#DDEEFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.terminal	{
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#333333;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+		word-break:keep-all;
+		}
+.output		{
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC;
+		color:#333333;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.program_caption {
+		}
+.terminal_caption {
+		}
+.output_caption {
+		}
+
+
+ul,ol,dl	{
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#333333;
+		line-height:130%;
+		}
+
+.dt2, .dt3	{
+		font-weight:bold;
+		}
+
+.table1		{
+		padding:2;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+.th1, .th2	{
+		padding:1;
+		color:#333333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+		}
+.td1, .th2	{
+		padding:1;
+		color:#333333;
+		background-color:#EEEEDD;
+		line-height:130%;
+		}
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#333333;
+		}
+.table2		{
+		padding:1;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		color:#333333;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+		}
+h2, .section	{
+		Xfont-size:16pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+		}
+h3, .subsection	{
+		Xfont-size:12pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+		}
+
+.em		{
+		font-weight:bold;
+		}
+
+.toc		{
+		font-size:small;
+		line-height:100%;
+		}
+.footnote	{
+		font-size:small;
+		}
+.note		{
+		background-color:#FFFFDD;
+		border-style:solid;
+		border-width:0 1 0 1;
+		border-color:#DDDD66;
+		color:#333300;
+		Xfont-size:small;
+		line-height:120%;
+		padding: 5 20 5 20;
+		}
+.figure		{
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+		}
+
+   -->
+  </style>
+
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+    <div align="left"><h1>Kwartzユーザーズガイド</h1></div>
+
+    <div align="left">
+      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">はじめに</h2>
+<p>このドキュメントは、テンプレートシステムKwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>のユーザーズガイドです。
+Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』という概念を実現したテンプレートシステムです。
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>Kwartzの開発は、<a href="http://www.ipa.go.jp/">情報処理推進機構(IPA)</a>による平成15年度<a href="http://www.ipa.go.jp/jinzai/esp/">未踏ソフトウェア創造事業</a>の支援を受けています。</dd>
+ </dl>
+</div>
+<a name="toc"></a>
+<h3 class="section2">目次</h3>
+目次：
+<div class="toc">
+<ul>
+  <li><a href="#preface">はじめに</a>
+  <ul>
+    <li><a href="#toc">目次</a>
+    </li>
+    <li><a href="#changelog">更新履歴</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#intro">Kwartzについて</a>
+  <ul>
+    <li><a href="#whatis">Kwartzとは？</a>
+    </li>
+    <li><a href="#features">特徴</a>
+    </li>
+    <li><a href="#example1">簡単な例</a>
+    </li>
+    <li><a href="#example2">複雑な例</a>
+    </li>
+    <li><a href="#pattern">プレゼンテーションロジックの応用例</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#directives">ディレクティブ</a>
+  </li>
+  <li><a href="#sanitizing">サニタイズ</a>
+  <ul>
+    <li><a href="#sanitizing-auto">自動サニタイズ</a>
+    </li>
+    <li><a href="#sanitizing-partial">部分サニタイズ</a>
+    </li>
+    <li><a href="#sanitizing-config">サニタイズの設定</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#topics">その他の話題</a>
+  <ul>
+    <li><a href="#restriction">制限事項</a>
+    </li>
+    <li><a href="#topics-analyze">グローバル変数とローカル変数</a>
+    </li>
+    <li><a href="#topics-span">spanタグの削除</a>
+    </li>
+    <li><a href="#topics-append">タグに式の値を追加する</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+</div>
+<br>
+
+
+<a name="changelog"></a>
+<h3 class="section2">更新履歴</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-02-06</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>alpha1 release
+	</li>
+	</ul>
+</dd>
+</dl>
+<br>
+
+
+<br>
+
+
+<a name="intro"></a>
+<h2 class="section1">Kwartzについて</h2>
+<a name="whatis"></a>
+<h3 class="section2">Kwartzとは？</h3>
+<p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup>とは、
+『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data'(SoPL/PD)』という概念を実現したテンプレートシステムです。
+</p>
+<p>Kwartz-rubyは、RubyによるKwartzの実装です。
+このほか、PHPやJavaによる実装も予定されています。
+</p>
+<p>以降の説明では、「Kwartz」という言葉はテンプレートシステムの仕様を説明するときに使用し、
+「Kwartz-ruby」という言葉は特定の実装について説明するときに使用します。
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
+  <dd>Kwartzは'Quartz'と同じように発音してください。</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="features"></a>
+<h3 class="section2">特徴</h3>
+<p>Kwartzには次のような特徴があります。
+</p>
+<dl class="dl2">
+<dt class="dt2">
+プレゼンテーションデータとプレゼンテーションロジックとが分離可能</dt>
+<dd class="dd2">
+<p>	通常のテンプレートシステムではテンプレートとメインプログラムとを分離します。
+	Kwartzでは更に、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分離します。
+	これにより、プレゼンテーションロジックがHTMLの中に混じることも、またメインプログラムに紛れ込むこともありません。
+</p>
+</dd>
+<dt class="dt2">
+高速な動作</dt>
+<dd class="dd2">
+<p>	Kwartzでは、テンプレート（プレゼンテーションデータとプレゼンテーションロジック）から出力用スクリプトを生成します。
+	これをあらかじめ行っておくため、実行時には出力用プログラムを呼び出すだけでよく、極めて高速に動作します。
+	またDOMツリーのような木構造を使わずに済むため、他のテンプレートシステムよりも高速です。
+</p>
+</dd>
+<dt class="dt2">
+複数のプログラミング言語に対応</dt>
+<dd class="dd2">
+<p>	Kwartzは内部で独自の中間言語を採用することにより、様々なプログラミング言語から使用できるようになっています。
+	つまり、ひとつのHTMLテンプレートを様々な言語から使用することができるのです。
+	また使用する言語を変えたとしても、プレゼンテーション層は何も変更する必要がありません。
+	現在のところ、Ruby(eRuby)、PHP、JSP(JSTL 1.1&amp;1.0)に対応しています。
+</p>
+</dd>
+<dt class="dt2">
+HTMLテンプレートがSGML形式を崩さない</dt>
+<dd class="dd2">
+<p>	Kwartzでは、HTMLテンプレートにおけるマーキング（印付け）をid属性で行っています。
+	そのため、 <a href="http://smarty.php.net/">Smarty</a> や
+	<a href="http://jakarta.apache.org/velocity/">Jakarta Velocity</a> 
+	のようにHTMLテンプレートのデザインを崩してしまうことがありません。
+</p>
+</dd>
+<dt class="dt2">
+任意のテキストファイルで使用可能</dt>
+<dd class="dd2">
+<p>	Kwartzでは、専用の属性がついたタグのみを認識し、それ以外のタグはただのプレーンテキストとみなします。
+	またHTMLパーサーやXMLパーサーを使用せず、独自に解析を行っています。
+	そのため、<a href="http://xmlc.objectweb.org/">Enhydra XMLC</a> や
+	<a href="http://amrita.sourceforge.jp/">amrita</a> 
+	のようにXMLやHTMLでしか使用できないということはなく、任意のテキストファイルで使用可能です。
+</p>
+</dd>
+<dt class="dt2">
+自動サニタイズ機能をサポート</dt>
+<dd class="dd2">
+<p>	Kwartzでは、サニタイズを自動的に行うようにすることができます。
+	つまり、いちいち「CGI::escapeHTML(var)」や「<code>htmlspecialchars($var)</code>」と書く必要がありません。
+	またサニタイズ機能はオン/オフすることができます。
+	さらに、ある部分だけをサニタイズする/しないを細かく指定できます。
+</p>
+</dd>
+</dl>
+<br>
+
+
+<a name="example1"></a>
+<h3 class="section2">簡単な例</h3>
+<p>Kwartzは、テンプレートをプレゼンテーションデータとプレゼンテーションロジックとに分けて記述します。
+ここではその例を示します。
+</p>
+<p>まずプレゼンテーションデータの例です。
+</p>
+<ul type="disc">
+<li>「<code>id="list"</code>」はそのエレメントにvaluesという名前で「目印」をつけること、つまり操作対象とすることを表します。Kwartzでは、エレメントに目印をつけることを「マーキング(Marking)」といいます。
+</li>
+<li>同様に、「<code>id="item"</code>」は&lt;td&gt;エレメントにitemという名前で「目印」をつけています。
+</li>
+</ul>
+<p>プレゼンテーションデータ(example1.html)：
+</p>
+<a name="example1.html"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="list"</b>&gt;
+    &lt;td <b>id="item"</b>&gt;foo&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>次はプレゼンテーションロジックの例です。
+プレゼンテーションロジックでは、プレゼンテーションデータにつけた「目印」に対して操作を行います。
+</p>
+<ul type="disc">
+<li>「<code>#item { ... }</code>」は目印「item」がつけられたエレメント（Element, ここでは<code>&lt;td&gt;</code>から<code>&lt;t/d&gt;</code>まで）を表します。
+    <ul type="circle">
+    <li>「<code>value: <i>expression</i>;</code>」は、エレメントの内容を式<code><i>expression</i></code>の値（ここでは変数<code>member</code>の値）で置き換えることを表します。
+    </li>
+    <li>「<code>remove: "id";</code>」は、エレメントからid属性を取り除くことを表します。
+       なお「<code>id="<i>name</i></code>"」のかわりに「<code>id="mark:<i>name</i>"</code>」を使用するとid属性は自動的に削除され、「<code>remove: "id";</code>」をいちいち記述する必要はなくなります。
+    </li>
+    </ul>
+</li>
+<li>「<code>#list { ... }</code>」は目印「list」がつけられたエレメント（Element, ここでは<code>&lt;tr&gt;</code>から<code>&lt;/tr&gt;</code>まで）を表します。
+    <ul type="circle">
+    <li>「<code>plogic: { ... }</code>」で、そのエレメントのプレゼンテーションロジックを定義します。
+    </li>
+    <li>「<code>@stag</code>」は開始タグ（Start tag, ここでは<code>&lt;tr&gt;</code>）を表します。
+    </li>
+    <li>「<code>@cont</code>」は内容（Content, ここでは<code>&lt;td id="item"&gt;foo&lt;/td&gt;</code>）を表します。
+    </li>
+    <li>「<code>@etag</code>」は終了タグ（End tag, ここでは<code>&lt;/tr&gt;</code>）を表します。
+    </li>
+    <li>「<code>foreach (member in member_list) { ... }</code>」は繰り返しを表します。
+    </li>
+    </ul>
+</li>
+</ul>
+<p>プレゼンテーションロジック(example1.plogic)：
+</p>
+<a name="example1.plogic"></a>
+<pre class="program">#item {            // id="item" がついたエレメント
+  value: member;      // 内容を変数memberの値で置き換える
+  remove: "id";       // id属性を取り除く
+}
+
+#list {            // id="list" がついたエレメント
+  remove: "id";       // id属性を取り除く
+  plogic: {           // プレゼンテーションロジックを定義する
+    foreach (member in member_list) {
+      @stag;          // タグ(start tag)
+      @cont;          // 内容(content)
+      @etag;          // 終了タグ(end tag)
+    }
+  }
+}
+</pre>
+<p>Kwartzはこの2つから各言語(eRuby, PHP, JSTL1.1&amp;1.0)用の出力用スクリプトを自動生成します。
+これをコンパイルといいます。
+コンパイルするにはコマンドラインで次のようにします。
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby  -p example1.plogic example1.html &gt; example1.rhtml
+
+### for PHP
+$ kwartz -l php    -p example1.plogic example1.html &gt; example1.php
+
+### for JSTL 1.1
+$ kwartz -l jstl11 -p example1.plogic example1.html &gt; example1.jsp
+
+### for JSTL 1.0
+$ kwartz -l jstl10 -p example1.plogic example1.html &gt; example1.jsp
+</pre>
+<p>以下は自動生成された出力用スクリプトです。
+</p>
+<p>出力用スクリプト for eRuby (example1.rhtml):
+</p>
+<pre class="program">&lt;table&gt;
+&lt;% for member in member_list do %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= member %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+</pre>
+<p>出力用スクリプト for PHP (example1.php):
+</p>
+<pre class="program">&lt;table&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?php echo $member; ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+</pre>
+<p>出力用スクリプト for JSTL 1.1<sup>(<a href="#fnref:3" name="fnlink:3">*3</a>)</sup>(example1.jsp):
+</p>
+<pre class="program">&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>出力用スクリプト for JSTL 1.0(example1.jsp):
+</p>
+<pre class="program">&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>またコンパイル時にコマンドオプション <code>-e</code> をつけると、サニタイズされた出力用スクリプトが生成されます。
+サニタイズには、eRubyでは<code>CGI.escapeHTML()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out/&gt;</code>が使用されます。
+</p>
+<p>これらの出力用スクリプトをメインプログラムから呼び出すと、Webページが出力されます。
+呼び出し方は、各プログラミング言語によって異なります。
+</p>
+<p>メインプログラム(Ruby)：
+</p>
+<pre class="program">## データを用意する
+member_list = [ 'Oboro', 'Ominae', 'Jaquemonde' ]
+
+## ERBを使って出力する
+require 'erb'
+require 'cgi'        # for sanitizing
+str = File.open('example1.rhtml') { |f| f.read() }
+str.untaint
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+
+## またはERubyを使う方法
+require 'eruby'
+require 'cgi'        # for sanitizing
+ERuby::import('example1.rhtml')
+</pre>
+<p>メインプログラム(PHP)：
+</p>
+<pre class="program">&lt;?php
+   // データを用意する
+   $member_list = array('Oboro', 'Ominae', 'Jaquemonde');
+   
+   // 出力する
+   include('example1.php');
+ ?&gt;
+</pre>
+<p>メインプログラム(JSTL)：
+</p>
+<pre class="program">public void doGet(HttpServletRequest request,
+                  HttpServletResponse response)
+                  throws ServletException, IOException {
+   ...
+   // データを用意する
+   java.util.List member_list = new java.util.ArrayList();
+   member_list.add("Oboro");
+   member_list.add("Ominae");
+   member_list.add("Jaquemonde");
+
+   // 出力
+   RequestDispatcher dispatcher = 
+       request.getRequestDispatcher('example1.jsp');
+   dispatcher.include(request, response);
+   // または dispatcher.forward(request, response);
+}
+</pre>
+<p>出力用プログラムを呼び出して実行すると、例えば次のようなWebページが生成されます。
+</p>
+<pre class="output">&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Oboro&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Ominae&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Jaquemonde&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
+  <dd>コマンドラインオプションとして「--charset=<i>CHARSET</i>」をつけると、JSTL用出力スクリプトでは「<code>&lt;%@ page contentType="text/html; charset=<i>CHARSET</i>" %&gt;</code>」をつけてくれます。</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="example2"></a>
+<h3 class="section2">複雑な例</h3>
+<p>もう少し複雑な例として、色つきのテーブルを示します。
+</p>
+<p>プレゼンテーションデータは次のようになります。
+マーキングは「<code>id="<i>name</i>"</code>」ではなく「<code>id="mark:<i>name</i>"</code>」としています。
+こうするとid属性は自動的に削除されますので、プレゼンテーションロジックファイルでいちいち「<code>remove: "id"</code>」と書く必要がなくなります。
+</p>
+<p>プレゼンテーションデータ(example2.html)：
+</p>
+<a name="example2.html"></a>
+<pre class="program">&lt;table&gt;
+ &lt;tr bgcolor="#CCCCFF" <b>id="mark:list"</b>&gt;
+  &lt;td <b>id="mark:name"</b>&gt;foo&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:foo@mail.com" <b>id="mark:email"</b>&gt;foo@mail.com&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>次はプレゼンテーションロジックです。
+プレゼンテーションロジックでは、繰り返しを行いながら、奇数行か偶数行かの判定を行っています。
+</p>
+<p>プレゼンテーションロジック(example2.plogic)：
+</p>
+<a name="example2.plogic"></a>
+<pre class="program">// id="mark:list" がついたエレメント：
+// bgcolor属性の値として変数colorを出力する。
+// また繰り返しを行い、奇数行と偶数行で変数colorの値を変える。
+#list {
+  attr:  "bgcolor" color;
+  plogic: {
+    i = 0;
+    foreach (member in member_list) {
+      i += 1;
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+
+// id="mark:name" がついたエレメント：
+// 内容として member['name'] の値を出力する。
+#name {
+  value: member['name'];
+}
+
+// id="mark:email" がついたエレメント：
+// 内容として member['email'] の値を出力する。
+// またhref属性は "mailto:" .+ member['email'] の値を出力する。
+// （「.+」は文字列の連結を行う演算子）
+#email {
+  value: member['email'];
+  attr:  "href" ("mailto:" .+ member['email']);
+}
+</pre>
+<p>見ておわかりのように、プレゼンテーションロジックにはHTMLタグが一切入らず、またプレゼンテーションデータにはロジックが一切入っていません。
+つまり、プレゼンテーションデータとプレゼンテーションロジックの分離が実現できていることになります。
+</p>
+<p>なおインクリメント演算子（++）は使えませんので、<code>ctr++</code> のように書くことはできません。
+</p>
+<p>コンパイル：
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby  -p example2.plogic example2.html &gt; example2.rhtml
+
+### for PHP
+$ kwartz -l php    -p example2.plogic example2.html &gt; example2.php
+
+### for JSTL 1.1
+$ kwartz -l jstl11 -p example2.plogic example2.html &gt; example2.jsp
+
+### for JSTL 1.0
+$ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% i = 0 %&gt;
+&lt;% for member in member_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+  &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;%= "mailto:" + member["email"] %&gt;"&gt;&lt;%= member["email"] %&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php $i = 0; ?&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php   $color = $i % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;?php echo "mailto:" . $member["email"]; ?&gt;"&gt;&lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+&lt;c:set var="i" value="0"/&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;c:set var="i" value="${i + 1}"/&gt;
+  &lt;c:set var="color" value="${i % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;c:out value="${fn:join('mailto:',member['email'])}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<br>
+
+
+<a name="pattern"></a>
+<h3 class="section2">プレゼンテーションロジックの応用例</h3>
+<p>Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
+ここではその例を示します。
+</p>
+<ul type="disc">
+<li>エレメント全体を繰り返すことができます。
+<pre class="program">#list {
+  plogic: {
+    foreach (member in member_list) {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>内容だけを繰り返すことができます。&lt;dl&gt;&lt;/dl&gt;で使うのに向いています。
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    foreach (member in member_list) {
+      @cont;
+    }
+    @etag;
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>内容のかわりに、変数や式などの値を出力することができます。
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    print("Hello!");
+    @etag;
+  }
+}
+</pre>
+   これは次と同じです。
+<pre class="program">#list {
+  value: "Hello!";
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>エレメントのかわりに、変数や式などの値を出力することができます。
+<pre class="program">#list {
+  plogic: {
+    print("&lt;b&gt;Hello!&lt;/b&gt;");
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>内容だけを残し、開始タグと終了タグを消すことができます。
+<pre class="program">#list {
+  plogic: {
+    @cont;
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>エレメント全体を消すことができます。これは、ダミーデータを消すときに便利です。
+<pre class="program">#list {
+  plogic: {
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>エレメント全体を、別のエレメントで置き換えることができます。
+<pre class="program">#list {
+  plogic: {
+    @element(foo);  // 「foo」とマーキングされたエレメントを展開する
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>複雑なプレゼンテーションロジックを含めることができます。
+<pre class="program">#list {
+  plogic: {
+  i = 0;
+  foreach (member in member_list) {
+    i += 1;		// 注意：i++ や ++i は使えません
+    if (i % 2 == 0) {
+      color = 'red';
+    } else {
+      color = 'blue';
+    }
+    @stag;
+    @cont;
+    @etag;
+  }
+}
+</pre>
+</li>
+</ul>
+<p>ここで重要なのは、<b>プレゼンテーションロジックにはタグ名や属性名が一切出てきていない</b>という点です。
+プレゼンテーションデータのほうでどんなにタグを変更したとしても、プレゼンテーションロジックはまったく変更する必要はありません。
+</p>
+<p>つまり、プレゼンテーションデータとプレゼンテーションロジックとが完全に分離されているわけです。
+</p>
+<br>
+
+
+<br>
+
+
+<a name="directives"></a>
+<h2 class="section1">ディレクティブ</h2>
+<p>Kwartzでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
+つまり、両者を分離することも、一体化することもできるわけです。
+</p>
+<p>プレゼンテーションロジックをプレゼンテーションデータの中に埋め込むには、ディレクティブを用います。
+ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
+Kwartzでは、id属性とkd属性を用いてディレクティブを記述します。
+</p>
+<p>次はディレクティブを使った例です：
+</p>
+<ul type="disc">
+<li>「<code>id="foreach:<i>var</i>=<i>list</i>"</code>」は、繰り返しを表します。
+</li>
+<li>「<code>id="value:<i>expression</i>"</code>」は、内容のかわりに式の値を出力することを表します。
+</li>
+<li>「<code>id="dummy:<i>str</i>"</code>」は、そのエレメントがダミーであることを表します（つまり出力されません）。
+    ここで<code><i>str</i></code>はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
+</li>
+<li>「<code>#{<i>expression</i>}#</code>」は、式の値を出力するためのディレクティブです。
+</li>
+</ul>
+<p>プレゼンテーションデータ(example3.html)：
+</p>
+<a name="example3.html"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="foreach:member=member_list"</b>&gt;
+    &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<b>#{member['email']}#</b>"&gt;
+         <b>#{member['email']}#</b>&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <b>id="dummy:d1"</b>&gt;
+    &lt;td&gt;bar&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <b>id="dummy:d2"</b>&gt;
+    &lt;td&gt;baz&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby   example3.html &gt; example3.rhtml
+
+### for PHP
+$ kwartz -l php     example3.html &gt; example3.php
+
+### for JSTL1.1
+$ kwartz -l jstl11  example3.html &gt; example3.jsp
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% for member in member_list do %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;%= member["email"] %&gt;"&gt;
+         &lt;%= member["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;?php echo $member["email"]; ?&gt;"&gt;
+         &lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;c:out value="${member['email']}" escapeXml="false"/&gt;"&gt;
+         &lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>このほか、条件分岐を行うディレクティブなども用意されています。
+詳細はリファレンスマニュアルをご覧ください。
+</p>
+<br>
+
+
+<a name="sanitizing"></a>
+<h2 class="section1">サニタイズ</h2>
+<p>Kwartzでは、自動でサニタイズを行うことができます。
+またある部分だけをサニタイズする/しないを選択することもできます。
+</p>
+<a name="sanitizing-auto"></a>
+<h3 class="section2">自動サニタイズ</h3>
+<p>コマンドラインオプション <code>-e</code> をつけると、出力スクリプトをサニタイズします。
+サニタイズでは、eRubyでは<code>CGI.escapeHTML()</code>が、ERBでは<code>h()</code>が、PHPでは<code>htmlspecialchars()</code>が、JSTLでは<code>escapeXml="false"</code>なしの<code>&lt;c:out&gt;</code>がそれぞれ使用されます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="sanitize1.html"></a>
+<pre class="program">&lt;tr bgcolor="#{color}#"&gt;
+  &lt;td id="value:str"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -e -l eruby  sanitize1.html &gt; sanitize1.rhtml
+	
+### for ERB
+$ kwartz -e -l erb    sanitize1.html &gt; sanitize1.rhtml
+	
+### for PHP
+$ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
+	
+### for JSTL 1.1
+$ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;tr bgcolor="&lt;%= CGI::escapeHTML((color).to_s) %&gt;"&gt;
+  &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for ERB
+&lt;tr bgcolor="&lt;%=h(color)%&gt;"&gt;
+  &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr bgcolor="&lt;?php echo htmlspecialchars($color); ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;tr bgcolor="&lt;c:out value="${color}"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>式が文字列や数値のような定数の場合は、サニタイズされません。
+また「<code>$flag ? 'checked' : ''</code>」のような条件演算子では、<code>$flag</code>の値にかかわらず文字列定数が出力されますので、これもサニタイズされません。
+</p>
+<br>
+
+
+<a name="sanitizing-partial"></a>
+<h3 class="section2">部分サニタイズ</h3>
+<p>関数<code>E(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズします。
+また関数<code>X(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズしません。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="sanitize-partial1.pdata"></a>
+<pre class="program">&lt;table&gt;
+ &lt;tr bgcolor="<b>#{X(color)}#</b>"&gt;
+   &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>コンパイル：
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -e -l eruby  sanitize1.html &gt; sanitize1.rhtml
+	
+### for ERB
+$ kwartz -e -l erb    sanitize1.html &gt; sanitize1.rhtml
+	
+### for PHP
+$ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
+	
+### for JSTL 1.1
+$ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for ERB
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+   &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+   &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>またコマンドラインオプションに関係なく、「<code>id="Value:<i>expr</i>"</code>」や「<code>id="Attr:<i>name</i>=<i>expr</i>)"</code>」は式<code><i>expr</i></code>を必ずサニタイズします。
+逆に、「<code>id="VALUE:<i>expr</i>"</code>」や「<code>id="ATTR:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズしません。
+これらはそれぞれ、「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>」と同じです。
+</p>
+<br>
+
+
+<a name="sanitizing-config"></a>
+<h3 class="section2">サニタイズの設定</h3>
+<p>kwartz/config.rbはKwartz-rubyの動作を設定しているファイルです。
+デフォルトでサニタイズを行うように設定するには、この中で定数<code>Kwartz::Config::ESCAPE</code>の値をtrueに変更します。
+</p>
+<br>
+
+
+<br>
+
+
+<a name="topics"></a>
+<h2 class="section1">その他の話題</h2>
+<a name="restriction"></a>
+<h3 class="section2">制限事項</h3>
+<p>Kwartzでは、HTMLパーサやXMLパーサを用いず、正規表現によるパターンマッチでHTMLファイルを解析しています。
+そのため、HTMLではないテキストファイルでも利用できるという利点がありますが、次のような制限事項もあります。
+</p>
+<ul type="disc">
+<li>id属性がついたタグは、終了タグを省略できません。
+<pre class="program">&lt;!-- &lt;/li&gt; が指定されていないので解析できない --&gt;
+&lt;ul&gt;
+ &lt;li id="foo"&gt;foo
+&lt;/ul&gt;
+</pre>
+   また内容を持たない場合は、<code>&lt;foo id="..."/&gt;</code>のような空タグとしてください。
+</li>
+</ul>
+<ul type="disc">
+<li>ただし、<code>&lt;input&gt;</code>と<code>&lt;br&gt;</code>と<code>&lt;meta&gt;</code>と<code>&lt;img&gt;</code>と<code>&lt;hr&gt;</code>は、終了タグを省略できます。
+   また空タグにする必要もありません。
+<pre class="program">&lt;!-- &lt;/input&gt; が省略されているが、正しく解析される --&gt;
+&lt;input type="text" name="user" id="user"&gt;
+</pre>
+   なおこれらのタグ名はkwartz/config.rbの中で定数<code>Kwartz::Config::EMPTY</code>に設定されています。
+   また大文字と小文字は区別されます。
+</li>
+</ul>
+<ul type="disc">
+<li>属性値は必ず「<code>"</code>」で囲ってください。また「'」で囲っても認識されません。
+<pre class="program">&lt;!-- 属性値が「"」で囲まれていないので、解析できない --&gt;
+&lt;h1 id="value:title" class=title&gt;title&lt;/h1&gt;
+</pre>
+</li>
+</ul>
+<br>
+
+
+<a name="topics-analyze"></a>
+<h3 class="section2">グローバル変数とローカル変数</h3>
+<p>Kwartzには、プレゼンテーションデータ/ロジックファイルを分析し、変数を調査する機能があります。
+</p>
+<p>Kwartzでは、メインプログラムで設定されて出力用スクリプトに渡される変数をグローバル変数、
+テンプレートの中でだけ使用される変数をローカル変数と呼んでいます。
+Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
+</p>
+<p>次の例をご覧ください。
+</p>
+<p>プレゼンテーションデータ(analyze.html)：
+</p>
+<a name="analyze.html"></a>
+<pre class="program">&lt;span kd="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+&lt;dl id="mark:items"&gt;
+ &lt;dt kd="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+ &lt;dd kd="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<p>プレゼンテーションロジック(analyze.plogic)：
+</p>
+<a name="analyze.plogic"></a>
+<pre class="program">#items {
+  plogic: {
+    @stag;
+    <b>ctr</b> = 0;
+    foreach (<b>item</b> in <b>list</b>) {
+      <b>ctr</b> += 1;
+      @cont;
+    }
+    @etag;
+  }
+}
+</pre>
+<p>この例では4つの変数があります。
+このうち、<code>item</code>と<code>ctr</code>はテンプレート中でだけ使われるのでローカル変数、
+<code>title</code>と<code>list</code>はメインプログラムで設定されて出力用スクリプトに渡されるのでグローバル変数です。
+</p>
+<p>kwartzをコマンドランオプション <code>-a analyze</code> をつけて起動すると、グローバル変数とローカル変数を報告してくれます。
+</p>
+<p>実行例：
+</p>
+<pre class="terminal">$ kwartz -a analyze -p analyze.plogic analyze.html
+<b>Global: title list</b>
+<b>Local:  ctr item</b>
+</pre>
+<br>
+
+
+<a name="topics-span"></a>
+<h3 class="section2">spanタグの削除</h3>
+<p>Kwartzでは、ディレクティブしか含まないようなspanタグは、ダミータグとみなされて自動的に削除されます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="topics-span1.pdata"></a>
+<pre class="program">&lt;h1&gt;&lt;span id="mark:title"&gt;title&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span id="value:user"&gt;World&lt;/span&gt;!
+</pre>
+<p>プレゼンテーションロジック：
+</p>
+<a name="topics-span1.plogic"></a>
+<pre class="program">#title {
+  value: title;
+}
+</pre>
+<p>出力用スクリプト(for eRuby)：
+</p>
+<pre class="program">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+
+Hello &lt;%= user %&gt;!
+</pre>
+<p>spanタグが他の属性を含んでいた場合は、削除されません。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="topics-span2.pdata"></a>
+<pre class="program">&lt;h1&gt;&lt;span id="mark:title" class="title"&gt;title&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span kd="value:user" style="color:black"&gt;World&lt;/span&gt;!
+</pre>
+<p>出力用スクリプト(for eRuby)：
+</p>
+<pre class="program">&lt;h1&gt;&lt;span class="title"&gt;&lt;%= title %&gt;&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
+</pre>
+<br>
+
+
+<a name="topics-append"></a>
+<h3 class="section2">タグに式の値を追加する</h3>
+<p>「<code>&lt;input type="..." checked&gt;</code>」のようにする場合は、次のようにします。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="topics-append1.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+</pre>
+<p>プレゼンテーションロジック：
+</p>
+<a name="topics-append1.plogic"></a>
+<pre class="program">#foo {
+  append: flag ? ' checked' : '';
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${flag}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<p>ディレクティブ <code>id="append:<i>expr</i>"</code> でも同じことができます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="topics-append2.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" /&gt;
+</pre>
+<p>また<code>checked="checked"</code>や<code>selected="selected"</code>を簡単に出力するための関数を用意しています。
+「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」は式<code><i>expr</i></code>が真だった場合に、
+それぞれ「<code> checked="checked"</code>」「<code> selected="selected"</code>」「<code> disabled="disabled"</code>」を出力します。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="topics-append3.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+</pre>
+<p>プレゼンテーションロジック：
+</p>
+<a name="topics-append3.plogic"></a>
+<pre class="program">#foo {
+  append: C(foo == 100);
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= foo == 100 ? " checked=\"checked\"" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $foo == 100 ? " checked=\"checked\"" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${foo eq 100 ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${foo eq 100}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

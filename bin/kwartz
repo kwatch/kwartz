@@ -118,16 +118,21 @@ module Kwartz
 
          lang = (options[?l] || Kwartz::Config::LANG)
 
+         ## add JSP directives
          output = ''
          charset = properties[:charset] || Kwartz::Config::CHARSET
          case lang
          when 'jstl', 'jstl11'
-            output << Kwartz::Config::HEADER_JSTL11
+            output << Kwartz::Config::HEADER_JSTL11 if !properties.key?(:header)
             output << Kwartz::Config::HEADER_JSP_CHARSET.gsub(/__CHARSET__/, charset) if charset
          when 'jstl10'
-            output << Kwartz::Config::HEADER_JSTL10
+            output << Kwartz::Config::HEADER_JSTL10 if !properties.key?(:header)
             output << Kwartz::Config::HEADER_JSP_CHARSET.gsub(/__CHARSET__/, charset) if charset
          end
+
+         ## add header
+         properties[:header] = '' if properties[:header] == true
+         output << properties[:header] if properties[:header]
 
          ## parse presentation logic file
          compiler = Kwartz::Compiler.new(properties)
@@ -160,8 +165,10 @@ module Kwartz
                end
             end
          end
-         print output
-         return 0
+
+         ## return output
+         output << properties[:header] if properties[:header]
+         return output
       end
 
       private
@@ -180,6 +187,8 @@ Usage: #{@command} [..options..] file1 [file2...]
   --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
   --even=value    : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN}")
   --dattr=name    : use attribute name as directive (default "#{Kwartz::Config::DATTR}")
+  --header=text   : header text
+  --footer=text   : footer text
 END
          return s
       end
@@ -242,7 +251,8 @@ end
 if __FILE__ == $0
    begin
       main_command = Kwartz::MainCommand.new(ARGV)
-      main_command.main()
+      output = main_command.main()
+      print output
    rescue Kwartz::KwartzError => ex
       $stderr.puts ex.message
       exit 1

@@ -1,0 +1,1264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Kwartz Users' Guide</title>
+  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <style type="text/css">
+   <!--
+
+body		{
+		background-color:#FFFFFF;
+		}
+.mainbody	{
+		color:#333333;
+		line-height:150%;
+		}
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+		}
+a:visited	{
+		color:#DD9900;
+		}
+
+p		{
+		color:#333333;
+		line-height:150%;
+		}
+
+pre		{
+		width: 100%;
+		line-height:130%;
+		white-space:pre;
+		}
+.program	{
+		border-style:solid;
+		border-width:2;
+		border-color:#6699FF;
+		color:#333333;
+		background-color:#DDEEFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.terminal	{
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#333333;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+		word-break:keep-all;
+		}
+.output		{
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC;
+		color:#333333;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.program_caption {
+		}
+.terminal_caption {
+		}
+.output_caption {
+		}
+
+
+ul,ol,dl	{
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#333333;
+		line-height:130%;
+		}
+
+.dt2, .dt3	{
+		font-weight:bold;
+		}
+
+.table1		{
+		padding:2;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+.th1, .th2	{
+		padding:1;
+		color:#333333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+		}
+.td1, .th2	{
+		padding:1;
+		color:#333333;
+		background-color:#EEEEDD;
+		line-height:130%;
+		}
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#333333;
+		}
+.table2		{
+		padding:1;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		color:#333333;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+		}
+h2, .section	{
+		Xfont-size:16pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+		}
+h3, .subsection	{
+		Xfont-size:12pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+		}
+
+.em		{
+		font-weight:bold;
+		}
+
+.toc		{
+		font-size:small;
+		line-height:100%;
+		}
+.footnote	{
+		font-size:small;
+		}
+.note		{
+		background-color:#FFFFDD;
+		border-style:solid;
+		border-width:0 1 0 1;
+		border-color:#DDDD66;
+		color:#333300;
+		Xfont-size:small;
+		line-height:120%;
+		padding: 5 20 5 20;
+		}
+.figure		{
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+		}
+
+   -->
+  </style>
+
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+    <div align="left"><h1>Kwartz Users' Guide</h1></div>
+
+    <div align="left">
+      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>This is the users' guide to Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>,
+a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data (SoPL/PD).'
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>Development of Kwartz is subsidized by Exploratory Software Project of <a href="http://www.ipa.go.jp/about/english/index.html">IPA (Information-Technology Promotion Agency Japan)</a>.</dd>
+ </dl>
+</div>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+Table of Contents:
+<div class="toc">
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+    <li><a href="#changelog">Changelog</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#intro">Introduction to Kwartz</a>
+  <ul>
+    <li><a href="#whatis">What's Kwartz?</a>
+    </li>
+    <li><a href="#features">Features</a>
+    </li>
+    <li><a href="#example1">Simple Example</a>
+    </li>
+    <li><a href="#example2">Complex Example</a>
+    </li>
+    <li><a href="#pattern">Other Examples of Presentation Logic</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#directives">Directives</a>
+  </li>
+  <li><a href="#sanitizing">Sanitizing</a>
+  <ul>
+    <li><a href="#sanitizing-auto">Automatic Sanitizing</a>
+    </li>
+    <li><a href="#sanitizing-partial">Partially Sanitizing</a>
+    </li>
+    <li><a href="#sanitizing-config">Configuration for sanitizing</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#topics">Other Topics</a>
+  <ul>
+    <li><a href="#restriction">Restrictions</a>
+    </li>
+    <li><a href="#topics-analyze">Analyzing Global and Local Variables</a>
+    </li>
+    <li><a href="#topics-span">Span Tag Deletion</a>
+    </li>
+    <li><a href="#topics-append">Appending Expression to Tag</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+</div>
+<br>
+
+
+<a name="changelog"></a>
+<h3 class="section2">Changelog</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-02-06</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>alpha1 release
+	</li>
+	</ul>
+</dd>
+</dl>
+<br>
+
+
+<br>
+
+
+<a name="intro"></a>
+<h2 class="section1">Introduction to Kwartz</h2>
+<a name="whatis"></a>
+<h3 class="section2">What's Kwartz?</h3>
+<p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system
+which realized the concept of 'Separation of Presentation Logic and Presentaion Data'(SoPL/PD).
+</p>
+<p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
+There is a plan to implement Kwartz in PHP or Java.
+</p>
+<p>In the following, the word 'Kwartz' means the specification of the template system
+ and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
+  <dd>'Kwartz' is pronounced like 'Quartz'.</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="features"></a>
+<h3 class="section2">Features</h3>
+<p>Kwartz has the following features:
+</p>
+<dl class="dl2">
+<dt class="dt2">
+Separates presentation logic from presentation data.</dt>
+<dd class="dd2">
+<p>	Using template systems such as Smarty, Velocity, XMLC, amrita, etc,
+	you can separate HTML design from business logic as a template.
+	With Kwartz, you can separate presentation logic from a template.
+	In other words, Kwartz divides a template into 'presentation data' and 'presentation logic'.
+	You need not mix presentation logic into HTML files nor main program.
+</p>
+</dd>
+<dt class="dt2">
+Very fast</dt>
+<dd class="dd2">
+<p>	Kwartz creates a script from a template (= presentation data and presentaion logic). 
+	All you have to do in main program is to call the output script.
+	Because Kwartz doesn't use DOM trees or the like, it is both fast and light-weight.
+</p>
+</dd>
+<dt class="dt2">
+Multiple programing languages</dt>
+<dd class="dd2">
+<p>	Kwartz can create output scripts for Ruby(eRuby), PHP, and JSP(JSTL 1.1 &amp; 1.0) from a template file,
+	because Kwartz uses an internal intermediate language.
+	You don't have to change the presentation layer at all, even if you changed programming language.
+</p>
+</dd>
+<dt class="dt2">
+Doesn't break HTML design at all</dt>
+<dd class="dd2">
+<p>	You must use directives like 
+	<code>{foreach ...}{/foreach}</code> in <a href="http://smarty.php.net/">Smarty</a> or
+	<code>#foreach(...)</code> in <a href="http://jakarta.apache.org/velocity/">Jakarta Velocity</a>.
+	These directives break the HTML design of template.
+	Kwartz doesn't break HTML design because Kwartz uses id attributes for marking in an HTML template.
+</p>
+</dd>
+<dt class="dt2">
+Can handle any text file</dt>
+<dd class="dd2">
+<p>	Kwartz uses an original template parser; not using an HTML or XML parser,
+	it is able to handle any text file (HTML, PostScript, RTF, and so on).
+	This also means that Kwartz can handle non-well-formed XML files, as well as well-formed XML files.
+	This is an advantage of Kwartz against <a href="http://xmlc.objectweb.org/">Enhydra XMLC</a> or
+	<a href="http://amrita.sourceforge.jp/">amrita</a>, which handle only XML/HTML files.
+</p>
+</dd>
+<dt class="dt2">
+Auto-Sanitizing and Partial-Sanitizing Support</dt>
+<dd class="dd2">
+<p>	Kwartz can do sanitizing automatically.
+	You don't need to write '<code>CGI::escapeHTML(var)</code>' or '<code>htmlspecialchars($var)</code>'.
+	You are free to turn sanitizing on/off, as well specifying which parts of the template to sanitize.
+</p>
+</dd>
+</dl>
+<br>
+
+
+<a name="example1"></a>
+<h3 class="section2">Simple Example</h3>
+<p>In Kwartz, a template is defined as both presentation data and presentation logic.
+They may be described in separate files.
+</p>
+<p>This is an example of a presentation data file.
+</p>
+<ul type="disc">
+<li>'<b><code>id="list"</code></b>' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
+</li>
+<li>'<b><code>id="item"</code></b>' is also an marking.
+</li>
+</ul>
+<p>Presentation data file(example1.html):
+</p>
+<a name="example1.html"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="list"</b>&gt;
+    &lt;td <b>id="item"</b>&gt;foo&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>And the following is an example of presentation logic.
+In presentation logic, you can operate on elements which are marked in presentation data.
+</p>
+<ul type="disc">
+<li>'<b><code>#item { ... }</code></b>' represents an element marked with name 'item' (= '&lt;td&gt;...&lt;/td&gt;').
+    <ul type="circle">
+    <li>'<b><code>value: <i>expression</i>;</code></b>' represents that the content of the element is replaced by value of <code><i>expression</i></code>, which is value of a variable <code>member</code> in this case.
+    </li>
+    <li>'<b><code>remove: "id";</code></b>' represents that the id attribute is to be deleted.
+    </li>
+    </ul>
+</li>
+<li>'<b><code>#list { ... }</code></b>' represents an element marked with name 'list' (= '&lt;tr&gt;...&lt;/tr&gt;')
+    <ul type="circle">
+    <li>'<b><code>plogic: { ... }</code></b>' represents presentation logic of the element.
+    </li>
+    <li>'<b><code>@stag</code></b>' represents a start tag (= '&lt;tr&gt;').
+    </li>
+    <li>'<b><code>@cont</code></b>' represents content(= '&lt;td id="item"&gt;foo&lt;/td&gt;').
+    </li>
+    <li>'<b><code>@etag</code></b>' represents an end tag(= '&lt;/tr&gt;').
+    </li>
+    <li>'<b><code>foreach (<i>var</i> in <i>list</i>) { ... }</code></b>' represents an iteration.
+    </li>
+    </ul>
+</li>
+</ul>
+<p>Presentation logic file(example1.plogic):
+</p>
+<a name="example1.plogic"></a>
+<pre class="program">#item {            // The element which is marked by 'id="item"'
+  value: member;      // replace the content with value of a variable 'member'
+  remove: "id";       // remove the id attribte
+}
+
+#list {            // The element which is marked by 'id="list"'
+  remove: "id";       // remove the id attribute
+  plogic: {           // define the presentation logic
+    foreach (member in member_list) {
+      @stag;          // start tag
+      @cont;          // content
+      @etag;          // end tag
+    }
+  }
+}
+</pre>
+<p>Kwartz creates output scripts automatically for eRuby, PHP, and JSP (JSTL 1.1&amp;1.0) from the above two files.
+This action is called 'compiling'.
+To compile, enter one of the following commands:
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby  -p example1.plogic example1.html &gt; example1.rhtml
+
+### for PHP
+$ kwartz -l php    -p example1.plogic example1.html &gt; example1.php
+
+### for JSTL 1.1
+$ kwartz -l jstl11 -p example1.plogic example1.html &gt; example1.jsp
+
+### for JSTL 1.0
+$ kwartz -l jstl10 -p example1.plogic example1.html &gt; example1.jsp
+</pre>
+<p>The following is the output script for each respective language.
+</p>
+<p>Output Script for eRuby(example1.rhtml):
+</p>
+<pre class="program">&lt;table&gt;
+&lt;% for member in member_list do %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= member %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+</pre>
+<p>Output Script for PHP(example1.php):
+</p>
+<pre class="program">&lt;table&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?php echo $member; ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+</pre>
+<p>Output Script for JSTL 1.1<sup>(<a href="#fnref:3" name="fnlink:3">*3</a>)</sup>(example1.jsp):
+</p>
+<pre class="program">&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>Output Script for JSTL1.0(example1.jsp):
+</p>
+<pre class="program">&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>Using the command-line option '<code>-e</code>' when compiling, Kwartz will output sanitized scripts.
+For sanitizing, <code>CGI.escapeHTML()</code> is used in eRuby, <code>htmlspecialchars()</code> in PHP, and <code>&lt;c:out/&gt;</code> without <code>escapeXml="false"</code> in JSTL.
+</p>
+<p>Then execute or import these output scripts into your main program, like this:
+</p>
+<p>Main Program (Ruby) :
+</p>
+<pre class="program">## set a data
+member_list = [ 'Oboro', 'Ominae', 'Jaquemonde' ]
+
+## print out using ERB
+require 'erb'
+require 'cgi'        # for sanitizing
+str = File.open('example1.rhtml') { |f| f.read() }
+str.untaint
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+
+## or print out using ERuby
+require 'eruby'
+require 'cgi'        # for sanitizing
+ERuby::import('example1.rhtml')
+</pre>
+<p>Main Program (PHP) :
+</p>
+<pre class="program">&lt;?php
+   // set a data
+   $member_list = array('Oboro', 'Ominae', 'Jaquemonde');
+   
+   // print out
+   include('example1.php');
+ ?&gt;
+</pre>
+<p>Main Program (JSTL) :
+</p>
+<pre class="program">public void doGet(HttpServletRequest request,
+                  HttpServletResponse response)
+                  throws ServletException, IOException {
+   ...
+   // set a data
+   java.util.List member_list = new java.util.ArrayList();
+   member_list.add("Oboro");
+   member_list.add("Ominae");
+   member_list.add("Jaquemonde");
+
+   // print
+   RequestDispatcher dispatcher = 
+       request.getRequestDispatcher('example1.jsp');
+   dispatcher.include(request, response);
+   // or dispatcher.forward(request, response);
+}
+</pre>
+<p>Calling or executing the output script, you might get a web page like this:
+</p>
+<pre class="output">&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Oboro&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Ominae&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Jaquemonde&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
+  <dd>if you specify the command-line option '--charset=<i>CHARSET</i>', Kwartz will output <code>&lt;%@ page contentType="text/html; charset=<i>CHARSET</i>" %&gt;</code> when the language is JSTL.</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="example2"></a>
+<h3 class="section2">Complex Example</h3>
+<p>The following is a little complex example which is borderd table.
+</p>
+<p>Marking is done with <code>id="mark:<i>name</i>"</code> instead of <code>id="<i>name</i>"</code>
+in the following presentation data.
+You don't have to write <code>remove: "id"</code> in presentation logic file
+because Kwartz removes <code>id="mark:<i>name</i>"</code> automatically.
+</p>
+<p>Presentation Data (example2.html):
+</p>
+<a name="example2.html"></a>
+<pre class="program">&lt;table&gt;
+ &lt;tr bgcolor="#CCCCFF" <b>id="mark:list"</b>&gt;
+  &lt;td <b>id="mark:name"</b>&gt;foo&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="mailto:foo@mail.com" <b>id="mark:email"</b>&gt;foo@mail.com&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>The following is the presentation logic file.
+In the presentation logic, you should detect whether odd or even line in the iteration.
+</p>
+<p>Presentation Logic (example2.plogic):
+</p>
+<a name="example2.plogic"></a>
+<pre class="program">// an element which is marked by 'id="mark:list"':
+// * print value of a variable 'color' as bgcolor attribute value.
+// * change value of a variable 'color' whether odd or even line.
+#list {
+  attr:  "bgcolor" color;
+  plogic: {
+    i = 0;
+    foreach (member in member_list) {
+      i += 1;
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+
+// an element which is marked by 'id="mark:name"':
+// * print value of member['name'] as content of the element.
+#name {
+  value: member['name'];
+}
+
+// an element marked by 'id="mark:email"':
+// * print value of member['emal'] as contentn of the element.
+// * print "mailto:" and member['email'] as href attribute value.
+//   (operator '.+' means string concatenation.)
+#email {
+  value: member['email'];
+  attr:  "href" ("mailto:" .+ member['email']);
+}
+</pre>
+<p>You will find that there is no HTML tag in the presentation logic and no logic in the presentation data.
+That is to say, Kwartz can separate presentation logic from presentation data.
+</p>
+<p>Notice that you cannot write <code>ctr++</code> because incremental operator (<code>++</code>) is not supported.
+</p>
+<p>Compile:
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby  -p example2.plogic example2.html &gt; example2.rhtml
+
+### for PHP
+$ kwartz -l php    -p example2.plogic example2.html &gt; example2.php
+
+### for JSTL 1.1
+$ kwartz -l jstl11 -p example2.plogic example2.html &gt; example2.jsp
+
+### for JSTL 1.0
+$ kwartz -l jstl10 -p example2.plogic example2.html &gt; example2.jsp
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% i = 0 %&gt;
+&lt;% for member in member_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+  &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;%= "mailto:" + member["email"] %&gt;"&gt;&lt;%= member["email"] %&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php $i = 0; ?&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php   $color = $i % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;?php echo "mailto:" . $member["email"]; ?&gt;"&gt;&lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+&lt;c:set var="i" value="0"/&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;c:set var="i" value="${i + 1}"/&gt;
+  &lt;c:set var="color" value="${i % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;td&gt;
+   &lt;a href="&lt;c:out value="${fn:join('mailto:',member['email'])}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<br>
+
+
+<a name="pattern"></a>
+<h3 class="section2">Other Examples of Presentation Logic</h3>
+<p>Kwartz enables you to write complex presentation logic natulally.
+This section shows some examples.
+</p>
+<ul type="disc">
+<li>You can choose to iterate an element.
+<pre class="program">#list {
+  plogic: {
+    foreach (member in member_list) {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can choose to iterate only contents. This is useful for &lt;dl&gt;&lt;/dl&gt;.
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    foreach (member in member_list) {
+      @cont;
+    }
+    @etag;
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can print a value of a variable or an expression instead of a static content string.
+<pre class="program">#list {
+  plogic: {
+    @stag;
+    print("Hello!");
+    @etag;
+  }
+}
+</pre>
+   This is equal to the following.
+<pre class="program">#list {
+  value: "Hello!";
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can print a value of a variable or an expression instead of an element.
+<pre class="program">#list {
+  plogic: {
+    print("&lt;b&gt;Hello!&lt;/b&gt;");
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can delete the start tag and the end tag.
+<pre class="program">#list {
+  plogic: {
+    @cont;
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can delete an element. This is useful for delete dummy data.
+<pre class="program">#list {
+  plogic: {
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can replace an element by other element marked.
+<pre class="program">#list {
+  plogic: {
+    @element(foo);  // expand other element marked with name 'foo'
+  }
+}
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>You can include a complex presentation logic like this:
+<pre class="program">#list {
+  plogic: {
+  i = 0;
+  foreach (member in member_list) {
+    i += 1;		// notice: i++ and ++i are unsupported
+    if (i % 2 == 0) {
+      color = 'red';
+    } else {
+      color = 'blue';
+    }
+    @stag;
+    @cont;
+    @etag;
+  }
+}
+</pre>
+</li>
+</ul>
+<p>It is very important that tag/attribute names don't appear in presentation logic at all.
+This way, you don't need to change presentation logic files even if the tag/attribute names are changed in the presentation data.
+</p>
+<p>Kwartz separates presentation logic from presentation data.
+</p>
+<br>
+
+
+<br>
+
+
+<a name="directives"></a>
+<h2 class="section1">Directives</h2>
+<p>Presentation logic may be embedded into presentation data in Kwartz.
+You can choose to separate or not to sepearate presentation data and presentation logic.
+</p>
+<p>To embed presentation logic into presentation data, use directives.
+Directive is a command to embed presentation logic into presentation data.
+In Kwartz, 'id' and 'kd' attributes are used to describe directives.
+</p>
+<p>The following is an example to use directives.
+</p>
+<ul type="disc">
+<li>Directive '<code>id="foreach:<i>var</i>=<i>list</i>"</code>' means to iterate the element.
+</li>
+<li>Directive '<code>id="value:<i>expression</i>"</code> means to print value of expression as content of the element.
+</li>
+<li>Directive '<code>id="dummy:<i>str</i>"</code>' means that the element is a dummy and is not printed out.
+   (<i>Str</i> is a string only to keep unique value of id attribute.)
+</li>
+<li>'<code>#{<i>expression</i>}#</code>' is also a directive to print out expression value.
+</li>
+</ul>
+<p>Presentation Data(example3.html):
+</p>
+<a name="example3.html"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="foreach:member=member_list"</b>&gt;
+    &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<b>#{member['email']}#</b>"&gt;
+         <b>#{member['email']}#</b>&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <b>id="dummy:d1"</b>&gt;
+    &lt;td&gt;bar&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <b>id="dummy:d2"</b>&gt;
+    &lt;td&gt;baz&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -l eruby   example3.html &gt; example3.rhtml
+
+### for PHP
+$ kwartz -l php     example3.html &gt; example3.php
+
+### for JSTL1.1
+$ kwartz -l jstl11  example3.html &gt; example3.jsp
+</pre>
+<p>Output script:
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+&lt;% for member in member_list do %&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;%= member["email"] %&gt;"&gt;
+         &lt;%= member["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;?php echo $member["email"]; ?&gt;"&gt;
+         &lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:&lt;c:out value="${member['email']}" escapeXml="false"/&gt;"&gt;
+         &lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;
+&lt;/table&gt;
+</pre>
+<p>There are several directives such as conditional branching.
+See reference manual for details.
+</p>
+<br>
+
+
+<a name="sanitizing"></a>
+<h2 class="section1">Sanitizing</h2>
+<p>Kwartz supports Automatic Sanitizing and Partially Sanitizing.
+</p>
+<a name="sanitizing-auto"></a>
+<h3 class="section2">Automatic Sanitizing</h3>
+<p><code>-e</code> is the command-line optin to generate output script with sanitizing.
+<code>CGI.escapeHTML()</code> is used in eRuby for sanitizing, <code>htmlspecialchars()</code> in PHP, and <code>&lt;c:out/&gt;</code> tag without <code>escapeXml="false"</code> in JSTL.
+</p>
+<p>Presentation Data (sanitize1.html):
+</p>
+<a name="sanitize1.html"></a>
+<pre class="program">&lt;tr bgcolor="#{color}#"&gt;
+  &lt;td id="value:str"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -e -l eruby  sanitize1.html &gt; sanitize1.rhtml
+	
+### for ERB
+$ kwartz -e -l erb    sanitize1.html &gt; sanitize1.rhtml
+	
+### for PHP
+$ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
+	
+### for JSTL 1.1
+$ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+</pre>
+<p>Output Scirpt:
+</p>
+<pre class="program">### for eRuby
+&lt;tr bgcolor="&lt;%= CGI::escapeHTML((color).to_s) %&gt;"&gt;
+  &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for ERB
+&lt;tr bgcolor="&lt;%=h(color)%&gt;"&gt;
+  &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr bgcolor="&lt;?php echo htmlspecialchars($color); ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;tr bgcolor="&lt;c:out value="${color}"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>Constant string and constant number are not sanitized.
+Conditional expression such as '<code>flag ? " checked" : ""</code>' is not sanitized because the result is constant string whether the value of '<code>flag</code>' is true or false.
+</p>
+<br>
+
+
+<a name="sanitizing-partial"></a>
+<h3 class="section2">Partially Sanitizing</h3>
+<p>The function <code>E(<i>expr</i>)</code> always sanitizes expression <code><i>expr</i></code> even when '-e' is not specified.
+The function <code>X(<i>expr</i>)</code> doesn't sanitize expression <code><i>expr</i></code> even when '-e' is specified.
+</p>
+<p>Presentaion Data:
+</p>
+<a name="sanitize-partial1.pdata"></a>
+<pre class="program">&lt;table&gt;
+ &lt;tr bgcolor="<b>#{X(color)}#</b>"&gt;
+   &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">### for eRuby
+$ kwartz -e -l eruby  sanitize1.html &gt; sanitize1.rhtml
+	
+### for ERB
+$ kwartz -e -l erb    sanitize1.html &gt; sanitize1.rhtml
+	
+### for PHP
+$ kwartz -e -l php    sanitize1.html &gt; sanitize1.php
+	
+### for JSTL 1.1
+$ kwartz -e -l jstl11 sanitize1.html &gt; sanitize1.jsp
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for ERB
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+   &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for JSTL 1.1 &amp; 1.0
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+   &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>Directives <code>id="Value:<i>expr</i>"</code> and <code>id="Attr:<i>name</i>=<i>expr</i>"</code> always sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is not specified.
+Directives <code>id="VALUE:<i>expr</i>:"</code> and <code>id="ATTR:<i>name</i>=<i>expr</i>"</code> doesn't sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is specified.
+These are equivalent to <code>id="value:E(<i>expr</i>)"</code>, <code>id="attr:<i>name</i>=E(<i>expr</i>)"</code>, 
+<code>id="value:X(<i>expr</i>)"</code>, and <code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>.
+</p>
+<br>
+
+
+<a name="sanitizing-config"></a>
+<h3 class="section2">Configuration for sanitizing</h3>
+<p>File 'kwartz/config.rb' is a configuration file for Kwartz-ruby.
+If you want to sanitize in default, change value of constant <code>Kwartz::Config::ESCAPE</code> to true in the configuration file.
+</p>
+<br>
+
+
+<br>
+
+
+<a name="topics"></a>
+<h2 class="section1">Other Topics</h2>
+<a name="restriction"></a>
+<h3 class="section2">Restrictions</h3>
+<p>Kwartz parses presentation data file by regular expression pattern matching.
+It means that Kwartz doesn't use HTML parser nor XML parser for parsing presentation data.
+This approach enables Kwartz to handle any type of text file, and also brings the following restrictions to Kwartz.
+</p>
+<ul type="disc">
+<li>Cannot omit end tag if id attribute is specified.
+<pre class="program">&lt;!-- Kwartz cannot parse the following because &lt;/li&gt; is omitted. --&gt;
+&lt;ul&gt;
+ &lt;li id="foo"&gt;foo
+&lt;/ul&gt;
+</pre>
+   An Element which doesn't have any content is to be written as an empty tag such as <code>&lt;foo id="..."/&gt;</code>.
+</li>
+</ul>
+<ul type="disc">
+<li>However, <code>&lt;input&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;img&gt;</code>, and <code>&lt;hr&gt;</code> are allowed to omit end tag.
+   And these doesn't have to be written as an empty tag.
+<pre class="program">&lt;!-- &lt;/input/&gt; is omitted but Kwartz can parse correctly. --&gt;
+&lt;input type="text" name="user" id="user"&gt;
+</pre>
+   Constant Kwartz::Config::EMPTY lists these tag names in file kwartz/config.rb.
+   Upper-case and lower-case are distinguished.
+</li>
+</ul>
+<ul type="disc">
+<li>Attribute values should be surrounded with '<code>"</code>'.
+<pre class="program">&lt;!-- Kwartz fails parsing because attribute value is not surrounded with '"'. --&gt;
+&lt;h1 id="value:title" class=title&gt;title&lt;/h1&gt;
+</pre>
+</li>
+</ul>
+<br>
+
+
+<a name="topics-analyze"></a>
+<h3 class="section2">Analyzing Global and Local Variables</h3>
+<p>Kwartz have a function to analyze presentation data/logic files and inspect variables.
+</p>
+<p>In Kwartz, variables are called Global variables if they are set in the main program and are passed to output script.
+Variables are called Local variables if they are used only in the template.
+Kwartz have a function to detect whether variables are global or local and report the result.
+</p>
+<p>Assume the following presentation data and presentation logic:
+</p>
+<p>Presentation Data (analyze.html):
+</p>
+<a name="analyze.html"></a>
+<pre class="program">&lt;span kd="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+&lt;dl id="mark:items"&gt;
+ &lt;dt kd="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+ &lt;dd kd="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<p>Presentation Logic (analyze.plogic):
+</p>
+<a name="analyze.plogic"></a>
+<pre class="program">#items {
+  plogic: {
+    @stag;
+    <b>ctr</b> = 0;
+    foreach (<b>item</b> in <b>list</b>) {
+      <b>ctr</b> += 1;
+      @cont;
+    }
+    @etag;
+  }
+}
+</pre>
+<p>In this case, variables <code>ctr</code> and <code>item</code> are Local Variables because they are used only in the template.
+Variables <code>title</code> and <code>list</code> are Global Variables because they are set in the main program and passed to output script.
+</p>
+<p>Invoking kwartz with the command-line option <code>-a analyze</code> reports global/local variables.
+</p>
+<p>Analyzing Example:
+</p>
+<pre class="terminal">$ kwartz -a analyze -p analyze.plogic analyze.html
+<b>Global: title list</b>
+<b>Local:  ctr item</b>
+</pre>
+<br>
+
+
+<a name="topics-span"></a>
+<h3 class="section2">Span Tag Deletion</h3>
+<p>The span tags which contains only directives are regarded as dummy tags and deleted automatically.
+</p>
+<p>Presentation Data:
+</p>
+<a name="topics-span1.pdata"></a>
+<pre class="program">&lt;h1&gt;&lt;span id="mark:title"&gt;title&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span id="value:user"&gt;World&lt;/span&gt;!
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="topics-span1.plogic"></a>
+<pre class="program">#title {
+  value: title;
+}
+</pre>
+<p>Output Script(for eRuby):
+</p>
+<pre class="program">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+
+Hello &lt;%= user %&gt;!
+</pre>
+<p>The span tags are not removed when they have other attributes.
+</p>
+<p>Presentation Data:
+</p>
+<a name="topics-span2.pdata"></a>
+<pre class="program">&lt;h1&gt;&lt;span id="mark:title" class="title"&gt;title&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span kd="value:user" style="color:black"&gt;World&lt;/span&gt;!
+</pre>
+<p>Output Script(for eRuby):
+</p>
+<pre class="program">&lt;h1&gt;&lt;span class="title"&gt;&lt;%= title %&gt;&lt;/span&gt;&lt;/h1&gt;
+
+Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
+</pre>
+<br>
+
+
+<a name="topics-append"></a>
+<h3 class="section2">Appending Expression to Tag</h3>
+<p>The following is an example to print only attribute variable such as <code>&lt;input type="..." checked&gt;</code>.
+</p>
+<p>Presentation Data:
+</p>
+<a name="topics-append1.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="topics-append1.plogic"></a>
+<pre class="program">#foo {
+  append: flag ? ' checked' : '';
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${flag}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<p>A directive <code>append(<i>expr</i>)</code> appends the value of the expression <code><i>expr</i></code> in the element tag.
+</p>
+<p>Presentation Data:
+</p>
+<a name="topics-append2.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" /&gt;
+</pre>
+<p>There are useful functions to print <code>checked="checked"</code> or <code>selected="selected"</code> easily.
+<code>C(<i>expr</i>)</code>, <code>S(<i>expr</i>)</code>, <code>D(<i>expr</i>)</code> prints 
+<code> checked="checked"</code>, <code> selected="selected"</code>, <code> disabled="disabled"</code> respectively
+when the expression <code><i>expr</i></code> is true.
+</p>
+<p>Presentation Data:
+</p>
+<a name="topics-append3.pdata"></a>
+<pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+</pre>
+<p>Presentation Logic:
+</p>
+<a name="topics-append3.plogic"></a>
+<pre class="program">#foo {
+  append: C(foo == 100);
+}
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= foo == 100 ? " checked=\"checked\"" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $foo == 100 ? " checked=\"checked\"" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${foo eq 100 ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${foo eq 100}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

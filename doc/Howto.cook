@@ -1,0 +1,27 @@
+if [exists 'm18n.rb'] then
+	m18n = 'm18n.rb';
+else if [exists '../m18n.rb'] then
+	m18n = '../m18n.rb';
+
+U = users-guide;
+R = reference;
+
+all: [U].en.html [U].ja.html [R].en.html [R].ja.html;
+
+%1.%2.html: %1.%2.txt
+{
+	mkdir -p guide.d;
+	retrieve -d guide.d [need];
+	lang = %2;
+	if [matches [lang] 'ja'] then
+		tagfile = 'html-css_i,euc';
+	else
+		tagfile = 'html-css_i';
+	kwaser -t [tagfile] -T [need] > %1.[lang].toc.html;
+	kwaser -t [tagfile]    [need] > [target];
+}
+
+%1.%2.txt: %1.txt
+{
+	ruby [m18n] -l [upcase %2] [need] > [target];
+}

@@ -117,7 +117,7 @@ module Kwartz
          elsif @tagname.is_a?(Expression)
             arguments << StringExpression.new("#{@spaces[2]}</")
             arguments << @tagname
-            arguments << StringExpression.new(">#{@space[3]}")
+            arguments << StringExpression.new(">#{@spaces[3]}")
          else
             Kwartz::assert
          end

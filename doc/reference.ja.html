@@ -1,0 +1,2390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  <title>Kwartzリファレンスマニュアル</title>
+  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <style type="text/css">
+   <!--
+
+body		{
+		background-color:#FFFFFF;
+		}
+.mainbody	{
+		color:#333333;
+		line-height:150%;
+		}
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+		}
+a:visited	{
+		color:#DD9900;
+		}
+
+p		{
+		color:#333333;
+		line-height:150%;
+		}
+
+pre		{
+		width: 100%;
+		line-height:130%;
+		white-space:pre;
+		}
+.program	{
+		border-style:solid;
+		border-width:2;
+		border-color:#6699FF;
+		color:#333333;
+		background-color:#DDEEFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.terminal	{
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#333333;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+		word-break:keep-all;
+		}
+.output		{
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC;
+		color:#333333;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.program_caption {
+		}
+.terminal_caption {
+		}
+.output_caption {
+		}
+
+
+ul,ol,dl	{
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#333333;
+		line-height:130%;
+		}
+
+.dt2, .dt3	{
+		font-weight:bold;
+		}
+
+.table1		{
+		padding:2;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+.th1, .th2	{
+		padding:1;
+		color:#333333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+		}
+.td1, .th2	{
+		padding:1;
+		color:#333333;
+		background-color:#EEEEDD;
+		line-height:130%;
+		}
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#333333;
+		}
+.table2		{
+		padding:1;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		color:#333333;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+		}
+h2, .section	{
+		Xfont-size:16pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+		}
+h3, .subsection	{
+		Xfont-size:12pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+		}
+
+.em		{
+		font-weight:bold;
+		}
+
+.toc		{
+		font-size:small;
+		line-height:100%;
+		}
+.footnote	{
+		font-size:small;
+		}
+.note		{
+		background-color:#FFFFDD;
+		border-style:solid;
+		border-width:0 1 0 1;
+		border-color:#DDDD66;
+		color:#333300;
+		Xfont-size:small;
+		line-height:120%;
+		padding: 5 20 5 20;
+		}
+.figure		{
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+		}
+
+   -->
+  </style>
+
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+    <div align="left"><h1>Kwartzリファレンスマニュアル</h1></div>
+
+    <div align="left">
+      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="はじめに"></a>
+<h2 class="section1">はじめに</h2>
+<p>このドキュメントは、Kwartzのリファレンスマニュアルです。
+プレゼンテーション用言語「PL」、ディレクティブ、コマンドラインオプションについて説明しています。
+</p>
+目次：
+<div class="toc">
+<ul>
+  <li><a href="#はじめに">はじめに</a>
+  </li>
+  <li><a href="#pl">プレゼンテーション用言語「PL」</a>
+  <ul>
+    <li><a href="#pl-comment">コメント</a>
+    </li>
+    <li><a href="#pl-string">文字列</a>
+    </li>
+    <li><a href="#pl-boolean">真偽値、null</a>
+    </li>
+    <li><a href="#pl-variable">変数</a>
+    </li>
+    <li><a href="#pl-op">演算子</a>
+    </li>
+    <li><a href="#pl-print">出力</a>
+    </li>
+    <li><a href="#pl-set">代入</a>
+    </li>
+    <li><a href="#pl-array">配列、ハッシュ</a>
+    </li>
+    <li><a href="#pl-property">プロパティとメソッド</a>
+    </li>
+    <li><a href="#pl-foreach">繰り返し</a>
+    </li>
+    <li><a href="#pl-if">条件分岐</a>
+    </li>
+    <li><a href="#pl-func">関数</a>
+    </li>
+    <li><a href="#pl-empty">empty</a>
+    </li>
+    <li><a href="#pl-decl">エレメント宣言</a>
+    </li>
+    <li><a href="#pl-doc">ドキュメント宣言</a>
+    </li>
+    <li><a href="#pl-analyze">グローバル変数とローカル変数</a>
+    </li>
+    <li><a href="#pl-infuture">未実装（または検討中）の機能</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#directive">ディレクティブ</a>
+  <ul>
+    <li><a href="#directive-whatis">ディレクティブとは？</a>
+    </li>
+    <li><a href="#directive-mark">マーキング</a>
+    </li>
+    <li><a href="#directive-output">値の出力</a>
+    </li>
+    <li><a href="#directive-value">値の出力2</a>
+    </li>
+    <li><a href="#directive-attr">属性値の設定</a>
+    </li>
+    <li><a href="#directive-append">属性の追加</a>
+    </li>
+    <li><a href="#directive-set">変数への代入</a>
+    </li>
+    <li><a href="#directive-if">条件分岐</a>
+    </li>
+    <li><a href="#directive-foreach">繰り返し(foreach)</a>
+    </li>
+    <li><a href="#directive-loop">繰り返し(loop)</a>
+    </li>
+    <li><a href="#directive-foreach2">カウンタつき繰り返し(Foreach,Loop)</a>
+    </li>
+    <li><a href="#directive-foreach3">トグルつき繰り返し(FOREACH,LOOP)</a>
+    </li>
+    <li><a href="#directive-while">繰り返し(while)</a>
+    </li>
+    <li><a href="#directive-dummy">ダミーデータ</a>
+    </li>
+    <li><a href="#directive-replace">エレメントの置換</a>
+    </li>
+    <li><a href="#directive-notes">注意事項</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#command-line">コマンドラインオプション</a>
+  </li>
+  <li><a href="#config">設定オプション</a>
+  </li>
+</ul>
+</div>
+<br>
+
+
+<a name="pl"></a>
+<h2 class="section1">プレゼンテーション用言語「PL」</h2>
+<p>PLとは、Kwartzにおいてプレゼンテーションロジックを記述するのに利用される言語です。
+この章では、PLの書き方について説明します。
+</p>
+<a name="pl-comment"></a>
+<h3 class="section2">コメント</h3>
+<p>「<code>//</code>」から改行まではコメントになります。
+</p>
+<pre class="program">// ここはコメント
+</pre>
+<br>
+
+
+<a name="pl-string"></a>
+<h3 class="section2">文字列</h3>
+<p>文字列は「<code>"..."</code>」または「<code>'...'</code>」で表します。
+前者には改行(Line Feed)「\n」と復改(Carriage Returen)「\r」とタブ(Tab)「\t」を含めることができます。
+</p>
+<pre class="program">'foo bar'         // 文字列
+"foo bar\n"       // 改行を含む文字列
+</pre>
+<br>
+
+
+<a name="pl-boolean"></a>
+<h3 class="section2">真偽値、null</h3>
+<p>式の中で <code>true</code>、<code>false</code>、<code>null</code> が使えます。
+</p>
+<pre class="program">flag = obj == null ? true : false;
+</pre>
+<p><code>true</code>、<code>false</code>、<code>null</code>は各言語において次のように変換されます。
+</p>
+<div align="center">
+<table class="table1" border="1" cellspacing="0" summary="	<code>true</code>、<code>false</code>、<code>null</code>の変換
+">
+ <caption class="caption1">
+	<code>true</code>、<code>false</code>、<code>null</code>の変換
+ </caption>
+ <tr class="tr1">
+  <th class="th1">変換先言語</th>
+  <th class="th1">true</th>
+  <th class="th1">false</th>
+  <th class="th1">null</th>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">PHP</td>
+  <td class="td1">TRUE</td>
+  <td class="td1">FALSE</td>
+  <td class="td1">NULL</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">eRuby</td>
+  <td class="td1">true</td>
+  <td class="td1">false</td>
+  <td class="td1">nil</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">JSP(JSTL)</td>
+  <td class="td1">true</td>
+  <td class="td1">false</td>
+  <td class="td1">null</td>
+ </tr>
+</table>
+</div>
+<br>
+
+
+<a name="pl-variable"></a>
+<h3 class="section2">変数</h3>
+<p>変数はアルファべットまたは「_」で始まり、アルファベットと数字と「<code>_</code>」が連続したものです。
+</p>
+<p>また変数には型がなく、変数宣言もする必要がありません<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>。
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>この性質から、PLまたはPL-Kwartzで書かれたプログラムを、変数に型のある言語や変数宣言が必要な言語に変換するのは困難です。</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="pl-op"></a>
+<h3 class="section2">演算子</h3>
+<p>演算子には次のものが使用できます。基本的には、文字列用と数値用とで演算子を分けてはいません<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup>。
+</p>
+<div align="center">
+<table class="table1" border="1" cellspacing="0" summary="	演算子
+">
+ <caption class="caption1">
+	演算子
+ </caption>
+ <tr class="tr1">
+  <td class="td1">比較演算子</td>
+  <td class="td1"><code>==  != &lt; &lt;= &gt; &gt;=</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">論理演算子</td>
+  <td class="td1"><code>&amp;&amp; || !</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">算術演算子</td>
+  <td class="td1"><code>+ - * / %</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">文字列の連結</td>
+  <td class="td1"><code> .+ </code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">条件演算子</td>
+  <td class="td1"><code>?:</code></td>
+ </tr>
+</table>
+</div>
+<p>文字列の連結演算子「<code>.+</code>」は、eRubyでは「<code>+</code>」に、PHPでは「<code>.</code>」に、
+JSTL1.1では関数<code>fn:join()</code>に変換されます。
+JSTL1.0では連結演算子がないので、トリッキーな方法で凌いでいます。
+</p>
+<p>PLプログラム(PL)：
+</p>
+<a name="pl-concatop.plogic"></a>
+<pre class="program">filename = basename .+ '.plogic';
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% filename = basename + ".plogic" %&gt;
+
+### for PHP
+&lt;?php $filename = $basename . ".plogic"; ?&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="filename" value="${fn:join(basename,'.plogic')}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:set var="filename" value="${basename}${'.plogic'}"/&gt;
+</pre>
+<p>条件演算子（3項演算子）はeRubyとPHPとJSTL1.1では使用できますが、JSTL1.0では使用できません。
+そのため条件演算子を含む式は、JSTL1.0ではif文（に相当する&lt;c:choose&gt;）に変換されます。
+</p>
+<p>PLプログラム(PL)：
+</p>
+<a name="pl-condop.plogic"></a>
+<pre class="program">color = ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% color = ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
+
+### for PHP
+&lt;?php $color = $ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="color" value="${ctr % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${ctr % 2 eq 0}"&gt;
+  &lt;c:set var="color" value="#FFCCCC"/&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+  &lt;c:set var="color" value="#CCCCFF"/&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
+  <dd>Perlのように文字列用と数値用とで演算子が異なる言語に対しては、Kwartzを対応させるのは困難です。</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="pl-print"></a>
+<h3 class="section2">出力</h3>
+<p>出力は「<code>print(<i>...</i>);</code>」で表します。
+引数には任意の式を書くことができます。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-print.plogic"></a>
+<pre class="program">print('foo', bar, "baz\n");    // 文字列と変数を出力
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+foo&lt;%= bar %&gt;baz
+
+### for PHP
+foo&lt;?php echo $bar; ?&gt;baz
+
+### for JSTL
+foo&lt;c:out value="${bar}" escapeXml="false"/&gt;baz
+</pre>
+<p>自動サニタイズ機能を使用した場合は次のような出力になります。
+</p>
+<pre class="output">### for eRuby
+foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+
+### for PHP
+foo&lt;?php echo htmlspecialchars($bar); ?&gt;baz
+
+### for JSTL
+foo&lt;c:out value="${bar}"/&gt;baz
+</pre>
+<p>また自動サニタイズ機能を使用しても、条件演算子が返す値が文字列または数字である場合は、サニタイズされません。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-print2.plogic"></a>
+<pre class="program">// サニタイズされる
+print("&lt;option ", condition ? var1 : var2, "&gt;\n");
+// サニタイズされない（必要がないから）
+print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;option &lt;%= CGI::escapeHTML((condition ? var1 : var2).to_s) %&gt;&gt;
+&lt;option &lt;%= condition ? "selected" : "" %&gt;&gt;
+
+### for PHP
+&lt;option &lt;?php echo htmlspecialchars($condition ? $var1 : $var2); ?&gt;&gt;
+&lt;option &lt;?php echo $condition ? "selected" : ""; ?&gt;&gt;
+
+### for JSTL
+&lt;option &lt;c:out value="${condition ? var1 : var2}"/&gt;&gt;
+&lt;option &lt;c:out value="${condition ? 'selected' : ''}" escapeXml="false"/&gt;&gt;
+</pre>
+<br>
+
+
+<a name="pl-set"></a>
+<h3 class="section2">代入</h3>
+<p>代入は「<code>var = 100;</code>」のように行います。
+また、「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>%=</code>」「<code>.=</code>」も使用できます。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-set.plogic"></a>
+<pre class="program">name = 'Foo';		// 文字列を代入
+count += 1;		// 値を1増やす
+str .+= '.txt';		// 文字列の末尾に追加
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for PHP
+&lt;?php $name = "Foo"; ?&gt;
+&lt;?php $count += 1; ?&gt;
+&lt;?php $str .= ".txt"; ?&gt;
+
+### for eRuby
+&lt;% name = "Foo" %&gt;
+&lt;% count += 1 %&gt;
+&lt;% str += ".txt" %&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;c:set var="name" value="Foo"/&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;c:set var="str" value="${fn:join(str,'.txt')}"/&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:set var="name" value="Foo"/&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;c:set var="str" value="${str}${'.txt'}"/&gt;
+</pre>
+<br>
+
+
+<a name="pl-array"></a>
+<h3 class="section2">配列、ハッシュ</h3>
+<p>配列は「<code>arr[expr]</code>」の形で参照できます。
+ハッシュも同じ形で参照できます<sup>(<a href="#fnref:3" name="fnlink:3">*3</a>)</sup>。
+</p>
+<p>JSTLでは配列やハッシュの要素を参照することはできますが、配列やハッシュの要素に代入することはできません。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-array.plogic"></a>
+<pre class="program">list[n] = 10;           // n番目の要素に代入
+print(list[i], "\n");     // i番目の要素を出力
+hash['key'] = 'foo';    // ハッシュの要素に代入
+print(hash['key'], "\n"); // ハッシュの要素を出力
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% list[n] = 10 %&gt;
+&lt;%= list[i] %&gt;
+&lt;% hash["key"] = "foo" %&gt;
+&lt;%= hash["key"] %&gt;
+
+### for PHP
+&lt;?php $list[$n] = 10; ?&gt;
+&lt;?php echo $list[$i]; ?&gt;
+&lt;?php $hash["key"] = "foo"; ?&gt;
+&lt;?php echo $hash["key"]; ?&gt;
+</pre>
+<p>ハッシュは、「<code>hash[:key]</code>」という形でも参照できます。
+このとき、「<code>key</code>」は英数字と「<code>_</code>」のみからなる文字列である必要があります。
+</p>
+<p>「<code>hash[:key]</code>」は、各プログラム言語に応じて次のように変換されます。
+</p>
+<div align="center">
+<table class="table1" border="1" cellspacing="0" summary="	「<code>hash[:key]</code>」の変換結果
+">
+ <caption class="caption1">
+	「<code>hash[:key]</code>」の変換結果
+ </caption>
+ <tr class="tr1">
+  <th class="th1">ターゲット言語</th>
+  <th class="th1">変換結果</th>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">eRuby</td>
+  <td class="td1"><code>hash[:key]</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">PHP</td>
+  <td class="td1"><code>$hash['key']</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1">JSTL</td>
+  <td class="td1"><code>hash['key']</code></td>
+ </tr>
+</table>
+</div>
+<p>PLプログラム：
+</p>
+<a name="pl-hash.plogic"></a>
+<pre class="program">print(hash[:key]);
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;%= hash[:key] %&gt;
+
+### for PHP
+&lt;?php echo $hash['key']; ?&gt;
+
+### for JSTL
+&lt;c:out value="${hash['key']}" escapeXml="false"/&gt;</pre>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
+  <dd>配列とハッシュとで同じ演算子を用いているため、Perlのように異なる演算子を必要とするプログラミング言語への変換は困難です。</dd>
+ </dl>
+</div>
+<br>
+
+
+<a name="pl-property"></a>
+<h3 class="section2">プロパティとメソッド</h3>
+<p>オブジェクトのプロパティは、「<code><i>object</i>.<i>property</i></code>」の形式で参照します。
+また「<code><i>object</i>.<i>method</i>(<i>arg1</i>, <i>arg2</i>, ..)</code>」のように引数をつけてメソッドを呼ぶこともできます。
+ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSTLへの変換時にはエラーになります。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-property.plogic"></a>
+<pre class="program">// property
+user.name = 'Foo';
+print(user.name, "\n");
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% user.name = "Foo" %&gt;
+&lt;%= user.name %&gt;
+
+### for PHP
+&lt;?php $user-&gt;name = "Foo"; ?&gt;
+&lt;?php echo $user-&gt;name; ?&gt;
+
+### for JSTL
+&lt;c:set var="user" property="name" value="Foo"/&gt;
+&lt;c:out value="${user.name}" escapeXml="false"/&gt;
+</pre>
+<p>PLプログラム：
+</p>
+<a name="pl-method.plogic"></a>
+<pre class="program">// method call
+print(user.method(10, 20));
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;%= user.method(10, 20) %&gt;
+
+### for PHP
+&lt;?php echo $user-&gt;method(10, 20); ?&gt;</pre>
+<p>またPLではオブジェクトやプロパティを参照することはできても、オブジェクトを自分で生成したりクラスを定義したりすることはできません。
+それらはPLの外部で（つまりメインプログラムの中で）行われることになります。
+</p>
+<br>
+
+
+<a name="pl-foreach"></a>
+<h3 class="section2">繰り返し</h3>
+<p>繰り返しは「<code>foreach(<i>loopvar</i> in <i>list</i>) { ... }</code>」で表します。
+いわゆるforeach文であり、<code><i>list</i></code>の要素をひとつひとつ<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-foreach.plogic"></a>
+<pre class="program">foreach(item in list) {     // listの要素をitemに代入しながら
+  print(item, "\n");        // 繰り返し出力する
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% for item in list do %&gt;
+&lt;%= item %&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php echo $item; ?&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:forEach var="item" items="${list}"&gt;
+&lt;c:out value="${item}" escapeXml="false"/&gt;
+&lt;/c:forEach&gt;
+</pre>
+<p>またwhile文も使用できます。
+ただし、JSTLにはwhile文に相当するカスタムタグがないため、JSTLへ変換しようとするとエラーになります。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-while.plogic"></a>
+<pre class="program">i = 0;
+while(i &lt; length) {
+  i += 1;
+  print(list[i]);
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% i = 0 %&gt;
+&lt;% while i &lt; length do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%= list[i] %&gt;&lt;% end %&gt;
+
+### for PHP
+&lt;?php $i = 0; ?&gt;
+&lt;?php while ($i &lt; $length) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php echo $list[$i]; ?&gt;&lt;?php } ?&gt;
+</pre>
+<p>なおJavaやCのようなfor文は用意されていません。ご注意ください。
+</p>
+<br>
+
+
+<a name="pl-if"></a>
+<h3 class="section2">条件分岐</h3>
+<p>条件分岐は「<code>if(<i>condition</i>) { ... } else if(<i>condition</i>) { ... } else { ... }</code>」で表します。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-if.plogic"></a>
+<pre class="program">if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% if val &gt; 0 then %&gt;
+* value is positive.
+&lt;% elsif val &lt; 0 then %&gt;
+* value is negative.
+&lt;% else %&gt;
+* value is zero.
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($val &gt; 0) { ?&gt;
+* value is positive.
+&lt;?php } elseif ($val &lt; 0) { ?&gt;
+* value is negative.
+&lt;?php } else { ?&gt;
+* value is zero.
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${val gt 0}"&gt;
+* value is positive.
+&lt;/c:when&gt;&lt;c:when test="${val lt 0}"&gt;
+* value is negative.
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+* value is zero.
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<a name="pl-func"></a>
+<h3 class="section2">関数</h3>
+<p>PLでは、以下の関数を使用することができます。
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+E(<i>expr</i>) </b></dt>
+<dd class="dd3">
+	  式 <i>expr</i> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+</dd>
+<dt class="dt3"><b>
+X(<i>expr</i>) </b></dt>
+<dd class="dd3">
+	  式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、X(<i>expr</i>)で指定された式はサニタイズされません。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+C(<i>expression</i>) </b></dt>
+<dd class="dd3">
+	「<code><i>expression</i> ? ' checked="checked"' : ''</code>」と同じです。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+S(<i>expression</i>) </b></dt>
+<dd class="dd3">
+	「<code><i>expression</i> ? ' selected="selected"' : ''</code>」と同じです。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+D(<i>expression</i>) </b></dt>
+<dd class="dd3">
+	「<code><i>expression</i> ? ' disabled="disabled"' : ''</code>」と同じです。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+list_new() </b></dt>
+<dd class="dd3">
+	  新しいリストを作成します。
+</dd>
+<dt class="dt3"><b>
+list_length(<i>list</i>) </b></dt>
+<dd class="dd3">
+	  リスト<i>list</i>の長さを返します。JSTL1.0では使用できません。
+</dd>
+<dt class="dt3"><b>
+hash_new() </b></dt>
+<dd class="dd3">
+	  新しいハッシュを作成します。
+</dd>
+<dt class="dt3"><b>
+hash_keys(<i>hash</i>) </b></dt>
+<dd class="dd3">
+	  ハッシュの全キーをリストで返します。
+</dd>
+<dt class="dt3"><b>
+str_length(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>の長さを返します。
+</dd>
+<dt class="dt3"><b>
+str_tolower(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>を小文字にして返します。
+</dd>
+<dt class="dt3"><b>
+str_toupper(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>を大文字にして返します。
+</dd>
+<dt class="dt3"><b>
+str_trim(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>の前後から空白を取り除いた文字列を返します。
+</dd>
+<dt class="dt3"><b>
+str_index(<i>string</i>, <i>char</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>において文字<i>char</i>のある場所を返します。
+</dd>
+</dl>
+<p>ただし、JSTL1.0では関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
+</p>
+<div align="center">
+<table class="table1" border="1" cellspacing="0">
+ <tr class="tr1">
+  <th class="th1">関数名</th>
+  <th class="th1">PHP</th>
+  <th class="th1">eRuby</th>
+  <th class="th1">JSTL1.1</th>
+  <th class="th1">JSTL1.0</th>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>list_new()</code></td>
+  <td class="td1"><code>[]</code></td>
+  <td class="td1"><code>array()</code></td>
+  <td class="td1">-</td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>list_length(<i>list</i>)</code></td>
+  <td class="td1"><code><i>list</i>.length</code></td>
+  <td class="td1"><code>array_length(<i>list</i>)</code></td>
+  <td class="td1"><code>fn:length(<i>list</i>)</code></td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>hash_new()</code></td>
+  <td class="td1"><code>{}</code></td>
+  <td class="td1"><code>array()</code></td>
+  <td class="td1">-</td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>hash_keys(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.keys</code></td>
+  <td class="td1"><code>array_keys(<i>hash</i>)</code></td>
+  <td class="td1">-</td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_length(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.lenth</code></td>
+  <td class="td1"><code>strlen(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:length(<i>str</i>)</code></td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_tolower(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.downcase</code></td>
+  <td class="td1"><code>strtolower(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:toLowerCase(<i>str</i>)</code></td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_toupper(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.upcase</code></td>
+  <td class="td1"><code>strtoupper(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:toUpperCase(<i>str</i>)</code></td>
+  <td class="td1">-</td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_index(<i>str</i>,<i>ch</i>)</code></td>
+  <td class="td1"><code><i>str</i>.index(<i>ch</i>)</code></td>
+  <td class="td1"><code>strchr(<i>str</i>,<i>ch</i>)</code></td>
+  <td class="td1"><code>fn:indexOf(<i>str</i>,<i>ch</i>)</code></td>
+  <td class="td1">-</td>
+ </tr>
+</table>
+</div>
+<p>これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
+JSTLではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+</p>
+<br>
+
+
+<a name="pl-empty"></a>
+<h3 class="section2">empty</h3>
+<p>値がnullまたは空文字列かどうかを調べるための予約語「<code>empty</code>」を用意しています。
+「<code>empty</code>」は「<code>==</code>」または「<code>!=</code>」の右辺にのみ置くことができ、左辺がnullか空文字列なら真を、それ以外なら偽を返します。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-empty.plogic"></a>
+<pre class="program">if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% if !str1 || str1.empty? then %&gt;
+str1 is empty.
+&lt;% elsif str2 &amp;&amp; !str2.empty? then %&gt;
+str2 is not empty.
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if (!$str1) { ?&gt;
+str1 is empty.
+&lt;?php } elseif ($str2) { ?&gt;
+str2 is not empty.
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${empty str1}"&gt;
+str1 is empty.
+&lt;/c:when&gt;&lt;c:when test="${not empty str2}"&gt;
+str2 is not empty.
+&lt;/c:when&gt;&lt;/c:choose&gt;
+</pre>
+<br>
+
+
+<a name="pl-decl"></a>
+<h3 class="section2">エレメント宣言</h3>
+<p>エレメント宣言とは、「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」でマーキングされたエレメントに対して、属性を操作したり、プレゼンテーションロジックを変更するための記述です。
+Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述されます。
+</p>
+<p>エレメント宣言は、「<code>#<i>name</i></code>」および複数の宣言部から構成されます。
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>value: <i>expression</i>;</code> </b></dt>
+<dd class="dd3">
+	エレメントの内容を式<code><i>expression</i></code>の値で置き換えます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>attr: "<i>attr1</i>" <i>expr1</i> , "<i>attr2</i>" <i>expr2</i> , ... ;</code> </b></dt>
+<dd class="dd3">
+	属性<code><i>attr</i></code>の値を式<code><i>expr</i></code>で置き換えます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>remove: "<i>attr1</i>" , "<i>attr2</i>" , ... ;</code> </b></dt>
+<dd class="dd3">
+	属性<code><i>attr</i></code>を削除します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>append: <i>expr1</i> , <i>expr2</i> , ... ;</code> </b></dt>
+<dd class="dd3">
+	タグに式<code><i>expr</i></code>の値を追加します。
+	&lt;input&gt;タグや&lt;option&gt;タグにおいて「<code>checked</code>」や「<code>selected</code>」を追加するときに使用します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>tagname: <i>expression</i>;</code> </b></dt>
+<dd class="dd3">
+	タグの名前を式<code><i>expression</i></code>で置き換えます。
+	StrutsやJSFのカスタムタグを利用するときに使用します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>plogic: { <i>...</i> }</code> </b></dt>
+<dd class="dd3">
+	プレゼンテーションロジックを記述します。
+	<code>{ ... }</code> の中では <code>@stag</code>、<code>@cont</code>、<code>@etag</code> が使用でき、それぞれ開始タグ、内容、終了タグを表します。
+	また <code>@element(<i>other</i>)</code> も使用でき、これはほかの名前がつけられたエレメントを展開することを表します。
+</dd>
+</dl>
+<p>プレゼンテーションデータ：
+</p>
+<a name="pl-decl.pdata"></a>
+<pre class="program">&lt;ul&gt;
+  &lt;li id="foo" class="foo"&gt;dummy&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;input type="checkbox" name="user" value="Y" checked="checked" id="mark:chkbox"/&gt;
+&lt;/form&gt;
+</pre>
+<p>プレゼンテーションロジック：
+</p>
+<a name="pl-decl.plogic"></a>
+<pre class="program">#foo {
+  value:  item;
+  attr:   "class" klass;
+  plogic: {
+    foreach (item in list) {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+#chkbox {
+  remove:  "checked";
+  append:  flag ? " checked" : "";
+  tagname: "html:text";
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;li id="foo" class="&lt;%= klass %&gt;"&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+&lt;/form&gt;
+
+### for PHP
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li id="foo" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+&lt;/form&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;li id="foo" class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+
+&lt;form action="foo.cgi"&gt;
+  &lt;html:text type="checkbox" name="user" value="Y"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+&lt;/form&gt;
+</pre>
+<br>
+
+
+<a name="pl-doc"></a>
+<h3 class="section2">ドキュメント宣言</h3>
+<p><code>#DOCUMENT { <i>...</i> }</code> is a special element declaration for document.
+It represents document information and takes the following declaration parts.
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>begin: { <i>...</i> }</code> </b></dt>
+<dd class="dd3">
+	Represents PL code which is added at the beginning of the output script.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>end: { <i>...</i> }</code> </b></dt>
+<dd class="dd3">
+	Represents PL code which is added at the end of the output script.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>require: "<i>filename1</i>" , "<i>filename2</i>", <i>...</i> ;</code> </b></dt>
+<dd class="dd3">
+	Load presentation logic file.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>global: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dd class="dd3">
+	List of global variables. Currently this part have no means but will be used in future release.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>local: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dd class="dd3">
+	List of local variables. Currently this part have no means but will be used in future release.
+</dd>
+</dl>
+<p>プレゼンテーションデータ：
+</p>
+<a name="pl-doc.html"></a>
+<pre class="program">&lt;ul id="mark:list"&gt;
+  &lt;li id="value:item"&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<p>PLプログラム：
+</p>
+<a name="pl-doc.plogic"></a>
+<pre class="program">#DOCUMENT {
+  begin: {
+    list = context[:list];
+  }
+  end:   {
+    print("&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;\n");
+  }
+  global:  context;
+}
+
+#list {
+  plogic: {
+    @stag;
+    foreach (item in list)
+      @cont;
+    @etag;
+  }
+}
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% list = context[:list] %&gt;
+&lt;ul&gt;
+&lt;% for item in list do %&gt;
+  &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;% end %&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+
+### for PHP
+&lt;?php $list = $context['list']; ?&gt;
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+
+### for JSTL
+&lt;c:set var="list" value="${context['list']}"/&gt;
+&lt;ul&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;li&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
+&lt;/c:forEach&gt;
+&lt;/ul&gt;
+&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+</pre>
+<br>
+
+
+<a name="pl-analyze"></a>
+<h3 class="section2">グローバル変数とローカル変数</h3>
+<p>Kwartzでは、メインプログラムから出力用プログラムに渡される変数をグローバル変数、テンプレートの中だけで使用される変数をローカル変数と呼んでいます。
+</p>
+<p>例えば次のようなプレゼンテーションデータとプレゼンテーションロジックを考えます。
+</p>
+<p>プレゼンテーションデータ(analyze.html)：
+</p>
+<a name="analyze.html"></a>
+<pre class="program">&lt;table&gt;
+  &lt;caption id="value:<b>title</b>"&gt;Sample&lt;/caption&gt;
+  &lt;tr id="mark:items" bgcolor="#{<b>color</b>}#"&gt;
+    &lt;td id="value:<b>item</b>"&gt;Foo&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<p>プレゼンテーションロジック(analyze.plogic)：
+</p>
+<a name="analyze.plogic"></a>
+<pre class="program">#items {
+  plogic: {
+    <b>ctr</b> = 0;
+    foreach (<b>item</b> in <b>list</b>) {
+      <b>ctr</b> += 1;
+      <b>color</b> = <b>ctr</b>%2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+</pre>
+<p>いくつかの変数がでてきますが、これらは次のように分類できます。
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+グローバル変数 </b></dt>
+<dd class="dd3">
+	 変数「<code>title</code>」と「<code>list</code>」は、メインプログラムからテンプレートに渡される変数であり、メインプログラムで値を設定する必要があります。
+	Kwartzではこれをグローバル変数と呼んでいます。
+</dd>
+<dt class="dt3"><b>
+ローカル変数 </b></dt>
+<dd class="dd3">
+	変数「<code>item</code>」と「<code>ctr</code>」と「<code>color</code>」はテンプレートの中だけで使用される変数であり、メインプログラムで設定する必要はありません。
+	Kwartzではこれをローカル変数と呼んでいます。
+</dd>
+</dl>
+<p>kwartzコマンドにオプション「<code>-a analyze</code>」をつけて起動すると、テンプレートを分析してグローバル変数とローカル変数を報告してくれます。
+</p>
+<pre class="program">$ kwartz -p analyze.plogic -a analyze analyze.html
+Global: <b>title</b> <b>list</b>
+Local:  <b>ctr</b> <b>item</b> <b>color</b>
+</pre>
+<p>このとき、Kwartzは次のようなルールでグローバル変数とローカル変数とを判別しています。
+</p>
+<ul type="disc">
+<li>変数が初めて現れたときに…
+    <ul type="circle">
+    <li>代入文の左辺に現れた変数はローカル変数
+    </li>
+    <li>foreach文のループ変数として現れた変数はローカル変数
+    </li>
+    <li>それ以外はグローバル変数
+    </li>
+    </ul>
+</li>
+</ul>
+<p>またグローバル変数へ代入したり、グローバル変数をループ変数としていると、分析時に警告を出します。
+なぜなら、テンプレートシステムはメインプログラムで設定されたデータの表示のみを行うべきであり、それらを変更すべきではないから、つまりグローバル変数を変更すべきではないからです（変更してよいのはローカル変数のみのはずです）。
+</p>
+<p>テンプレート（プレゼンテーションデータとプレゼンテーションロジック）が複雑になると、メインプログラムで設定しなければならない変数がどれか、わかりづらくなることがあります。
+そのようなときは、この分析機能を利用してください。変数名のタイプミスも見つけやすくなります。
+</p>
+<br>
+
+
+<a name="pl-infuture"></a>
+<h3 class="section2">未実装（または検討中）の機能</h3>
+<p>以下の機能は実装されていませんが、将来において実装されるかもしれません。
+</p>
+<ul type="disc">
+<li>break, continue
+</li>
+<li>ユーザ定義関数
+</li>
+<li>JSTLにおける配列やハッシュの作成
+</li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="directive"></a>
+<h2 class="section1">ディレクティブ</h2>
+<a name="directive-whatis"></a>
+<h3 class="section2">ディレクティブとは？</h3>
+<p>Kwartzでは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むこともできます。
+そのための命令を「ディレクティブ(Directive)」といいます。
+</p>
+<p>ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
+Kwartzでは、ディレクティブはid属性またはid属性を使用します（使い方はどちらも同じです）。
+「<code>id="<i>name</i>"</code>」や「<code>id="mark:<i>name</i>"</code>」も、「マーキング」というディレクティブです。
+</p>
+<p>Kwartzではせっかくプレゼンテーションデータとプレゼンテーションロジックとを分離することができるのに、なぜ両者を一体化するような機能も用意されているのでしょう？
+</p>
+<p>それは、開発者の好みに応じてどちらも選べるようにするため、つまり「<b>選択可能性</b>」を高めるためです。
+Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
+分離するほうが望ましいのであれば分離すればよいし、一体化するほうが好みであれば一体化すればよいのです。
+</p>
+<p>また両者を一体化すると、他のテンプレートと差別化できないと思われるかもしれません。
+しかし一体化してもなお、Kwartzは他のテンプレートと比べて次のような利点があります。
+</p>
+<ul type="disc">
+<li>HTMLデザインを崩しません（<a href="http://jakarta.apache.org/velocity/">Jakarta Velocity</a>や<a href="http://www.template-toolkit.org/">Template-Toolkit</a>と比べてみてください）。
+</li>
+<li>複雑なプログラミングが必要ありません（DOMプログラミングが必要な<a href="http://xmlc.objectweb.org/">Enhydra XMLC</a>と比べてみてください）。
+</li>
+<li>実行時の動作が軽くて高速です（{{http://amrita.sourceforge.jp/&gt;}}と比べてみてください）。
+</li>
+<li>XMLやHTMLだけでなく、どのようなテキスト形式でも利用できます（<a href="http://xmlc.objectweb.org/">Enhydra XMLC</a>や<a href="http://amrita.sourceforge.jp/">amrita</a>と比べて見てください）。
+</li>
+<li>各種のプログラミング言語で使用できます（このようなテンプレートシステムは他にありません！）。
+</li>
+</ul>
+<br>
+
+
+<a name="directive-mark"></a>
+<h3 class="section2">マーキング</h3>
+<p>「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」とすることで、マーキングを行います。
+マーキングとは、エレメントに対してその名前で目印をつけることです。
+</p>
+<p>「<code>id="<i>name</i>"</code>」と「<code>id="mark:<i>name</i>"</code>」との違いは、中間コードにコンバートされるときに前者ではid属性が残るのに対し後者は取り除かれるという点です。
+またkd属性は必ず取り除かれます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-mark.pdata"></a>
+<pre class="program">&lt;div <b>id="foo"</b>&gt;foo&lt;/div&gt;
+&lt;div <b>id="mark:bar"</b>&gt;bar&lt;/div&gt;
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+
+### for PHP
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+
+### for JSTL
+&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+</pre>
+<br>
+
+
+<a name="directive-output"></a>
+<h3 class="section2">値の出力</h3>
+<p>「<code>#{<i>expression</i>}#</code>」は、式の値を出力するコマンドです。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-output.html"></a>
+<pre class="program">Hello <b>#{user.name}#</b>!
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+Hello &lt;%= user.name %&gt;!
+
+### for PHP
+Hello &lt;?php echo $user-&gt;name; ?&gt;!
+
+### for JSTL
+Hello &lt;c:out value="${user.name}" escapeXml="false"/&gt;!
+</pre>
+<p>コンパイル時に、コマンドオプション<code>-e</code>を指定した場合は、式をサニタイズして出力します。
+このとき、文字列や数値はサニタイズされず、式のみがサニタイズされることに注意してください。
+</p>
+<p>出力用プログラム（コマンドオプション<code>-e</code>をつけた場合）：
+</p>
+<pre class="output">### for eRuby
+Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+
+### for PHP
+Hello &lt;?php echo htmlspecialchars($user-&gt;name); ?&gt;!
+
+### for JSTL
+Hello &lt;c:out value="${user.name}"/&gt;!
+</pre>
+<p>コマンドオプションの有無に関わらずサニタイズをする/しないを指定するには、関数<code>E()</code>と<code>X()</code>を使用します。
+<code>E(<i>expr</i>)</code>は式<code><i>expr</i></code>をサニタイズし、<code>X(<i>expr</i>)</code>はサニタイズしません。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-output2.html"></a>
+<pre class="program">With sanitizing:    <b>#{E(var)}#</b>!
+Without sanitizing: <b>#{X(var)}#</b>!
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
+Without sanitizing: &lt;%= var %&gt;!
+
+### for PHP
+With sanitizing:    &lt;?php echo htmlspecialchars($var); ?&gt;!
+Without sanitizing: &lt;?php echo $var; ?&gt;!
+
+### for JSTL
+With sanitizing:    &lt;c:out value="${var}"/&gt;!
+Without sanitizing: &lt;c:out value="${var}" escapeXml="false"/&gt;!
+</pre>
+<p>.
+.
+</p>
+<br>
+
+
+<a name="directive-value"></a>
+<h3 class="section2">値の出力2</h3>
+<p>「<code>id="value:<i>expression</i>"</code>」とすることで、内容のかわりに式の値を出力します。
+ダミーデータを利用できるため、「<code>#{<i>expression</i>}#</code>」と比べてHTMLデザインがより崩れません。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-value.html"></a>
+<pre class="program">&lt;li <b>id="value:hash['name']"</b>&gt;foo&lt;/li&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
+
+### for PHP
+&lt;li&gt;&lt;?php echo $hash["name"]; ?&gt;&lt;/li&gt;
+
+### for JSTL
+&lt;li&gt;&lt;c:out value="${hash['name']}" escapeXml="false"/&gt;&lt;/li&gt;
+</pre>
+<p>また「<code>id="Value:<i>expr</i>"</code>」でサニタイズすることを、「<code>id="VALUE:<i>expr</i>"</code>」でサニタイズしないことを指定できます。
+これらはそれぞれ「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="value:X(<i>expr</i>)"</code>」と同じです。
+</p>
+<br>
+
+
+<a name="directive-attr"></a>
+<h3 class="section2">属性値の設定</h3>
+<p>「<code>id="attr:<i>name</i>=<i>value</i>"</code>」または「<code>id="attr:<i>name</i>:<i>value</i>"</code>」とすることで、タグの属性値を設定できます。
+これを用いると、「<code>#{...}#</code>」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
+</p>
+<p>次の例では、属性classにダミーの属性値 "<code>odd</code>" を設定していますが、実際には変数<code>klass</code>の値を用いるようにしています。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-attr.pdata"></a>
+<pre class="program">&lt;tr class="odd" <b>id="attr:class=klass"</b>&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;tr class="&lt;%= klass %&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr class="&lt;?php echo $klass; ?&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL
+&lt;tr class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>また「<code>id="Attr:<i>name</i>=<i>value</i>"</code>」でサニタイズすることを、「<code>id="ATTR:<i>name</i>=<i>value</i>"</code>」でサニタイズしないことを指定できます。
+これらはそれぞれ「<code>id="attr:<i>name</i>=E(<i>value</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>value</i>)"</code>」と同じです。
+</p>
+<p>なお「<code>;</code>」で区切ることにより、「<code>attr:<i>name</i>=<i>value</i></code>」を複数設定したり他のテンプレートコマンドと一緒に設定したりできます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-attr2.pdata"></a>
+<pre class="program">&lt;font id="if:message!=empty<b>;attr:class=klass;attr:bgcolor=color</b>"&gt;
+ #{message}#
+&lt;/font&gt;
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% if message &amp;&amp; !message.empty? then %&gt;
+&lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
+ &lt;%= message %&gt;
+&lt;/font&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($message) { ?&gt;
+&lt;font class="&lt;?php echo $klass; ?&gt;" bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+ &lt;?php echo $message; ?&gt;
+&lt;/font&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:if test="${not empty message}"&gt;
+&lt;font class="&lt;c:out value="${klass}" escapeXml="false"/&gt;" bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+ &lt;c:out value="${message}" escapeXml="false"/&gt;
+&lt;/font&gt;
+&lt;/c:if&gt;
+</pre>
+<br>
+
+
+<a name="directive-append"></a>
+<h3 class="section2">属性の追加</h3>
+<p>「<code>id="append:<i>expression</i>"</code>」とすることで、タグの中に式の値を追加できます。
+これは主に「&lt;input ... checked /&gt;」や「&lt;option ... selected&gt;&lt;/option&gt;」を実現するための機能です。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-append.pdata"></a>
+<pre class="program">&lt;option name="lang" value="ruby"
+       <b>id="append:lang=='ruby'?' selected':''"</b>&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"
+       <b>id="append:gender=='M'?' checked':''"</b> /&gt;
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for eRuby
+&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt; /&gt;
+
+### for PHP
+&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
+&lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Ruby&lt;/option&gt;
+
+&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
+&lt;input type="radio" name="gender" value="M" checked /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="gender" value="M" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<p>なお「checked="checked"」「selected="selected"」「disabled="disabled"」の出力を簡単にするための機能として、関数「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」が用意されています。
+これらは、式<code><i>expr</i></code>が真のときにそれぞれ「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」を出力します。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-append2.pdata"></a>
+<pre class="program">&lt;option name="lang" value="ruby"
+       id="append:<b>S(lang=='ruby')</b>"&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"
+       id="append:<b>C(gender=='M')</b>" /&gt;Male
+
+&lt;input type="radio" name="os" value="win"
+       id="append:<b>D(os=='mac')</b>" /&gt;Windows
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="program">### for PHP
+&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected=\"selected\"" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;?php echo $os == "mac" ? " disabled=\"disabled\"" : ""; ?&gt; /&gt;Windows
+
+### for eRuby
+&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected=\"selected\"" : "" %&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;%= os == "mac" ? " disabled=\"disabled\"" : "" %&gt; /&gt;Windows
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected="selected"' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
+
+&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;Male
+
+&lt;input type="radio" name="os" value="win"&lt;c:out value="${os eq 'mac' ? ' disabled="disabled"' : ''}" escapeXml="false"/&gt; /&gt;Windows
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
+&lt;option name="lang" value="ruby" selected="selected"&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Ruby&lt;/option&gt;
+
+&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
+&lt;input type="radio" name="gender" value="M" checked="checked" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="gender" value="M" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Male
+
+&lt;c:choose&gt;&lt;c:when test="${os eq 'mac'}"&gt;
+&lt;input type="radio" name="os" value="win" disabled="disabled" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="radio" name="os" value="win" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+Windows
+</pre>
+<br>
+
+
+<a name="directive-set"></a>
+<h3 class="section2">変数への代入</h3>
+<p>「<code>id="set:<i>var</i>=<i>value</i>"</code>」は、変数<i>$var</i>に値<i>value</i>を設定します。
+「<code>=</code>」だけでなく「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>.=</code>」が使用できます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-set.pdata"></a>
+<pre class="program">&lt;dt <b>id="set:var=value"</b>&gt;foo&lt;/dt&gt;
+&lt;dd <b>id="set:count+=1"</b>&gt;123&lt;/dd&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;% var = value %&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;% count += 1 %&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+
+### for PHP
+&lt;?php $var = $value; ?&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;?php $count += 1; ?&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+
+### for JSTL
+&lt;c:set var="var" value="${value}"/&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;c:set var="count" value="${count + 1}"/&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+</pre>
+<br>
+
+
+<a name="directive-if"></a>
+<h3 class="section2">条件分岐</h3>
+<p>「<code>id="if:<i>expression</i>"</code>」とすることで、条件分岐を行います。
+elseやelseifも使用できます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-if.pdata"></a>
+<pre class="program">&lt;div <b>id="if:value &gt; 0"</b>&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;div <b>id="elseif:value &lt; 0"</b>&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;div <b>id="else:"</b>&gt;
+  Value is zero.
+&lt;/div&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;% if value &gt; 0 then %&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;% elsif value &lt; 0 then %&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;% else %&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php if ($value &gt; 0) { ?&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;?php } elseif ($value &lt; 0) { ?&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;?php } else { ?&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:choose&gt;&lt;c:when test="${value gt 0}"&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;/c:when&gt;&lt;c:when test="${value lt 0}"&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+</pre>
+<p>「<code>elseif</code>」や「<code>else</code>」を使う場合は、直前に空行を入れないようにしてください。
+</p>
+<br>
+
+
+<a name="directive-foreach"></a>
+<h3 class="section2">繰り返し(foreach)</h3>
+<p>「<code>id="foreach:<i>loopvar</i>=<i>list</i>:"</code>」（または「<code>id="foreach:<i>loopvar</i>:<i>list</i>:"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら、繰り返しを行います。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-foreach.pdata"></a>
+<pre class="program">&lt;tr <b>id="foreach:item=list"</b>&gt;
+  &lt;td&gt;#{item}#&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;% for item in list do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:forEach var="item" items="${list}"&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/c:forEach&gt;
+</pre>
+<br>
+
+
+<a name="directive-loop"></a>
+<h3 class="section2">繰り返し(loop)</h3>
+<p>「<code>id="loop:<i>loopvar</i>=<i>list</i>)"</code>」（または「<code>id="loop:<i>loopvar</i>:<i>list</i>)"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
+「<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
+&lt;dl&gt;&lt;/dl&gt;で使うと非常に便利です。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-loop.pdata"></a>
+<pre class="program">&lt;dl <b>id="loop:item=list"</b>&gt;
+  &lt;dt&gt;#{item.text}#&lt;/dt&gt;
+  &lt;dd&gt;#{item.desc}#&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;dl&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+
+### for PHP
+&lt;dl&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
+&lt;/dl&gt;
+
+### for JSTL
+&lt;dl&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
+&lt;/dl&gt;
+</pre>
+<br>
+
+
+<a name="directive-foreach2"></a>
+<h3 class="section2">カウンタつき繰り返し(Foreach,Loop)</h3>
+<p>「<code>id="Foreach:<i>var</i>=<i>list</i>)"</code>」や「<code>id="Loop:<i>var</i>=<i>list</i>)"</code>」を使うと、カウンタを増やしながら繰り返しを行います。
+カウンタは1から始まり、変数名は<code><i>var</i>_ctr</code>です。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-foreach2.pdata"></a>
+<pre class="program">&lt;tr <b>id="Foreach:item=list"</b>&gt;
+  &lt;td&gt;#{item_ctr}#&lt;/td&gt;
+  &lt;td&gt;#{item}#&lt;td&gt;
+&lt;/tr&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item_ctr %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php $item_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php   $item_ctr += 1; ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item_ctr; ?&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;c:set var="item_ctr" value="0"/&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;c:set var="item_ctr" value="${item_ctr + 1}"/&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;c:out value="${item_ctr}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;/c:forEach&gt;
+</pre>
+<br>
+
+
+<a name="directive-foreach3"></a>
+<h3 class="section2">トグルつき繰り返し(FOREACH,LOOP)</h3>
+<p>「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」や「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」とすると、トグルつきの繰り返しを行うことができます。
+トグルは、繰り返し回数が奇数回か偶数回かによって、値が入れ替わります。
+トグル変数の名前は<code><i>var</i>_tgl</code>です。
+トグルの値はデフォルトで「<code>"odd"</code>」と「<code>"even"</code>」が使われますが、コマンドオプション --odd と --even で指定できます。
+また設定ファイルkwartz/config.rbの定数ODDとEVENでも指定できます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-foreach3.pdata"></a>
+<pre class="program">&lt;table&gt;
+  &lt;tbody <b>id="LOOP:item=list"</b>&gt;
+    &lt;tr class="<b>#{item_tgl}#</b>"&gt;
+      &lt;td&gt;#{item}#&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;%   item_tgl = item_ctr % 2 == 0 ? "even" : "odd" %&gt;
+    &lt;tr class="&lt;%= item_tgl %&gt;"&gt;
+      &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;% end %&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;?php $item_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+&lt;?php   $item_ctr += 1; ?&gt;
+&lt;?php   $item_tgl = $item_ctr % 2 == 0 ? "even" : "odd"; ?&gt;
+    &lt;tr class="&lt;?php echo $item_tgl; ?&gt;"&gt;
+      &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;?php } ?&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+  &lt;tbody&gt;
+&lt;c:set var="item_ctr" value="0"/&gt;
+&lt;c:forEach var="item" items="${list}"&gt;
+  &lt;c:set var="item_ctr" value="${item_ctr + 1}"/&gt;
+  &lt;c:set var="item_tgl" value="${item_ctr % 2 eq 0 ? 'even' : 'odd'}"/&gt;
+    &lt;tr class="&lt;c:out value="${item_tgl}" escapeXml="false"/&gt;"&gt;
+      &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/c:forEach&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+<br>
+
+
+<a name="directive-while"></a>
+<h3 class="section2">繰り返し(while)</h3>
+<p>「<code>id="while:<i>expression</i>"</code>」とすることで、繰り返しを行うことができます。
+</p>
+<p>またJSPでは、whileを変換しようとするとエラーになります。
+これは、whileに対応するカスタムタグがないからです。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-while.pdata"></a>
+<pre class="program">&lt;tr <b>id="while:row=sth.fetch()"</b>&gt;
+  &lt;td&gt;#{row[0]}#&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">### for eRuby
+&lt;% while row = sth.fetch() do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+
+### for PHP
+&lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+</pre>
+<br>
+
+
+<a name="directive-dummy"></a>
+<h3 class="section2">ダミーデータ</h3>
+<p>「<code>id="dummy:<i>str</i>"</code>」とすることで、そのノードをダミーデータとみなして読み飛ばします。
+</p>
+<p><code><i>str</i></code>は、id属性の値が重ならないようにするためのものであり、意味はありません。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<pre class="program">&lt;tr <b>id="dummy:d1"</b>&gt;
+  &lt;td&gt;bar&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr <b>id="dummy:d2"</b>&gt;
+  &lt;td&gt;baz&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<p>中間コード：
+</p>
+<pre class="output">                          // 何も出力されない
+</pre>
+<p>出力用プログラム：
+</p>
+<pre class="output">                          // 何も出力されない
+</pre>
+<br>
+
+
+<a name="directive-replace"></a>
+<h3 class="section2">エレメントの置換</h3>
+<p>「<code>id="replace:<i>name</i>"</code>」とすることで、そのエレメントを別のエレメントに置き換えることができます。
+</p>
+<p>プレゼンテーションデータ：
+</p>
+<a name="directive-replace.pdata"></a>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;!-- ナビゲーション --&gt;
+    &lt;div <b>id="mark:breadcrumbs"</b>&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+
+   ....
+
+    &lt;div <b>id="replace:breadcrumbs"</b>&gt;
+      Home &amp;gt; Kwartz &amp;gt; Kwartz-ruby
+    &lt;/span&gt;
+  &lt;/div&gt;
+&lt;/html
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;!-- ナビゲーション --&gt;
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+
+   ....
+
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/html
+
+### for PHP
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;!-- ナビゲーション --&gt;
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+
+   ....
+
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/html
+
+### for JSTL
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;!-- ナビゲーション --&gt;
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+
+   ....
+
+    &lt;div&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/html
+</pre>
+<br>
+
+
+<a name="directive-notes"></a>
+<h3 class="section2">注意事項</h3>
+<p>ディレクティブを使用する際の注意事項です。
+</p>
+<ul type="disc">
+<li>ひとつのid属性またはkd属性にはひとつのディレクティブしか記述できません。
+   例えば「<code>id="set:var=100;value:var"</code>」のような記述はエラーになります。
+<pre class="program">## NG
+&lt;span id="set:var=100;value:var"&gt;foo&lt;/span&gt;
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>ただし、attrディレクティブとappendディレクティブだけは他のディレクティブといっしょに記述できます。
+   また複数のattrディレクティブとappendディレクティブを設定することもできます。
+<pre class="program">## OK
+&lt;foo id="foreach:item=list;attr:class=item.class;attr:href=item.url"&gt;
+....
+&lt;/foo&gt;
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>タグにディレクティブを含めた場合、終了タグは省略できません。
+   また<code>&lt;foo .../&gt;</code>のような空要素タグは使用できます。
+<pre class="program">## NG
+&lt;ul&gt;
+  &lt;li id="value:item"&gt;foo
+&lt;/ul&gt;
+## OK
+&lt;a id="attr:name=refname"/&gt;
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>ディレクティブしか含まないような&lt;span&gt;&lt;/span&gt;は、削除されます。
+   例えば「<code>Hello &lt;span id="value:name"&gt;World&lt;/span&gt;!</code>」というプレゼンテーションデータは、&lt;span&gt;&lt;/span&gt;が削除されて「<code>Hello &lt;%= name %&gt;!</code>」（eRubyの場合）という出力ファイルになります。
+<pre class="program">## プレゼンテーションデータ
+Hello &lt;span id="value:name"&gt;World&lt;/span&gt;!
+## 出力用スクリプト for eRuby
+Hello &lt;%= name %&gt;!
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>ディレクティブを含むタグでは、ほかの属性は必ず「<code><i>attr</i>="<i>value</i>"</code>」の形で記述し、属性名や属性値を省略しないようにしてください。
+   これはHTML/XML以外でもKwartzを使用できるようにするための意図した仕様であり、バグではありません。
+<pre class="program">## NG
+&lt;input type="checkbox" id="foreach:item=list" <b>checked</b>/&gt;
+## OK
+&lt;input type="checkbox" id="foreach:item=list" <b>checked="checked"</b>/&gt;
+
+## NG
+&lt;option id="attr:value=val" #{flag ? 'selected' : ''}#/&gt;
+## OK
+&lt;option value="#{val}#" #{flag ? 'selected' : ''}#&gt;
+</pre>
+</li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="command-line"></a>
+<h2 class="section1">コマンドラインオプション</h2>
+<p>テンプレートを出力用プログラムへコンパイルするには、kwartzコマンドを使用します。
+</p>
+<p>使い方：
+<b><code>kwartz [options...] [-p plogic ] pdata.html &gt; output-script</code></b>
+</p>
+<p>オプションは次の通りです。
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+-h, --help</b></dt>
+<dd class="dd3">
+	ヘルプを表示。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+-v</b></dt>
+<dd class="dd3">
+	バージョン情報を表示
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+-a <i>action</i></b></dt>
+<dd class="dd3">
+	実行する処理。<i>action</i>には次のどれかを指定する（デフォルトはcompile）。
+	<dl class="dl1" compact>
+	<dt class="dt1">
+compile</dt>
+	<dd class="dd1">
+		プレゼンテーションデータとプレゼンテーションロジックを読み込み、出力用スクリプトを生成します。
+	</dd>
+	<dt class="dt1">
+analyze</dt>
+	<dd class="dd1">
+		プレゼンテーションデータとプレゼンテーションロジックを読み込み、変数のスコープを解析します。
+	</dd>
+	<dt class="dt1">
+convert</dt>
+	<dd class="dd1">
+		プレゼンテーションデータを読み込み、PLプログラムに変換します。デバッグ用です。
+	</dd>
+	<dt class="dt1">
+transalte</dt>
+	<dd class="dd1">
+		PLプログラムを読み込み、出力用スクリプトに変換します。デバッグ用です。
+	</dd>
+	</dl>
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+-l <i>lang</i></b></dt>
+<dd class="dd3">
+	ターゲット言語を指定。指定できるのは
+	eruby, erb, php, jstl11, jstl10.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+-e , -s</b></dt>
+<dd class="dd3">
+	サニタイズを行う。<code>--escape=true</code>と同じ。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+-p <i>plogic-file</i></b></dt>
+<dd class="dd3">
+	プレゼンテーションロジックのファイル名。「<code>,</code>」で区切ることで、複数のファイル名を指定できる。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--dname=<i>name</i></b></dt>
+<dd class="dd3">
+	ディレクティブで使用する属性名。デフォルトは 'kd'。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--charset=<i>charset</i></b></dt>
+<dd class="dd3">
+	文字コード。JSTLにおいて '<code>&lt;%@ page contentType="text/html; charset=<i>charset</i> "%&gt;</code>' を出力する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--escape=<i>true</i>|<i>false</i></b></dt>
+<dd class="dd3">
+	式をサニタイズして出力する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--even=<i>value</i></b></dt>
+<dd class="dd3">
+	偶数のときの値。デフォルトは「<code>'even'</code>」。ディレクティブFOREACHとLISTで使われる。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--footer=<i>string</i></b></dt>
+<dd class="dd3">
+	フッター文字列。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--header=<i>string</i></b></dt>
+<dd class="dd3">
+	ヘッダー文字列。
+	JSPではデフォルトで '<code>&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;</code>'
+	が設定される。
+	これを出力したくないときは <code>--header=false</code> とする。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--indent=' '</b></dt>
+<dd class="dd3">
+	出力用スクリプトのインデントを指定する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--odd=<i>value</i></b></dt>
+<dd class="dd3">
+	奇数のときの値。デフォルトは「<code>'odd'</code>」。ディレクティブFOREACHとLISTで使われる。
+</dd>
+</dl>
+<p>使い方の例です。
+</p>
+<ul type="disc">
+<li>プレゼンテーションデータ(file1.html)をコンパイルして、出力用スクリプト(file1.php)に変換する。
+	ターゲット言語はeRuby。
+<pre class="terminal">$ kwartz -l eruby file1.html &gt; file1.rhtml
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>プレゼンテーションデータ(file1.html)とプレゼンテーションロジック(file1.plogic)から、出力用スクリプト(file1.php)を作成する。
+	ターゲット言語はPHP。
+<pre class="terminal">$ kwartz -l php -p file1.plogic file1.html &gt; file1.php
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li>プレゼンテーションデータをPLプログラムにコンバートする。
+<pre class="terminal">$ kwartz -a convert file1.html | more
+</pre>
+</li>
+</ul>
+<br>
+
+
+<a name="config"></a>
+<h2 class="section1">設定オプション</h2>
+<p>設定ファイルで、Kwartzのオプションを指定できます。
+Kwartzの設定ファイルは、実装ごとに異なります。
+Kwartz-rubyでは、kwartz/config.rbです。
+</p>
+<p>設定ファイルでは、以下のオプションが設定できます。
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+ESCAPE </b></dt>
+<dd class="dd3">
+	自動サニタイズをデフォルトでオンにするか、オフにするかを指定します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+NEWLINE </b></dt>
+<dd class="dd3">
+	改行を表す文字列を指定します。
+	ただし、Kwartzは改行が「\n」か「\r\n」かを自動判別することができるので、通常は変更する必要はありません。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+INDENT </b></dt>
+<dd class="dd3">
+	インデントとして使う空白文字列を指定します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+LANG </b></dt>
+<dd class="dd3">
+	デフォルトの出力用言語を指定します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+ODD </b></dt>
+<dd class="dd3">
+	トグル変数の奇数値を指定します。
+	「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」と「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」で使用されます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+EVEN </b></dt>
+<dd class="dd3">
+	トグル変数の偶数値を指定します。
+	「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」と「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」で使用されます。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+DATTR </b></dt>
+<dd class="dd3">
+	ディレクティブで使用する属性名を指定します。デフォルトはkdです。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+CHARSET </b></dt>
+<dd class="dd3">
+	文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。
+</dd>
+</dl>
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

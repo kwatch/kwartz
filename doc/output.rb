@@ -34,13 +34,15 @@ lang_list = langs ? langs.split(/,/) : [ 'eruby', 'php', 'jstl' ]
 names = {
     'php'    => 'PHP',
     'eruby'  => 'eRuby',
-    'jstl'   => 'JSTL 1.1 & 1.0',
+    'erb'    => 'ERB',
+    'jstl'   => 'JSTL',
     'jstl11' => 'JSTL 1.1',
     'jstl10' => 'JSTL 1.0',
 }
 
-lang_list.each_with_index do |lang, i|
-   print "\n" if i > 0
+nl = nil
+lang_list.each do |lang|
+   print nl if nl
    name = names[lang]
    print "### for #{name}\n"
    argv = args.dup
@@ -50,6 +52,9 @@ lang_list.each_with_index do |lang, i|
       argv[0,0] = '-l'
       argv[1,0] = lang
    end
+   argv[0,0] = '--header=false' if lang == 'jstl'
    kwartz = Kwartz::MainCommand.new(argv)
-   kwartz.main()
+   output = kwartz.main()
+   print output
+   nl = output[-1] == ?\n ? "\n" : "\n\n"
 end

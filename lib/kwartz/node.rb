@@ -247,7 +247,7 @@ module Kwartz
          @method_name = method_name
          @arguments = arguments
       end
-      attr_accessor :receiver, :propname, :arguments
+      attr_accessor :receiver, :method_name, :arguments
 
       def _inspect(depth=0, s='')
          super(depth, s)
