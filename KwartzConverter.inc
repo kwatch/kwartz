@@ -99,8 +99,8 @@ require_once('KwartzUtility.inc');
 		}
 
 
-		## helper method for convert()
-		private function parse_attr_str($attr_str) {
+		## helper method for _convert()
+		private function parse_attr_str($attr_str=NULL) {
 			if ($attr_str === NULL) {
 				$attr_str = $this->attr_str;
 			}
@@ -110,54 +110,55 @@ require_once('KwartzUtility.inc');
 			$spaces	     = $m[1];
 			$attr_names  = $m[2];
 			$attr_values = $m[3];
-			$kd_name = 'kd';
 			$kd_value = NULL;
 			$id_value = NULL;
+			$php_value = NULL;
 			$i = -1;
 			foreach ($attr_names as $name) {
 				$i++;
 				if ($name == 'id') {
-					$id_value = $attr_values[$i];
-				}
-				if ($name == $kd_name) {
-					$kd_value = $attr_values[$i];
+					$id_value  = $attr_values[$i];
+				} elseif ($name == 'kd') {
+					$kd_value  = $attr_values[$i];
+				} elseif ($name == 'php') {
+					$php_value = $attr_values[$i];
 				}
 			}
 			$directive = NULL;	// or tuple
-			if ($id_value !== NULL || $kd_value !== NULL) {
-				$attr_directives = array();	// hash
-				$id_directive = $kd_directive = NULL;
+			if ($id_value !== NULL || $kd_value !== NULL || $php_value !== NULL) {
+				$kd_attr_exprs = array();	// hash
+				$php_attr_exprs = array();	// hash
+				$id_directive = $kd_directive = $php_directive = NULL;
+				$directive = NULL;
 				if ($id_value !== NULL) {
-					$id_directive = $this->parse_directive_str($id_value, $attr_directives);
+					$id_directive = $this->parse_directive_kdstr($id_value, $kd_attr_exprs);
+					if ($id_directive) { $directive = $id_directive; }
 				}
 				if ($kd_value !== NULL) {
-					$kd_directive = $this->parse_directive_str($kd_value, $attr_directives);
+					$kd_directive = $this->parse_directive_kdstr($kd_value, $kd_attr_exprs);
+					if ($kd_directive) { $directive = $kd_directive; }
 				}
-				$directive = $kd_directive ? $kd_directive : $id_directive;
+				if ($php_value != NULL) {
+					$php_directive = $this->parse_directive_phpstr($php_value, $php_attr_exprs);
+					if ($php_directive) { $directive = $php_directive; }
+				}
 
-				## rebuild $this->attr_str.
-				##  (1) delete 'kd="..."' and 'id="..."'
-				##  (2) if directive 'attr:expr' is specified then
-				##	 - replace 'attr="value"' by 'attr="#{expr}"'
-				##	 - or add 'attr="#{expr}"' if directive 'attr:expr' is specified
+				## deploy attribute expression strings which are specified as directive.
+				$this->deploy_attr_exprs($kd_attr_exprs,  $spaces, $attr_names, $attr_values, '#{',	     '}#');
+				$this->deploy_attr_exprs($php_attr_exprs, $spaces, $attr_names, $attr_values, '<?php echo ', '; ?>');
+
+				## rebuild $this->attr_str, excepting kd/id/php attributes.
 				$s = '';
 				$i = -1;
-				foreach ($attr_names as $name) {
+				foreach ($attr_names as $attr_name) {
 					$i++;
-					$space = $spaces[$i];
 					$value = $attr_values[$i];
-					if ($name == $kd_name || ($name == 'id' && !preg_match('/^[-\w]+$/', $value))) {
+					if ($attr_name == 'php' || $attr_name == 'kd' || ($attr_name == 'id' && !preg_match('/^[-\w]+$/', $value))) {
 						# nothing
 					} else {
-						if (array_key_exists($name, $attr_directives)) {
-							$value = '#{' . $attr_directives[$name] . '}#';
-							unset($attr_directives[$name]);
-						}
-						$s .= "{$space}{$name}=\"{$value}\"";
+						$space = $spaces[$i];
+						$s .= "{$space}{$attr_name}=\"{$value}\"";
 					}
-				}
-				foreach ($attr_directives as $name => $value) {
-					$s .= " {$name}=\"#{" . $value . '}#"';
 				}
 				$this->attr_str = $s;
 			}
@@ -165,18 +166,43 @@ require_once('KwartzUtility.inc');
 		}
 
 
+		## deploy attribute expression string.
+		##   - replace 'attr="value"' by 'attr="#{expr}#"'
+		##   - add 'attr="#{expr}#"'
+		private function deploy_attr_exprs(&$attr_exprs, &$spaces, &$attr_names, &$attr_values, $prefix, $postfix) {
+			if (count($attr_exprs) == 0) {
+				return;
+			}
+			$i = -1;
+			foreach ($attr_names as $attr_name) {
+				$i++;
+				if (array_key_exists($attr_name, $attr_exprs)) {
+					$expr_str = $attr_exprs[$attr_name];
+					$new_value = $prefix . $expr_str . $postfix;
+					$attr_values[$i] = $new_value;
+					unset($attr_exprs[$attr_name]);
+				}
+			}
+			foreach ($attr_exprs as $attr_name => $expr_str) {
+				$spaces[] = ' ';
+				$attr_names[] = $attr_name;
+				$attr_values[] = $prefix . $expr_str . $postfix;
+			}
+		}
+
+
 		## for test of parse_attr_str()
-		function _parse_attr_str($attr_str) {
+		function _parse_attr_str(&$attr_str) {
 			return $this->parse_attr_str($attr_str);
 		}
 
 
 		## helper method for convert().
 		## returns a tuple(==array($name, $value)).
-		private function parse_directive_str(&$str, &$attr_directives) {	// why needs '&' ?
+		private function parse_directive_kdstr(&$str, &$kd_attr_exprs) {
 			$strs = preg_split('/;/', $str);
+			$directive = NULL;
 			foreach ($strs as $s) {
-				$directive = NULL;
 				if (preg_match('/^\w+$/', $s)) {
 					$directive = array('mark', $s);
 				} elseif (preg_match('/^(\w+):(.*)$/', $s, $matches = array())) {
@@ -187,18 +213,15 @@ require_once('KwartzUtility.inc');
 						if (preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $value, $m=array())) {
 							$attr_name = $m[1];
 							$expr_str  = $m[2];
-							$attr_directives[$attr_name] = $expr_str;
+							$kd_attr_exprs[$attr_name] = $expr_str;
 						} else {
 							$msg = "'attr:\"'{$value}\"': invalid directive.";
 							throw new KwartzConvertionError($msg, $this);
 						}
 						break;
-					case 'value':
-					case 'Value':
-					case 'VALUE':
+					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
-					case 'if':
-					case 'unless':
+					case 'if':   case 'elsif': case 'else': case 'unless':
 					case 'while':
 					case 'dummy':
 						$directive = array($name, $value);
@@ -209,29 +232,93 @@ require_once('KwartzUtility.inc');
 						}
 						$directive = array($name, $value);
 						break;
-					case 'foreach':
-					case 'loop':
-					case 'Foreach':
-					case 'Loop':
-					case 'FOREACH':
-					case 'LOOP':
+					case 'foreach': case 'Foreach': case 'FOREACH':
+					case 'loop':	case 'Loop':	case 'LOOP':
 						if (preg_match('/^\w+:/', $value)) {
 							$value = preg_replace('/:/', '=', $value);
 						}
 						$directive = array($name, $value);
 						break;
 					default:
-						# ignore
+						$msg = "'$s': invalid directive.";
+						throw new KwartzConvertionError($msg, $this);
 					}
+				} else {
+					$msg = "'$s': invalid directive.";
+					throw new KwartzConvertionError($msg, $this);
 				}
+			}
+			if ($directive) {
+				$directive[2] = FALSE;		// $flag_php_mode false
 			}
 			return $directive;
 		}
 
 
-		## test for parse_directive_str()
-		function _parse_directive_str(&$str, &$attr_directives) {
-			return $this->parse_directive_str($str, $attr_directives);
+		## helper method for convert().
+		## - args:
+		##     - $str : directive string.
+		##		ex. "attr('class'=>$klass,'rowspan'=>$rowspan);foreach($list as $item)"
+		##     - $kd_attr_exprs: hash of attributes.
+		##		ex. array('class'=>'$klass', 'rowspan'=>'$rowspan')
+		## - return: a tuple of directive name and argument.
+		##		ex. array('foreach', '$list as $item')
+		private function parse_directive_phpstr(&$str, &$attr_exprs) {
+			$strs = preg_split('/;/', $str);
+			$directive = NULL;
+			foreach ($strs as $s) {
+				if (preg_match('/^\w+$/', $s)) {
+					$directive = array('mark', $s);
+				} elseif (preg_match('/^(\w+)\((.*)\)$/', $s, $matches = array())) {
+					$name  = $matches[1];
+					$value = trim($matches[2]);
+					switch ($name) {
+					case 'attr':  case 'Attr':  case 'ATTR':
+						$flag_escape = $name != 'ATTR';
+						$pairs = preg_split('/,/', $value);
+						foreach ($pairs as $pair) {
+							if (preg_match('/^\'([-:\w]+)\'=>(.*)/', $pair, $m=array())) {
+								$attr_name = $m[1];
+								$expr_str  = $m[2];
+								//$expr_str  = $flag_escape ? "htmlspecialchars({$m[2]})" : $m[2];
+								$attr_exprs[$attr_name] = $expr_str;
+							} else {
+								$msg = "'attr:\"'{$pair}\"': invalid directive.";
+								throw new KwartzConvertionError($msg, $this);
+							}
+						}
+						break;
+					case 'echo':  case 'Echo':  case 'ECHO':
+					case 'mark':
+					case 'if':  case 'elseif':  case 'else':
+					case 'while':
+					case 'set':
+					case 'foreach': case 'Foreach': case 'FOREACH':
+					case 'loop':	case 'Loop':	case 'LOOP':
+					case 'dummy':
+						$directive = array($name, $value);
+						break;
+					default:
+						$msg = "'$name': invalid directive.";
+						throw new KwartzConvertionError($msg, $this);
+					}
+				} else {
+					$directive = array('set', $s);
+				}
+			}
+			if ($directive) {
+				$directive[2] = TRUE;		// $flag_php_mode true
+			}
+			return $directive;
+		}
+
+
+		## test for parse_directive_kdstr()
+		function _parse_directive_kdstr(&$str, &$attr_exprs) {
+			return $this->parse_directive_kdstr($str, $attr_exprs);
+		}
+		function _parse_directive_phpstr(&$str, &$attr_exprs) {
+			return $this->parse_directive_phpstr($str, $attr_exprs);
 		}
 
 
@@ -360,6 +447,8 @@ require_once('KwartzUtility.inc');
 		private function store_stmt_for_directive(&$directive, &$block, &$stmt_list, $flag_remove_span=FALSE) {
 			$directive_name = $directive[0];
 			$directive_arg	= $directive[1];
+			$flag_php_mode	= $directive[2];
+
 			switch ($directive_name) {
 			case 'foreach':
 			case 'loop':
@@ -367,17 +456,27 @@ require_once('KwartzUtility.inc');
 			case 'Loop':
 			case 'FOREACH':
 			case 'LOOP':
-				$expr = $this->parse_expression($directive_arg);
-				if ($expr->token() != '=') {
-					$msg = "invalid '$directive_name' directive.";
-					throw new KwartzConvertionError($msg, $this);
+				if ($flag_php_mode) {
+					if ($ary = preg_split('/\sas\s/', $directive_arg)) {
+						$list_expr    = $this->parse_expression($ary[0], $flag_php_mode);
+						$loopvar_expr = $this->parse_expression($ary[1], $flag_php_mode);
+					} else {
+						$msg = "invalid '$directive_name' directive.";
+						throw new KwartzConvertionError($msg, $this);
+					}
+				} else {
+					$expr = $this->parse_expression($directive_arg, $flag_php_mode);
+					if ($expr->token() != '=') {
+						$msg = "invalid '$directive_name' directive.";
+						throw new KwartzConvertionError($msg, $this);
+					}
+					$loopvar_expr = $expr->left();
+					$list_expr = $expr->right();
 				}
-				if ($expr->left()->token() != 'variable') {
+				if ($loopvar_expr->token() != 'variable') {
 					$msg = "invalid loop variable in '$directive_name' directive.";
 					throw new KwartzConvertionError($msg, $this);
 				}
-				$loopvar_expr = $expr->left();
-				$list_expr = $expr->right();
 				$flag_loop = $flag_toggle = $flag_count = FALSE;
 				switch ($directive_name) {
 				case 'FOREACH':
@@ -439,7 +538,7 @@ require_once('KwartzUtility.inc');
 				break;
 
 			case 'set':
-				$expr = $this->parse_expression($directive_arg);
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
 				$stmt = new KwartzSetStatement($expr);
 				$stmt_list[] = $stmt;
 				//$stmt_list[] = $block;
@@ -449,13 +548,14 @@ require_once('KwartzUtility.inc');
 				break;
 
 			case 'value':
-				$expr = $this->parse_expression($directive_arg);
+			case 'echo':
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
 				if ($flag_remove_span) {
 					$stmt_list[] = new KwartzPrintStatement(array($expr));
 				} else {
-					$stmt_list[] = $block->shift();  //array_shift($block->statements());	// stag
+					$stmt_list[] = $block->shift();	 //array_shift($block->statements());	// stag
 					$stmt_list[] = new KwartzPrintStatement(array($expr));
-					$stmt_list[] = $block->pop();    //array_pop($block->statements());	// etag
+					$stmt_list[] = $block->pop();	 //array_pop($block->statements());	// etag
 				}
 				//echo "*** debug: stmt_list[0]={$stmt_list[0]->inspect()}\n";
 				//echo "*** debug: stmt_list[1]={$stmt_list[1]->inspect()}\n";
@@ -463,20 +563,20 @@ require_once('KwartzUtility.inc');
 				break;
 
 			case 'if':
-				$expr = $this->parse_expression($directive_arg);
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
 				$stmt = new KwartzIfStatement($expr, $block, NULL);
 				$stmt_list[] = $stmt;
 				break;
 
 			case 'unless':
-				$expr = $this->parse_expression($directive_arg);
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
 				$expr = new KwartzUnaryExpression('!', $expr);
 				$stmt = new KwartzIfStatement($expr, $block, NULL);
 				$stmt_list[] = $stmt;
 				break;
 
 			case 'while':
-				$expr = $this->parse_expression($directive_arg);
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
 				$stmt = new KwartzWhileStatement($expr, $block);
 				$stmt_list[] = $stmt;
 				break;
@@ -487,8 +587,8 @@ require_once('KwartzUtility.inc');
 					$stag_list = array();
 					$etag_list = array();
 				} else {
-					$stag_stmt = $block->shift();   //array_shift($block->statements());
-					$etag_stmt = $block->pop();     //array_pop($block->statements());
+					$stag_stmt = $block->shift();	//array_shift($block->statements());
+					$etag_stmt = $block->pop();	//array_pop($block->statements());
 					$stag_list = array($stag_stmt);
 					$etag_list = array($etag_stmt);
 				}
@@ -512,15 +612,15 @@ require_once('KwartzUtility.inc');
 
 			default:
 				$msg = "'{$directive_name}': invalid directive name.";
-				throw new KwartzConvertionException($msg, $this);
+				throw new KwartzConvertionError($msg, $this);
 			}
 		}
 
 
-		private function parse_expression($str) {
+		private function parse_expression($str, $flag_php_mode=FALSE) {
 			$scanner = new KwartzScanner($str);
 			$parser	 = new KwartzParser($scanner);
-			$expr	 = $parser->parse_expression_strictly();
+			$expr	 = $parser->parse_expression_strictly($flag_php_mode);
 			return $expr;
 		}
 	}

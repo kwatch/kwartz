@@ -760,22 +760,22 @@ END;
 		$this->_test_stmt($input, $expected);
 	}
 
-	function test_expand2_stmt1() {
+	function test_expand_stmt2() {
 		$input = "@elem_foo";
 		$expected = <<<END
 		:expand
 		  'elem_foo'
 
 END;
-		//$this->_test_stmt($input, $expected, 'parse_expand2_stmt');
+		//$this->_test_stmt($input, $expected, 'parse_expand_stmt');
 		$this->_test_stmt($input, $expected);
 	}
 
-	function test_expand2_stmt2() {
+	function test_expand_stmt3() {
 		$input = "@stag";
 		$expected = NULL;
 		try {
-			$this->_test_stmt($input, $expected, 'parse_expand2_stmt', false);
+			$this->_test_stmt($input, $expected, 'parse_expand_stmt', false);
 		} catch (KwartzSemanticError $ex) {
 			# OK
 			return;

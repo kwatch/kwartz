@@ -99,16 +99,31 @@ END;
 	}
 
 
+	function test_fetch6() {
+		$input = <<<END
+		<span id="foo" class="foo"
+		      php="attr('class'=>\$user->ctr%2==0?'even':'odd')">hello</span>
+
+END;
+		$expected = <<<END
+"" "" <span " id=\"foo\" class=\"foo\"\\n      php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""> ""
+"hello" "" </span ""> "\\n"
+""
+END;
+		$this->_test_fetch($input, $expected);
+	}
+
+
 
 	###
 	### helper method for convert()
 	###
 
-	function test_parse_directive_str1() {
+	function test_parse_directive_kdstr1() {
 		$converter = new KwartzConverter('');
 		$directive_str = "attr:class:klass;attr:id:item;value:expr";
 		$attr_directives = array();
-		$directive = $converter->_parse_directive_str($directive_str, $attr_directives);
+		$directive = $converter->_parse_directive_kdstr($directive_str, $attr_directives);
 		$this->assertEquals('klass', $attr_directives['class']);
 		$this->assertEquals('item', $attr_directives['id']);
 		$this->assertEquals('value', $directive[0]);
@@ -134,7 +149,31 @@ END;
 		$this->assertEquals("set", $directive[0]);
 		$this->assertEquals("klass=ctr%2==0?'even':'odd'", $directive[1]);
 	}
-	
+
+
+
+	function test_parse_attr_str2() {
+		$input = <<<END
+<tr id="foo" class="odd" php="attr('class'=>\$klass,'align'=>\$item->align);foreach(\$list as \$item)">
+  <td id="value:klass">hoge</td>
+</tr>
+END;
+		$expected1 = ' id="foo" class="odd" php="attr(\'class\'=>$klass,\'align\'=>$item->align);foreach($list as $item)"';
+		$expected2 = " id=\"foo\" class=\"<?php echo \$klass; ?" . ">\" align=\"<?php echo \$item->align; ?" . ">\"";
+
+		$converter = new KwartzConverter($input);
+		$tag_name = $converter->fetch();
+		//echo "*** debug: before:" . kwartz_inspect_str($converter->_attr_str()) . "\n";
+		$this->assertEquals($expected1, $converter->_attr_str());
+		
+		$directive = $converter->_parse_attr_str($converter->_attr_str());
+		//echo "*** debug: after:" . kwartz_inspect_str($converter->_attr_str()) . "\n";
+		$this->assertEquals($expected2, $converter->_attr_str());
+
+		//echo var_dump($directive);
+		$this->assertEquals("foreach", $directive[0]);
+		$this->assertEquals("\$list as \$item", $directive[1]);
+	}
 
 
 	###
@@ -251,6 +290,12 @@ END;
 		hoge
 		</div>
 END;
+
+		$input2 = <<<END
+		<div php="mark(foo)">
+		hoge
+		</div>
+END;
 		$expected = <<<END
 		<<block>>
 		  :macro
@@ -281,7 +326,8 @@ END;
 		    'elem_foo'
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -289,6 +335,9 @@ END;
 	function test_convert_value() {
 		$input = <<<END
 		<td kd="value:hash['key']">hoge</td>
+END;
+		$input2 = <<<END
+		<td php="echo(\$hash['key'])">hoge</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -302,7 +351,8 @@ END;
 		    "</td>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -311,6 +361,11 @@ END;
 	function test_convert_if() {
 		$input = <<<END
 		<font color="red" kd="if:flag!=true">
+		ERROR
+		</font>
+END;
+		$input2 = <<<END
+		<font color="red" php="if(\$flag!=true)">
 		ERROR
 		</font>
 END;
@@ -329,7 +384,8 @@ END;
 		        "</font>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -339,6 +395,9 @@ END;
 		$input = <<<END
 		<font color="red" kd="unless:list.length>0">Empty.</font>
 END;
+#		$input2 = <<<END
+#		<font color="red" php="unless(list.length>0)">Empty.</font>
+#END;
 		$expected = <<<END
 		<<block>>
 		  :if
@@ -357,7 +416,8 @@ END;
 		        "</font>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		#$this->_test_convert($input2, $expected);
 	}
 
 
@@ -367,6 +427,9 @@ END;
 	function test_convert_while() {
 		$input = <<<END
 		<li kd="while:i<max">foo</li>
+END;
+		$input2 = <<<END
+		<li php="while(\$i<\$max)">foo</li>
 END;
 		$expected = <<<END
 		<<block>>
@@ -383,7 +446,8 @@ END;
 		        "</li>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -396,6 +460,11 @@ END;
 		<li kd="dummy:x1" class="even">bar</li>
 		</ul>
 END;
+		$input2 = <<<END
+		<ul>
+		<li php="dummy(x1)" class="even">bar</li>
+		</ul>
+END;
 		$expected = <<<END
 		<<block>>
 		  :print
@@ -404,14 +473,18 @@ END;
 		    "</ul>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
 
-	function test_convert_set() {
+	function test_convert_set1() {
 		$input = <<<END
 		<td kd="set:i=i+1">hoge</td>
+END;
+		$input2 = <<<END
+		<td php="\$i=\$i+1">hoge</td>
 END;
 		$expected = <<<END
 		<<block>>
@@ -429,7 +502,8 @@ END;
 		    "</td>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -438,6 +512,9 @@ END;
 	function test_convert_foreach1() {
 		$input = <<<END
 		<b kd="foreach:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b php="foreach(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -453,7 +530,8 @@ END;
 		        "</b>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -462,6 +540,9 @@ END;
 	function test_convert_foreach2() {
 		$input = <<<END
 		<b kd="Foreach:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b php="Foreach(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -485,7 +566,8 @@ END;
 		        "</b>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -493,6 +575,9 @@ END;
 	function test_convert_foreach3() {
 		$input = <<<END
 		<b kd="FOREACH:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b php="FOREACH(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -528,6 +613,7 @@ END;
 
 END;
 		$this->_test_convert($input, $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -535,6 +621,9 @@ END;
 	function test_convert_loop1() {
 		$input = <<<END
 		<b kd="loop:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b php="loop(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -550,7 +639,8 @@ END;
 		    "</b>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -561,6 +651,9 @@ END;
 		$input = <<<END
 		<b kd="Loop:item=list">hoge</b>
 END;
+		$input2 = <<<END
+		<b php="Loop(\$list as \$item)">hoge</b>
+END;
 		$expected = <<<END
 		<<block>>
 		  :print
@@ -583,7 +676,8 @@ END;
 		    "</b>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -592,6 +686,9 @@ END;
 	function test_convert_loop3() {
 		$input = <<<END
 		<b kd="LOOP:item=list">hoge</b>
+END;
+		$input2 = <<<END
+		<b php="LOOP(\$list as \$item)">hoge</b>
 END;
 		$expected = <<<END
 		<<block>>
@@ -626,7 +723,8 @@ END;
 		    "</b>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -636,6 +734,11 @@ END;
 		<span id="set:var1=value1"/>
 		  <span id="set:var2=value2"/>
 		<span id="attr:class:var3;set:var3=value3"/>
+END;
+		$input2 = <<<END
+		<span php="\$var1=\$value1"/>
+		  <span php="\$var2=\$value2"/>
+		<span php="attr('class'=>\$var3);\$var3=\$value3"/>
 END;
 		$expected = <<<END
 		<<block>>
@@ -657,7 +760,29 @@ END;
 		    "\"/>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+
+		$c = '?';
+		$expected2 = <<<END
+		<<block>>
+		  :set
+		    =
+		      var1
+		      value1
+		  :set
+		    =
+		      var2
+		      value2
+		  :set
+		    =
+		      var3
+		      value3
+		  :print
+		    "<span class=\"<?php echo \$var3; $c>\"/>"
+
+END;
+
+		$this->_test_convert($input2, $expected2);
 	}
 
 
@@ -666,6 +791,14 @@ END;
 	function test_convert_span2() {
 		$input = <<<END
 		<span kd="foreach:item=list">
+		aaa
+		</span>
+		<span>
+		bbb
+		</span>
+END;
+		$input2 = <<<END
+		<span php="foreach(\$list as \$item)">
 		aaa
 		</span>
 		<span>
@@ -688,7 +821,8 @@ END;
 		    "</span>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -696,6 +830,9 @@ END;
 	function test_convert_span3() {		# bug
 		$input = <<<END
 <span id="value:day" class="holiday">&nbsp;</span>
+END;
+		$input2 = <<<END
+<span php="echo(\$day)" class="holiday">&nbsp;</span>
 END;
 		$expected = <<<END
 <<block>>
@@ -708,6 +845,7 @@ END;
 
 END;
 		$this->_test_convert($input, $expected);
+		$this->_test_convert($input2, $expected);
 	}
 
 
@@ -944,6 +1082,24 @@ END;
 		  </tbody>
 		</table>
 END;
+
+		$input2 = <<<END
+		<table>
+		  <span php="\$ctr=0"/>
+		  <tbody php="loop(\$user_list as \$user)">
+		    <span php="\$ctr+=1"/>
+		    <tr class="odd" php="attr('class'=>\$klass);\$klass=\$user_ctr%2==0?'even':'odd'">
+		      <td php="echo(\$user['name'])">Foo</td>
+		      <td php="echo(\$user['mail'])">foo@mail.org</td>
+		    </tr>
+		    <tr class="even" php="dummy(d1)">
+		      <td>Bar</td>
+		      <td>bar@mail.com</td>
+		    </tr>
+		  </tbody>
+		</table>
+END;
+
 		$expected = <<<END
 		<<block>>
 		  :print
@@ -1001,7 +1157,65 @@ END;
 		    "</table>"
 
 END;
-		$this->_test_convert($input, $expected);
+		$this->_test_convert($input,  $expected);
+
+		$expected2 = <<<END
+		<<block>>
+		  :print
+		    "<table>\\n"
+		  :set
+		    =
+		      ctr
+		      0
+		  :print
+		    "  <tbody>\\n"
+		  :foreach
+		    user
+		    user_list
+		    <<block>>
+		      :set
+		        +=
+		          ctr
+		          1
+		      :set
+		        =
+		          klass
+		          ?
+		            ==
+		              %
+		                user_ctr
+		                2
+		              0
+		            "even"
+		            "odd"
+		      :print
+		        "    <tr class=\"<?php echo \$klass; ?>\">\\n"
+		      :print
+		        "      <td>"
+		      :print
+		        []
+		          user
+		          "name"
+		      :print
+		        "</td>\\n"
+		      :print
+		        "      <td>"
+		      :print
+		        []
+		          user
+		          "mail"
+		      :print
+		        "</td>\\n"
+		      :print
+		        "    </tr>\\n"
+		  :print
+		    "  </tbody>\\n"
+		  :print
+		    "</table>"
+
+END;
+
+		$this->_test_convert($input2, $expected2);
 	}
 
 

@@ -48,6 +48,23 @@ class KwartzCompilerTest extends PHPUnit_TestCase {
 		</html>
 END;
 
+		$pdata_php = <<<END
+		<html>
+		 <body>
+		  <table>
+		   <tr class="odd" php="mark(user);attr('class'=>\$klass)">
+		    <td php="echo(\$user['name'])">foo</td>
+		    <td php="echo(\$user['mail'])">foo@mail.com</td>
+		   </tr>
+		   <tr class="even" php="dummy(d1)">
+		    <td>bar</td>
+		    <td>bar@mail.com</td>
+		   </tr>
+		  </table>
+		 </body>
+		</html>
+END;
+
 		$plogic = <<<END
 		:elem(user)
 		  :set(i = 0)
@@ -91,15 +108,21 @@ END;
 		 </body>
 		</html>
 END;
-		$this->_test($pdata, $plogic, $expected);
-		$this->_test($pdata, $plogic_php, $expected);
 
+		$this->_test($pdata,     $plogic,     $expected);
+		$this->_test($pdata,     $plogic_php, $expected);
+		$this->_test($pdata_php, $plogic,     $expected);
+		$this->_test($pdata_php, $plogic_php, $expected);
 	}
 
 
 	function test_compile2() {
 		$pdata = <<<END
 		<a href="#{url}#" id="mark:link">next page</a>
+
+END;
+		$pdata_php = <<<END
+		<a href="#{url}#" php="mark(link)">next page</a>
 
 END;
 		$plogic = <<<END
@@ -135,6 +158,8 @@ END;
 END;
 		$this->_test($pdata, $plogic,     $expected);
 		$this->_test($pdata, $plogic_php, $expected);
+		$this->_test($pdata_php, $plogic,     $expected);
+		$this->_test($pdata_php, $plogic_php, $expected);
 	}
 
 
@@ -186,6 +211,55 @@ END;
 		&nbsp;
 
 END;
+
+		$pdata_php = <<<END
+		<table cellpadding="2" summary="">
+		  <caption>
+		    <i php="echo(\$month)">Jan</i>&nbsp;<i php="echo(\$year)">20XX</i>
+		  </caption>
+		  <thead>
+		    <tr bgcolor="#CCCCCC">
+		      <th><span class="holiday">S</span></th>
+		      <th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr php="mark(week)">
+		      <td><span php="mark(day)" class="holiday">&nbsp;</span></td>
+		      <td id="dummy:d1">&nbsp;</td>
+		      <td id="dummy:d2">1</td>
+		      <td id="dummy:d3">2</td>
+		      <td id="dummy:d4">3</td>
+		      <td id="dummy:d5">4</td>
+		      <td id="dummy:d6">5</td>
+		    </tr>
+		    <tr php="dummy(w1)">
+		      <td><span class="holiday">6</span></td>
+		      <td>7</td><td>8</td><td>9</td>
+		      <td>10</td><td>11</td><td>12</td>
+		    </tr>
+		    <tr php="dummy(w2)">
+		      <td><span class="holiday">13</span></td>
+		      <td>14</td><td>15</td><td>16</td>
+		      <td>17</td><td>18</td><td>19</td>
+		    </tr>
+		    <tr php="dummy(w3)">
+		      <td><span class="holiday">20</span></td>
+		      <td>21</td><td>22</td><td>23</td>
+		      <td>24</td><td>25</td><td>26</td>
+		    </tr>
+		    <tr php="dummy(w4)">
+		      <td><span class="holiday">27</span></td>
+		      <td>28</td><td>29</td><td>30</td>
+		      <td>31</td><td>&nbsp;</td><td>&nbsp;</td>
+		    </tr>
+		  </tbody>
+		</table>
+		&nbsp;
+
+END;
+
+
 		$plogic = <<<END
 		:elem(week)
 		
@@ -343,8 +417,10 @@ END;
 		&nbsp;
 
 END;
-		$this->_test($pdata, $plogic,     $expected);
-		$this->_test($pdata, $plogic_php, $expected);
+		$this->_test($pdata,     $plogic,     $expected);
+		$this->_test($pdata,     $plogic_php, $expected);
+		$this->_test($pdata_php, $plogic,     $expected);
+		$this->_test($pdata_php, $plogic_php, $expected);
 	}
 
 

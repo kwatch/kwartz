@@ -145,7 +145,8 @@ require_once('KwartzScanner.inc');
 
 
 		## * BNF:
-		##    array ::= item | post '[' expr ']' | post '{' expr '}' | post '[:' name ']' | post '.' property | post '->' property
+		##    array ::= item | post '[' expr ']' | post '{' expr '}' | post '[:' name ']'
+		##                   | post '.' property | post '->' property
 		##	    ::= item { '[' expr ']' | '{' expr '}' | '[:' name ']' | '.' propperty | '->' propperty }
 		function parse_array($flag_php_mode=FALSE) {
 			$expr = $this->parse_item($flag_php_mode);
@@ -369,13 +370,14 @@ require_once('KwartzScanner.inc');
 			return $expr;
 		}
 
+
 		## * BNF:
 		##    expression ::= assignment
 		function parse_expression($flag_php_mode=FALSE) {
 			return $this->parse_assignment($flag_php_mode);
 		}
 
-		##
+
 		##
 		function parse_expression_strictly($flag_php_mode=FALSE) {
 			//$expr = $this->parse_assignment($flag_php_mode);
@@ -405,11 +407,10 @@ require_once('KwartzScanner.inc');
 			'elem'	    => 'parse_element_stmt',
 			':expand'   => 'parse_expand_stmt',
 			'expand'    => 'parse_expand_stmt',
-			'@'	    => 'parse_expand2_stmt',
+			'@'	    => 'parse_expand_stmt',
 			':::'	    => 'parse_rawcode_stmt',
 			':rawcode'  => 'parse_rawcode_stmt',
 		);
-
 
 
 		## * BNF:
@@ -525,48 +526,35 @@ require_once('KwartzScanner.inc');
 		##    while-stmt ::= ':while' '(' assignment ')' stmt-list ':end'
 		function parse_while_stmt() {
 			$t = $this->token();
-			if ($t == ':while') {
-				$flag_php_mode = FALSE;
-				$linenum = $this->scanner->linenum();
-				$this->scan();
-				$this->token_check2('(', "'$t' requires '('.");
-				$cond_expr = $this->parse_expression($flag_php_mode);
-				$this->token_check2(')', "'{$t}(' is not closed by ')'.");
-				$body_block = $this->parse_block_stmt();
-				$this->token_check2(':end', "'{$t}' (at line $linenum) is not closed by ':end'.");
-				return new KwartzWhileStatement($cond_expr, $body_block);
-			} elseif ($t == 'while') {
-				$flag_php_mode = TRUE;
-				$linenum = $this->scanner->linenum();
-				$this->scan();
-				$this->token_check2('(', "'$t' requires '('.");
-				$cond_expr = $this->parse_expression($flag_php_mode);
-				$this->token_check2(')', "'{$t}(' is not closed by ')'.");
+			$flag_php_mode = $t[0] != ':';
+			$linenum = $this->scanner->linenum();
+			$this->scan();
+			$this->token_check2('(', "'$t' requires '('.");
+			$cond_expr = $this->parse_expression($flag_php_mode);
+			$this->token_check2(')', "'{$t}(' is not closed by ')'.");
+			if ($flag_php_mode) {
 				$this->token_check2('{', "'{$t}()' required '{'..");
-				$body_block = $this->parse_block_stmt();
-				$this->token_check2('}', "'{$t}' (at line $linenum) is not closed by '}'.");
-				return new KwartzWhileStatement($cond_expr, $body_block);
 			}
-			assert(false);
+			$body_block = $this->parse_block_stmt();
+			$endtoken = $flag_php_mode ? '}' : ':end';
+			$this->token_check2($endtoken, "'{$t}' (at line $linenum) is not closed by ':end' (current token is '{$this->token()}').");
+			return new KwartzWhileStatement($cond_expr, $body_block);
 		}
 
 
 		## * BNF:
-		##    foreach-stmt ::= ':foreach' '(' expression '=' expression ')'
-		##		       stmt-list ':end'
+		##    foreach-stmt ::= ':foreach' '(' expression '=' expression ')' stmt-list ':end'
 		function parse_foreach_stmt() {
 			$t = $this->token();
-			$flag_php_mode = $t == 'foreach';
+			$flag_php_mode = $t[0] != ':';
 			$linenum = $this->scanner->linenum();
 
-			## parse 'if()' or ':if()'
+			## parse 'foreach()' or ':foreach()'
 			$this->scan();
 			$this->token_check2('(', "'$t' requires '('.");
 			if ($flag_php_mode) {
 				$list_expr = $this->parse_expression($flag_php_mode);
-				if ($this->token() == 'name' && $this->value() == 'as') {
-					# OK
-				} else {
+				if ( ! ($this->token() == 'name' && $this->value() == 'as') ) {
 					$this->syntax_error("'$t' requires 'as'.");
 				}
 				$this->scan();
@@ -583,14 +571,14 @@ require_once('KwartzScanner.inc');
 			if ($loopvar_expr->token() != 'variable') {
 				$this->syntax_error("'{$t}': invalid loop variable.");
 			}
-			
+
 			## parse block
 			if ($flag_php_mode) {
 				$this->token_check2('{', "'{$t}()' requires '{'.");
 			}
-			$endtoken = $flag_php_mode ? '}' : ':end';
 			$body_block = $this->parse_block_stmt();
-			$this->token_check2($endtoken,  "'{$t}' (at line $linenum) is not closed by '$endtoken'.");
+			$endtoken = $flag_php_mode ? '}' : ':end';
+			$this->token_check2($endtoken,	"'{$t}' (at line $linenum) is not closed by '$endtoken'.");
 			return new KwartzForeachStatement($loopvar_expr, $list_expr, $body_block);
 		}
 
@@ -599,42 +587,26 @@ require_once('KwartzScanner.inc');
 		##    print-stmt ::= ':print'  '(' expression { ',' expression } ')'
 		function parse_print_stmt() {
 			$t = $this->token();
-			if ($t == ':print') {
-				$flag_php_mode = FALSE;
-				$linenum = $this->scanner->linenum();
-				$this->scan();
-				$this->token_check2('(', "':print' requires '('.");
-				$expr_list = array();
-				if ($this->token() != ')') {
-					while (TRUE) {
-						$expr = $this->parse_expression($flag_php_mode);
-						$expr_list[] = $expr;
-						if ($this->token() != ',') { break; }
-						$this->scan();
-					}
-				}
-				$this->token_check2(')', "':print(' is not closed by ')'.");
-				return new KwartzPrintStatement($expr_list);
+			$flag_php_mode = $t[0] != ':';
+			$linenum = $this->scanner->linenum();
+
+			$this->scan();
+			if (! $flag_php_mode) {
+				$this->token_check2('(', "'$t' requires '('.");
 			}
-			elseif ($t == 'echo' || $t == 'print') {
-				$flag_php_mode = TRUE;
-				$linenum = $this->scanner->linenum();
-				$this->scan();
-				//$this->token_check2('(', "'{$t}' requires '('.");
-				$expr_list = array();
-				if ($this->token() != ';') {
-					while (TRUE) {
-						$expr = $this->parse_expression($flag_php_mode);
-						$expr_list[] = $expr;
-						if ($this->token() != ',') { break; }
-						$this->scan();
-					}
+			$expr_list = array();
+			$t2 = $this->token();
+			$endtoken = $flag_php_mode ? ';' : ')';
+			if ($this->token() != $endtoken) {
+				while (TRUE) {
+					$expr = $this->parse_expression($flag_php_mode);
+					$expr_list[] = $expr;
+					if ($this->token() != ',') { break; }
+					$this->scan();
 				}
-				//$this->token_check2(')', "'{$t}(' is not closed by ')'.");
-				$this->token_check2(';', "'{$t}' (at line {$linenum}) is not terminated by ';'.");
-				return new KwartzPrintStatement($expr_list);
 			}
-			assert(false);
+			$this->token_check2($endtoken, "'$t' is not closed by '$endtoken'.");
+			return new KwartzPrintStatement($expr_list);
 		}
 
 
@@ -643,52 +615,36 @@ require_once('KwartzScanner.inc');
 		##    element-stmt ::= ':element' '(' name ')' stmt-list ':end'
 		function parse_macro_stmt() {
 			$t = $this->token();
-			if ($t == ':macro' || $t == ':element' || $t == ':elem') {
-				$linenum = $this->scanner->linenum();
-				$this->scan();
+			$flag_php_mode = $t[0] != ':';
+			$flag_element = ($t != ':macro' && $t != 'macro');
+			$linenum = $this->scanner->linenum();
+			$this->scan();
+			if (! $flag_php_mode) {
 				$this->token_check2('(', "'$t' requires '('.");
-				$this->token_check('name', "'$t' should take a name.");
-				$name = $this->value();
-				$macro_name = $t == ':macro' ? $name : ('elem_' . $name);
-				$this->scan();
+			}
+			$this->token_check('name', "'$t' should take a name.");
+			$name = $this->value();
+			$macro_name = $flag_element ? ('elem_' . $name) : $name;
+			//$macro_name = $flag_element ? ('element_' . $name) : $name;
+			$this->scan();
+			if ($flag_php_mode) {
+				$this->token_check2('{', "'$t()' requires '{'.");
+			} else {
 				$this->token_check2(')', "'$t(' is not closed by ')'.");
-				if ($t == ':macro') {
-					$body_block = $this->parse_block_stmt();
-				} else {
-					array_push($this->element_name_stack, $name);
-					$this->current_element_name = $name;
-					$body_block = $this->parse_block_stmt();
-					array_pop($this->element_name_stack);
-					$this->current_element_name = end($this->element_name_stack);
-					//$this->current_element_name = array_pop($this->element_name_stack);
-				}
-				$this->token_check2(':end', "'$t' (at line $linenum) is not closed by ':end'.");
-				return new KwartzMacroStatement($macro_name, $body_block);
 			}
-			elseif ($t == 'macro' || $t == 'element' || $t == 'elem') {
-				$linenum = $this->scanner->linenum();
-				$this->scan();
-				//$this->token_check2('(', "'$t' requires '('.");
-				$this->token_check('name', "'$t' should take a name.");
-				$name = $this->value();
-				$macro_name = $t == 'macro' ? $name : ('elem_' . $name);
-				$this->scan();
-				//$this->token_check2(')', "'$t(' is not closed by ')'.");
-				$this->token_check2('{', "'$t' requires '{'.");
-				if ($t == 'macro') {
-					$body_block = $this->parse_block_stmt();
-				} else {
-					array_push($this->element_name_stack, $name);
-					$this->current_element_name = $name;
-					$body_block = $this->parse_block_stmt();
-					array_pop($this->element_name_stack);
-					$this->current_element_name = end($this->element_name_stack);
-					//$this->current_element_name = array_pop($this->element_name_stack);
-				}
-				$this->token_check2('}', "'$t' (at line $linenum) is not closed by '}'.");
-				return new KwartzMacroStatement($macro_name, $body_block);
+			if (! $flag_element) {
+				$body_block = $this->parse_block_stmt();
+			} else {
+				array_push($this->element_name_stack, $name);
+				$this->current_element_name = $name;
+				$body_block = $this->parse_block_stmt();
+				array_pop($this->element_name_stack);
+				$this->current_element_name = end($this->element_name_stack);
+				//$this->current_element_name = array_pop($this->element_name_stack);
 			}
-			assert(false);
+			$endtoken = $flag_php_mode ? '}' : ':end';
+			$this->token_check2($endtoken, "'$t' (at line $linenum) is not closed by '$endtoken' (current token is '{$this->token()}'.");
+			return new KwartzMacroStatement($macro_name, $body_block);
 		}
 
 
@@ -707,63 +663,8 @@ require_once('KwartzScanner.inc');
 
 
 		## * BNF:
-		##    expand-stmt ::= ':expand' '(' name ')'
+		##    expand-stmt ::= ':expand' '(' macro-name ')'  | '@' macro-name
 		function parse_expand_stmt() {
-			$t = $this->token();
-			$flag_php_mode = $t == 'expand';
-			$this->scan();
-			$flag_paren = true;
-			if (! $flag_php_mode) {
-				$this->token_check2('(', "'{$t}' requires '('.");
-			} elseif ($this->token() == '(') {
-				$this->scan();
-			} else {
-				$flag_paren = false;
-			}
-			$this->token_check('name', "'{$t}' requires macro-name.");
-			$macro_name = $this->value();
-			$this->scan();
-			if ($flag_paren) {
-				$this->token_check2(')', "'{$t}(' is not closed by ')'.");
-			}
-			if ($flag_php_mode) {
-				$this->token_check2(';', "'{$t}' is not terminated by ';'.");
-			}
-			return new KwartzExpandStatement($macro_name);
-
-			//if ($t == ':expand') {
-			//	$this->scan();
-			//	$this->token_check2('(', "'{$t}' requires '('.");
-			//	$this->token_check('name', "'{$t}()' requires macro-name.");
-			//	$macro_name = $this->value();
-			//	$this->scan();
-			//	$this->token_check2(')', "'{$t}' is not closed by ')'.");
-			//	return new KwartzExpandStatement($macro_name);
-			//}
-			//elseif ($t == 'expand') {
-			//	$this->scan();
-			//	$flag_paren = false;
-			//	if ($this->token() == '(') {
-			//		//$this->token_check2('(', "'{$t}' requires '('.");
-			//		$this->scan();
-			//		$flag_paren = true;
-			//	}
-			//	$this->token_check('name', "'{$t}' requires macro-name.");
-			//	$macro_name = $this->value();
-			//	$this->scan();
-			//	if ($flag_paren) {
-			//		$this->token_check2(')', "'{$t}(' is not closed by ')'.");
-			//	}
-			//	$this->token_check2(';', "'{$t}' is not terminated by ';'.");
-			//	return new KwartzExpandStatement($macro_name);
-			//}
-			//assert(false);
-		}
-
-
-		## * BNF:
-		##     expand2-stmt ::= '@' macro-name
-		function parse_expand2_stmt() {
 			$t = $this->token();
 			if ($t == '@') {
 				$macro_name = $this->value();
@@ -776,17 +677,43 @@ require_once('KwartzScanner.inc');
 						$msg = "'@{$macro_name}' should be in ':element' statement.";
 						throw new KwartzSemanticError($msg, $this->scanner);
 					}
-					$macro_name .= '_';
-					$macro_name .= $this->current_element_name;
+					$macro_name .= '_' . $this->current_element_name;
+					break;
+				//default:
+				//	if (preg_match(/^elem_(.*)$/, $macro_name, $m = array()) {
+				//		$macro_name = 'element_' . $m[1];
+				//	}
 				}
 				return new KwartzExpandStatement($macro_name);
 			}
-			assert(false);
+			$flag_php_mode = $t == 'expand';
+			$this->scan();
+			$flag_paren = true;
+			if (! $flag_php_mode) {
+				$this->token_check2('(', "'{$t}' requires '('.");
+			} elseif ($this->token() == '(') {
+				$this->scan();
+			} else {
+				$flag_paren = false;
+			}
+			$this->token_check('name', "'{$t}' requires macro-name.");
+			$macro_name = $this->value();
+			//if (preg_match('/^elem_(.*)$/', $macro_name, $m=array())) {
+			//	$macro_name = 'element_' . $m[1];
+			//}
+			$this->scan();
+			if ($flag_paren) {
+				$this->token_check2(')', "'{$t}(' is not closed by ')'.");
+			}
+			if ($flag_php_mode) {
+				$this->token_check2(';', "'{$t}' is not terminated by ';'.");
+			}
+			return new KwartzExpandStatement($macro_name);
 		}
 
 
 		## * BNF:
-		##    rawcode ::= ':::' raw-string
+		##    rawcode ::= ':::' raw-string | '<?' raw-string | '<%' raw-string
 		function parse_rawcode_stmt() {
 			if ($this->token() == ':::' || $this->token() == ':rawcode') {
 				$rawcode = $this->value();
@@ -801,14 +728,7 @@ require_once('KwartzScanner.inc');
 		##    load-stmt ::= ':load' '(' string ')'
 		function parse_load_stmt() {
 			$t = $this->token();
-			if ($t == ':load') {
-				$flag_php_mode = FALSE;
-			} elseif ($t == 'load') {
-				$flag_php_mode = TRUE;
-			} else {
-				assert(false);
-			}
-
+			$flag_php_mode = $t[0] != ':';
 			$this->scan();
 			$this->token_check2('(', "'{$t}' requires '('.");
 			$this->token_check('string', "'{$t}()' should take filename as a string.");
@@ -844,11 +764,6 @@ require_once('KwartzScanner.inc');
 		##
 		function parse() {
 			return $this->parse_program();
-		}
-
-		## *obsolete*
-		function parse_all() {
-			return $this->parse();
 		}
 	}  // end of class KwartzParser
 
