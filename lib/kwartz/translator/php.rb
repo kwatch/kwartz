@@ -123,7 +123,7 @@ module Kwartz
 
 
       def keyword(key)
-         Kwartz::assert(@@keywords.key?(key), "key=#{key.inspect}")
+         Kwartz::assert("key=#{key.inspect}") unless @@keywords.key?(key)
          return @@keywords[key]
       end
 

@@ -25,14 +25,16 @@ class CompilerTest < Test::Unit::TestCase
    end
 
 
-   def _test(pdata_str, plogic_str, expected, properties={})
-      s = caller().first
-      s =~ /in `(.*)'/          #'
-      testmethod = $1
-      if testmethod =~ /_(eruby|php|jstl11)$/
-         lang = $1
-      else
-         raise "invalid testmethod name (='#{testmethod}')"
+   def _test(pdata_str, plogic_str, expected, properties={}, lang=nil)
+      if !lang
+         s = caller().first
+         s =~ /in `(.*)'/          #'
+         testmethod = $1
+         if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
+            lang = $1
+         else
+            raise "invalid testmethod name (='#{testmethod}')"
+         end
       end
       return if @flag_suspend
       compiler = Kwartz::Compiler.new(properties)
@@ -87,6 +89,7 @@ END
 END
       _test(@@pdata1, @@plogic1, expected)
    end
+
    def test_compile1_jstl11	# marking
       expected = <<'END'
 <table>
@@ -97,6 +100,8 @@ END
 </c:forEach>
 </table>
 END
+      _test(@@pdata1, @@plogic1, expected)
+      _test(@@pdata1, @@plogic1, expected, {}, 'jstl10')
    end
 
 
@@ -160,6 +165,7 @@ END
 </table>
 END
       _test(@@pdata2, @@plogic2, expected)
+      _test(@@pdata2, @@plogic2, expected, {}, 'jstl10')
    end
 
 
@@ -225,6 +231,7 @@ END
 </table>
 END
       _test(@@pdata3, @@plogic3, expected)
+      _test(@@pdata3, @@plogic3, expected, {}, 'jstl10')
    end
 
 
@@ -327,6 +334,7 @@ END
 </table>
 END
       _test(@@pdata4, @@plogic4, expected)
+      _test(@@pdata4, @@plogic4, expected, {}, 'jstl10')
    end
 
 
@@ -360,6 +368,7 @@ END
 <input name="username" size="30" type="text" id="username" value="<c:out value="${user.name}" escapeXml="false"/>" />
 END
       _test(@@pdata5, @@plogic5, expected)
+      _test(@@pdata5, @@plogic5, expected, {}, 'jstl10')
    end
 
 
@@ -392,6 +401,17 @@ END
    def test_compile6_jstl11	# empty tag and append
       expected = <<'END'
 checkbox:  <input name="chkbox" size="30" type="checkbox" id="chkbox"<c:out value="${flag ? " checked=\"checked\"" : ""}" escapeXml="false"/> />
+END
+      _test(@@pdata6, @@plogic6, expected)
+   end
+
+   def test_compile6_jstl10	# empty tag and append
+      expected = <<'END'
+checkbox:<c:choose><c:when test="${flag}">
+  <input name="chkbox" size="30" type="checkbox" id="chkbox" checked="checked" />
+</c:when><c:otherwise>
+  <input name="chkbox" size="30" type="checkbox" id="chkbox" />
+</c:otherwise></c:choose>
 END
       _test(@@pdata6, @@plogic6, expected)
    end

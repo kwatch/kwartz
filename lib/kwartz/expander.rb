@@ -32,9 +32,9 @@ module Kwartz
                cont_st = elem.cont_stmt
                st = expand(cont_st, elem)
                return st || cont_st
-               #Kwartz::assert(cont_st.token == :block)
+               #Kwartz::assert unless cont_st.token == :block
                #st = expand(cont_st, elem)
-               #Kwartz::assert(st == nil)
+               #Kwartz::assert unless st == nil
                #return const_st
             elsif stmt.type == :etag
                return elem.etag_stmt
@@ -44,10 +44,10 @@ module Kwartz
                   raise ExpantionError.new("'@element(#{stmt.name})': element not found.")
                end
                stmt2 = expand(elem2.plogic, elem2)
-               Kwartz::assert(stmt2 == nil)
+               Kwartz::assert(stmt2._inspect) unless stmt2 == nil
                return elem2.plogic
             else
-               Kwartz::assert(false)
+               Kwartz::assert
             end
          when :print
             return nil
@@ -73,7 +73,7 @@ module Kwartz
             end
             return nil
          end
-         Kwartz::assert(false, "stmt.token == #{stmt.token}")
+         Kwartz::assert("stmt.token == #{stmt.token}")
       end
    end
 

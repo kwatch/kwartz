@@ -10,7 +10,12 @@
 ##	Expression
 ##	   Unary
 ##	   Binary
+##	     Arithmetic
+##	     Assignment
+##	     Logical
+##	     Relational
 ##	   Function
+##	   Method
 ##	   Property
 ##	   Variable
 ##	   Literal
@@ -104,7 +109,7 @@ module Kwartz
    end
 
 
-   ##
+   ## abstract class
    class BinaryExpression < Expression
       def initialize(token, left_expr, right_expr)
          super(token)
@@ -122,6 +127,66 @@ module Kwartz
 
       def accept(visitor, depth=0)
          return visitor.visit_binary_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class ArithmeticExpression < BinaryExpression
+      def initialize(token, left_expr, right_expr)
+         super(token, left_expr, right_expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_arithmetic_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class AssignmentExpression < BinaryExpression
+      def initialize(token, left_expr, right_expr)
+         super(token, left_expr, right_expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_assignment_expression(self, depth)
+      end
+   end
+
+   
+   ##
+   class RelationalExpression < BinaryExpression
+      def initialize(token, left_expr, right_expr)
+         super(token, left_expr, right_expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_relational_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class LogicalExpression < BinaryExpression
+      def initialize(token, left_expr, right_expr)
+         super(token, left_expr, right_expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_logical_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class IndexExpression < BinaryExpression
+      def initialize(token, left_expr, right_expr)
+         super(token, left_expr, right_expr)
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_index_expression(self, depth)
       end
    end
 
@@ -152,29 +217,50 @@ module Kwartz
 
    ##
    class PropertyExpression < Expression
-      def initialize(object_expr, propname, arguments=nil)
+      def initialize(object_expr, propname)
          super('.')
          @object = object_expr
          @propname = propname
-         @arguments = arguments
       end
-      attr_accessor :object, :propname, :arguments
+      attr_accessor :object, :propname
 
       def _inspect(depth=0, s='')
          super(depth, s)
          @object._inspect(depth+1, s)
          indent(depth+1, s)
          s << @propname << "\n"
-         if arguments
-            arguments.each do |expr|
-               expr._inspect(depth+2, s)
-            end
-         end
          return s
       end
 
       def accept(visitor, depth=0)
          return visitor.visit_property_expression(self, depth)
+      end
+   end
+
+
+   ##
+   class MethodExpression < Expression
+      def initialize(receiver_expr, method_name, arguments=[])
+         super('.')
+         @receiver = receiver_expr
+         @method_name = method_name
+         @arguments = arguments
+      end
+      attr_accessor :receiver, :propname, :arguments
+
+      def _inspect(depth=0, s='')
+         super(depth, s)
+         @receiver._inspect(depth+1, s)
+         indent(depth+1, s)
+         s << @method_name << "\n"
+         arguments.each do |expr|
+            expr._inspect(depth+2, s)
+         end
+         return s
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_method_expression(self, depth)
       end
    end
 

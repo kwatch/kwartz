@@ -4,7 +4,6 @@
 ### $Id$
 ###
 
-
 require 'kwartz/exception'
 require 'kwartz/parser'
 require 'kwartz/converter'

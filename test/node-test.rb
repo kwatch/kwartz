@@ -105,16 +105,27 @@ END
 
    ##
    def test_property_expr1
+      expr = PropertyExpression.new(VariableExpression.new('obj'), 'p1')
+      expected = <<END
+.
+  obj
+  p1
+END
+      _test(expr, expected)
+   end
+
+   ##
+   def test_method_expr1
       arguments = [
          StringExpression.new("arg1"),
          VariableExpression.new("arg2"),
          BinaryExpression.new("!=", VariableExpression.new("arg3"), NullExpression.new()),
       ]
-      expr = PropertyExpression.new(VariableExpression.new('obj'), 'p1', arguments)
+      expr = MethodExpression.new(VariableExpression.new('recv'), 'm1', arguments)
       expected = <<END
 .
-  obj
-  p1
+  recv
+  m1
     "arg1"
     arg2
     !=

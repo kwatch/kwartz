@@ -2,8 +2,15 @@
 .?version:	$Rev$
 .?lastupdate:	$Date$
 
+.: 2004-01-29 rev.25
+	.- [enhance] JSTL1.0 support
+	.- [change] new file: todo.txt
+	.- [change] BinaryExpression is now abstract class.
+	.- [change] new class: ArithmeticExpression, AssginmentExpression, RelationalExpression, LogicalExpression, IndexExpression, MethodExpression
+	.- [change] PropertyExpression is divided into PropertyExpression and MethodExpression
+
 .: 2004-01-28 rev.24
-	.- [enhance] new file: translator/jstl.rb
+	.- [enhance] JSTL1.1 support
 
 .: 2004-01-27 rev.23
 	.- [enhance] new file: analyzer.rb, analyzer-test.rb

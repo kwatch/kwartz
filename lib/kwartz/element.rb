@@ -35,7 +35,7 @@ module Kwartz
       end
       
       def self.create_from_taginfo(name, staginfo, etaginfo, body_stmt_list)
-         Kwartz::assert(staginfo[:tagname] == etaginfo[:tagname]) if etaginfo
+         Kwartz::assert unless !etaginfo || staginfo[:tagname] == etaginfo[:tagname]
          tagname      = staginfo[:tagname]
          content      = BlockStatement.new(body_stmt_list)
          attrs        = staginfo[:attr_values]
@@ -59,7 +59,7 @@ module Kwartz
             arguments << StringExpression.new("#{@spaces[0]}<")
             arguments << @tagname
          else
-            Kwartz::assert(false)
+            Kwartz::assert
          end
          @attrs.each do |aname, avalue|
             if @remove && @remove.include?(aname)
@@ -71,7 +71,7 @@ module Kwartz
                arguments << avalue
                arguments << StringExpression.new("\"")
             else
-               Kwartz::assert(false)
+               Kwartz::assert
             end
          end
          @append.each do |expr|
@@ -83,7 +83,7 @@ module Kwartz
       end
       
       def cont_stmt(properties={})
-         #Kwartz::assert(! (@is_empty && @content), @content.inspect)
+         #Kwartz::assert unless @is_empty && @content
          return @content
       end
          
@@ -98,7 +98,7 @@ module Kwartz
             arguments << @tagname
             arguments << StringExpression.new(">#{@space[3]}")
          else
-            Kwartz::assert(false)
+            Kwartz::assert
          end
          return PrintStatement.new(arguments)
       end

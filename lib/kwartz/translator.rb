@@ -133,7 +133,7 @@ module Kwartz
 
         '||'       =>  30,
 
-        '?:'       =>  20,		## don't use '?'
+        '?:'       =>  20,
 
         '='        =>  10,
         '+='       =>  10,
@@ -189,13 +189,13 @@ module Kwartz
       def visit_empty_expression(expr, depth=0)
          t = expr.token
          if t == :empty
-            left  = BinaryExpression.new('==',  expr, NullExpression.new())
+            left  = BinaryExpression.new('==', expr, NullExpression.new())
             right = BinaryExpression.new('==', expr, StringExpression.new(""))
-            expr  = BinaryExpression.new('||',  left, right)
+            expr  = BinaryExpression.new('||', left, right)
          elsif t == :notempty
-            left  = BinaryExpression.new('!=',  expr, NullExpression.new())
+            left  = BinaryExpression.new('!=', expr, NullExpression.new())
             right = BinaryExpression.new('!=', expr, StringExpression.new(""))
-            expr  = BinaryExpression.new('&&',  left, right)
+            expr  = BinaryExpression.new('&&', left, right)
          end
          translate_expr(expr)
          return @code
@@ -203,6 +203,36 @@ module Kwartz
 
       ##
       def visit_binary_expression(expr, depth=0)
+         t = expr.token
+         _translate_expr(expr.left, t)
+         op = keyword(t)
+         @code << op
+         _translate_expr(expr.right, t)
+         return @code
+      end
+      
+      ##
+      def visit_arithmetic_expression(expr, depth=0)
+         return visit_binary_expression(expr, depth)
+      end
+
+      ##
+      def visit_assignment_expression(expr, depth=0)
+         return visit_binary_expression(expr, depth)
+      end
+
+      ##
+      def visit_relational_expression(expr, depth=0)
+         return visit_binary_expression(expr, depth)
+      end
+
+      ##
+      def visit_logical_expression(expr, depth=0)
+         return visit_binary_expression(expr, depth)
+      end
+
+      ##
+      def visit_index_expression(expr, depth=0)
          t = expr.token
          case t
          when '[]'
@@ -215,15 +245,10 @@ module Kwartz
             @code << keyword('[:')
             @code << expr.right.value
             @code << keyword(':]')
-         else
-            _translate_expr(expr.left, t)
-            op = keyword(t)
-            $stderr.puts "*** debug: op=#{op.inspect}, t=#{t.inspect}" if $DEBUG
-            @code << op
-            _translate_expr(expr.right, t)
          end
          return @code
       end
+
 
       ##
       def visit_property_expression(expr, depth=0)
@@ -232,16 +257,22 @@ module Kwartz
          op = keyword(t)
          @code << op
          @code << expr.propname
-         if expr.arguments
-            @code << keyword('(')
-            sep = nil
-            expr.arguments.each do |arg|
-               @code << keyword(sep) if sep
-               sep = ','
-               translate_expression(arg)
-            end
-            @code << keyword(')')
+         return @code
+      end
+      
+      ##
+      def visit_method_expression(expr, depth=0)
+         t = expr.token
+         _translate_expr(expr.receiver, t)
+         op = keyword(t)
+         @code << op
+         @code << expr.method_name
+         @code << keyword('(')
+         expr.arguments.each_with_index do |arg, i|
+            @code << keyword(',') if i > 0
+            translate_expression(arg)
          end
+         @code << keyword(')')
          return @code
       end
 

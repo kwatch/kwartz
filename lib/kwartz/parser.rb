@@ -75,15 +75,6 @@ module Kwartz
          raise SemanticError.new(msg, @scanner.linenum, @scanner.filename)
       end
 
-      def check_token(tkn, msg)
-         syntax_error(msg) unless tkn == token()
-      end
-
-      def check_token2(tkn, msg)
-         check_token(tkn, msg)
-         scan()
-      end
-
 
       ###
       ### expression
@@ -120,7 +111,7 @@ module Kwartz
             if tkn == '('
                scan()
                arguments = parse_arguments()
-               check_token(')', "missing ')' of '#{name}()' (current token='#{tkn}').")
+               syntax_error("missing ')' of '#{name}()' (current token='#{tkn}').") unless token() == ')'
                scan()
                return FunctionExpression.new(name, arguments)
             else
@@ -129,11 +120,11 @@ module Kwartz
          elsif tkn == '('
             scan()
             expr = parse_expression()
-            check_token(')', "')' expected ('(' is not closed by ')').")
+            syntax_error("')' expected ('(' is not closed by ')').") unless token() == ')'
             scan()
             return expr
          else
-            Kwartz::assert(false, "tkn == #{tkn}")
+            Kwartz::assert("tkn == #{tkn}")
          end
       end
 
@@ -164,13 +155,13 @@ module Kwartz
          when :empty
             syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
          end
-         Kwartz::assert(false, "tkn = #{token}")
+         Kwartz::assert("tkn = #{token}")
       end
 
 
       ##
       ## BNF:
-      ##  factor       ::=  literal | item | item '[' expression ']' | item '[:' name ']' | item '.' property
+      ##  factor       ::=  literal | item | item '[' expression ']' | item '[:' name ']' | item '.' property | item '.' method '(' [ arguments ] ')'
       ##
       def parse_factor_expr
          tkn = token()
@@ -180,31 +171,33 @@ module Kwartz
             if token() == '['
                scan()
                expr2 = parse_expression()
-               check_token(']', "']' expected ('[' is not closed by ']').")
+               syntax_error("']' expected ('[' is not closed by ']').") unless token() == ']'
                scan()
-               return BinaryExpression.new('[]', expr, expr2)
+               return IndexExpression.new('[]', expr, expr2)
             elsif token() == '[:'
                scan()
                word = value()
-               check_token(:name, "'#{tkn}': '[:' requires a word following.")
+               syntax_error("'#{tkn}': '[:' requires a word following.") unless token() == :name
+               tkn = scan()
+               syntax_error("'[:' is not closed by ']'.") unless tkn == ']'
                scan()
-               check_token(']', "'[:' is not closed by ']'.")
-               scan()
-               return BinaryExpression.new('[:]', expr, StringExpression.new(word))
+               return IndexExpression.new('[:]', expr, StringExpression.new(word))
             elsif token() == '.'
                scan()
-               prop_name = value()
-               check_token(:name, "'#{tkn}': '.' requires a property name following.")
+               name = value()
+               syntax_error("'#{tkn}': '.' requires a property or method name following.") unless token() == :name
                scan()
                if token() == '('
+                  method_name = name
                   scan()
                   arguments = parse_arguments()
-                  check_token(')', "')' expected (property '#{prop_name}()' is not closed by ')').")
+                  syntax_error("')' expected (method '#{method_name}()' is not closed by ')').") unless token() == ')'
                   scan()
+                  return MethodExpression.new(expr, method_name, arguments)
                else
-                  arguments = nil
+                  prop_name = name
+                  return PropertyExpression.new(expr, prop_name)
                end
-               return PropertyExpression.new(expr, prop_name, arguments)
             else
                return expr
             end
@@ -245,7 +238,7 @@ module Kwartz
          while (tkn = token()) == '*' || tkn == '/' || tkn == '%'
             scan()
             expr2 = parse_factor_expr()
-            expr = BinaryExpression.new(tkn, expr, expr2)
+            expr = ArithmeticExpression.new(tkn, expr, expr2)
          end
          return expr
       end
@@ -261,7 +254,7 @@ module Kwartz
          while (tkn = token()) == '+' || tkn == '-' || tkn == '.+'
             scan()
             expr2 = parse_term_expr()
-            expr = BinaryExpression.new(tkn, expr, expr2)
+            expr = ArithmeticExpression.new(tkn, expr, expr2)
          end
          return expr
       end
@@ -269,11 +262,11 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  compare-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
-      ##  compare      ::=  arith | arith compare-op arith | arith '==' 'empty' | arith '!=' 'empty'
-      ##               ::=  arith [ compare-op arith ] | arith ('==' | '!=') 'empty'
+      ##  relational-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
+      ##  relational      ::=  arith | arith relational-op arith | arith '==' 'empty' | arith '!=' 'empty'
+      ##                  ::=  arith [ relational-op arith ] | arith ('==' | '!=') 'empty'
       ##
-      def parse_compare_expr
+      def parse_relational_expr
          expr = parse_arith_expr()
          while (op = token()) == '==' || op == '!=' || op == '>' || op == '>=' || op == '<' || op == '<='
             scan()
@@ -289,7 +282,7 @@ module Kwartz
                end
             else
                expr2 = parse_arith_expr()
-               expr = BinaryExpression.new(op, expr, expr2)
+               expr = RelationalExpression.new(op, expr, expr2)
             end
          end
          return expr
@@ -298,15 +291,15 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  logical-and  ::=  compare | logical-and '&&' compare
-      ##               ::=  compare { '&&' compare }
+      ##  logical-and  ::=  relational | logical-and '&&' relational
+      ##               ::=  relational { '&&' relational }
       ##
       def parse_logical_and_expr
-         expr = parse_compare_expr()
+         expr = parse_relational_expr()
          while (op = token()) == '&&'
             scan()
-            expr2 = parse_compare_expr()
-            expr = BinaryExpression.new(op, expr, expr2)
+            expr2 = parse_relational_expr()
+            expr = LogicalExpression.new(op, expr, expr2)
          end
          return expr
       end
@@ -322,7 +315,7 @@ module Kwartz
          while (op = token()) == '||'
             scan()
             expr2 = parse_logical_and_expr()
-            expr = BinaryExpression.new(op, expr, expr2)
+            expr = LogicalExpression.new(op, expr, expr2)
          end
          return expr
       end
@@ -338,7 +331,7 @@ module Kwartz
          if token() == '?'
             scan()
             expr2 = parse_expression()
-            check_token(':', "':' expected ('?' requires ':').")
+            syntax_error("':' expected ('?' requires ':').") unless token() == ':'
             scan()
             expr3 = parse_conditional_expr()
             expr = ConditionalExpression.new(expr, expr2, expr3)
@@ -354,14 +347,29 @@ module Kwartz
       ##
       def parse_assignment_expr
          expr = parse_conditional_expr()
-         while (op = token()) == '=' || op == '+=' || op == '-=' || op == '*=' || op == '/=' || op == '%=' || op == '.+='
+         op = token()
+         if op == '=' || op == '+=' || op == '-=' || op == '*=' || op == '/=' || op == '%=' || op == '.+='
+            unless lhs?(expr)
+               semantic_error("invalid assignment.")
+            end
             scan()
             expr2 = parse_assignment_expr()
-            expr = BinaryExpression.new(op, expr, expr2)
+            expr = AssignmentExpression.new(op, expr, expr2)
          end
          return expr
       end
 
+      def lhs?(expr)
+         case expr.token
+         when :variable, '[]', '[:]'
+            return true
+         when '.'
+            return expr.is_a?(PropertyExpression)
+         else
+            return false
+         end
+      end
+      
 
       ##
       ## BNF:
@@ -376,14 +384,14 @@ module Kwartz
       ##  print-stmt   ::=  'print' '(' arguments ')' ';'
       ##  
       def parse_print_stmt()
-         Kwartz::assert(token() == :print)
+         Kwartz::assert unless token() == :print
          tkn = scan()
-         check_token('(', "print-statement requires '('.") unless tkn != '('
+         syntax_error("print-statement requires '('.") unless tkn == '('
          scan()
          arguments = parse_arguments()
-         check_token(')', "print-statement requires ')'.") unless token() != ')'
+         syntax_error("print-statement requires ')'.") unless token() == ')'
          tkn = scan()
-         check_token(';', "print-statement requires ';'.") unless tkn != ';'
+         syntax_error("print-statement requires ';'.") unless tkn == ';'
          scan()
          return PrintStatement.new(arguments)
       end
@@ -394,7 +402,7 @@ module Kwartz
       ##  
       def parse_expr_stmt()
          expr = parse_expression()
-         check_token(';', "expression-statement requires ';'.") unless token() != ';'
+         syntax_error("expression-statement requires ';'.") unless token() == ';'
          scan()
          return ExprStatement.new(expr)
       end
@@ -412,18 +420,18 @@ module Kwartz
       ##                    [ 'else' statement ]
       ##
       def parse_if_stmt()
-         Kwartz::assert(token() == :if || token() == :elseif)
+         Kwartz::assert unless token() == :if || token() == :elseif
          tkn = scan()
-         check_token('(', "if-statement requires '('.") unless tkn == '('
+         syntax_error("if-statement requires '('.") unless tkn == '('
          scan()
          cond_expr = parse_expression()
-         check_token(')', "if-statement requires ')'.") unless tkn == ')'
+         syntax_error("if-statement requires ')'.") unless token() == ')'
          scan()
          then_body = parse_statement()
          if token() == :elseif
             scan()
             tkn = scan()
-            check_token('(', "elseif-statement requires ')'.") unless tkn == '('
+            syntax_error("elseif-statement requires ')'.") unless tkn == '('
             scan()
             else_body = parse_if_stmt()
          elsif token() == :else
@@ -440,18 +448,18 @@ module Kwartz
       ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
       ##  
       def parse_foreach_stmt()
-         Kwartz::assert(token() == :foreach)
+         Kwartz::assert unless token() == :foreach
          tkn = scan()
-         check_token('(', "foreach-statement requires '('.") unless tkn == '('
+         syntax_error("foreach-statement requires '('.") unless tkn == '('
          scan()
          loopvar_expr = parse_expression()
          unless loopvar_expr.token() == :variable
             raise syntax_error("foreach-statement requires loop-variable but got '#{tkn}'.")
          end
-         check_token(:in, "foreach-statement requires 'in' but got '#{tkn}'.") unless token() == :in
+         syntax_error("foreach-statement requires 'in' but got '#{tkn}'.") unless token() == :in
          scan()
          list_expr = parse_expression()
-         check_token(')', "foreach-statement requires ')'.") unless tkn == ')'
+         syntax_error("foreach-statement requires ')'.") unless token() == ')'
          scan()
          body_stmt = parse_statement()
          return ForeachStatement.new(loopvar_expr, list_expr, body_stmt)
@@ -462,12 +470,12 @@ module Kwartz
       ##  while-stmt   ::=  'while' '(' expression ')' statement
       ##
       def parse_while_stmt()
-         Kwartz::assert(token() == :while)
+         Kwartz::assert unless token() == :while
          tkn = scan()
-         check_token('(', "while-statement requires '('") unless tkn == '('
+         syntax_error("while-statement requires '('") unless tkn == '('
          scan()
          cond_expr = parse_expression()
-         check_token(')', "while-statement requires ')'") unless token() == ')'
+         syntax_error("while-statement requires ')'") unless token() == ')'
          scan()
          body_stmt = parse_statement()
          return WhileStatement.new(cond_expr, body_stmt)
@@ -478,7 +486,7 @@ module Kwartz
       ##  @stag,  @cont,  @etag,  @element(name)
       ##
       def parse_expand_stmt()
-         Kwartz::assert(token() == '@')
+         Kwartz::assert unless token() == '@'
          type = value()
          stmt = nil
          case type
@@ -486,17 +494,17 @@ module Kwartz
             name = nil
          when 'element'
             tkn = scan()
-            check_token('(', "@element() requires '('.") unless tkn == '('
+            syntax_error("@element() requires '('.") unless tkn == '('
             tkn = scan()
-            check_token(:name, "@element() requires an element name.") unless tkn == :name
+            syntax_error("@element() requires an element name.") unless tkn == :name
             name = value()
             tkn = scan()
-            check_token(')', "@element() requires ')'.") unless tkn == ')'
+            syntax_error("@element() requires ')'.") unless tkn == ')'
          else
             syntax_error("'@' should be '@stag', '@cont', '@etag', or '@element(name)'.")
          end
          tkn = scan()
-         check_token(';', "@#{type} requires ';'.") unless tkn == ';'
+         syntax_error("@#{type} requires ';'.") unless tkn == ';'
          scan()
          return ExpandStatement.new(type.intern, name)
       end
@@ -519,10 +527,10 @@ module Kwartz
       ##  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
       ##
       def parse_block_stmt()
-         Kwartz::assert(token() == '{')
+         Kwartz::assert unless token() == '{'
          scan()
          stmt_list = parse_stmt_list()
-         check_token('}', "block-statement requires '}'.") unless token() != '}'
+         syntax_error("block-statement requires '}'.") unless token() == '}'
          scan()
          return BlockStatement.new(stmt_list)
       end
@@ -575,7 +583,7 @@ module Kwartz
             elem_decl = parse_element_decl()
             elem_decl_list << elem_decl
          end
-         check_token(nil, "plogic is not ended.") unless token() == nil
+         syntax_error("plogic is not ended.") unless token() == nil
          return elem_decl_list
       end
       
@@ -585,15 +593,15 @@ module Kwartz
       ## sub-decl      ::= value-decl | attr-decl | append-decl | remove-decl | tagname-decl | plogic-decl
       ##
       def parse_element_decl()
-         Kwartz::assert(token() == '#')
+         Kwartz::assert unless token() == '#'
          tkn = scan()
-         check_token(:name, "'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
+         syntax_error("'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
          marking = value()
          tkn = scan()
-         check_token('{', "'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
+         syntax_erro("'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
          scan()
          hash = parse_sub_decl_list()
-         check_token('}', "'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
+         syntax_erro("'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
          scan()
          return ElementDeclaration.create_from_hash(marking, hash)
       end
@@ -634,14 +642,14 @@ module Kwartz
       ##  value_dec  ::= 'value:' [ expression ] ';'
       ##
       def parse_value_decl()
-         Kwartz::assert(token() == :value)
+         Kwartz::assert unless token() == :value
          tkn = scan()
          if tkn == ';'
             scan()
             return nil
          end
          expr = parse_expression()
-         check_token(';', "value-declaration requires ';'.") unless token() == ';'
+         syntax_error("value-declaration requires ';'.") unless token() == ';'
          scan()
          return expr
       end
@@ -650,7 +658,7 @@ module Kwartz
       ##  attr_decl ::= 'attr:' [ string expression { ',' string expression } ] ';'
       ##
       def parse_attr_decl()
-         Kwartz::assert(token() == :attr)
+         Kwartz::assert unless token() == :attr
          attrs = {}
          tkn = scan()
          if tkn == ';'
@@ -659,14 +667,14 @@ module Kwartz
          end
          while true
             aname_expr = parse_expression()
-            check_token(:string, "attr-declaration requires attribute names as string.") unless aname_expr.token == :string
+            syntax_error("attr-declaration requires attribute names as string.") unless aname_expr.token == :string
             aname = aname_expr.value
             avalue_expr = parse_expression()
             attrs[aname] = avalue_expr
             break if token() != ','
             scan()
          end
-         check_token(';', "attr-declaration requires ';'.") unless token() == ';'
+         syntax_error("attr-declaration requires ';'.") unless token() == ';'
          scan()
          return attrs
       end
@@ -675,7 +683,7 @@ module Kwartz
       ## append_decl ::= 'append:' [ expression ] ';'
       ##
       def parse_append_decl()
-         Kwartz::assert(token() == :append)
+         Kwartz::assert unless token() == :append
          list = []
          tkn = scan()
          if tkn == ';'
@@ -688,7 +696,7 @@ module Kwartz
             break if token() != ','
             scan()
          end
-         check_token(';', "append-declaration requires ';'.") unless token() == ';'
+         syntax_error("append-declaration requires ';'.") unless token() == ';'
          scan()
          return list
       end
@@ -698,11 +706,11 @@ module Kwartz
       ##
       def parse_remove_decl()
          list = []
-         Kwartz::assert(token() == :remove)
+         Kwartz::assert unless token() == :remove
          while (tkn = scan()) == :string
             list << value()
          end
-         check_token(';', "append-declaration requires ';'.") unless token() == ';'
+         syntax_error("append-declaration requires ';'.") unless token() == ';'
          scan()
          return list
       end
@@ -711,14 +719,14 @@ module Kwartz
       ## tagname_decl ::= 'tagname:' [ expression ] ';'
       ##
       def parse_tagname_decl()
-         Kwartz::assert(token() == :tagname)
+         Kwartz::assert unless token() == :tagname
          tkn = scan()
          if tkn == ';'
             scan()
             return nil
          end
          expr = parse_expression()
-         check_token(';', "tagname-declaration requires ';'.") unless token() == ';'
+         syntax_error("tagname-declaration requires ';'.") unless token() == ';'
          scan()
          return expr
       end
@@ -727,9 +735,9 @@ module Kwartz
       ## plogic_decl ::= 'plogic:' block-stmt
       ##
       def parse_plogic_decl()
-         Kwartz::assert(token() == :plogic)
+         Kwartz::assert unless token() == :plogic
          tkn = scan()
-         check_token('{', "plogic-declaration requires '{'.") unless tkn == '{'
+         syntax_error("plogic-declaration requires '{'.") unless tkn == '{'
          block_stmt = parse_block_stmt()
          return block_stmt
       end
@@ -741,7 +749,7 @@ module Kwartz
 
       def parse_program()
          stmt_list = parse_stmt_list()
-         token_check(nil, "EOF expected but '#{token()}'.") unless token() == nil
+         syntax_error("EOF expected but '#{token()}'.") unless token() == nil
          #return stmt_list
          return BlockStatement.new(stmt_list)
       end

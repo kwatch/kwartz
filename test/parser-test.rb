@@ -96,7 +96,7 @@ END
    def test_parse_item_expr3
       input = "(x + y)"
       expected = "+\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
    
    ##
@@ -151,29 +151,32 @@ END
    def test_parse_factor_expr2
       input = "x[i+1]"
       expected = "[]\n  x\n  +\n    i\n    1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, IndexExpression)
    end
 
    def test_parse_factor_expr3
       input = "x[:key]"
       expected = "[:]\n  x\n  \"key\"\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, IndexExpression)
    end
 
    def test_parse_factor_expr4
       input = "x.prop"
       expected = ".\n  x\n  prop\n"
       _test(input, expected, PropertyExpression)
-      input = "x.prop(a, b)"
-      expected = ".\n  x\n  prop\n    a\n    b\n"
-      _test(input, expected, PropertyExpression)
+   end
+
+   def test_parse_factor_expr5
+      input = "x.m1(a, b)"
+      expected = ".\n  x\n  m1\n    a\n    b\n"
+      _test(input, expected, MethodExpression)
    end
 
    ##
    def test_parse_term_expr1
       input = "x * y"
       expected = "*\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
 
    def test_parse_term_expr2
@@ -187,7 +190,7 @@ END
     c
   d
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
 
    ##
@@ -213,7 +216,7 @@ END
    def test_parse_arith_expr1
       input = "x + y"
       expected = "+\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
 
    def test_parse_arith_expr2
@@ -227,7 +230,7 @@ END
     c
   d
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
 
    def test_parse_arith_expr3
@@ -244,7 +247,7 @@ END
     d
     e
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
 
    def test_parse_arith_expr4
@@ -256,28 +259,28 @@ END
    end
 
    ##
-   def test_parse_compare_expr1
+   def test_parse_relational_expr1
       input = "x == y"
       expected = "==\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
       input = "x != y"
       expected = "!=\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
       input = "x > y"
       expected = ">\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
       input = "x >= y"
       expected = ">=\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
       input = "x < y"
       expected = "<\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
       input = "x <= y"
       expected = "<=\n  x\n  y\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
    end
 
-   def test_parse_compare_expr2
+   def test_parse_relational_expr2
       input = "x + y <= x * y"
       expected = <<'END'
 <=
@@ -288,10 +291,10 @@ END
     x
     y
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, RelationalExpression)
    end
 
-   def test_parse_compare_expr3
+   def test_parse_relational_expr3
       input = "x == empty"
       expected = "empty\n  x\n"
       _test(input, expected, EmptyExpression)
@@ -300,7 +303,7 @@ END
       _test(input, expected, EmptyExpression)
    end
 
-   def test_parse_compare_expr4
+   def test_parse_relational_expr4
       input = "x > empty"
       expected = ""
       assert_raise(Kwartz::SyntaxError) do
@@ -320,7 +323,7 @@ END
     x
     10
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, LogicalExpression)
    end
 
    ##
@@ -335,7 +338,7 @@ END
     10
     x
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, LogicalExpression)
    end
 
    def test_parse_logical_or_expr2
@@ -352,7 +355,7 @@ END
       10
       x
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, LogicalExpression)
    end
 
    ##
@@ -391,22 +394,22 @@ END
    def test_parse_assignment_expr1
       input = "x = 1"
       expected = "=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
       input = "x += 1"
       expected = "+=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
       input = "x -= 1"
       expected = "-=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
       input = "x *= 1"
       expected = "*=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
       input = "x /= 1"
       expected = "/=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
       input = "x .+= 1"
       expected = ".+=\n  x\n  1\n"
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
    end
 
    def test_parse_assignment_expr2
@@ -420,7 +423,7 @@ END
       z
       null
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
    end
 
    ##
@@ -440,7 +443,7 @@ END
       y
       1
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, AssignmentExpression)
    end
 
 end
@@ -537,7 +540,12 @@ END
         2
         3
 END
+      begin
+      $DEBUG = true
       _test(input, expected, ExprStatement)
+      ensure
+      $DEBUG = false
+      end
    end
 
 
@@ -1008,7 +1016,7 @@ class ParseDeclarationTest < Test::Unit::TestCase
     user
     email
 END
-      _test(input, expected, BinaryExpression)
+      _test(input, expected, ArithmeticExpression)
    end
    
    

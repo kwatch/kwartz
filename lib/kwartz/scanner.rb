@@ -126,7 +126,7 @@ module Kwartz
             return @token
          end
 
-         Kwartz::assert(false)
+         Kwartz::assert
       end
 
 
@@ -203,7 +203,7 @@ module Kwartz
 
 
       def scan_line()
-         Kwartz::assert(@line != nil)
+         Kwartz::assert unless @line != nil
 
          ch = current_char()
          if ch == nil
@@ -474,7 +474,7 @@ module Kwartz
                end
             end
          end
-         Kwartz::assert(false)
+         Kwartz::assert
       end
 
    end  # end of class RubyScanner

@@ -33,7 +33,7 @@ class TranslatorTest < Test::Unit::TestCase
       s = caller()[1]
       s =~ /in `(.*)'/          #'
       testmethod = $1
-      if testmethod =~ /_(eruby|php|jstl11)$/
+      if testmethod =~ /_(eruby|php|jstl11|jstl10)$/
          lang = $1
       else
          raise "invalid testmethod name (='#{testmethod}')"
@@ -56,6 +56,122 @@ class TranslatorTest < Test::Unit::TestCase
 
 
    ## ======================================== expression
+
+   ## ---------------------------- literal
+   @@literal1 = '1'
+   def test_literal1_eruby
+      expected = '1'
+      _test_expr(@@literal1, expected)
+   end
+   def test_literal1_php
+      expected = '1'
+      _test_expr(@@literal1, expected)
+   end
+   def test_literal1_jstl11
+      expected = '1'
+      _test_expr(@@literal1, expected)
+   end
+   def test_literal1_jstl10
+      expected = '1'
+      _test_expr(@@literal1, expected)
+   end
+
+
+   @@literal2 = '"str\'s\r\n"'
+   def test_literal2_eruby
+      expected = '"str\'s\r\n"'
+      _test_expr(@@literal2, expected)
+   end
+   def test_literal2_php
+      expected = '"str\'s\r\n"'
+      _test_expr(@@literal2, expected)
+   end
+   def test_literal2_jstl11
+      expected = '"str\'s\r\n"'
+      _test_expr(@@literal2, expected)
+   end
+   def test_literal2_jstl10
+      expected = '"str\'s\r\n"'
+      _test_expr(@@literal2, expected)
+   end
+
+
+#   #@@literal3 = "'str" + '\' + "'s\"\r\n'"
+#   @@literal3 = %Q|'str\\\'s\r\n'|
+#   def test_literal3_eruby
+#      expected = '"str\'s\"\r\n"'
+#      _test_expr(@@literal3, expected)
+#   end
+#   def test_literal3_php
+#      expected = '"str\'s\"\r\n"'
+#      _test_expr(@@literal3, expected)
+#   end
+#   def test_literal3_jstl11
+#      expected = '"str\'s\"\r\n"'
+#      _test_expr(@@literal3, expected)
+#   end
+#   def test_literal3_jstl10
+#      expected = '"str\'s\"\r\n"'
+#      _test_expr(@@literal3, expected)
+#   end
+
+   @@literal4 = "true"
+   def test_literal4_eruby
+      expected = "true"
+      _test_expr(@@literal4, expected)
+   end
+   def test_literal4_php
+      expected = "TRUE"
+      _test_expr(@@literal4, expected)
+   end
+   def test_literal4_jstl11
+      expected = "true"
+      _test_expr(@@literal4, expected)
+   end
+   def test_literal4_jstl10
+      expected = "true"
+      _test_expr(@@literal4, expected)
+   end
+
+
+   @@literal5 = "false"
+   def test_literal5_eruby
+      expected = "false"
+      _test_expr(@@literal5, expected)
+   end
+   def test_literal5_php
+      expected = "FALSE"
+      _test_expr(@@literal5, expected)
+   end
+   def test_literal5_jstl11
+      expected = "false"
+      _test_expr(@@literal5, expected)
+   end
+   def test_literal5_jstl10
+      expected = "false"
+      _test_expr(@@literal5, expected)
+   end
+
+
+   @@literal6 = "null"
+   def test_literal6_eruby
+      expected = "nil"
+      _test_expr(@@literal6, expected)
+   end
+   def test_literal6_php
+      expected = "NULL"
+      _test_expr(@@literal6, expected)
+   end
+   def test_literal6_jstl11
+      expected = "null"
+      _test_expr(@@literal6, expected)
+   end
+   def test_literal6_jstl10
+      expected = "null"
+      _test_expr(@@literal6, expected)
+   end
+
+
 
    ## ---------------------------- unary, binary
 
@@ -299,33 +415,191 @@ class TranslatorTest < Test::Unit::TestCase
    ## ---------------------------- expression statement
 
    @@expr_stmt1 = "a = 1;"
-   def test_expr_stmt1_eruby
+   def test_expr_stmt1_eruby	# numeric
       expected = "<% a = 1 %>\n"
       _test_stmt(@@expr_stmt1, expected)
    end
-   def test_expr_stmt1_php
+   def test_expr_stmt1_php	# numeric
       expected = "<?php $a = 1; ?>\n"
       _test_stmt(@@expr_stmt1, expected)
    end
-   def test_expr_stmt1_jstl11
+   def test_expr_stmt1_jstl11	# numeric
+      expected = '<c:set var="a" value="1"/>' + "\n"
+      _test_stmt(@@expr_stmt1, expected)
+   end
+   def test_expr_stmt1_jstl10	# numeric
       expected = '<c:set var="a" value="1"/>' + "\n"
       _test_stmt(@@expr_stmt1, expected)
    end
 
 
-   @@epxr_stmt2 = "a[i] += x>y ? x : y;"
-   def test_expr_stmt2_eruby
-      expected = "<% a[i] += x > y ? x : y %>\n"
-      _test_stmt(@@epxr_stmt2, expected)
+   @@expr_stmt2 = 's = "foo";'
+   def test_expr_stmt2_eruby	# string
+      expected = "<% s = \"foo\" %>\n"
+      _test_stmt(@@expr_stmt2, expected)
    end
-   def test_expr_stmt2_php
-      expected = "<?php $a[$i] += $x > $y ? $x : $y; ?>\n"
-      _test_stmt(@@epxr_stmt2, expected)
+   def test_expr_stmt2_php	# string
+      expected = "<?php $s = \"foo\"; ?>\n"
+      _test_stmt(@@expr_stmt2, expected)
    end
-   def test_expr_stmt2_jstl11		# NOT GOOD
-      expected = '<c:set var="a[i]" value="${a[i] + (x gt y ? x : y)}"/>' + "\n"
-      _test_stmt(@@epxr_stmt2, expected)
+   def test_expr_stmt2_jstl11	# string
+      expected = '<c:set var="s" value="foo"/>' + "\n"
+      _test_stmt(@@expr_stmt2, expected)
    end
+   def test_expr_stmt2_jstl10	# string
+      expected = '<c:set var="s" value="foo"/>' + "\n"
+      _test_stmt(@@expr_stmt2, expected)
+   end
+
+
+   @@expr_stmt3 = 'v *= a[i]+1;'
+   def test_expr_stmt3_eruby	# *=
+      expected = "<% v *= a[i] + 1 %>\n"
+      _test_stmt(@@expr_stmt3, expected)
+   end
+   def test_expr_stmt3_php	# *=
+      expected = "<?php $v *= $a[$i] + 1; ?>\n"
+      _test_stmt(@@expr_stmt3, expected)
+   end
+   def test_expr_stmt3_jstl11	# *=
+      expected = '<c:set var="v" value="${v * (a[i] + 1)}"/>' + "\n"
+      _test_stmt(@@expr_stmt3, expected)
+   end
+   def test_expr_stmt3_jstl10	# *=
+      expected = '<c:set var="v" value="${v * (a[i] + 1)}"/>' + "\n"
+      _test_stmt(@@expr_stmt3, expected)
+   end
+
+
+   @@epxr_stmt4 = "max = x>y ? x : y;"
+   def test_expr_stmt4_eruby	# conditinal expr
+      expected = "<% max = x > y ? x : y %>\n"
+      _test_stmt(@@epxr_stmt4, expected)
+   end
+   def test_expr_stmt4_php	# conditinal expr
+      expected = "<?php $max = $x > $y ? $x : $y; ?>\n"
+      _test_stmt(@@epxr_stmt4, expected)
+   end
+   def test_expr_stmt4_jstl11
+      expected = '<c:set var="max" value="${x gt y ? x : y}"/>' + "\n"
+      _test_stmt(@@epxr_stmt4, expected)
+   end
+   def test_expr_stmt4_jstl10
+      expected = <<'END'
+<c:choose><c:when test="${x gt y}">
+  <c:set var="max" value="${x}"/>
+</c:when><c:otherwise>
+  <c:set var="max" value="${y}"/>
+</c:otherwise></c:choose>
+END
+      _test_stmt(@@epxr_stmt4, expected)
+   end
+
+
+   @@epxr_stmt5 = "max = x>y ? x : y;"
+   def test_expr_stmt5_eruby	# conditinal expr
+      expected = "<% max = x > y ? x : y %>\n"
+      _test_stmt(@@epxr_stmt5, expected)
+   end
+   def test_expr_stmt5_php	# conditinal expr
+      expected = "<?php $max = $x > $y ? $x : $y; ?>\n"
+      _test_stmt(@@epxr_stmt5, expected)
+   end
+   def test_expr_stmt5_jstl11
+      expected = '<c:set var="max" value="${x gt y ? x : y}"/>' + "\n"
+      _test_stmt(@@epxr_stmt5, expected)
+   end
+   def test_expr_stmt5_jstl10
+      expected = <<'END'
+<c:choose><c:when test="${x gt y}">
+  <c:set var="max" value="${x}"/>
+</c:when><c:otherwise>
+  <c:set var="max" value="${y}"/>
+</c:otherwise></c:choose>
+END
+      _test_stmt(@@epxr_stmt5, expected)
+   end
+
+
+   @@epxr_stmt6 = "map[:key] = value;"
+   def test_expr_stmt6_eruby	# map[:key] = value
+      expected = "<% map[:key] = value %>\n"
+      _test_stmt(@@epxr_stmt6, expected)
+   end
+   def test_expr_stmt6_php	# map[:key] = value
+      expected = "<?php $map['key'] = $value; ?>\n"
+      _test_stmt(@@epxr_stmt6, expected)
+   end
+   def test_expr_stmt6_jstl11	# map[:key] = value
+      expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt6, expected)
+   end
+   def test_expr_stmt6_jstl10	# map[:key] = value
+      expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt6, expected)
+   end
+
+
+   @@epxr_stmt7 = "map['key'] = value;"
+   def test_expr_stmt7_eruby	# map['key'] = value
+      expected = "<% map[\"key\"] = value %>\n"
+      _test_stmt(@@epxr_stmt7, expected)
+   end
+   def test_expr_stmt7_php	# map['key'] = value
+      expected = "<?php $map[\"key\"] = $value; ?>\n"
+      _test_stmt(@@epxr_stmt7, expected)
+   end
+   def test_expr_stmt7_jstl11	# map['key'] = value
+      expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt7, expected)
+   end
+   def test_expr_stmt7_jstl10	# map['key'] = value
+      expected = '<c:set var="map" property="key" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt7, expected)
+   end
+
+
+   @@epxr_stmt8 = "map[key] = value;"
+   def test_expr_stmt8_eruby	# map[key] = value
+      expected = "<% map[key] = value %>\n"
+      _test_stmt(@@epxr_stmt8, expected)
+   end
+   def test_expr_stmt8_php	# map[key] = value
+      expected = "<?php $map[$key] = $value; ?>\n"
+      _test_stmt(@@epxr_stmt8, expected)
+   end
+   def test_expr_stmt8_jstl11	# map[key] = value
+      expected = ""
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@epxr_stmt8, expected)
+      end
+   end
+   def test_expr_stmt8_jstl10	# map[key] = value
+      expected = ""
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@epxr_stmt8, expected)
+      end
+   end
+
+
+   @@epxr_stmt9 = "obj.prop = value;"
+   def test_expr_stmt9_eruby	# map[:key] = value
+      expected = "<% obj.prop = value %>\n"
+      _test_stmt(@@epxr_stmt9, expected)
+   end
+   def test_expr_stmt9_php	# map[:key] = value
+      expected = "<?php $obj->prop = $value; ?>\n"
+      _test_stmt(@@epxr_stmt9, expected)
+   end
+   def test_expr_stmt9_jstl11	# map[:key] = value
+      expected = '<c:set var="obj" property="prop" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt9, expected)
+   end
+   def test_expr_stmt9_jstl10	# map[:key] = value
+      expected = '<c:set var="obj" property="prop" value="${value}"/>' + "\n"
+      _test_stmt(@@epxr_stmt9, expected)
+   end
+
 
 
    ## ---------------------------- print statement
@@ -619,6 +893,12 @@ END
       end
    end
    def test_expand_stmt1_jstl11
+      expected = ''
+      assert_raise(Kwartz::TranslationError) do
+         _test_stmt(@@expand_stmt1, expected)
+      end
+   end
+   def test_expand_stmt1_jstl10
       expected = ''
       assert_raise(Kwartz::TranslationError) do
          _test_stmt(@@expand_stmt1, expected)

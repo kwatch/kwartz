@@ -124,7 +124,7 @@ module Kwartz
          @warnings.each do |warn|
             cause = warn[0];  name = warn[1]
             message = @@warning_messages[cause]
-            Kwartz::assert(message != nil, "cause = #{cause}")
+            Kwartz::assert("cause = #{cause}") unless message != nil
             s << "Warning: #{message % name}\n"
          end
          return s
@@ -133,8 +133,17 @@ module Kwartz
       ## --------------------
 
       def visit_binary_expression(expr, depth=0)
-         case expr.token
-         when '='
+         analyze_expression(expr.left, depth+1)    # left first
+         analyze_expression(expr.right, depth+1)
+      end
+      
+      alias :visit_arithmetic_expression :visit_binary_expression
+      alias :visit_relational_expression :visit_binary_expression
+      alias :visit_logical_expression    :visit_binary_expression
+      alias :visit_index_expression      :visit_binary_expression
+      
+      def visit_assignment_expression(expr, depth=0)
+         if expr.token == '='
             analyze_expression(expr.right, depth+1)  # right first
             if expr.left.is_a?(VariableExpression)
                var_expr = expr.left
@@ -147,19 +156,17 @@ module Kwartz
             else
                analyze_expression(expr.left, depth+1)
             end
-         when '+=', '-=', '*=', '/=', '%=', '.+='
+         else
             analyze_expression(expr.right, depth+1)   # right first
             analyze_expression(expr.left, depth+1)
             if expr.left.is_a?(VariableExpression) && global?(expr.left)
                #@warnings << "assignment into a global variable '#{expr.left.name}'."
                add_warning(:gvar_assign, expr.left.name)
             end
-         else
-            analyze_expression(expr.left, depth+1)    # left first
-            analyze_expression(expr.right, depth+1)
          end
       end
-
+      
+      
       @@func_names = {
          'list_new'    => true,
          'list_length' => true,
@@ -190,21 +197,13 @@ module Kwartz
          add_global(var_expr) unless registered?(var_expr)
       end
 
-      def visit_numeric_expression(expr, depth=0)
+      def visit_literal_expression(expr, depth=0)
          # nothing
       end
-
-      def visit_string_expression(expr, depth=0)
-         # nothing
-      end
-
-      def visit_boolean_expression(expr, depth=0)
-         # nothing
-      end
-
-      def visit_null_expression(expr, depth=0)
-         # nothing
-      end
+      alias :visit_numeric_expression :visit_literal_expression
+      alias :visit_string_expression :visit_literal_expression
+      alias :visit_boolean_expression :visit_literal_expression
+      alias :visit_null_expression :visit_literal_expression
 
       def visit_foreach_statement(stmt, depth=0)
          analyze_expression(stmt.list_expr())

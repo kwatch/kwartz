@@ -54,10 +54,8 @@ module Kwartz
    end
    
    ## assertion
-   def self.assert(condition, message='')
-      unless condition
-         raise AssertionError.new(message)
-      end
+   def self.assert(message='')
+      raise AssertionError.new(message)
    end
 
 end
