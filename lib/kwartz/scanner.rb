@@ -55,18 +55,23 @@ module Kwartz
          @keywords = @@keywords
       end
 
-      def reset(input, linenum=1)
+      def reset(input, base_linenum=1)
          @input = input
          @lines = input.split(/\r?\n/)
-         @linenum = linenum - 1
+         @linenum = 0
+         @base_linenum = base_linenum
          @current_line = nil
          @token = nil
          @value = nil
          @index = -1
+         getline()
          #@ch = nil
       end
 
-      attr_reader :token, :value, :linenum, :filename, :keywords
+      attr_reader :token, :value, :filename, :keywords
+      def linenum
+         return @linenum + @base_linenum
+      end
 
 
       @@keywords = {
@@ -312,7 +317,7 @@ module Kwartz
             end
             if ch == nil
                msg = 'string "\'" is not closed.'
-               raise ScanError.new(msg, @linenum, @filename)
+               raise ScanError.new(msg, linenum(), @filename)
             end
             getchar()
             @value = s
@@ -344,7 +349,7 @@ module Kwartz
             end
             if ch == nil
                msg = "string '\"' is not closed."
-               raise ScanError.new(msg, @linenum, @filename)
+               raise ScanError.new(msg, linenum(), @filename)
             end
             getchar()
             @value = s
@@ -378,7 +383,7 @@ module Kwartz
                return @token = ch.chr + ch2.chr		## && ||
             else
                msg = "'#{ch.chr}': invalid char."
-               raise ScanError.new(msg, @linenum, @filename)
+               raise ScanError.new(msg, linenum(), @filename)
             end
          end
 
@@ -390,7 +395,7 @@ module Kwartz
             end
             if s.empty?
                msg = "'@' requires macro name."
-               raise ScanError.new(msg, @linenum, @filename)
+               raise ScanError.new(msg, linenum(), @filename)
             end
             @value = s
             return @token = '@'
@@ -413,7 +418,7 @@ module Kwartz
          end
 
          msg = "'#{ch.chr}': invalid char."
-         raise ScanError.new(msg, @linenum, @filename)
+         raise ScanError.new(msg, linenum(), @filename)
       end
 
    end	# end of class Scanner
@@ -465,7 +470,7 @@ module Kwartz
                   return @token
                else
                   msg = "invalid statement: ruby code must start with white space."
-                  raise ScanError.new(msg, @linenum, @filename)
+                  raise ScanError.new(msg, linenum(), @filename)
                end
             end
          end

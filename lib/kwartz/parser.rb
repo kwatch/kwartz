@@ -544,7 +544,7 @@ module Kwartz
             return parse_print_stmt()
          when :if
             return parse_if_stmt()
-         when :foreach
+         when :foreach, :for
             return parse_foreach_stmt()
          when :while
             return parse_while_stmt()
@@ -555,8 +555,8 @@ module Kwartz
          when ';'
             scan()
             return ';'
-         when nil:
-            return;
+         when nil
+            return
          when :name
             return parse_expr_stmt()
          else
@@ -590,14 +590,14 @@ module Kwartz
          Kwartz::assert(token() == '#')
          tkn = scan()
          check_token(:name, "'#': element declaration requires an element name but got '#{token()}'") unless token() == :name
-         name = value()
+         marking = value()
          tkn = scan()
          check_token('{', "'#': element declaration requires '{' but got '#{token()}'") unless token() == '{'
          scan()
          hash = parse_sub_decl_list()
          check_token('}', "'#': element declaration requires '}' but got '#{token()}'") unless token() == '}'
          scan()
-         return Element.new(name, hash)
+         return ElementDeclaration.new(marking, hash)
       end
       
       def parse_sub_decl_list()
@@ -760,10 +760,16 @@ end
 
 
 if __FILE__ == $0
-   input = ARGF.read()
-   parser = Kwartz::Parser.new(input)
    #--
-   
+   parser = Kwartz::Parser.new("aaa")
+   [ "foo", "E(bar)", "X(baz)" ].each do |line|
+      parser.reset(line, 10)
+      expr = parser.parse_expression()
+      print expr._inspect
+   end
+   #--
+   #input = ARGF.read()
+   #parser = Kwartz::Parser.new(input)
    #--
    #expr = parser.parse_expression()
    #print expr._inspect()

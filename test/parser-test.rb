@@ -1252,7 +1252,7 @@ END
       @etag
 }
 END
-      _test(input, expected, Element)
+      _test(input, expected, ElementDeclaration)
    end
 
 

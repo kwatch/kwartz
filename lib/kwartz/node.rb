@@ -367,17 +367,18 @@ module Kwartz
 
    ##
    class IfStatement < Statement
-      def initialize(condition_expr, then_block, else_stmt=nil)
+      def initialize(condition_expr, then_stmt, else_stmt=nil)
          super(:if)
          @condition  = condition_expr
-         @then_block = then_block
+         @then_stmt  = then_stmt
          @else_stmt  = else_stmt
       end
+      attr_accessor :condition, :then_stmt, :else_stmt
 
       def _inspect(depth=0, s='')
          super(depth, s)
          @condition._inspect(depth+1, s)
-         @then_block._inspect(depth+1, s)
+         @then_stmt._inspect(depth+1, s)
          @else_stmt._inspect(depth+1, s) if @else_stmt
          return s
       end

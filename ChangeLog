@@ -1,4 +1,7 @@
 .: 2005-01-24  rev.18
+	.- [enhance] converter.rb: rewrited to create BlockStatement
+
+.: 2005-01-24  rev.18
 	.- [enhance] parser.rb: declaration support
 	.- [enhance] element.rb: new file
 
