@@ -3,6 +3,7 @@
 
 $files = array(
 	'kwartz-php',
+        'mkmethod-php',
 );
 $script_list = array();
 foreach ($files as $file) {

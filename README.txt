@@ -154,4 +154,12 @@
 .	  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .	  GNU General Public License for more details..	
 .	
+.	
+.	
+.EN	.$ Special Thanks
+.JA	●お礼
+.	
+.EN	.* Shu-yu Guo - He corrected my English of users' guide. Very Thanks!
+.JA	.* Shu-yu Guo - ユーザーズガイドの英語を直してくれました。多謝。
+.	
 .#@EOF

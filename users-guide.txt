@@ -1137,8 +1137,8 @@
 .	
 .	
 .JA	◎置換			| pattern-replacement
-.JA	.#◎式による置換	| pattern-prelacement
-.EN	.$$ Replacement
+.JA	.#◎式による置換
+.EN	.$$ Replacement		| pattern-prelacement
 .EN	.#$$ Replacement (by Expression)
 .	
 .JA	エレメントを、変数や式の値で置き換えることができます。
@@ -1500,7 +1500,7 @@
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.-------------------- teq-choice.pdata
+.	.-------------------- pat-choice.pdata
 .	<div {{*id="mark:message"*}}>
 .	  <font color="red"   {{*id="mark:error"*}}>ERROR!</font>
 .	  <font color="blue"  {{*id="mark:warning"*}}>Warning:</font>
@@ -1511,7 +1511,7 @@
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.-------------------- teq-choice.plogic
+.	.-------------------- pat-choice.plogic
 .	element message {
 .	  @stag;
 .	  {{*if ($error) {*}}
@@ -1529,7 +1529,7 @@
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! kwartz-php -p guide.d/teq-choice.plogic guide.d/teq-choice.pdata
+.	.<<<:! kwartz-php -p guide.d/pat-choice.plogic guide.d/pat-choice.pdata
 .	.--------------------
 .	
 .	
@@ -1563,20 +1563,20 @@
 .	
 .JA	プレゼンテーションデータ：
 .EN	Presentation Data:
-.	.--------------------
+.	.-------------------- pat-extract1.pdata
 .	<div {{*id="mark:breadcrumbs"*}}>
 .	  <a {{*id="mark:crumb"*}} href="@{$href}@">Home</a>
-.	  <span {{*id="mark:separaotr"*}}> &lt; </span>
+.	  <span {{*id="mark:separator"*}}> &lt; </span>
 .	  <a href="/aaa/">AAA</a> &lt;
 .	  <a href="/aaa/bbb/">BBB</a> &lt;
 .	  <a href="/aaa/bbb/ccc/">CCC</a> &lt;
 .	</div>
-.	<span kd="value($title)">DDD</span>
+.	<span kd:php="value($title)">DDD</span>
 .	.--------------------
 .	
 .JA	プレゼンテーションロジック：
 .EN	Presentation Logic:
-.	.--------------------
+.	.-------------------- pat-extract1.plogic
 .	element breadcrumbs {
 .	  @stag;
 .	  foreach ($breadcrumbs as $crumb) {
@@ -1595,6 +1595,12 @@
 .EN	  echo $crumb['title'];    ## print expression instead of content
 .	  @etag;
 .	}
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! kwartz-php -p guide.d/pat-extract1.plogic guide.d/pat-extract1.pdata
 .	.--------------------
 .	
 .	
@@ -1673,8 +1679,8 @@
 .	  <body>
 .	
 .	    <div {{*id="mark:tablist"*}}>
-.	      <div class="tabs">
-.	        <a href="{{*@{$tab_href}@*}}" class="{{*@{$tab_class}@*}}" {{*id="mark:tabs"*}}>Home</a>
+.	      <div class="tabs" id="mark:tabs">
+.	        <a href="{{*@{$tab_href}@*}}" class="{{*@{$tab_class}@*}}" {{*id="mark:tab"*}}>Home</a>
 .	        <a href="/product/" class="selected">Product</a>
 .	        <a href="/download/" class="">Download</a>
 .	        <a href="/support/" class="">Support</a>
@@ -1734,13 +1740,17 @@
 .	
 .	element tabs {
 .	  foreach ($tablist as $tab) {
-.	    $tab_href = $tab['href'];
-.	    $tab_name = $tab['name'];
-.	    $klass = $current_tab == $tab_name ? 'selected' : '';
-.	    @stag;
-.	    echo $tab_name;
-.	    @etag;
+.	    @element_tab;
 .	  }
+.	}
+.	
+.	element tab {
+.	  $tab_href = $tab['href'];
+.	  $tab_name = $tab['name'];
+.	  $klass = $current_tab == $tab_name ? 'selected' : '';
+.	  @stag;
+.	  echo $tab_name;
+.	  @etag;
 .	}
 .	.--------------------
 .	
@@ -2116,3 +2126,79 @@
 .	
 .	include($view);
 .	.--------------------
+.	
+.	
+.	
+.JA	◎テンプレートをPHPの関数にコンパイルする	| topic-mkmethod
+.EN	.$$ Compile Template as a PHP Function 		| topic-mkmethod
+.	
+.	
+.JA	付属のmkmethod-phpスクリプトを使用することで、コンパイルしたテンプレートをPHPの関数として定義できます。
+.EN	Using the 'mkmethod-php' script, you can compile templates into a function of PHP.
+.	
+.	
+.JA	プレゼンテーションデータ(hoge1.html)：
+.EN	Presentation Data (hoge1.html)
+.	.-------------------- hoge1.html
+.	Hello @{$user}@ !
+.	<ul id="mark:list">
+.	  <li kd:php="value($item)">xxx</li>
+.	</ul>
+.	.--------------------
+.	
+.JA	プレゼンテーションロジック(hoge1.plogic)：
+.EN	Presentation Logic (hoge1.plogic)
+.	.-------------------- hoge1.plogic
+.	element list {
+.	  @stag;
+.	  foreach ($list as $item) {
+.	    @cont;
+.	  }
+.	  @stag;
+.	}
+.	.--------------------
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ mkmethod-php -p hoge1.plogic hoge1.html > hoge1.view
+.	.====================
+.	
+.	
+.JA	出力用スクリプト(hoge1.view)：
+.EN	Output Script (hoge1.view):
+.	.--------------------
+.	.<<<:! mkmethod-php -p guide.d/hoge1.plogic guide.d/hoge1.html | tee hoge1.view
+.	.--------------------
+.	
+.	
+.JA	メインプログラム(hoge1.php)：
+.EN	Main Program (hoge1.php):
+.	.-------------------- hoge1.php
+.	<?php
+.	// set $args
+.	$user = "Kwartz-php";
+.	$list = array('Foo', 'Bar', 'Baz');
+.	{{*$args*}} = array('user'=>$user, 'list'=>$list);
+.	
+.	// output
+.	include('hoge1.view');
+.	echo {{*expand_hoge1($args)*}};
+.	?>
+.	.--------------------
+.	
+.	
+.JA	出力結果：
+.EN	Output Result:
+.	.____________________
+.	.<<<:! php -q guide.d/hoge1.php
+.	.____________________
+.	
+.	
+.JA	またコマンドラインオプション {{,-m,}} でメソッド名を、{{,-c,}} でクラス名を、{{,-a,}} で引数を指定できます。
+.JA	詳しくは {{,mkmethod-php -h,}} でヘルプを参照してください。
+.EN	You can specify method name with the command-line option {{,-m,}}, class name with {{,-c,}},
+.EN	and arguments with {{,-a,}}.
+.EN	See the help of mkmethod-php (type {{,mkmethod-php -h,}}) for details.
+.	
+.	

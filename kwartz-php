@@ -411,7 +411,6 @@ END;
                     $this->options[$optch] = $optstr ? $optstr : TRUE;
                     break;
                 } else {
-                    echo "*** debgu: noarg=$noarg, argrequired=$argrequired, argoptional=$argoptional\n";
                     $error_msg = "'-${optch}${optstr}': invalid option.";
                     break;
                 }
