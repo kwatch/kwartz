@@ -15,7 +15,7 @@
 /*
  * Development of Kwartz-php is subsidized by Exploratory Software Project of
  * IPA (Information-Technology Promotion Agency Japan).
- * See http://www.ipa.go.jp/about/english/index.html
+ * See http://www.ipa.go.jp/about/english/index.html for details about IPA.
  */
 
 /*
@@ -38,9 +38,9 @@ require_once('Kwartz.php');
 
 //namespace Kwartz {
 
-class KwartzCommandOptionError extends KwartzException {
+class KwartzCommandOptionError extends KwartzError {
     function __construct($msg) {
-        parent::__construct($msg);
+        parent::__construct($msg, NULL, NULL);
     }
 }
 
@@ -97,7 +97,7 @@ class KwartzCommand {
               case 'eruby':
               case 'jsp':
               case 'plphp':
-# OK
+                // OK
                 break;
               default:
                 $msg = "'$lang': unsupported language name.";
@@ -116,56 +116,144 @@ class KwartzCommand {
         // determine which action to do (default: 'compile')
         $action = $this->option('a') ? $this->option('a') : 'compile';
         
-        // read presentation logic file
-        $plogic_filename = NULL;
-        $plogic = NULL;
-        if ($this->option('p')) {
-            $plogic_filename = $this->option('p');
-            $plogic_filenames = preg_split('/,/', $plogic_filename);
-            $plogic = '';
-            foreach ($plogic_filenames as $fname) {
-                if (! file_exists($fname)) {
-                    $msg = "'$fname': file not found.";
-                    throw new KwartzCommandOptionError($msg);
-                }
-                $plogic .= file_get_contents($fname);
-            }
-        }
-        
-        // read input
-        $input_filename = NULL;
-        $input = '';
+        // presentation logic filenames
+	$plogic_filenames = NULL;
+	if ($this->option('p')) {
+	    $plogic_filenames = preg_split('/,/', $this->option('p'));
+	}
+	
+	// input filenames
         if (count($this->args) == 0) {
-            $input = file_get_contents('php://stdin');
-            $input_filename = NULL;
+            $input_filenames = NULL;		// read stdin
         } else {
-            //foreach ($this->args as $filename) {
-            //	if (! file_exists($filename)) {
-            //		$msg = "$filename: file not found.";
-            //		throw new KwartzCommandOptionError($msg);
-            //	}
-            //	$input .= file_get_contents($filename);
-            //}
-            $input_filename = $this->args[0];	// read only the first file
-            if (! file_exists($input_filename)) {
-                $msg = "$input_filename: file not found.";
-                throw new KwartzCommandOptionError($msg);
-            }
-            $input = file_get_contents($input_filename);
+            $input_filenames = $this->args;
         }
         
         // do action
-        $output = $this->do_action($action, $input, $input_filename, $plogic, $plogic_filename,
-                                   $lang, $flag_escape, $this->toppings);
+        $output = $this->do_action($action, $input_filenames, $plogic_filenames, $lang, $flag_escape, $this->toppings);
         return $output;
     }
     
+
+    static $translator_classnames = array(
+        'php'   => 'KwartzPhpTranslator',
+        'eruby' => 'KwartzErubyTranslator',
+        'jsp'   => 'KwartzJspTranslator',
+        'plphp' => 'KwartzPlphpTranslator',
+        );
     
-    function do_action(&$action, &$input, &$input_filename, &$plogic, &$plogic_filename,
-                       $lang, $flag_escape=FALSE, $toppings=NULL) {
+    function do_action(&$action, &$input_filenames, &$plogic_filenames, $lang, $flag_escape=FALSE, $toppings=NULL) {
+        // file existence check
+        if ($input_filenames) {
+            foreach ($input_filenames as $filename) {
+                if (! file_exists($filename)) {
+                    $msg = "'$filename': not found.";
+                    throw new KwartzCommandOptionError($msg);
+                }
+            }
+        } else {
+            $input_filenames = array('php://stdin');
+        }
+        if ($plogic_filenames) {
+            foreach ($plogic_filenames as $filename) {
+                if (! file_exists($filename)) {
+                    $msg = "'$filename': not found.";
+                    throw new KwartzCommandOptionError($msg);
+                }
+            }
+        }
+        
+        // perform action
+        $output = '';
         switch ($action) {
+          case 'scan':
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $scanner = new KwartzScanner($input, $toppings);
+                $output .= $scanner->scan_all();
+            }
+            break;
+            
+          case 'parse':
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $parser = new KwartzParser($input, $toppings);
+                $block  = $parser->parse();
+                $output .= $block->inspect();
+            }
+            break;
+            
+          case '_convert':
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $converter = new KwartzConverter($input, $toppings);
+                $block = $converter->convert();
+                $output .= $block->inspect();
+            }
+            break;
+            
+          case 'convert':
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $converter = new KwartzConverter($input, $toppings);
+                $block = $converter->convert();
+                $translator = new KwartzPlphpTranslator($block, $flag_escape, $toppings);
+                $output .= $translator->translate();
+            }
+            break;
+            
+          case 'translate':
+            $block = NULL;
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $parser = new KwartzParser($input, $toppings);
+                $block2 = $parser->parse();
+                $block = $block == NULL ? $block2 : $block->merge($block2);
+            }
+            $classname = KwartzCommand::$translator_classnames[$lang];
+            $translator = new $classname($block, $flag_escape, $toppings);
+            $output = $translator->translate();
+            break;
+            
           case 'compile':
-            $output = '';
+          case 'analyze':
+            $blocks = array();
+            foreach ($input_filenames as $filename) {
+                $input = file_get_contents($filename);
+                $toppings['filename'] = $filename;
+                $converter = new KwartzConverter($input, $toppings);
+                $block = $converter->convert();
+                $blocks[] = $block;
+            }
+            if ($plogic_filenames) {
+                foreach ($plogic_filenames as $filename) {
+                    $plogic = file_get_contents($filename);
+                    $toppings['filename'] = $filename;
+                    $parser = new KwartzParser($plogic, $toppings);
+                    $block = $parser->parse();
+                    $blocks[] = $block;
+                }
+            }
+            $merged_block = NULL;
+            foreach ($blocks as $block) {
+                $merged_block = $merged_block == NULL ? $block : $merged_block->merge($block);
+            }
+            unset($toppings['filename']);
+            
+            $block = $merged_block;
+            // analyze
+            if ($action == 'analyze') {
+                $analyzer = new KwartzAnalyzer($block, $toppings);
+                $analyzer->analyze();
+                $output = $analyzer->result();
+                break;
+            }
+            // compile
             if ($lang == 'jsp') {
                 $newline = kwartz_detect_newline_char($input);
                 if (! $newline) {
@@ -184,80 +272,9 @@ class KwartzCommand {
                     $output .= $this->topping('header');
                 }
             }
-            $toppings['pdata_filename'] = $input_filename;
-            $toppings['plogic_filename'] = $plogic_filename;
-            $compiler = new KwartzCompiler($input, $plogic, $lang, $flag_escape, $toppings);
-            $output .= $compiler->compile();
-            if ($this->has_topping('footer')) {
-                $output .= $this->topping('footer');
-            }
-            break;
-            
-          case 'scan':
-            $toppings['filename'] = $input_filename;
-            $scanner = new KwartzScanner($input, $toppings);
-            $output = $scanner->scan_all();
-            break;
-            
-          case 'parse':
-            $toppings['filename'] = $input_filename;
-            $parser = new KwartzParser($input, $toppings);
-            $block = $parser->parse();
-            $output = $block->inspect();
-            break;
-            
-          case '_convert':
-            $toppings['filename'] = $input_filename;
-            $converter = new KwartzConverter($input, $toppings);
-            $block = $converter->convert();
-            $output = $block->inspect();
-            break;
-            
-          case 'convert':
-            $toppings['filename'] = $input_filename;
-            $converter = new KwartzConverter($input, $toppings);
-            $block = $converter->convert();
-            $translator = new KwartzPlphpTranslator($block, $flag_escape, $toppings);
-            $output = $translator->translate();
-            break;
-            
-          case 'translate':
-            $toppings['filename'] = $input_filename;
-            $parser = new KwartzParser($input, $toppings);
-            $block = $parser->parse();
-            switch ($lang) {
-              case 'php':
-                $translator = new KwartzPhpTranslator($block, $flag_escape, $toppings);
-                break;
-              case 'eruby':
-                $translator = new KwartzErubyTranslator($block, $flag_escape, $toppings);
-                break;
-              case 'jsp':
-                $translator = new KwartzJspTranslator($block, $flag_escape, $toppings);
-                break;
-              case 'plphp':
-                $translator = new KwartzPlphpTranslator($block, $flag_escape, $toppings);
-                break;
-            }
-            $output = $translator->translate();
-            break;
-            
-          case 'analyze':
-            $toppings['filename'] = $input_filename;
-            $converter = new KwartzConverter($input, $toppings);
-            $block = $converter->convert();
-            if ($plogic) {
-                $toppings['filename'] = $plogic_filename;
-                $parser = new KwartzParser($plogic, $toppings);
-                $plogic_block = $parser->parse();
-                $block = $block->merge($plogic_block);
-            }
-            unset($toppings['filename']);
-            //$toppings('pdata_fileanme') = $input_filename;
-            //$toppings('plogic_filename') = $plogic_filename;
-            $analyzer = new KwartzAnalyzer($block, $toppings);
-            $analyzer->analyze();
-            $output = $analyzer->result();
+            $classname = KwartzCommand::$translator_classnames[$lang];
+            $translator = new $classname($block, $flag_escape, $toppings);
+            $output .= $translator->translate();
             break;
             
           default:
@@ -434,14 +451,11 @@ if (basename(__FILE__) == basename($argv[0])) {
     try {
         $kwartz = new KwartzCommand($argv);
         echo $kwartz->main();
-    } catch (KwartzException $ex) {
-        if (defined('STDERR')) {
-            fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
-        } else {
-            $stderr = fopen("php://stderr", "r");
-            fwrite($stderr, "ERROR: " . $ex->getMessage() . "\n");
-            fclose($fstderr);
-        } 
+    } catch (KwartzError $ex) {
+        //fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
+        $stderr = fopen("php://stderr", "r");
+        fwrite($stderr, "ERROR: " . $ex->getMessage() . "\n");
+        fclose($stderr);
         exit(1);
     }
     exit(0);

@@ -8,9 +8,9 @@ require_once('Kwartz/KwartzCompiler.php');
 
 //namespace Kwartz {
 
-class KwartzHelperError extends KwartzException {
+class KwartzHelperError extends KwartzError {
     function __construct($msg) {
-        parent::__construct($msg);
+        parent::__construct($msg, NULL, NULL);
     }
 }
 

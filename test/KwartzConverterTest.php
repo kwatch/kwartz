@@ -39,18 +39,20 @@ END;
 #		""
 #END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: ""
-		tag:          <span>
-		attr_str:     ""
-		after_space:  "\\n"
+		linenum+delta: 1+1
+		before_text:   ""
+		before_space:  ""
+		tag:           <span>
+		attr_str:      ""
+		after_space:   "\\n"
 		
-		before_text:  ""
-		before_space: ""
-		tag:          </span>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 2+1
+		before_text:   ""
+		before_space:  ""
+		tag:           </span>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -71,12 +73,13 @@ END;
 #		""
 #END;
 		$expected = <<<END
-		before_text:  "hoge\\ngeji\\n"
-		before_space: ""
-		tag:          <span>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 3+1
+		before_text:   "hoge\\ngeji\\n"
+		before_space:  ""
+		tag:           <span>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -95,12 +98,13 @@ END;
 		""
 END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: " "
-		tag:          <span/>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 1+1
+		before_text:   ""
+		before_space:  " "
+		tag:           <span/>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -120,18 +124,20 @@ END;
 #		""
 #END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: ""
-		tag:          <span>
-		attr_str:     " kd=\"value:foo\""
-		after_space:  ""
+		linenum+delta: 1+0
+		before_text:   ""
+		before_space:  ""
+		tag:           <span>
+		attr_str:      " kd=\"value:foo\""
+		after_space:   ""
 		
-		before_text:  "hello"
-		before_space: ""
-		tag:          </span>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 1+1
+		before_text:   "hello"
+		before_space:  ""
+		tag:           </span>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -152,18 +158,20 @@ END;
 #		""
 #END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: ""
-		tag:          <span>
-		attr_str:     " id=\"foo\" class=\"foo\"\\n      kd=\"attr:class=ctr%2==0?'even':'odd'\""
-		after_space:  ""
+		linenum+delta: 1+1
+		before_text:   ""
+		before_space:  ""
+		tag:           <span>
+		attr_str:      " id=\"foo\" class=\"foo\"\\n      kd=\"attr:class=ctr%2==0?'even':'odd'\""
+		after_space:   ""
 		
-		before_text:  "hello"
-		before_space: ""
-		tag:          </span>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 2+1
+		before_text:   "hello"
+		before_space:  ""
+		tag:           </span>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -183,18 +191,20 @@ END;
 #""
 #END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: ""
-		tag:          <span>
-		attr_str:     " id=\"foo\" class=\"foo\"\\n      kd:php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""
-		after_space:  ""
+		linenum+delta: 1+1
+		before_text:   ""
+		before_space:  ""
+		tag:           <span>
+		attr_str:      " id=\"foo\" class=\"foo\"\\n      kd:php=\"attr('class'=>\$user->ctr%2==0?'even':'odd')\""
+		after_space:   ""
 		
-		before_text:  "hello"
-		before_space: ""
-		tag:          </span>
-		attr_str:     ""
-		after_space:  "\\n"
-		rest:         ""
+		linenum+delta: 2+1
+		before_text:   "hello"
+		before_space:  ""
+		tag:           </span>
+		attr_str:      ""
+		after_space:   "\\n"
+		rest:          ""
 
 
 END;
@@ -213,42 +223,48 @@ END;
 		</div>
 END;
 		$expected = <<<END
-		before_text:  ""
-		before_space: ""
-		tag:          <div>
-		attr_str:     " kd=\"mark:foo\""
-		after_space:  "\\n"
+		linenum+delta: 1+1
+		before_text:   ""
+		before_space:  ""
+		tag:           <div>
+		attr_str:      " kd=\"mark:foo\""
+		after_space:   "\\n"
 		
-		before_text:  ""
-		before_space: " "
-		tag:          <div>
-		attr_str:     " id=\"bar\""
-		after_space:  "\\n"
+		linenum+delta: 2+1
+		before_text:   ""
+		before_space:  " "
+		tag:           <div>
+		attr_str:      " id=\"bar\""
+		after_space:   "\\n"
 		
-		before_text:  ""
-		before_space: "  "
-		tag:          <div>
-		attr_str:     " id=\"baz\""
-		after_space:  "\\n"
+		linenum+delta: 3+1
+		before_text:   ""
+		before_space:  "  "
+		tag:           <div>
+		attr_str:      " id=\"baz\""
+		after_space:   "\\n"
 		
-		before_text:  "   test\\n"
-		before_space: "  "
-		tag:          </div>
-		attr_str:     ""
-		after_space:  "\\n"
+		linenum+delta: 5+1
+		before_text:   "   test\\n"
+		before_space:  "  "
+		tag:           </div>
+		attr_str:      ""
+		after_space:   "\\n"
 		
-		before_text:  ""
-		before_space: " "
-		tag:          </div>
-		attr_str:     ""
-		after_space:  "\\n"
+		linenum+delta: 6+1
+		before_text:   ""
+		before_space:  " "
+		tag:           </div>
+		attr_str:      ""
+		after_space:   "\\n"
 		
-		before_text:  ""
-		before_space: ""
-		tag:          </div>
-		attr_str:     ""
-		after_space:  ""
-		rest:         ""
+		linenum+delta: 7+0
+		before_text:   ""
+		before_space:  ""
+		tag:           </div>
+		attr_str:      ""
+		after_space:   ""
+		rest:          ""
 
 
 END;

@@ -45,7 +45,7 @@ class KwartzScannerTest extends PHPUnit_TestCase {
 		$input     = '"hogeratta\n\n';
 		try {
 			$this->_test_str($input, '', false);
-		} catch (KwartzScannerException $ex) {
+		} catch (KwartzScanError $ex) {
 			# OK
 			return;
 		}
@@ -56,7 +56,7 @@ class KwartzScannerTest extends PHPUnit_TestCase {
 		$input     = "'hogeratta\n\n";
 		try {
 			$this->_test_str($input, '', false);
-		} catch (KwartzScannerException $ex) {
+		} catch (KwartzScanError $ex) {
 			# OK
 			return;
 		}
@@ -245,18 +245,50 @@ END;
 	}
 	
 	
-	##
+    	##
 	## invalid char
 	##
 	function test_scan_invalid1() {
+		$input = "foo\nab`cd";
+		try {
+			$this->_test($input, NULL, false);
+		} catch (KwartzScanError $ex) {
+			# OK
+                        $this->assertEquals(2, $ex->linenum());
+			return;
+		}
+		$this->fail("KwartzScanError should be thrown.");
+	}
+
+    
+    	##
+	## invalid char
+	##
+	function test_scan_invalid2() {
+		$input = "\n\n\n~cd";
+		try {
+			$this->_test($input, NULL, false);
+		} catch (KwartzScanError $ex) {
+			# OK
+                        $this->assertEquals(4, $ex->linenum());
+			return;
+		}
+		$this->fail("KwartzScanError should be thrown.");
+	}
+
+
+	##
+	## invalid char
+	##
+	function test_scan_invalid3() {
 		$input = 'あいうえお';
 		try {
 			$this->_test($input, NULL, false);
-		} catch (KwartzScannerException $ex) {
+		} catch (KwartzScanError $ex) {
 			# OK
 			return;
 		}
-		$this->fail("KwartzScannerException should be thrown.");
+		$this->fail("KwartzScanError should be thrown.");
 	}
 
 

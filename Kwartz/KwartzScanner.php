@@ -8,17 +8,9 @@ require_once('Kwartz/KwartzUtility.php');
 
 //namespace Kwartz {
 
-class KwartzScannerException extends KwartzException {
-    var $linenum;
-    var $scanner;
-    
-    function __construct($msg, $scanner, $linenum=NULL) {
-        if (! $linenum) {
-            $linenum = $scanner->linenum();
-        }
-        parent::__construct("ScanError (line {$linenum}): " . $msg);
-        $this->scanner = $scanner;
-        $this->linenum = $linenum;
+class KwartzScanError extends KwartzError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
@@ -38,6 +30,7 @@ define('EOF', -1);
  */
 class KwartzScanner {
     private $toppings;
+    private $filename;
     private $input;			// string
     private $index;
     private $char;
@@ -48,7 +41,7 @@ class KwartzScanner {
     private $next_token;
     private $next_token_str;
     
-    private $reserved = array(
+    static $reserved = array(
         ':if'	   => ':if',
         ':elseif'  => ':elseif',
         ':elsif'   => ':elseif',
@@ -106,20 +99,21 @@ class KwartzScanner {
         return NULL;
     }
     
-    function reset($input) {
+    function reset($input, $linenum=NULL) {
         $this->input = $input;
-        $this->_initialize();
+        $this->_initialize($linenum);
     }
     
-    function _initialize() {
+    function _initialize($linenum=NULL) {
         $this->length  = strlen($this->input);
         $this->index   = -1;
         $this->char    = NULL;
-        $this->linenum = 1;
+        $this->linenum = $linenum ? $linenum : 1;
         $this->token          = NULL;
         $this->token_str      = NULL;
         $this->next_token     = NULL;
         $this->next_token_str = NULL;
+        $this->filename = $this->topping('filename');
         
         $this->read();
     }
@@ -134,6 +128,10 @@ class KwartzScanner {
     
     function linenum() {
         return $this->linenum;
+    }
+    
+    function filename() {
+        return $this->filename;
     }
     
     function read() {
@@ -192,8 +190,8 @@ class KwartzScanner {
             while ( ($c = $this->read()) != EOF && (ctype_alnum($c) || $c == '_') ) {
                 $s .= $c;
             }
-            if (array_key_exists($s, $this->reserved)) {
-                $this->token = $this->reserved[$s];
+            if (array_key_exists($s, KwartzScanner::$reserved)) {
+                $this->token = KwartzScanner::$reserved[$s];
                 //$this->token_str = $s;
             } else {
                 $this->token = 'name';
@@ -218,7 +216,11 @@ class KwartzScanner {
                 $this->token = 'integer';
             }
             if (ctype_alpha($c)) {
-                throw new KwartzScannerException("invalid number.", $this);
+                $s .= $c;
+                while (($c = $this->read()) != EOF && (ctype_alnum($c) || $c == '_')) {
+                    $s .= $c;
+                }
+                throw new KwartzScanError("'$s': invalid number or token.", $this->linenum, $this->filename);
             }
             $this->token_str = $s;
             return $this->token;
@@ -227,7 +229,7 @@ class KwartzScanner {
         // string
         if ($c == '"') {
             $s = '';
-            $linenum = $this->linenum;
+            $start_linenum = $this->linenum;
             while (($c = $this->read()) != EOF && $c != '"') {
                 if ($c == '\\') {
                     $c = $this->read();
@@ -241,7 +243,7 @@ class KwartzScanner {
                 $s .= $c;
             }
             if ($c == EOF) {
-                throw new KwartzScannerException("string is not closed.", $this, $linenum);
+                throw new KwartzScanError("string is not closed.", $start_linenum, $this->filename);
             }
             assert($c == '"');
             $this->token_str = $s;
@@ -251,7 +253,7 @@ class KwartzScanner {
         
         if ($c == "'") {
             $this->token_str = '';
-            $linenum = $this->linenum;
+            $start_linenum = $this->linenum;
             while (($c = $this->read()) != EOF && $c != "'") {
                 if ($c == '\\') {
                     $c = $this->read();
@@ -263,7 +265,7 @@ class KwartzScanner {
                 $this->token_str .= $c;
             }
             if ($c == EOF) {
-                throw new KwartzScannerException("string is not closed.", $this, $linenum);
+                throw new KwartzScanError("string is not closed.", $start_linenum, $this->filename);
             }
             assert($c == "'");
             $this->read();
@@ -361,7 +363,7 @@ class KwartzScanner {
                 return $this->token = $op . $op;
             }
             //return $c;
-            throw new KwartzScannerError("'{$op}': invalid character.", $this);
+            throw new KwartzScannerError("'{$op}': invalid character.", $this->linenum, $this->filename);
         }
         
         if ($c == ':') {
@@ -392,12 +394,12 @@ class KwartzScanner {
                 $s .= $c;
                 $c = $this->read();
             }
-            if (array_key_exists($s, $this->reserved)) {
-                return $this->token = $this->reserved[$s];
+            if (array_key_exists($s, KwartzScanner::$reserved)) {
+                return $this->token = KwartzScanner::$reserved[$s];
             }
             
             // ':' and variable
-            //throw new KwartzScannerError("invalid identifier.", $this);
+            //throw new KwartzScannerError("invalid identifier.", $this->linenum, $this->filename);
             $this->next_token = 'name';
             $this->next_token_str = substr($s, 1);
             return $this->token = ':';
@@ -419,7 +421,7 @@ class KwartzScanner {
             }
             if ($s == '') {
                 $msg = "'@' needs macro-name.";
-                throw new KwartzScannerError($msg, $this);
+                throw new KwartzScannerError($msg, $this->linenum, $this->filename);
             }
             $this->token_str = $s;
             return $this->token = '@';
@@ -435,15 +437,15 @@ class KwartzScanner {
           case '?':
           case ',':
           case ';':
-          case '\\':
-          case '`':
-          case '~':
+          //case '\\':
+          //case '`':
+          //case '~':
             $this->token = $c;
             $this->read();
             return $this->token;
         }
         
-        throw new KwartzScannerException("'$c': invalid char.", $this);
+        throw new KwartzScanError("'$c': invalid char.", $this->linenum, $this->filename);
         //$this->read();
         //return $c;
     }

@@ -110,13 +110,13 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
     protected function translate_function_expression($expr) {
         $funcname = $expr->funcname();
         $msg = "'$funcname()': JSP doesn't support function call expression.";
-        throw new KwartzTranslationError($msg, $this);
+        throw new KwartzTranslationError($msg);
     }
     
     protected function translate_property_expression($expr) {
         if ($expr->arglist() !== NULL && count($expr->arglist()) > 0) {
             $msg = "JSTL doesn't support method-call with arguments.";
-            throw new KwartzTranslationError($msg, $this);
+            throw new KwartzTranslationError($msg);
         }
         $t = $expr->token();
         $op = $this->keyword($t);
@@ -228,7 +228,7 @@ class KwartzJspTranslator extends KwartzBaseTranslator {
     
     protected function translate_while_statement($stmt) {
         $error_msg = "JSP doesn't support 'while' statement.";
-        throw new KwartzTranslationError($error_msg, $this);
+        throw new KwartzTranslationError($error_msg);
     }
     
     

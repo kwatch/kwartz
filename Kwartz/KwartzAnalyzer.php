@@ -135,12 +135,12 @@ class KwartzAnalyzeVisitor {
             if ($t == 'variable') {
                 $name = $expr->left()->value();
                 if ($this->is_global_var($name)) {
-                    $this->add_global_var($name, TRUE);	# assign to global var
-                    } elseif ($this->is_local_var($name)) {
-                        // do nothing
-                    } else {
-                        $this->add_local_var($name);
-                    }
+                    $this->add_global_var($name, TRUE);	  // assign to global var
+                } elseif ($this->is_local_var($name)) {
+                    // do nothing
+                } else {
+                    $this->add_local_var($name);
+                }
             } elseif ($t == '[]' || $t == '[:]' || $t == '{}' || $t == '.') {
                 $expr->left()->accept($this);
                 $array = $expr->left()->left();
@@ -164,7 +164,7 @@ class KwartzAnalyzeVisitor {
                         // OK
                     } else {
                         $this->add_local_var($name, TRUE);	// uninitialized local var
-                        }
+                    }
             } else {
                 $expr->left()->accept($this);
             }

@@ -10,12 +10,9 @@ require_once('Kwartz/KwartzUtility.php');
 
 // namespace Kwartz {
 
-class KwartzTranslationError extends KwartzException {
-    private $translator;
-    
-    function __construct($msg, $translator) {
-        parent::__construct($msg);
-        $this->translator = $translator;
+class KwartzTranslationError extends KwartzError {
+    function __construct($msg) {
+        parent::__construct($msg, NULL, NULL);
     }
 }
 
@@ -372,9 +369,6 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
     function translate_statement($stmt, $depth) {
         $class_name = get_class($stmt);
         $method_name = KwartzBaseTranslator::$dispatcher[$class_name];
-        if (! is_string($method_name)) {
-            throw new exception();
-        }
         $this->$method_name($stmt, $depth);
     }
     
@@ -482,7 +476,7 @@ abstract class KwartzBaseTranslator extends KwartzTranslator {
         $block = $this->macro($stmt->macro_name());
         if (! $block) {
             $msg = "macro '{$stmt->macro_name()}' not defined.";
-            throw new KwartzTranslationError($msg, $this);
+            throw new KwartzTranslationError($msg);
         }
         $this->translate_statement($block, $depth);
     }

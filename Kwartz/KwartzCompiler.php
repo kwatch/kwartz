@@ -18,11 +18,9 @@ require_once('Kwartz/KwartzUtility.php');
 /**
  *  exception class for compilation
  */
-class KwartzCompilationError extends KwartzException {
-    private $compiler;
-    function __construct($msg, $compiler) {
-        parent::__construct($msg);
-        $this->compiler = $compiler;
+class KwartzCompilationError extends KwartzError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
@@ -69,6 +67,9 @@ class KwartzCompiler {
         $newline_char = NULL;
         if ($this->pdata) {
             $newline_char = kwartz_detect_newline_char($this->pdata);
+            if ($filename = $this->topping('pdata_filename')) {
+                $this->toppings['filename'] = $filename;
+            }
             $converter = new KwartzConverter($this->pdata, $this->toppings);
             $pdata_block = $converter->convert();
         }
@@ -76,6 +77,9 @@ class KwartzCompiler {
         // convert presentation logic code into block
         $plogic_block = NULL;
         if ($this->plogic) {
+            if ($filename = $this->topping('plogic_filename')) {
+                $this->toppings['filename'] = $filename;
+            }
             $parser = new KwartzParser($this->plogic, $this->toppings);
             $plogic_block = $parser->parse();
         }

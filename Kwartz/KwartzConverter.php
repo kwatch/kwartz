@@ -13,12 +13,9 @@ require_once('Kwartz/KwartzUtility.php');
 /**
  *  exception class for convertion
  */
-class KwartzConvertionError extends KwartzException {
-    var $converter;
-    
-    function __construct($msg, $converter) {
-        parent::__construct($msg);
-        $this->converter = $converter;
+class KwartzConvertionError extends KwartzError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
@@ -35,6 +32,7 @@ class KwartzConverter {
     private $input;		// string
     private $parser;
     private $toppings;
+    private $filename;
     
     private $kd_attr_name;
     private $php_attr_name;
@@ -49,6 +47,9 @@ class KwartzConverter {
     private $slash_empty;
     private $tag_name;
     private $attr_str;
+    
+    private $linenum       = 1;		// current line number
+    private $linenum_delta = 0;		// number of newlines in the current tag
     
     private $macro_stmt_list;
     
@@ -88,6 +89,7 @@ class KwartzConverter {
         $this->macro_stmt_list = array();
         $this->parser = new KwartzParser(' ', $this->toppings);
         //
+        $this->filename      = $this->topping('filename');
         $this->kd_attr_name  = $this->topping('attr_name',     'kd');
         $this->php_attr_name = $this->topping('php_attr_name', 'kd:php');
         $this->even_value    = $this->topping('even_value',    'even');
@@ -110,13 +112,19 @@ class KwartzConverter {
             $this->before_text  = $m[1];
             $this->before_space = $m[2];
             $this->slash_etag   = $m[3];
-            $this->tag_name	    = $m[4];
-            $this->attr_str	    = $m[5];
+            $this->tag_name	= $m[4];
+            $this->attr_str	= $m[5];
             $this->extra_space  = $m[6];
             $this->slash_empty  = $m[7];
             $this->after_space  = $m[8];
             $matched_length = strlen($m[0]);
             $this->input = substr($this->input, $matched_length);
+	    
+	    $n = substr_count($this->before_text, "\n");
+	    $this->linenum += $this->linenum_delta;
+	    $this->linenum += $n;
+	    $this->linenum_delta = substr_count($m[0], "\n") - $n;
+	    
             return $this->tag_name;
         }
         return $this->tag_name = NULL;
@@ -127,19 +135,20 @@ class KwartzConverter {
         $s = '';
         while (($tag_name = $this->fetch()) != NULL) {
             if ($s) { $s .= "\n"; }
-            $s .= "before_text:  " . kwartz_inspect_str($this->before_text) . "\n";
-            $s .= "before_space: " . kwartz_inspect_str($this->before_space). "\n";
-            $s .= "tag:          " . "<{$this->slash_etag}{$tag_name}{$this->extra_space}{$this->slash_empty}>\n";
-            $s .= "attr_str:     " . kwartz_inspect_str($this->attr_str) . "\n";
-            $s .= "after_space:  " . kwartz_inspect_str($this->after_space) . "\n";
+	    $s .= "linenum+delta: " . sprintf("%d+%d\n", $this->linenum, $this->linenum_delta);
+            $s .= "before_text:   " . kwartz_inspect_str($this->before_text) . "\n";
+            $s .= "before_space:  " . kwartz_inspect_str($this->before_space). "\n";
+            $s .= "tag:           " . "<{$this->slash_etag}{$tag_name}{$this->extra_space}{$this->slash_empty}>\n";
+            $s .= "attr_str:      " . kwartz_inspect_str($this->attr_str) . "\n";
+            $s .= "after_space:   " . kwartz_inspect_str($this->after_space) . "\n";
         }
-        $s .= "rest:         " . kwartz_inspect_str($this->input) . "\n\n";
+        $s .= "rest:          " . kwartz_inspect_str($this->input) . "\n\n";
         return $s;
     }
     
     
     // helper method for _convert()
-    private function parse_attr_str($attr_str=NULL) {
+    private function parse_attr_str($attr_str=NULL, $linenum) {
         if ($attr_str === NULL) {
             $attr_str = $this->attr_str;
         }
@@ -172,15 +181,15 @@ class KwartzConverter {
             $id_directive = $kd_directive = $php_directive = NULL;
             $directive = NULL;
             if ($id_value !== NULL) {
-                $id_directive = $this->parse_directive_kdstr($id_value, $attr_hash, $append_str);
+                $id_directive = $this->parse_directive_kdstr($id_value, $attr_hash, $append_str, $linenum);
                 if ($id_directive) { $directive = $id_directive; }
             }
             if ($kd_value !== NULL) {
-                $kd_directive = $this->parse_directive_kdstr($kd_value, $attr_hash, $append_str);
+                $kd_directive = $this->parse_directive_kdstr($kd_value, $attr_hash, $append_str, $linenum);
                 if ($kd_directive) { $directive = $kd_directive; }
             }
             if ($php_value != NULL) {
-                $php_directive = $this->parse_directive_phpstr($php_value, $attr_hash, $append_str);
+                $php_directive = $this->parse_directive_phpstr($php_value, $attr_hash, $append_str, $linenum);
                 if ($php_directive) { $directive = $php_directive; }
             }
             
@@ -189,9 +198,9 @@ class KwartzConverter {
             $i = 0;
             foreach ($attr_names as $attr_name) {
                 $attr_value = $attr_hash[$attr_name];
-                if (   $attr_name == $this->php_attr_name
-                       || $attr_name == $this->kd_attr_name
-                       || ($attr_name == 'id' && ($this->delete_idattr || !preg_match('/^[-\w]+$/', $attr_value)))) {
+                if ( $attr_name == $this->php_attr_name
+                     || $attr_name == $this->kd_attr_name
+                     || ($attr_name == 'id' && ($this->delete_idattr || !preg_match('/^[-\w]+$/', $attr_value)))) {
                     // nothing (i.e. delete the attribute)
                 } else {
                     $space = $spaces[$i];
@@ -215,8 +224,8 @@ class KwartzConverter {
     
     
     // for test of parse_attr_str()
-    function _parse_attr_str(&$attr_str) {
-        return $this->parse_attr_str($attr_str);
+    function _parse_attr_str(&$attr_str, $linenum=NULL) {
+        return $this->parse_attr_str($attr_str, $linenum);
     }
     
     
@@ -230,7 +239,7 @@ class KwartzConverter {
     //		ex. array('flag ? "checked" : ""')
     // - return: a tuple of directive name and argument.
     //		ex. array('foreach', 'item=list')
-    private function parse_directive_kdstr(&$str, &$attr_hash, &$append_str) {
+    private function parse_directive_kdstr(&$str, &$attr_hash, &$append_str, $linenum) {
         $strs = preg_split('/;/', $str);
         $directive = NULL;
         foreach ($strs as $s) {
@@ -243,7 +252,7 @@ class KwartzConverter {
                           case 'attr':  case 'Attr':  case 'ATTR':
                             if (! preg_match('/^(\w+(?::\w+)?)[:=](.*)$/', $darg, $m=array())) {
                                 $msg = "'attr:\"'{$darg}\"': invalid directive.";
-                                throw new KwartzConvertionError($msg, $this);
+                                throw new KwartzConvertionError($msg, $linenum, $this->filename);
                             }
                             $attr_name = $m[1];
                             $expr_str  = $m[2];
@@ -280,17 +289,17 @@ class KwartzConverter {
                           case 'include':  case 'load':
                             if (! preg_match('/^\'(.*)\'$/', $darg, $m=array())) {
                                 $msg = "directive '$dname' requires filename as string.";
-                                throw new KwartzConvertionError($msg, $this);
+                                throw new KwartzConvertionError($msg, $linenum, $this->filename);
                             }
                             $directive = array($dname, $darg);
                             break;
                           default:
                             $msg = "'$s': invalid directive.";
-                            throw new KwartzConvertionError($msg, $this);
+                            throw new KwartzConvertionError($msg, $linenum, $this->filename);
                         }
             } else {
                 $msg = "'$s': invalid directive.";
-                throw new KwartzConvertionError($msg, $this);
+                throw new KwartzConvertionError($msg, $linenum, $this->filename);
             }
         }
         if ($directive) {
@@ -310,7 +319,7 @@ class KwartzConverter {
     //		ex. array('$flag ? "checked" : ""')
     // - return: a tuple of directive name and argument.
     //		ex. array('foreach', '$list as $item')
-    private function parse_directive_phpstr(&$str, &$attr_hash, &$append_str) {
+    private function parse_directive_phpstr(&$str, &$attr_hash, &$append_str, $linenum) {
         $strs = preg_split('/;/', $str);
         $directive = NULL;
         foreach ($strs as $s) {
@@ -323,9 +332,9 @@ class KwartzConverter {
                   case 'attr':  case 'Attr':  case 'ATTR':
                     $pairs = preg_split('/,/', $darg);
                     foreach ($pairs as $pair) {
-                        if (!preg_match('/^\'([-:\w]+)\'=>(.*)/', $pair, $m=array())) {
+                        if (!preg_match('/^\'([-_.:\w]+)\'=>(.*)/', $pair, $m=array())) {
                             $msg = "'attr:\"'{$pair}\"': invalid directive.";
-                            throw new KwartzConvertionError($msg, $this);
+                            throw new KwartzConvertionError($msg, $linenum, $this->filename);
                         }
                         $attr_name = $m[1];
                         $expr_str  = $m[2];
@@ -354,13 +363,13 @@ class KwartzConverter {
                   case 'include':  case 'load':
                     if (!preg_match('/^\'(.*)\'$/', $darg, $m=array())) {
                         $msg = "directive '$dname' requires filename as string.";
-                        throw new KwartzConvertionError($msg, $this);
+                        throw new KwartzConvertionError($msg, $linenum, $this->filename);
                     }
                     $directive = array($dname, $darg);
                     break;
                   default:
                     $msg = "'$dname': invalid directive.";
-                    throw new KwartzConvertionError($msg, $this);
+                    throw new KwartzConvertionError($msg, $linenum, $this->filename);
                 }
             } else {
                 $directive = array('set', $s);		## regard as assign statement
@@ -374,15 +383,15 @@ class KwartzConverter {
     
     
     // test for parse_directive_kdstr()
-    function _parse_directive_kdstr(&$str, &$attr_exprs, &$append_exprs) {
-        return $this->parse_directive_kdstr($str, $attr_exprs, $append_exprs);
+    function _parse_directive_kdstr(&$str, &$attr_exprs, &$append_exprs, $linenum=NULL) {
+        return $this->parse_directive_kdstr($str, $attr_exprs, $append_exprs, $linenum);
     }
-    function _parse_directive_phpstr(&$str, &$attr_exprs, &$append_exprs) {
-        return $this->parse_directive_phpstr($str, $attr_exprs, $append_exprs);
+    function _parse_directive_phpstr(&$str, &$attr_exprs, &$append_exprs, $linenum=NULL) {
+        return $this->parse_directive_phpstr($str, $attr_exprs, $append_exprs, $linenum);
     }
     
     
-    private function create_print_stmt($str) {
+    private function create_print_stmt($str, $current_linenum) {
         if (! $str) {
             return NULL;
         }
@@ -393,6 +402,7 @@ class KwartzConverter {
             $text     = $m[1];
             //$value    = $m[2];
             //$phpvalue = $m[3];
+            $current_linenum += substr_count($text, "\n");
             $rest     = $m[4];
             if ($m[2]) {
                 $value = $m[2];
@@ -420,7 +430,7 @@ class KwartzConverter {
                 //	$expr = $this->parse_expression($value, $flag_php_mode);
                 //}
                 $newvalue = $this->expand_csd($value);
-                $expr = $this->parse_expression($newvalue, $flag_php_mode);
+                $expr = $this->parse_expression($newvalue, $flag_php_mode, $current_linenum);
                 $list[] = $expr;
             }
             $s = $rest;
@@ -450,40 +460,42 @@ class KwartzConverter {
     
     
     private function _convert($end_tag_name) {
+        $current_linenum = $this->linenum;
         $stmt_list = array();
         if ($end_tag_name) {
-            $print_stmt = $this->create_print_stmt($this->create_tagstr());
+            $print_stmt = $this->create_print_stmt($this->create_tagstr(), $current_linenum);
             $stmt_list[] = $print_stmt;
         }
         while (($tag_name = $this->fetch()) != NULL) {
+	    $current_linenum = $this->linenum;
             if ($this->before_text) {
-                $print_stmt = $this->create_print_stmt($this->before_text);
+                $print_stmt = $this->create_print_stmt($this->before_text, $current_linenum);
                 $stmt_list[] = $print_stmt;
             }
             if ($this->slash_empty) {		# empty tag
-                if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str)) != NULL) {
+                if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str, $current_linenum)) != NULL) {
                     $flag_remove_span = ($tag_name == 'span' && ! $this->attr_str);
                     if ($flag_remove_span) {
                         $list = array();
                     } else {
-                        $print_stmt = $this->create_print_stmt($this->create_tagstr());
+                        $print_stmt = $this->create_print_stmt($this->create_tagstr(), $current_linenum);
                         $list = array($print_stmt);
                     }
                     $block = new KwartzBlockStatement($list);
-                    $this->handle_directive($directive, $block, $stmt_list, $flag_remove_span, TRUE);
+                    $this->handle_directive($directive, $block, $stmt_list, $flag_remove_span, TRUE, $current_linenum);
                 } else {
-                    $print_stmt = $this->create_print_stmt($this->create_tagstr());
+                    $print_stmt = $this->create_print_stmt($this->create_tagstr(), $current_linenum);
                     $stmt_list[] = $print_stmt;
                 }
             } elseif ($this->slash_etag) {		# end tag
-                $print_stmt = $this->create_print_stmt($this->create_tagstr());
+                $print_stmt = $this->create_print_stmt($this->create_tagstr(), $current_linenum);
                 $stmt_list[] = $print_stmt;
                 if ($tag_name == $end_tag_name) {
                     $block = new KwartzBlockStatement($stmt_list);
                     return $block;
                 }
             } else {				# start tag
-                if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str)) != NULL) { # directive specifed
+                if ($this->attr_str && ($directive = $this->parse_attr_str($this->attr_str, $current_linenum)) != NULL) { # directive specifed
                     $flag_remove_span = ($tag_name == 'span' && ! $this->attr_str);
                     $block = $this->_convert($tag_name);			# call recursively
                         if ($flag_remove_span) {
@@ -491,7 +503,7 @@ class KwartzConverter {
                             $first_stmt = $block->shift(); //array_shift($block->statements());
                             $last_stmt  = $block->pop();   //array_pop($block->statements());
                         }
-                    $this->handle_directive($directive, $block, $stmt_list, $flag_remove_span, FALSE);
+                    $this->handle_directive($directive, $block, $stmt_list, $flag_remove_span, FALSE, $current_linenum);
                 } else {										# directive not specified
                     if ($tag_name == $end_tag_name) {
                         $block = $this->_convert($tag_name);		# call recursively
@@ -499,7 +511,7 @@ class KwartzConverter {
                                 $stmt_list[] = $stmt;
                             }
                     } else {
-                        $print_stmt = $this->create_print_stmt($this->create_tagstr());
+                        $print_stmt = $this->create_print_stmt($this->create_tagstr(), $current_linenum);
                         $stmt_list[] = $print_stmt;
                     }
                 }
@@ -507,11 +519,11 @@ class KwartzConverter {
         }
         if ($end_tag_name) {
             $msg = "end tag '</{$end_tag_name}>' not found.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         // when $end_tag_name == NULL
         if ($this->input) {
-            $print_stmt = $this->create_print_stmt($this->input);
+            $print_stmt = $this->create_print_stmt($this->input, $current_linenum);
             $stmt_list[] = $print_stmt;
         }
         $block = new KwartzBlockStatement($stmt_list);
@@ -553,43 +565,43 @@ class KwartzConverter {
         'dummy'   => 'handle_directive_dummy',
         );
     
-    private function handle_directive(&$directive, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive(&$directive, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         $directive_name = $directive[0];
         $directive_arg	= $directive[1];
         $flag_php_mode	= $directive[2];
         if (! array_key_exists($directive_name, KwartzConverter::$handler_dispatcher)) {
             $msg = "'internal error: {$directive_name}': invalid directive name.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         if (! $directive_arg && ($directive_name != 'dummy' && $directive_name != 'else')) {
             $msg = "argument of directive '$directive_name' is not specified.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         $handler = KwartzConverter::$handler_dispatcher[$directive_name];
-        $this->$handler($directive_name, $directive_arg, $flag_php_mode, $block, $stmt_list, $flag_remove_span, $flag_empty);
+        $this->$handler($directive_name, $directive_arg, $flag_php_mode, $block, $stmt_list, $flag_remove_span, $flag_empty, $linenum);
     }
     
-    private function handle_directive_foreach($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, &$flag_remove_span, $flag_empty) {
+    private function handle_directive_foreach($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, &$flag_remove_span, $flag_empty, $linenum) {
         if ($flag_php_mode) {
-            if ($ary = preg_split('/\sas\s/', $directive_arg)) {
-                $list_expr    = $this->parse_expression($ary[0], $flag_php_mode);
-                $loopvar_expr = $this->parse_expression($ary[1], $flag_php_mode);
+            if ($ary = preg_split('/\s+as\s+/', $directive_arg)) {
+                $list_expr    = $this->parse_expression($ary[0], $flag_php_mode, $linenum);
+                $loopvar_expr = $this->parse_expression($ary[1], $flag_php_mode, $linenum);
             } else {
                 $msg = "invalid '$directive_name' directive.";
-                throw new KwartzConvertionError($msg, $this);
+                throw new KwartzConvertionError($msg, $linenum, $this->filename);
             }
         } else {
-            $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+            $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
             if ($expr->token() != '=') {
-                $msg = "invalid '$directive_name' directive.";
-                throw new KwartzConvertionError($msg, $this);
+                $msg = "'$directive_name' directive requires 'var=list'.";
+                throw new KwartzConvertionError($msg, $linenum, $this->filename);
             }
             $loopvar_expr = $expr->left();
             $list_expr = $expr->right();
         }
         if ($loopvar_expr->token() != 'variable') {
             $msg = "invalid loop variable in '$directive_name' directive.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         
         list($flag_loop, $flag_count, $flag_toggle) = KwartzConverter::$flags_foreach[$directive_name];
@@ -600,7 +612,7 @@ class KwartzConverter {
         if ($flag_loop) {
             if ($flag_empty) {
                 $msg = "directive '$directive_name' is not available in empty tag.";
-                throw new KwartzConvertionError($msg, $this);
+                throw new KwartzConvertionError($msg, $linenum, $this->filename);
             }
             if (! $flag_remove_span) {
                 $first_stmt = $block->shift(); //array_shift($block->statements());
@@ -638,8 +650,8 @@ class KwartzConverter {
         }
     }
     
-    private function handle_directive_set($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
-        $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+    private function handle_directive_set($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
+        $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
         $stmt = new KwartzSetStatement($expr);
         $stmt_list[] = $stmt;
         //$stmt_list[] = $block;
@@ -648,12 +660,12 @@ class KwartzConverter {
         }
     }
     
-    private function handle_directive_value($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive_value($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         if ($flag_empty) {
             $msg = "directive '$directive_name' is not available in empty tag.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
-        $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+        $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
         $func_name = KwartzConverter::$escapes[$directive_name];
         if ($func_name) {
             $expr = new KwartzFunctionExpression($func_name, array($expr));
@@ -667,8 +679,8 @@ class KwartzConverter {
         }
     }
     
-    private function handle_directive_if($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
-        $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+    private function handle_directive_if($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
+        $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
         if ($directive_name == 'unless') {
             $expr = new KwartzUnaryExpression('!', $expr);
         }
@@ -676,16 +688,16 @@ class KwartzConverter {
         $stmt_list[] = $stmt;
     }
     
-    private function handle_directive_else($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive_else($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         $last_stmt = end($stmt_list);
         if ($last_stmt->token() != ':if') {
             $msg = "'$directive_name' directive should be placed just after 'if' or 'elseif' statement.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         if ($directive_name == 'else') {	// 'else'
             $stmt = $block;
         } else {				// 'elseif', 'elsif'
-            $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+            $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
             $stmt = new KwartzIfStatement($expr, $block, NULL);
         }
         $st = $last_stmt;
@@ -694,18 +706,18 @@ class KwartzConverter {
         }
         if ($st->token() != ':if') {
             $msg = "'$directive_name' directive cannot find corresponding if-statement.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         $st->set_else_stmt($stmt);
     }
     
-    private function handle_directive_while($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
-        $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+    private function handle_directive_while($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
+        $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
         $stmt = new KwartzWhileStatement($expr, $block);
         $stmt_list[] = $stmt;
     }
     
-    private function handle_directive_mark($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive_mark($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         $name = $directive_arg;
         if ($flag_empty) {
             if ($flag_remove_span) {
@@ -740,17 +752,17 @@ class KwartzConverter {
             $stmt_list[] = new KwartzExpandStatement("element_$name");
     }
     
-    private function handle_directive_replace($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive_replace($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         //$macro_name = 'elem_' . $directive_arg;
         $macro_name = 'element_' . $directive_arg;						## element_ or elem_
             $stmt_list[] = new KwartzExpandStatement($macro_name);	# ignore $body
             }
     
-    private function handle_directive_load($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
-        $expr = $this->parse_expression($directive_arg, $flag_php_mode);
+    private function handle_directive_load($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
+        $expr = $this->parse_expression($directive_arg, $flag_php_mode, $linenum);
         if ($expr->token() != 'string') {
             $msg = "'$directive_name' directive requires filename as string.";
-            throw KwartzConvertionError($msg, $this);
+            throw KwartzConvertionError($msg, $linenum, $this->filename);
         }
         $filename = $expr->value();
         $topping_name = $directive_name == 'include' ? 'include_path' : 'load_path';
@@ -764,7 +776,7 @@ class KwartzConverter {
         }
         if (! file_exists($filename)) {
             $msg = "'$directive_name' directive: file '$filename' not found.";
-            throw new KwartzConvertionError($msg, $this);
+            throw new KwartzConvertionError($msg, $linenum, $this->filename);
         }
         $input = file_get_contents($filename);
         if ($directive_name == 'include') {
@@ -781,13 +793,13 @@ class KwartzConverter {
         }
     }
     
-    private function handle_directive_dummy($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty) {
+    private function handle_directive_dummy($directive_name, $directive_arg, $flag_php_mode, &$block, &$stmt_list, $flag_remove_span, $flag_empty, $linenum) {
         // do nothing;
     }
     
     
-    private function parse_expression($str, $flag_php_mode=FALSE) {
-        $this->parser->reset($str);
+    private function parse_expression($str, $flag_php_mode=FALSE, $linenum=NULL) {
+        $this->parser->reset($str, $linenum);
         $expr = $this->parser->parse_expression_strictly($flag_php_mode);
         return $expr;
     }

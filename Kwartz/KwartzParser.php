@@ -9,29 +9,21 @@ require_once('Kwartz/KwartzScanner.php');
 
 //namespace Kwartz {
 
-class KwartzParserException extends KwartzException {
-    private $linenum;
-    private $scanner;
-    
-    function __construct($prefix, $msg, $scanner, $linenum=NULL) {
-        if (! $linenum) {
-            $linenum = $scanner->linenum();
-        }
-        parent::__construct("{$prefix} (line {$linenum}): " . $msg);
-        $this->scanner = $scanner;
-        $this->linenum = $linenum;
+abstract class KwartzParseError extends KwartzError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
-class KwartzSyntaxError extends KwartzParserException {
-    function __construct($msg, $linenum) {
-        parent::__construct('SyntaxError', $msg, $linenum);
+class KwartzSyntaxError extends KwartzParseError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
-class KwartzSemanticError extends KwartzParserException {
-    function __construct($msg, $linenum) {
-        parent::__construct('SemanticError', $msg, $linenum);
+class KwartzSemanticError extends KwartzParseError {
+    function __construct($msg, $linenum=NULL, $filename=NULL) {
+        parent::__construct($msg, $linenum, $filename);
     }
 }
 
@@ -50,6 +42,7 @@ class KwartzParser {
     private $scanner;
     private $element_name_stack;
     private $current_element_name;
+    //private $filename;   // use $scanner->filename() instead
     
     function __construct($input, $toppings=NULL) {
         $this->toppings = $toppings ? $toppings : array();
@@ -57,8 +50,8 @@ class KwartzParser {
         $this->_initialize();
     }
     
-    function reset($input) {
-        $this->scanner->reset($input);
+    function reset($input, $linenum=NULL) {
+        $this->scanner->reset($input, $linenum);
         $this->_initialize();
     }
     
@@ -105,11 +98,11 @@ class KwartzParser {
     }
     
     protected function syntax_error($error_msg) {
-        throw new KwartzSyntaxError($error_msg, $this->scanner);
+        throw new KwartzSyntaxError($error_msg, $this->scanner->linenum(), $this->scanner->filename());
     }
     
     protected function semantic_error($error_msg) {
-        throw new KwartzSemanticError($error_msg, $this->scanner);
+        throw new KwartzSemanticError($error_msg, $this->scanner->linenum(), $this->scanner->filename());
     }
     
     
@@ -118,9 +111,9 @@ class KwartzParser {
     function parse_item($flag_php_mode=FALSE) {
         switch ($t = $this->token()) {
           case '$':				// variable
-              if (! $flag_php_mode) {
+            if (! $flag_php_mode) {
                   $this->syntax_error("'$': invalid character.");
-              }
+            }
             $this->scan();
             $this->token_check('name', "'$' requires variable name.");
             $name = $this->value();
@@ -416,7 +409,9 @@ class KwartzParser {
     }
     
     
-    //
+    /**
+     *  for Converter#parse_expression()
+     */
     function parse_expression_strictly($flag_php_mode=FALSE) {
         //$expr = $this->parse_assignment($flag_php_mode);
         $expr = $this->parse_expression($flag_php_mode);
@@ -474,7 +469,16 @@ class KwartzParser {
         }
         //$flag_php_mode = true;
         //$stmt = $this->parse_set_stmt($flag_php_mode);
-        $this->syntax_error("'$t': unexpected token.");
+        switch ($t) {
+          case 'name':
+            $this->syntax_error("'{$this->token_str()}': unexpected name.");
+            break;
+          case 'string':
+            $this->syntax_error("unexpected string.");
+            break;
+          default:
+            $this->syntax_error("'$t': unexpected token.");
+        }
     }
     
     
