@@ -30,14 +30,14 @@ require_once('KwartzAnalyzer.inc');
 	class KwartzCommand {
 		private $command_name;
 		private $options = array();
-		private $properties = array();
+		private $toppings = array();
 		
 		function __construct($command_name) {
 			$this->command_name = $command_name;
 		}
 
 		function main(&$argv) {
-			## parse $argv and set $command_name, $options and $properties
+			## parse $argv and set $command_name, $options and $toppings
 			$this->parse_argv($argv);
 
 			## print usage/version message
@@ -71,8 +71,11 @@ require_once('KwartzAnalyzer.inc');
 			}
 			
 			## flag escape
-			$flag_escape = ($this->option('-s') || $this->option('-e'));
-
+			$flag_escape = ($this->option('-s') || $this->option('-e') || $this->topping('escape'));
+			
+			## topping handler
+			$this->check_toppings();
+			
 			## determine which action to do (default: 'compile')
 			$action = 'compile';
 			if ($this->option('-a')) {
@@ -96,11 +99,15 @@ require_once('KwartzAnalyzer.inc');
 			$plogic_code = NULL;
 			if ($this->option('-p')) {
 				$plogic_filename = $this->option('-p');
-				if (! file_exists($plogic_filename)) {
-					$msg = "'$plogic_filename': file not found.";
-					throw new KwartzCommandOptionError($msg);
+				$plogic_filenames = preg_split('/,/', $plogic_filename);
+				$plogic_code = '';
+				foreach ($plogic_filenames as $fname) {
+					if (! file_exists($fname)) {
+						$msg = "'$fname': file not found.";
+						throw new KwartzCommandOptionError($msg);
+					}
+					$plogic_code .= file_get_contents($fname);
 				}
-				$plogic_code = file_get_contents($plogic_filename);
 			}
 
 			## read input
@@ -118,12 +125,12 @@ require_once('KwartzAnalyzer.inc');
 			}
 
 			## do action
-			$output = $this->do_action($action, $input, $plogic_code, $lang, $flag_escape);
+			$output = $this->do_action($action, $input, $plogic_code, $lang, $flag_escape, $this->toppings);
 			echo $output;
 		}
 
 
-		function do_action(&$action, &$input, &$plogic_code, $lang, $flag_escape) {
+		function do_action(&$action, &$input, &$plogic_code, $lang, $flag_escape=FALSE, $toppings=NULL) {
 			switch ($action) {
 			case 'compile':
 				$output = '';
@@ -132,19 +139,24 @@ require_once('KwartzAnalyzer.inc');
 					if (! $newline) {
 						$newline = "\n";
 					}
-					if ($charset = $this->property('charset')) {
+					if ($charset = $this->topping('charset')) {
 						$output .= "<%@ page contentType=\"text/html; charset=$charset\" %>$newline";
 					}
-					#if ($text = $this->property('header-text')) {
-					#	$output .= $text;
-					if ($this->has_property('header-text')) {
-						$output .= $this->property('header-text');
+					if ($this->has_topping('header')) {
+						$output .= $this->topping('header');
 					} else {
 						$output .= "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jstl/core\" %>$newline";
 					}
+				} else {
+					if ($this->has_topping('header')) {
+						$output .= $this->topping('header');
+					}
 				}
-				$compiler = new KwartzCompiler($input, $plogic_code, $lang, $flag_escape);
+				$compiler = new KwartzCompiler($input, $plogic_code, $lang, $flag_escape, $toppings);
 				$output .= $compiler->compile();
+				if ($this->has_topping('footer')) {
+					$output .= $this->topping('footer');
+				}
 				break;
 
 			case 'parse':
@@ -154,30 +166,30 @@ require_once('KwartzAnalyzer.inc');
 				break;
 
 			case 'translate':
-				$parser = new KwartzParser($input, $flag_escape);
+				$parser = new KwartzParser($input, $flag_escape, $toppings);
 				$block = $parser->parse();
 				switch ($lang) {
 				case 'php':
-					$translator = new KwartzPhpTranslator($block);
+					$translator = new KwartzPhpTranslator($block, $toppings);
 					break;
 				case 'eruby':
-					$translator = new KwartzErubyTranslator($block);
+					$translator = new KwartzErubyTranslator($block, $toppings);
 					break;
 				case 'jsp':
-					$translator = new KwartzJspTranslator($block);
+					$translator = new KwartzJspTranslator($block, $toppings);
 					break;
 				}
 				$output = $translator->translate();
 				break;
 
 			case 'convert':
-				$converter = new KwartzConverter($input);
+				$converter = new KwartzConverter($input, $toppings);
 				$block = $converter->convert();
 				$output = $block->inspect();
 				break;
 
 			case 'analyze':
-				$converter = new KwartzConverter($input);
+				$converter = new KwartzConverter($input, $toppings);
 				$block = $converter->convert();
 				if ($plogic_code) {
 					$parser = new KwartzParser($plogic_code);
@@ -203,30 +215,45 @@ require_once('KwartzAnalyzer.inc');
 			return NULL;
 		}
 
-		function property($key) {
-			if (array_key_exists($key, $this->properties)) {
-				return $this->properties[$key];
+		function topping($key) {
+			if (array_key_exists($key, $this->toppings)) {
+				return $this->toppings[$key];
 			}
 			return NULL;
 		}
 
-		function set_property($key, $value) {
-			$this->properties[$key] = $value;
+		function set_topping($key, $value) {
+			$this->toppings[$key] = $value;
 		}
 
-		function has_property($key) {
-			return array_key_exists($key, $this->properties);
+		function has_topping($key) {
+			return array_key_exists($key, $this->toppings);
 		}
+
+		function check_toppings() {
+			if ($s = $this->topping('include_path')) {
+				$this->set_topping('include_path', preg_split('/,/', $s));
+			}
+			if ($s = $this->topping('load_path')) {
+				$this->set_topping('load_path', preg_split('/,/', $s));
+			}
+		}
+
 
 		function usage() {
 			$usage = <<<END
 Usage: {$this->command_name} [..options..] [filenames...]
-   -h		  : help
-   -v		  : version
-   -l lang	  : php/eruby (default 'php')
-   -a action	  : compile/parse/translate/convert/analyze (default 'compile')
-   -p file.plogic : presentation logic file
-   --name=value	  : property name and value
+  -h		 : help
+  -v		 : version
+  -l lang	 : php/eruby (default 'php')
+  -a action	 : compile/parse/translate/convert/analyze (default 'compile')
+  -p file.plogic : presentation logic file
+  -e             : escape(sanitize)
+  --escape=true  : escape(sanitize)
+  --header=text  : header text (default '<%@ taglib ...>' when jsp)
+  --footer=text  : footer text
+  --include_path=dir1,dir2,... : path list for 'include' directive
+  --load_path=dir1,dir2,...    : path list for 'load' directive
 
 END;
 			return $usage;
@@ -294,7 +321,7 @@ END;
 							default:
 							}
 						}
-						$this->set_property($key, $value);
+						$this->set_topping($key, $value);
 					} else {
 						$error_msg = "'${opt}': invalid option.";
 						break;
@@ -316,12 +343,14 @@ END;
 ##
 ## main program
 ##
-try {
-	$kwartz = new KwartzCommand($argv[0]);
-	$kwartz->main($argv);
-} catch (KwartzException $ex) {
-	fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
-	exit(1);
+if (basename(__FILE__) == $argv[0]) {
+	try {
+		$kwartz = new KwartzCommand($argv[0]);
+		$kwartz->main($argv);
+	} catch (KwartzException $ex) {
+		fwrite(STDERR, "ERROR: " . $ex->getMessage() . "\n");
+		exit(1);
+	}
+	exit(0);
 }
-exit(0);
 ?>

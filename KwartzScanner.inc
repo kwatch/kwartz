@@ -36,6 +36,7 @@ require_once('KwartzUtility.inc');
 	###   }
 	###
 	class KwartzScanner {
+		private $toppings;
 		private $input;			// string
 		private $index;
 		private $char;
@@ -91,11 +92,19 @@ require_once('KwartzUtility.inc');
 		//const EOF = -1;
 
 
-		function __construct($input) {
+		function __construct($input, $toppings=NULL) {
 			$this->input = $input;
+			$this->toppings = $toppings ? $toppings : array();
 			$this->_initialize();
 		}
-		
+
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
+		}
+
 		function reset($input) {
 			$this->input = $input;
 			$this->_initialize();

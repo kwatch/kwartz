@@ -49,8 +49,9 @@ require_once('KwartzScanner.inc');
 		private $element_name_stack;
 		private $current_element_name;
 
-		function __construct($input) {
-			$this->scanner = new KwartzScanner($input);
+		function __construct($input, $toppings=NULL) {
+			$this->toppings = $toppings ? $toppings : array();
+			$this->scanner = new KwartzScanner($input, $toppings);
 			$this->_initialize();
 		}
 		
@@ -64,7 +65,14 @@ require_once('KwartzScanner.inc');
 			$this->element_name_stack   = array();
 			$this->current_element_name = NULL;
 		}
-		
+
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
+		}
+
 		protected function token() {
 			return $this->scanner->token();
 		}

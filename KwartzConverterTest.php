@@ -1479,6 +1479,277 @@ END;
 		$this->_test_convert($input2, $expected2);
 	}
 
+	function test_replace1() {
+		$input = 
+		'<b kd="replace:foo">
+		bakeratta
+		</b>
+		<span kd="replace:foo"/>
+		';
+		$expected = 
+		'<<block>>
+		  :expand
+		    \'element_foo\'
+		  :expand
+		    \'element_foo\'
+		';
+		$this->_test_convert($input, $expected);
+	}
+
+	function test_replace2() {
+		$input = 
+		'<b php="replace(foo)">
+		bakeratta
+		</b>
+		<span php="replace(foo)"/>
+		';
+		$expected = 
+		'<<block>>
+		  :expand
+		    \'element_foo\'
+		  :expand
+		    \'element_foo\'
+		';
+		$this->_test_convert($input, $expected);
+	}
+	
+	
+	function test_include1() {
+		$filename = '_test.pdata';
+		$pdata =
+		'<div kd="foreach:item=list">
+		  <span kd="value:item">foo</span>
+		</div>
+		';
+		$pdata = preg_replace('/^\t\t/m', '', $pdata);
+		$f = fopen($filename, 'w');
+		fwrite($f, $pdata);
+		fclose($f);
+		$input = 
+		'<div>
+		  <div kd="include:\'' . $filename . '\'">
+		    foo
+		  </div>
+		</div>
+		';
+		#$input = preg_replace('/^\t\t/m', '', $pdata);
+		
+		$expected = 
+		'<<block>>
+		  :print
+		    "<div>\n"
+		  :print
+		    "  <div>\n"
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :print
+		        "<div>\n"
+		      :print
+		        item
+		      :print
+		        "</div>\n"
+		  :print
+		    "  </div>\n"
+		  :print
+		    "</div>\n"
+		';
+		$this->_test_convert($input, $expected);
+		unlink($filename);
+	}
+
+
+	function test_include1_php() {
+		$filename = '_test.plogic';
+		$pdata =
+		'<div php="foreach($list as $item)">
+		  <span php="echo($item)">foo</span>
+		</div>
+		';
+		$pdata = preg_replace('/^\t\t/m', '', $pdata);
+		$f = fopen($filename, 'w');
+		fwrite($f, $pdata);
+		fclose($f);
+		$input = 
+		'<div>
+		  <div php="include(\'' . $filename . '\')">
+		    foo
+		  </div>
+		</div>
+		';
+		#$input = preg_replace('/^\t\t/m', '', $pdata);
+		
+		$expected = 
+		'<<block>>
+		  :print
+		    "<div>\n"
+		  :print
+		    "  <div>\n"
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :print
+		        "<div>\n"
+		      :print
+		        item
+		      :print
+		        "</div>\n"
+		  :print
+		    "  </div>\n"
+		  :print
+		    "</div>\n"
+		';
+		$this->_test_convert($input, $expected);
+		unlink($filename);
+	}
+
+
+
+	function test_include1() {
+		$filename = '_test.pdata';
+		$pdata =
+		'<div kd="foreach:item=list">
+		  <span kd="value:item">foo</span>
+		</div>
+		';
+		$pdata = preg_replace('/^\t\t/m', '', $pdata);
+		$f = fopen($filename, 'w');
+		fwrite($f, $pdata);
+		fclose($f);
+		$input = 
+		'<div>
+		  <div kd="include:\'' . $filename . '\'">
+		    foo
+		  </div>
+		</div>
+		';
+		#$input = preg_replace('/^\t\t/m', '', $pdata);
+		
+		$expected = 
+		'<<block>>
+		  :print
+		    "<div>\n"
+		  :print
+		    "  <div>\n"
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :print
+		        "<div>\n"
+		      :print
+		        item
+		      :print
+		        "</div>\n"
+		  :print
+		    "  </div>\n"
+		  :print
+		    "</div>\n"
+		';
+		$this->_test_convert($input, $expected);
+		unlink($filename);
+	}
+
+
+	function test_load1() {
+		$filename = '_test.plogic';
+		$pdata =
+		':foreach (item=list)
+		  :print("<div>\n")
+		  :print(item)
+		  :print("</div>\n")
+		:end
+		';
+		$pdata = preg_replace('/^\t\t/m', '', $pdata);
+		$f = fopen($filename, 'w');
+		fwrite($f, $pdata);
+		fclose($f);
+		$input = 
+		'<div>
+		  <div kd="load:\'' . $filename . '\'">
+		    foo
+		  </div>
+		</div>
+		';
+		#$input = preg_replace('/^\t\t/m', '', $pdata);
+		
+		$expected = 
+		'<<block>>
+		  :print
+		    "<div>\n"
+		  :print
+		    "  <div>\n"
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :print
+		        "<div>\n"
+		      :print
+		        item
+		      :print
+		        "</div>\n"
+		  :print
+		    "  </div>\n"
+		  :print
+		    "</div>\n"
+		';
+		$this->_test_convert($input, $expected);
+		unlink($filename);
+	}
+
+
+	function test_load1_php() {
+		$filename = '_test.plogic';
+		$pdata =
+		'foreach ($list as $item) {
+		  echo "<div>\n";
+		  echo $item;
+		  echo "</div>\n";
+		}
+		';
+		$pdata = preg_replace('/^\t\t/m', '', $pdata);
+		$f = fopen($filename, 'w');
+		fwrite($f, $pdata);
+		fclose($f);
+		$input = 
+		'<div>
+		  <div php="load(\'' . $filename . '\')">
+		    foo
+		  </div>
+		</div>
+		';
+		#$input = preg_replace('/^\t\t/m', '', $pdata);
+		
+		$expected = 
+		'<<block>>
+		  :print
+		    "<div>\n"
+		  :print
+		    "  <div>\n"
+		  :foreach
+		    item
+		    list
+		    <<block>>
+		      :print
+		        "<div>\n"
+		      :print
+		        item
+		      :print
+		        "</div>\n"
+		  :print
+		    "  </div>\n"
+		  :print
+		    "</div>\n"
+		';
+		$this->_test_convert($input, $expected);
+		unlink($filename);
+	}
+
+
+
 }
 
 

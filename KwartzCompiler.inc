@@ -28,11 +28,13 @@ require_once('KwartzUtility.inc');
 		private $pdata;
 		private $plogic;
 		private $lang;
+		private $toppings;
 		private $flag_escape;
 		
-		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php', $flag_escape=FALSE) {
+		function __construct($pdata_str=NULL, $plogic_code=NULL, $lang='php', $flag_escape=FALSE, $toppings=NULL) {
 			$this->pdata = $pdata_str;
 			$this->plogic = $plogic_code;
+			$this->toppings = $toppings ? $toppings : array();
 			switch ($lang) {
 			case 'php':
 			case 'eruby':
@@ -47,20 +49,27 @@ require_once('KwartzUtility.inc');
 			$this->flag_escape = $flag_escape;
 		}
 		
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
+		}
+		
 		function compile() {
 			## convert presentation data into block
 			$pdata_block = NULL;
 			$newline_char = NULL;
 			if ($this->pdata) {
 				$newline_char = kwartz_detect_newline_char($this->pdata);
-				$converter = new KwartzConverter($this->pdata);
+				$converter = new KwartzConverter($this->pdata, $this->toppings);
 				$pdata_block = $converter->convert();
 			}
 			
 			## convert presentation logic code into block
 			$plogic_block = NULL;
 			if ($this->plogic) {
-				$parser = new KwartzParser($this->plogic);
+				$parser = new KwartzParser($this->plogic, $this->toppings);
 				$plogic_block = $parser->parse();
 			}
 			
@@ -77,13 +86,13 @@ require_once('KwartzUtility.inc');
 			## translate block into PHP code
 			switch ($this->lang) {
 			case 'php':
-				$translator = new KwartzPhpTranslator($block, $this->flag_escape);
+				$translator = new KwartzPhpTranslator($block, $this->flag_escape, $this->toppings);
 				break;
 			case 'eruby':
-				$translator = new KwartzErubyTranslator($block, $this->flag_escape);
+				$translator = new KwartzErubyTranslator($block, $this->flag_escape, $this->toppings);
 				break;
 			case 'jsp':
-				$translator = new KwartzJspTranslator($block, $this->flag_escape);
+				$translator = new KwartzJspTranslator($block, $this->flag_escape, $this->toppings);
 				break;
 			default:
 				assert(false);

@@ -25,6 +25,7 @@ require_once('KwartzUtility.inc');
 	class KwartzConverter {
 		private $input;		// string
 		private $parser;
+		private $toppings;
 		
 		private $before_text;
 		private $before_space;
@@ -39,10 +40,18 @@ require_once('KwartzUtility.inc');
 		function _attr_str()	   { return $this->attr_str; }		// for unit-test
 
 
-		function __construct($input) {
+		function __construct($input, $toppings=NULL) {
 			$this->input = $input;
+			$this->toppings = $toppings ? $toppings : array();
 			$this->macro_stmt_list = array();
-			$this->parser = new KwartzParser(' ');
+			$this->parser = new KwartzParser(' ', $this->toppings);
+		}
+		
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
 		}
 
 
@@ -204,8 +213,10 @@ require_once('KwartzUtility.inc');
 						break;
 					case 'value':  case 'Value':  case 'VALUE':
 					case 'mark':
+					case 'replace':
 					case 'if':   case 'elsif': case 'else': case 'unless':
 					case 'while':
+					case 'include':
 					case 'dummy':
 						$directive = array($name, $value);
 						break;
@@ -219,6 +230,13 @@ require_once('KwartzUtility.inc');
 					case 'loop':	case 'Loop':	case 'LOOP':
 						if (preg_match('/^\w+:/', $value)) {
 							$value = preg_replace('/:/', '=', $value);
+						}
+						$directive = array($name, $value);
+						break;
+					case 'include':  case 'load':
+						if (! preg_match('/^\'(.*)\'$/', $value, $m=array())) {
+							$msg = "directive '$name' requires filename as string.";
+							throw new KwartzConvertionError($msg, $this);
 						}
 						$directive = array($name, $value);
 						break;
@@ -273,12 +291,20 @@ require_once('KwartzUtility.inc');
 						break;
 					case 'echo':  case 'Echo':  case 'ECHO':
 					case 'mark':
+					case 'replace':
 					case 'if':  case 'elseif':  case 'else':
 					case 'while':
 					case 'set':
 					case 'foreach': case 'Foreach': case 'FOREACH':
 					case 'loop':	case 'Loop':	case 'LOOP':
 					case 'dummy':
+						$directive = array($name, $value);
+						break;
+					case 'include':  case 'load':
+						if (!preg_match('/^\'(.*)\'$/', $value, $m=array())) {
+							$msg = "directive '$name' requires filename as string.";
+							throw new KwartzConvertionError($msg, $this);
+						}
 						$directive = array($name, $value);
 						break;
 					default:
@@ -608,8 +634,55 @@ require_once('KwartzUtility.inc');
 				$this->macro_stmt_list[] = new KwartzMacroStatement("stag_$name", $stag_block);
 				$this->macro_stmt_list[] = new KwartzMacroStatement("cont_$name", $cont_block);
 				$this->macro_stmt_list[] = new KwartzMacroStatement("etag_$name", $etag_block);
+				//$this->macro_stmt_list[] = new KwartzMacroStatement("elem_$name", $elem_block);
 				$this->macro_stmt_list[] = new KwartzMacroStatement("element_$name", $elem_block);	## element_ or elem_
 				$stmt_list[] = new KwartzExpandStatement("element_$name");
+				break;
+
+			case 'replace':
+				//$macro_name = 'elem_' . $directive_arg;
+				$macro_name = 'element_' . $directive_arg;						## element_ or elem_
+				$stmt_list[] = new KwartzExpandStatement($macro_name);	# ignore $body
+				break;
+
+			case 'include':
+			case 'load':
+				$expr = $this->parse_expression($directive_arg, $flag_php_mode);
+				if ($expr->token() != 'string') {
+					$msg = "'$directive_name' directive requires filename as string.";
+					throw KwartzConvertionError($msg, $this);
+				}
+				$filename = $expr->value();
+				$topping_name = $directive_name == 'include' ? 'include_path' : 'load_path';
+				if ($this->topping($topping_name)) {
+					foreach ($this->topping($topping_name) as $dir) {
+						if (file_exists("$dir/$filename")) {
+							$filename = "$dir/$filename";
+							break;
+						}
+					}
+				}
+				if (! file_exists($filename)) {
+					$msg = "'$directive_name' directive: file '$filename' not found.";
+					throw new KwartzConvertionError($msg, $this);
+				}
+				$first_stmt = $block->shift();
+				$last_stmt = $block->pop();
+				$input = file_get_contents($filename);
+				if ($directive_name == 'include') {
+					$pdata =& $input;
+					$converter = new KwartzConverter($pdata);
+					$block = $converter->convert();
+				} else {
+					$plogic =& $input;
+					$parser = new KwartzParser($plogic);
+					$block = $parser->parse();
+				}
+				$stmt_list[] = $first_stmt;
+				foreach ($block->statements() as $stmt) {
+					$stmt_list[] = $stmt;
+				}
+				$stmt_list[] = $last_stmt;
 				break;
 
 			case 'dummy':

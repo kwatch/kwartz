@@ -122,9 +122,10 @@ require_once('KwartzUtility.inc');
 		protected $max_depth = 9;
 
 
-		function __construct($block, $flag_escape=FALSE) {
+		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
 			$this->block       = $block->rearrange();
 			$this->flag_escape = $flag_escape;
+			$this->toppings     = $toppings ? $toppings : array();
 			if ($flag_escape) {
 				$this->print_key    = ':eprint';
 				$this->endprint_key = ':endeprint';
@@ -133,7 +134,14 @@ require_once('KwartzUtility.inc');
 				$this->endprint_key = ':endprint';
 			}
 		}
-		
+
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
+		}
+
 		function code() { return $this->code; }
 		function flag_escape() { return $this->flag_escape; }
 		
@@ -521,8 +529,8 @@ require_once('KwartzUtility.inc');
 			'E)'   => ')',
 		);
 		
-		function __construct($block, $flag_escape=FALSE) {
-			parent::__construct($block, $flag_escape);
+		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+			parent::__construct($block, $flag_escape, $toppings);
 		}
 
 		protected function keyword($token) {

@@ -69,8 +69,8 @@ require_once('KwartzNode.inc');
 			'E)'   => NULL,
 		);
 
-		function __construct($block, $flag_escape=FALSE) {
-			parent::__construct($block, $flag_escape);
+		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+			parent::__construct($block, $flag_escape, $toppings);
 			$this->condfind_visitor = new KwartzConditionalExpressionFindVisitor();
 			$this->deepcopy_visitor = new KwartzConditionalDeepCopyVisitor();
 		}

@@ -12,14 +12,23 @@ require_once('KwartzVisitor.inc');
 	class KwartzAnalyzer {
 		private $node;
 		private $analyze_visitor;
+		private $toppings;
 
-		function __construct($node) {
+		function __construct($node, $toppings=NULL) {
 			if ($node->token() == '<<block>>') {
 				$this->node = $node->rearrange();
 			} else {
 				$this->node = $node;
 			}
+			$this->toppings = $toppings ? $toppings : array();
 			$this->analyze_visitor = new KwartzAnalyzeVisitor();
+		}
+
+		function topping($name) {
+			if (array_key_exists($name, $this->toppings)) {
+				return $this->toppings[$name];
+			}
+			return NULL;
 		}
 
 		function analyze() {

@@ -53,8 +53,8 @@ require_once('KwartzTranslator.inc');
 			'E)'   => ').to_s)',
 		);
 
-		function __construct($block, $flag_escape=FALSE) {
-			parent::__construct($block, $flag_escape);
+		function __construct($block, $flag_escape=FALSE, $toppings=NULL) {
+			parent::__construct($block, $flag_escape, $toppings);
 		}
 
 		protected function keyword($token) {
