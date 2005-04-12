@@ -1,7 +1,15 @@
 $Release$
 $Id$
 
-2.0.0-beta4 (2005-03-28)
+
+	* [enhance] Rails support
+		--globalvar-prefix=@
+	* [bugfix] nested property or index
+
+	* [enhance] RubyGem support
+		If you have installed rubygem, type 'gem install kwartz-ruby'.
+
+2.0.0-beta4 (2005-03-28) (rev.59)
 	* [enhance] New action 'defun' support.
 		It is equivalent to 'mkmethod' script of Kwartz1.0, and
 		it generates Ruby/PHP function from templates.
@@ -10,8 +18,6 @@ $Id$
 	* [enhance] 'Velocity' support.
 		Kwartz-ruby now support Velocity, a template system in Java.
 		The command-line option '-l velocity' generates velocity script.
-	* [enhance] RubyGem support
-		If you have installed rubygem, type 'gem install kwartz-ruby'.
 
 2.0.0-beta3 (2005-03-07)
 	* [change] 'kd' attribute is renamed to 'kw:d'.

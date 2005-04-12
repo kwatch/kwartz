@@ -172,46 +172,50 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  factor       ::=  literal | item | item '[' expression ']' | item '[:' name ']' | item '.' property | item '.' method '(' [ arguments ] ')'
+      ##  factor       ::=  literal | item | factor '[' expression ']' | factor '[:' name ']' | factor '.' property | factor '.' method '(' [ arguments ] ')'
       ##
       def parse_factor_expr
          tkn = token()
          case tkn
          when :name, '('
             expr = parse_item_expr()
-            if token() == '['
-               scan()
-               expr2 = parse_expression()
-               syntax_error("']' expected ('[' is not closed by ']').") unless token() == ']'
-               scan()
-               return IndexExpression.new('[]', expr, expr2)
-            elsif token() == '[:'
-               scan()
-               word = value()
-               syntax_error("'#{tkn}': '[:' requires a word following.") unless token() == :name
-               tkn = scan()
-               syntax_error("'[:' is not closed by ']'.") unless tkn == ']'
-               scan()
-               return IndexExpression.new('[:]', expr, StringExpression.new(word))
-            elsif token() == '.'
-               scan()
-               name = value()
-               syntax_error("'#{tkn}': '.' requires a property or method name following.") unless token() == :name
-               scan()
-               if token() == '('
-                  method_name = name
+            while true
+               case token()
+               when '['
                   scan()
-                  arguments = parse_arguments()
-                  syntax_error("')' expected (method '#{method_name}()' is not closed by ')').") unless token() == ')'
+                  expr2 = parse_expression()
+                  syntax_error("']' expected ('[' is not closed by ']').") unless token() == ']'
                   scan()
-                  return MethodExpression.new(expr, method_name, arguments)
+                  expr = IndexExpression.new('[]', expr, expr2)
+               when '[:'
+                  scan()
+                  word = value()
+                  syntax_error("'#{tkn}': '[:' requires a word following.") unless token() == :name
+                  tkn = scan()
+                  syntax_error("'[:' is not closed by ']'.") unless tkn == ']'
+                  scan()
+                  expr = IndexExpression.new('[:]', expr, StringExpression.new(word))
+               when '.'
+                  scan()
+                  name = value()
+                  syntax_error("'#{tkn}': '.' requires a property or method name following.") unless token() == :name
+                  scan()
+                  if token() == '('
+                     method_name = name
+                     scan()
+                     arguments = parse_arguments()
+                     syntax_error("')' expected (method '#{method_name}()' is not closed by ')').") unless token() == ')'
+                     scan()
+                     expr = MethodExpression.new(expr, method_name, arguments)
+                  else
+                     prop_name = name
+                     expr = PropertyExpression.new(expr, prop_name)
+                  end
                else
-                  prop_name = name
-                  return PropertyExpression.new(expr, prop_name)
+                  break   # escape 'while true' loop
                end
-            else
-               return expr
             end
+            return expr
          when :numeric, :string, :true, :false, :null, :empty
             expr = parse_literal_expr()
             return expr

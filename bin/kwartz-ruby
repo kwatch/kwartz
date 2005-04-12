@@ -109,6 +109,7 @@ module Kwartz
             end
             $stderr.puts usage() if options[?h]
             #return 0
+            return
          end
 
          ## action
@@ -242,7 +243,6 @@ Usage: #{command} [..options..] file1 [file2...]
   -F function         : function/method name  (only for action 'defun')
   -A arg1,arg2,...    : arguments             (only for action 'defun')
   --escape[=true] : sanitize(escape)
-  --rename[=true] : rename local variables (ex. rename 'var' to '_var')
   --charset=name  : add '<%@ page contentType="text/html; charset=name" %>'
   --odd=value     : odd  value in FOREACH or LIST (default "#{Kwartz::Config::ODD}")
   --even=value    : even value in FOREACH or LIST (default "#{Kwartz::Config::EVEN}")
@@ -251,6 +251,8 @@ Usage: #{command} [..options..] file1 [file2...]
   --footer=text   : footer text
   --extract=name  : extract an marked element
   --include-dirs=dir1,dir2,...  : directories for 'include:' directive
+  --localvar-prefix=string      : add prefix to local variables
+  --globalvar-prefix=string     : add prefix to global variables
 END
          return s
       end
