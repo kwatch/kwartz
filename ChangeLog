@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-21 rev.63
+	.- [change] add Rookfile
+
 .: 2005-04-13 rev.62
 	.- [bugfix] now can parse var.prop1.prop2 or var['key1']['key2']
 	.- [bugfix] fix the help message of kwartz-ruby

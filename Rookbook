@@ -1,0 +1,72 @@
+#!/usr/bin/env rook
+
+###
+### copyright (c) makoto kuwata all rights reserved
+###
+### $Id$
+### $Release$
+###
+
+text_files = [ "ChangeLog.txt", "README.ja.txt", "README.en.txt", "COPYING", 
+		"setup.rb", "todo.txt", "kwartz-ruby.gemspec", ]
+
+
+doc_files = [
+	"doc/docstyle.css",
+	"doc/reference.en.html",  "doc/users-guide.en.html",  "doc/p-pattern.en.html",
+	"doc/reference.ja.html",  "doc/users-guide.ja.html",  "doc/p-pattern.ja.html",
+	"doc/design.css",  "doc/design.html",
+	# "doc/BNF.txt",
+	]
+
+
+desc	"create README.(en|ja).txt"
+grecipe 'README.??.txt'				, 'README.txt'		do |r|
+	cmd "ruby m18n.rb -l #{m[1].upcase} #{r.ingred} > #{r.product}"
+	end
+
+
+desc	false
+recipe	:chmod								do |r|
+	cmd 'find . -type f | grep -v \'\\.svn\' | xargs chmod 644'
+	cmd 'a+x bin/kwartz bin/kwartz-ruby'
+	end
+
+
+desc	"create archive"
+grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}$/    , text_files, doc_files	do |r|
+	release = m[1]
+	suffix = m[2]
+	archive_dir = "kwartz-ruby_#{m[1]}"
+	remove_rf archive_dir
+	mkdir_p archive_dir
+	copy_r 'lib', 'bin', 'test', text_files, archive_dir
+	mkdir_p "#{archive_dir}/doc"
+	copy_r doc_files, "#{archive_dir}/doc"
+	chdir 'examples' do cmd 'make -s clean' end
+	copy_r 'examples', archive_dir
+	remove_rf "#{archive_dir}/*/.expected"
+	cmd "find #{archive_dir} -name '.svn' | xargs rm -rf"
+	cmd %Q!find #{archive_dir} -type f | xargs ruby -pi -e 'gsub(/\\$Release.*?\\$/, "$Release: #{release}$")'!
+	cmd "find #{archive_dir} -type f | xargs chmod 644"
+	cmd "chmod 755 #{archive_dir}/bin/*"
+	if !suffix || suffix.empty? || suffix == 'tar.bz2'
+		cmd "tar cjf #{archive_dir}.tar.bz2 #{archive_dir}"
+	elsif suffix == 'tar.gz'
+		cmd "tar czf #{archive_dir}.tar.gz #{archive_dir}"
+	end
+	end
+
+
+#recipe	/^doc\/(.*)\.(en|ja)\.html$/		, 'doc/{1}.{2}.html'	do |r|
+#	chdir "doc" do rook r.target end
+#	end
+grecipe 'doc/%.%.html'			, 'doc/{1}.txt'		do |r|
+	chdir "doc" do rook "{1}.{2}.html" end
+	end
+
+
+recipe	/^doc\/(design\.css|design\.html)$/	, 'doc/p-pattern.en.txt' do |r|
+	chdir "doc" do rook "{1}" end
+	end
+
