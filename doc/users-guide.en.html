@@ -71,13 +71,15 @@ a template system which realized the concept of 'Separation of Presentation Logi
     </li>
     <li><a href="#analyze">Analyzing Global and Local Variables</a>
     </li>
-    <li><a href="#rename">Rename Template Local Variable Names</a>
+    <li><a href="#rename">Rename Template Global/Local Variable Names</a>
     </li>
     <li><a href="#span">Span Tag Deletion</a>
     </li>
     <li><a href="#topics-append">Appending Expression to Start Tag</a>
     </li>
     <li><a href="#rawcode">Describe Presentation Logic in Target Language</a>
+    </li>
+    <li><a href="#rails">Kwartz with Ruby on Rails</a>
     </li>
     <li><a href="#topic-defun">Compile Template into a Function of Ruby or PHP</a>
     </li>
@@ -484,9 +486,9 @@ In the presentation logic, you should detect whether odd or even line in the ite
     foreach (member in member_list) {
       i += 1;
       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-      @stag;
-      @cont;
-      @etag;
+      @stag;    // start tag
+      @cont;    // content
+      @etag;    // end tag
     }
   }
 }
@@ -530,7 +532,8 @@ $ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
 </pre>
 <p>Output Script:
 </p>
-<pre class="program">&lt;table&gt;
+<pre class="program">### for eRuby
+&lt;table&gt;
 &lt;% i = 0 %&gt;
 &lt;% for member in member_list do %&gt;
 &lt;%   i += 1 %&gt;
@@ -543,44 +546,54 @@ $ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
  &lt;/tr&gt;
 &lt;% end %&gt;
 &lt;/table&gt;
-### for eRuby
-&lt;table&gt;
- &lt;tr bgcolor="#CCCCFF"&gt;
-  &lt;td&gt;foo&lt;/td&gt;
-  &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com"&gt;foo@mail.com&lt;/a&gt;
-  &lt;/td&gt;
- &lt;/tr&gt;
-&lt;/table&gt;
 
 ### for PHP
 &lt;table&gt;
- &lt;tr bgcolor="#CCCCFF"&gt;
-  &lt;td&gt;foo&lt;/td&gt;
+&lt;?php $i = 0; ?&gt;
+&lt;?php foreach ($member_list as $member) { ?&gt;
+&lt;?php   $i += 1; ?&gt;
+&lt;?php   $color = $i % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo $member["name"]; ?&gt;&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com"&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:&lt;?php echo $member["email"]; ?&gt;"&gt;&lt;?php echo $member["email"]; ?&gt;&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
+&lt;?php } ?&gt;
 &lt;/table&gt;
 
 ### for JSTL
 &lt;table&gt;
- &lt;tr bgcolor="#CCCCFF"&gt;
-  &lt;td&gt;foo&lt;/td&gt;
+&lt;c:set var="i" value="0"/&gt;
+&lt;c:forEach var="member" items="${member_list}"&gt;
+  &lt;c:set var="i" value="${i + 1}"/&gt;
+  &lt;c:set var="color" value="${i % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${member['name']}" escapeXml="false"/&gt;&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com"&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:&lt;c:out value="${member['email']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${member['email']}" escapeXml="false"/&gt;&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
+&lt;/c:forEach&gt;
 &lt;/table&gt;
 
 ### for Velocity
 &lt;table&gt;
- &lt;tr bgcolor="#CCCCFF"&gt;
-  &lt;td&gt;foo&lt;/td&gt;
+#set($i = 0)
+#foreach($member in $member_list)
+  #set($i = $i + 1)
+  #if($i % 2 == 0)
+    #set($color = "#FFCCCC")
+  #else
+    #set($color = "#CCCCFF")
+  #end
+ &lt;tr bgcolor="$!{color}"&gt;
+  &lt;td&gt;$!{member["name"]}&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com"&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:$!{member["email"]}"&gt;$!{member["email"]}&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
+#end
 &lt;/table&gt;
 </pre>
 <br>
@@ -773,16 +786,7 @@ $ kwartz -l jstl11  example3.html &gt; example3.jsp
 </pre>
 <p>Output script:
 </p>
-<pre class="program">&lt;table&gt;
-&lt;% for member in member_list do %&gt;
-  &lt;tr&gt;
-    &lt;td&gt;&lt;%= member["name"] %&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;a href="mailto:&lt;%= member["email"] %&gt;"&gt;
-         &lt;%= member["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
-  &lt;/tr&gt;
-&lt;% end %&gt;
-&lt;/table&gt;
-### for eRuby
+<pre class="program">### for eRuby
 &lt;table&gt;
 &lt;% for member in member_list do %&gt;
   &lt;tr&gt;
@@ -873,7 +877,31 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
 </pre>
 <p>Output Scirpt:
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;tr bgcolor="&lt;%= CGI::escapeHTML((color).to_s) %&gt;"&gt;
+  &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for ERB
+&lt;tr bgcolor="&lt;%=h(color)%&gt;"&gt;
+  &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for PHP
+&lt;tr bgcolor="&lt;?php echo htmlspecialchars($color); ?&gt;"&gt;
+  &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for JSTL
+&lt;tr bgcolor="&lt;c:out value="${color}"/&gt;"&gt;
+  &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+### for Velocity
+&lt;tr bgcolor="$!esc.html($color)"&gt;
+  &lt;td&gt;$!esc.html($str)&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
 <p>Constant string and constant number are not sanitized.
 Conditional expression such as '<code>flag ? " checked" : ""</code>' is not sanitized because the result is constant string whether the value of '<code>flag</code>' is true or false.
 </p>
@@ -914,7 +942,41 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
 </pre>
 <p>Output Script:
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%= CGI::escapeHTML((str).to_s) %&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for ERB
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+   &lt;td&gt;&lt;%=h(str)%&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;?php echo $color; ?&gt;"&gt;
+   &lt;td&gt;&lt;?php echo htmlspecialchars($str); ?&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for JSTL
+&lt;table&gt;
+ &lt;tr bgcolor="&lt;c:out value="${color}" escapeXml="false"/&gt;"&gt;
+   &lt;td&gt;&lt;c:out value="${str}"/&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+
+### for Velocity
+&lt;table&gt;
+ &lt;tr bgcolor="$!{color}"&gt;
+   &lt;td&gt;$!esc.html($str)&lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
 <p>Directives <code>id="Value:<i>expr</i>"</code> and <code>id="Attr:<i>name</i>=<i>expr</i>"</code> always sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is not specified.
 Directives <code>id="VALUE:<i>expr</i>:"</code> and <code>id="ATTR:<i>name</i>=<i>expr</i>"</code> doesn't sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is specified.
 These are equivalent to <code>id="value:E(<i>expr</i>)"</code>, <code>id="attr:<i>name</i>=E(<i>expr</i>)"</code>, 
@@ -1027,62 +1089,70 @@ Variables <code>title</code> and <code>list</code> are template global variables
 
 
 <a name="rename"></a>
-<h3 class="section2">Rename Template Local Variable Names</h3>
-<p>In Ruby or PHP, if template local variables in templates have the same name of variables in main program,
-assignment into local variables effects the control of main program.
-To address this problem, Kwartz have a feature to rename template local variable names in templates automatically.
+<h3 class="section2">Rename Template Global/Local Variable Names</h3>
+<p>The command-line option <code>--globalvar-prefix=<i>prefix</i></code> and <code>--localvar-prefix=<i>prefix</i></code>
+add a prefix to global/local variable names in template.
 </p>
-<p>The command-line option '<code>--rename</code>' renames all of template local variable names in template automatically.
+<p>In Ruby or PHP, for example, if template local variables in templates have the same name of variables in main program,
+assignment into template local variables effects the control of main program.
+To address this problem, you should add a prefix such as '_' to template local variable names automatically.
 </p>
 <p>The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
 </p>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--rename</b> analyze.html
-$ kwartz -l php    -p analyze.plogic <b>--rename</b> analyze.html
-$ kwartz -l jstl11 -p analyze.plogic <b>--rename</b> analyze.html
-$ kwartz -l velocity -p analyze.plogic <b>--rename</b> analyze.html
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
+$ kwartz -l php    -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
+$ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 </pre>
 <p>Output Script:
 </p>
-<pre class="program">&lt;%= title %&gt;
-&lt;dl&gt;
-&lt;% ctr = 0 %&gt;
-&lt;% for item in list do %&gt;
-&lt;%   ctr += 1 %&gt;
- &lt;dt&gt;&lt;%= ctr %&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;%= item %&gt;&lt;/dd&gt;
-&lt;% end %&gt;
-&lt;/dl&gt;
-### for eRuby
+<pre class="program">### for eRuby
 &lt;%= title %&gt;
 &lt;dl&gt;
- &lt;dt&gt;&lt;%= ctr %&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;%= item %&gt;&lt;/dd&gt;
+&lt;% _ctr = 0 %&gt;
+&lt;% for _item in list do %&gt;
+&lt;%   _ctr += 1 %&gt;
+ &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
 &lt;/dl&gt;
 
 ### for PHP
 &lt;?php echo $title; ?&gt;
 &lt;dl&gt;
- &lt;dt&gt;&lt;?php echo $ctr; ?&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;?php echo $item; ?&gt;&lt;/dd&gt;
+&lt;?php $_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $_item) { ?&gt;
+&lt;?php   $_ctr += 1; ?&gt;
+ &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+&lt;?php } ?&gt;
 &lt;/dl&gt;
 
 ### for JSTL
 &lt;c:out value="${title}" escapeXml="false"/&gt;
 &lt;dl&gt;
- &lt;dt&gt;&lt;c:out value="${ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;c:set var="_ctr" value="0"/&gt;
+&lt;c:forEach var="_item" items="${list}"&gt;
+  &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
+ &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+ &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+&lt;/c:forEach&gt;
 &lt;/dl&gt;
 
 ### for Velocity
 $!{title}
 &lt;dl&gt;
- &lt;dt&gt;$!{ctr}&lt;/dt&gt;
- &lt;dd&gt;$!{item}&lt;/dd&gt;
+#set($_ctr = 0)
+#foreach($_item in $list)
+  #set($_ctr = $_ctr + 1)
+ &lt;dt&gt;$!{_ctr}&lt;/dt&gt;
+ &lt;dd&gt;$!{_item}&lt;/dd&gt;
+#end
 &lt;/dl&gt;
 </pre>
-<p>Constant RENAME in configuration file specifies whether rename template local variable names in default.
+<p>Constant GLOBALVAR_PREFIX and LOCALVAR_PREFIX in configuration file specifies the default prefix.
 </p>
 <br>
 
@@ -1147,7 +1217,32 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </pre>
 <p>Output Script:
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= flag ? " checked" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${flag}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($flag)
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked /&gt;
+#else
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+#end
+</pre>
 <p>A directive <code>append(<i>expr</i>)</code> appends the value of the expression <code><i>expr</i></code> in the element tag.
 </p>
 <p>Presentation Data:
@@ -1174,7 +1269,32 @@ when the expression <code><i>expr</i></code> is true.
 </pre>
 <p>Output Script:
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;%= foo == 100 ? " checked=\"checked\"" : "" %&gt; /&gt;
+
+### for PHP
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;?php echo $foo == 100 ? " checked=\"checked\"" : ""; ?&gt; /&gt;
+
+### for JSTL 1.1
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo"&lt;c:out value="${foo eq 100 ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;
+
+### for JSTL 1.0
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
+&lt;c:choose&gt;&lt;c:when test="${foo eq 100}"&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+&lt;/c:when&gt;&lt;c:otherwise&gt;
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+
+### for Velocity
+#if($foo == 100)
+&lt;input type="checkbox" name="foo" value="Y" id="foo" checked="checked" /&gt;
+#else
+&lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
+#end
+</pre>
 <br>
 
 
@@ -1200,6 +1320,129 @@ It enables you to write presentation logics in Ruby, PHP, and Java.
 Raw-code is statement and not expression, therefore you can write raw-code in 'plogic:' part
 but not in 'value:' part and 'attr:' part.
 </p>
+<br>
+
+
+<a name="rails"></a>
+<h3 class="section2">Kwartz with Ruby on Rails</h3>
+<p>Kwartz-ruby has a special option '-Rails' for Ruby on Rails.
+It is equivarent to '-l erb --globalvar-prefix=@'.
+</p>
+<p>If you want to use Rails-specific functions such as 'link_to()' or 'url_for()',
+use '&lt;% ... %&gt;' or '&lt;%= ... %&gt;' (or embed them into presentation data file).
+</p>
+<p>Presentation Data (list.html)
+</p>
+<a name="list.html"></a>
+<pre class="program">&lt;html&gt;
+ &lt;body&gt;
+
+  &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
+  
+  &lt;table border="1"&gt;
+   &lt;tr&gt;
+    &lt;th width="80%"&gt;Recipe&lt;/th&gt;
+    &lt;th width="20%"&gt;Date&lt;/th&gt;
+   &lt;/tr&gt;
+   &lt;tr <b>id="mark:recipes"</b>&gt;
+    &lt;td&gt;&lt;a href="..." <b>id="mark:recipe_title"</b>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
+    &lt;td <b>id="mark:recipe_date"</b>&gt;2004 November 11&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr <b>id="dummy:d1"</b>&gt;
+    &lt;td&gt;&lt;a href="..."&gt;Ice Water&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;2004 November 11&lt;/td&gt;
+   &lt;/tr&gt;
+  &lt;/table&gt;
+
+  &lt;p&gt;
+   &lt;a href="..." <b>id="mark:recipe_new"</b>&gt;Create new recipe&lt;/a&gt;
+  &lt;/p&gt;
+
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Presentation Logic (list.plogic)
+</p>
+<a name="list.plogic"></a>
+<pre class="program">#recipes {
+  plogic: {
+    recipe_url = null;    // dummy statement to identify a variable as template local
+    foreach (recipe in recipes) {
+      &lt;%= recipe_url = url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+
+#recipe_title {
+  value: recipe.title;
+  attr:  "href" recipe_url;
+}
+
+// Or
+//  #recipe_title {
+//    plogic: {
+//      &lt;%= link_to recipe.title, :action =&gt; "show", :id =&gt; recipe.id %&gt;
+//    }
+//  }
+
+#recipe_date {
+  value: recipe.date;
+}
+
+#recipe_new {
+  plogic: {
+    &lt;%= link_to "Create new recipe", :action =&gt; "new" %&gt;
+  }
+}
+
+// Or
+//  #recipe_new {
+//    attr: "href" action_new_url;
+//    plogic: {
+//      action_new_url = null;
+//      &lt;% action_new_url = url_for(:action =&gt; "new") %&gt;
+//      @stag;
+//      @cont;
+//      @etag;
+//    }
+//  }
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz <b>-Rails</b> -p list.plogic list.html &gt; list.rhtml
+</pre>
+<p>Output Script:
+</p>
+<pre class="program">&lt;html&gt;
+ &lt;body&gt;
+
+  &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
+  
+  &lt;table border="1"&gt;
+   &lt;tr&gt;
+    &lt;th width="80%"&gt;Recipe&lt;/th&gt;
+    &lt;th width="20%"&gt;Date&lt;/th&gt;
+   &lt;/tr&gt;
+&lt;% recipe_url = nil %&gt;
+&lt;% for recipe in @recipes do %&gt;
+&lt;%= recipe_url = url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;
+   &lt;tr&gt;
+    &lt;td&gt;&lt;a href="&lt;%= recipe_url %&gt;"&gt;&lt;%= recipe.title %&gt;&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;%= recipe.date %&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+&lt;% end %&gt;
+  &lt;/table&gt;
+
+  &lt;p&gt;
+&lt;%= link_to "Create new recipe", :action =&gt; "new" %&gt;
+  &lt;/p&gt;
+
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
 <br>
 
 
@@ -1235,7 +1478,43 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
 </pre>
 <p>Output Script:
 </p>
-<pre class="program"></pre>
+<pre class="program">### for eRuby
+  def view_hoge1(__args)
+    user = __args[:user]
+    list = __args[:list]
+    return _view_hoge1(user,list)
+  end
+  def _view_hoge1(user,list)
+    _erbout = ''; _erbout &lt;&lt; "Hello "; _erbout &lt;&lt;(( user ).to_s); _erbout &lt;&lt; " !\n"
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+     for item in list do 
+    _erbout &lt;&lt; "  &lt;li&gt;"; _erbout &lt;&lt;(( item ).to_s); _erbout &lt;&lt; "&lt;/li&gt;\n"
+     end 
+    _erbout &lt;&lt; "&lt;ul&gt;\n"
+    _erbout
+  end
+
+### for PHP
+&lt;?php
+    function view_hoge1($__args) {
+        $user = $__args['user']
+        $list = $__args['list']
+        return _view_hoge1(user,list)
+    }
+    function _view_hoge1(user,list) {
+        ob_start();
+?&gt;Hello &lt;?php echo $user; ?&gt; !
+&lt;ul&gt;
+&lt;?php foreach ($list as $item) { ?&gt;
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+&lt;?php } ?&gt;
+&lt;ul&gt;
+&lt;?php
+        $__s = ob_get_contents();
+        ob_end_clean();
+        return $__s;
+    }
+?&gt;</pre>
 <p>Two functions are defined by '-a defun' option. You can use whichever you prefer.
 </p>
 <ul type="disc">

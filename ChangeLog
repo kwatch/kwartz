@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-25 rev.65
+	.- [bugfix] optparse() can handle '-Rails', which option character and argument is not separated
+	.- [update] users-guide updated
+
 .: 2005-04-24 rev.64
 	.- [enhance] new function 'escape_xml', 'escape_sql', 'escape_url', 'str_replace', 'str_linebreak'
 	.- [enhance] new command-line option '-Rails'

@@ -55,3 +55,4 @@
 .- [v] function 'escape_sql'
 .- [v] function 'escape_url'
 .- [v] function 'str_linebreak'
+.- [_] new directive 'dvalue'

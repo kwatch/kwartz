@@ -11,11 +11,7 @@ unless filename
    $stderr.puts "*** kwartz command not found."
    exit(1)
 end
-
-script = File.open(filename) { |f| f.read }
-KWARTZ_NOEXEC = true
-KWARTZ_EXECUTE = true
-eval script
+load(filename)
 
 
 args = []
@@ -31,8 +27,6 @@ ARGV.each_with_index do |arg, i|
    args << arg
 end
 
-$stdout.puts "*** debug: langs=#{langs.inspect}"
-__END__
 lang_list = langs ? langs.split(/,/) : [ 'eruby', 'php', 'jstl', 'velocity' ]
 
 names = {

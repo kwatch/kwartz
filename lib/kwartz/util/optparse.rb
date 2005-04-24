@@ -86,8 +86,10 @@ module Kwartz
                   if noargs.include?(optchar)
                      options[optchar] = true
                   elsif requires.include?(optchar)
-                     arg = optstr && !optstr.empty? ? optstr : argv.shift
-                     unless arg && !arg.empty?
+                     arg = optstr
+                     optstr = nil
+                     arg = argv.shift if !arg || arg.empty?
+                     unless arg
                         raise Kwartz::Util::OptparseError.new("argument required.", :argument_required, optchar, arg)
                      end
                      options[optchar] = arg

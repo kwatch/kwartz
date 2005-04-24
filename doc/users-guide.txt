@@ -522,9 +522,12 @@
 .	    foreach (member in member_list) {
 .	      i += 1;
 .	      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-.	      @stag;
-.	      @cont;
-.	      @etag;
+.JA	      @stag;    // 開始タグ(start tag)
+.JA	      @cont;    // 内容    (content)
+.JA	      @etag;    // 終了タグ(end tag)
+.EN	      @stag;    // start tag
+.EN	      @cont;    // content
+.EN	      @etag;    // end tag
 .	    }
 .	  }
 .	}
@@ -1069,46 +1072,43 @@
 .	
 .	
 .	
-.JA	◎テンプレートローカル変数の名前を変更する		| rename
-.EN	.$$ Rename Template Local Variable Names		| rename
+.JA	◎テンプレートグローバル/ローカル変数の名前を変更する	| rename
+.EN	.$$ Rename Template Global/Local Variable Names		| rename
 .	
+.JA	Kwartzでは、テンプレートグローバル変数とテンプレートローカル変数の、両方または一方の名前にプレフィックスをつけることができます。
+.JA	プレフィックスをつけるには、コマンドラインオプション「{{,--globalvar-prefix={{/prefix/}},}}」と「{{,--localvar-prefix={{/prefix/}},}}」を使用します。
+.EN	The command-line option {{,--globalvar-prefix={{/prefix/}},}} and {{,--localvar-prefix={{/prefix/}},}}
+.EN	add a prefix to global/local variable names in template.
 .	
-.JA	RubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
+.JA	例えばRubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
 .JA	テンプレート側の変数を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
-.JA	これに対処するため、Kwartzではテンプレートローカル変数名を自動的に変更する機能があります。
-.EN	In Ruby or PHP, if template local variables in templates have the same name of variables in main program,
-.EN	assignment into local variables effects the control of main program.
-.EN	To address this problem, Kwartz have a feature to rename template local variable names in templates automatically.
-.	
-.	
-.JA	コンパイル時にコマンドラインオプション「{{,--rename,}}」を指定すると、
-.JA	テンプレートローカル変数名の頭に「{{,_,}}をつけます。
-.EN	The command-line option '{{,--rename,}}' renames all of template local variable names in template automatically.
-.	
+.JA	これに対処するには、テンプレートローカル変数名に例えば「_」というプレフィックスをつけます。
+.JA	
+.EN	In Ruby or PHP, for example, if template local variables in templates have the same name of variables in main program,
+.EN	assignment into template local variables effects the control of main program.
+.EN	To address this problem, you should add a prefix such as '_' to template local variable names automatically.
 .	
 .JA	前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
 .EN	The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
 .	
-.	
 .JA	実行例：
 .EN	Compile:
 .	.====================
-.	$ kwartz -l eruby  -p analyze.plogic {{*--rename*}} analyze.html
-.	$ kwartz -l php    -p analyze.plogic {{*--rename*}} analyze.html
-.	$ kwartz -l jstl11 -p analyze.plogic {{*--rename*}} analyze.html
-.	$ kwartz -l velocity -p analyze.plogic {{*--rename*}} analyze.html
+.	$ kwartz -l eruby  -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+.	$ kwartz -l php    -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+.	$ kwartz -l jstl11 -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+.	$ kwartz -l velocity -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
 .	.====================
-.	
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.--------------------
-.	.<<<:! ./output.rb -p guide.d/analyze.plogic --rename guide.d/analyze.html
+.	.<<<:! ./output.rb -p guide.d/analyze.plogic --localvar-prefix='_' guide.d/analyze.html
 .	.--------------------
 .	
-.	
-.JA	なお設定ファイルの定数RENAMEで、デフォルトでテンプレートローカル変数名を変更する・しないを設定できます。
-.EN	Constant RENAME in configuration file specifies whether rename template local variable names in default.
+.JA	なお設定ファイルの定数「GLOBALVAR_PREFIX」と「LOCALVAR_PREFIX」で、
+.JA	デフォルトのプレフィックスを指定できます。
+.EN	Constant GLOBALVAR_PREFIX and LOCALVAR_PREFIX in configuration file specifies the default prefix.
 .	
 .	
 .	
@@ -1264,6 +1264,123 @@
 .	
 .	
 .	
+.JA	◎Ruby on Railsで使用する	| rails
+.EN	.$$ Kwartz with Ruby on Rails	| rails
+.	
+.	
+.JA	Ruby on RailsでKwartzを使うには、コマンドオプションとして「-l erb」と「--globalvar-prefix='@'」をつけます。
+.JA	Kwartz-rubyでは、これをまとめて行うコマンドオプション「-Rails」を特別に用意しています。
+.EN	Kwartz-ruby has a special option '-Rails' for Ruby on Rails.
+.EN	It is equivarent to '-l erb --globalvar-prefix=@'.
+.	
+.	
+.JA	またプレゼンテーションロジックファイルにおいてRuby on Rails特有の関数を使う場合は、
+.JA	「<% ... %>」や「<%= ... %>」を使います（もちろん、プレゼンテーションデータファイルに直接埋め込んでもよいです）。
+.EN	If you want to use Rails-specific functions such as 'link_to()' or 'url_for()',
+.EN	use '<% ... %>' or '<%= ... %>' (or embed them into presentation data file).
+.	
+.	
+.JA	プレゼンテーションデータ(list.html)：
+.EN	Presentation Data (list.html)
+.	.-------------------- list.html
+.	<html>
+.	 <body>
+.	
+.	  <h1>Online Cookbook - All Recipes</h1>
+.	  
+.	  <table border="1">
+.	   <tr>
+.	    <th width="80%">Recipe</th>
+.	    <th width="20%">Date</th>
+.	   </tr>
+.	   <tr {{*id="mark:recipes"*}}>
+.	    <td><a href="..." {{*id="mark:recipe_title"*}}>Hot Chips</a></td>
+.	    <td {{*id="mark:recipe_date"*}}>2004 November 11</td>
+.	   </tr>
+.	   <tr {{*id="dummy:d1"*}}>
+.	    <td><a href="...">Ice Water</a></td>
+.	    <td>2004 November 11</td>
+.	   </tr>
+.	  </table>
+.	
+.	  <p>
+.	   <a href="..." {{*id="mark:recipe_new"*}}>Create new recipe</a>
+.	  </p>
+.	
+.	 </body>
+.	</html>
+.	.--------------------
+.	
+.	
+.JA	プレゼンテーションロジック(list.plogic)：
+.EN	Presentation Logic (list.plogic)
+.	.-------------------- list.plogic
+.	#recipes {
+.	  plogic: {
+.JA	    recipe_url = null;    // ローカル変数と認識させるためのダミー文
+.EN	    recipe_url = null;    // dummy statement to identify a variable as template local
+.	    foreach (recipe in recipes) {
+.	      <%= recipe_url = url_for(:action => "show", :id => recipe.id) %>
+.	      @stag;
+.	      @cont;
+.	      @etag;
+.	    }
+.	  }
+.	}
+.	
+.	#recipe_title {
+.	  value: recipe.title;
+.	  attr:  "href" recipe_url;
+.	}
+.	
+.JA	// または次のようにしてもよい。
+.EN	// Or
+.	//  #recipe_title {
+.	//    plogic: {
+.	//      <%= link_to recipe.title, :action => "show", :id => recipe.id %>
+.	//    }
+.	//  }
+.	
+.	#recipe_date {
+.	  value: recipe.date;
+.	}
+.	
+.	#recipe_new {
+.	  plogic: {
+.	    <%= link_to "Create new recipe", :action => "new" %>
+.	  }
+.	}
+.	
+.JA	// または次のようにしてもよい。
+.EN	// Or
+.	//  #recipe_new {
+.	//    attr: "href" action_new_url;
+.	//    plogic: {
+.	//      action_new_url = null;
+.	//      <% action_new_url = url_for(:action => "new") %>
+.	//      @stag;
+.	//      @cont;
+.	//      @etag;
+.	//    }
+.	//  }
+.	.--------------------
+.	
+.	
+.JA	コンパイル：
+.EN	Compile:
+.	.====================
+.	$ kwartz {{*-Rails*}} -p list.plogic list.html > list.rhtml
+.	.====================
+.	
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.--------------------
+.	.<<<:! kwartz-ruby -Rails -p guide.d/list.plogic guide.d/list.html
+.	.--------------------
+.	
+.	
+.	
 .JA	◎テンプレートをRubyまたはPHPの関数にコンパイルする	| topic-defun
 .EN	.$$ Compile Template into a Function of Ruby or PHP	| topic-defun
 .	
@@ -1402,3 +1519,6 @@
 .		erb = ERB.new(str, $SAFE, trim_mode)
 .		print erb.result(binding())
 .	.--------------------
+.	
+.	
+.	

@@ -252,7 +252,7 @@ Usage: #{command} [..options..] file1 [file2...]
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   -p file1,file2,...  : presentation logic filenames
   -i file1,file2,...  : import elements from outer files
-  -Rails              : equivarent to '-lang erb --globalvar-prefix=@'
+  -Rails              : equivarent to '-l erb --globalvar-prefix=@'
   -C class            : class/module name     (only for action 'defun')
   -F function         : function/method name  (only for action 'defun')
   -A arg1,arg2,...    : arguments             (only for action 'defun')
