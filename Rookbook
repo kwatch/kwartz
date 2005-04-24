@@ -28,15 +28,15 @@ grecipe 'README.??.txt'				, 'README.txt'		do |r|
 
 desc	false
 recipe	:chmod								do |r|
-	cmd 'find . -type f | grep -v \'\\.svn\' | xargs chmod 644'
+	cmd "find . -type f | grep -v '\\.svn' | xargs chmod 644"
 	cmd 'a+x bin/kwartz bin/kwartz-ruby'
 	end
 
 
 desc	"create archive"
-grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}$/    , text_files, doc_files	do |r|
+grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}'    , text_files, doc_files	do |r|
 	release = m[1]
-	suffix = m[2]
+	suffix  = m[2]
 	archive_dir = "kwartz-ruby_#{m[1]}"
 	remove_rf archive_dir
 	mkdir_p archive_dir
@@ -58,15 +58,16 @@ grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}$/    , text_files, doc_files	do |r|
 	end
 
 
-#recipe	/^doc\/(.*)\.(en|ja)\.html$/		, 'doc/{1}.{2}.html'	do |r|
-#	chdir "doc" do rook r.target end
+##recipe	/^doc\/(.*)\.(en|ja)\.html$/		, 'doc/{1}.{2}.html'	do |r|
+##	chdir "doc" do rook r.target end
+##	end
+#grecipe 'doc/%.%.html'			, 'doc/{1}.txt'		do |r|
+#	chdir "doc" do rook "{1}.{2}.html" end
 #	end
-grecipe 'doc/%.%.html'			, 'doc/{1}.txt'		do |r|
-	chdir "doc" do rook "{1}.{2}.html" end
-	end
-
-
-recipe	/^doc\/(design\.css|design\.html)$/	, 'doc/p-pattern.en.txt' do |r|
-	chdir "doc" do rook "{1}" end
-	end
-
+#
+#
+#recipe	/^doc\/(design\.css|design\.html)$/	, 'doc/p-pattern.en.txt' do |r|
+#	chdir "doc" do rook "{1}" end
+#	end
+#
+#

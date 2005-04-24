@@ -14,6 +14,7 @@ end
 
 script = File.open(filename) { |f| f.read }
 KWARTZ_NOEXEC = true
+KWARTZ_EXECUTE = true
 eval script
 
 
@@ -30,6 +31,8 @@ ARGV.each_with_index do |arg, i|
    args << arg
 end
 
+$stdout.puts "*** debug: langs=#{langs.inspect}"
+__END__
 lang_list = langs ? langs.split(/,/) : [ 'eruby', 'php', 'jstl', 'velocity' ]
 
 names = {
@@ -55,7 +58,7 @@ lang_list.each do |lang|
       argv[1,0] = lang
    end
    argv[0,0] = '--header=false' if lang == 'jstl'
-   kwartz = Kwartz::MainCommand.new(argv)
+   kwartz = Kwartz::MainProgram.new(argv)
    output = kwartz.main()
    print output
    nl = output[-1] == ?\n ? "\n" : "\n\n"

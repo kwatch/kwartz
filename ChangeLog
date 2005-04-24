@@ -3,6 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-24 rev.64
+	.- [enhance] new function 'escape_xml', 'escape_sql', 'escape_url', 'str_replace', 'str_linebreak'
+	.- [enhance] new command-line option '-Rails'
+	.- [change] class 'MainCommand' is renamed to 'MainProgram'
+
 .: 2005-04-21 rev.63
 	.- [change] add Rookfile
 

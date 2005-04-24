@@ -128,49 +128,46 @@ module Kwartz
       end
 
 
-      @@func_names = {
-         'list_new'    => nil,
-         'list_length' => 'fn:length',
-         'list_empty'  => nil,
-         'hash_new'    => nil,
-         'hash_keys'   => nil,
-         'hash_empty'  => nil,
-         'str_length'  => 'fn:length',
-         'str_trim'    => 'fn:trim',
-         'str_tolower' => 'fn:toLowerCase',
-         'str_toupper' => 'fn:toUpperCase',
-         'str_index'   => 'fn:indexOf',
-         'str_empty'   => nil,
+      @@jstl_func_names = {
+         'list_new'      => false,
+         'list_length'   => 'fn:length',
+         'list_empty'    => true,
+         'hash_new'      => false,
+         'hash_length'   => 'fn:length',
+         'hash_empty'    => true,
+         'hash_keys'     => false,
+         'str_length'    => 'fn:length',
+         'str_trim'      => 'fn:trim',
+         'str_tolower'   => 'fn:toLowerCase',
+         'str_toupper'   => 'fn:toUpperCase',
+         'str_index'     => 'fn:indexOf',
+         'str_empty'     => true,
+         'str_replace'   => 'fn:replace',
+         'str_linebreak' => true,
+         'escape_xml'    => 'fn:escapeXml',
+         'escape_url'    => false,
+         'escape_sql'    => false,
       }
 
 
-      ## should be abstract
-      def function_name(name)
-         return @@func_names[name]
-      end
-
-
       ##
-      def visit_funtion_expression(expr, depth=0)
-         case expr.funcname
+      def translate_function(function_name, arguments)
+         case function_name
          when 'list_empty', 'hash_empty', 'str_empty'
-            @code << 'fn:length('
-            translate_expression(expr.arguments[0])
-            @code << ')==0'
+            append_code('fn:length(')
+            translate_expression(arguments[0])
+            append_code(')==0')
+         when 'str_linebreak'
+            append_code('fn:replace(')
+            translate_expression(arguments[0])
+            append_code(',"\n","<br />\n")')
          else
-            funcname = function_name(expr.funcname)
-            if funcname
-               return super(expr, depth)
-            else
-               raise TranslationError.new("#{expr.funcname}: No corresponding method.")
+            funcname = @@jstl_func_names[function_name]
+            unless funcname
+               raise TranslationError.new("#{function_name}: No corresponding method.")
             end
+            super(funcname, arguments)
          end
-         return @code
-      end
-
-      ##
-      def visit_method_expression(expr, depth=0)
-         raise TranslationError.new("#{expr.method_name}(): JSTL doesn't support method-call.")
       end
 
 
@@ -358,7 +355,7 @@ module Kwartz
          return @code
       end
 
-      def visit_function_expression(expr, depth=0)
+      def translate_function(funtion_name, arguments)
          raise TranslationError.new("'#{expr.funcname}()': JSTL1.0 doesn't support function call.")
       end
 

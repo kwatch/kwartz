@@ -218,8 +218,7 @@ if (expr != null) {
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for Velocity
-#if($obj)
+<pre class="output">#if($obj)
   #set($flag = true)
 #else
   #set($flag = false)
@@ -229,6 +228,41 @@ expr is not null.
 #else
 epxr is null.
 #end
+### for eRuby
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for PHP
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for JSTL
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for Velocity
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
 </pre>
 <br>
 
@@ -292,21 +326,7 @@ Concatenation operator will be error in Velocity.
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% filename = basename + ".plogic" %&gt;
-
-### for PHP
-&lt;?php $filename = $basename . ".plogic"; ?&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="filename" value="${fn:join(basename,'.plogic')}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:set var="filename" value="${basename}${'.plogic'}"/&gt;
-</pre>
+<pre class="output"></pre>
 <p>Conditional Operator is available in eRuby, PHP, and JSTL1.1.
 However, it is not available in JSTL1.0 and Velocity.
 Therefore, conditional operators will be translated to corresponding if statements in JSTL1.0 and velocity.
@@ -318,32 +338,7 @@ Therefore, conditional operators will be translated to corresponding if statemen
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% color = ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
-
-### for PHP
-&lt;?php $color = $ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="color" value="${ctr % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${ctr % 2 eq 0}"&gt;
-  &lt;c:set var="color" value="#FFCCCC"/&gt;
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-  &lt;c:set var="color" value="#CCCCFF"/&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-
-### for Velocity
-#if($ctr % 2 == 0)
-  #set($color = "#FFCCCC")
-#else
-  #set($color = "#CCCCFF")
-#end
-</pre>
+<pre class="output"></pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
@@ -365,31 +360,33 @@ Any expression can be in arguments.
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-foo&lt;%= bar %&gt;baz
+<pre class="output">foo&lt;%= bar %&gt;baz
+### for eRuby
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for PHP
-foo&lt;?php echo $bar; ?&gt;baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for JSTL
-foo&lt;c:out value="${bar}" escapeXml="false"/&gt;baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for Velocity
-foo$!{bar}baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 </pre>
 <p>When you enable auto-sanitizing, the output scripts will be one of the following:
 </p>
-<pre class="output">### for eRuby
-foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+<pre class="output">foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+### for eRuby
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for PHP
-foo&lt;?php echo htmlspecialchars($bar); ?&gt;baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for JSTL
-foo&lt;c:out value="${bar}"/&gt;baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 
 ### for Velocity
-foo$!esc.html($bar)baz
+print('foo', bar, "baz\n");    // print a string and the value of a variable
 </pre>
 <p>If conditional operator returns constant string or number, sanitizing will be off even when using auto-sanitizing.
 </p>
@@ -403,18 +400,7 @@ print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;option &lt;%= CGI::escapeHTML((condition ? var1 : var2).to_s) %&gt;&gt;
-&lt;option &lt;%= condition ? "selected" : "" %&gt;&gt;
-
-### for PHP
-&lt;option &lt;?php echo htmlspecialchars($condition ? $var1 : $var2); ?&gt;&gt;
-&lt;option &lt;?php echo $condition ? "selected" : ""; ?&gt;&gt;
-
-### for JSTL
-&lt;option &lt;c:out value="${condition ? var1 : var2}"/&gt;&gt;
-&lt;option &lt;c:out value="${condition ? 'selected' : ''}" escapeXml="false"/&gt;&gt;
-</pre>
+<pre class="output"></pre>
 <p>'<code>print(a .+ b .+ c);</code>' will be expanded such as '<code>print(a); print(b); print(c);</code>'.
 This is for some languages which doesn't support string concatenation operator (<code>.+</code>).
 </p>
@@ -435,29 +421,7 @@ str .+= '.txt';		// append a string
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for PHP
-&lt;?php $name = "Foo"; ?&gt;
-&lt;?php $count += 1; ?&gt;
-&lt;?php $str .= ".txt"; ?&gt;
-
-### for eRuby
-&lt;% name = "Foo" %&gt;
-&lt;% count += 1 %&gt;
-&lt;% str += ".txt" %&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="name" value="Foo"/&gt;
-&lt;c:set var="count" value="${count + 1}"/&gt;
-&lt;c:set var="str" value="${fn:join(str,'.txt')}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:set var="name" value="Foo"/&gt;
-&lt;c:set var="count" value="${count + 1}"/&gt;
-&lt;c:set var="str" value="${str}${'.txt'}"/&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -478,18 +442,7 @@ print(hash['key'], "\n"); // print a hash element
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% list[n] = 10 %&gt;
-&lt;%= list[i] %&gt;
-&lt;% hash["key"] = "foo" %&gt;
-&lt;%= hash["key"] %&gt;
-
-### for PHP
-&lt;?php $list[$n] = 10; ?&gt;
-&lt;?php echo $list[$i]; ?&gt;
-&lt;?php $hash["key"] = "foo"; ?&gt;
-&lt;?php echo $hash["key"]; ?&gt;
-</pre>
+<pre class="output"></pre>
 <p>You can reference a hash by '<code>hash[:key]</code>'.
 '<code>key</code>' must be a string which contains only alphpanumerics and '<code>_</code>'.
 </p>
@@ -530,17 +483,18 @@ print(hash['key'], "\n"); // print a hash element
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;%= hash[:key] %&gt;
+<pre class="output">&lt;%= hash[:key] %&gt;### for eRuby
+print(hash[:key]);
 
 ### for PHP
-&lt;?php echo $hash['key']; ?&gt;
+print(hash[:key]);
 
 ### for JSTL
-&lt;c:out value="${hash['key']}" escapeXml="false"/&gt;
+print(hash[:key]);
 
 ### for Velocity
-$!{hash.key}</pre>
+print(hash[:key]);
+</pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
@@ -565,21 +519,27 @@ print(user.name, "\n");
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% user.name = "Foo" %&gt;
+<pre class="output">&lt;% user.name = "Foo" %&gt;
 &lt;%= user.name %&gt;
+### for eRuby
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for PHP
-&lt;?php $user-&gt;name = "Foo"; ?&gt;
-&lt;?php echo $user-&gt;name; ?&gt;
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for JSTL
-&lt;c:set var="user" property="name" value="Foo"/&gt;
-&lt;c:out value="${user.name}" escapeXml="false"/&gt;
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for Velocity
-#set($user.name = "Foo")
-$!{user.name}
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 </pre>
 <p>PL Program:
 </p>
@@ -589,14 +549,7 @@ print(user.method(10, 20));
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;%= user.method(10, 20) %&gt;
-
-### for PHP
-&lt;?php echo $user-&gt;method(10, 20); ?&gt;
-
-### for Velocity
-$!{user.method(10, 20)}</pre>
+<pre class="output"></pre>
 <p>There is no way to create a new object or define a new class in PL.
 These tasks must be done in the main program.
 </p>
@@ -617,25 +570,28 @@ Items in the <code><i>list</i></code> is assigned into the variable <code><i>loo
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% for item in list do %&gt;
+<pre class="output">&lt;% for item in list do %&gt;
 &lt;%= item %&gt;
 &lt;% end %&gt;
+### for eRuby
+foreach(item in list) {
+  print(item, "\n");
+}
 
 ### for PHP
-&lt;?php foreach ($list as $item) { ?&gt;
-&lt;?php echo $item; ?&gt;
-&lt;?php } ?&gt;
+foreach(item in list) {
+  print(item, "\n");
+}
 
 ### for JSTL
-&lt;c:forEach var="item" items="${list}"&gt;
-&lt;c:out value="${item}" escapeXml="false"/&gt;
-&lt;/c:forEach&gt;
+foreach(item in list) {
+  print(item, "\n");
+}
 
 ### for Velocity
-#foreach($item in $list)
-$!{item}
-#end
+foreach(item in list) {
+  print(item, "\n");
+}
 </pre>
 <p>You can also use a while statment.
 Kwartz will raise an error if you try to translate a while statement into a JSTL or Velocity script,
@@ -652,18 +608,7 @@ while(i &lt; length) {
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% i = 0 %&gt;
-&lt;% while i &lt; length do %&gt;
-&lt;%   i += 1 %&gt;
-&lt;%= list[i] %&gt;&lt;% end %&gt;
-
-### for PHP
-&lt;?php $i = 0; ?&gt;
-&lt;?php while ($i &lt; $length) { ?&gt;
-&lt;?php   $i += 1; ?&gt;
-&lt;?php echo $list[$i]; ?&gt;&lt;?php } ?&gt;
-</pre>
+<pre class="output"></pre>
 <p>for-statements (like in C or Java) are not available.
 </p>
 <br>
@@ -686,41 +631,48 @@ while(i &lt; length) {
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% if val &gt; 0 then %&gt;
+<pre class="output">&lt;% if val &gt; 0 then %&gt;
 * value is positive.
 &lt;% elsif val &lt; 0 then %&gt;
 * value is negative.
 &lt;% else %&gt;
 * value is zero.
 &lt;% end %&gt;
+### for eRuby
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for PHP
-&lt;?php if ($val &gt; 0) { ?&gt;
-* value is positive.
-&lt;?php } elseif ($val &lt; 0) { ?&gt;
-* value is negative.
-&lt;?php } else { ?&gt;
-* value is zero.
-&lt;?php } ?&gt;
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${val gt 0}"&gt;
-* value is positive.
-&lt;/c:when&gt;&lt;c:when test="${val lt 0}"&gt;
-* value is negative.
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-* value is zero.
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for Velocity
-#if($val &gt; 0)
-* value is positive.
-#elseif($val &lt; 0)
-* value is negative.
-#else
-* value is zero.
-#end
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 </pre>
 <br>
 
@@ -928,33 +880,38 @@ It can be placed only at the right-side of the operators '<code>==</code>' and '
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;% if !str1 || str1.empty? then %&gt;
+<pre class="output">&lt;% if !str1 || str1.empty? then %&gt;
 str1 is empty.
 &lt;% elsif str2 &amp;&amp; !str2.empty? then %&gt;
 str2 is not empty.
 &lt;% end %&gt;
+### for eRuby
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for PHP
-&lt;?php if (!$str1) { ?&gt;
-str1 is empty.
-&lt;?php } elseif ($str2) { ?&gt;
-str2 is not empty.
-&lt;?php } ?&gt;
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${empty str1}"&gt;
-str1 is empty.
-&lt;/c:when&gt;&lt;c:when test="${not empty str2}"&gt;
-str2 is not empty.
-&lt;/c:when&gt;&lt;/c:choose&gt;
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for Velocity
-#if(! $str1 || $str1 == "")
-str1 is empty.
-#elseif($str2 &amp;&amp; $str2 != "")
-str2 is not empty.
-#end
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 </pre>
 <br>
 
@@ -1048,56 +1005,7 @@ In Kwartz, presentation logic file is described as a set of element declarations
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
-&lt;ul&gt;
-&lt;% for item in list do %&gt;
-  &lt;li id="foo" class="&lt;%= klass %&gt;"&gt;&lt;%= item %&gt;&lt;/li&gt;
-&lt;% end %&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;%= flag ? " checked" : "" %&gt; /&gt;
-&lt;/form&gt;
-
-### for PHP
-&lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
-  &lt;li id="foo" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
-&lt;?php } ?&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
-&lt;/form&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
-  &lt;li id="foo" class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
-&lt;/c:forEach&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
-&lt;/form&gt;
-
-### for Velocity
-&lt;ul&gt;
-#foreach($item in $list)
-  &lt;li id="foo" class="$!{klass}"&gt;$!{item}&lt;/li&gt;
-#end
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-#if($flag)
-  &lt;html:text type="checkbox" name="user" value="Y" checked /&gt;
-#else
-  &lt;html:text type="checkbox" name="user" value="Y" /&gt;
-#end
-&lt;/form&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -1172,41 +1080,32 @@ It represents document information and takes the following declaration parts.
 </pre>
 <p>Output script:
 </p>
-<pre class="output">### for eRuby
-&lt;% list = context[:list] %&gt;
+<pre class="output">&lt;% list = context[:list] %&gt;
 &lt;ul&gt;
 &lt;% for item in list do %&gt;
   &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
 &lt;% end %&gt;
 &lt;/ul&gt;
 &lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+### for eRuby
+&lt;ul&gt;
+  &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 ### for PHP
-&lt;?php $list = $context['list']; ?&gt;
 &lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
   &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
-&lt;?php } ?&gt;
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 
 ### for JSTL
-&lt;c:set var="list" value="${context['list']}"/&gt;
 &lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
   &lt;li&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
-&lt;/c:forEach&gt;
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 
 ### for Velocity
-#set($list = $context.list)
 &lt;ul&gt;
-#foreach($item in $list)
   &lt;li&gt;$!{item}&lt;/li&gt;
-#end
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 </pre>
 <br>
 
@@ -1228,9 +1127,27 @@ print("key=", key, " value=", value, "\n");
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for PHP
-&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+<pre class="output">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
 key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
+&lt;?php } ?&gt;
+### for eRuby
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for PHP
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for Velocity
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
 &lt;?php } ?&gt;
 </pre>
 <p>Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
@@ -1409,7 +1326,9 @@ kw:d attributes are always removed.
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+### for eRuby
 &lt;div id="foo"&gt;foo&lt;/div&gt;
 &lt;div&gt;bar&lt;/div&gt;
 
@@ -1440,7 +1359,8 @@ This pattern is changeable with a constant EMBED_PATTERN in configuration file (
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">Hello &lt;%= user.name %&gt;!
+### for eRuby
 Hello &lt;%= user.name %&gt;!
 
 ### for PHP
@@ -1457,17 +1377,18 @@ Notice that all expressions except string and numbers constants are sanitized.
 </p>
 <p>Output Program (with command-line option <code>-e</code>) :
 </p>
-<pre class="output">### for eRuby
-Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+<pre class="output">Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+### for eRuby
+Hello &lt;%= user.name %&gt;!
 
 ### for PHP
-Hello &lt;?php echo htmlspecialchars($user-&gt;name); ?&gt;!
+Hello &lt;?php echo $user-&gt;name; ?&gt;!
 
 ### for JSTL
-Hello &lt;c:out value="${user.name}"/&gt;!
+Hello &lt;c:out value="${user.name}" escapeXml="false"/&gt;!
 
 ### for Velocity
-Hello $!esc.html($user.name)!
+Hello $!{user.name}!
 </pre>
 <p>Using the functions <code>E()</code> or <code>X()</code>, you can toggle sanitizing on/off for each expression.
 <code>E(<i>expr</i>)</code> means that the expression <code><i>expr</i></code> is sanitized
@@ -1482,7 +1403,9 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
+Without sanitizing: &lt;%= var %&gt;!
+### for eRuby
 With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
 Without sanitizing: &lt;%= var %&gt;!
 
@@ -1516,7 +1439,8 @@ It is more suitable for HTML design than '<code>@{<i>expression</i>}@</code>' be
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
+### for eRuby
 &lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
 
 ### for PHP
@@ -1551,7 +1475,10 @@ It overwrites the existing value if attribute <code><i>name</i></code> is alread
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;tr class="&lt;%= klass %&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+### for eRuby
 &lt;tr class="&lt;%= klass %&gt;"&gt;
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
@@ -1587,7 +1514,12 @@ You can enumerate other attributes this way as well.
 </pre>
 <p>Output Script:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% if message &amp;&amp; !message.empty? then %&gt;
+&lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
+ &lt;%= message %&gt;
+&lt;/font&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% if message &amp;&amp; !message.empty? then %&gt;
 &lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
  &lt;%= message %&gt;
@@ -1633,32 +1565,7 @@ This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... select
 </pre>
 <p>Output Script:
 </p>
-<pre class="program">### for eRuby
-&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
-
-### for PHP
-&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt;&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt;&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
-&lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Ruby&lt;/option&gt;
-&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked&gt;
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M"&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-</pre>
+<pre class="program"></pre>
 <p>A function to output <code>'checked="checked"'</code>, <code>'selected="selected"'</code> and <code>'disabled="disabled"'</code> easily for HTML/XHTML is available in Kwartz.
 <code>C(<i>expr</i>)</code>, <code>S(<i>expr</i>)</code>, and <code>D(<i>expr</i>)</code> print <code>' checked="checked"'</code>, <code>' selected="selected"'</code> and <code>' disabled="disabled"'</code> respectively when expression <code><i>expr</i></code> is true.
 </p>
@@ -1676,46 +1583,7 @@ Ruby&lt;/option&gt;
 </pre>
 <p>Output Script:
 </p>
-<pre class="program">### for PHP
-&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected=\"selected\"" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;?php echo $os == "mac" ? " disabled=\"disabled\"" : ""; ?&gt; /&gt;Windows
-
-### for eRuby
-&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected=\"selected\"" : "" %&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;%= os == "mac" ? " disabled=\"disabled\"" : "" %&gt; /&gt;Windows
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected="selected"' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;c:out value="${os eq 'mac' ? ' disabled="disabled"' : ''}" escapeXml="false"/&gt; /&gt;Windows
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
-&lt;option name="lang" value="ruby" selected="selected"&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Ruby&lt;/option&gt;
-
-&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked="checked" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Male
-
-&lt;c:choose&gt;&lt;c:when test="${os eq 'mac'}"&gt;
-&lt;input type="radio" name="os" value="win" disabled="disabled" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="os" value="win" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Windows
-</pre>
+<pre class="program"></pre>
 <br>
 
 
@@ -1732,7 +1600,11 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% var = value %&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;% count += 1 %&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+### for eRuby
 &lt;% var = value %&gt;
 &lt;dt&gt;foo&lt;/dt&gt;
 &lt;% count += 1 %&gt;
@@ -1779,7 +1651,20 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% if value &gt; 0 then %&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;% elsif value &lt; 0 then %&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;% else %&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% if value &gt; 0 then %&gt;
 &lt;div&gt;
   Value is positive.
@@ -1857,7 +1742,12 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% for item in list do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% for item in list do %&gt;
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
@@ -1904,7 +1794,13 @@ It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;dl&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+### for eRuby
 &lt;dl&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
@@ -1954,7 +1850,15 @@ The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item_ctr %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% item_ctr = 0 %&gt;
 &lt;% for item in list do %&gt;
 &lt;%   item_ctr += 1 %&gt;
@@ -2019,7 +1923,19 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;table&gt;
+  &lt;tbody&gt;
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;%   item_tgl = item_ctr % 2 == 0 ? "even" : "odd" %&gt;
+    &lt;tr class="&lt;%= item_tgl %&gt;"&gt;
+      &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;% end %&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+### for eRuby
 &lt;table&gt;
   &lt;tbody&gt;
 &lt;% item_ctr = 0 %&gt;
@@ -2098,20 +2014,7 @@ because there is no custom tag in JSTL which is equivalent to a while statement.
 </pre>
 <p>Output Program:
 </p>
-<pre class="output">### for eRuby
-&lt;% while row = sth.fetch() do %&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;% end %&gt;
-
-### for PHP
-&lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;?php } ?&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -2309,8 +2212,7 @@ Included data file can contain directives.
 </pre>
 <p>Output Script:
 </p>
-<pre class="program">### for eRuby
-&lt;html&gt;
+<pre class="program">&lt;html&gt;
   &lt;body&gt;
 
     ... main contents ...
@@ -2323,6 +2225,7 @@ Included data file can contain directives.
 
   &lt;/body&gt;
 &lt;/html&gt;
+### for eRuby
 </pre>
 <p>'<code>Include</code>' and '<code>INCLUDE</code>' directives are also available.
 </p>

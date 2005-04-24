@@ -245,17 +245,18 @@
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-Hello&lt;%= username %&gt;!
+<pre class="program">Hello&lt;%= username %&gt;!
+### for eRuby
+Hello World!
 
 ### for PHP
-Hello&lt;?php echo $username; ?&gt;!
+Hello World!
 
 ### for JSTL
-Hello&lt;c:out value="${username}" escapeXml="false"/&gt;!
+Hello World!
 
 ### for Velocity
-Hello$!{username}!
+Hello World!
 </pre>
 <br>
 
@@ -319,17 +320,18 @@ Hello$!{username}!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+<pre class="program">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+### for eRuby
+&lt;h1&gt;Example&lt;/h1&gt;
 
 ### for PHP
-&lt;h1&gt;&lt;?php echo $title; ?&gt;&lt;/h1&gt;
+&lt;h1&gt;Example&lt;/h1&gt;
 
 ### for JSTL
-&lt;h1&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/h1&gt;
+&lt;h1&gt;Example&lt;/h1&gt;
 
 ### for Velocity
-&lt;h1&gt;$!{title}&lt;/h1&gt;
+&lt;h1&gt;Example&lt;/h1&gt;
 </pre>
 <br>
 
@@ -752,24 +754,31 @@ Hello$!{username}!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+### for eRuby
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
+  &lt;li id="dummy"&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 
 ### for PHP
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
+  &lt;li id="dummy"&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 
 ### for JSTL
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
+  &lt;li id="dummy"&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 
 ### for Velocity
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
+  &lt;li id="dummy"&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <br>
@@ -832,29 +841,21 @@ Hello$!{username}!
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;% if url == nil then %&gt;
+<pre class="program">&lt;% if url == nil then %&gt;
 Next&lt;% else %&gt;
 &lt;a href="&lt;%= url %&gt;"&gt;Next&lt;/a&gt;
 &lt;% end %&gt;
+### for eRuby
+&lt;a href="..."&gt;Next&lt;/a&gt;
 
 ### for PHP
-&lt;?php if ($url == NULL) { ?&gt;
-Next&lt;?php } else { ?&gt;
-&lt;a href="&lt;?php echo $url; ?&gt;"&gt;Next&lt;/a&gt;
-&lt;?php } ?&gt;
+&lt;a href="..."&gt;Next&lt;/a&gt;
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${url eq null}"&gt;
-Next&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;a href="&lt;c:out value="${url}" escapeXml="false"/&gt;"&gt;Next&lt;/a&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+&lt;a href="..."&gt;Next&lt;/a&gt;
 
 ### for Velocity
-#if($url)
-Next#else
-&lt;a href="$!{url}"&gt;Next&lt;/a&gt;
-#end
+&lt;a href="..."&gt;Next&lt;/a&gt;
 </pre>
 <br>
 
@@ -908,36 +909,34 @@ Next#else
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<pre class="program">&lt;ul&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
 &lt;/ul&gt;
+### for eRuby
+&lt;ul&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;/ul&gt;
 
 ### for PHP
 &lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
   &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
-&lt;?php } ?&gt;
 &lt;/ul&gt;
 
 ### for JSTL
 &lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
-&lt;/c:forEach&gt;
 &lt;/ul&gt;
 
 ### for Velocity
 &lt;ul&gt;
-#foreach($item in $list)
   &lt;dt&gt;$!{item.text}&lt;/dt&gt;
   &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
-#end
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1001,36 +1000,34 @@ Next#else
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<pre class="program">&lt;ul&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
 &lt;/ul&gt;
+### for eRuby
+&lt;ul&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;/ul&gt;
 
 ### for PHP
 &lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
   &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
-&lt;?php } ?&gt;
 &lt;/ul&gt;
 
 ### for JSTL
 &lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
-&lt;/c:forEach&gt;
 &lt;/ul&gt;
 
 ### for Velocity
 &lt;ul&gt;
-#foreach($item in $list)
   &lt;dt&gt;$!{item.text}&lt;/dt&gt;
   &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
-#end
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1098,41 +1095,40 @@ Next#else
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;% if status == "error" then %&gt;
+<pre class="program">&lt;% if status == "error" then %&gt;
   &lt;font color="red"&gt;ERROR!&lt;/font&gt;
 &lt;% elsif status == "warning" then %&gt;
   &lt;font color="blue"&gt;Warning:&lt;/font&gt;
 &lt;% else %&gt;
   &lt;font color="black"&gt;No error.&lt;/font&gt;
 &lt;% end %&gt;
+### for eRuby
+&lt;div&gt;
+  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;font color="black"&gt;No error.&lt;/font&gt;
+&lt;/div&gt;
 
 ### for PHP
-&lt;?php if ($status == "error") { ?&gt;
+&lt;div&gt;
   &lt;font color="red"&gt;ERROR!&lt;/font&gt;
-&lt;?php } elseif ($status == "warning") { ?&gt;
   &lt;font color="blue"&gt;Warning:&lt;/font&gt;
-&lt;?php } else { ?&gt;
   &lt;font color="black"&gt;No error.&lt;/font&gt;
-&lt;?php } ?&gt;
+&lt;/div&gt;
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${status eq 'error'}"&gt;
+&lt;div&gt;
   &lt;font color="red"&gt;ERROR!&lt;/font&gt;
-&lt;/c:when&gt;&lt;c:when test="${status eq 'warning'}"&gt;
   &lt;font color="blue"&gt;Warning:&lt;/font&gt;
-&lt;/c:when&gt;&lt;c:otherwise&gt;
   &lt;font color="black"&gt;No error.&lt;/font&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+&lt;/div&gt;
 
 ### for Velocity
-#if($status == "error")
+&lt;div&gt;
   &lt;font color="red"&gt;ERROR!&lt;/font&gt;
-#elseif($status == "warning")
   &lt;font color="blue"&gt;Warning:&lt;/font&gt;
-#else
   &lt;font color="black"&gt;No error.&lt;/font&gt;
-#end
+&lt;/div&gt;
 </pre>
 <br>
 
@@ -1208,8 +1204,7 @@ Next#else
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-&lt;html&gt;
+<pre class="program">&lt;html&gt;
   &lt;body&gt;
 &lt;% for item in list do %&gt;
       &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
@@ -1218,37 +1213,59 @@ Next#else
       &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
+### for eRuby
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;div id="breadcrumbs"&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b&gt;Page Title&lt;/b&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
 
 ### for PHP
 &lt;html&gt;
   &lt;body&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
-      &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
+    &lt;div id="breadcrumbs"&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt;
-&lt;?php } ?&gt;
-      &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b&gt;Page Title&lt;/b&gt;
+    &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
 ### for JSTL
 &lt;html&gt;
   &lt;body&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
-      &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
+    &lt;div id="breadcrumbs"&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt;
-&lt;/c:forEach&gt;
-      &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b&gt;Page Title&lt;/b&gt;
+    &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
 ### for Velocity
 &lt;html&gt;
   &lt;body&gt;
-#foreach($item in $list)
-      &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
+    &lt;div id="breadcrumbs"&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt;
-#end
-      &lt;b&gt;$!{title}&lt;/b&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;b&gt;Page Title&lt;/b&gt;
+    &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -1445,68 +1462,13 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
 </pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-    &lt;div align="center" class="copyright"&gt;
-      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
-    &lt;/div&gt;
-
-### for PHP
-    &lt;div align="center" class="copyright"&gt;
-      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
-    &lt;/div&gt;
-</pre>
+<pre class="program"></pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-    &lt;div&gt;
-      &lt;div class="tabs"&gt;
-&lt;% for tab in tablist do %&gt;
-&lt;%   klass = current_tabname == tab["name"] ? "selected" : "" %&gt;
-        &lt;a href="&lt;%= tab["href"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= tab["name"] %&gt;&lt;/a&gt;
-&lt;% end %&gt;
-      &lt;/div&gt;
-      &lt;div class="tabsline"&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-
-### for PHP
-    &lt;div&gt;
-      &lt;div class="tabs"&gt;
-&lt;?php foreach ($tablist as $tab) { ?&gt;
-&lt;?php   $klass = $current_tabname == $tab["name"] ? "selected" : ""; ?&gt;
-        &lt;a href="&lt;?php echo $tab["href"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $tab["name"]; ?&gt;&lt;/a&gt;
-&lt;?php } ?&gt;
-      &lt;/div&gt;
-      &lt;div class="tabsline"&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-</pre>
+<pre class="program"></pre>
 <p>出力用スクリプト：
 </p>
-<pre class="program">### for eRuby
-    &lt;div&gt;
-      &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
-      &lt;div class="menus"&gt;
-&lt;% for menu in menulist do %&gt;
-&lt;%   klass = current_menu == menu["name"] ? "selected" : "" %&gt;
-        &lt;a href="&lt;%= menu["cgipath"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu["name"] %&gt;&lt;/a&gt;
-        &lt;br&gt;
-&lt;% end %&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-
-### for PHP
-    &lt;div&gt;
-      &lt;span class="menu_title"&gt;&lt;?php echo $menu_title; ?&gt;&lt;/span&gt;
-      &lt;div class="menus"&gt;
-&lt;?php foreach ($menulist as $menu) { ?&gt;
-&lt;?php   $klass = $current_menu == $menu["name"] ? "selected" : ""; ?&gt;
-        &lt;a href="&lt;?php echo $menu["cgipath"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $menu["name"]; ?&gt;&lt;/a&gt;
-        &lt;br&gt;
-&lt;?php } ?&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-</pre>
+<pre class="program"></pre>
 <br>
 
 <a name="pickup-elem-supplement"></a>

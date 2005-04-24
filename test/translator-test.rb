@@ -16,6 +16,7 @@ require 'assert-diff.rb'
 require 'kwartz/parser'
 require 'kwartz/translator'
 require 'kwartz/translator/eruby'
+require 'kwartz/translator/erb'
 require 'kwartz/translator/php'
 require 'kwartz/translator/jstl'
 require 'kwartz/translator/velocity'
@@ -36,7 +37,7 @@ class TranslatorTest < Test::Unit::TestCase
          s = caller()[1]
          s =~ /in `(.*)'/          #'
          testmethod = $1
-         if testmethod =~ /_(eruby|php|jstl11|jstl10|velocity)$/
+         if testmethod =~ /_(eruby|erb|php|jstl11|jstl10|velocity)$/
             lang = $1
          else
             raise "invalid testmethod name (='#{testmethod}')"
@@ -346,103 +347,433 @@ class TranslatorTest < Test::Unit::TestCase
 
    ## ---------------------------- function
 
-   @@function1 = 'list = list_new()'
-   def test_function1_eruby
+   @@function01 = 'list = list_new()'			# list_new()
+   def test_function1_eruby	# list_new()
       expected = 'list = []'
-      _test_expr(@@function1, expected)
+      _test_expr(@@function01, expected)
    end
-   def test_function1_php
+   def test_function01_php	# list_new()
       expected = '$list = array()'
-      _test_expr(@@function1, expected)
+      _test_expr(@@function01, expected)
    end
-#   def test_function1_jstl11
-#      expected = 'list = array()'
-#      _test_expr(@@function1, expected)
-#   end
-#   def test_function1_velocity
-#      expected = '$list = []'
-#      _test_expr(@@function1, expected)
-#   end
-
-
-   @@function2 = 'hash = hash_new()'
-   def test_function2_eruby
-      expected = 'hash = {}'
-      _test_expr(@@function2, expected)
-   end
-   def test_function2_php
-      expected = '$hash = array()'
-      _test_expr(@@function2, expected)
-   end
-#   def test_function2_jstl11
-#      expected = 'hash = array()'
-#      _test_expr(@@function2, expected)
-#   end
-#   def test_function2_velocity
-#      expected = '$hash = {}'
-#      _test_expr(@@function2, expected)
-#   end
-
-
-   @@function3 = 'list_length(list) + str_length(str)'
-   def test_function3_eruby
-      expected = 'list.length + str.length'
-      _test_expr(@@function3, expected)
-   end
-   def test_function3_php
-      expected = 'count($list) + strlen($str)'
-      _test_expr(@@function3, expected)
-   end
-   def test_function3_jstl11
-      expected = 'fn:length(list) + fn:length(str)'
-      _test_expr(@@function3, expected)
-   end
-
-
-   @@function4 = 'list_empty(list) && hash_empty(hash) && str_empty(str)'
-   def test_function4_eruby
-      expected = 'list.empty? && hash.empty? && str.empty?'
-      _test_expr(@@function4, expected)
-   end
-   def test_function4_php
-      expected = 'count($list)==0 && count($hash)==0 && $str'
-      _test_expr(@@function4, expected)
-   end
-   def test_function4_jstl11
-      expected = 'fn:length(list)==0 and fn:length(hash)==0 and fn:length(str)==0'
-      _test_expr(@@function4, expected)
-   end
-
-
-   @@function5 = 'str_trim(s) .+ str_toupper(s) .+ str_tolower(s) .+ str_index(s, "x")'
-   def test_function5_eruby
-      expected = 's.trim + s.upcase + s.downcase + s.index("x")'
-      _test_expr(@@function5, expected)
-   end
-   def test_function5_php
-      expected = 'trim($s) . strtoupper($s) . strtolower($s) . strstr($s, "x")'
-      _test_expr(@@function5, expected)
-   end
-   def test_function5_jstl11
-      expected = 'fn:join(fn:join(fn:join(fn:trim(s),fn:toUpperCase(s)),fn:toLowerCase(s)),fn:indexOf(s, \'x\'))'
-      _test_expr(@@function5, expected)
-   end
-
-
-   @@function6 = 'list_length(hash_keys(hash))'
-   def test_function6_eruby
-      expected = 'hash.keys.length'
-      _test_expr(@@function6, expected)
-   end
-   def test_function6_php
-      expected = 'count(array_keys($hash))'
-      _test_expr(@@function6, expected)
-   end
-   def test_function6_jstl11
-      expected = ''
+   def test_function01_jstl11	# list_new()
+      input = 'list_new()'
+      expected = '***'
       assert_raise(Kwartz::TranslationError) do
-         _test_expr(@@function6, expected)
+         _test_expr(input, expected)
       end
+   end
+   def test_function01_velocity	# list_new()
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function01, expected)
+      end
+   end
+
+
+   @@function03 = 'list_length(list)'			# list_length()
+   def test_function03_eruby	# list_length()
+      expected = 'list.length'
+      _test_expr(@@function03, expected)
+   end
+   def test_function03_php	# list_length()
+      expected = 'count($list)'
+      _test_expr(@@function03, expected)
+   end
+   def test_function03_jstl11	# list_length()
+      expected = 'fn:length(list)'
+      _test_expr(@@function03, expected)
+   end
+   def test_function03_velocity	# list_length()
+      expected = '$list.size()'
+      _test_expr(@@function03, expected)
+   end
+
+
+   @@function04 = 'list_empty(list)'			# list_empty()
+   def test_function04_eruby	# list_empty()
+      expected = 'list.empty?'
+      _test_expr(@@function04, expected)
+   end
+   def test_function04_php	# list_empty()
+      expected = 'count($list)==0'
+      _test_expr(@@function04, expected)
+   end
+   def test_function04_jstl11	# list_empty()
+      expected = 'fn:length(list)==0'
+      _test_expr(@@function04, expected)
+   end
+   def test_function04_velocity	# list_empty()
+      expected = '$list.size()==0'
+      _test_expr(@@function04, expected)
+   end
+
+
+
+   @@function11 = 'hash = hash_new()'			# hash_new()
+   def test_function11_eruby	# hash_new()
+      expected = 'hash = {}'
+      _test_expr(@@function11, expected)
+   end
+   def test_function11_php	# hash_new()
+      expected = '$hash = array()'
+      _test_expr(@@function11, expected)
+   end
+   def test_function11_jstl11	# hash_new()
+      input = 'hash_new()'
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(input, expected)
+      end
+   end
+   def test_function11_velocity	# hash_new()
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function11, expected)
+      end
+   end
+
+
+   @@function13 = 'hash_length(hash)'			# hash_length()
+   def test_function13_eruby	# hash_length()
+      expected = 'hash.length'
+      _test_expr(@@function13, expected)
+   end
+   def test_function13_php	# hash_length()
+      expected = 'count($hash)'
+      _test_expr(@@function13, expected)
+   end
+   def test_function13_jstl11	# hash_length()
+      expected = 'fn:length(hash)'
+      _test_expr(@@function13, expected)
+   end
+   def test_function13_velocity	# hash_length()
+      expected = '$hash.size()'
+      _test_expr(@@function13, expected)
+   end
+
+
+   @@function14 = 'hash_empty(hash)'			# hash_empty()
+   def test_function14_eruby	# hash_empty()
+      expected = 'hash.empty?'
+      _test_expr(@@function14, expected)
+   end
+   def test_function14_php	# hash_empty()
+      expected = 'count($hash)==0'
+      _test_expr(@@function14, expected)
+   end
+   def test_function14_jstl11	# hash_empty()
+      expected = 'fn:length(hash)==0'
+      _test_expr(@@function14, expected)
+   end
+   def test_function14_velocity	# hash_empty()
+      expected = '$hash.size()==0'
+      _test_expr(@@function14, expected)
+   end
+
+
+   @@function15 = 'hash_keys(hash)'			# hash_keys()
+   def test_function15_eruby	# hash_keys()
+      expected = 'hash.keys'
+      _test_expr(@@function15, expected)
+   end
+   def test_function15_php	# hash_keys()
+      expected = 'array_keys($hash)'
+      _test_expr(@@function15, expected)
+   end
+   def test_function15_jstl11	# hash_keys()
+      #expected = 'fn:length(hash)'
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function15, expected)
+      end
+   end
+   def test_function15_velocity	# hash_keys()
+      expected = '$hash.keySet().toArray()'
+      _test_expr(@@function15, expected)
+   end
+
+
+
+   @@function21 = 'str_length(s)'			# str_length()
+   def test_function21_eruby	# str_length()
+      expected = 's.length'
+      _test_expr(@@function21, expected)
+   end
+   def test_function21_php	# str_length()
+      expected = 'strlen($s)'
+      _test_expr(@@function21, expected)
+   end
+   def test_function21_jstl11	# str_length()
+      expected = 'fn:length(s)'
+      _test_expr(@@function21, expected)
+   end
+   def test_function21_velocity	# str_length()
+      expected = '$s.length()'
+      _test_expr(@@function21, expected)
+   end
+
+
+   @@function22 = 'str_empty(s)'			# str_empty()
+   def test_function22_eruby	# str_empty()
+      expected = 's.empty?'
+      _test_expr(@@function22, expected)
+   end
+   def test_function22_php	# str_empty()
+      expected = 'strlen($s)==0'
+      _test_expr(@@function22, expected)
+   end
+   def test_function22_jstl11	# str_empty()
+      expected = 'fn:length(s)==0'
+      _test_expr(@@function22, expected)
+   end
+   def test_function22_velocity	# str_empty()
+      expected = '$s.length()==0'
+      _test_expr(@@function22, expected)
+   end
+
+
+   @@function23 = 'str_trim(s)'				# str_trim()
+   def test_function23_eruby	# str_trim()
+      expected = 's.trim'
+      _test_expr(@@function23, expected)
+   end
+   def test_function23_php	# str_trim()
+      expected = 'trim($s)'
+      _test_expr(@@function23, expected)
+   end
+   def test_function23_jstl11	# str_trim()
+      expected = 'fn:trim(s)'
+      _test_expr(@@function23, expected)
+   end
+   def test_function23_velocity	# str_trim()
+      expected = '$s.trim()'
+      _test_expr(@@function23, expected)
+   end
+
+
+   @@function24 = 'str_toupper(s)'			# str_toupper()
+   def test_function24_eruby	# str_toupper()
+      expected = 's.upcase'
+      _test_expr(@@function24, expected)
+   end
+   def test_function24_php	# str_toupper()
+      expected = 'strtoupper($s)'
+      _test_expr(@@function24, expected)
+   end
+   def test_function24_jstl11	# str_toupper()
+      expected = 'fn:toUpperCase(s)'
+      _test_expr(@@function24, expected)
+   end
+   def test_function24_velocity	# str_toupper()
+      expected = '$s.toUpperCase()'
+      _test_expr(@@function24, expected)
+   end
+
+
+   @@function25 = 'str_tolower(s)'			# str_tolower()
+   def test_function25_eruby	# str_tolower()
+      expected = 's.downcase'
+      _test_expr(@@function25, expected)
+   end
+   def test_function25_php	# str_tolower()
+      expected = 'strtolower($s)'
+      _test_expr(@@function25, expected)
+   end
+   def test_function25_jstl11	# str_tolower()
+      expected = 'fn:toLowerCase(s)'
+      _test_expr(@@function25, expected)
+   end
+   def test_function25_velocity	# str_tolower()
+      expected = '$s.toLowerCase()'
+      _test_expr(@@function25, expected)
+   end
+
+
+   @@function26 = 'str_index(s, "x")'			# str_index()
+   def test_function26_eruby	# str_index()
+      expected = 's.index("x")'
+      _test_expr(@@function26, expected)
+   end
+   def test_function26_php	# str_index()
+      expected = 'strstr($s, "x")'
+      _test_expr(@@function26, expected)
+   end
+   def test_function26_jstl11	# str_index()
+      expected = "fn:indexOf(s, 'x')"
+      _test_expr(@@function26, expected)
+   end
+   def test_function26_velocity	# str_index()
+      expected = '$s.indexOf("x")'
+      _test_expr(@@function26, expected)
+   end
+
+
+   @@function27 = 'str_replace(s,from,"to")'		# str_replace()
+   def test_function27_eruby	# str_replace()
+      expected = 's.gsub(from, "to")'
+      _test_expr(@@function27, expected)
+   end
+   def test_function27_php	# str_replace()
+      expected = 'str_replace($from, "to", $s)'
+      _test_expr(@@function27, expected)
+   end
+   def test_function27_jstl11	# str_replace()
+      expected = "fn:replace(s, from, 'to')"
+      _test_expr(@@function27, expected)
+   end
+   def test_function27_velocity	# str_replace()
+      expected = '$s.replaceAll($from, "to")'
+      _test_expr(@@function27, expected)
+   end
+
+
+   @@function28 = 'str_linebreak(line)'			# str_linebreak()
+   def test_function28_eruby	# str_linebreak()
+      expected = 'line.gsub(/\r?\n/,\'<br />\\&\')'
+      _test_expr(@@function28, expected)
+   end
+   def test_function28_php	# str_linebreak()
+      expected = 'nl2br($line)'
+      _test_expr(@@function28, expected)
+   end
+   def test_function28_jstl11	# str_linebreak()
+      expected = 'fn:replace(line,"\\n","<br />\\n")'   #'
+      _test_expr(@@function28, expected)
+   end
+   def test_function28_velocity	# str_linebreak()
+      expected = "$line.replaceAll('$','<br />')"  #'
+      _test_expr(@@function28, expected)
+   end
+
+
+   @@function31 = 'escape_xml(xml)'			# escape_xml()
+   def test_function31_eruby	# escape_url
+      expected = 'CGI::escapeHTML(xml)'
+      _test_expr(@@function31, expected)
+   end
+   def test_function31_php	# escape_url
+      expected = 'htmlspecialchars($xml)'
+      _test_expr(@@function31, expected)
+   end
+   def test_function31_jstl11	# escape_url
+      expected = 'fn:escapeXml(xml)'
+      _test_expr(@@function31, expected)
+   end
+   def test_function31_velocity	# escape_url
+      expected = '$esc.xml($xml)'
+      _test_expr(@@function31, expected)
+   end
+
+
+   @@function32 = 'escape_sql(sql)'			# escape_sql()
+   def test_function32_eruby	# escape_url
+      expected = 'sql.gsub([\'"\\\\\\0],\'\\&\')'
+      _test_expr(@@function32, expected)
+   end
+   def test_function32_php	# escape_url
+      expected = 'addslashes($sql)'
+      _test_expr(@@function32, expected)
+   end
+   def test_function32_jstl11	# escape_url
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function32, expected)
+      end
+   end
+   def test_function32_velocity	# escape_url
+      expected = '$esc.sql($sql)'
+      _test_expr(@@function32, expected)
+   end
+
+
+   @@function33 = 'escape_url(url)'			# escape_url()
+   def test_function33_eruby	# escape_url
+      expected = 'CGI::escape(url)'
+      _test_expr(@@function33, expected)
+   end
+   def test_function33_erb	# escape_url
+      expected = 'url_encode(url)'
+      _test_expr(@@function33, expected)
+   end
+   def test_function33_php	# escape_url
+      expected = 'urlencode($url)'
+      _test_expr(@@function33, expected)
+   end
+   def test_function33_jstl11	# escape_url
+      expected = '***'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function33, expected)
+      end
+   end
+   def test_function33_velocity	# escape_url
+      expected = '$esc.url($url)'
+      _test_expr(@@function33, expected)
+   end
+
+
+   @@function81 = 'foo(10) + bar(x)'		# original function
+   def test_function81_eruby	# original function
+      expected = 'foo(10) + bar(x)'
+      _test_expr(@@function81, expected)
+   end
+   def test_function81_php	# original function
+      expected = 'foo(10) + bar($x)'
+      _test_expr(@@function81, expected)
+   end
+   def test_function81_jstl11	# original function
+      expected = 'my:foo(10) + my:bar(x)'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function81, expected)
+      end
+   end
+   def test_function81_velocity	# original function
+      expected = 'my.foo(10) + my.bar($x)'
+      assert_raise(Kwartz::TranslationError) do
+         _test_expr(@@function81, expected)
+      end
+   end
+
+
+   @@function82 = 's2 = sprintf("%02d - %s\n", x, s2)'		# sprintf
+   def test_function82_eruby	# sprintf
+      expected = 's2 = sprintf("%02d - %s\n", x, s2)'
+      _test_expr(@@function82, expected)
+   end
+   def test_function82_php	# sprintf
+      expected = '$s2 = sprintf("%02d - %s\n", $x, $s2)'
+      _test_expr(@@function82, expected)
+   end
+   #def test_function82_jstl11	# sprintf
+   #   expected = '***'
+   #   assert_raise(Kwartz::TranslationError) do
+   #      _test_expr(@@function82, expected)
+   #   end
+   #end
+   #def test_function82_velocity	# sprintf
+   #   expected = '***'
+   #   assert_raise(Kwartz::TranslationError) do
+   #      _test_expr(@@function82, expected)
+   #   end
+   #end
+
+
+   @@function91 = 'str_length(str_toupper(s))'		# nested function
+   def test_function91_eruby	# nested function
+      expected = 's.upcase.length'
+      _test_expr(@@function91, expected)
+   end
+   def test_function91_php	# nested function
+      expected = 'strlen(strtoupper($s))'
+      _test_expr(@@function91, expected)
+   end
+   def test_function91_jstl11	# nested function
+      expected = 'fn:length(fn:toUpperCase(s))'
+      _test_expr(@@function91, expected)
+   end
+   def test_function91_velocity	# nested function
+      expected = '$s.toUpperCase().length()'
+      _test_expr(@@function91, expected)
    end
 
 
@@ -828,8 +1159,8 @@ END
       _test_stmt(@@print_stmt3, expected, {:escape=>true})
    end
 
-   
-   
+
+
    @@print_stmt4 = 'print("http://" .+ url .+ "?param=" .+ value);'
    def test_print_stmt4_eruby
    	#expected = '<% "http://" + url + "?param=" + value %>'

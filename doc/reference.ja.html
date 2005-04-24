@@ -217,8 +217,7 @@ if (expr != null) {
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for Velocity
-#if($obj)
+<pre class="output">#if($obj)
   #set($flag = true)
 #else
   #set($flag = false)
@@ -228,6 +227,41 @@ expr is not null.
 #else
 epxr is null.
 #end
+### for eRuby
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for PHP
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for JSTL
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
+
+### for Velocity
+flag = obj == null? true : false;
+
+if (expr != null) {
+  print("expr is not null.\n");
+} else {
+  print("epxr is null.\n");
+}
 </pre>
 <br>
 
@@ -291,21 +325,7 @@ Velocity¤Ç¤Ï¥¨¥é¡¼¤Ë¤Ê¤ê¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% filename = basename + ".plogic" %&gt;
-
-### for PHP
-&lt;?php $filename = $basename . ".plogic"; ?&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="filename" value="${fn:join(basename,'.plogic')}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:set var="filename" value="${basename}${'.plogic'}"/&gt;
-</pre>
+<pre class="output"></pre>
 <p>¾ò·ï±é»»»Ò¡Ê3¹à±é»»»Ò¡Ë¤ÏeRuby¤ÈPHP¤ÈJSTL1.1¤Ç¤Ï»ÈÍÑ¤Ç¤­¤Þ¤¹¤¬¡¢JSTL1.0¤ÈVelocity¤Ç¤Ï»ÈÍÑ¤Ç¤­¤Þ¤»¤ó¡£
 ¤½¤Î¤¿¤á¾ò·ï±é»»»Ò¤ò´Þ¤à¼°¤Ï¡¢JSTL1.0¤ÈVelocity¤Ç¤ÏifÊ¸¡ÊJSTL1.0¤Ê¤éifÊ¸¤ËÁêÅö¤¹¤ë&lt;c:choose&gt;¡Ë¤ËÊÑ´¹¤µ¤ì¤Þ¤¹¡£
 </p>
@@ -316,32 +336,7 @@ Velocity¤Ç¤Ï¥¨¥é¡¼¤Ë¤Ê¤ê¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% color = ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
-
-### for PHP
-&lt;?php $color = $ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF"; ?&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="color" value="${ctr % 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${ctr % 2 eq 0}"&gt;
-  &lt;c:set var="color" value="#FFCCCC"/&gt;
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-  &lt;c:set var="color" value="#CCCCFF"/&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-
-### for Velocity
-#if($ctr % 2 == 0)
-  #set($color = "#FFCCCC")
-#else
-  #set($color = "#CCCCFF")
-#end
-</pre>
+<pre class="output"></pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
@@ -363,31 +358,33 @@ Velocity¤Ç¤Ï¥¨¥é¡¼¤Ë¤Ê¤ê¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-foo&lt;%= bar %&gt;baz
+<pre class="output">foo&lt;%= bar %&gt;baz
+### for eRuby
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for PHP
-foo&lt;?php echo $bar; ?&gt;baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for JSTL
-foo&lt;c:out value="${bar}" escapeXml="false"/&gt;baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for Velocity
-foo$!{bar}baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 </pre>
 <p>¼«Æ°¥µ¥Ë¥¿¥¤¥ºµ¡Ç½¤ò»ÈÍÑ¤·¤¿¾ì¹ç¤Ï¼¡¤Î¤è¤¦¤Ê½ÐÎÏ¤Ë¤Ê¤ê¤Þ¤¹¡£
 </p>
-<pre class="output">### for eRuby
-foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+<pre class="output">foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
+### for eRuby
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for PHP
-foo&lt;?php echo htmlspecialchars($bar); ?&gt;baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for JSTL
-foo&lt;c:out value="${bar}"/&gt;baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 
 ### for Velocity
-foo$!esc.html($bar)baz
+print('foo', bar, "baz\n");    // Ê¸»úÎó¤ÈÊÑ¿ô¤ò½ÐÎÏ
 </pre>
 <p>¤Þ¤¿¼«Æ°¥µ¥Ë¥¿¥¤¥ºµ¡Ç½¤ò»ÈÍÑ¤·¤Æ¤â¡¢¾ò·ï±é»»»Ò¤¬ÊÖ¤¹ÃÍ¤¬Ê¸»úÎó¤Þ¤¿¤Ï¿ô»ú¤Ç¤¢¤ë¾ì¹ç¤Ï¡¢¥µ¥Ë¥¿¥¤¥º¤µ¤ì¤Þ¤»¤ó¡£
 </p>
@@ -401,18 +398,7 @@ print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;option &lt;%= CGI::escapeHTML((condition ? var1 : var2).to_s) %&gt;&gt;
-&lt;option &lt;%= condition ? "selected" : "" %&gt;&gt;
-
-### for PHP
-&lt;option &lt;?php echo htmlspecialchars($condition ? $var1 : $var2); ?&gt;&gt;
-&lt;option &lt;?php echo $condition ? "selected" : ""; ?&gt;&gt;
-
-### for JSTL
-&lt;option &lt;c:out value="${condition ? var1 : var2}"/&gt;&gt;
-&lt;option &lt;c:out value="${condition ? 'selected' : ''}" escapeXml="false"/&gt;&gt;
-</pre>
+<pre class="output"></pre>
 <p>¡Ö<code>print(a .+ b .+ c);</code>¡×¤Ï¡Ö<code>print(a); print(b); print(c);</code>¡×¤ÈÅ¸³«¤µ¤ì¤Þ¤¹¡£
 ¤³¤ì¤Ï¡¢Ê¸»úÎó¤ÎÏ¢·ë±é»»»Ò¡Ö<code>.+</code>¡×¤ò¥µ¥Ý¡¼¥È¤·¤Æ¤¤¤Ê¤¤°ìÉô¤Î¸À¸ì¤ò¹ÍÎ¸¤·¤¿»ÅÍÍ¤Ç¤¹¡£
 </p>
@@ -433,29 +419,7 @@ str .+= '.txt';		// Ê¸»úÎó¤ÎËöÈø¤ËÄÉ²Ã
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for PHP
-&lt;?php $name = "Foo"; ?&gt;
-&lt;?php $count += 1; ?&gt;
-&lt;?php $str .= ".txt"; ?&gt;
-
-### for eRuby
-&lt;% name = "Foo" %&gt;
-&lt;% count += 1 %&gt;
-&lt;% str += ".txt" %&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;c:set var="name" value="Foo"/&gt;
-&lt;c:set var="count" value="${count + 1}"/&gt;
-&lt;c:set var="str" value="${fn:join(str,'.txt')}"/&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:set var="name" value="Foo"/&gt;
-&lt;c:set var="count" value="${count + 1}"/&gt;
-&lt;c:set var="str" value="${str}${'.txt'}"/&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -476,18 +440,7 @@ print(hash['key'], "\n"); // ¥Ï¥Ã¥·¥å¤ÎÍ×ÁÇ¤ò½ÐÎÏ
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% list[n] = 10 %&gt;
-&lt;%= list[i] %&gt;
-&lt;% hash["key"] = "foo" %&gt;
-&lt;%= hash["key"] %&gt;
-
-### for PHP
-&lt;?php $list[$n] = 10; ?&gt;
-&lt;?php echo $list[$i]; ?&gt;
-&lt;?php $hash["key"] = "foo"; ?&gt;
-&lt;?php echo $hash["key"]; ?&gt;
-</pre>
+<pre class="output"></pre>
 <p>¥Ï¥Ã¥·¥å¤Ï¡¢¡Ö<code>hash[:key]</code>¡×¤È¤¤¤¦·Á¤Ç¤â»²¾È¤Ç¤­¤Þ¤¹¡£
 ¤³¤Î¤È¤­¡¢¡Ö<code>key</code>¡×¤Ï±Ñ¿ô»ú¤È¡Ö<code>_</code>¡×¤Î¤ß¤«¤é¤Ê¤ëÊ¸»úÎó¤Ç¤¢¤ëÉ¬Í×¤¬¤¢¤ê¤Þ¤¹¡£
 </p>
@@ -528,17 +481,18 @@ print(hash['key'], "\n"); // ¥Ï¥Ã¥·¥å¤ÎÍ×ÁÇ¤ò½ÐÎÏ
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;%= hash[:key] %&gt;
+<pre class="output">&lt;%= hash[:key] %&gt;### for eRuby
+print(hash[:key]);
 
 ### for PHP
-&lt;?php echo $hash['key']; ?&gt;
+print(hash[:key]);
 
 ### for JSTL
-&lt;c:out value="${hash['key']}" escapeXml="false"/&gt;
+print(hash[:key]);
 
 ### for Velocity
-$!{hash.key}</pre>
+print(hash[:key]);
+</pre>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
@@ -563,21 +517,27 @@ print(user.name, "\n");
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% user.name = "Foo" %&gt;
+<pre class="output">&lt;% user.name = "Foo" %&gt;
 &lt;%= user.name %&gt;
+### for eRuby
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for PHP
-&lt;?php $user-&gt;name = "Foo"; ?&gt;
-&lt;?php echo $user-&gt;name; ?&gt;
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for JSTL
-&lt;c:set var="user" property="name" value="Foo"/&gt;
-&lt;c:out value="${user.name}" escapeXml="false"/&gt;
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 
 ### for Velocity
-#set($user.name = "Foo")
-$!{user.name}
+// property
+user.name = 'Foo';
+print(user.name, "\n");
 </pre>
 <p>PL¥×¥í¥°¥é¥à¡§
 </p>
@@ -587,14 +547,7 @@ print(user.method(10, 20));
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;%= user.method(10, 20) %&gt;
-
-### for PHP
-&lt;?php echo $user-&gt;method(10, 20); ?&gt;
-
-### for Velocity
-$!{user.method(10, 20)}</pre>
+<pre class="output"></pre>
 <p>¤Þ¤¿PL¤Ç¤Ï¥ª¥Ö¥¸¥§¥¯¥È¤ä¥×¥í¥Ñ¥Æ¥£¤ò»²¾È¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Æ¤â¡¢¥ª¥Ö¥¸¥§¥¯¥È¤ò¼«Ê¬¤ÇÀ¸À®¤·¤¿¤ê¥¯¥é¥¹¤òÄêµÁ¤·¤¿¤ê¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Þ¤»¤ó¡£
 ¤½¤ì¤é¤ÏPL¤Î³°Éô¤Ç¡Ê¤Ä¤Þ¤ê¥á¥¤¥ó¥×¥í¥°¥é¥à¤ÎÃæ¤Ç¡Ë¹Ô¤ï¤ì¤ë¤³¤È¤Ë¤Ê¤ê¤Þ¤¹¡£
 </p>
@@ -615,25 +568,28 @@ $!{user.method(10, 20)}</pre>
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% for item in list do %&gt;
+<pre class="output">&lt;% for item in list do %&gt;
 &lt;%= item %&gt;
 &lt;% end %&gt;
+### for eRuby
+foreach(item in list) {     // list¤ÎÍ×ÁÇ¤òitem¤ËÂåÆþ¤·¤Ê¤¬¤é
+  print(item, "\n");        // ·«¤êÊÖ¤·½ÐÎÏ¤¹¤ë
+}
 
 ### for PHP
-&lt;?php foreach ($list as $item) { ?&gt;
-&lt;?php echo $item; ?&gt;
-&lt;?php } ?&gt;
+foreach(item in list) {     // list¤ÎÍ×ÁÇ¤òitem¤ËÂåÆþ¤·¤Ê¤¬¤é
+  print(item, "\n");        // ·«¤êÊÖ¤·½ÐÎÏ¤¹¤ë
+}
 
 ### for JSTL
-&lt;c:forEach var="item" items="${list}"&gt;
-&lt;c:out value="${item}" escapeXml="false"/&gt;
-&lt;/c:forEach&gt;
+foreach(item in list) {     // list¤ÎÍ×ÁÇ¤òitem¤ËÂåÆþ¤·¤Ê¤¬¤é
+  print(item, "\n");        // ·«¤êÊÖ¤·½ÐÎÏ¤¹¤ë
+}
 
 ### for Velocity
-#foreach($item in $list)
-$!{item}
-#end
+foreach(item in list) {     // list¤ÎÍ×ÁÇ¤òitem¤ËÂåÆþ¤·¤Ê¤¬¤é
+  print(item, "\n");        // ·«¤êÊÖ¤·½ÐÎÏ¤¹¤ë
+}
 </pre>
 <p>¤Þ¤¿whileÊ¸¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 ¤¿¤À¤·¡¢JSTL¤ª¤è¤ÓVelocity¤Ë¤ÏwhileÊ¸¤ËÁêÅö¤¹¤ë¥«¥¹¥¿¥à¥¿¥°¤ä¥Ç¥£¥ì¥¯¥Æ¥£¥Ö¤¬¤Ê¤¤¤¿¤á¡¢
@@ -650,18 +606,7 @@ while(i &lt; length) {
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% i = 0 %&gt;
-&lt;% while i &lt; length do %&gt;
-&lt;%   i += 1 %&gt;
-&lt;%= list[i] %&gt;&lt;% end %&gt;
-
-### for PHP
-&lt;?php $i = 0; ?&gt;
-&lt;?php while ($i &lt; $length) { ?&gt;
-&lt;?php   $i += 1; ?&gt;
-&lt;?php echo $list[$i]; ?&gt;&lt;?php } ?&gt;
-</pre>
+<pre class="output"></pre>
 <p>¤Ê¤ªJava¤äC¤Î¤è¤¦¤ÊforÊ¸¤ÏÍÑ°Õ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£¤´Ãí°Õ¤¯¤À¤µ¤¤¡£
 </p>
 <br>
@@ -684,41 +629,48 @@ while(i &lt; length) {
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% if val &gt; 0 then %&gt;
+<pre class="output">&lt;% if val &gt; 0 then %&gt;
 * value is positive.
 &lt;% elsif val &lt; 0 then %&gt;
 * value is negative.
 &lt;% else %&gt;
 * value is zero.
 &lt;% end %&gt;
+### for eRuby
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for PHP
-&lt;?php if ($val &gt; 0) { ?&gt;
-* value is positive.
-&lt;?php } elseif ($val &lt; 0) { ?&gt;
-* value is negative.
-&lt;?php } else { ?&gt;
-* value is zero.
-&lt;?php } ?&gt;
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${val gt 0}"&gt;
-* value is positive.
-&lt;/c:when&gt;&lt;c:when test="${val lt 0}"&gt;
-* value is negative.
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-* value is zero.
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 
 ### for Velocity
-#if($val &gt; 0)
-* value is positive.
-#elseif($val &lt; 0)
-* value is negative.
-#else
-* value is zero.
-#end
+if (val &gt; 0) {
+  print ("* value is positive.\n");
+} else if (val &lt; 0) {
+  print ("* value is negative.\n");
+} else {
+  print ("* value is zero.\n");
+}
 </pre>
 <br>
 
@@ -923,33 +875,38 @@ JSTL¤ÈVelocity¤Ç¤Ï¥æ¡¼¥¶ÄêµÁ¤Î´Ø¿ô¤¬»ÈÍÑ¤Ç¤­¤Þ¤»¤ó¤Î¤Ç¡¢JSP¤Ø¤ÎÊÑ´¹¤Ï¥¨¥é¡¼¤Ë¤Ê¤
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% if !str1 || str1.empty? then %&gt;
+<pre class="output">&lt;% if !str1 || str1.empty? then %&gt;
 str1 is empty.
 &lt;% elsif str2 &amp;&amp; !str2.empty? then %&gt;
 str2 is not empty.
 &lt;% end %&gt;
+### for eRuby
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for PHP
-&lt;?php if (!$str1) { ?&gt;
-str1 is empty.
-&lt;?php } elseif ($str2) { ?&gt;
-str2 is not empty.
-&lt;?php } ?&gt;
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for JSTL
-&lt;c:choose&gt;&lt;c:when test="${empty str1}"&gt;
-str1 is empty.
-&lt;/c:when&gt;&lt;c:when test="${not empty str2}"&gt;
-str2 is not empty.
-&lt;/c:when&gt;&lt;/c:choose&gt;
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 
 ### for Velocity
-#if(! $str1 || $str1 == "")
-str1 is empty.
-#elseif($str2 &amp;&amp; $str2 != "")
-str2 is not empty.
-#end
+if (str1 == empty) {
+  print("str1 is empty.\n");
+} else if (str2 != empty) {
+  print("str2 is not empty.\n");
+}
 </pre>
 <br>
 
@@ -1040,56 +997,7 @@ Kwartz¤Ç¤Ï¡¢¥×¥ì¥¼¥ó¥Æ¡¼¥·¥ç¥ó¥í¥¸¥Ã¥¯¥Õ¥¡¥¤¥ë¤Ï¥¨¥ì¥á¥ó¥ÈÀë¸À¤Î½¸¹ç¤È¤·¤Æµ­½Ò¤µ
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;ul&gt;
-&lt;% for item in list do %&gt;
-  &lt;li id="foo" class="&lt;%= klass %&gt;"&gt;&lt;%= item %&gt;&lt;/li&gt;
-&lt;% end %&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;%= flag ? " checked" : "" %&gt; /&gt;
-&lt;/form&gt;
-
-### for PHP
-&lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
-  &lt;li id="foo" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
-&lt;?php } ?&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;?php echo $flag ? " checked" : ""; ?&gt; /&gt;
-&lt;/form&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
-  &lt;li id="foo" class="&lt;c:out value="${klass}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
-&lt;/c:forEach&gt;
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-  &lt;html:text type="checkbox" name="user" value="Y"&lt;c:out value="${flag ? ' checked' : ''}" escapeXml="false"/&gt; /&gt;
-&lt;/form&gt;
-
-### for Velocity
-&lt;ul&gt;
-#foreach($item in $list)
-  &lt;li id="foo" class="$!{klass}"&gt;$!{item}&lt;/li&gt;
-#end
-&lt;/ul&gt;
-
-&lt;form action="foo.cgi"&gt;
-#if($flag)
-  &lt;html:text type="checkbox" name="user" value="Y" checked /&gt;
-#else
-  &lt;html:text type="checkbox" name="user" value="Y" /&gt;
-#end
-&lt;/form&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -1164,41 +1072,32 @@ Kwartz¤Ç¤Ï¡¢¥×¥ì¥¼¥ó¥Æ¡¼¥·¥ç¥ó¥í¥¸¥Ã¥¯¥Õ¥¡¥¤¥ë¤Ï¥¨¥ì¥á¥ó¥ÈÀë¸À¤Î½¸¹ç¤È¤·¤Æµ­½Ò¤µ
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% list = context[:list] %&gt;
+<pre class="output">&lt;% list = context[:list] %&gt;
 &lt;ul&gt;
 &lt;% for item in list do %&gt;
   &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
 &lt;% end %&gt;
 &lt;/ul&gt;
 &lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
+### for eRuby
+&lt;ul&gt;
+  &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 ### for PHP
-&lt;?php $list = $context['list']; ?&gt;
 &lt;ul&gt;
-&lt;?php foreach ($list as $item) { ?&gt;
   &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
-&lt;?php } ?&gt;
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 
 ### for JSTL
-&lt;c:set var="list" value="${context['list']}"/&gt;
 &lt;ul&gt;
-&lt;c:forEach var="item" items="${list}"&gt;
   &lt;li&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/li&gt;
-&lt;/c:forEach&gt;
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 
 ### for Velocity
-#set($list = $context.list)
 &lt;ul&gt;
-#foreach($item in $list)
   &lt;li&gt;$!{item}&lt;/li&gt;
-#end
 &lt;/ul&gt;
-&lt;!-- copyright(c) 2005 kuwata-lab.com ALL RIGHTS RESERVERD. --&gt;
 </pre>
 <br>
 
@@ -1220,9 +1119,27 @@ print("key=", key, " value=", value, "\n");
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for PHP
-&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+<pre class="output">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
 key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
+&lt;?php } ?&gt;
+### for eRuby
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for PHP
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for JSTL
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
+&lt;?php } ?&gt;
+
+### for Velocity
+&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+print("key=", key, " value=", value, "\n");
 &lt;?php } ?&gt;
 </pre>
 <p>Raw-code¤Ï¡¢¥¨¥ì¥á¥ó¥ÈÀë¸À¤Î¡Öplogic:¡×Éô¡¢¤Þ¤¿¥É¥­¥å¥á¥ó¥ÈÀë¸À¤Î¡Öbegin:¡×Éô¤ä¡Öend:¡×Éô¤Ëµ­½Ò¤Ç¤­¤Þ¤¹¡£
@@ -1395,7 +1312,9 @@ Kwartz¤Ï¡¢³«È¯¼Ô¤Ë¤É¤Á¤é¤«°ìÊý¤ò²¡¤·¤Ä¤±¤ë¤è¤¦¤Ê¤³¤È¤Ï¤·¤Þ¤»¤ó¡£
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;div id="foo"&gt;foo&lt;/div&gt;
+&lt;div&gt;bar&lt;/div&gt;
+### for eRuby
 &lt;div id="foo"&gt;foo&lt;/div&gt;
 &lt;div&gt;bar&lt;/div&gt;
 
@@ -1426,7 +1345,8 @@ Kwartz¤Ï¡¢³«È¯¼Ô¤Ë¤É¤Á¤é¤«°ìÊý¤ò²¡¤·¤Ä¤±¤ë¤è¤¦¤Ê¤³¤È¤Ï¤·¤Þ¤»¤ó¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">Hello &lt;%= user.name %&gt;!
+### for eRuby
 Hello &lt;%= user.name %&gt;!
 
 ### for PHP
@@ -1443,17 +1363,18 @@ Hello $!{user.name}!
 </p>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡Ê¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó<code>-e</code>¤ò¤Ä¤±¤¿¾ì¹ç¡Ë¡§
 </p>
-<pre class="output">### for eRuby
-Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+<pre class="output">Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
+### for eRuby
+Hello &lt;%= user.name %&gt;!
 
 ### for PHP
-Hello &lt;?php echo htmlspecialchars($user-&gt;name); ?&gt;!
+Hello &lt;?php echo $user-&gt;name; ?&gt;!
 
 ### for JSTL
-Hello &lt;c:out value="${user.name}"/&gt;!
+Hello &lt;c:out value="${user.name}" escapeXml="false"/&gt;!
 
 ### for Velocity
-Hello $!esc.html($user.name)!
+Hello $!{user.name}!
 </pre>
 <p>¥³¥Þ¥ó¥É¥ª¥×¥·¥ç¥ó¤ÎÍ­Ìµ¤Ë´Ø¤ï¤é¤º¥µ¥Ë¥¿¥¤¥º¤ò¤¹¤ë/¤·¤Ê¤¤¤ò»ØÄê¤¹¤ë¤Ë¤Ï¡¢´Ø¿ô<code>E()</code>¤È<code>X()</code>¤ò»ÈÍÑ¤·¤Þ¤¹¡£
 <code>E(<i>expr</i>)</code>¤Ï¼°<code><i>expr</i></code>¤ò¥µ¥Ë¥¿¥¤¥º¤·¡¢<code>X(<i>expr</i>)</code>¤Ï¥µ¥Ë¥¿¥¤¥º¤·¤Þ¤»¤ó¡£
@@ -1466,7 +1387,9 @@ Without sanitizing: <b>@{X(var)}@</b>!
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
+Without sanitizing: &lt;%= var %&gt;!
+### for eRuby
 With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
 Without sanitizing: &lt;%= var %&gt;!
 
@@ -1500,7 +1423,8 @@ Without sanitizing: $!{var}!
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
+### for eRuby
 &lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
 
 ### for PHP
@@ -1534,7 +1458,10 @@ Without sanitizing: $!{var}!
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;tr class="&lt;%= klass %&gt;"&gt;
+  &lt;td&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+### for eRuby
 &lt;tr class="&lt;%= klass %&gt;"&gt;
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
@@ -1568,7 +1495,12 @@ Without sanitizing: $!{var}!
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% if message &amp;&amp; !message.empty? then %&gt;
+&lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
+ &lt;%= message %&gt;
+&lt;/font&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% if message &amp;&amp; !message.empty? then %&gt;
 &lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
  &lt;%= message %&gt;
@@ -1614,32 +1546,7 @@ Without sanitizing: $!{var}!
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="program">### for eRuby
-&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
-
-### for PHP
-&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked" : ""; ?&gt;&gt;
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked' : ''}" escapeXml="false"/&gt;&gt;
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
-&lt;option name="lang" value="ruby" selected&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Ruby&lt;/option&gt;
-&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked&gt;
-&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M"&gt;
-&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-</pre>
+<pre class="program"></pre>
 <p>¤Ê¤ª¡Ö<code>checked="checked"</code>¡×¡Ö<code>selected="selected"</code>¡×¡Ö<code>disabled="disabled"</code>¡×¤Î½ÐÎÏ¤ò´ÊÃ±¤Ë¤¹¤ë¤¿¤á¤Îµ¡Ç½¤È¤·¤Æ¡¢´Ø¿ô¡Ö<code>C(<i>expr</i>)</code>¡×¡Ö<code>S(<i>expr</i>)</code>¡×¡Ö<code>D(<i>expr</i>)</code>¡×¤¬ÍÑ°Õ¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
 ¤³¤ì¤é¤Ï¡¢¼°<code><i>expr</i></code>¤¬¿¿¤Î¤È¤­¤Ë¤½¤ì¤¾¤ì¡Ö<code>checked="checked"</code>¡×¡Ö<code>selected="selected"</code>¡×¡Ö<code>disabled="disabled"</code>¡×¤ò½ÐÎÏ¤·¤Þ¤¹¡£
 </p>
@@ -1657,46 +1564,7 @@ Ruby&lt;/option&gt;
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="program">### for PHP
-&lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected=\"selected\"" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;?php echo $os == "mac" ? " disabled=\"disabled\"" : ""; ?&gt; /&gt;Windows
-
-### for eRuby
-&lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected=\"selected\"" : "" %&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;%= os == "mac" ? " disabled=\"disabled\"" : "" %&gt; /&gt;Windows
-
-### for JSTL 1.1
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
-&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;option name="lang" value="ruby"&lt;c:out value="${lang eq 'ruby' ? ' selected="selected"' : ''}" escapeXml="false"/&gt;&gt;Ruby&lt;/option&gt;
-
-&lt;input type="radio" name="gender" value="M"&lt;c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/&gt; /&gt;Male
-
-&lt;input type="radio" name="os" value="win"&lt;c:out value="${os eq 'mac' ? ' disabled="disabled"' : ''}" escapeXml="false"/&gt; /&gt;Windows
-
-### for JSTL 1.0
-&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
-&lt;c:choose&gt;&lt;c:when test="${lang eq 'ruby'}"&gt;
-&lt;option name="lang" value="ruby" selected="selected"&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;option name="lang" value="ruby"&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Ruby&lt;/option&gt;
-
-&lt;c:choose&gt;&lt;c:when test="${gender eq 'M'}"&gt;
-&lt;input type="radio" name="gender" value="M" checked="checked" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="gender" value="M" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Male
-
-&lt;c:choose&gt;&lt;c:when test="${os eq 'mac'}"&gt;
-&lt;input type="radio" name="os" value="win" disabled="disabled" /&gt;&lt;/c:when&gt;&lt;c:otherwise&gt;
-&lt;input type="radio" name="os" value="win" /&gt;&lt;/c:otherwise&gt;&lt;/c:choose&gt;
-Windows
-</pre>
+<pre class="program"></pre>
 <br>
 
 
@@ -1713,7 +1581,11 @@ Windows
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% var = value %&gt;
+&lt;dt&gt;foo&lt;/dt&gt;
+&lt;% count += 1 %&gt;
+&lt;dd&gt;123&lt;/dd&gt;
+### for eRuby
 &lt;% var = value %&gt;
 &lt;dt&gt;foo&lt;/dt&gt;
 &lt;% count += 1 %&gt;
@@ -1760,7 +1632,20 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% if value &gt; 0 then %&gt;
+&lt;div&gt;
+  Value is positive.
+&lt;/div&gt;
+&lt;% elsif value &lt; 0 then %&gt;
+&lt;div&gt;
+  Value is negative.
+&lt;/div&gt;
+&lt;% else %&gt;
+&lt;div&gt;
+  Value is zero.
+&lt;/div&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% if value &gt; 0 then %&gt;
 &lt;div&gt;
   Value is positive.
@@ -1838,7 +1723,12 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% for item in list do %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% for item in list do %&gt;
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
@@ -1885,7 +1775,13 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;dl&gt;
+&lt;% for item in list do %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;% end %&gt;
+&lt;/dl&gt;
+### for eRuby
 &lt;dl&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
@@ -1935,7 +1831,15 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item_ctr %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+### for eRuby
 &lt;% item_ctr = 0 %&gt;
 &lt;% for item in list do %&gt;
 &lt;%   item_ctr += 1 %&gt;
@@ -1999,7 +1903,19 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
+<pre class="output">&lt;table&gt;
+  &lt;tbody&gt;
+&lt;% item_ctr = 0 %&gt;
+&lt;% for item in list do %&gt;
+&lt;%   item_ctr += 1 %&gt;
+&lt;%   item_tgl = item_ctr % 2 == 0 ? "even" : "odd" %&gt;
+    &lt;tr class="&lt;%= item_tgl %&gt;"&gt;
+      &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;% end %&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+### for eRuby
 &lt;table&gt;
   &lt;tbody&gt;
 &lt;% item_ctr = 0 %&gt;
@@ -2078,20 +1994,7 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥×¥í¥°¥é¥à¡§
 </p>
-<pre class="output">### for eRuby
-&lt;% while row = sth.fetch() do %&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;% end %&gt;
-
-### for PHP
-&lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;?php } ?&gt;
-</pre>
+<pre class="output"></pre>
 <br>
 
 
@@ -2287,8 +2190,7 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </pre>
 <p>½ÐÎÏÍÑ¥¹¥¯¥ê¥×¥È¡§
 </p>
-<pre class="program">### for eRuby
-&lt;html&gt;
+<pre class="program">&lt;html&gt;
   &lt;body&gt;
 
     ... main contents ...
@@ -2301,6 +2203,7 @@ else¤äelseif¤â»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 
   &lt;/body&gt;
 &lt;/html&gt;
+### for eRuby
 </pre>
 <p>¡Ö<code>include</code>¡×¥Ç¥£¥ì¥¯¥Æ¥£¥Ö¤Î¤Û¤«¤Ë¡¢¡Ö<code>Include</code>¡×¤È¡Ö<code>INCLUDE</code>¡×¤¬»ÈÍÑ¤Ç¤­¤Þ¤¹¡£
 </p>

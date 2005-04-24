@@ -132,44 +132,48 @@ module Kwartz
       end
 
 
-      @@func_names = {
-         'list_new'    => 'array',
-         'list_length' => 'count',
-         'list_empty'  => nil,
-         'hash_new'    => 'array',
-         'hash_keys'   => 'array_keys',
-         'hash_empty'  => nil,
-         'str_length'  => 'strlen',
-         'str_trim'    => 'trim',
-         'str_tolower' => 'strtolower',
-         'str_toupper' => 'strtoupper',
-         'str_index'   => 'strstr',
-         'str_empty'   => nil,
+      @@php_func_names = {
+         'list_new'      => 'array',
+         'list_length'   => 'count',
+         'list_empty'    => 'count',
+         'hash_new'      => 'array',
+         'hash_length'   => 'count',
+         'hash_empty'    => 'count',
+         'hash_keys'     => 'array_keys',
+         'str_length'    => 'strlen',
+         'str_trim'      => 'trim',
+         'str_tolower'   => 'strtolower',
+         'str_toupper'   => 'strtoupper',
+         'str_index'     => 'strstr',
+         'str_empty'     => 'strlen',
+         'str_replace'   => 'str_replace',
+         'str_linebreak' => 'nl2br',
+         'escape_xml'    => 'htmlspecialchars',
+         'escape_sql'    => 'addslashes',
+         'escape_url'    => 'urlencode',
       }
 
 
-      ## should be abstract
-      def function_name(name)
-         return @@func_names[name]
-      end
-
-
       ##
-      def visit_funtion_expression(expr, depth=0)
-         t = expr.token
-         case expr.funcname
-         when 'list_empty', 'hash_empty'
-            @code << 'count('
-            translate_expression(expr.arguments[0])
-            @code << ')==0'
-         when 'str_empty'
-            translate_expression(expr.arguments[0])
+      def translate_function(function_name, arguments)
+         funcname = @@php_func_names[function_name]
+         case function_name
+         when 'list_empty', 'hash_empty', 'str_empty'
+            append_code(funcname)
+            append_code('(')
+            translate_expression(arguments[0])
+            append_code(')==0')
+         when 'str_replace'
+            fname = @@php_func_names[function_name]
+            args = [ arguments[1], arguments[2], arguments[0] ]
+            super(fname, args)
          else
-            super(expr, depth)
+            fname = @@php_func_names[function_name] || function_name
+            return super(fname, arguments)
          end
-         return @code
       end
-
+      
+      
 
       ##
       def visit_empty_expression(expr, depth=0)

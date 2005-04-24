@@ -44,7 +44,7 @@ module Kwartz
       end
    end
 
-   class MainCommand
+   class MainProgram
 
       VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)*/ && $&)
       LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
@@ -73,7 +73,7 @@ module Kwartz
       def execute(argv=@argv)
          ## parse command-line options
          begin
-            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpiCFA", nil, true)
+            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpiRCFA", nil, true)
          rescue Kwartz::Util::OptparseError => ex
             case ex.type
             when :invalid_option
@@ -90,6 +90,8 @@ module Kwartz
                   msg = "-#{ex.optchar.chr}: presentation logic file requried."
                when ?i
                   msg = "-#{ex.optchar.chr}: contents data file requried."
+               #when ?R
+               #   msg = "-#{ex.optchar.chr}: invalid argument."
                else
                   Kwartz::assert(false, "ex.optchar=#{ex.optchar}")
                end
@@ -133,6 +135,17 @@ module Kwartz
             properties[key] = properties[key].split(/,/)
          end
 
+	 ## '-Rails' option
+         if options[?R]
+            if options[?R] == 'ails'
+               properties[:globalvar_prefix] = '@'
+               options[?l] = 'erb'
+            else
+               msg = "-R#{options[?R]}: invalid argument."
+               raise CommandOptionError.new(msg)
+            end
+         end
+
          ## target language
          lang = (options[?l] || Kwartz::Config::LANG)
 
@@ -166,7 +179,7 @@ module Kwartz
                decl_list.concat(list) if list
             end
          end
-         
+
          ## parse contens data file
          contents_filenames = options[?i] ? options[?i].split(/,/) : []
          element_list = []
@@ -200,7 +213,7 @@ module Kwartz
                end
             end
          end
-         
+
          ## define functions
          if action == :defun
             body = output
@@ -219,13 +232,13 @@ module Kwartz
 
          ## footer
          output << properties[:footer] if properties[:footer]
-         
+
          ## return output
          return output
       end
       alias :main :execute
-      
-      
+
+
       private
 
       def usage(command=nil)
@@ -238,7 +251,8 @@ Usage: #{command} [..options..] file1 [file2...]
   -l lang    : eruby/erb/php/jstl10/jstl11/velocity (default '#{Kwartz::Config::LANG}')
   -s, -e     : sanitize(escape) (equvarent to --escape=true)
   -p file1,file2,...  : presentation logic filenames
-  -i file1,file2,...  : import element from outer files
+  -i file1,file2,...  : import elements from outer files
+  -Rails              : equivarent to '-lang erb --globalvar-prefix=@'
   -C class            : class/module name     (only for action 'defun')
   -F function         : function/method name  (only for action 'defun')
   -A arg1,arg2,...    : arguments             (only for action 'defun')
@@ -322,12 +336,11 @@ end
 
 
 
-#if __FILE__ == $0
-unless defined?(KWARTZ_NOEXEC)
+if __FILE__ == $0 || defined?(KWARTZ_EXECUTE)
    begin
-      main_command = Kwartz::MainCommand.new(ARGV)
+      main_command = Kwartz::MainProgram.new(ARGV)
       output = main_command.main()
-      print output
+      print output if output
    rescue Kwartz::KwartzError => ex
       $stderr.puts ex.message
       exit 1

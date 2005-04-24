@@ -1,11 +1,13 @@
 #!/usr/bin/ruby
 
-##
-## invoke kwartz-ruby script
-##
-## $Id$
-## $Release$
-##
+###
+### invoke kwartz-ruby script
+###
+### Copyright (C) 2004-2005 kuwata-lab
+### All rights reserved.
+### $Id$
+### $Release$
+###
 
 ### if shell script
 #basedir=`dirname $0`
@@ -13,5 +15,6 @@
 #exec ruby $script $@
 
 ### if ruby script
+KWARTZ_EXECUTE = true
 script = __FILE__ + '-ruby'
 load script

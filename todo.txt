@@ -51,3 +51,7 @@
 .- [_] man page
 .- [_] re-design website
 .- [_] correct my English (>_<)
+.- [v] function 'escape_xml'
+.- [v] function 'escape_sql'
+.- [v] function 'escape_url'
+.- [v] function 'str_linebreak'

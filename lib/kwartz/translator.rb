@@ -86,16 +86,14 @@ module Kwartz
       def postfix(flag_add_newline=true)
          return flag_add_newline ? keyword(:postfix) + @nl : keyword(:postfix)
       end
-
-
-      ## abstract method
-      def keyword(key)
-         raise Kwartz::NotImplementedError.new("#{self.class.name}#keyword(): not implemented.")
+      
+      def append_code(code_str)
+         @code << code_str
       end
 
 
       ## abstract method
-      def function_name(name)
+      def keyword(key)
          raise Kwartz::NotImplementedError.new("#{self.class.name}#keyword(): not implemented.")
       end
 
@@ -287,18 +285,19 @@ module Kwartz
       end
 
       ##
+      def translate_function(function_name, argument_expressions)
+         append_code(function_name)
+         append_code('(')
+         argument_expressions.each_with_index do |arg_expr, i|
+            append_code(keyword(',')) if i > 0
+            translate_expression(arg_expr)
+         end
+         append_code(')')
+      end
+
+      ##
       def visit_funtion_expression(expr, depth=0)
-         t = expr.token
-         funcname = function_name(expr.funcname)
-         if !funcname
-            funcname = expr.funcname
-         end
-         @code << funcname << keyword('(')
-         expr.arguments.each_with_index do |arg, i|
-            @code << keyword(',') if i > 0
-            translate_expression(arg)
-         end
-         @code << keyword(')')
+         translate_function(expr.funcname, expr.arguments)
          return @code
       end
 

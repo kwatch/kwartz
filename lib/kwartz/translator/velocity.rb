@@ -138,24 +138,27 @@ module Kwartz
       end
 
 
-      @@func_names = {
-         'list_new'    => nil,
-         'list_length' => nil,
-         'list_empty'  => nil,
-         'hash_new'    => nil,
-         'hash_keys'   => nil,
-         'hash_empty'  => nil,
-         'str_length'  => nil,
-         'str_trim'    => nil,
-         'str_tolower' => nil,
-         'str_toupper' => nil,
-         'str_index'   => nil,
-         'str_empty'   => nil,
+      @@velocity_func_names = {
+         'list_new'      => false,
+         'list_length'   => '.size()',
+         'list_empty'    => true,
+         'hash_new'      => false,
+         'hash_length'   => '.size()',
+         'hash_empty'    => true,
+         'hash_keys'     => '.keySet().toArray()',
+         'str_length'    => '.length()',
+         'str_trim'      => '.trim()',
+         'str_tolower'   => '.toLowerCase()',
+         'str_toupper'   => '.toUpperCase()',
+         'str_index'     => '.indexOf',
+         'str_empty'     => true,
+         'str_replace'   => '.replaceAll',
+         'str_linebreak' => ".replaceAll('$','<br />')",
+         'escape_xml'    => '$esc.xml',
+         'escape_sql'    => '$esc.sql',
+         'escape_url'    => '$esc.url',
       }
 
-      def function_name(name)
-         return nil
-      end
 
       ##
       def visit_arithmetic_expression(expr, depth=0)
@@ -170,25 +173,41 @@ module Kwartz
       end
       
       ##
-      def visit_funtion_expression(expr, depth=0)
-         case expr.funcname
+      def translate_function(function_name, arguments)
+         funcname = @@velocity_func_names[function_name]
+         case function_name
+         when 'escape_xml', 'escape_sql', 'escape_url'
+            append_code(funcname)
+            append_code('(')
+            translate_expression(arguments[0])
+            append_code(')')
+         when 'list_empty', 'hash_empty'
+            translate_expression(arguments[0])
+            append_code('.size()==0')
          when 'str_empty'
-            @code << '!'
-            translate_expression(expr.arguments[0])
+            #append_code('!')
+            #translate_expression(arguments[0])
+            translate_expression(arguments[0])
+            append_code('.length()==0')
+         when 'str_index', 'str_replace'
+            translate_expression(arguments[0])
+            append_code(funcname)
+            append_code('(')
+            arguments.each_with_index do |arg, i|
+               append_code(', ')          if i > 1
+               translate_expression(arg) if i > 0
+            end
+            append_code(')')
          else
-            funcname = function_name(expr.funcname)
             if funcname
-               return super(expr, depth)
+               #assert(arguments.length==1)
+               translate_expression(arguments[0])
+               append_code(funcname)
             else
-               raise TranslationError.new("#{expr.funcname}: Veloicty doesn't support the method.")
+               msg = "#{function_name}: Veloicty doesn't support the method."
+               raise TranslationError.new(msg)
             end
          end
-         return @code
-      end
-
-      ##
-      def visit_method_expression(expr, depth=0)
-         raise TranslationError.new("#{expr.method_name}(): Velocity doesn't support method-call.")
       end
 
 

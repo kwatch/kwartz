@@ -10,11 +10,11 @@ require 'kwartz/translator'
 module Kwartz
 
    class ErubyTranslator < BaseTranslator
-      
+
       def self.lang
          return 'eruby'
       end
-      
+
       Translator.register('eruby', self)
 
       @@keywords = {
@@ -58,7 +58,7 @@ module Kwartz
         :true        => 'true',
         :false       => 'false',
         :null        => 'nil',
-        
+
         ## :empty and :notempty
         :empty       => nil,
         :notempty    => nil,
@@ -74,7 +74,7 @@ module Kwartz
         '/'    => ' / ',
         '%'    => ' % ',
         '.+'   => ' + ',
-        
+
         ## assignment op
         '='    => ' = ',
         '+='   => ' += ',
@@ -87,7 +87,7 @@ module Kwartz
         ## unary op
         '-.'   => '-',
         '+.'   => '+',
-        
+
         ## rerational op
         '<'    => ' < ',
         '<='   => ' <= ',
@@ -100,7 +100,7 @@ module Kwartz
         '&&'   => ' && ',
         '||'   => ' || ',
         '!'    => '!',
-        
+
         ## array & hash op
         '['    => '[',
         ']'    => ']',
@@ -109,23 +109,23 @@ module Kwartz
 
         ## property op
         '.'    => '.',
-        
+
         ## method op
         '.()'  => '.',
-        
+
         ## other op
         '('    => '(',
         ')'    => ')',
         '?'    => ' ? ',
         ':'    => ' : ',
         ','    => ', ',
-        
+
         ## escape function
         #'E('   => 'CGI::escapeHTML((',
         #'E)'   => ').to_s)',
       }
-      
-      
+
+
       def keyword(key)
          Kwartz::assert("key=#{key.inspect}") unless @@keywords.key?(key)
          return @@keywords[key]
@@ -137,52 +137,60 @@ module Kwartz
          'list_length' => '.length',
          'list_empty'  => '.empty?',
          'hash_new'    => '{}',
-         'hash_keys'   => '.keys',
+         'hash_length' => '.length',
          'hash_empty'  => '.empty?',
+         'hash_keys'   => '.keys',
          'str_length'  => '.length',
          'str_trim'    => '.trim',
          'str_tolower' => '.downcase',
          'str_toupper' => '.upcase',
          'str_index'   => '.index',
          'str_empty'   => '.empty?',
+         'str_replace' => '.gsub',
+         'str_linebreak' => '.gsub(/\r?\n/,\'<br />\\&\')',
+         'escape_xml'  => 'CGI::escapeHTML',
+         'escape_sql'  => '.gsub([\'"\\\\\\0],\'\\&\')',    #"
+         'escape_url'  => 'CGI::escape',
       }
 
-      
-      ## should be abstract
-      def function_name(name)
-         return @@func_names[name]
-      end
 
-      
       ##
-      def visit_funtion_expression(expr, depth=0)
-         t = expr.token
-         funcname = function_name(expr.funcname)
+      def translate_function(function_name, arguments)
+         funcname = @@func_names[function_name]
          if !funcname
-            return super(expr, depth)
+            return super(function_name, arguments)
          end
-
-         arglen = expr.arguments.length
-         if arglen == 0
-            @code << funcname
+         case function_name
+         when 'list_new', 'hash_new'
+            append_code(funcname)
+         when 'escape_xml', 'escape_url'
+            append_code(funcname)
+            append_code('(')
+            translate_expression(arguments[0])
+            append_code(')')
+         when 'escape_sql', 'str_linebreak'
+            translate_expression(arguments[0])
+            append_code(funcname)
          else
-            receiver = expr.arguments[0]
-            translate_expression(receiver)
-            @code << funcname
-            if arglen > 1
-               @code << keyword('(')
-               expr.arguments.each_with_index do |arg, i|
-                  @code << keyword(',')     if i > 1
-                  translate_expression(arg) if i > 0
+            if arguments.length == 0
+               append_code(funcname)
+            else
+               receiver = arguments[0]
+               translate_expression(receiver)
+               append_code(funcname)
+               if arguments.length > 1
+                  append_code(keyword('('))
+                  arguments.each_with_index do |arg, i|
+                     append_code(keyword(',')) if i > 1
+                     translate_expression(arg) if i > 0
+                  end
+                  append_code(keyword(')'))
                end
-               @code << keyword(')')
             end
          end
-         
-         return @code
       end
 
-      
+
       ##
       def visit_empty_expression(expr, depth=0)
          if expr.token == :empty
@@ -198,7 +206,7 @@ module Kwartz
          return @code
       end
 
-      
+
    end
 end
 
