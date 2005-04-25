@@ -22,7 +22,8 @@
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
 <p>This is the users' guide to Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>,
-a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data (SoPL/PD).'
+a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data'(SoPL/PD) or 
+'Indepencence of Presenation Logic'(IoPL).
 </p>
 <div class="footnote">
  <dl compact>
@@ -97,7 +98,8 @@ a template system which realized the concept of 'Separation of Presentation Logi
 <a name="whatis"></a>
 <h3 class="section2">What's Kwartz?</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system
-which realized the concept of <b>'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)</b>.
+which realized the concept of <b>'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)</b> or 
+<b>'Independence of Presentation Logic'(IoPL)</b>.
 </p>
 <p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
 There is a plan to implement Kwartz in PHP or Java.
@@ -166,7 +168,7 @@ Can handle any text file</dt>
 </p>
 </dd>
 <dt class="dt2">
-Auto-Sanitizing and Partial-Sanitizing Support</dt>
+Auto-Sanitizing and Partial-Sanitizing</dt>
 <dd class="dd2">
 <p>	Kwartz can do sanitizing automatically.
 	You don't need to write '<code>CGI.escapeHTML(var)</code>' or '<code>htmlspecialchars($var)</code>'.
@@ -744,14 +746,14 @@ In Kwartz, 'id' and 'kw:d' attributes are used to describe directives.
 <p>The following is an example to use directives.
 </p>
 <ul type="disc">
-<li>Directive '<code>id="foreach:<i>var</i>=<i>list</i>"</code>' means to iterate the element.
+<li>Directive <code>id="foreach:<i>var</i>=<i>list</i>"</code> means to iterate the element.
 </li>
-<li>Directive '<code>id="value:<i>expression</i>"</code> means to print value of expression as content of the element.
+<li>Directive <code>id="value:<i>expression</i>"</code> means to print value of expression as content of the element.
 </li>
-<li>Directive '<code>id="dummy:<i>str</i>"</code>' means that the element is a dummy and is not printed out.
+<li>Directive <code>id="dummy:<i>str</i>"</code> means that the element is a dummy and is not printed out.
    (<i>Str</i> is a string only to keep unique value of id attribute.)
 </li>
-<li>'<code>@{<i>expression</i>}@</code>'<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> is also a directive to print out expression value.
+<li><code>@{<i>expression</i>}@</code><sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> is also a directive to print out expression value.
 </li>
 </ul>
 <p>Presentation Data(example3.html):
@@ -848,8 +850,8 @@ See reference manual for details.
 </p>
 <a name="sanitize1"></a>
 <h3 class="section2">Automatic Sanitizing</h3>
-<p>'<code>-e</code>' is the command-line optin to generate output script with sanitizing.
-'<code>CGI.escapeHTML()</code>' is used in eRuby for sanitizing, '<code>htmlspecialchars()</code>' in PHP, '<code>&lt;c:out/&gt;</code>' tag without '<code>escapeXml="false"</code>' in JSTL, and '<code>$!esc.html()</code>' in Velocity.
+<p><code>-e</code> is the command-line optin to generate output script with sanitizing.
+<code>CGI.escapeHTML()</code> is used in eRuby for sanitizing, <code>htmlspecialchars()</code> in PHP, <code>&lt;c:out/&gt;</code> tag without <code>escapeXml="false"</code> in JSTL, and <code>$!esc.html()</code> in Velocity.
 </p>
 <p>Presentation Data (sanitize1.html):
 </p>
@@ -1055,8 +1057,8 @@ Kwartz have a function to detect whether variables are template global or local 
 <a name="analyze.html"></a>
 <pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
- &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
- &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+  &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+  &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>Presentation Logic (analyze.plogic):
@@ -1095,7 +1097,7 @@ add a prefix to global/local variable names in template.
 </p>
 <p>In Ruby or PHP, for example, if template local variables in templates have the same name of variables in main program,
 assignment into template local variables effects the control of main program.
-To address this problem, you should add a prefix such as '_' to template local variable names automatically.
+To avoid this confliction, you should add a prefix such as '_' to template local variable names automatically.
 </p>
 <p>The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
 </p>
@@ -1114,8 +1116,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;% _ctr = 0 %&gt;
 &lt;% for _item in list do %&gt;
 &lt;%   _ctr += 1 %&gt;
- &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
 &lt;/dl&gt;
 
@@ -1125,8 +1127,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;?php $_ctr = 0; ?&gt;
 &lt;?php foreach ($list as $_item) { ?&gt;
 &lt;?php   $_ctr += 1; ?&gt;
- &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
 &lt;?php } ?&gt;
 &lt;/dl&gt;
 
@@ -1136,8 +1138,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;c:set var="_ctr" value="0"/&gt;
 &lt;c:forEach var="_item" items="${list}"&gt;
   &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
- &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
 &lt;/dl&gt;
 
@@ -1147,8 +1149,8 @@ $!{title}
 #set($_ctr = 0)
 #foreach($_item in $list)
   #set($_ctr = $_ctr + 1)
- &lt;dt&gt;$!{_ctr}&lt;/dt&gt;
- &lt;dd&gt;$!{_item}&lt;/dd&gt;
+  &lt;dt&gt;$!{_ctr}&lt;/dt&gt;
+  &lt;dd&gt;$!{_item}&lt;/dd&gt;
 #end
 &lt;/dl&gt;
 </pre>
@@ -1316,20 +1318,20 @@ It enables you to write presentation logics in Ruby, PHP, and Java.
   }
 }
 </pre>
-<p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called 'raw-code'.
-Raw-code is statement and not expression, therefore you can write raw-code in 'plogic:' part
-but not in 'value:' part and 'attr:' part.
+<p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called raw-code.
+Raw-code is statement and not expression, therefore you can write raw-code in <code>plogic:</code> part
+but not in <code>value:</code> part and <code>attr:</code> part.
 </p>
 <br>
 
 
 <a name="rails"></a>
 <h3 class="section2">Kwartz with Ruby on Rails</h3>
-<p>Kwartz-ruby has a special option '-Rails' for Ruby on Rails.
-It is equivarent to '-l erb --globalvar-prefix=@'.
+<p>Kwartz-ruby has a special option <code>-Rails</code> for Ruby on Rails.
+It is equivarent to <code>-l erb --globalvar-prefix='@'</code>.
 </p>
-<p>If you want to use Rails-specific functions such as 'link_to()' or 'url_for()',
-use '&lt;% ... %&gt;' or '&lt;%= ... %&gt;' (or embed them into presentation data file).
+<p>If you want to use Rails-specific functions such as <code>link_to()</code> or <code>url_for()</code>,
+use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> (or embed them into presentation data file).
 </p>
 <p>Presentation Data (list.html)
 </p>

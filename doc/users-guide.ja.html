@@ -22,7 +22,7 @@
 <a name="preface"></a>
 <h2 class="section1">はじめに</h2>
 <p>このドキュメントは、テンプレートシステムKwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>のユーザーズガイドです。
-Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』という概念を実現したテンプレートシステムです。
+Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』または『プレゼンテーションロジックの独立(Independence of Presentation Logic)』という概念を実現したテンプレートシステムです。
 </p>
 <div class="footnote">
  <dl compact>
@@ -164,7 +164,7 @@ HTMLテンプレートがSGML形式を崩さない</dt>
 </p>
 </dd>
 <dt class="dt2">
-自動サニタイズ機能をサポート</dt>
+自動サニタイズと部分サニタイズ</dt>
 <dd class="dd2">
 <p>	Kwartzでは、サニタイズを自動的に行うようにすることができます。
 	つまり、いちいち「CGI.escapeHTML(var)」や「<code>htmlspecialchars($var)</code>」と書く必要がありません。
@@ -1054,8 +1054,8 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <a name="analyze.html"></a>
 <pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
- &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
- &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+  &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
+  &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>プレゼンテーションロジック(analyze.plogic)：
@@ -1095,7 +1095,7 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 </p>
 <p>例えばRubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
 テンプレート側の変数を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
-これに対処するには、テンプレートローカル変数名に例えば「_」というプレフィックスをつけます。
+これを避けるには、テンプレートローカル変数名に例えば「_」というプレフィックスをつけます。
 </p>
 <p>前の節で使用したanalyze.htmlとanalyze.plogicを使ってみます。
 </p>
@@ -1114,8 +1114,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;% _ctr = 0 %&gt;
 &lt;% for _item in list do %&gt;
 &lt;%   _ctr += 1 %&gt;
- &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;%= _ctr %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= _item %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
 &lt;/dl&gt;
 
@@ -1125,8 +1125,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;?php $_ctr = 0; ?&gt;
 &lt;?php foreach ($list as $_item) { ?&gt;
 &lt;?php   $_ctr += 1; ?&gt;
- &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;?php echo $_ctr; ?&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;?php echo $_item; ?&gt;&lt;/dd&gt;
 &lt;?php } ?&gt;
 &lt;/dl&gt;
 
@@ -1136,8 +1136,8 @@ $ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
 &lt;c:set var="_ctr" value="0"/&gt;
 &lt;c:forEach var="_item" items="${list}"&gt;
   &lt;c:set var="_ctr" value="${_ctr + 1}"/&gt;
- &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
- &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
+  &lt;dt&gt;&lt;c:out value="${_ctr}" escapeXml="false"/&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;c:out value="${_item}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
 &lt;/dl&gt;
 
@@ -1147,8 +1147,8 @@ $!{title}
 #set($_ctr = 0)
 #foreach($_item in $list)
   #set($_ctr = $_ctr + 1)
- &lt;dt&gt;$!{_ctr}&lt;/dt&gt;
- &lt;dd&gt;$!{_item}&lt;/dd&gt;
+  &lt;dt&gt;$!{_ctr}&lt;/dt&gt;
+  &lt;dd&gt;$!{_item}&lt;/dd&gt;
 #end
 &lt;/dl&gt;
 </pre>
@@ -1318,18 +1318,18 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </pre>
 <p>「<code>&lt;%</code>」または「<code>&lt;?</code>」から行末までをraw-codeといいます。
 raw-codeは文(statement)であり、式(expression)ではありません。
-そのため、「plogic:」部に書くことはできますが「value:」部や「attr:」部に書くことはできません。
+そのため、「<code>plogic:</code>」部に書くことはできますが「<code>value:</code>」部や「<code>attr:</code>」部に書くことはできません。
 </p>
 <br>
 
 
 <a name="rails"></a>
 <h3 class="section2">Ruby on Railsで使用する</h3>
-<p>Ruby on RailsでKwartzを使うには、コマンドオプションとして「-l erb」と「--globalvar-prefix='@'」をつけます。
-Kwartz-rubyでは、これをまとめて行うコマンドオプション「-Rails」を特別に用意しています。
+<p>Ruby on RailsでKwartzを使うには、コマンドオプションとして「<code>-l erb</code>」と「<code>--globalvar-prefix='@'</code>」をつけます。
+Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特別に用意しています。
 </p>
 <p>またプレゼンテーションロジックファイルにおいてRuby on Rails特有の関数を使う場合は、
-「&lt;% ... %&gt;」や「&lt;%= ... %&gt;」を使います（もちろん、プレゼンテーションデータファイルに直接埋め込んでもよいです）。
+「<code>&lt;% <i>...</i> %&gt;</code>」や「<code>&lt;%= <i>...</i> %&gt;</code>」を使います（もちろん、プレゼンテーションデータファイルに直接埋め込んでもよいです）。
 </p>
 <p>プレゼンテーションデータ(list.html)：
 </p>

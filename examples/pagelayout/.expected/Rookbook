@@ -1,0 +1,14 @@
+#!/usr/bin/env rook
+
+langs = [ "php", "jstl11", "jstl10", "velocity", ]
+
+recipe :all								do |r|
+	langs.each { |lang|
+	    cmd "kwartz -l #{lang} -i contents.html -p contents.plogic layout.html > page.#{lang}"
+	}
+	end
+
+recipe :clean								do |r|
+	files = langs.collect { |lang| "page.#{lang}" }
+	rm_rf files
+	end

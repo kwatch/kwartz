@@ -532,8 +532,8 @@
 .	
 .	.[ X({{/expr/}}) ]
 .JA		式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
-.JA		X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 .JA		X({{/expr/}})で指定された式はサニタイズされません。
+.JA		X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 .EN		Don't sanitize expression {{/expr/}}, even when the command-line option for
 .EN		sanitizing is specified.
 .EN		X() is pseudo-function and allowed to appear only as argument of print statement.
@@ -555,12 +555,24 @@
 .EN		  Create a new list. 
 .	
 .	.[ list_length({{/list/}}) ]
-.JA		  リスト{{/list/}}の長さを返します。JSTL1.0では使用できません。
+.JA		  リスト{{/list/}}の長さを返します。
 .EN		  Return the length of the {{/list/}}.
+.	
+.	.[ list_empty({{/list/}}) ]
+.JA		  リスト{{/list/}}が空ならtrueを、空でないならfalseを返します。
+.EN		  Return true if {{/list/}} is empty or false if not empty.
 .	
 .	.[ hash_new() ]
 .JA		  新しいハッシュを作成します。
 .EN		  Create a new hash. 
+.	
+.	.[ hash_length({{/hash/}}) ]
+.JA		  ハッシュ{{/hash/}}の長さ（要素の数）を返します。
+.EN		  Return the count of the {{/hash/}}.
+.	
+.	.[ hash_empty({{/hash/}}) ]
+.JA		  ハッシュ{{/hash/}}が空ならtrueを、空でないならfalseを返します。
+.EN		  Return true if {{/hash/}} is empty or false if not empty.
 .	
 .	.[ hash_keys({{/hash/}}) ]
 .JA		  ハッシュの全キーをリストで返します。
@@ -569,6 +581,10 @@
 .	.[ str_length({{/string/}}) ]
 .JA		  文字列{{/string/}}の長さを返します。
 .EN		  Return the length of the {{/string/}}.
+.	
+.	.[ str_empty({{/string/}}) ]
+.JA		  文字列{{/string/}}が空ならtrueを、空でないならfalseを返します。
+.EN		  Return true if {{/string/}} is empty, or false if not empty.
 .	
 .	.[ str_tolower({{/string/}}) ]
 .JA		  文字列{{/string/}}を小文字にして返します。
@@ -586,41 +602,162 @@
 .JA		  文字列{{/string/}}において文字{{/char/}}のある場所を返します。
 .EN		  Return the first positin a {{/char/}} occurs in a {{/string/}}.
 .	
+.	.[ str_replace({{/string/}}, {{/before/}}, {{/after/}}) ]
+.JA		  文字列{{/string/}}において、文字列{{/before/}}を文字列{{/after/}}に置き換えたものを返します。
+.EN		  Replace {{/before/}} to {{/after/}} in {{/string/}} and return it.
+.	
+.	.[ str_linebreak({{/string/}}) ]
+.JA		  文字列{{/string/}}において、改行のまえに{{,<br />,}}を挿入したものを返します。
+.EN		  Insert {{,<br />,}} before newline character in {{/string/}} and return it.
+.	
+.	.[ escape_xml({{/html_string/}}) ]
+.JA		  文字列{{/html_string/}}をサニタイズします。
+.EN		  return the sanitaized {{/html_string/}}.
+.	
+.	.[ escape_url({{/url_string/}}) ]
+.JA		  文字列{{/url_string/}}をURL形式でエンコードします。
+.EN		  Encode {{/url_string/}} and return it.
+.	
+.	.[ escape_sql({{/sql_string/}}) ]
+.JA		  文字列{{/sql_string/}}中の「{{,',}}」「{{,",}}」「{{,\,}}」をバックスラッシュでエスケープします。
+.EN		  Escape quotation({{,',}}), double quotation({{,",}}), backslash({{,\,}}) in {{/sql_string/}} with backslash and return it.
+.	
+.	
 .JA	.#現在のところ、これら以外の関数をユーザが自由に定義することはできません。
 .EN	.#Currently, you cannot define or use any functions except the above two.
 .	
-.JA	ただし、JSTL1.0とVelocityでは関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
-.JA	JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
-.EN	JSTL1.0 and Velocity don't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
-.EN	JSTL1.1 supports some functions but it is limited.
-.EN	In fact, list_new(), hash_new(), and hash_keys() are not supported.
+.JA	どのように変換されるかは次をご覧ください。
+.JA	.#ただし、JSTL1.0とVelocityでは関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
+.JA	.#JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
+.EN	The following table shows the translation of functions in each target languages.
+.EN	.#JSTL1.0 and Velocity don't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
+.EN	.#JSTL1.1 supports some functions but it is limited.
+.EN	.#In fact, list_new(), hash_new(), and hash_keys() are not supported.
 .	
 .	.+------------------------------------------------------------
-.JA	  関数名                            ., PHP                              ., eRuby                           ., JSTL1.1     ., JSTL1.0
-.EN	  Functions                         ., eRuby                              ., PHP                           ., JSTL1.1     ., JSTL1.0 & Velocity
+.JA	  関数名	., eRuby, ERB ., PHP ., JSTL1.1 ., Velocity
+.EN	  Functions	., eRuby, ERB ., PHP ., JSTL1.1 ., Velocity
 .	.------------------------------------------------------------                                              
-.	{{,list_new(),}}                    ., {{,[],}}                         ., {{,array(),}}                   ., -   ., -
-.	{{,list_length({{/list/}}),}}       ., {{,{{/list/}}.length,}}          ., {{,array_length({{/list/}}),}}  ., {{,fn:length({{/list/}}),}}  .,  -
-.	{{,hash_new(),}}                    ., {{,{},}}                         ., {{,array(),}}                   ., -  ., -
-.	{{,hash_keys({{/hash/}}),}}         ., {{,{{/hash/}}.keys,}}            ., {{,array_keys({{/hash/}}),}}    ., -  ., -
-.	{{,str_length({{/str/}}),}}         ., {{,{{/str/}}.lenth,}}            ., {{,strlen({{/str/}}),}}         ., {{,fn:length({{/str/}}),}} ., -
-.	{{,str_tolower({{/str/}}),}}        ., {{,{{/str/}}.downcase,}}         ., {{,strtolower({{/str/}}),}}     ., {{,fn:toLowerCase({{/str/}}),}} ., -
-.	{{,str_toupper({{/str/}}),}}        ., {{,{{/str/}}.upcase,}}           ., {{,strtoupper({{/str/}}),}}     ., {{,fn:toUpperCase({{/str/}}),}} ., -
-.	{{,str_index({{/str/}},{{/ch/}}),}} ., {{,{{/str/}}.index({{/ch/}}),}}  ., {{,strchr({{/str/}},{{/ch/}}),}} ., {{,fn:indexOf({{/str/}},{{/ch/}}),}} ., -
+.	{{,list_new(),}}					.\
+.		.	., {{,[],}}				.\
+.			., {{,array(),}}			.\
+.			., -					.\
+.			., -					.\
+.			.,
+.	{{,list_length({{/list/}}),}}				.\
+.			., {{,{{/list/}}.length,}}		.\
+.			., {{,array_length({{/list/}}),}}	.\
+.			., {{,fn:length({{/list/}}),}}		.\
+.			., {{,({{/list/}}).size(),}}		.\
+.			.,
+.	{{,list_empty({{/list/}}),}}				.\
+.			., {{,{{/list/}}.empty?,}}		.\
+.			., {{,array_length({{/list/}})==0,}}	.\
+.			., {{,fn:length({{/list/}})==0,}}	.\
+.			., {{,({{/list/}}).size()==0,}}		.\
+.			.,
+.	{{,hash_new(),}}					.\
+.			., {{,{},}}				.\
+.			., {{,array(),}}			.\
+.			., -					.\
+.			., -					.\
+.			.,
+.	{{,hash_length({{/hash/}}),}}				.\
+.			., {{,{{/hash/}}.length,}}		.\
+.			., {{,array_length({{/hash/}}),}}	.\
+.			., {{,fn:length({{/hash/}}),}}		.\
+.			., {{,{{/hash/}}.size(),}}		.\
+.			.,
+.	{{,hash_empty({{/hash/}}),}}				.\
+.			., {{,{{/hash/}}.empty?,}}		.\
+.			., {{,array_length({{/hash/}})==0,}}	.\
+.			., {{,fn:length({{/hash/}})==0,}}	.\
+.			., {{,{{/hash/}}.size()==0,}}	.\
+.			.,
+.	{{,hash_keys({{/hash/}}),}}				.\
+.			., {{,{{/hash/}}.keys,}}		.\
+.			., {{,array_keys({{/hash/}}),}}		.\
+.			., -					.\
+.			., {{,{{/hash/}}.keySet().toArray(),}}	.\
+.			.,
+.	{{,str_length({{/str/}}),}}				.\
+.			., {{,{{/str/}}.lenth,}}		.\
+.			., {{,strlen({{/str/}}),}}		.\
+.			., {{,fn:length({{/str/}}),}}		.\
+.			., {{,{{/str/}}.length(),}}		.\
+.			.,
+.	{{,str_tolower({{/str/}}),}}				.\
+.			., {{,{{/str/}}.downcase,}}		.\
+.			., {{,strtolower({{/str/}}),}}		.\
+.			., {{,fn:toLowerCase({{/str/}}),}}	.\
+.			., {{,{{/str/}}.toLowerCase(),}}	.\
+.			.,
+.	{{,str_toupper({{/str/}}),}}				.\
+.			., {{,{{/str/}}.upcase,}}		.\
+.			., {{,strtoupper({{/str/}}),}}		.\
+.			., {{,fn:toUpperCase({{/str/}}),}}	.\
+.			., {{,{{/str/}}.toUpperCase(),}}	.\
+.			.,
+.	{{,str_index({{/str/}},{{/ch/}}),}}			.\
+.			., {{,{{/str/}}.index({{/ch/}}),}}	.\
+.			., {{,strchr({{/str/}},{{/ch/}}),}}	.\
+.			., {{,fn:indexOf({{/str/}},{{/ch/}}),}}	.\
+.			., {{,{{/str/}}.indexOf({{/ch/}}),}}	.\
+.			.,
+.	{{,str_replace({{/str/}},{{/before/}}, {{/after/}}),}}			.\
+.			., {{,{{/str/}}.gsub({{/before/}},{{/after/}}),}}	.\
+.			., {{,str_replace({{/before/}},{{/after/}},{{/str/}}),}} .\
+.			., {{,fn:replace({{/str/}},{{/before/}},{{/after/}}),}}	.\
+.			., {{,{{/str/}}.indexOf({{/ch/}}),}}			.\
+.			.,
+.	{{,str_linebreak({{/str/}}),}}						.\
+.			., {{,{{/str/}}.gsub(/\r?\n/,'<br />\&'),}}		.\
+.			., {{,nl2br({{/str/}}),}}				.\
+.			., {{,fn:replace({{/str/}},'\n','<br />\n'),}}		.\
+.			., {{,{{/str/}}.replaceAll('$','<br />'),}}		.\
+.			.,
+.	{{,escape_xml({{/str/}}),}}						.\
+.			., {{,CGI::escapeHTML({{/str/}}),}} (when eRuby) .^ {{,html_escape({{/str/}}),}} (when ERB)	.\
+.			., {{,htmlspecialchars({{/str/}}),}}			.\
+.			., {{,fn:escapeXml({{/str/}}),}}			.\
+.			., {{,$esc.xml({{/str/}}),}}				.\
+.			.,
+.	{{,escape_url({{/str/}}),}}						.\
+.			., {{,CGI::escape({{/str/}}),}} (when eRuby) .^ {{,url_encode({{/str/}}),}} (when ERB)	.\
+.			., {{,urlencode({{/str/}}),}}				.\
+.			., -							.\
+.			., {{,$link.setURI({{/str/}}).toString(),}}		.\
+.			.,
+.	{{,escape_sql({{/str/}}),}}						.\
+.			., {{,{{/str/}}.gsub(/['"\\\0]/,'\\\&'),}}		.\
+.			., {{,addslashes({{/str/}}),}}				.\
+.			., -							.\
+.			., {{,$esc.sql({{/str/}}),}}				.\
+.			.,
 .	.+------------------------------------------------------------
 .	
 .	
-.JA	これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
-.JA	JSTLとVelocityではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
-.EN	All functions except above are printed "as is" when translating into PHP or eRuby script.
-.EN	Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support
-.EN	user-defined functions.
+.JA	これら以外の関数が指定されたときは、次のように動作します。
+.JA	.* eRubyまたはPHPに変換するときはそのまま出力されます。
+.JA	.* JSTLとVelocityに変換するときは、エラーとなります。
+.EN	All functions except above are printed "as is" when translating into eRuby or PHP script.
+.EN	Translating into JSTL or Velocity script will be error.
 .	
 .	
 .JA	E()とX()は、print文の引数として使われることを想定しています。
 .JA	それ以外の場所では使わないでください。
 .EN	Functions E() and X() are intended to be used as arguments of print statement.
 .EN	You shouldn't use them in other place.
+.	
+.	
+.JA	Velocityでは、以下の関数を使うために{{<VelocityTools|http://jakarta.apache.org/velocity/tools/>}}をインストールする必要があります。
+.JA	.* {{,escape_xml(),}}と{{,escape_sql(),}}では{{<EscapeTools|http://wiki.apache.org/jakarta-velocity/EscapeTool>}}を使用します。
+.JA	.* {{,escape_url(),}}では{{<LinkTools|http://jakarta.apache.org/velocity/tools/view/LinkTool.html>}}を使用します。
+.JA	詳細はそれぞれのドキュメントを参照してください。
+.EN	If you want to use the following functions, you need to install {{<VelocityTools|http://jakarta.apache.org/velocity/tools/>}}.
+.EN	.* {{,escape_xml(),}} and {{,escape_sql(),}} requires {{<EscapeTools|http://wiki.apache.org/jakarta-velocity/EscapeTool>}}.
+.EN	.* {{,escape_url(),}} requries {{<LinkTools|http://jakarta.apache.org/velocity/tools/view/LinkTool.html>}}.
+.EN	See each documentation for details.
 .	
 .	
 .	
@@ -1502,10 +1639,10 @@
 .EN	'{{,id="while:{{/expression/}}",}}' is a directive to iterate with a while statement. 
 .	
 .	
-.JA	またJSPでは、whileを変換しようとするとエラーになります。
-.JA	これは、whileに対応するカスタムタグがないからです。
-.EN	Kwartz will raise an error when compiling a while statement into JSP,
-.EN	because there is no custom tag in JSTL which is equivalent to a while statement.
+.JA	またJSPとVelocityでは、whileを変換しようとするとエラーになります。
+.JA	これは、whileに対応するカスタムタグやディレクティブがないからです。
+.EN	Kwartz will raise an error when compiling a while statement into JSP or Velocity,
+.EN	because there is no custom tag in JSTL nor Directives in Velocity which is equivalent to while statement.
 .	
 .	
 .JA	プレゼンテーションデータ：
@@ -2029,9 +2166,9 @@
 .JA	プレゼンテーションロジック：
 .EN	Presentation logic:
 .	.--------------------
-.JA	「id="mark:name"」でマーキングされたエレメントの宣言
-.EN	// element declaration for 'id="mark:name"'
-.	#name {
+.JA	「id="mark:{{/name/}}"」でマーキングされたエレメントの宣言
+.EN	// element declaration for 'id="mark:{{/name/}}"'
+.	#{{/name/}} {
 .	  
 .JA	  // 内容のかわりに出力する式
 .EN	  // print value of expression instead of content
@@ -2079,7 +2216,7 @@
 .	  
 .JA	  // 他のプレゼンテーションロジックファイルを読み込む
 .EN	  // load presentation logic file required
-.	  require: file1.plogic, file2.plogic;
+.	  require: "file1.plogic", "file2.plogic";
 .	}
 .	.--------------------
 .	
@@ -2184,6 +2321,12 @@
 .JA		プレゼンテーションロジックのファイル名。「{{,,,}}」で区切ることで、複数のファイル名を指定できる。
 .EN		Filename of the presentation logics. It is possible to specify several filename using '{{,,,}}' as a separator.
 .	
+.	.[-R {{/arg/}}]
+.JA		特殊オプション。今のところ以下の引数のみ指定可能。
+.JA		.* ails ... 「{{,-l erb --globalvar-prefix='@',}}」と同じ。Ruby on Rails用のファイルを出力する。
+.EN		Special option. Currently, only the following argument is avairable.
+.EN		.* ails ... Equivarent to {{,-l erb --globalvar-prefix='@',}}. Make output script for Ruby on Rails.
+.	
 .	.[--charset={{/charset/}}]
 .JA		文字コード。JSTLにおいて '{{,<%@ page contentType="text/html; charset={{/charset/}} "%>,}}' を出力する。
 .EN		Character set. Kwartz will print '{{,<%@ page contentType="text/html; charset={{/charset/}}" %>,}}' in JSTL.
@@ -2241,9 +2384,17 @@
 .JA		奇数のときの値。デフォルトは「{{,'odd',}}」。ディレクティブFOREACHとLISTで使われる。
 .EN		Odd value. Default is {{,'odd',}}. Directives FOREACH and LIST will use this value.
 .	
-.	.[--rename={{/true/}}|{{/false/}}]
-.JA		ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
-.EN		Specify rename or not local variable names.  Regarded as true when value is omitted.
+.	.#.[--rename={{/true/}}|{{/false/}}]
+.JA	.#	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
+.EN	.#	Specify rename or not local variable names.  Regarded as true when value is omitted.
+.	
+.	.[--localvar-prefix={{/string/}}]
+.JA		テンプレートローカル変数につけるプレフィックスを指定する。
+.EN		Prefix of template local variables.
+.	
+.	.[--globalvar-prefix={{/string/}}]
+.JA		テンプレートグローバル変数につけるプレフィックスを指定する。
+.EN		Prefix of template global variables.
 .	
 .	
 .	
@@ -2310,15 +2461,23 @@
 .JA		インデントとして使う空白文字列を指定します。
 .EN		Specify a string which represents indent of output script.
 .	
-.	.[ RENAME ]
-.JA		ローカル変数の名前を変更するかどうかを指定します。
-.JA		trueなら、ローカル変数名の頭に「_」をつけます。
-.EN		Specify whether rename local variable names. 
-.EN		If true, '_' is added to beginning of local variable name.
+.	.#.[ RENAME ]
+.JA	.#	ローカル変数の名前を変更するかどうかを指定します。
+.JA	.#	trueなら、ローカル変数名の頭に「_」をつけます。
+.EN	.#	Specify whether rename local variable names. 
+.EN	.#	If true, '_' is added to beginning of local variable name.
+.	.#
+.	.#.[ RENAME_PREFIX ]
+.JA	.#	ローカル変数の頭につける文字列を指定します。
+.EN	.#	Specify the prefix of local variable name when RENAME is true.
 .	
-.	.[ RENAME_PREFIX ]
-.JA		ローカル変数の頭につける文字列を指定します。
-.EN		Specify the prefix of local variable name when RENAME is true.
+.	.[ LOCALVAR_PREFIX ]
+.JA		テンプレートローカル変数のプレフィックス（頭につける文字列）を指定します。
+.EN		Specify the prefix of template local variable name.
+.	
+.	.[ GLOBALVAR_PREFIX ]
+.JA		テンプレートグローバル変数のプレフィックス（頭につける文字列）を指定します。
+.EN		Specify the prefix of template global variable name.
 .	
 .	.[ LANG ]
 .JA		デフォルトの出力用言語を指定します。

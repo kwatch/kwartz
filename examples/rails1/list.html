@@ -1,0 +1,31 @@
+<html>
+  <body>
+    <div id="mark:contents">
+
+      <h1>Online Cookbook - All Recipes</h1>
+
+      <table border="1">
+        <thead>
+          <tr>
+            <th width="40%">Recipe</th>
+            <th width="20%">Category</th>
+            <th width="20%">Date</th>
+          </tr>
+        </thead>
+        <tbody id="foreach:recipe=recipes">
+          <tr>
+            <td><a href="<%= url_for(:action=>'show', :id=>recipe.id) %>"
+                   id="value:recipe.title">Hot Chips</a></td>
+            <td id="value:recipe.category.name">Snacks</td>
+            <td id="value:recipe.data">2004-11-11</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <a href="<%= url_for(:action=>'new') %>">Create new recipe</a>
+      </p>
+
+    </div>
+  </body>
+</html>

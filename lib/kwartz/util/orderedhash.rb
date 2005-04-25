@@ -9,7 +9,7 @@ module Kwartz
 
    module Util
 
-      ## a hash which keeps the order of intertion
+      ## a hash which keeps the order of insertion
       class OrderedHash
          include Enumerable
 

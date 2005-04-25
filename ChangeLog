@@ -3,9 +3,14 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-25 rev.66
+	.- [update] reference.txt update
+	.- [enhance] examples/rails1 added
+	.- [enhance] examples/*/.expected/Rookbook added
+
 .: 2005-04-25 rev.65
 	.- [bugfix] optparse() can handle '-Rails', which option character and argument is not separated
-	.- [update] users-guide updated
+	.- [update] users-guide.txt updated
 
 .: 2005-04-24 rev.64
 	.- [enhance] new function 'escape_xml', 'escape_sql', 'escape_url', 'str_replace', 'str_linebreak'

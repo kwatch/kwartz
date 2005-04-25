@@ -20,12 +20,22 @@ require 'assert-diff.rb'
 
 class ExamplesTest < Test::Unit::TestCase
 
-   def _test(path, filename)
+   def _test(filename, path=@path)
       expected_filename = "#{path}/.expected/#{filename}"
       actual_filename   = "#{path}/#{filename}"
       expected = File.open(expected_filename) { |f| f.read() }
       actual   = File.open(actual_filename)   { |f| f.read() }
       assert_equal_with_diff(expected, actual)
+   end
+
+
+   @@langs = [ "php", "jstl11", "jstl10", "velocity" ]
+
+   def _test_all(basename=nil)
+      basename ||= (method_name() =~ /_([^_]+)\z/ && $1)
+      @@langs.each do |lang|
+         _test("#{basename}.#{lang}")
+      end
    end
 
 
@@ -41,105 +51,81 @@ class ExamplesTest < Test::Unit::TestCase
    ## ---------------------------------------- test method
 
 
+   def setup
+      method_name() =~ /_([^_]+)\z/
+      name = $1
+      @path = "#{@@basedir}/#{name}"
+      `cd #{@path}; make; rook -b .expected/Rookbook :all`
+   end
+
+   def teardown
+      `cd #{@path}; make clean; rook -b .expected/Rookbook :clean`
+   end
+
+
    def test_example_border1
-      path = "#{@@basedir}/border1"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'border1.view')
-      _test(path, 'border1.php')
-      _test(path, 'border1.jstl11')
-      _test(path, 'border1.jstl10')
-      _test(path, 'border1.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('border1.view')
+      _test_all('border1')
    end
 
 
    def test_example_border2
-      path = "#{@@basedir}/border2"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'border2.view')
-      _test(path, 'border2.php')
-      _test(path, 'border2.jstl11')
-      _test(path, 'border2.jstl10')
-      _test(path, 'border2.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('border2.view')
+      _test_all('border2')
    end
 
 
    def test_example_border3
-      path = "#{@@basedir}/border3"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'border3.view')
-      _test(path, 'border3.php')
-      _test(path, 'border3.jstl11')
-      _test(path, 'border3.jstl10')
-      _test(path, 'border3.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('border3.view')
+      _test_all('border3')
    end
 
 
    def test_example_breadcrumbs
-      path = "#{@@basedir}/breadcrumbs"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'breadcrumbs.view')
-      _test(path, 'breadcrumbs.php')
-      _test(path, 'breadcrumbs.jstl11')
-      _test(path, 'breadcrumbs.jstl10')
-      _test(path, 'breadcrumbs.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('breadcrumbs.view')
+      _test_all('breadcrumbs')
    end
 
 
    def test_example_calendar
-      path = "#{@@basedir}/calendar"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'calendar-month.view')
-      _test(path, 'calendar-page.view')
-      _test(path, 'calendar-month.php')
-      _test(path, 'calendar-page.php')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('calendar-month.view')
+      _test('calendar-page.view')
+      _test('calendar-month.php')
+      _test('calendar-page.php')
    end
 
 
    def test_example_form1
-      path = "#{@@basedir}/form1"
-      `cd #{path}; make; make _test`
-      _test(path, 'register.view')
-      _test(path, 'finish.view')
-      _test(path, 'finish.php')
-      _test(path, 'finish.jstl11')
-      _test(path, 'finish.jstl10')
-      _test(path, 'finish.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('register.view')
+      _test('finish.view')
+      _test_all('register')
+      _test_all('finish')
    end
 
 
    def test_example_pagelayout
-      path = "#{@@basedir}/pagelayout"
-      `cd #{path}; make; make _test`
-      _test(path, 'result.html')
-      _test(path, 'page.view')
-      _test(path, 'page.php')
-      _test(path, 'page.jstl11')
-      _test(path, 'page.jstl10')
-      _test(path, 'page.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('result.html')
+      _test('page.view')
+      _test_all('page')
    end
 
 
    def test_example_thumbnail
-      path = "#{@@basedir}/thumbnail"
-      `cd #{path}; make; make _test`
-      _test(path, 'thumbnail.view')
-      _test(path, 'thumbnail.php')
-      _test(path, 'thumbnail.jstl11')
-      _test(path, 'thumbnail.jstl10')
-      _test(path, 'thumbnail.velocity')
-      `cd #{path}; make clean; make _clean`
+      _test('thumbnail.view')
+      _test_all()
+   end
+
+
+   def test_example_rails1
+      _test('list.rhtml')
+      _test('show.rhtml')
+      _test('new.rhtml')
+      _test('edit.rhtml')
    end
 
 

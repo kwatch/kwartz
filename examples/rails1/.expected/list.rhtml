@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>Recipes: <%=h(@controller.action_name)%></title>
+<%= stylesheet_link_tag 'scaffold' %>
+  </head>
+  <body>
+    <div>
+
+      <h1>Online Cookbook - All Recipes</h1>
+
+      <table border="1">
+        <thead>
+          <tr>
+            <th width="40%">Recipe</th>
+            <th width="20%">Category</th>
+            <th width="20%">Date</th>
+          </tr>
+        </thead>
+<% for recipe in @recipes do %>
+        <tbody>
+          <tr>
+            <td><a href="<%= url_for(:action=>'show', :id=>recipe.id) %>"><%=h(recipe.title)%></a></td>
+            <td><%=h(recipe.category.name)%></td>
+            <td><%=h(recipe.data)%></td>
+          </tr>
+        </tbody>
+<% end %>
+      </table>
+
+      <p>
+        <a href="<%= url_for(:action=>'new') %>">Create new recipe</a>
+      </p>
+
+    </div>
+  </body>
+</html>

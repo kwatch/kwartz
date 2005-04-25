@@ -740,8 +740,8 @@ E(<i>expr</i>) </b></dt>
 X(<i>expr</i>) </b></dt>
 <dd class="dd3">
 	式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
-	X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 	X(<i>expr</i>)で指定された式はサニタイズされません。
+	X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 </dd>
 </dl>
 <dl class="dl3">
@@ -776,7 +776,14 @@ list_new() </b></dt>
 <dt class="dt3"><b>
 list_length(<i>list</i>) </b></dt>
 <dd class="dd3">
-	  リスト<i>list</i>の長さを返します。JSTL1.0では使用できません。
+	  リスト<i>list</i>の長さを返します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+list_empty(<i>list</i>) </b></dt>
+<dd class="dd3">
+	  リスト<i>list</i>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
@@ -784,6 +791,20 @@ list_length(<i>list</i>) </b></dt>
 hash_new() </b></dt>
 <dd class="dd3">
 	  新しいハッシュを作成します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+hash_length(<i>hash</i>) </b></dt>
+<dd class="dd3">
+	  ハッシュ<i>hash</i>の長さ（要素の数）を返します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+hash_empty(<i>hash</i>) </b></dt>
+<dd class="dd3">
+	  ハッシュ<i>hash</i>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
@@ -798,6 +819,13 @@ hash_keys(<i>hash</i>) </b></dt>
 str_length(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  文字列<i>string</i>の長さを返します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+str_empty(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
@@ -828,20 +856,54 @@ str_index(<i>string</i>, <i>char</i>) </b></dt>
 	  文字列<i>string</i>において文字<i>char</i>のある場所を返します。
 </dd>
 </dl>
-<p>ただし、JSTL1.0とVelocityでは関数をサポートしてないので、これらを使用することはできません（E()とX()を除く）。
-JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対応していません。
+<dl class="dl3">
+<dt class="dt3"><b>
+str_replace(<i>string</i>, <i>before</i>, <i>after</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>において、文字列<i>before</i>を文字列<i>after</i>に置き換えたものを返します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+str_linebreak(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>string</i>において、改行のまえに<code>&lt;br /&gt;</code>を挿入したものを返します。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_xml(<i>html_string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>html_string</i>をサニタイズします。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_url(<i>url_string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>url_string</i>をURL形式でエンコードします。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_sql(<i>sql_string</i>) </b></dt>
+<dd class="dd3">
+	  文字列<i>sql_string</i>中の「<code>'</code>」「<code>"</code>」「<code>\</code>」をバックスラッシュでエスケープします。
+</dd>
+</dl>
+<p>どのように変換されるかは次をご覧ください。
 </p>
 <div align="center">
 <table class="table1" border="1" cellspacing="0">
  <tr class="tr1">
   <th class="th1">関数名</th>
+  <th class="th1">eRuby, ERB</th>
   <th class="th1">PHP</th>
-  <th class="th1">eRuby</th>
   <th class="th1">JSTL1.1</th>
-  <th class="th1">JSTL1.0</th>
+  <th class="th1">Velocity</th>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_new()</code></td>
+  <td class="td1"><code>list_new()</code>						.</td>
   <td class="td1"><code>[]</code></td>
   <td class="td1"><code>array()</code></td>
   <td class="td1">-</td>
@@ -852,7 +914,14 @@ JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対
   <td class="td1"><code><i>list</i>.length</code></td>
   <td class="td1"><code>array_length(<i>list</i>)</code></td>
   <td class="td1"><code>fn:length(<i>list</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code>(<i>list</i>).size()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>list_empty(<i>list</i>)</code></td>
+  <td class="td1"><code><i>list</i>.empty?</code></td>
+  <td class="td1"><code>array_length(<i>list</i>)==0</code></td>
+  <td class="td1"><code>fn:length(<i>list</i>)==0</code></td>
+  <td class="td1"><code>(<i>list</i>).size()==0</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>hash_new()</code></td>
@@ -862,47 +931,111 @@ JSTL1.1では関数をサポートしていますが、list_new()とhash_new()とhash_keys()には対
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
+  <td class="td1"><code>hash_length(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.length</code></td>
+  <td class="td1"><code>array_length(<i>hash</i>)</code></td>
+  <td class="td1"><code>fn:length(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.size()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>hash_empty(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.empty?</code></td>
+  <td class="td1"><code>array_length(<i>hash</i>)==0</code></td>
+  <td class="td1"><code>fn:length(<i>hash</i>)==0</code></td>
+  <td class="td1"><code><i>hash</i>.size()==0</code></td>
+ </tr>
+ <tr class="tr1">
   <td class="td1"><code>hash_keys(<i>hash</i>)</code></td>
   <td class="td1"><code><i>hash</i>.keys</code></td>
   <td class="td1"><code>array_keys(<i>hash</i>)</code></td>
   <td class="td1">-</td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>hash</i>.keySet().toArray()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_length(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.lenth</code></td>
   <td class="td1"><code>strlen(<i>str</i>)</code></td>
   <td class="td1"><code>fn:length(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.length()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_tolower(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.downcase</code></td>
   <td class="td1"><code>strtolower(<i>str</i>)</code></td>
   <td class="td1"><code>fn:toLowerCase(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.toLowerCase()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_toupper(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.upcase</code></td>
   <td class="td1"><code>strtoupper(<i>str</i>)</code></td>
   <td class="td1"><code>fn:toUpperCase(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.toUpperCase()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_index(<i>str</i>,<i>ch</i>)</code></td>
   <td class="td1"><code><i>str</i>.index(<i>ch</i>)</code></td>
   <td class="td1"><code>strchr(<i>str</i>,<i>ch</i>)</code></td>
   <td class="td1"><code>fn:indexOf(<i>str</i>,<i>ch</i>)</code></td>
+  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_replace(<i>str</i>,<i>before</i>, <i>after</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(<i>before</i>,<i>after</i>)</code></td>
+  <td class="td1"><code>str_replace(<i>before</i>,<i>after</i>,<i>str</i>)</code></td>
+  <td class="td1"><code>fn:replace(<i>str</i>,<i>before</i>,<i>after</i>)</code></td>
+  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_linebreak(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
+  <td class="td1"><code>nl2br(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:replace(<i>str</i>,'\n','&lt;br /&gt;\n')</code></td>
+  <td class="td1"><code><i>str</i>.replaceAll('$','&lt;br /&gt;')</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_xml(<i>str</i>)</code></td>
+  <td class="td1"><code>CGI::escapeHTML(<i>str</i>)</code> (when eRuby) <br> <code>html_escape(<i>str</i>)</code> (when ERB)</td>
+  <td class="td1"><code>htmlspecialchars(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:escapeXml(<i>str</i>)</code></td>
+  <td class="td1"><code>$esc.xml(<i>str</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_url(<i>str</i>)</code></td>
+  <td class="td1"><code>CGI::escape(<i>str</i>)</code> (when eRuby) <br> <code>url_encode(<i>str</i>)</code> (when ERB)</td>
+  <td class="td1"><code>urlencode(<i>str</i>)</code></td>
   <td class="td1">-</td>
+  <td class="td1"><code>$link.setURI(<i>str</i>).toString()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_sql(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
+  <td class="td1"><code>addslashes(<i>str</i>)</code></td>
+  <td class="td1">-</td>
+  <td class="td1"><code>$esc.sql(<i>str</i>)</code></td>
  </tr>
 </table>
 </div>
-<p>これら以外の関数は、PHPまたはeRubyに変換するときはそのまま出力されます。
-JSTLとVelocityではユーザ定義の関数が使用できませんので、JSPへの変換はエラーになります。
+<p>これら以外の関数が指定されたときは、次のように動作します。
 </p>
+<ul type="disc">
+<li>eRubyまたはPHPに変換するときはそのまま出力されます。
+</li>
+<li>JSTLとVelocityに変換するときは、エラーとなります。
+</li>
+</ul>
 <p>E()とX()は、print文の引数として使われることを想定しています。
 それ以外の場所では使わないでください。
+</p>
+<p>Velocityでは、以下の関数を使うために<a href="http://jakarta.apache.org/velocity/tools/">VelocityTools</a>をインストールする必要があります。
+</p>
+<ul type="disc">
+<li><code>escape_xml()</code>と<code>escape_sql()</code>では<a href="http://wiki.apache.org/jakarta-velocity/EscapeTool">EscapeTools</a>を使用します。
+</li>
+<li><code>escape_url()</code>では<a href="http://jakarta.apache.org/velocity/tools/view/LinkTool.html">LinkTools</a>を使用します。
+</li>
+</ul>
+<p>詳細はそれぞれのドキュメントを参照してください。
 </p>
 <br>
 
@@ -2066,8 +2199,8 @@ elseやelseifも使用できます。
 <h3 class="section2">繰り返し(while)</h3>
 <p>「<code>id="while:<i>expression</i>"</code>」とすることで、繰り返しを行うことができます。
 </p>
-<p>またJSPでは、whileを変換しようとするとエラーになります。
-これは、whileに対応するカスタムタグがないからです。
+<p>またJSPとVelocityでは、whileを変換しようとするとエラーになります。
+これは、whileに対応するカスタムタグやディレクティブがないからです。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -2426,8 +2559,8 @@ Hello &lt;%= name %&gt;!
 </p>
 <p>プレゼンテーションロジック：
 </p>
-<pre class="program">「id="mark:name"」でマーキングされたエレメントの宣言
-#name {
+<pre class="program">「id="mark:<i>name</i>"」でマーキングされたエレメントの宣言
+#<i>name</i> {
   
   // 内容のかわりに出力する式
   value:  <i>expression</i>;
@@ -2465,7 +2598,7 @@ Hello &lt;%= name %&gt;!
   }
   
   // 他のプレゼンテーションロジックファイルを読み込む
-  require: file1.plogic, file2.plogic;
+  require: "file1.plogic", "file2.plogic";
 }
 </pre>
 <br>
@@ -2560,6 +2693,17 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+-R <i>arg</i></b></dt>
+<dd class="dd3">
+	特殊オプション。今のところ以下の引数のみ指定可能。
+	<ul type="disc">
+	<li>ails ... 「<code>-l erb --globalvar-prefix='@'</code>」と同じ。Ruby on Rails用のファイルを出力する。
+	</li>
+	</ul>
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --charset=<i>charset</i></b></dt>
 <dd class="dd3">
 	文字コード。JSTLにおいて '<code>&lt;%@ page contentType="text/html; charset=<i>charset</i> "%&gt;</code>' を出力する。
@@ -2633,9 +2777,16 @@ transalte</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
---rename=<i>true</i>|<i>false</i></b></dt>
+--localvar-prefix=<i>string</i></b></dt>
 <dd class="dd3">
-	ローカル変数名を変更するかどうかを指定する。値が省略されたときはtrueとみなされる。
+	テンプレートローカル変数につけるプレフィックスを指定する。
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--globalvar-prefix=<i>string</i></b></dt>
+<dd class="dd3">
+	テンプレートグローバル変数につけるプレフィックスを指定する。
 </dd>
 </dl>
 <p>使い方の例です。
@@ -2695,17 +2846,16 @@ INDENT </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-RENAME </b></dt>
+LOCALVAR_PREFIX </b></dt>
 <dd class="dd3">
-	ローカル変数の名前を変更するかどうかを指定します。
-	trueなら、ローカル変数名の頭に「_」をつけます。
+	テンプレートローカル変数のプレフィックス（頭につける文字列）を指定します。
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-RENAME_PREFIX </b></dt>
+GLOBALVAR_PREFIX </b></dt>
 <dd class="dd3">
-	ローカル変数の頭につける文字列を指定します。
+	テンプレートグローバル変数のプレフィックス（頭につける文字列）を指定します。
 </dd>
 </dl>
 <dl class="dl3">

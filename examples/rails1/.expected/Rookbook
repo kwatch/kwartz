@@ -1,0 +1,10 @@
+#!/usr/bin/env rook
+
+recipe :all								do |r|
+	#nothing
+	end
+
+recipe :clean								do |r|
+	#nothing
+	end
+

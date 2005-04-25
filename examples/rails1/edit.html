@@ -1,0 +1,56 @@
+<html>
+  <body>
+    <div id="mark:contents">
+
+      <h1>Edit Recipe</h1>
+
+      <form action="<% url_for(:action=>'update') %>" method="post">
+        <input id="recipe_id" name="recipe[id]" type="hidden" value="@{recipe.id}@" />
+
+        <table>
+          <tr>
+            <th>Title:</th>
+            <td>
+              <input id="recipe_title" name="recipe[title]"
+                     size="30" type="text" value="@{recipe.title}@" />
+            </td>
+          </tr>
+          <tr>
+            <th>Description:</th>
+            <td>
+              <input id="recipe_description" name="recipe[description]"
+                     size="30" type="text" value="@{recipe.description}@" />
+            </td>
+          </tr>
+          <tr>
+            <th>Category:</th>
+            <td>
+              <select name="recipe[category_id]" id="loop:category=categories">
+                <option id="append:S(category.id==recipe.category.id)"
+                        value="@{category.id}@">@{category.name}@</option>
+                <option value="2" id="dummy:o1">Drinks</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Instructions:</th>
+            <td>
+              <textarea id="recipe_instructions" name="recipe[instructions]"
+                cols="40" rows="20" wrap="virtual">@{recipe.instructions}@</textarea>
+            </td>
+          </tr>
+        </table>
+
+        <input type="submit" value="Update" />
+
+      </form>
+
+      <p>
+        <a href="<%= url_for(:action=>'show', :id=>@recipe.id) %>">Show</a>
+        |
+        <a href="<%= url_for(:action=>'list') %>">Back</a>
+      </p>
+
+    </div>
+  </body>
+</html>

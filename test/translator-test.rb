@@ -707,7 +707,7 @@ class TranslatorTest < Test::Unit::TestCase
       end
    end
    def test_function33_velocity	# escape_url
-      expected = '$esc.url($url)'
+      expected = '$link.setURI($url).toString()'
       _test_expr(@@function33, expected)
    end
 

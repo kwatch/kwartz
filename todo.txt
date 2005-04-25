@@ -56,3 +56,7 @@
 .- [v] function 'escape_url'
 .- [v] function 'str_linebreak'
 .- [_] new directive 'dvalue'
+.- [_] rawcode-statement and rawcode-expression
+.- [_] kwartz command for Rook
+.- [_] kwartz-ruby identify filename '>outfile' as output filename
+.- [_] plugin of user-defined functions

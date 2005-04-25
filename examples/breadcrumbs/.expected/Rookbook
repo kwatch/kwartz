@@ -1,0 +1,6 @@
+#!/usr/bin/env rook
+
+$T = 'breadcrumbs'
+
+basedir = File::dirname(__FILE__)
+load "#{basedir}/../../border2/.expected/Rookbook"

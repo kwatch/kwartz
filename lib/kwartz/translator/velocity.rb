@@ -156,7 +156,7 @@ module Kwartz
          'str_linebreak' => ".replaceAll('$','<br />')",
          'escape_xml'    => '$esc.xml',
          'escape_sql'    => '$esc.sql',
-         'escape_url'    => '$esc.url',
+         'escape_url'    => true,
       }
 
 
@@ -171,16 +171,20 @@ module Kwartz
          end
          return @code
       end
-      
+
       ##
       def translate_function(function_name, arguments)
          funcname = @@velocity_func_names[function_name]
          case function_name
-         when 'escape_xml', 'escape_sql', 'escape_url'
+         when 'escape_xml', 'escape_sql'
             append_code(funcname)
             append_code('(')
             translate_expression(arguments[0])
             append_code(')')
+         when 'escape_url'
+            append_code('$link.setURI(')
+            translate_expression(arguments[0])
+            append_code(').toString()')
          when 'list_empty', 'hash_empty'
             translate_expression(arguments[0])
             append_code('.size()==0')
@@ -265,12 +269,12 @@ module Kwartz
          @code << '$'
          return super(expr, depth)
       end
-      
+
       ##
       def visit_null_expression(expr, depth=0)
          raise TranslationError.new("Velocity doesn't support 'null' literal.")
       end
-      
+
       ##
       def _translate_expression_for_print(expr, flag_escape)
          case expr.token
@@ -310,7 +314,7 @@ module Kwartz
             raise TranslationError.new("Velocity doesn't support '#{expr.token}' operator for printing.")
          end
       end
-      
+
       ##
       def visit_expr_statement(stmt, depth)
          expr = stmt.expression
@@ -362,7 +366,7 @@ module Kwartz
          return BinaryExpression.new('=', lhs_expr, rhs_expr)
       end
       protected :normalize_assign_expr
-      
+
       def expand_conditional_expr(stmt)
          cond_expr = stmt.accept(@condfind_visitor)
          return stmt if !cond_expr

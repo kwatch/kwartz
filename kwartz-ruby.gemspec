@@ -19,9 +19,10 @@ spec = Gem::Specification.new do |s|
   s.summary     = "a template system for Ruby, PHP, and Java"
   s.description = <<-'END'
   Kwartz is a template system which realized the concept
-  'Separation of Presentation Logic and Presentation Data'(SoPL/PD).
-  Kwartz generates eRuby, PHP, and JSP script from presentation data
-  file (tipically HTML file) and presentation logic file.
+  'Separation of Presentation Logic and Presentation Data'(SoPL/PD)
+  or 'Independence of Presentation Logic'(IoPL).
+  Kwartz generates eRuby, PHP, JSP, and Velocity script from presentation
+  data file (tipically HTML file) and presentation logic file.
   Kwartz runs very fast and doesn't break HTML design at all.
   END
   
@@ -37,13 +38,13 @@ spec = Gem::Specification.new do |s|
              "doc/docstyle.css",
              "doc/design.css", "doc/design.html", ]
   files += %w(README.en.txt README.ja.txt ChangeLog.txt COPYING setup.rb todo.txt)
-  s.files       = files.delete_if { |path| path =~ /\.svn/ }
+  #s.files       = files.delete_if { |path| path =~ /\.svn/ }
   s.executables = ["kwartz", "kwartz-ruby"]
   s.bindir      = "bin"
   s.test_file   = 'test/test.rb'
 end
 
-if $0==__FILE__
+if $0 == __FILE__
   Gem::manage_gems
   Gem::Builder.new(spec).build
 end

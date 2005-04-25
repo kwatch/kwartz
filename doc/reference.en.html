@@ -784,9 +784,30 @@ list_length(<i>list</i>) </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+list_empty(<i>list</i>) </b></dt>
+<dd class="dd3">
+	  Return true if <i>list</i> is empty or false if not empty.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 hash_new() </b></dt>
 <dd class="dd3">
 	  Create a new hash. 
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+hash_length(<i>hash</i>) </b></dt>
+<dd class="dd3">
+	  Return the count of the <i>hash</i>.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+hash_empty(<i>hash</i>) </b></dt>
+<dd class="dd3">
+	  Return true if <i>hash</i> is empty or false if not empty.
 </dd>
 </dl>
 <dl class="dl3">
@@ -801,6 +822,13 @@ hash_keys(<i>hash</i>) </b></dt>
 str_length(<i>string</i>) </b></dt>
 <dd class="dd3">
 	  Return the length of the <i>string</i>.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+str_empty(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  Return true if <i>string</i> is empty, or false if not empty.
 </dd>
 </dl>
 <dl class="dl3">
@@ -831,21 +859,54 @@ str_index(<i>string</i>, <i>char</i>) </b></dt>
 	  Return the first positin a <i>char</i> occurs in a <i>string</i>.
 </dd>
 </dl>
-<p>JSTL1.0 and Velocity don't support any function, so you cannot use these function in JSTL1.0 (except E() and X()).
-JSTL1.1 supports some functions but it is limited.
-In fact, list_new(), hash_new(), and hash_keys() are not supported.
+<dl class="dl3">
+<dt class="dt3"><b>
+str_replace(<i>string</i>, <i>before</i>, <i>after</i>) </b></dt>
+<dd class="dd3">
+	  Replace <i>before</i> to <i>after</i> in <i>string</i> and return it.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+str_linebreak(<i>string</i>) </b></dt>
+<dd class="dd3">
+	  Insert <code>&lt;br /&gt;</code> before newline character in <i>string</i> and return it.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_xml(<i>html_string</i>) </b></dt>
+<dd class="dd3">
+	  return the sanitaized <i>html_string</i>.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_url(<i>url_string</i>) </b></dt>
+<dd class="dd3">
+	  Encode <i>url_string</i> and return it.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+escape_sql(<i>sql_string</i>) </b></dt>
+<dd class="dd3">
+	  Escape quotation(<code>'</code>), double quotation(<code>"</code>), backslash(<code>\</code>) in <i>sql_string</i> with backslash and return it.
+</dd>
+</dl>
+<p>The following table shows the translation of functions in each target languages.
 </p>
 <div align="center">
 <table class="table1" border="1" cellspacing="0">
  <tr class="tr1">
   <th class="th1">Functions</th>
-  <th class="th1">eRuby</th>
+  <th class="th1">eRuby, ERB</th>
   <th class="th1">PHP</th>
   <th class="th1">JSTL1.1</th>
-  <th class="th1">JSTL1.0 &amp; Velocity</th>
+  <th class="th1">Velocity</th>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_new()</code></td>
+  <td class="td1"><code>list_new()</code>						.</td>
   <td class="td1"><code>[]</code></td>
   <td class="td1"><code>array()</code></td>
   <td class="td1">-</td>
@@ -856,7 +917,14 @@ In fact, list_new(), hash_new(), and hash_keys() are not supported.
   <td class="td1"><code><i>list</i>.length</code></td>
   <td class="td1"><code>array_length(<i>list</i>)</code></td>
   <td class="td1"><code>fn:length(<i>list</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code>(<i>list</i>).size()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>list_empty(<i>list</i>)</code></td>
+  <td class="td1"><code><i>list</i>.empty?</code></td>
+  <td class="td1"><code>array_length(<i>list</i>)==0</code></td>
+  <td class="td1"><code>fn:length(<i>list</i>)==0</code></td>
+  <td class="td1"><code>(<i>list</i>).size()==0</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>hash_new()</code></td>
@@ -866,48 +934,106 @@ In fact, list_new(), hash_new(), and hash_keys() are not supported.
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
+  <td class="td1"><code>hash_length(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.length</code></td>
+  <td class="td1"><code>array_length(<i>hash</i>)</code></td>
+  <td class="td1"><code>fn:length(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.size()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>hash_empty(<i>hash</i>)</code></td>
+  <td class="td1"><code><i>hash</i>.empty?</code></td>
+  <td class="td1"><code>array_length(<i>hash</i>)==0</code></td>
+  <td class="td1"><code>fn:length(<i>hash</i>)==0</code></td>
+  <td class="td1"><code><i>hash</i>.size()==0</code></td>
+ </tr>
+ <tr class="tr1">
   <td class="td1"><code>hash_keys(<i>hash</i>)</code></td>
   <td class="td1"><code><i>hash</i>.keys</code></td>
   <td class="td1"><code>array_keys(<i>hash</i>)</code></td>
   <td class="td1">-</td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>hash</i>.keySet().toArray()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_length(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.lenth</code></td>
   <td class="td1"><code>strlen(<i>str</i>)</code></td>
   <td class="td1"><code>fn:length(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.length()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_tolower(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.downcase</code></td>
   <td class="td1"><code>strtolower(<i>str</i>)</code></td>
   <td class="td1"><code>fn:toLowerCase(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.toLowerCase()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_toupper(<i>str</i>)</code></td>
   <td class="td1"><code><i>str</i>.upcase</code></td>
   <td class="td1"><code>strtoupper(<i>str</i>)</code></td>
   <td class="td1"><code>fn:toUpperCase(<i>str</i>)</code></td>
-  <td class="td1">-</td>
+  <td class="td1"><code><i>str</i>.toUpperCase()</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>str_index(<i>str</i>,<i>ch</i>)</code></td>
   <td class="td1"><code><i>str</i>.index(<i>ch</i>)</code></td>
   <td class="td1"><code>strchr(<i>str</i>,<i>ch</i>)</code></td>
   <td class="td1"><code>fn:indexOf(<i>str</i>,<i>ch</i>)</code></td>
+  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_replace(<i>str</i>,<i>before</i>, <i>after</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(<i>before</i>,<i>after</i>)</code></td>
+  <td class="td1"><code>str_replace(<i>before</i>,<i>after</i>,<i>str</i>)</code></td>
+  <td class="td1"><code>fn:replace(<i>str</i>,<i>before</i>,<i>after</i>)</code></td>
+  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>str_linebreak(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
+  <td class="td1"><code>nl2br(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:replace(<i>str</i>,'\n','&lt;br /&gt;\n')</code></td>
+  <td class="td1"><code><i>str</i>.replaceAll('$','&lt;br /&gt;')</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_xml(<i>str</i>)</code></td>
+  <td class="td1"><code>CGI::escapeHTML(<i>str</i>)</code> (when eRuby) <br> <code>html_escape(<i>str</i>)</code> (when ERB)</td>
+  <td class="td1"><code>htmlspecialchars(<i>str</i>)</code></td>
+  <td class="td1"><code>fn:escapeXml(<i>str</i>)</code></td>
+  <td class="td1"><code>$esc.xml(<i>str</i>)</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_url(<i>str</i>)</code></td>
+  <td class="td1"><code>CGI::escape(<i>str</i>)</code> (when eRuby) <br> <code>url_encode(<i>str</i>)</code> (when ERB)</td>
+  <td class="td1"><code>urlencode(<i>str</i>)</code></td>
   <td class="td1">-</td>
+  <td class="td1"><code>$link.setURI(<i>str</i>).toString()</code></td>
+ </tr>
+ <tr class="tr1">
+  <td class="td1"><code>escape_sql(<i>str</i>)</code></td>
+  <td class="td1"><code><i>str</i>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
+  <td class="td1"><code>addslashes(<i>str</i>)</code></td>
+  <td class="td1">-</td>
+  <td class="td1"><code>$esc.sql(<i>str</i>)</code></td>
  </tr>
 </table>
 </div>
-<p>All functions except above are printed "as is" when translating into PHP or eRuby script.
-Translating into JSTL script will be error because Exrepssion Language of JSTL doesn't support
-user-defined functions.
+<p>All functions except above are printed "as is" when translating into eRuby or PHP script.
+Translating into JSTL or Velocity script will be error.
 </p>
 <p>Functions E() and X() are intended to be used as arguments of print statement.
 You shouldn't use them in other place.
+</p>
+<p>If you want to use the following functions, you need to install <a href="http://jakarta.apache.org/velocity/tools/">VelocityTools</a>.
+</p>
+<ul type="disc">
+<li><code>escape_xml()</code> and <code>escape_sql()</code> requires <a href="http://wiki.apache.org/jakarta-velocity/EscapeTool">EscapeTools</a>.
+</li>
+<li><code>escape_url()</code> requries <a href="http://jakarta.apache.org/velocity/tools/view/LinkTool.html">LinkTools</a>.
+</li>
+</ul>
+<p>See each documentation for details.
 </p>
 <br>
 
@@ -2086,8 +2212,8 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 <h3 class="section2">Iteration (while)</h3>
 <p>'<code>id="while:<i>expression</i>"</code>' is a directive to iterate with a while statement. 
 </p>
-<p>Kwartz will raise an error when compiling a while statement into JSP,
-because there is no custom tag in JSTL which is equivalent to a while statement.
+<p>Kwartz will raise an error when compiling a while statement into JSP or Velocity,
+because there is no custom tag in JSTL nor Directives in Velocity which is equivalent to while statement.
 </p>
 <p>Presentation Data:
 </p>
@@ -2449,8 +2575,8 @@ Hello &lt;%= name %&gt;!
 </p>
 <p>Presentation logic:
 </p>
-<pre class="program">// element declaration for 'id="mark:name"'
-#name {
+<pre class="program">// element declaration for 'id="mark:<i>name</i>"'
+#<i>name</i> {
   
   // print value of expression instead of content
   value:  <i>expression</i>;
@@ -2488,7 +2614,7 @@ Hello &lt;%= name %&gt;!
   }
   
   // load presentation logic file required
-  require: file1.plogic, file2.plogic;
+  require: "file1.plogic", "file2.plogic";
 }
 </pre>
 <br>
@@ -2583,6 +2709,17 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
+-R <i>arg</i></b></dt>
+<dd class="dd3">
+	Special option. Currently, only the following argument is avairable.
+	<ul type="disc">
+	<li>ails ... Equivarent to <code>-l erb --globalvar-prefix='@'</code>. Make output script for Ruby on Rails.
+	</li>
+	</ul>
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
 --charset=<i>charset</i></b></dt>
 <dd class="dd3">
 	Character set. Kwartz will print '<code>&lt;%@ page contentType="text/html; charset=<i>charset</i>" %&gt;</code>' in JSTL.
@@ -2655,9 +2792,16 @@ translate</dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
---rename=<i>true</i>|<i>false</i></b></dt>
+--localvar-prefix=<i>string</i></b></dt>
 <dd class="dd3">
-	Specify rename or not local variable names.  Regarded as true when value is omitted.
+	Prefix of template local variables.
+</dd>
+</dl>
+<dl class="dl3">
+<dt class="dt3"><b>
+--globalvar-prefix=<i>string</i></b></dt>
+<dd class="dd3">
+	Prefix of template global variables.
 </dd>
 </dl>
 <p>Examples:
@@ -2717,17 +2861,16 @@ INDENT </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-RENAME </b></dt>
+LOCALVAR_PREFIX </b></dt>
 <dd class="dd3">
-	Specify whether rename local variable names. 
-	If true, '_' is added to beginning of local variable name.
+	Specify the prefix of template local variable name.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-RENAME_PREFIX </b></dt>
+GLOBALVAR_PREFIX </b></dt>
 <dd class="dd3">
-	Specify the prefix of local variable name when RENAME is true.
+	Specify the prefix of template global variable name.
 </dd>
 </dl>
 <dl class="dl3">

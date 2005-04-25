@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Recipes: <%=h(@controller.action_name)%></title>
+<%= stylesheet_link_tag 'scaffold' %>
+  </head>
+  <body>
+    <div>
+
+      <h1>Show Recipe</h1>
+      
+      <table>
+        <tr>
+          <th>Title:</th>
+          <td><%=h(@recipe.title)%></td>
+        </tr>
+        <tr>
+          <th>Description:</th>
+          <td><%=h(@recipe.description)%></td>
+        </tr>
+        <tr>
+          <th>Category:</th>
+          <td><%=h(@recipe.category.name)%></td>
+        </tr>
+        <tr>
+          <th>Date:</th>
+          <td><%=h(@recipe.date)%></td>
+        </tr>
+        <tr>
+          <th>Instructions:</th>
+          <td><%=h(@recipe.instructions)%></td>
+        </tr>
+      </table>
+
+      <p>
+        <a href="<%= url_for(:action=>'edit', :id=>@recipe.id) %>">Edit</a>
+        |
+        <a href="<%= url_for(:action=>'list') %>">Back</a>
+      </p>
+      
+    </div>
+  </body>
+</html>

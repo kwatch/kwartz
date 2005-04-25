@@ -1,0 +1,38 @@
+<html>
+  <body>
+    <div id="mark:contents">
+
+      <h1>Show Recipe</h1>
+      
+      <table>
+        <tr>
+          <th>Title:</th>
+          <td id="value:recipe.title">Hot Chips</td>
+        </tr>
+        <tr>
+          <th>Description:</th>
+          <td id="value:recipe.description">Only for the brave!</td>
+        </tr>
+        <tr>
+          <th>Category:</th>
+          <td id="value:recipe.category.name">Snacks</td>
+        </tr>
+        <tr>
+          <th>Date:</th>
+          <td id="value:recipe.date">2004-11-11</td>
+        </tr>
+        <tr>
+          <th>Instructions:</th>
+          <td id="value:recipe.instructions">Sprinkle hot-pepper sauce on corn chips.</td>
+        </tr>
+      </table>
+
+      <p>
+        <a href="<%= url_for(:action=>'edit', :id=>@recipe.id) %>">Edit</a>
+        |
+        <a href="<%= url_for(:action=>'list') %>">Back</a>
+      </p>
+      
+    </div>
+  </body>
+</html>

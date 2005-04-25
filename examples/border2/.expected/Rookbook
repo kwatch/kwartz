@@ -1,0 +1,17 @@
+#!/usr/bin/env rook
+
+$T = 'border2' unless defined?($T) && $T
+
+langs = [ "php", "jstl11", "jstl10", "velocity", ]
+
+recipe :all								do |r|
+	langs.each { |lang|
+	    cmd "kwartz -l #{lang} -p #{$T}.plogic #{$T}.html > #{$T}.#{lang}"
+	}	
+	end
+
+recipe :clean								do |r|
+	files = langs.collect { |lang| "#{$T}.#{lang}" }
+	rm_rf [files]
+	end
+

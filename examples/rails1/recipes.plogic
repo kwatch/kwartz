@@ -1,0 +1,5 @@
+#stylesheet_link {
+  plogic: {
+    <%= stylesheet_link_tag 'scaffold' %>
+  }
+}
