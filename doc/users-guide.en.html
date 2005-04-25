@@ -390,7 +390,7 @@ import java.io.IOException;
 public class Main1 {
   public static void main(String[] args) {
     try {
-    // ½é´ü²½
+    // initialization
     Velocity.init();
  
     // create data
@@ -482,7 +482,7 @@ In the presentation logic, you should detect whether odd or even line in the ite
 // * print value of a variable 'color' as bgcolor attribute value.
 // * change value of a variable 'color' whether odd or even line.
 #list {
-  attr:  "bgcolor" color;
+  attrs:  "bgcolor" color;
   plogic: {
     i = 0;
     foreach (member in member_list) {
@@ -507,7 +507,7 @@ In the presentation logic, you should detect whether odd or even line in the ite
 //   (operator '.+' means string concatenation.)
 #email {
   value: member['email'];
-  attr:  "href" ("mailto:" .+ member['email']);
+  attrs: "href" ("mailto:" .+ member['email']);
 }
 </pre>
 <p>You will find that there is no HTML tag in the presentation logic and no logic in the presentation data.
@@ -1320,7 +1320,7 @@ It enables you to write presentation logics in Ruby, PHP, and Java.
 </pre>
 <p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called raw-code.
 Raw-code is statement and not expression, therefore you can write raw-code in <code>plogic:</code> part
-but not in <code>value:</code> part and <code>attr:</code> part.
+but not in <code>value:</code> part and <code>attrs:</code> part.
 </p>
 <br>
 
@@ -1380,7 +1380,7 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 
 #recipe_title {
   value: recipe.title;
-  attr:  "href" recipe_url;
+  attrs: "href" recipe_url;
 }
 
 // Or
@@ -1402,7 +1402,7 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 
 // Or
 //  #recipe_new {
-//    attr: "href" action_new_url;
+//    attrs: "href" action_new_url;
 //    plogic: {
 //      action_new_url = null;
 //      &lt;% action_new_url = url_for(:action =&gt; "new") %&gt;

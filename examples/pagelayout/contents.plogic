@@ -10,5 +10,5 @@
 
 #menu_item {
   value: item[:name];
-  attr:  "href" item[:url];
+  attrs:  "href" item[:url];
 }

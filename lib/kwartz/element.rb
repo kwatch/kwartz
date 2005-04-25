@@ -30,9 +30,9 @@ module Kwartz
          part = decl.part
          @tagname = part[:tagname] if part[:tagname]
          @content = PrintStatement.new([part[:value]]) if part[:value]
-         part[:attr].each do |key,val|
+         part[:attrs].each do |key,val|
             @attrs[key] = val
-         end if part[:attr]
+         end if part[:attrs]
          part[:remove].each do |aname|
             @attrs.delete(aname)
          end if part[:remove]
@@ -197,10 +197,10 @@ module Kwartz
          h = @part
          s = "\##{@name} {\n"
          s <<    "  value:\n" << h[:value]._inspect(2) if h[:value]
-         if h[:attr]
-            s << "  attr:\n"
-            h[:attr].keys.sort.each do |key|
-               s << "    \"#{key}\" " << h[:attr][key]._inspect()
+         if h[:attrs]
+            s << "  attrs:\n"
+            h[:attrs].keys.sort.each do |key|
+               s << "    \"#{key}\" " << h[:attrs][key]._inspect()
             end
          end
          if h[:append]

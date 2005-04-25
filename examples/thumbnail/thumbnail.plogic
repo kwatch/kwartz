@@ -10,7 +10,7 @@
 
 
 #navi_first {
-	attr:  "href" first_url;
+	attrs:  "href" first_url;
 	plogic: {
 	    if (first_url != empty) {
 	        @stag;

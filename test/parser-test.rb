@@ -1172,7 +1172,7 @@ END
 
    ##
    def test_parse_value_part3
-      input = "value: 'mailto:'.+user.email attr:"
+      input = "value: 'mailto:'.+user.email attrs:"
       expected = nil
       assert_raise(Kwartz::SyntaxError) do
          _test(input, expected)
@@ -1190,22 +1190,22 @@ END
 
 
    ##
-   def test_parse_attr_part1
-      input = 'attr: "foo" bar; '
+   def test_parse_attrs_part1
+      input = 'attrs: "foo" bar; '
       expected = "[foo]\nbar\n"
       _test(input, expected, Kwartz::Util::OrderedHash)
    end
 
    ##
-   def test_parse_attr_part2
-      input = 'attr: "class" klass, "href" user.url; '
+   def test_parse_attrs_part2
+      input = 'attrs: "class" klass, "href" user.url; '
       expected = "[class]\nklass\n[href]\n.\n  user\n  url\n"
       _test(input, expected, Kwartz::Util::OrderedHash)
    end
 
    ##
-   def test_parse_attr_part3
-      input = 'attr: "class" klass, "href" user.url '
+   def test_parse_attrs_part3
+      input = 'attrs: "class" klass, "href" user.url '
       expected = ""
       assert_raise(Kwartz::SyntaxError) do
          _test(input, expected, nil)
@@ -1316,7 +1316,7 @@ END
 #   def test_parse_elem_part1
 #      input = <<'END'
 #value:   user.name;
-#attr:    "class" klass, "bgcolor" color;
+#attrs:    "class" klass, "bgcolor" color;
 #append:  flag ? ' checked="checked"' : '';
 #remove:  "id";
 #tagname: tag;
@@ -1334,7 +1334,7 @@ END
 #  flag
 #  " checked=\"checked\""
 #  ""
-#attr:
+#attrs:
 #bgcolor=color
 #class=klass
 #plogic:
@@ -1369,7 +1369,7 @@ END
 #            value.each do |v|
 #               s << v._inspect()
 #            end
-#         when :attr
+#         when :attrs
 #            value.keys.sort.each do |k|
 #               v = value[k]
 #               s << "#{k}=#{v._inspect}"
@@ -1388,7 +1388,7 @@ END
       input = <<'END'
 foo {
 	value:   user.name;
-	attr:    "class" klass, "bgcolor" color;
+	attrs:   "class" klass, "bgcolor" color;
 	append:  flag ? ' checked="checked"' : '';
 	remove:  "id";
 	tagname: tag;
@@ -1406,7 +1406,7 @@ END
     .
       user
       name
-  attr:
+  attrs:
     "bgcolor" color
     "class" klass
   append:
@@ -1582,7 +1582,7 @@ END
       input = <<'END'
 #foo {
 	value:   user;
-	attr:    "class" klass, "bgcolor" color;
+	attrs:   "class" klass, "bgcolor" color;
 	plogic: {
 		@stag;
 		foreach (item in list)
@@ -1602,7 +1602,7 @@ END
 #foo {
   value:
     user
-  attr:
+  attrs:
     "bgcolor" color
     "class" klass
   plogic:

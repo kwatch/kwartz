@@ -15,6 +15,7 @@ require 'test/unit/ui/console/testrunner'
 require 'assert-diff.rb'
 require 'kwartz/element'
 require 'kwartz/node'
+require 'kwartz/config'
 
 include Kwartz
 
@@ -33,14 +34,14 @@ class ElementTest < Test::Unit::TestCase
       marking = 'user_list'
       tagname = 'li'
       content = Kwartz::PrintStatement.new( [ Kwartz::StringExpression.new("foo") ] )
-      attr    = { "id" => "user_list", "bgcolor" => "color", "class"=>"user", }
+      attrs   = { "id" => "user_list", "bgcolor" => "color", "class"=>"user", }
       append  = []
       is_empty = false
-      element = Kwartz::Element.new(marking, tagname, content, attr, append)
+      element = Kwartz::Element.new(marking, tagname, content, attrs, append)
 
       part = {}
-      part[:value] = Kwartz::VariableExpression.new("user")
-      part[:attr]  = { "bgcolor" => Kwartz::VariableExpression.new('color') }
+      part[:value]  = Kwartz::VariableExpression.new("user")
+      part[:attrs]  = { "bgcolor" => Kwartz::VariableExpression.new('color') }
       part[:append] = [ Kwartz::StringExpression.new(" checked") ]
       part[:remove] = [ "id" ]
       part[:tagname] = nil
@@ -58,7 +59,7 @@ class ElementTest < Test::Unit::TestCase
 #user_list {
   value:
     user
-  attr:
+  attrs:
     "bgcolor" color
   append:
     " checked"
@@ -135,10 +136,10 @@ END
       marking = 'foo'
       tagname = 'input'
       content = Kwartz::BlockStatement.new([])
-      attr    = { "id" => StringExpression.new("foo"), "value" => VariableExpression.new("value") }
+      attrs   = { "id" => StringExpression.new("foo"), "value" => VariableExpression.new("value") }
       append  = []
       is_empty = false
-      element = Kwartz::Element.new(marking, tagname, content, attr, append)
+      element = Kwartz::Element.new(marking, tagname, content, attrs, append)
       
       expected1 = <<'END'
 :print

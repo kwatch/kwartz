@@ -808,7 +808,7 @@
 .JA		エレメントの内容を式{{,{{/expression/}},}}の値で置き換えます。
 .EN		Replace content of the element by value of {{,{{/expression/}},}}.
 .	
-.	.[ {{,attr: "{{/attr1/}}" {{/expr1/}} , "{{/attr2/}}" {{/expr2/}} , ... ;,}} ]
+.	.[ {{,attrs: "{{/attr1/}}" {{/expr1/}} , "{{/attr2/}}" {{/expr2/}} , ... ;,}} ]
 .JA		属性{{,{{/attr/}},}}の値を式{{,{{/expr/}},}}で置き換えます。
 .EN		Replace value of attribute {{,{{/attr/}},}} by value of {{,{{/expr/}},}}.
 .	
@@ -856,7 +856,7 @@
 .	.-------------------- pl-decl.plogic
 .	#foo {
 .	  value:  item;
-.	  attr:   "class" klass;
+.	  attrs:  "class" klass;
 .	  plogic: {
 .	    foreach (item in list) {
 .	      @stag;
@@ -1005,9 +1005,9 @@
 .	.--------------------
 .	
 .	
-.JA	ただし、Raw-codeをエレメント宣言の「value:」部や「attr:」部に記述することはできません。
+.JA	ただし、Raw-codeをエレメント宣言の「value:」部や「attrs:」部に記述することはできません。
 .JA	Raw-codeは文(statement)であり式(expression)ではないためです。
-.EN	Raw-cde cannot be in 'value:' or 'attr:' part of element declaration,
+.EN	Raw-cde cannot be in 'value:' or 'attrs:' part of element declaration,
 .EN	because raw-code is statement and not expression.
 .	
 .	
@@ -2176,7 +2176,7 @@
 .	  
 .JA	  // 属性（名前と値）
 .EN	  // set attribute values
-.	  attr: "{{/attr1/}}" {{/expr1/}}, "{{/attr2/}}" {{/expr2/}}, "{{/attr3/}}" {{/expr3/}};
+.	  attrs: "{{/attr1/}}" {{/expr1/}}, "{{/attr2/}}" {{/expr2/}}, "{{/attr3/}}" {{/expr3/}};
 .	  
 .JA	  // 削除する属性の名前
 .EN	  // remove attributes

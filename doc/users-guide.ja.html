@@ -480,7 +480,7 @@ public class Main1 {
 // bgcolor属性の値として変数colorを出力する。
 // また繰り返しを行い、奇数行と偶数行で変数colorの値を変える。
 #list {
-  attr:  "bgcolor" color;
+  attrs:  "bgcolor" color;
   plogic: {
     i = 0;
     foreach (member in member_list) {
@@ -505,7 +505,7 @@ public class Main1 {
 // （「.+」は文字列の連結を行う演算子）
 #email {
   value: member['email'];
-  attr:  "href" ("mailto:" .+ member['email']);
+  attrs: "href" ("mailto:" .+ member['email']);
 }
 </pre>
 <p>見ておわかりのように、プレゼンテーションロジックにはHTMLタグが一切入らず、またプレゼンテーションデータにはロジックが一切入っていません。
@@ -1318,7 +1318,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </pre>
 <p>「<code>&lt;%</code>」または「<code>&lt;?</code>」から行末までをraw-codeといいます。
 raw-codeは文(statement)であり、式(expression)ではありません。
-そのため、「<code>plogic:</code>」部に書くことはできますが「<code>value:</code>」部や「<code>attr:</code>」部に書くことはできません。
+そのため、「<code>plogic:</code>」部に書くことはできますが「<code>value:</code>」部や「<code>attrs:</code>」部に書くことはできません。
 </p>
 <br>
 
@@ -1378,7 +1378,7 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
 
 #recipe_title {
   value: recipe.title;
-  attr:  "href" recipe_url;
+  attrs: "href" recipe_url;
 }
 
 // または次のようにしてもよい。
@@ -1400,7 +1400,7 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
 
 // または次のようにしてもよい。
 //  #recipe_new {
-//    attr: "href" action_new_url;
+//    attrs: "href" action_new_url;
 //    plogic: {
 //      action_new_url = null;
 //      &lt;% action_new_url = url_for(:action =&gt; "new") %&gt;

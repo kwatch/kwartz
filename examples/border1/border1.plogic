@@ -1,5 +1,5 @@
 #user_list {
-	attr:    "bgcolor" color;
+	attrs:    "bgcolor" color;
 	remove:  "id";
 	plogic: {
 		i = 0;
@@ -21,7 +21,7 @@
 #email {
 	value:   user['email'];
 	remove:  "id";
-	attr:    "href" 'mailto:' .+ user['email'];
+	attrs:    "href" 'mailto:' .+ user['email'];
 }
 
 #dummy {

@@ -1,5 +1,5 @@
 #user_list {
-	attr:    "bgcolor" color;
+	attrs:    "bgcolor" color;
 	plogic: {
 		i = 0;
 		foreach (user in user_list) {

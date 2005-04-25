@@ -400,7 +400,8 @@
 .	public class Main1 {
 .	  public static void main(String[] args) {
 .	    try {
-.	    // 初期化
+.JA	    // 初期化
+.EN	    // initialization
 .	    Velocity.init();
 .	 
 .JA	    // データを用意する
@@ -518,7 +519,7 @@
 .EN	// * print value of a variable 'color' as bgcolor attribute value.
 .EN	// * change value of a variable 'color' whether odd or even line.
 .	#list {
-.	  attr:  "bgcolor" color;
+.	  attrs:  "bgcolor" color;
 .	  plogic: {
 .	    i = 0;
 .	    foreach (member in member_list) {
@@ -552,7 +553,7 @@
 .EN	//   (operator '.+' means string concatenation.)
 .	#email {
 .	  value: member['email'];
-.	  attr:  "href" ("mailto:" .+ member['email']);
+.	  attrs: "href" ("mailto:" .+ member['email']);
 .	}
 .	.--------------------
 .	
@@ -1259,10 +1260,10 @@
 .	
 .JA	「{{,<%,}}」または「{{,<?,}}」から行末までをraw-codeといいます。
 .JA	raw-codeは文(statement)であり、式(expression)ではありません。
-.JA	そのため、「{{,plogic:,}}」部に書くことはできますが「{{,value:,}}」部や「{{,attr:,}}」部に書くことはできません。
+.JA	そのため、「{{,plogic:,}}」部に書くことはできますが「{{,value:,}}」部や「{{,attrs:,}}」部に書くことはできません。
 .EN	Lines starting with '{{,<%,}}' or '{{,<?,}}' are called raw-code.
 .EN	Raw-code is statement and not expression, therefore you can write raw-code in {{,plogic:,}} part
-.EN	but not in {{,value:,}} part and {{,attr:,}} part.
+.EN	but not in {{,value:,}} part and {{,attrs:,}} part.
 .	
 .	
 .	
@@ -1332,7 +1333,7 @@
 .	
 .	#recipe_title {
 .	  value: recipe.title;
-.	  attr:  "href" recipe_url;
+.	  attrs: "href" recipe_url;
 .	}
 .	
 .JA	// または次のようにしてもよい。
@@ -1356,7 +1357,7 @@
 .JA	// または次のようにしてもよい。
 .EN	// Or
 .	//  #recipe_new {
-.	//    attr: "href" action_new_url;
+.	//    attrs: "href" action_new_url;
 .	//    plogic: {
 .	//      action_new_url = null;
 .	//      <% action_new_url = url_for(:action => "new") %>

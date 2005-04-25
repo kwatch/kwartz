@@ -660,14 +660,15 @@ module Kwartz
 
       ##
       ## EBNF:
-      ##   elem-part     ::=  value-part | attr-part | remove-part | append-part | tagname-part | plogic-part
+      ##   elem-part     ::=  value-part | attrs-part | remove-part | append-part | tagname-part | plogic-part
       ##
       def parse_elem_part()
          Kwartz::assert("token()=#{token()}") unless token() == :name
          obj = nil
          case key = value()
          when 'value'     ;   obj = parse_value_part()
-         when 'attr'      ;   obj = parse_attr_part()
+         when 'attrs'     ;   obj = parse_attrs_part()
+         when 'attr'      ;   obj = parse_attr_part()    ; key = 'attrs'
          when 'append'    ;   obj = parse_append_part()
          when 'remove'    ;   obj = parse_remove_part()
          when 'tagname'   ;   obj = parse_tagname_part()
@@ -731,8 +732,13 @@ module Kwartz
 
       ##
       ## EBNF:
-      ##   attr-part     ::=  'attr' ':' [ string '=>' expression { ',' string '=>' expression } ] ';'
+      ##   attrs-part     ::=  'attrs' ':' [ string '=>' expression { ',' string '=>' expression } ] ';'
       ##
+      def parse_attrs_part()
+         Kwartz::assert unless value() == 'attrs'
+         hash = _parse_part_hash('attrs')
+         return hash
+      end
       def parse_attr_part()
          Kwartz::assert unless value() == 'attr'
          hash = _parse_part_hash('attr')
@@ -747,7 +753,7 @@ module Kwartz
          attrs = Kwartz::Util::OrderedHash.new
          while token() != ';'
             aname_expr = parse_expression()
-            syntax_error("attr-declaration requires attribute names as string.") unless aname_expr.token == :string
+            syntax_error("attrs-declaration requires attribute names as string.") unless aname_expr.token == :string
             aname = aname_expr.value
             avalue_expr = parse_expression()
             attrs[aname] = avalue_expr

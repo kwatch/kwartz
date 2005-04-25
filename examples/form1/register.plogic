@@ -1,5 +1,5 @@
 #name {
-	attr: "value" name;
+	attrs: "value" name;
 }
 
 #gender_m {

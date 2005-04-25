@@ -12,7 +12,7 @@
 
 #crumb {
 	value: crumb[:name];
-	attr:  "href" crumb[:path];
+	attrs: "href" crumb[:path];
 }
 
 #title {

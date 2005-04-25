@@ -15,8 +15,10 @@ require 'test/unit/ui/console/testrunner'
 require 'assert-diff.rb'
 require 'kwartz/compiler'
 require 'kwartz/translator/eruby'
+require 'kwartz/translator/erb'
 require 'kwartz/translator/php'
 require 'kwartz/translator/jstl'
+require 'kwartz/translator/velocity'
 
 
 class CompilerTest < Test::Unit::TestCase
@@ -236,7 +238,7 @@ END
 
 
 
-   ## -------------------- attr
+   ## -------------------- attrs
    @@pdata4 = <<'END'
 <table id="table">
  <tr id="user_list">
@@ -247,7 +249,7 @@ END
 END
    @@plogic4 = <<'END'
 #table {
-	attr: "summary" title;
+	attrs: "summary" title;
 }
 #name {
 	remove: "id";
@@ -259,7 +261,7 @@ END
 }
 #user_list {
 	remove: "id";
-        attr: "bgcolor" color;
+        attrs: "bgcolor" color;
 	plogic: {
           i = 0;
 	  foreach(user in user_list) {
@@ -273,7 +275,7 @@ END
 	}
 }
 END
-   def test_compile4_eruby	# attr
+   def test_compile4_eruby	# attrs
       expected = <<'END'
 <table id="table" summary="<%= title %>">
 <% i = 0 %>
@@ -294,7 +296,7 @@ END
       _test(@@pdata4, @@plogic4, expected)
    end
 
-   def test_compile4_php	# attr
+   def test_compile4_php	# attrs
       expected = <<'END'
 <table id="table" summary="<?php echo $title; ?>">
 <?php $i = 0; ?>
@@ -315,7 +317,7 @@ END
       _test(@@pdata4, @@plogic4, expected)
    end
 
-   def test_compile4_jstl11	# attr
+   def test_compile4_jstl11	# attrs
       expected = <<'END'
 <table id="table" summary="<c:out value="${title}" escapeXml="false"/>">
 <c:set var="i" value="0"/>
@@ -345,7 +347,7 @@ END
 END
    @@plogic5 = <<'END'
 #username {
-	attr: "value" user.name;
+	attrs: "value" user.name;
 }
 END
 
@@ -632,11 +634,11 @@ END
 END
    @@plogic10 = <<'END'
 #username {
-        attr: "value" username, "size" 60;
+        attrs: "value" username, "size" 60;
 }
 
 #image {
-    attr: "src" image.url, "alt" image.desc;
+    attrs: "src" image.url, "alt" image.desc;
     plogic: {
 	foreach (image in image_list) {
 	    @stag;

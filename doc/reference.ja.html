@@ -1103,7 +1103,7 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-<code>attr: "<i>attr1</i>" <i>expr1</i> , "<i>attr2</i>" <i>expr2</i> , ... ;</code> </b></dt>
+<code>attrs: "<i>attr1</i>" <i>expr1</i> , "<i>attr2</i>" <i>expr2</i> , ... ;</code> </b></dt>
 <dd class="dd3">
 	属性<code><i>attr</i></code>の値を式<code><i>expr</i></code>で置き換えます。
 </dd>
@@ -1156,7 +1156,7 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 <a name="pl-decl.plogic"></a>
 <pre class="program">#foo {
   value:  item;
-  attr:   "class" klass;
+  attrs:  "class" klass;
   plogic: {
     foreach (item in list) {
       @stag;
@@ -1373,7 +1373,7 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
   }
 }
 </pre>
-<p>ただし、Raw-codeをエレメント宣言の「value:」部や「attr:」部に記述することはできません。
+<p>ただし、Raw-codeをエレメント宣言の「value:」部や「attrs:」部に記述することはできません。
 Raw-codeは文(statement)であり式(expression)ではないためです。
 </p>
 <p>ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
@@ -2566,7 +2566,7 @@ Hello &lt;%= name %&gt;!
   value:  <i>expression</i>;
   
   // 属性（名前と値）
-  attr: "<i>attr1</i>" <i>expr1</i>, "<i>attr2</i>" <i>expr2</i>, "<i>attr3</i>" <i>expr3</i>;
+  attrs: "<i>attr1</i>" <i>expr1</i>, "<i>attr2</i>" <i>expr2</i>, "<i>attr3</i>" <i>expr3</i>;
   
   // 削除する属性の名前
   remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
