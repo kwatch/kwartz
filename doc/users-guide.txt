@@ -1233,39 +1233,64 @@
 .	.--------------------
 .	
 .	
+.	
 .JA	◎プレゼンテーションロジックをターゲット言語で記述する	| rawcode
 .EN	.$$ Describe Presentation Logic in Target Language	| rawcode
 .	
 .	
+.JA	Kwartzでは、ターゲット言語（RubyやPHPやJavaなど）でプレゼンテーションロジックを記述することができます。
+.JA	.* 「{{,<%= {{/expression/}} %>,}} 」または「{{,<?= {{/expression/}} ?>,}} 」は、
+.JA	   ターゲット言語で式を記述します。
+.JA	.* 「{{,<% {{/statement/}} %>,}}」または「{{,<? {{/statement/}} ?>,}}」は、
+.JA	   ターゲット言語で文を記述します。「{{,%>,}}」や「{{,?>,}}」のあとに「;」はつけません。
+.EN	Kwartz allows you to write presentation logics in target language (such as Ruby, PHP, Java, etc).
+.EN	.* {{,<%= {{/expression/}} %>,}} or {{,<?= {{/expression/}} ?>,}} means expression in target language.
+.EN	.* {{,<% {{/statement/}} %>,}} or {{,<? {{/statement/}} ?>,}} means statement in target language.
+.EN	   Semicolon(`{{,;,}}') is not needed after {{,%>,}} and {{,?>,}}.
 .	
 .	
-.JA	行が「{{,<%,}}」または「{{,<?,}}」で始まる場合、そこから行末まではそのまま出力されます。
-.JA	これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。
-.EN	Lines staring with '{{,<%,}}' or '{{,<?,}}' are printed as it is.
-.EN	It enables you to write presentation logics in Ruby, PHP, and Java.
-.	
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	プレゼンテーションロジック(eRuby)：
+.EN	Presentation Logic(eRuby):
 .	.-------------------- topics-rawcode.plogic
-.	#list {
+.	#foo {
+.	  value:  {{*<%= str.empty? ? "null" : str %>*}};
 .	  plogic: {
 .	    @stag;
-.	    <% ENV.each { |name, value| %>
+.	    {{*<% ENV.each do |name, value| %>*}}
 .	      @cont;
-.	    <% } %>
+.	    {{*<% end %>*}}
 .	    @etag;
 .	  }
 .	}
 .	.--------------------
 .	
 .	
-.JA	「{{,<%,}}」または「{{,<?,}}」から行末までをraw-codeといいます。
-.JA	raw-codeは文(statement)であり、式(expression)ではありません。
-.JA	そのため、「{{,plogic:,}}」部に書くことはできますが「{{,value:,}}」部や「{{,attrs:,}}」部に書くことはできません。
-.EN	Lines starting with '{{,<%,}}' or '{{,<?,}}' are called raw-code.
-.EN	Raw-code is statement and not expression, therefore you can write raw-code in {{,plogic:,}} part
-.EN	but not in {{,value:,}} part and {{,attrs:,}} part.
+.JA	プレゼンテーションロジック(PHP)：
+.EN	Presentation Logic(PHP):
+.	.-------------------- topics-rawcode2.plogic
+.	#foo {
+.	  value:  {{*<?= $str === NULL ? "null" : str ?>*}};
+.	  plogic: {
+.	    @stag;
+.	    {{*<?php foreach ($_ENV as $name => $value) { ?>*}}
+.	      @cont;
+.	    {{*<?php } ?>*}}
+.	    @etag;
+.	  }
+.	}
+.	.--------------------
+.	
+.	
+.JA	Kwartzは、「{{,<%= ... %>,}}」や「{{,<% ... %>,}}」で囲まれた部分をそのまま出力するだけです。
+.JA	中身を一切解析しませんので、文法に間違いがあっても検出されませんし、
+.JA	テンプレートローカル変数/グローバル変数の解析もできません。
+.EN	Kwartz just print code in {{,<%= ... %>,}} and {{,<% ... %>,}} and doesn't parse or analyze it.
+.EN	Therefore Kwartz doesn't report syntax error in the target code
+.EN	 nor report analyzing template local/global variables.
+.	
+.	
+.JA	なお「{{,X(<%= {{/expression/}} %>),}}」とすれば、{{/expression/}}をサニタイズせずに出力できます。
+.EN	Write {{,X(<%= {{/expression/}} %>),}} if you don't want to sanitize {{/expression/}}.
 .	
 .	
 .	
@@ -1323,9 +1348,9 @@
 .	#recipes {
 .	  plogic: {
 .	    foreach (recipe in recipes) {
-.	      @stag;
-.	      @cont;
-.	      @etag;
+.	      @stag;   // start tag
+.	      @cont;   // content
+.	      @etag;   // end tag
 .	    }
 .	  }
 .	}
@@ -1373,6 +1398,11 @@
 .	.--------------------
 .	.<<<:! kwartz-ruby -Rails -p guide.d/list.plogic guide.d/list.html
 .	.--------------------
+.	
+.	
+.JA	なお「{{,X(<%= {{/expression/}} %>),}}」とすれば、{{/expression/}}をサニタイズせずに出力できます。
+.EN	Write {{,X(<%= {{/expression/}} %>),}} if you don't want to sanitize {{/expression/}}.
+.	
 .	
 .	
 .	

@@ -8,7 +8,7 @@
 
       <h1>Edit Recipe</h1>
 
-      <form action="<% url_for(:action=>'update') %>" method="post">
+      <form action="<%= url_for(:action=>'update') %>" method="post">
         <input id="recipe_id" name="recipe[id]" type="hidden" value="<%=h(@recipe.id)%>" />
 
         <table>
@@ -29,8 +29,7 @@
             <td>
               <select name="recipe[category_id]">
 <% for category in @categories do %>
-                <option
-                        value="<%=h(category.id)%>"<%= category.id == @recipe.category.id ? " selected=\"selected\"" : "" %>><%=h(category.name)%></option>
+                <option value="<%=h(category.id)%>"<%= category.id == @recipe.category.id ? " selected=\"selected\"" : "" %>><%=h(category.name)%></option>
 <% end %>
               </select>
             </td>
@@ -38,7 +37,7 @@
           <tr>
             <th>Instructions:</th>
             <td>
-              <textarea id="recipe_instructions" name="recipe[instructions]" cols="40" rows="20" wrap="virtual"><%=h(@recipe.instructions)%></textarea>
+              <textarea id="recipe_instructions" name="recipe[instructions]" wrap="virtual" cols="40" rows="20"><%=h(@recipe.instructions)%></textarea>
             </td>
           </tr>
         </table>

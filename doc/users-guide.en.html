@@ -23,7 +23,7 @@
 <h2 class="section1">Preface</h2>
 <p>This is the users' guide to Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>,
 a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data'(SoPL/PD) or 
-'Indepencence of Presenation Logic'(IoPL).
+'Independence of Presenation Logic'(IoPL).
 </p>
 <div class="footnote">
  <dl compact>
@@ -1302,25 +1302,48 @@ when the expression <code><i>expr</i></code> is true.
 
 <a name="rawcode"></a>
 <h3 class="section2">Describe Presentation Logic in Target Language</h3>
-<p>Lines staring with '<code>&lt;%</code>' or '<code>&lt;?</code>' are printed as it is.
-It enables you to write presentation logics in Ruby, PHP, and Java.
+<p>Kwartz allows you to write presentation logics in target language (such as Ruby, PHP, Java, etc).
 </p>
-<p>Presentation Logic:
+<ul type="disc">
+<li><code>&lt;%= <i>expression</i> %&gt;</code> or <code>&lt;?= <i>expression</i> ?&gt;</code> means expression in target language.
+</li>
+<li><code>&lt;% <i>statement</i> %&gt;</code> or <code>&lt;? <i>statement</i> ?&gt;</code> means statement in target language.
+   Semicolon(`<code>;</code>') is not needed after <code>%&gt;</code> and <code>?&gt;</code>.
+</li>
+</ul>
+<p>Presentation Logic(eRuby):
 </p>
 <a name="topics-rawcode.plogic"></a>
-<pre class="program">#list {
+<pre class="program">#foo {
+  value:  <b>&lt;%= str.empty? ? "null" : str %&gt;</b>;
   plogic: {
     @stag;
-    &lt;% ENV.each { |name, value| %&gt;
+    <b>&lt;% ENV.each do |name, value| %&gt;</b>
       @cont;
-    &lt;% } %&gt;
+    <b>&lt;% end %&gt;</b>
     @etag;
   }
 }
 </pre>
-<p>Lines starting with '<code>&lt;%</code>' or '<code>&lt;?</code>' are called raw-code.
-Raw-code is statement and not expression, therefore you can write raw-code in <code>plogic:</code> part
-but not in <code>value:</code> part and <code>attrs:</code> part.
+<p>Presentation Logic(PHP):
+</p>
+<a name="topics-rawcode2.plogic"></a>
+<pre class="program">#foo {
+  value:  <b>&lt;?= $str === NULL ? "null" : str ?&gt;</b>;
+  plogic: {
+    @stag;
+    <b>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</b>
+      @cont;
+    <b>&lt;?php } ?&gt;</b>
+    @etag;
+  }
+}
+</pre>
+<p>Kwartz just print code in <code>&lt;%= ... %&gt;</code> and <code>&lt;% ... %&gt;</code> and doesn't parse or analyze it.
+Therefore Kwartz doesn't report syntax error in the target code
+ nor report analyzing template local/global variables.
+</p>
+<p>Write <code>X(&lt;%= <i>expression</i> %&gt;)</code> if you don't want to sanitize <i>expression</i>.
 </p>
 <br>
 
@@ -1369,9 +1392,9 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 <pre class="program">#recipes {
   plogic: {
     foreach (recipe in recipes) {
-      @stag;
-      @cont;
-      @etag;
+      @stag;   // start tag
+      @cont;   // content
+      @etag;   // end tag
     }
   }
 }
@@ -1434,6 +1457,8 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
+<p>Write <code>X(&lt;%= <i>expression</i> %&gt;)</code> if you don't want to sanitize <i>expression</i>.
+</p>
 <br>
 
 

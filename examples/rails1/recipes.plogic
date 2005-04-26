@@ -1,5 +1,10 @@
 #stylesheet_link {
   plogic: {
-    print(<%= stylesheet_link_tag 'scaffold' %>, "\n");
+    print(X(<%= stylesheet_link_tag 'scaffold' %>), "\n");
   }
 }
+
+#list_recipes {
+  attrs:  "href" X(<%= url_for(:action=>'list') %>);
+}
+

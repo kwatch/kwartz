@@ -1,0 +1,36 @@
+#edit_form {
+  attrs:  "action" X(<%= url_for(:action=>'update') %>);
+}
+
+#recipe_id {
+  attrs:  "value" recipe.id;
+}
+
+#recipe_title {
+  attrs:  "value" recipe.title;
+}
+
+#recipe_description {
+  attrs:  "value" recipe.description;
+}
+
+#category_name {
+  value:  category.name;
+  attrs:  "value"  category.id;
+  append: S(category.id==recipe.category.id);
+  plogic: {
+    foreach (category in categories) {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+
+#recipe_instructions {
+  value:  recipe.instructions;
+}
+
+#show_recipe {
+  attrs:  "href" X(<%= url_for(:action=>'show', :id=>@recipe.id) %>);
+}

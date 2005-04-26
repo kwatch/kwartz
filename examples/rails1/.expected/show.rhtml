@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <th>Instructions:</th>
-          <td><%=h(@recipe.instructions)%></td>
+          <td><%= html_escape(@recipe.instructions).gsub(/\r?\n/,'<br />\&') %></td>
         </tr>
       </table>
 

@@ -1300,25 +1300,49 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 
 <a name="rawcode"></a>
 <h3 class="section2">プレゼンテーションロジックをターゲット言語で記述する</h3>
-<p>行が「<code>&lt;%</code>」または「<code>&lt;?</code>」で始まる場合、そこから行末まではそのまま出力されます。
-これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。
+<p>Kwartzでは、ターゲット言語（RubyやPHPやJavaなど）でプレゼンテーションロジックを記述することができます。
 </p>
-<p>プレゼンテーションロジック：
+<ul type="disc">
+<li>「<code>&lt;%= <i>expression</i> %&gt;</code> 」または「<code>&lt;?= <i>expression</i> ?&gt;</code> 」は、
+   ターゲット言語で式を記述します。
+</li>
+<li>「<code>&lt;% <i>statement</i> %&gt;</code>」または「<code>&lt;? <i>statement</i> ?&gt;</code>」は、
+   ターゲット言語で文を記述します。「<code>%&gt;</code>」や「<code>?&gt;</code>」のあとに「;」はつけません。
+</li>
+</ul>
+<p>プレゼンテーションロジック(eRuby)：
 </p>
 <a name="topics-rawcode.plogic"></a>
-<pre class="program">#list {
+<pre class="program">#foo {
+  value:  <b>&lt;%= str.empty? ? "null" : str %&gt;</b>;
   plogic: {
     @stag;
-    &lt;% ENV.each { |name, value| %&gt;
+    <b>&lt;% ENV.each do |name, value| %&gt;</b>
       @cont;
-    &lt;% } %&gt;
+    <b>&lt;% end %&gt;</b>
     @etag;
   }
 }
 </pre>
-<p>「<code>&lt;%</code>」または「<code>&lt;?</code>」から行末までをraw-codeといいます。
-raw-codeは文(statement)であり、式(expression)ではありません。
-そのため、「<code>plogic:</code>」部に書くことはできますが「<code>value:</code>」部や「<code>attrs:</code>」部に書くことはできません。
+<p>プレゼンテーションロジック(PHP)：
+</p>
+<a name="topics-rawcode2.plogic"></a>
+<pre class="program">#foo {
+  value:  <b>&lt;?= $str === NULL ? "null" : str ?&gt;</b>;
+  plogic: {
+    @stag;
+    <b>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</b>
+      @cont;
+    <b>&lt;?php } ?&gt;</b>
+    @etag;
+  }
+}
+</pre>
+<p>Kwartzは、「<code>&lt;%= ... %&gt;</code>」や「<code>&lt;% ... %&gt;</code>」で囲まれた部分をそのまま出力するだけです。
+中身を一切解析しませんので、文法に間違いがあっても検出されませんし、
+テンプレートローカル変数/グローバル変数の解析もできません。
+</p>
+<p>なお「<code>X(&lt;%= <i>expression</i> %&gt;)</code>」とすれば、<i>expression</i>をサニタイズせずに出力できます。
 </p>
 <br>
 
@@ -1367,9 +1391,9 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
 <pre class="program">#recipes {
   plogic: {
     foreach (recipe in recipes) {
-      @stag;
-      @cont;
-      @etag;
+      @stag;   // start tag
+      @cont;   // content
+      @etag;   // end tag
     }
   }
 }
@@ -1432,6 +1456,8 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
+<p>なお「<code>X(&lt;%= <i>expression</i> %&gt;)</code>」とすれば、<i>expression</i>をサニタイズせずに出力できます。
+</p>
 <br>
 
 

@@ -4,30 +4,29 @@
 
       <h1>Edit Recipe</h1>
 
-      <form action="<%= url_for(:action=>'update') %>" method="post">
-        <input id="recipe_id" name="recipe[id]" type="hidden" value="@{recipe.id}@" />
+      <form id="mark:edit_form" action="..." method="post">
+        <input id="recipe_id" name="recipe[id]" type="hidden" value="1" />
 
         <table>
           <tr>
             <th>Title:</th>
             <td>
               <input id="recipe_title" name="recipe[title]"
-                     size="30" type="text" value="@{recipe.title}@" />
+                     size="30" type="text" value="Hot Chips" />
             </td>
           </tr>
           <tr>
             <th>Description:</th>
             <td>
               <input id="recipe_description" name="recipe[description]"
-                     size="30" type="text" value="@{recipe.description}@" />
+                     size="30" type="text" value="Only for the brave!" />
             </td>
           </tr>
           <tr>
             <th>Category:</th>
             <td>
-              <select name="recipe[category_id]" id="loop:category=categories">
-                <option id="append:S(category.id==recipe.category.id)"
-                        value="@{category.id}@">@{category.name}@</option>
+              <select name="recipe[category_id]">
+                <option value="1" id="mark:category_name">Snacks</option>
                 <option value="2" id="dummy:o1">Drinks</option>
               </select>
             </td>
@@ -35,8 +34,8 @@
           <tr>
             <th>Instructions:</th>
             <td>
-              <textarea id="recipe_instructions" name="recipe[instructions]"
-                cols="40" rows="20" wrap="virtual">@{recipe.instructions}@</textarea>
+              <textarea id="recipe_instructions" name="recipe[instructions]" wrap="virtual"
+                cols="40" rows="20">Sprinkle hot-pepper sauce on corn chips.</textarea>
             </td>
           </tr>
         </table>
@@ -46,9 +45,9 @@
       </form>
 
       <p>
-        <a href="<%= url_for(:action=>'show', :id=>@recipe.id) %>">Show</a>
+        <a href="..." id="mark:show_recipe">Show</a>
         |
-        <a href="<%= url_for(:action=>'list') %>">Back</a>
+        <a href="..." id="mark:list_recipes">Back</a>
       </p>
 
     </div>

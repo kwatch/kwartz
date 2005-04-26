@@ -36,7 +36,7 @@ module Kwartz
       def translate_function(function_name, arguments)
          func = @@erb_func_names[function_name]
          unless func
-            super(function_name, arguments, code)
+            super(function_name, arguments)
             return
          end
          append_code(func)

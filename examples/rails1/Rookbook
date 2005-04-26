@@ -1,0 +1,14 @@
+
+all = %w(list.rhtml show.rhtml new.rhtml edit.rhtml)
+
+recipe  :all			, all
+
+recipe  :clean								do |r|
+	rm_rf all
+	end
+
+grecipe  '*.rhtml'		, '{1}.html', '{1}.plogic',  \
+			 	  'recipes.html', 'recipes.plogic'	do |r|
+	cmd "kwartz -Rails -p recipes.plogic,{1}.plogic -e -i {1}.html recipes.html > {1}.rhtml"
+	end
+

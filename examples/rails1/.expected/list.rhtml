@@ -16,15 +16,18 @@
             <th width="20%">Date</th>
           </tr>
         </thead>
-<% for recipe in @recipes do %>
         <tbody>
-          <tr>
+<% i = 0 %>
+<% for recipe in @recipes do %>
+<%   i += 1 %>
+<%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %>
+          <tr bgcolor="<%= color %>">
             <td><a href="<%= url_for(:action=>'show', :id=>recipe.id) %>"><%=h(recipe.title)%></a></td>
             <td><%=h(recipe.category.name)%></td>
-            <td><%=h(recipe.data)%></td>
+            <td><%=h(recipe.date)%></td>
           </tr>
-        </tbody>
 <% end %>
+        </tbody>
       </table>
 
       <p>
