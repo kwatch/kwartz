@@ -147,7 +147,9 @@ module Kwartz
                when :true, :false, :null, :nil, :empty
                   s << ':' << token.id2name
                when :rawcode
-                  s << @value
+                  s << "<%#{@value}%>"
+               when :rawexpr
+                  s << "<%=#{@value}%>"
                when :rubycode
                   s << ':rubycode' << @value
                else
@@ -376,8 +378,29 @@ module Kwartz
                getchar()
                @token = '<='
             elsif ch2 == ?% || ch2 == ??
-               @value = '<' + ch2.chr + getrest()
-               @token = :rawcode
+               #@value = '<' + ch2.chr + getrest()
+               #@token = :rawcode
+               s = ''
+               ch = getchar()
+               @token = ch == ?= ? :rawexpr : :rawcode
+               ch = getchar() if ch == ?=
+               while true
+                  unless ch
+                     msg = "`<#{ch2.chr}#{@token == :rawexpr ? '=' : ''}' is not closed."
+                     raise ScanError.new(msg, linenum(), @filename)
+                  end
+                  if ch != ch2
+                     s << ch.chr
+                  elsif (ch = getchar()) == ?>
+                     getchar()
+                     break
+                  else
+                     s << ch2.chr
+                     s << ch.chr
+                  end
+                  ch = getchar()
+               end
+               @value = s
             else
                @token = '<'
             end

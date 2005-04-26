@@ -63,6 +63,10 @@ module Kwartz
         :eprint     => '$!esc.html(',
         :endeprint  => ')',
 
+        ## rawcode-statement
+        :rawcode    => '',
+        :endrawcode => '',
+
         ## literal
         :true        => 'true',
         :false       => 'false',

@@ -100,7 +100,7 @@ class ScannerTest < Test::Unit::TestCase
 	_test(input, expected)
     end
 
-    def test_scan_keywords
+    def test_scan_keywords	# keywords
        input = <<-'END'
 		expand
 		element
@@ -174,19 +174,66 @@ class ScannerTest < Test::Unit::TestCase
     end
 
     
-    def test_scan_rawcode1
+    def test_scan_rawcode1	# rawcode statement
        input = <<-'END'
 		:::  pulic int i = 0;
-		<%= foo %>
+		<% foo %>
 		<?php echo $foo; ?>
        END
+#       expected = <<-'END'
+#		  pulic int i = 0;
+#		<%= foo %>
+#		<?php echo $foo; ?>
+#       END
        expected = <<-'END'
-		  pulic int i = 0;
-		<%= foo %>
-		<?php echo $foo; ?>
+		<%  pulic int i = 0;%>
+		<% foo %>
+		<%php echo $foo; %>
        END
        _test(input, expected)
     end
+
+
+    def test_scan_rawcode2	# rawcode expression
+       input = <<-'END'
+		<%= foo %>
+		<?= $foo ?>
+       END
+       expected = <<-'END'
+		<%= foo %>
+		<%= $foo %>
+       END
+       _test(input, expected)
+    end
+
+
+    def test_scan_rawcode3	# unclosed rawcode
+       input = "<% foo ?>"
+       expected = ""
+       assert_raise(Kwartz::ScanError) do
+          _test(input, expected)
+       end
+       input = "<%= foo ?>"
+       expected = ""
+       assert_raise(Kwartz::ScanError) do
+          _test(input, expected)
+       end
+    end
+    
+    
+    def test_scan_rawcode4	# unterminated rawcode
+       input = "<? foo "
+       expected = ""
+       assert_raise(Kwartz::ScanError) do
+          _test(input, expected)
+       end
+       input = "<?= foo "
+       expected = ""
+       assert_raise(Kwartz::ScanError) do
+          _test(input, expected)
+       end
+    end
+    
 
     
     def test_scan_operators1

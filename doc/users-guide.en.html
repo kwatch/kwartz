@@ -1368,9 +1368,7 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 <a name="list.plogic"></a>
 <pre class="program">#recipes {
   plogic: {
-    recipe_url = null;    // dummy statement to identify a variable as template local
     foreach (recipe in recipes) {
-      &lt;%= recipe_url = url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;
       @stag;
       @cont;
       @etag;
@@ -1380,13 +1378,13 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 
 #recipe_title {
   value: recipe.title;
-  attrs: "href" recipe_url;
+  attrs: "href" &lt;%= url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;;
 }
 
 // Or
 //  #recipe_title {
 //    plogic: {
-//      &lt;%= link_to recipe.title, :action =&gt; "show", :id =&gt; recipe.id %&gt;
+//      print(&lt;%= link_to recipe.title, :action =&gt; "show", :id =&gt; recipe.id %&gt;);
 //    }
 //  }
 
@@ -1395,20 +1393,13 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 }
 
 #recipe_new {
-  plogic: {
-    &lt;%= link_to "Create new recipe", :action =&gt; "new" %&gt;
-  }
+  attrs: "href" &lt;%= url_for(:action =&gt; "new") %&gt;;
 }
 
 // Or
 //  #recipe_new {
-//    attrs: "href" action_new_url;
 //    plogic: {
-//      action_new_url = null;
-//      &lt;% action_new_url = url_for(:action =&gt; "new") %&gt;
-//      @stag;
-//      @cont;
-//      @etag;
+//      print(&lt;%= link_to "Create new recipe", :action =&gt; "new" %&gt;);
 //    }
 //  }
 </pre>
@@ -1428,18 +1419,16 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
     &lt;th width="80%"&gt;Recipe&lt;/th&gt;
     &lt;th width="20%"&gt;Date&lt;/th&gt;
    &lt;/tr&gt;
-&lt;% recipe_url = nil %&gt;
 &lt;% for recipe in @recipes do %&gt;
-&lt;%= recipe_url = url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;
    &lt;tr&gt;
-    &lt;td&gt;&lt;a href="&lt;%= recipe_url %&gt;"&gt;&lt;%= recipe.title %&gt;&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;a href="&lt;%= url_for(:action =&gt; "show", :id =&gt; recipe.id) %&gt;"&gt;&lt;%= recipe.title %&gt;&lt;/a&gt;&lt;/td&gt;
     &lt;td&gt;&lt;%= recipe.date %&gt;&lt;/td&gt;
    &lt;/tr&gt;
 &lt;% end %&gt;
   &lt;/table&gt;
 
   &lt;p&gt;
-&lt;%= link_to "Create new recipe", :action =&gt; "new" %&gt;
+   &lt;a href="&lt;%= url_for(:action =&gt; "new") %&gt;"&gt;Create new recipe&lt;/a&gt;
   &lt;/p&gt;
 
  &lt;/body&gt;

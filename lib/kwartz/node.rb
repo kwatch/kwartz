@@ -24,6 +24,7 @@
 ##	     String
 ##	     Boolean
 ##	     Null
+##	     Rawcode
 ##	Statement
 ##	   Print
 ##	   Expr
@@ -394,6 +395,25 @@ module Kwartz
    end
 
 
+   ## token::  :rawexpr
+   class RawcodeExpression < LiteralExpression
+      def initialize(rawcode_str)
+         @rawcode = rawcode_str
+      end
+      attr_accessor :rawcode
+
+      def _inspect(depth=0, s='')
+         indent(depth, s)
+         s << "<%=#{@rawcode}%>\n"
+         return s
+      end
+
+      def accept(visitor, depth=0)
+         return visitor.visit_rawcode_expression(self, depth)
+      end
+   end
+
+
    ## ----------------------------------------
 
    ## abstract class for statement
@@ -608,10 +628,14 @@ module Kwartz
          indent(depth, s)
          if @rawcode =~ /\A<[%?]/
             s << @rawcode
-         else
+         elsif @rawcode[-1] == ?\n
             s << ':::' << @rawcode
+         elsif @rawcode =~ /\Aphp\s/
+            s << "<?#{@rawcode}?>\n"
+         else
+            s << "<%#{@rawcode}%>\n"
          end
-         s << "\n" if @rawcode[-1] != ?\n
+         s << "\n" if s[-1] != ?\n
          return s
       end
 

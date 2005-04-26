@@ -54,6 +54,10 @@ module Kwartz
         :eprint     => '<?php echo htmlspecialchars(',
         :endeprint  => '); ?>',
 
+        ## rawcode-statement
+        :rawcode    => '<?',
+        :endrawcode => '?>',
+
         ## literal
         :true        => 'TRUE',
         :false       => 'FALSE',
@@ -210,6 +214,16 @@ module Kwartz
          @code << postfix()
          return @code
       end
+      
+      
+      ##
+      def visit_rawcode_statement(stmt, depth)
+         @code << keyword(:rawcode)
+         @code << 'php ' unless stmt.rawcode =~ /\Aphp\s*/
+         @code << stmt.rawcode << keyword(:endrawcode) << @nl
+         return @code
+      end
+
 
    end
 end

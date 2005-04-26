@@ -4,7 +4,7 @@
 
       <h1>Edit Recipe</h1>
 
-      <form action="<% url_for(:action=>'update') %>" method="post">
+      <form action="<%= url_for(:action=>'update') %>" method="post">
         <input id="recipe_id" name="recipe[id]" type="hidden" value="@{recipe.id}@" />
 
         <table>

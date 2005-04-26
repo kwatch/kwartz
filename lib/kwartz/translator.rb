@@ -344,6 +344,12 @@ module Kwartz
          @code << keyword(:null)
       end
 
+      ##
+      def visit_rawcode_expression(expr, depth=0)
+         @code << expr.rawcode.strip
+      end
+
+
       ## --------------------
 
       ##
@@ -483,7 +489,7 @@ module Kwartz
 
       ##
       def visit_rawcode_statement(stmt, depth)
-         @code << stmt.rawcode << @nl
+         @code << keyword(:rawcode) << stmt.rawcode << keyword(:endrawcode) << @nl
          return @code
       end
 
@@ -507,9 +513,9 @@ module Kwartz
       end
 
 
-      alias   :visit				:translate
-      alias   :visit_expression			:translate_expression
-      alias   :visit_statement			:translate_statement
+      alias   :visit		 :translate
+      alias   :visit_expression	 :translate_expression
+      alias   :visit_statement	 :translate_statement
 
    end  # class Translator
 

@@ -109,6 +109,9 @@ module Kwartz
          return visit_literal_expression(expr, depth)
       end
 
+      def visit_rawcode_expression(expr, depth=0)
+         return visit_literal_expression(expr, depth)
+      end
 
       ## ----------------------------------------
 

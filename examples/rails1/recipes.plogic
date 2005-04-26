@@ -1,5 +1,5 @@
 #stylesheet_link {
   plogic: {
-    <%= stylesheet_link_tag 'scaffold' %>
+    print(<%= stylesheet_link_tag 'scaffold' %>, "\n");
   }
 }

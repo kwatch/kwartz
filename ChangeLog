@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-26 rev.68
+	.- [change] RawcodeExpression suport
+
 .: 2005-04-26 rev.67
 	.- [change] 'attr:' part is renamed to 'attrs:' part
 

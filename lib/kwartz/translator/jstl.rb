@@ -50,6 +50,10 @@ module Kwartz
         :eprint     => '<c:out value="${',
         :endeprint  => '}"/>',
 
+        ## rawcode-statement
+        :rawcode    => '<%',
+        :endrawcode => '%>',
+
         ## literal
         :true        => 'true',
         :false       => 'false',

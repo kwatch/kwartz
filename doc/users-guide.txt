@@ -15,7 +15,7 @@
 .JA	Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentation Data, SoPL/PD)』または『プレゼンテーションロジックの独立(Independence of Presentation Logic)』という概念を実現したテンプレートシステムです。
 .EN	This is the users' guide to Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
 .EN	a template system which realized the concept of 'Separation of Presentation Logic and Presentation Data'(SoPL/PD) or 
-.EN	'Indepencence of Presenation Logic'(IoPL).
+.EN	'Independence of Presenation Logic'(IoPL).
 .	
 .	
 .	
@@ -1237,6 +1237,8 @@
 .EN	.$$ Describe Presentation Logic in Target Language	| rawcode
 .	
 .	
+.	
+.	
 .JA	行が「{{,<%,}}」または「{{,<?,}}」で始まる場合、そこから行末まではそのまま出力されます。
 .JA	これにより、プレゼンテーションロジックをRubyやPHPやJavaで直接記述することができます。
 .EN	Lines staring with '{{,<%,}}' or '{{,<?,}}' are printed as it is.
@@ -1320,10 +1322,7 @@
 .	.-------------------- list.plogic
 .	#recipes {
 .	  plogic: {
-.JA	    recipe_url = null;    // ローカル変数と認識させるためのダミー文
-.EN	    recipe_url = null;    // dummy statement to identify a variable as template local
 .	    foreach (recipe in recipes) {
-.	      <%= recipe_url = url_for(:action => "show", :id => recipe.id) %>
 .	      @stag;
 .	      @cont;
 .	      @etag;
@@ -1333,14 +1332,14 @@
 .	
 .	#recipe_title {
 .	  value: recipe.title;
-.	  attrs: "href" recipe_url;
+.	  attrs: "href" <%= url_for(:action => "show", :id => recipe.id) %>;
 .	}
 .	
 .JA	// または次のようにしてもよい。
 .EN	// Or
 .	//  #recipe_title {
 .	//    plogic: {
-.	//      <%= link_to recipe.title, :action => "show", :id => recipe.id %>
+.	//      print(<%= link_to recipe.title, :action => "show", :id => recipe.id %>);
 .	//    }
 .	//  }
 .	
@@ -1349,21 +1348,14 @@
 .	}
 .	
 .	#recipe_new {
-.	  plogic: {
-.	    <%= link_to "Create new recipe", :action => "new" %>
-.	  }
+.	  attrs: "href" <%= url_for(:action => "new") %>;
 .	}
 .	
 .JA	// または次のようにしてもよい。
 .EN	// Or
 .	//  #recipe_new {
-.	//    attrs: "href" action_new_url;
 .	//    plogic: {
-.	//      action_new_url = null;
-.	//      <% action_new_url = url_for(:action => "new") %>
-.	//      @stag;
-.	//      @cont;
-.	//      @etag;
+.	//      print(<%= link_to "Create new recipe", :action => "new" %>);
 .	//    }
 .	//  }
 .	.--------------------

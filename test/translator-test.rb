@@ -1544,14 +1544,41 @@ END
      print(key, " is ", value, "\n");
   <% end %>
 END
-   def test_expand_stmt1_eruby
+
+   def test_rawcode_stmt1_eruby
       expected = <<'END'
- int i = 0;
-<?php foreach($hash as $key => $value) { ?>
+<% int i = 0;%>
+<%php foreach($hash as $key => $value) { %>
 <%= key %> = <%= value %>
-<?php } ?>
+<%php } %>
 <% hash.each do |key, value| %>
 <%= key %> is <%= value %>
+<% end %>
+END
+      _test_stmt(@@rawcode_stmt1, expected)
+   end
+   
+   def test_rawcode_stmt1_php
+      expected = <<'END'
+<?php  int i = 0;?>
+<?php foreach($hash as $key => $value) { ?>
+<?php echo $key; ?> = <?php echo $value; ?>
+<?php } ?>
+<?php  hash.each do |key, value| ?>
+<?php echo $key; ?> is <?php echo $value; ?>
+<?php  end ?>
+END
+      _test_stmt(@@rawcode_stmt1, expected)
+   end
+
+   def test_rawcode_stmt1_jstl11
+      expected = <<'END'
+<% int i = 0;%>
+<%php foreach($hash as $key => $value) { %>
+<c:out value="${key}" escapeXml="false"/> = <c:out value="${value}" escapeXml="false"/>
+<%php } %>
+<% hash.each do |key, value| %>
+<c:out value="${key}" escapeXml="false"/> is <c:out value="${value}" escapeXml="false"/>
 <% end %>
 END
       _test_stmt(@@rawcode_stmt1, expected)

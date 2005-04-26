@@ -194,6 +194,16 @@ END
       _test(input, expected, StringExpression)
    end
 
+   def test_parse_literal_expr6
+      input = "<%= empty? %>"
+      expected = "<%= empty? %>\n"
+      _test(input, expected, RawcodeExpression)
+      input = "<?= $foo ?>"
+      expected = "<%= $foo %>\n"
+      _test(input, expected, RawcodeExpression)
+   end
+
+
    ##
    def test_parse_factor_expr1
       input = "x"
@@ -603,6 +613,30 @@ END
 
 
    ##
+   def test_parse_expr_stmt3   # assignment with rawcode expression
+      input = "url = <%= url_for :action => 'show', :id => @recipe.id %>;"
+      expected = <<'END'
+:expr
+  =
+    url
+    <%= url_for :action => 'show', :id => @recipe.id %>
+END
+      _test(input, expected, ExprStatement)
+   end
+
+
+   ##
+   def test_parse_expr_stmt4   # rawcode expression
+      input = "<%= link_to :action => 'show', :id => @recipe.id %>;"
+      expected = <<'END'
+:expr
+  <%= link_to :action => 'show', :id => @recipe.id %>
+END
+      _test(input, expected, ExprStatement)
+   end
+
+
+   ##
    def test_parse_block_stmt1
       input = <<-'END'
         { print(foo); print(bar); }
@@ -883,7 +917,7 @@ END
    ##
    def test_parse_rawcode_stmt2  # :::
       input    = "  :::  int i=0;\n"
-      expected =   ":::  int i=0;\n"
+      expected =   "<%  int i=0;%>\n"
       _test(input, expected, RawcodeStatement)
    end
 

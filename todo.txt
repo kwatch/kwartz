@@ -50,13 +50,16 @@
 .- [v] rename 'kd' attribute to 'kw:d'
 .- [_] man page
 .- [_] re-design website
-.- [_] correct my English (>_<)
 .- [v] function 'escape_xml'
 .- [v] function 'escape_sql'
 .- [v] function 'escape_url'
 .- [v] function 'str_linebreak'
 .- [_] new directive 'dvalue'
-.- [_] rawcode-statement and rawcode-expression
+.- [v] rawcode-statement and rawcode-expression
 .- [_] kwartz command for Rook
 .- [_] kwartz-ruby identify filename '>outfile' as output filename
-.- [_] plugin of user-defined functions
+.- [_] plugin system for user-defined functions
+.- [_] global variable indicator
+.- [_] change '@stag', '@cont', '@etag', '@element' to 'stag()', 'cont()', 'etag()', 'element()'
+.- [_] phuny parser for ruby
+.- [_] correct my English (>_<)

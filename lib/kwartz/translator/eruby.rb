@@ -53,6 +53,10 @@ module Kwartz
         :endprint   => ' %>',
         :eprint     => '<%= CGI::escapeHTML((',
         :endeprint  => ').to_s) %>',
+        
+        ## rawcode-statement
+        :rawcode    => '<%',
+        :endrawcode => '%>',
 
         ## literal
         :true        => 'true',

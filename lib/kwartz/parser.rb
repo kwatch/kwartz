@@ -142,7 +142,7 @@ module Kwartz
 
       ##
       ## BNF:
-      ##  literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty'
+      ##  literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty' | rawcode-expr
       ##
       def parse_literal_expr
          tkn = token()
@@ -152,9 +152,9 @@ module Kwartz
             scan()
             return NumericExpression.new(val)
          when :string
-            str = value()
+            val = value()
             scan()
-            return StringExpression.new(str)
+            return StringExpression.new(val)
          when :true, :false
             val = value()
             scan()
@@ -165,6 +165,10 @@ module Kwartz
             return NullExpression.new()
          when :empty
             syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
+         when :rawexpr
+            val = value()
+            scan()
+            return RawcodeExpression.new(val)
          end
          Kwartz::assert("tkn = #{token}")
       end
@@ -216,7 +220,7 @@ module Kwartz
                end
             end
             return expr
-         when :numeric, :string, :true, :false, :null, :empty
+         when :numeric, :string, :true, :false, :null, :empty, :rawexpr
             expr = parse_literal_expr()
             return expr
          else
@@ -592,6 +596,8 @@ module Kwartz
          when nil
             return
          when :name
+            return parse_expr_stmt()
+         when :rawexpr
             return parse_expr_stmt()
          else
             #return parse_expr_stmt()
@@ -1012,13 +1018,16 @@ if __FILE__ == $0
    input = ARGF.read()
    parser = Kwartz::Parser.new(input)
    #--
-   decl = parser.parse_document_decl()
-   print decl._inspect
+   #decl = parser.parse_element_decl()
+   #print decl._inspect
    #--
-   #decl_list = parser.parse_plogic()
-   #decl_list.each do |elem_decl|
-   #   print elem_decl._inspect()
-   #end
+   #decl = parser.parse_document_decl()
+   #print decl._inspect
+   #--
+   decl_list = parser.parse_plogic()
+   decl_list.each do |elem_decl|
+      print elem_decl._inspect()
+   end
    #--
    #expr = parser.parse_expression()
    #print expr._inspect()

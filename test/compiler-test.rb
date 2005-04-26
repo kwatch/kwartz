@@ -984,6 +984,42 @@ END
    end
 
 
+
+   ## -------------------- rawcode expression
+
+   @@pdata14 = <<'END'
+<a href="..." id="mark:item1">foo</a>
+<a href="..." id="mark:item2">foo</a>
+END
+   @@plogic14 = <<'END'
+#item1 {
+  plogic: {
+     print(<%= link_to :action => 'show', id = @recipe.id %>, "\n");
+  }
+}
+#item2 {
+   value: <%= @recipe.title %>;
+   attrs: "href" <%= url_for :action => 'show', id = @recipe.id %>;
+}
+END
+
+   def test_compile14_eruby	# rawcode expression
+      expected = <<'END'
+<%= link_to :action => 'show', id = @recipe.id %>
+<a href="<%= url_for :action => 'show', id = @recipe.id %>"><%= @recipe.title %></a>
+END
+      _test(@@pdata14, @@plogic14, expected)
+   end
+
+   def test_compile14_php	# rawcode expression
+      expected = <<'END'
+<?php echo link_to :action => 'show', id = @recipe.id; ?>
+<a href="<?php echo url_for :action => 'show', id = @recipe.id; ?>"><?php echo @recipe.title; ?></a>
+END
+      _test(@@pdata14, @@plogic14, expected)
+   end
+
+
 end
 
 
