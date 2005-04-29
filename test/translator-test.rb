@@ -200,6 +200,32 @@ class TranslatorTest < Test::Unit::TestCase
    end
 
 
+   def test_literal7_eruby	# rawcode expression
+      input    = "<%= { :a=>'10', :b=>'20',} %>"
+      expected = "{ :a=>'10', :b=>'20',}"
+      _test_expr(input, expected)
+   end
+   def test_literal7_php	# rawcode expression
+      input    = "<?= array('a'=>10,'b'=>20) ?>"
+      expected = "array('a'=>10,'b'=>20)"
+      _test_expr(input, expected)
+   end
+   def test_literal7_jstl11	# rawcode expression
+      input    = '<%= request.getAttribute("name") %>'
+      expected = 'request.getAttribute("name")'
+      _test_expr(input, expected)
+   end
+   def test_literal7_jstl10	# rawcode expression
+      input    = '<%= request.getAttribute("name") %>'
+      expected = 'request.getAttribute("name")'
+      _test_expr(input, expected)
+   end
+   def test_literal7_velocity	# rawcode expression
+      input = '<%= "mailto:${email}" %>'
+      expected = '"mailto:${email}"'
+      _test_expr(input, expected)
+   end
+
 
    ## ---------------------------- unary, binary
 
@@ -1093,6 +1119,33 @@ END
    def test_expr_stmt9_velocity	# obj.prop = value;
       expected = "#set($obj.prop = $value)\n"
       _test_stmt(@@epxr_stmt9, expected)
+   end
+
+
+   def test_expr_stmt10_eruby	# rawcode expression
+      input    = 'hash = <%=   { :a=>10,:b=>20,}%> + x;'
+      expected = "<% hash = { :a=>10,:b=>20,} + x %>\n"
+      _test_stmt(input, expected)
+   end
+   def test_expr_stmt10_php	# rawcode expression
+      input    = "hash = <?= array('a'=>10,'b'=>20)     ?> + x;"
+      expected = "<?php $hash = array('a'=>10,'b'=>20) + $x; ?>\n"
+      _test_stmt(input, expected)
+   end
+   def test_expr_stmt10_jstl11	# rawcode expression
+      input    = 'name = <%= new User(10,"foo") %>;'
+      expected = '<c:set var="name" value="${new User(10,"foo")}"/>' + "\n"
+      _test_stmt(input, expected)
+   end
+   def test_expr_stmt10_jstl10	# rawcode expression
+      input    = 'name = <%= new User(10,"foo") %>;'
+      expected = '<c:set var="name" value="${new User(10,"foo")}"/>' + "\n"
+      _test_stmt(input, expected)
+   end
+   def test_expr_stmt10_velocity # rawcode expression
+      input    = 'str = <%= "${a}${b}" %>;'
+      expected = '#set($str = "${a}${b}")' + "\n"
+      _test_stmt(input, expected)
    end
 
 

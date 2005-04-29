@@ -104,6 +104,7 @@ module Kwartz
         :boolean   => 100,
         :string    => 100,
         :null      => 100,
+        :rawexpr   => 100,
         :function  => 100,
         :property  => 100,
 

@@ -558,9 +558,10 @@ module Kwartz
       ##
       def parse_block_stmt()
          Kwartz::assert unless token() == '{'
+         start_linenum = @scanner.linenum()
          scan()
          stmt_list = parse_stmt_list()
-         syntax_error("block-statement requires '}'.") unless token() == '}'
+         syntax_error("block-statement(starts at line #{start_linenum}) requires '}'.") unless token() == '}'
          scan()
          return BlockStatement.new(stmt_list)
       end
@@ -1024,13 +1025,13 @@ if __FILE__ == $0
    #decl = parser.parse_document_decl()
    #print decl._inspect
    #--
-   decl_list = parser.parse_plogic()
-   decl_list.each do |elem_decl|
-      print elem_decl._inspect()
-   end
+   #decl_list = parser.parse_plogic()
+   #decl_list.each do |elem_decl|
+   #   print elem_decl._inspect()
+   #end
    #--
-   #expr = parser.parse_expression()
-   #print expr._inspect()
+   expr = parser.parse_expression()
+   print expr._inspect()
    #--
    #stmt_list = parser.parse_stmt_list()
    #stmt_list.each do |stmt|

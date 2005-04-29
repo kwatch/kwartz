@@ -903,7 +903,7 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <th class="th1">Velocity</th>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_new()</code>						.</td>
+  <td class="td1"><code>list_new()</code></td>
   <td class="td1"><code>[]</code></td>
   <td class="td1"><code>array()</code></td>
   <td class="td1">-</td>
@@ -1338,43 +1338,66 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 
 <a name="pl-rawcode"></a>
 <h3 class="section2">ターゲット言語のプログラムコード</h3>
-<p>ターゲット言語のプログラムコードを直接記述することもできます。
-Kwartzでは、「<code>&lt;?</code>」または「<code>&lt;%</code>」で始まる行があれば行末までをターゲット言語のコードと判断し、
-そのまま出力します。
+<p>ターゲット言語(Ruby,PHP,Javaなど)のプログラムコードを直接記述することもできます。
+Kwartzではターゲット言語で書かれたコードをRawcodeと呼んでいます。
 </p>
+<ul type="disc">
+<li>「<code>&lt;%=<i>expression</i>%&gt;</code>」または「<code>&lt;?=<i>expression</i>?&gt;</code>」は、ターゲット言語で書かれた式です。
+   これはRawcode式(Rawcode Expression)といい、文法的には文字列や数字と同じようにリテラルとして扱われます。
+</li>
+<li>「<code>&lt;%<i>statement</i>%&gt;</code>」または「<code>&lt;?<i>statement</i>?&gt;</code>」は、ターゲット言語で書かれた文です。
+   これはRawcode文(Rawcode Statement)といい、ひとつの文として扱われます。
+   ただし行末の「<code>;</code>」は必要ありません。
+</li>
+</ul>
+<p>次の例は、Rubyコードを直接記述した例です。
+</p>
+<p>PLプログラム：
+</p>
+<a name="pl-rawcode1.plogic"></a>
+<pre class="program">// Rawcode式
+hash = <b>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</b>;
+
+// Rawcode文
+<b>&lt;% hash.each do |key, value| %&gt;</b>
+print("key=", key, " value=", value, "\n");
+<b>&lt;% end %&gt;</b>
+</pre>
+<p>出力用スクリプト：
+</p>
+<pre class="output">### for eRuby
+&lt;% hash = { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;
+&lt;% hash.each do |key, value| %&gt;
+key=&lt;%= key %&gt; value=&lt;%= value %&gt;
+&lt;% end %&gt;
+</pre>
 <p>次の例は、PHPのコードを直接記述した例です。
 </p>
 <p>PLプログラム：
 </p>
-<a name="pl-rawcode.plogic"></a>
-<pre class="program">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+<a name="pl-rawcode2.plogic"></a>
+<pre class="program">// Rawcode式
+hash = <b>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</b>;
+
+// Rawcode文
+<b>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</b>
 print("key=", key, " value=", value, "\n");
-&lt;?php } ?&gt;
+<b>&lt;?php } ?&gt;</b>
 </pre>
 <p>出力用スクリプト：
 </p>
 <pre class="output">### for PHP
+&lt;?php $hash = array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789); ?&gt;
 &lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
 key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 &lt;?php } ?&gt;
 </pre>
-<p>Raw-codeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
-つまり、プレゼンテーションロジックをターゲット言語で記述できます。
+<p>Rawcode文は、エレメント宣言の「plogic:」部に記述できます。
+またRawcode式は、「value:」部や「attrs:」部に記述できます。
+なおRawcode式を「<code>X(&lt;%= <i>...</i> %&gt;)</code>」のように記述すれば、サニタイズしません。
 </p>
-<p>プレゼンテーションロジック：
-</p>
-<pre class="program">#foo {
-  plogic: {
-    @stag;
-    &lt;% hash.each do |key, value| %&gt;
-      @cont;
-    &lt;% end %&gt;
-    @etag;
-  }
-}
-</pre>
-<p>ただし、Raw-codeをエレメント宣言の「value:」部や「attrs:」部に記述することはできません。
-Raw-codeは文(statement)であり式(expression)ではないためです。
+<p>Rawcodeを用いてKwartzをRuby on Railsで使うサンプルが、Kwartzアーカイブのexamples/rails1ディレクトリにあります。
+参考にしてください。
 </p>
 <p>ターゲット言語のプログラムコードを直接記述した場合は、当然ですが他の言語では使用できなくなります。
 それでも構わない場合にのみ使用してください。
@@ -2572,7 +2595,7 @@ Hello &lt;%= name %&gt;!
   remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
   
   // 開始タグに追加する式
-  append:  "<i>expr1</i>", "<i>expr2</i>", "<i>expr3</i>";
+  append:  <i>expr1</i>, <i>expr2</i>, <i>expr3</i>;
   
   // タグ名
   tagname: "<i>tagname</i>",

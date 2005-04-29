@@ -66,7 +66,7 @@ in this document.
     </li>
     <li><a href="#pl-doc">Document declaration</a>
     </li>
-    <li><a href="#pl-rawcode">Raw-code</a>
+    <li><a href="#pl-rawcode">Rawcode</a>
     </li>
     <li><a href="#pl-scope">Global and Local Variables</a>
     </li>
@@ -906,7 +906,7 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <th class="th1">Velocity</th>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_new()</code>						.</td>
+  <td class="td1"><code>list_new()</code></td>
   <td class="td1"><code>[]</code></td>
   <td class="td1"><code>array()</code></td>
   <td class="td1">-</td>
@@ -1025,7 +1025,7 @@ Translating into JSTL or Velocity script will be error.
 <p>Functions E() and X() are intended to be used as arguments of print statement.
 You shouldn't use them in other place.
 </p>
-<p>If you want to use the following functions, you need to install <a href="http://jakarta.apache.org/velocity/tools/">VelocityTools</a>.
+<p>If you want to use the following functions in Velocity, you need to install <a href="http://jakarta.apache.org/velocity/tools/">VelocityTools</a>.
 </p>
 <ul type="disc">
 <li><code>escape_xml()</code> and <code>escape_sql()</code> requires <a href="http://wiki.apache.org/jakarta-velocity/EscapeTool">EscapeTools</a>.
@@ -1338,44 +1338,65 @@ It represents document information and takes the following declaration parts.
 
 
 <a name="pl-rawcode"></a>
-<h3 class="section2">Raw-code</h3>
-<p>Code in the target program language can be in the PL program.
-If Kwartz find a line starting with '<code>&lt;%</code>' or '<code>&lt;?</code>',
-Kwartz prints the string from '<code>&lt;%</code>' or '<code>&lt;?</code>' to the end of line directly.
+<h3 class="section2">Rawcode</h3>
+<p>Kwartz allow you to write code of target language (Ruby, PHP, Java, etc) directly in presentation logic.
+These are called `Raw Code'.  There are two type of raw code: expression and statement.
 </p>
+<ul type="disc">
+<li><code>&lt;%=<i>expression</i>%&gt;</code> and <code>&lt;?=<i>expression</i>?&gt;</code> represents raw code expression.
+   They are treated as literal like string and number.
+</li>
+<li><code>&lt;%<i>statement</i>%&gt;</code> and <code>&lt;?<i>statement</i>?&gt;</code> represents raw code statement.
+   They are treated as a statment. Semicolon ('<code>;</code>') is not needed at the end of the statement.
+</li>
+</ul>
+<p>The following is an example to write Ruby code directly.
+</p>
+<p>PL Program:
+</p>
+<a name="pl-rawcode1.plogic"></a>
+<pre class="program">// Rawcode expression
+hash = <b>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</b>;
+
+// Rawcode statement
+<b>&lt;% hash.each do |key, value| %&gt;</b>
+print("key=", key, " value=", value, "\n");
+<b>&lt;% end %&gt;</b>
+</pre>
+<p>Output Script:
+</p>
+<pre class="output">### for eRuby
+&lt;% hash = { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;
+&lt;% hash.each do |key, value| %&gt;
+key=&lt;%= key %&gt; value=&lt;%= value %&gt;
+&lt;% end %&gt;
+</pre>
 <p>The following is an example which includes PHP code.
 </p>
 <p>PL Program:
 </p>
-<a name="pl-rawcode.plogic"></a>
-<pre class="program">&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
+<a name="pl-rawcode2.plogic"></a>
+<pre class="program">// Rawcode expression
+hash = <b>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</b>;
+
+// Rawcode statement
+<b>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</b>
 print("key=", key, " value=", value, "\n");
-&lt;?php } ?&gt;
+<b>&lt;?php } ?&gt;</b>
 </pre>
 <p>Output Script:
 </p>
 <pre class="output">### for PHP
+&lt;?php $hash = array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789); ?&gt;
 &lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
 key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 &lt;?php } ?&gt;
 </pre>
-<p>Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
-This means that you can write presentation logics in target language.
+<p>Rawocde statement is available at the `plogic:' part of the element declaration.
+Rawcode expression is available at the `value:' part, `attrs:' part, or `append:' part.
+You can prevent to sanitize rawcode expression if you write <code>X(&lt;%= <i>...</i> %&gt;)</code>.
 </p>
-<p>Presentation Logic:
-</p>
-<pre class="program">#foo {
-  plogic: {
-    @stag;
-    &lt;% hash.each do |key, value| %&gt;
-      @cont;
-    &lt;% end %&gt;
-    @etag;
-  }
-}
-</pre>
-<p>Raw-cde cannot be in 'value:' or 'attrs:' part of element declaration,
-because raw-code is statement and not expression.
+<p>There is an example which use Kwartz with Ruby on Rails in examples/rails1 directory of Kwartz archive.
 </p>
 <p>You should remember that writing a raw-code takes portability away.
 </p>
@@ -2588,7 +2609,7 @@ Hello &lt;%= name %&gt;!
   remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
   
   // append expression to start tag
-  append:  "<i>expr1</i>", "<i>expr2</i>", "<i>expr3</i>";
+  append:  <i>expr1</i>, <i>expr2</i>, <i>expr3</i>;
   
   // change tag name
   tagname: "<i>tagname</i>",

@@ -639,7 +639,7 @@
 .EN	  Functions	., eRuby, ERB ., PHP ., JSTL1.1 ., Velocity
 .	.------------------------------------------------------------                                              
 .	{{,list_new(),}}					.\
-.		.	., {{,[],}}				.\
+.			., {{,[],}}				.\
 .			., {{,array(),}}			.\
 .			., -					.\
 .			., -					.\
@@ -754,7 +754,7 @@
 .JA	.* {{,escape_xml(),}}と{{,escape_sql(),}}では{{<EscapeTools|http://wiki.apache.org/jakarta-velocity/EscapeTool>}}を使用します。
 .JA	.* {{,escape_url(),}}では{{<LinkTools|http://jakarta.apache.org/velocity/tools/view/LinkTool.html>}}を使用します。
 .JA	詳細はそれぞれのドキュメントを参照してください。
-.EN	If you want to use the following functions, you need to install {{<VelocityTools|http://jakarta.apache.org/velocity/tools/>}}.
+.EN	If you want to use the following functions in Velocity, you need to install {{<VelocityTools|http://jakarta.apache.org/velocity/tools/>}}.
 .EN	.* {{,escape_xml(),}} and {{,escape_sql(),}} requires {{<EscapeTools|http://wiki.apache.org/jakarta-velocity/EscapeTool>}}.
 .EN	.* {{,escape_url(),}} requries {{<LinkTools|http://jakarta.apache.org/velocity/tools/view/LinkTool.html>}}.
 .EN	See each documentation for details.
@@ -954,15 +954,47 @@
 .	
 .	
 .JA	◎ターゲット言語のプログラムコード | pl-rawcode
-.EN	.$$ Raw-code | pl-rawcode
+.EN	.$$ Rawcode | pl-rawcode
 .	
 .	
-.JA	ターゲット言語のプログラムコードを直接記述することもできます。
-.JA	Kwartzでは、「{{,<?,}}」または「{{,<%,}}」で始まる行があれば行末までをターゲット言語のコードと判断し、
-.JA	そのまま出力します。
-.EN	Code in the target program language can be in the PL program.
-.EN	If Kwartz find a line starting with '{{,<%,}}' or '{{,<?,}}',
-.EN	Kwartz prints the string from '{{,<%,}}' or '{{,<?,}}' to the end of line directly.
+.JA	ターゲット言語(Ruby,PHP,Javaなど)のプログラムコードを直接記述することもできます。
+.JA	Kwartzではターゲット言語で書かれたコードをRawcodeと呼んでいます。
+.JA	.* 「{{,<%={{/expression/}}%>,}}」または「{{,<?={{/expression/}}?>,}}」は、ターゲット言語で書かれた式です。
+.JA	   これはRawcode式(Rawcode Expression)といい、文法的には文字列や数字と同じようにリテラルとして扱われます。
+.JA	.* 「{{,<%{{/statement/}}%>,}}」または「{{,<?{{/statement/}}?>,}}」は、ターゲット言語で書かれた文です。
+.JA	   これはRawcode文(Rawcode Statement)といい、ひとつの文として扱われます。
+.JA	   ただし行末の「{{,;,}}」は必要ありません。
+.EN	Kwartz allow you to write code of target language (Ruby, PHP, Java, etc) directly in presentation logic.
+.EN	These are called `Raw Code'.  There are two type of raw code: expression and statement.
+.EN	.* {{,<%={{/expression/}}%>,}} and {{,<?={{/expression/}}?>,}} represents raw code expression.
+.EN	   They are treated as literal like string and number.
+.EN	.* {{,<%{{/statement/}}%>,}} and {{,<?{{/statement/}}?>,}} represents raw code statement.
+.EN	   They are treated as a statment. Semicolon ('{{,;,}}') is not needed at the end of the statement.
+.	
+.	
+.JA	次の例は、Rubyコードを直接記述した例です。
+.EN	The following is an example to write Ruby code directly.
+.	
+.	
+.JA	PLプログラム：
+.EN	PL Program:
+.	.-------------------- pl-rawcode1.plogic
+.JA	// Rawcode式
+.EN	// Rawcode expression
+.	hash = {{*<%= { :a => 123, :b => 456, :c => 789, } %>*}};
+.	
+.JA	// Rawcode文
+.EN	// Rawcode statement
+.	{{*<% hash.each do |key, value| %>*}}
+.	print("key=", key, " value=", value, "\n");
+.	{{*<% end %>*}}
+.	.--------------------
+.	
+.JA	出力用スクリプト：
+.EN	Output Script:
+.	.____________________
+.	.<<<:! ./output.rb  -a translate -l eruby guide.d/pl-rawcode1.plogic
+.	.____________________
 .	
 .	
 .JA	次の例は、PHPのコードを直接記述した例です。
@@ -971,44 +1003,63 @@
 .	
 .JA	PLプログラム：
 .EN	PL Program:
-.	.-------------------- pl-rawcode.plogic
-.	<?php foreach($hash as $key => $value) { ?>
+.	.-------------------- pl-rawcode2.plogic
+.JA	// Rawcode式
+.EN	// Rawcode expression
+.	hash = {{*<?= array("a"=>123, "b"=>456, "c"=>789) ?>*}};
+.	
+.JA	// Rawcode文
+.EN	// Rawcode statement
+.	{{*<?php foreach($hash as $key => $value) { ?>*}}
 .	print("key=", key, " value=", value, "\n");
-.	<?php } ?>
+.	{{*<?php } ?>*}}
 .	.--------------------
 .	
 .JA	出力用スクリプト：
 .EN	Output Script:
 .	.____________________
-.	.<<<:! ./output.rb  -a translate -l php guide.d/pl-rawcode.plogic
+.	.<<<:! ./output.rb  -a translate -l php guide.d/pl-rawcode2.plogic
 .	.____________________
 .	
 .	
-.JA	Raw-codeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
-.JA	つまり、プレゼンテーションロジックをターゲット言語で記述できます。
-.EN	Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
-.EN	This means that you can write presentation logics in target language.
+.JA	Rawcode文は、エレメント宣言の「plogic:」部に記述できます。
+.JA	またRawcode式は、「value:」部や「attrs:」部に記述できます。
+.JA	なおRawcode式を「{{,X(<%= {{/.../}} %>),}}」のように記述すれば、サニタイズしません。
+.EN	Rawocde statement is available at the `plogic:' part of the element declaration.
+.EN	Rawcode expression is available at the `value:' part, `attrs:' part, or `append:' part.
+.EN	You can prevent to sanitize rawcode expression if you write {{,X(<%= {{/.../}} %>),}}.
 .	
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.--------------------
-.	#foo {
-.	  plogic: {
-.	    @stag;
-.	    <% hash.each do |key, value| %>
-.	      @cont;
-.	    <% end %>
-.	    @etag;
-.	  }
-.	}
-.	.--------------------
+.JA	Rawcodeを用いてKwartzをRuby on Railsで使うサンプルが、Kwartzアーカイブのexamples/rails1ディレクトリにあります。
+.JA	参考にしてください。
+.EN	There is an example which use Kwartz with Ruby on Rails in examples/rails1 directory of Kwartz archive.
 .	
 .	
-.JA	ただし、Raw-codeをエレメント宣言の「value:」部や「attrs:」部に記述することはできません。
-.JA	Raw-codeは文(statement)であり式(expression)ではないためです。
-.EN	Raw-cde cannot be in 'value:' or 'attrs:' part of element declaration,
-.EN	because raw-code is statement and not expression.
+.JA	.#Rawcodeは、エレメント宣言の「plogic:」部、またドキュメント宣言の「begin:」部や「end:」部に記述できます。
+.JA	.#つまり、プレゼンテーションロジックをターゲット言語で記述できます。
+.EN	.#Raw-code can be in 'plogic:' part of element declaration, or 'begin:'/'end:' part of document declaration.
+.EN	.#This means that you can write presentation logics in target language.
+.	.#
+.	.#
+.JA	.#プレゼンテーションロジック：
+.EN	.#Presentation Logic:
+.	.#.--------------------
+.	.##foo {
+.	.#  plogic: {
+.	.#    @stag;
+.	.#    <% hash.each do |key, value| %>
+.	.#      @cont;
+.	.#    <% end %>
+.	.#    @etag;
+.	.#  }
+.	.#}
+.	.#.--------------------
+.	.#
+.	.#
+.JA	.#ただし、Raw-codeをエレメント宣言の「value:」部や「attrs:」部に記述することはできません。
+.JA	.#Raw-codeは文(statement)であり式(expression)ではないためです。
+.EN	.#Raw-cde cannot be in 'value:' or 'attrs:' part of element declaration,
+.EN	.#because raw-code is statement and not expression.
 .	
 .	
 .JA	.#また「{{,:::{{/raw code/}},}}」とすると、{{,:::,}}の次の文字から行末までをそのまま出力します。
@@ -2184,7 +2235,7 @@
 .	  
 .JA	  // 開始タグに追加する式
 .EN	  // append expression to start tag
-.	  append:  "{{/expr1/}}", "{{/expr2/}}", "{{/expr3/}}";
+.	  append:  {{/expr1/}}, {{/expr2/}}, {{/expr3/}};
 .	  
 .JA	  // タグ名
 .EN	  // change tag name

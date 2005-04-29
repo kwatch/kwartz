@@ -376,6 +376,25 @@ class ScannerTest < Test::Unit::TestCase
        expected = ''
        _test(input, expected)
     end
+    
+    
+    def test_scan_comment1	# line comment
+       input = "// comment"
+       expected = ''
+       _test(input, expected)
+       input = "hoge // comment\n // comment \ngeji //comment"
+       expected = "hoge\ngeji\n"
+       _test(input, expected)
+    end
+
+    def test_scan_comment2	# region comment
+       input = "/* region comment */"
+       expected = ''
+       _test(input, expected)
+       input = "hoge /* comment */\n /* comment \n comment */ geji"
+       expected = "hoge\ngeji\n"
+       _test(input, expected)
+    end
 
 end
 

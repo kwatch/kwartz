@@ -398,6 +398,7 @@ module Kwartz
    ## token::  :rawexpr
    class RawcodeExpression < LiteralExpression
       def initialize(rawcode_str)
+         super(:rawexpr, nil)
          @rawcode = rawcode_str
       end
       attr_accessor :rawcode

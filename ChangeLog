@@ -3,6 +3,11 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-29 rev.70
+	.- [change] class Scanner is rewrited
+	.- [update] reference.txt updated
+	.- [bugfix] rawcode expression causes an error when it placed at the right-hand of assignment (bug#1192134)
+
 .: 2005-04-27 rev.69
 	.- [update] examples/rails1 updated to use RawcodeExpression
 	.- [udpate] users-guide updated
