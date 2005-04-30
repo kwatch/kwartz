@@ -336,7 +336,8 @@ end
 
 
 
-if __FILE__ == $0 || defined?(KWARTZ_EXECUTE)
+#if __FILE__ == $0
+unless defined?(KWARTZ_NOEXEC)
    begin
       main_command = Kwartz::MainProgram.new(ARGV)
       output = main_command.main()

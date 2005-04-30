@@ -10,20 +10,22 @@
 .JA	●KwartzとKwartz-rubyについて
 .	
 .EN	  Kwartz is a template system which realized the concept
-.EN	  'Separation of Presentation Logic and Presentation Data'.
+.EN	  'Separation of Presentation Logic and Presentation Data'(SoPL/PD)
+.EN	  or 'Independence of Presentation Logic'(IoPL).
 .EN	  It has the following features:
-.JA	  Kwartzとは、『プレゼンテーションロジックとプレゼンテーションデータの分離』と
-.JA	  いう概念を実現したテンプレートシステムです。
+.JA	  Kwartzとは、『プレゼンテーションロジックとプレゼンテーションデータの分離』
+.JA	  （または『プレゼンテーションロジックの独立』）という概念を実現した
+.JA	  テンプレートシステムです。
 .JA	  次のような特徴があります。
 .	
 .EN	   .* Separate presentation logics from presentation data
-.EN	   .* Multi programing language: Ruby(eRuby), PHP, and Java(JSP)
+.EN	   .* Multi programing language: Ruby(eRuby), PHP, Java(JSP), and Velocity.
 .EN	   .* Runs Very fast
 .EN	   .* Auto-Sanitizing and Partially Sanitizing
 .EN	   .* Doesn't break HTML design at all
 .EN	   .* Can handle any text file
 .JA	   .* プレゼンテーションデータからプレゼンテーションロジックを分離できます。
-.JA	   .* 複数のプログラミング言語に対応します: Ruby(eRuby), PHP, and Java(JSP)
+.JA	   .* 複数のプログラミング言語に対応します: Ruby(eRuby), PHP, Java(JSP), and Velocity.
 .JA	   .* 高速に動作します。
 .JA	   .* 自動サニタイズ機能があります。
 .JA	   .* HTMLデザインをまったく崩しません。
@@ -42,8 +44,16 @@
 .EN	.$ Installation
 .JA	●インストール
 .	
-.EN	  The following shows how to install Kwartz-ruby.
-.JA	  インストール手順は次のとおりです。
+.EN	  The following show how to install Kwartz-ruby with RubyGems.
+.JA	  RubyGemsでインストールするには次のようにします。
+.	
+.		.====================
+.		$ su -
+.		# gem install --remote kwartz-ruby
+.		.====================
+.	
+.EN	  The following shows how to install Kwartz-ruby manually.
+.JA	  RubyGemsを使わない場合のインストール手順は次のとおりです。
 .	
 .		.====================
 .EN		### Unarchive the kwartz-ruby_*.tar.gz

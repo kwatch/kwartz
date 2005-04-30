@@ -59,12 +59,19 @@
 .JA	◎コメント	| pl-comment
 .EN	.$$ Comments	| pl-comment
 .	
-.JA	「{{,//,}}」から改行まではコメントになります。
+.JA	「{{,/*,}}」と「{{,*/,}}」で囲まれた範囲と、「{{,//,}}」から行末まではコメントになります。
 .EN	Characters following '{{,//,}}' in a line is a comment.
+.EN	Also is a comment between '{{,/*,}}' and '{{,*/,}}'.
 .	
 .	.--------------------
 .JA	// ここはコメント
+.JA	/*
+.JA	  ここもコメント
+.JA	*/
 .EN	// comment
+.EN	/*
+.EN	   comment
+.EN	 */
 .	.--------------------
 .	
 .	

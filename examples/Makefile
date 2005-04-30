@@ -8,6 +8,7 @@ all:
 	cd form1;	$(MAKE)
 	cd thumbnail;	$(MAKE)
 	cd pagelayout;	$(MAKE)
+	cd rails1;	$(MAKE)
 
 clean:
 	cd border1;	$(MAKE) clean
@@ -18,3 +19,4 @@ clean:
 	cd form1;	$(MAKE) clean
 	cd thumbnail;	$(MAKE) clean
 	cd pagelayout;	$(MAKE) clean
+	cd rails1;	$(MAKE) clean

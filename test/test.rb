@@ -8,9 +8,9 @@ $: << 'test'
 
 require 'test/unit'
 
-flag_quick = false
+flag_quick = true
 if ARGV[0] && ARGV[0] == '-q'
-   flag_quick = true
+   flag_quick = false
    ARGV.shift
 end
 

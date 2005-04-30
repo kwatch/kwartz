@@ -3,6 +3,12 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-04-29 rev.71
+	.- [update] README.txt updated
+	.- [change] bin/kwartz, bin/kwartz-ruby, doc/output.rb changed to support RubyGems
+	.- [bugfix] kwartz-ruby.gemspec
+	.- [enhance] add `examples/Rookbook' and `examples/*/Rookbook'
+
 .: 2005-04-29 rev.70
 	.- [change] class Scanner is rewrited
 	.- [update] reference.txt updated

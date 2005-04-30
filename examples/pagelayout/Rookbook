@@ -1,0 +1,15 @@
+recipe	:all		, "result.html"
+
+recipe  "result.html"	, "main.rb", "page.view"			do |r|
+	cmd "ruby main.rb > result.html"
+	end
+
+recipe  "page.view"	, %w[layout.html contents.html contents.plogic]	do |r|
+	cmd "kwartz -i contents.html -p contents.plogic layout.html > page.view"
+	end
+
+recipe  :clear								do |r|
+	rm_rf "result.html", "page.view"
+	end
+
+recipe  :default	, :all

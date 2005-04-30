@@ -27,7 +27,8 @@ recipe  :clean								do |r|
 	end
 
 recipe  'output.rb'		, '../doc/output.rb'			do |r|
-	copy r.ingreds[0], r.product
+	#copy r.ingreds[0], r.product
+	copy r.ingreds[0], "."
 	end
 
 grecipe '*.{en|ja}.txt'		, '../doc/{1}.txt'			do |r|
@@ -75,5 +76,6 @@ recipe	"index.html"			, "index.txt"			do |r|
 #	end
 
 recipe	"ChangeLog.txt"			, "../ChangeLog.txt"		do |r|
-	copy r.ingreds[0], r.product
+	#copy r.ingreds[0], r.product
+	copy r.ingreds[0], "."
 	end

@@ -2,14 +2,25 @@ $Release$
 $Id$
 
 
+: 2.0.0 (2005-04-29) (rev.71)
 	* [enhance] Rails support
-		--globalvar-prefix=@
-	* [bugfix] nested property or index
-
+		New command-line option `-Rails' (which is equivarent to `-l eruby --globalvar-prefix=@')
+		allow you to use Kwartz with Ruby on Rails.
+		See:
+		- doc/users-guide.en.html#rails
+		- examples/rails1
+	* [enhance] Rawcode expression support
+		You can write target code expression(Ruby, PHP, Java, etc) directly in presentation logic.
+		This is called `Rawcode Expression'. It is treated as literal, such as string and number.
+		See:
+		- doc/users-guide.en.html#rawcode
+		- doc/reference.en.html#rawcode
 	* [enhance] RubyGem support
-		If you have installed rubygem, type 'gem install kwartz-ruby'.
+		If you have installed rubygem, just type 'gem install --remote kwartz-ruby' to install kwartz-ruby.
+	* [bugfix] several bugs are fixed
 
-2.0.0-beta4 (2005-03-28) (rev.59)
+
+: 2.0.0-beta4 (2005-03-28) (rev.59)
 	* [enhance] New action 'defun' support.
 		It is equivalent to 'mkmethod' script of Kwartz1.0, and
 		it generates Ruby/PHP function from templates.
@@ -19,7 +30,8 @@ $Id$
 		Kwartz-ruby now support Velocity, a template system in Java.
 		The command-line option '-l velocity' generates velocity script.
 
-2.0.0-beta3 (2005-03-07)
+
+: 2.0.0-beta3 (2005-03-07)
 	* [change] 'kd' attribute is renamed to 'kw:d'.
 		'kw:d' attribute name is more suitable for XHTML than 'kd'.
 		Sorry, this change forces you to modify many files.
@@ -36,7 +48,7 @@ $Id$
 		This change is for other implementation of Kwartz (kwartz-php and kwartz-java).
 
 
-2.0.0-beta2 (2005-02-19)
+: 2.0.0-beta2 (2005-02-19)
 	* [enhance] Raw-code supported. 
 		Raw-code enables you to write presentation logics in Ruby, PHP, or Java.
 		See:
@@ -54,5 +66,5 @@ $Id$
 		- doc/p-pattern.en.html#replace-cont-by-elem
 
 
-2.0.0-beta1 (2005-02-14)
+: 2.0.0-beta1 (2005-02-14)
 	* beta1 released

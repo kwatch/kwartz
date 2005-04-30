@@ -32,6 +32,7 @@ spec = Gem::Specification.new do |s|
   files += Dir.glob('bin/**/*')
   files += Dir.glob('examples/**/*')
   files += Dir.glob('test/**/*')
+  files += Dir.glob('man/**/*')
   files += [ "doc/users-guide.en.html", "doc/users-guide.ja.html", 
              "doc/reference.en.html",   "doc/reference.ja.html", 
              "doc/p-pattern.en.html",   "doc/p-pattern.ja.html", 
@@ -39,6 +40,7 @@ spec = Gem::Specification.new do |s|
              "doc/design.css", "doc/design.html", ]
   files += %w(README.en.txt README.ja.txt ChangeLog.txt COPYING setup.rb todo.txt)
   #s.files       = files.delete_if { |path| path =~ /\.svn/ }
+  s.files       = files
   s.executables = ["kwartz", "kwartz-ruby"]
   s.bindir      = "bin"
   s.test_file   = 'test/test.rb'

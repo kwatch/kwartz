@@ -20,8 +20,22 @@ doc_files = [
 	]
 
 
-desc	"create README.(en|ja).txt"
-grecipe 'README.??.txt'				, 'README.txt'		do |r|
+recipe  :all		, text_files, doc_files
+
+
+recipe  :clean							do |r|
+	files = []
+	files.concat Dir.glob('kwartz-ruby_*.tar.bz2')
+	files.concat Dir.glob('kwartz-ruby-*.gem')
+	#files.concat text_files
+	#files.concat doc_files
+	files.concat [ "README.ja.txt", "README.en.txt" ]
+	delete_rf files
+	end
+
+
+desc	"create README.en.txt or README.ja.txt"
+grecipe 'README.{en|ja}.txt'			, 'README.txt'		do |r|
 	cmd "ruby m18n.rb -l #{m[1].upcase} #{r.ingred} > #{r.product}"
 	end
 
@@ -40,22 +54,40 @@ grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}'    , text_files, doc_files	do |r|
 	archive_dir = "kwartz-ruby_#{m[1]}"
 	remove_rf archive_dir
 	mkdir_p archive_dir
-	copy_r 'lib', 'bin', 'test', text_files, archive_dir
+	mkdir_p "#{archive_dir}/man"
+	store 'lib/**/*', 'bin/*', 'test/**/*', 'man/**/*', text_files, archive_dir
+	chdir 'examples' do cmd 'make -s clean' end
+	store 'examples/**/*', archive_dir
+	#remove_rf "#{archive_dir}/*/.expected"
 	mkdir_p "#{archive_dir}/doc"
 	copy_r doc_files, "#{archive_dir}/doc"
-	chdir 'examples' do cmd 'make -s clean' end
-	copy_r 'examples', archive_dir
-	remove_rf "#{archive_dir}/*/.expected"
-	cmd "find #{archive_dir} -name '.svn' | xargs rm -rf"
-	cmd %Q!find #{archive_dir} -type f | xargs ruby -pi -e 'gsub(/\\$Release.*?\\$/, "$Release: #{release}$")'!
+	#cmd "find #{archive_dir} -name '.svn' | xargs rm -rf"
+	#cmd %Q!find #{archive_dir} -type f | xargs ruby -pi -e 'gsub(/\\$Release.*?\\$/, "$Release: #{release} $")'!
+	Dir.glob("#{archive_dir}/**/*").each do |file|
+	   next unless test(?f, file)
+	   File.open(file, "r+") do |f|
+	      s = f.read().gsub(/\$Release.*?\$/, "$Release: #{m[1]} $")
+	      f.rewind()
+	      f.truncate(0)
+	      f.write(s)
+	   end
+	end
 	cmd "find #{archive_dir} -type f | xargs chmod 644"
 	cmd "chmod 755 #{archive_dir}/bin/*"
 	if !suffix || suffix.empty? || suffix == 'tar.bz2'
 		cmd "tar cjf #{archive_dir}.tar.bz2 #{archive_dir}"
 	elsif suffix == 'tar.gz'
 		cmd "tar czf #{archive_dir}.tar.gz #{archive_dir}"
+	elsif suffix == 'zip'
+		cmd "zip -qr9 #[archive_dir}.zip #{archive_dir}"
 	end
+	chdir archive_dir do cmd "gem build kwartz-ruby.gemspec" end
+	move "#{archive_dir}/kwartz-ruby-{1}.gem", "."
 	end
+
+
+desc	'create archive'
+recipe  :archive		, 'kwartz-ruby_2.0.0.tar.bz2'
 
 
 ##recipe	/^doc\/(.*)\.(en|ja)\.html$/		, 'doc/{1}.{2}.html'	do |r|

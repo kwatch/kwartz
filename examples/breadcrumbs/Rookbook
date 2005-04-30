@@ -1,0 +1,17 @@
+t = "breadcrumbs"
+
+recipe  :all			, "result.html"
+
+recipe  "result.html"		, "#{t}.rb", "#{t}.view"		do |r|
+	cmd "ruby #{r.ingreds[0]} > #{r.product}"
+	end
+
+grecipe "*.view"		, "{1}.html", "{1}.plogic"		do |r|
+	cmd "kwartz -p {1}.plogic {1}.html > {1}.view"
+	end
+
+recipe  :clear								do |r|
+	rm_rf "result.html", "#{t}.view"
+	end
+
+recipe  :default		, :all

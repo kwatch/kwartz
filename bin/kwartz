@@ -15,6 +15,5 @@
 #exec ruby $script $@
 
 ### if ruby script
-KWARTZ_EXECUTE = true
 script = __FILE__ + '-ruby'
 load script

@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+KWARTZ_NOEXEC = true
 
 filename = nil
 ENV['PATH'].split(/:/).each do |path|

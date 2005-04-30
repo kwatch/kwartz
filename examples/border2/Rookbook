@@ -1,0 +1,16 @@
+recipe  :all			, 'result.html'
+
+recipe  'result.html'		, 'border2.rb', 'border2.view'		do |r|
+	cmd "ruby #{r.ingreds[0]} > #{r.product}"
+	end
+
+recipe  'border2.view'		, 'border2.html', 'border2.plogic'	do |r|
+	cmd "kwartz -l eruby -p #{r.ingreds[1]} #{r.ingreds[0]} > #{r.product}"
+	end
+
+recipe  :clear								do |r|
+	remove_rf 'result.html', 'border2.view'
+	end
+
+recipe  :default		, :all
+
