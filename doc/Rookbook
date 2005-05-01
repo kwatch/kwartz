@@ -47,7 +47,7 @@ grecipe '*.*.txt'				, '{1}.txt'		do |r|
 	end
 
 desc
-recipe	'design.{html|css}'			, 'p-pattern.en.txt'	do |r|
+grecipe	'design.{html|css}'			, 'p-pattern.en.txt'	do |r|
 	cmd "retrieve -d guide.d #{r.ingredients[0]}"
 	move "guide.d/#{m[0]}", "."
 	end

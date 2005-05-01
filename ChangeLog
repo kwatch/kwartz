@@ -3,7 +3,7 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2005-04-29 rev.71
+.: 2005-04-30 rev.71
 	.- [update] README.txt updated
 	.- [change] bin/kwartz, bin/kwartz-ruby, doc/output.rb changed to support RubyGems
 	.- [bugfix] kwartz-ruby.gemspec

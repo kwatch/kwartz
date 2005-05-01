@@ -2,7 +2,7 @@ $Release$
 $Id$
 
 
-: 2.0.0 (2005-04-29) (rev.71)
+: 2.0.0 (2005-04-30) (rev.71)
 	* [enhance] Rails support
 		New command-line option `-Rails' (which is equivarent to `-l eruby --globalvar-prefix=@')
 		allow you to use Kwartz with Ruby on Rails.

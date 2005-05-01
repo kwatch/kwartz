@@ -25,7 +25,8 @@ conditional branching) from the presentation data (HTML file).
 	.* Supports auto-sanitizing and partial-sanitizing
 
 .% Download
-	.* {{<kwartz-ruby_2.0.0.tar.bz2|download.html>}} (sourceforge.net) (2005-04-30 released)
+	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz-ruby,}}' to install Kwartz-ruby.
+	.* Or download {{<kwartz-ruby_2.0.0.tar.bz2|download.html>}} (2005-04-30 released)
 
 .% Documents
 	.* README           ({{<English|README.en.html>}}      | {{<Japanese|README.ja.html>}})
