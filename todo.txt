@@ -62,4 +62,5 @@
 .- [_] global variable indicator
 .- [_] change '@stag', '@cont', '@etag', '@element' to 'stag()', 'cont()', 'etag()', 'element()'
 .- [_] phuny parser for ruby
+.- [_] unit test for visitor.rb
 .- [_] correct my English (>_<)

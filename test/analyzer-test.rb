@@ -212,6 +212,25 @@ END
    end
 
 
+
+   ## ---------------------------------------- [ #1737 ] Problem in Kwartz#Visitor#visit_method_expression
+   def test_analyze7	# receiver.method(args)
+      pdata = <<'END'
+<span id="mark:user">foo</span>
+END
+      plogic = <<'END'
+#user {
+    value: user.get("name");
+}
+END
+      expected = <<'END'
+Global: user
+Local:  
+END
+      _test(pdata, plogic, expected)
+   end
+
+
 end
 
 

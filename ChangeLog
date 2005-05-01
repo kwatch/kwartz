@@ -3,6 +3,13 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-05-02 rev.73
+	.- [bugfix] Visitor#visit_method_expression(expr, depth) now uses expr.receiver instead of expr.object ([ #1737 ] Problem in Kwartz#Visitor#visit_method_expression)
+
+.: 2005-05-02 rev.72
+	.- [update] index.txt
+	.- [bugfix] Rookbook
+
 .: 2005-04-30 rev.71
 	.- [update] README.txt updated
 	.- [change] bin/kwartz, bin/kwartz-ruby, doc/output.rb changed to support RubyGems

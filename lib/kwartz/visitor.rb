@@ -73,7 +73,7 @@ module Kwartz
       end
       
       def visit_method_expression(expr, depth=0)
-         expr.object.accept(self, depth+1)
+         expr.receiver.accept(self, depth+1)
          expr.arguments.each do |arg|
             arg.accept(self, depth+1)
          end
