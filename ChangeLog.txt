@@ -2,6 +2,12 @@ $Release$
 $Id$
 
 
+: 2.0.1 (2005-05-02) (rev.73)
+	* [bugfix] Visitor#visit_method_expression() fixed
+		Visitor#visit_method_expression(expr, depth) now uses expr.receiver instead of expr.object
+		([ #1737 ] Problem in Kwartz#Visitor#visit_method_expression)
+
+
 : 2.0.0 (2005-04-30) (rev.71)
 	* [enhance] Rails support
 		New command-line option `-Rails' (which is equivarent to `-l eruby --globalvar-prefix=@')

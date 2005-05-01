@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-05-02 rev.74
+	.- [update] ChangeLog.txt update
+	.- [update] website/index.html update
+
 .: 2005-05-02 rev.73
 	.- [bugfix] Visitor#visit_method_expression(expr, depth) now uses expr.receiver instead of expr.object ([ #1737 ] Problem in Kwartz#Visitor#visit_method_expression)
 
