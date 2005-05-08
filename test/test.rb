@@ -44,6 +44,9 @@ suite << SpanTest.suite()
 require 'analyzer-test'
 suite << AnalyzerTest.suite()
 
+require 'defun-test'
+suite << DefunTest.suite()
+
 unless flag_quick
    require 'examples-test'
    suite << ExamplesTest.suite()
