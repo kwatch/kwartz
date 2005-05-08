@@ -94,7 +94,7 @@ module Kwartz
          end if arguments
          s << "    return _#{function}(#{arguments})" << nl
          s << "  end" << nl
-         s << "  def _#{function}(#{arguments})" << nl
+         s << "  def #{prefix}_#{function}(#{arguments})" << nl
          s << body.gsub(/^/, '    ')
          s << nl unless body[-1] == ?\n
          s << "  end" << nl
