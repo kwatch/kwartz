@@ -90,6 +90,7 @@ module Kwartz
          s << "  include ERB::Util" << nl       if lang == 'erb' && klass
          s << "  def #{prefix}#{function}(__args)" << nl
          arguments.split(',').each do |arg|
+            arg.strip!
             s << "    #{arg} = __args[:#{arg}]" << nl
          end if arguments
          s << "    return _#{function}(#{arguments})" << nl
@@ -118,16 +119,19 @@ module Kwartz
          function  = context[:function] || function_name(context[:filename])
          arguments = context[:arguments]
 
+         args_str = arguments.split(',').collect { |arg| "$" + arg.strip.sub(/\$/,'') }.join(", ")
          nl = (body =~ /(.?)\n/ && $1 == "\r") ? "\r\n" : "\n"
          s = "<?php" << nl
          s <<    "class #{klass}" << nl if klass
          s <<    "    function #{function}($__args) {" << nl
          arguments.split(',').each do |arg|
+            arg.strip!
+            arg.sub!(/\A\$/, '')
             s << "        $#{arg} = $__args['#{arg}']" << nl
          end if arguments
-         s <<    "        return _#{function}(#{arguments})" << nl
+         s <<    "        return _#{function}(#{args_str})" << nl
          s <<    "    }" << nl
-         s <<    "    function _#{function}(#{arguments}) {" << nl
+         s <<    "    function _#{function}(#{args_str}) {" << nl
          s <<    "        ob_start();" << nl
          s <<    "?>" << body
          s <<    "<?php" << nl
