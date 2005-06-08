@@ -360,19 +360,43 @@ Compile and execution:
 .--------------------
 
 
-{{<contents.html|pagelayout/contents.html>}} (presentation data):
+{{<menu.html|pagelayout/menu.html>}} (presentation data):
 .--------------------
-.<<<! ruby examples.rb pagelayout/contents.html
-.--------------------
-
-
-{{<contents.plogic|pagelayout/contents.plogic>}} (presentation logic):
-.--------------------
-.<<<: pagelayout/contents.plogic
+.<<<! ruby examples.rb pagelayout/menu.html
 .--------------------
 
 
-{{<pagelayout.rb|pagelayout/main.rb>}} (main program):
+{{<menu.plogic|pagelayout/menu.plogic>}} (presentation logic):
+.--------------------
+.<<<: pagelayout/menu.plogic
+.--------------------
+
+
+{{<page1.html|pagelayout/page1.html>}} (presentation data):
+.--------------------
+.<<<! ruby examples.rb pagelayout/page1.html
+.--------------------
+
+
+{{<page1.plogic|pagelayout/page1.plogic>}} (presentation logic):
+.--------------------
+.<<<: pagelayout/page1.plogic
+.--------------------
+
+
+{{<page2.html|pagelayout/page2.html>}} (presentation data):
+.--------------------
+.<<<! ruby examples.rb pagelayout/page2.html
+.--------------------
+
+
+{{<page2.plogic|pagelayout/page2.plogic>}} (presentation logic):
+.--------------------
+.<<<: pagelayout/page2.plogic
+.--------------------
+
+
+{{<main.rb|pagelayout/main.rb>}} (main program):
 .--------------------
 .<<<: pagelayout/main.rb
 .--------------------
@@ -381,22 +405,36 @@ Compile and execution:
 Compile and execution:
 .====================
 ### compile
-% kwartz {{*-i contents.html*}} -p contents.plogic layout.html > page.view
+% kwartz -p menu.plogic,page1.plogic {{*-i menu.html,page1.html*}} layout.html > page1.view
+% kwartz -p menu.plogic,page2.plogic {{*-i menu.html,page2.html*}} layout.html > page2.view
 
 ### execution
-% ruby main.rb > result.html
+% ruby main.rb > result1.html
+% ruby main.rb AAPL > result2.html
 .====================
 
 
-{{<page.view|pagelayout/page.view>}} (output script for Ruby):
+{{<page1.view|pagelayout/page1.view>}} (output script for Ruby):
 .--------------------
-.<<<: pagelayout/page.view
+.<<<: pagelayout/page1.view
 .--------------------
 
 
-{{<result.html|pagelayout/result.html>}}
+{{<page2.view|pagelayout/page2.view>}} (output script for Ruby):
 .--------------------
-.<<<: pagelayout/result.html
+.<<<: pagelayout/page2.view
+.--------------------
+
+
+{{<result1.html|pagelayout/result1.html>}}
+.--------------------
+.<<<: pagelayout/result1.html
+.--------------------
+
+
+{{<result2.html|pagelayout/result2.html>}}
+.--------------------
+.<<<: pagelayout/result2.html
 .--------------------
 
 

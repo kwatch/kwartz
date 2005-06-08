@@ -2,7 +2,7 @@ body {
 	background-color:#FFFFFF;
 }
 
-.menu , .article {
+.menulist , .contents {
 	border-style:solid;
 	border-color:#006699;
 	border-width:2px;

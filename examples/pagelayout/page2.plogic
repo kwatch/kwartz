@@ -1,0 +1,29 @@
+#contents {
+        plogic: {
+            if (stock == null) {
+                @element(message);
+            } else {
+                @element(stock);
+            }
+        }
+}
+
+#stock {
+        plogic: {
+            symbol = stock[:symbol];
+            price  = stock[:price];
+            rate   = stock[:rate];
+            style  = "";
+            if (rate < 0) {
+               rate = - rate;
+               style = ' style="color:red"';
+            }
+            @stag;
+            @cont;
+            @etag;
+        }
+}
+
+#stock_rate {
+        append: style;
+}

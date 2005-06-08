@@ -1,19 +1,24 @@
-recipe	:all		, "result.html"
+recipe	:all		, "result1.html", "result2.html"
 
-recipe  "result.html"	, "main.rb", "page.view"			do |r|
-	cmd "ruby main.rb > result.html"
+
+grecipe  "page*.view"	, "page{1}.html", "page{1}.plogic",  \
+			"layout.html", "menu.html", "menu.plogic"	do |r|
+	cmd "kwartz -p menu.plogic,page{1}.plogic -i menu.html,page{1}.html layout.html > page{1}.view"
 	end
 
-recipe  "page.view"	, %w[layout.html contents.html contents.plogic]	do |r|
-	cmd "kwartz -i contents.html -p contents.plogic layout.html > page.view"
+grecipe "result*.html"	, "main.rb", "page{1}.view"			do |r|
+	cmd "ruby main.rb > result{1}.html"
+	end
+
+recipe "result2.html"	, "main.rb", "page2.view"			do |r|
+	cmd "ruby main.rb AAPL > result2.html"
 	end
 
 recipe  :clear								do |r|
-	rm_rf "result.html", "page.view"
-	end
-
-grecipe "*.view"	, "{1}.html", "{1}.plogic", "laytout.html"	do |r|
-	cmd "kwartz -i {1}.plogic -i {1}.html layout.html > {1}.view"
+	list = []
+	list << Dir.glob("result?.html")
+	list << Dir.glob("page?.view")
+	rm_rf list
 	end
 
 recipe  :default	, :all

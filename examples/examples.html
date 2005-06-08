@@ -206,6 +206,18 @@ h3, .subsection	{
   </li>
   <li><a href="#bordered3">Bordered Table 3</a>
   </li>
+  <li><a href="#form1">HTML Form</a>
+  </li>
+  <li><a href="#breadcrumbs">Breadcrumbs</a>
+  </li>
+  <li><a href="#calendar">Calendar</a>
+  </li>
+  <li><a href="#thumbnail">Thumbnail</a>
+  </li>
+  <li><a href="#pagelayout">Page Layout</a>
+  </li>
+  <li><a href="#rails1">Rails 1</a>
+  </li>
 </ul>
 <br>
 
@@ -306,17 +318,17 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
 &lt;% i = 0 %&gt;
 &lt;% for user in user_list do %&gt;
 &lt;%   i += 1 %&gt;
 &lt;%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %&gt;
-	&lt;tr bgcolor="&lt;%= color %&gt;"&gt;
-	  &lt;td&gt;&lt;%= user["name"] %&gt;&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:&lt;%= user["email"] %&gt;"&gt;&lt;%= user["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+          &lt;td&gt;&lt;%= user["name"] %&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:&lt;%= user["email"] %&gt;"&gt;&lt;%= user["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
 &lt;% end %&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
@@ -331,25 +343,25 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;sumire&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;nana&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;momoko&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;kasumi&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;sumire&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;nana&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;momoko&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;kasumi&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
     
@@ -438,7 +450,7 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
 &lt;% i = 0 %&gt;
@@ -447,10 +459,10 @@ print erb.result(binding())
 &lt;%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %&gt;
 &lt;%   name = user["name"] %&gt;
 &lt;%   email = user["email"] %&gt;
-	&lt;tr bgcolor="&lt;%= color %&gt;"&gt;
-	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+          &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
 &lt;% end %&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
@@ -465,25 +477,25 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;sumire&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;nana&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;momoko&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;kasumi&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;sumire&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;nana&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;momoko&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;kasumi&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
     
@@ -574,24 +586,24 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-&lt;% i = 0 %&gt;
+&lt;% toggle = false %&gt;
 &lt;% for user in user_list do %&gt;
-&lt;%   i += 1 %&gt;
+&lt;%   toggle = !toggle %&gt;
 &lt;%   name = user["name"] %&gt;
 &lt;%   email = user["email"] %&gt;
-&lt;%   if i % 2 == 0 then %&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+&lt;%   if toggle then %&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
 &lt;%   else %&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
 &lt;%   end %&gt;
 &lt;% end %&gt;
       &lt;/tbody&gt;
@@ -607,25 +619,25 @@ print erb.result(binding())
 
     &lt;table&gt;
       &lt;thead&gt;
-	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;sumire&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;nana&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#FFCCCC"&gt;
-	  &lt;td&gt;momoko&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr bgcolor="#CCCCFF"&gt;
-	  &lt;td&gt;kasumi&lt;/td&gt;
-	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
-	&lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;sumire&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;nana&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
+          &lt;td&gt;momoko&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
+          &lt;td&gt;kasumi&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
     
@@ -2604,7 +2616,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 <pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title <b>id="value:title"</b>&gt;...title...&lt;/title&gt;
+    &lt;title&gt;MyGroupware: &lt;span <b>id="placeholder:pagetitle"</b>&gt;&lt;/span&gt;&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
@@ -2612,28 +2624,28 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        
+
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top"&gt;
-          &lt;div class="menu" <b>id="placeholder:menu"</b>&gt;
-            &lt;ul&gt;
-              &lt;li&gt;menu1&lt;/li&gt;
-              &lt;li&gt;menu2&lt;/li&gt;
-              &lt;li&gt;menu3&lt;/li&gt;
-            &lt;/ul&gt;
+        &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;div <b>id="placeholder:menulist"</b>&gt;
+            * menu1 &lt;br&gt;
+            * menu2 &lt;br&gt;
+            * menu3 &lt;br&gt;
+            * menu4 &lt;br&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
-        &lt;!-- article part --&gt;
-        &lt;td width="400" valign="top"&gt;
-          &lt;div class="article" <b>id="placeholder:article"</b>&gt;
-            aaa&lt;br&gt;
-            bbb&lt;br&gt;
-            ccc&lt;br&gt;
-            ddd&lt;br&gt;
+
+        &lt;!-- content part --&gt;
+        &lt;td width="400" valign="top" class="contents"&gt;
+          &lt;h3&gt;&lt;span <b>id="placeholder:pagetitle"</b>&gt;...title...&lt;/span&gt;&lt;/h3&gt;
+          &lt;div <b>id="placeholder:contents"</b>&gt;
+            content&lt;br&gt;
+            content&lt;br&gt;
+            content&lt;br&gt;
+            content&lt;br&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
+
       &lt;/tr&gt;
 
       &lt;!-- footer part --&gt;
@@ -2643,84 +2655,236 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
         &lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
-    
+
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/contents.html">contents.html</a> (presentation data):
+<p><a href="pagelayout/menu.html">menu.html</a> (presentation data):
 </p>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     
-    &lt;p&gt;menu:&lt;/p&gt;
-    &lt;ul <b>id="mark:menu"</b>&gt;
-      &lt;li&gt;&lt;a href="..." <b>id="mark:menu_item"</b>&gt;menu1&lt;/a&gt;&lt;/li&gt;
+    &lt;h1&gt;Menu&lt;/h1&gt;
+    
+    &lt;ul <b>id="mark:menulist"</b>&gt;
+      &lt;li&gt;&lt;a href="..." <b>id="mark:menu"</b>&gt;menu0&lt;/a&gt;&lt;/li&gt;
+      &lt;li <b>id="dummy:m1"</b>&gt;&lt;a href="..."&gt;menu1&lt;/a&gt;&lt;/li&gt;
+      &lt;li <b>id="dummy:m2"</b>&gt;&lt;a href="..."&gt;menu2&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
-
-    &lt;p&gt;article:&lt;/p&gt;
-    &lt;div <b>id="mark:article"</b>&gt;
-      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
-      &lt;p&gt;Kwartz is a template system, which realized the concept
-        &lt;strong&gt;`Independence of Presentation Logic'(IoPL)&lt;/strong&gt;.
-      &lt;/p&gt;
-    &lt;/div&gt;
     
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/contents.plogic">contents.plogic</a> (presentation logic):
+<p><a href="pagelayout/menu.plogic">menu.plogic</a> (presentation logic):
 </p>
-<pre class="program">#menu {
-  plogic: {
-    @stag;
-    foreach (item in menu_list) {
-      @cont;
-    }
-    @etag;
-  }
+<pre class="program">#menulist {
+        plogic:  {
+            foreach (menu in menulist) {
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
 }
 
-#menu_item {
-  value: item[:name];
-  attrs:  "href" item[:url];
+#menu {
+        value:  menu[:label];
+        attrs:  "href" menu[:url];
 }
 </pre>
-<p><a href="pagelayout/main.rb">pagelayout.rb</a> (main program):
+<p><a href="pagelayout/page1.html">page1.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      &lt;!--
+        .minus { color: red; }
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Stock Quoting&lt;/span&gt;&lt;/h1&gt;
+    
+    &lt;div <b>id="mark:contents"</b>&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr <b>id="mark:stocks"</b>&gt;
+            &lt;td <b>id="value:symbol"</b>&gt;AAAA&lt;/td&gt;
+            &lt;td <b>id="value:price"</b>&gt;11.11&lt;/td&gt;
+            &lt;td <b>id="mark:stock_rate"</b> class="minus"&gt;&lt;span <b>id="value:rate"</b>&gt;1.11&lt;/span&gt;%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr <b>id="dummy:s1"</b>&gt;
+            &lt;td&gt;BBBB&lt;/td&gt;&lt;td&gt;22.22&lt;/td&gt;&lt;td&gt;2.22%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr <b>id="dummy:s2"</b>&gt;
+            &lt;td&gt;CCCC&lt;/td&gt;&lt;td&gt;33.33&lt;/td&gt;&lt;td&gt;3.33%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr <b>id="dummy:s3"</b>&gt;
+            &lt;td&gt;DDDD&lt;/td&gt;&lt;td&gt;44.44&lt;/td&gt;&lt;td&gt;4.44%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/page1.plogic">page1.plogic</a> (presentation logic):
+</p>
+<pre class="program">#stocks {
+        plogic:  {
+            foreach (stock in stocks) {
+                symbol = stock[:symbol];
+                price  = stock[:price];
+                rate   = stock[:rate];
+                style  = '';
+                if (rate &lt; 0) {
+                    rate = - rate;
+                    style = ' style="color:red"';
+                }
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+#stock_rate {
+        append: style;
+}
+
+</pre>
+<p><a href="pagelayout/page2.html">page2.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+  &lt;body&gt;
+
+    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Quoting Detail&lt;/span&gt;&lt;/h1&gt;
+    
+    &lt;div <b>id="mark:contents"</b>&gt;
+      &lt;div <b>id="mark:message"</b> style="color:red"&gt;
+        Symbol `&lt;span <b>id="value:symbol"</b>&gt;AAAA&lt;/span&gt;' not found.
+      &lt;/div&gt;
+      &lt;table <b>id="mark:stock"</b>&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;td <b>id="value:symbol"</b>&gt;AAPL&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Price&lt;/th&gt;&lt;td <b>id="value:price"</b>&gt;36.49&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change&lt;/th&gt;
+            &lt;td <b>id="mark:stock_rate"</b>&gt;&lt;span <b>id="value:rate"</b>&gt;0.32&lt;/span&gt;%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/page2.plogic">page2.plogic</a> (presentation logic):
+</p>
+<pre class="program">#contents {
+        plogic: {
+            if (stock == null) {
+                @element(message);
+            } else {
+                @element(stock);
+            }
+        }
+}
+
+#stock {
+        plogic: {
+            symbol = stock[:symbol];
+            price  = stock[:price];
+            rate   = stock[:rate];
+            style  = "";
+            if (rate &lt; 0) {
+               rate = - rate;
+               style = ' style="color:red"';
+            }
+            @stag;
+            @cont;
+            @etag;
+        }
+}
+
+#stock_rate {
+        append: style;
+}
+</pre>
+<p><a href="pagelayout/main.rb">main.rb</a> (main program):
 </p>
 <pre class="program">#!/usr/bin/env ruby
 
 ## menu
-menu_list = [
-  { :name =&gt; 'Mail',     :url =&gt; '/cgi-bin/mail.cgi' },
-  { :name =&gt; 'Calnedar', :url =&gt; '/cgi-bin/calendar.cgi' },
-  { :name =&gt; 'Todo',     :url =&gt; '/cgi-bin/todo.cgi' },
+menulist = [
+  { :label =&gt; 'Mail',     :url =&gt; '/cgi-bin/mail.cgi' },
+  { :label =&gt; 'Calnedar', :url =&gt; '/cgi-bin/calendar.cgi' },
+  { :label =&gt; 'Todo',     :url =&gt; '/cgi-bin/todo.cgi' },
+  { :label =&gt; 'Stock',    :url =&gt; '/cgi-bin/stock.cgi' },
 ]
 
-## title
-title = "My Homepage"
+## contents data
+stocks = [
+  { :symbol =&gt; "AAPL", :price =&gt; 36.49, :rate =&gt; -0.32, },
+  { :symbol =&gt; "MSFT", :price =&gt; 26.53, :rate =&gt; 2.44, },
+  { :symbol =&gt; "ORCL", :price =&gt; 12.59, :rate =&gt; 2.02, },
+  { :symbol =&gt; "INTL", :price =&gt; 19.51, :rate =&gt; 2.90, },
+]
+
+## page filename
+cgi = nil
+symbol = nil
+if ENV['SCRIPT_NAME']
+  require 'cgi'
+  cgi = CGI.new
+  symbol = cgi.params['symbol'].first
+elsif ARGV[0]
+  symbol = ARGV[0]
+end
+if symbol
+  stock = stocks.find { |hash| hash[:symbol] == symbol }
+  filename = 'page2.view'
+else
+  filename = 'page1.view'
+end
 
 ## output
 require 'erb'
-filename = 'page.view'
 str = File.open(filename) { |f| f.read() }
 trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
+print cgi.header if cgi
 print erb.result(binding())
 </pre>
 <p>Compile and execution:
 </p>
 <pre class="terminal">### compile
-% kwartz <b>-i contents.html</b> -p contents.plogic layout.html &gt; page.view
+% kwartz -p menu.plogic,page1.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
+% kwartz -p menu.plogic,page2.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
 
 ### execution
-% ruby main.rb &gt; result.html
+% ruby main.rb &gt; result1.html
+% ruby main.rb AAPL &gt; result2.html
 </pre>
-<p><a href="pagelayout/page.view">page.view</a> (output script for Ruby):
+<p><a href="pagelayout/page1.view">page1.view</a> (output script for Ruby):
 </p>
 <pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;title&gt;MyGroupware: Stock Quoting&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
@@ -2728,30 +2892,51 @@ print erb.result(binding())
 
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        
+
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top"&gt;
-          &lt;div class="menu"&gt;
+        &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;div&gt;
+&lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
-&lt;% for item in menu_list do %&gt;
-      &lt;li&gt;&lt;a href="&lt;%= item[:url] %&gt;"&gt;&lt;%= item[:name] %&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;% end %&gt;
+      &lt;li&gt;&lt;a href="&lt;%= menu[:url] %&gt;"&gt;&lt;%= menu[:label] %&gt;&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
+&lt;% end %&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
-        &lt;!-- article part --&gt;
-        &lt;td width="400" valign="top"&gt;
-          &lt;div class="article"&gt;
+
+        &lt;!-- content part --&gt;
+        &lt;td width="400" valign="top" class="contents"&gt;
+          &lt;h3&gt;Stock Quoting&lt;/h3&gt;
+          &lt;div&gt;
     &lt;div&gt;
-      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
-      &lt;p&gt;Kwartz is a template system, which realized the concept
-        &lt;strong&gt;`Independence of Presentation Data'(IoPL)&lt;/strong&gt;.
-      &lt;/p&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+&lt;% for stock in stocks do %&gt;
+&lt;%   symbol = stock[:symbol] %&gt;
+&lt;%   price = stock[:price] %&gt;
+&lt;%   rate = stock[:rate] %&gt;
+&lt;%   style = "" %&gt;
+&lt;%   if rate &lt; 0 then %&gt;
+&lt;%     rate = -rate %&gt;
+&lt;%     style = " style=\"color:red\"" %&gt;
+&lt;%   end %&gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;%= symbol %&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;%= price %&gt;&lt;/td&gt;
+            &lt;td class="minus"&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
+          &lt;/tr&gt;
+&lt;% end %&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
     &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
+
       &lt;/tr&gt;
 
       &lt;!-- footer part --&gt;
@@ -2761,16 +2946,16 @@ print erb.result(binding())
         &lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
-    
+
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/result.html">result.html</a>
+<p><a href="pagelayout/page2.view">page2.view</a> (output script for Ruby):
 </p>
 <pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;My Homepage&lt;/title&gt;
+    &lt;title&gt;MyGroupware: Quoting Detail&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
@@ -2778,30 +2963,53 @@ print erb.result(binding())
 
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        
+
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top"&gt;
-          &lt;div class="menu"&gt;
+        &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;div&gt;
+&lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
-      &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href="/cgi-bin/calendar.cgi"&gt;Calnedar&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href="/cgi-bin/todo.cgi"&gt;Todo&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="&lt;%= menu[:url] %&gt;"&gt;&lt;%= menu[:label] %&gt;&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
+&lt;% end %&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
-        &lt;!-- article part --&gt;
-        &lt;td width="400" valign="top"&gt;
-          &lt;div class="article"&gt;
-    &lt;div&gt;
-      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
-      &lt;p&gt;Kwartz is a template system, which realized the concept
-        &lt;strong&gt;`Independence of Presentation Data'(IoPL)&lt;/strong&gt;.
-      &lt;/p&gt;
-    &lt;/div&gt;
+
+        &lt;!-- content part --&gt;
+        &lt;td width="400" valign="top" class="contents"&gt;
+          &lt;h3&gt;Quoting Detail&lt;/h3&gt;
+          &lt;div&gt;
+&lt;% if stock == nil then %&gt;
+      &lt;div style="color:red"&gt;
+        Symbol `&lt;%= symbol %&gt;' not found.
+      &lt;/div&gt;
+&lt;% else %&gt;
+&lt;%   symbol = stock[:symbol] %&gt;
+&lt;%   price = stock[:price] %&gt;
+&lt;%   rate = stock[:rate] %&gt;
+&lt;%   style = "" %&gt;
+&lt;%   if rate &lt; 0 then %&gt;
+&lt;%     rate = -rate %&gt;
+&lt;%     style = " style=\"color:red\"" %&gt;
+&lt;%   end %&gt;
+      &lt;table&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;td&gt;&lt;%= symbol %&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Price&lt;/th&gt;&lt;td&gt;&lt;%= price %&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change&lt;/th&gt;
+            &lt;td&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+&lt;% end %&gt;
           &lt;/div&gt;
         &lt;/td&gt;
-        
+
       &lt;/tr&gt;
 
       &lt;!-- footer part --&gt;
@@ -2811,7 +3019,156 @@ print erb.result(binding())
         &lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
-    
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/result1.html">result1.html</a>
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;MyGroupware: Stock Quoting&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;div&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/calendar.cgi"&gt;Calnedar&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/todo.cgi"&gt;Todo&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/stock.cgi"&gt;Stock&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+        &lt;!-- content part --&gt;
+        &lt;td width="400" valign="top" class="contents"&gt;
+          &lt;h3&gt;Stock Quoting&lt;/h3&gt;
+          &lt;div&gt;
+    &lt;div&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;td&gt;AAPL&lt;/td&gt;
+            &lt;td&gt;36.49&lt;/td&gt;
+            &lt;td class="minus" style="color:red"&gt;0.32%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;MSFT&lt;/td&gt;
+            &lt;td&gt;26.53&lt;/td&gt;
+            &lt;td class="minus"&gt;2.44%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;ORCL&lt;/td&gt;
+            &lt;td&gt;12.59&lt;/td&gt;
+            &lt;td class="minus"&gt;2.02%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;INTL&lt;/td&gt;
+            &lt;td&gt;19.51&lt;/td&gt;
+            &lt;td class="minus"&gt;2.9%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/result2.html">result2.html</a>
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;MyGroupware: Quoting Detail&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;div&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/calendar.cgi"&gt;Calnedar&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/todo.cgi"&gt;Todo&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/stock.cgi"&gt;Stock&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+        &lt;!-- content part --&gt;
+        &lt;td width="400" valign="top" class="contents"&gt;
+          &lt;h3&gt;Quoting Detail&lt;/h3&gt;
+          &lt;div&gt;
+      &lt;table&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;td&gt;AAPL&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Price&lt;/th&gt;&lt;td&gt;36.49&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change&lt;/th&gt;
+            &lt;td style="color:red"&gt;0.32%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -2837,8 +3194,8 @@ print erb.result(binding())
 <p><a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):
 </p>
 <pre class="program">#stylesheet_link {
+        // replace element with print statement
         plogic: {
-            // replace element with print statement
             print(X(&lt;%= stylesheet_link_tag 'scaffold' %&gt;), "\n");
         }
 }
