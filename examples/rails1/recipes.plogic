@@ -1,10 +1,11 @@
 #stylesheet_link {
-  plogic: {
-    print(X(<%= stylesheet_link_tag 'scaffold' %>), "\n");
-  }
+        // replace element with print statement
+        plogic: {
+            print(X(<%= stylesheet_link_tag 'scaffold' %>), "\n");
+        }
 }
 
 #list_recipes {
-  attrs:  "href" X(<%= url_for(:action=>'list') %>);
+        // set href attribute value with Rails function
+        attrs:  "href" X(<%= url_for(:action=>'list') %>);
 }
-

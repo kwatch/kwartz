@@ -12,4 +12,8 @@ recipe  :clear								do |r|
 	rm_rf "result.html", "page.view"
 	end
 
+grecipe "*.view"	, "{1}.html", "{1}.plogic", "laytout.html"	do |r|
+	cmd "kwartz -i {1}.plogic -i {1}.html layout.html > {1}.view"
+	end
+
 recipe  :default	, :all

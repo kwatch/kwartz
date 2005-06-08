@@ -1,17 +1,17 @@
 #user_list {
-	plogic: {
-		@stag;
-		i = 0;
-		foreach (user in user_list) {
-			i += 1;
-			name  = user['name'];
-			email = user['email'];
-			if (i % 2 == 0) {
-				@element(even);
-			} else {
-				@element(odd);
-			}
-		}
-		@etag;
-	}
+        plogic:   {
+            @stag;                  // start tag
+            toggle = false;
+            foreach (user in user_list) {
+                toggle = ! toggle;
+                name  = user['name'];
+                email = user['email'];
+                if (toggle) {
+                    @element(odd);  // element marked as id="mark:odd"
+                } else {
+                    @element(even); // element marked as id="mark:even"
+                }
+            }
+            @etag;                  // end tag
+        }
 }

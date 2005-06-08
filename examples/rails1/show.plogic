@@ -1,3 +1,11 @@
+#recipe_instructions {
+        value:  X(str_linebreak(escape_xml(recipe.instructions)));
+}
+
+#edit_recipe {
+        attrs:  "href"  X(<%= url_for(:action=>'edit', :id=>@recipe.id) %>);
+}
+
 // #recipe_title {
 //   value:  recipe.title;
 // }
@@ -13,12 +21,3 @@
 // #recipe_date {
 //   value:  recipe.date;
 // }
-
-#recipe_instructions {
-  value:  X(str_linebreak(escape_xml(recipe.instructions)));
-}
-
-#edit_recipe {
-  attrs:  "href"  X(<%= url_for(:action=>'edit', :id=>@recipe.id) %>);
-}
-

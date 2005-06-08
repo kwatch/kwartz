@@ -52,6 +52,6 @@ end
 require 'erb'
 str = File.open('thumbnail.view') { |f| f.read() }
 str.untaint
-trim_mode = 1
+trim_mode = 2
 print cgi.header if cgi
 ERB.new(str, $SAFE, trim_mode).run(binding())

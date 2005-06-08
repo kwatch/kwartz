@@ -1,0 +1,22 @@
+#stocks {
+	plogic:  {
+	    foreach (stock in stocks) {
+	        symbol = stock[:symbol];
+		price  = stock[:price];
+		rate   = stock[:rate];
+		klass  = '';
+	        if (rate < 0) {
+	            rate = - rate;
+	            klass = 'minus';
+	        }
+	        @stag;
+		@cont;
+		@etag;
+	    }
+	}
+}
+
+#stock_rate {
+        attrs:  "class" klass;
+}
+

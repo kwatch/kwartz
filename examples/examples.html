@@ -1,0 +1,3378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  <title>Kwartz Examples</title>
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <style type="text/css">
+   <!--
+
+body		{
+		background-color:#FFFFFF;
+		}
+.mainbody	{
+		color:#333333;
+		line-height:150%;
+		}
+
+a:link, a:active, a:hover {
+		color:#CC6600;
+		}
+a:visited	{
+		color:#DD9900;
+		}
+
+p		{
+		color:#333333;
+		line-height:150%;
+		}
+
+pre		{
+		width: 100%;
+		line-height:130%;
+		white-space:pre;
+		}
+.program	{
+		border-style:solid;
+		border-width:2;
+		border-color:#6699FF;
+		color:#333333;
+		background-color:#DDEEFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.terminal	{
+		border-style:solid;
+		border-width:1;
+		border-color:#FFFFFF;
+		color:#333333;
+		background-color:#E0E0E0;
+		padding:9 10 9 10;
+		margin:0;
+		word-break:keep-all;
+		}
+.output		{
+		border-style:solid;
+		border-width:2;
+		border-color:#CCCCCC;
+		color:#333333;
+		background-color:#FFFFFF;
+		padding:8 9 8 9;
+		margin:0;
+		word-break:keep-all;
+		}
+.program_caption {
+		}
+.terminal_caption {
+		}
+.output_caption {
+		}
+
+
+ul,ol,dl	{
+	 	Xmargin:0px;
+		Xpadding:0px;
+		color:#333333;
+		line-height:130%;
+		}
+
+.dt2, .dt3	{
+		font-weight:bold;
+		}
+
+.table1		{
+		padding:2;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+.th1, .th2	{
+		padding:1;
+		color:#333333;
+		Xbackground-color:#DDDDCC;
+		background-color:#CCCCBB;
+		line-height:130%;
+		}
+.td1, .th2	{
+		padding:1;
+		color:#333333;
+		background-color:#EEEEDD;
+		line-height:130%;
+		}
+.caption1, .caption2 {
+		Xfont-size:x-small;
+		color:#333333;
+		}
+.table2		{
+		padding:1;
+		color:#333333;
+		background-color:#DDDDCC;
+		line-height:130%;
+		Xborder-width:1;
+		Xborder-style:solid;
+		Xborder-color:#FFFFFF;
+		margin:5;
+		}
+
+h1, .chapter, .doctitle {
+	  	Xfont-size:20pt;
+		color:#333333;
+	 	font-weight:bold;
+		padding:30 0 10 0;
+		}
+h2, .section	{
+		Xfont-size:16pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width:0 0 2 30;
+		padding:10 20 0 5;
+		}
+h3, .subsection	{
+		Xfont-size:12pt;
+		color:#333333;
+		font-weight:bold;
+		border-style:solid;
+		border-color:#6699FF;
+		border-width: 0 0 0 15;
+		padding: 10 20 0 5;
+		}
+
+.em		{
+		font-weight:bold;
+		}
+
+.toc		{
+		font-size:small;
+		line-height:100%;
+		}
+.footnote	{
+		font-size:small;
+		}
+.note		{
+		background-color:#FFFFDD;
+		border-style:solid;
+		border-width:0 1 0 1;
+		border-color:#DDDD66;
+		color:#333300;
+		Xfont-size:small;
+		line-height:120%;
+		padding: 5 20 5 20;
+		}
+.figure		{
+		Xborder-width:1;
+		Xborder-color:#DDDD66;
+		Xwhite-space:pre;
+		}
+
+   -->
+  </style>
+
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+    <div align="left"><h1>Kwartz Examples</h1></div>
+
+    <div align="left">
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>This document shows you examples of Kwartz, especially in Ruby.
+</p>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#border1">Bordered Table 1</a>
+  </li>
+  <li><a href="#border2">Bordered Table 2</a>
+  </li>
+  <li><a href="#bordered3">Bordered Table 3</a>
+  </li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="border1"></a>
+<h2 class="section1">Bordered Table 1</h2>
+<p><a href="border1/border1.html">border1.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr bgcolor="#FFCCCC" <b>id="user_list"</b>&gt;
+          &lt;td <b>id="name"</b>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:foo@email.com" <b>id="email"</b>&gt;foo@email.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF" <b>id="dummy"</b>&gt;
+          &lt;td&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:bar@emai.net"&gt;bar@email.net&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border1/border1.plogic">border1.plogic</a> (presentation logic):
+</p>
+<pre class="program">#user_list {
+        attrs:   "bgcolor" color;   // set bgcolor attribute value
+        remove:  "id";              // remove id attribute
+        plogic:  {
+            i = 0;
+            foreach (user in user_list) {
+                i += 1;
+                color = i%2==0 ? '#CCCCFF' : '#FFCCCC';
+                @stag;              // start tag
+                @cont;              // content
+                @etag;              // end tag
+            }
+        }
+}
+
+#name {
+        value:   user['name'];      // replace content by expression value
+        remove:  "id";              // remove id attribute
+}
+
+#email {
+        value:   user['email'];     // replace content by expression value
+        remove:  "id";              // remove id attribute
+        attrs:   "href" 'mailto:' .+ user['email'];    // set href attribute value
+}
+
+#dummy {
+        plogic: { }                 // remove an element
+}
+</pre>
+<p><a href="border1/border1.rb">border1.rb</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## set user list
+user_list = [
+  { "name" =&gt; "sumire", "email" =&gt; "voilet@mail.com" },
+  { "name" =&gt; "nana",   "email" =&gt; "seven@mail.com" },
+  { "name" =&gt; "momoko", "email" =&gt; "peach@mail.com" },
+  { "name" =&gt; "kasumi", "email" =&gt; "mist@mail.com" },
+]
+
+## display view
+require 'erb'
+filename = 'border1.view'
+str = File.open(filename) { |f| f.read }  ## or File.read(filename)
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p border1.plogic border1.html &gt; border1.view
+
+### execution
+% ruby border1.rb &gt; result.html
+</pre>
+<p><a href="border1/border1.view">border1.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+&lt;% i = 0 %&gt;
+&lt;% for user in user_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %&gt;
+	&lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+	  &lt;td&gt;&lt;%= user["name"] %&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:&lt;%= user["email"] %&gt;"&gt;&lt;%= user["email"] %&gt;&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;% end %&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border1/result.html">result.html</a>
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;sumire&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;nana&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;momoko&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;kasumi&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="border2"></a>
+<h2 class="section1">Bordered Table 2</h2>
+<p><a href="border2/border2.html">border2.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr bgcolor="#FFCCCC" <b>id="mark:user_list"</b>&gt;
+          &lt;td <b>id="value:name"</b>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF" <b>id="dummy:d1"</b>&gt;
+          &lt;td&gt;Bar&lt;/td&gt;
+          &lt;td&gt;&lt;a href="bar@mail.net"&gt;bar@mail.net&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border2/border2.plogic">border2.plogic</a> (presentation logic):
+</p>
+<pre class="program">#user_list {                        // id attribute is removed automatically
+        attrs:   "bgcolor" color;   // set bgcolor attribute value
+        plogic:  {
+            i = 0;
+            foreach (user in user_list) {
+                i += 1;
+                color = i%2==0 ? '#CCCCFF' : '#FFCCCC';
+                name  = user['name'];
+                email = user['email'];
+                @stag;              // start tag
+                @cont;              // content
+                @etag;              // end tag
+            }
+        }
+}
+</pre>
+<p><a href="border2/border2.rb">border2.rb</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## set user list
+user_list = [
+  { "name" =&gt; "sumire", "email" =&gt; "voilet@mail.com" },
+  { "name" =&gt; "nana",   "email" =&gt; "seven@mail.com" },
+  { "name" =&gt; "momoko", "email" =&gt; "peach@mail.com" },
+  { "name" =&gt; "kasumi", "email" =&gt; "mist@mail.com" },
+]
+
+## display view
+require 'erb'
+filename = 'border2.view'
+str = File.open(filename) { |f| f.read }  ## or File.read(filename)
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p border2.plogic border2.html &gt; border2.view
+
+### execution
+% ruby border2.rb &gt; result.html
+</pre>
+<p><a href="border2/border2.view">border2.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+&lt;% i = 0 %&gt;
+&lt;% for user in user_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %&gt;
+&lt;%   name = user["name"] %&gt;
+&lt;%   email = user["email"] %&gt;
+	&lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;% end %&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border2/result.html">result.html</a>
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;sumire&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;nana&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;momoko&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;kasumi&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="bordered3"></a>
+<h2 class="section1">Bordered Table 3</h2>
+<p><a href="border3/border3.html">border3.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody <b>id="mark:user_list"</b>&gt;
+        &lt;tr bgcolor="#FFCCCC" <b>id="mark:odd"</b>&gt;
+          &lt;td <b>id="value:name"</b>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr bgcolor="#CCCCFF" <b>id="mark:even"</b>&gt;
+          &lt;td <b>id="value:name"</b>&gt;Bar&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;bar@mail.net&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border3/border3.plogic">border3.plogic</a> (presentation logic):
+</p>
+<pre class="program">#user_list {
+        plogic:   {
+            @stag;                  // start tag
+            toggle = false;
+            foreach (user in user_list) {
+                toggle = ! toggle;
+                name  = user['name'];
+                email = user['email'];
+                if (toggle) {
+                    @element(odd);  // element marked as id="mark:odd"
+                } else {
+                    @element(even); // element marked as id="mark:even"
+                }
+            }
+            @etag;                  // end tag
+        }
+}
+</pre>
+<p><a href="border3/border3.rb">border3.rb</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## set user list
+user_list = [
+  { "name" =&gt; "sumire", "email" =&gt; "voilet@mail.com" },
+  { "name" =&gt; "nana",   "email" =&gt; "seven@mail.com" },
+  { "name" =&gt; "momoko", "email" =&gt; "peach@mail.com" },
+  { "name" =&gt; "kasumi", "email" =&gt; "mist@mail.com" },
+]
+
+## display view
+require 'erb'
+filename = 'border3.view'
+str = File.open(filename) { |f| f.read }  ## or File.read(filename)
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p border3.plogic border3.html &gt; border3.view
+
+### execution
+% ruby border3.rb &gt; result.html
+</pre>
+<p><a href="border3/border3.view">border3.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+&lt;% i = 0 %&gt;
+&lt;% for user in user_list do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   name = user["name"] %&gt;
+&lt;%   email = user["email"] %&gt;
+&lt;%   if i % 2 == 0 then %&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;%   else %&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;%   end %&gt;
+&lt;% end %&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="border3/result.html">result.html</a>
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+	&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;sumire&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:voilet@mail.com"&gt;voilet@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;nana&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:seven@mail.com"&gt;seven@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#FFCCCC"&gt;
+	  &lt;td&gt;momoko&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:peach@mail.com"&gt;peach@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr bgcolor="#CCCCFF"&gt;
+	  &lt;td&gt;kasumi&lt;/td&gt;
+	  &lt;td&gt;&lt;a href="mailto:mist@mail.com"&gt;mist@mail.com&lt;/a&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="form1"></a>
+<h2 class="section1">HTML Form</h2>
+<p><a href="form1/register.html">register.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+ &lt;head&gt;
+  &lt;style type="text/css"&gt;
+   &lt;!--
+     .label {
+        /* font-weight:bold; */
+        background-color:#CCFFCC;
+        text-align:right;
+     }
+    --&gt;
+  &lt;/style&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;form action="register.rbx" method="POST"&gt;
+
+   &lt;span <b>id="if:error_list!=null"</b>&gt;
+    &lt;font color="#FF0000" <b>id="foreach:error=error_list"</b>&gt;
+     &lt;span <b>id="value:error"</b>&gt;Name is empty.&lt;/span&gt;&lt;br&gt;
+    &lt;/font&gt;
+   &lt;/span&gt;
+   &lt;span <b>id="else:"</b>&gt;
+    Enter your personal information:
+   &lt;/span&gt;
+
+   &lt;table border="0" cellspacing="1" cellpadding="5"&gt;
+
+    &lt;tr&gt;
+     &lt;td class="label"&gt;Name:&lt;/td&gt;
+     &lt;td&gt;
+      &lt;input type="text" name="name" size="20" <b>id="name"</b> /&gt;
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+     &lt;td class="label"&gt;Gender:&lt;/td&gt;
+     &lt;td&gt;
+      &lt;input type="radio" name="gender" value="M" <b>id="mark:gender_m"</b> /&gt;Man
+      &amp;nbsp;
+      &lt;input type="radio" name="gender" value="W" <b>id="mark:gender_w"</b> /&gt;Woman
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+     &lt;td colspan="2" align="center"&gt;
+      &lt;input type="submit" value=" Regist "&gt;
+      &lt;input type="reset"  value="reset"&gt;
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+   &lt;/table&gt;
+  &lt;/form&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="form1/register.plogic">register.plogic</a> (presentation logic):
+</p>
+<pre class="program">#name {
+    attrs: "value" name;
+}
+
+#gender_m {
+    //append: gender == 'M' ? ' checked="checked"' : '';
+    append: C(gender=='M');
+}
+
+#gender_w {
+    //append: gender == 'W' ? ' checked="checked"' : '';
+    append: C(gender=='M');
+}
+</pre>
+<p><a href="form1/finish.html">finish.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+ &lt;body&gt;
+  Registration has finished with the following data:&lt;br&gt;
+  &lt;br&gt;
+  Name:
+   &lt;span <b>id="value:name"</b>&gt;Foo&lt;/span&gt;&lt;br&gt;
+  Gender:
+   &lt;span <b>id="if:gender=='M'"</b>&gt;Man&lt;/span&gt;
+   &lt;span <b>id="else:"</b>&gt;Woman&lt;/span&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="form1/register.rbx">register.rbx</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## get parameters
+require 'cgi'
+cgi = CGI.new
+name   = cgi.params['name'].first
+gender = cgi.params['gender'].first
+
+## check parameters
+view_name = 'register.view'
+error_list = nil
+if cgi.params.length &gt; 0
+    ## check input data
+    error_list = []
+    unless name &amp;&amp; !name.empty?
+        error_list &lt;&lt; 'Name is empty.'
+    end
+    unless gender == 'M' || gender == 'W'
+        error_list &lt;&lt; 'Gender is not selected.'
+    end
+
+    ## if input parameter is valid then print the finished page.
+    ## else print the registration page.
+    if error_list.empty?
+        error_list = nil
+        view_name = 'finish.view'
+    end
+end
+
+## print web page
+require 'erb'
+str = File.open(view_name) { |f| f.read }
+str.untaint()
+trim_mode = 1
+print cgi.header
+print ERB.new(str, $SAFE, trim_mode).result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -e -p register.plogic register.html &gt; register.view
+% kwartz -l eruby -e                    finish.html   &gt; finish.view
+
+### execution
+% ruby form1.rb &gt; result.html
+</pre>
+<p><a href="form1/register.view">register.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+ &lt;head&gt;
+  &lt;style type="text/css"&gt;
+   &lt;!--
+     .label {
+        /* font-weight:bold; */
+        background-color:#CCFFCC;
+        text-align:right;
+     }
+    --&gt;
+  &lt;/style&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;form action="register.rbx" method="POST"&gt;
+
+&lt;% if error_list != nil then %&gt;
+&lt;%   for error in error_list do %&gt;
+    &lt;font color="#FF0000"&gt;
+     &lt;%= CGI::escapeHTML((error).to_s) %&gt;&lt;br&gt;
+    &lt;/font&gt;
+&lt;%   end %&gt;
+&lt;% else %&gt;
+    Enter your personal information:
+&lt;% end %&gt;
+
+   &lt;table border="0" cellspacing="1" cellpadding="5"&gt;
+
+    &lt;tr&gt;
+     &lt;td class="label"&gt;Name:&lt;/td&gt;
+     &lt;td&gt;
+      &lt;input type="text" name="name" size="20" id="name" value="&lt;%= CGI::escapeHTML((name).to_s) %&gt;" /&gt;
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+     &lt;td class="label"&gt;Gender:&lt;/td&gt;
+     &lt;td&gt;
+      &lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Man
+      &amp;nbsp;
+      &lt;input type="radio" name="gender" value="W"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Woman
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+     &lt;td colspan="2" align="center"&gt;
+      &lt;input type="submit" value=" Regist "&gt;
+      &lt;input type="reset"  value="reset"&gt;
+     &lt;/td&gt;
+    &lt;/tr&gt;
+
+   &lt;/table&gt;
+  &lt;/form&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="form1/finish.view">finish.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+ &lt;body&gt;
+  Registration has finished with the following data:&lt;br&gt;
+  &lt;br&gt;
+  Name:
+   &lt;%= CGI::escapeHTML((name).to_s) %&gt;&lt;br&gt;
+  Gender:
+&lt;% if gender == "M" then %&gt;
+   Man
+&lt;% else %&gt;
+   Woman
+&lt;% end %&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="breadcrumbs"></a>
+<h2 class="section1">Breadcrumbs</h2>
+<p><a href="breadcrumbs/breadcrumbs.html">breadcrumbs.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;div <b>id="breadcrumbs"</b>&gt;
+      &lt;a href="/" <b>id="mark:crumb"</b>&gt;Home&lt;/a&gt;
+      &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;span <b>id="mark:title"</b>&gt;Page Titlte&lt;/span&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="breadcrumbs/breadcrumbs.plogic">breadcrumbs.plogic</a> (presentation logic):
+</p>
+<pre class="program">#breadcrumbs {
+        plogic: {
+            @stag;
+            foreach (crumb in breadcrumbs) {
+                @element(crumb);          // print &lt;a&gt;...&lt;/a&gt;
+                @element(separator);      // print '&amp;gt;'
+            }
+            @element(title);
+            @etag;
+        }
+}
+
+#crumb {
+        value: crumb[:name];
+        attrs: "href" crumb[:path];
+}
+
+#title {
+        value: title;
+}
+</pre>
+<p><a href="breadcrumbs/breadcrumbs.rb">breadcrumbs.rb</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## set breadcrumbs
+breadcrumbs = [
+   { :name =&gt; "HOME",        :path =&gt; "/", },
+   { :name =&gt; "Kwartz",      :path =&gt; "/kwartz/", },
+   { :name =&gt; "Examples",    :path =&gt; "/kwartz/examples/", },
+   { :name =&gt; "Breadcrumbs", :path =&gt; "/kwartz/examples/breadcrumbs/", },
+]
+
+## set title
+title = 'Result';
+
+## display view
+require 'erb'
+filename = 'breadcrumbs.view'
+str = File.open(filename) { |f| f.read }  ## or File.read(filename)
+trim_mode = 2
+ERB.new(str, $SAFE, trim_mode).run(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p breadcrumbs.plogic breadcrumbs.html &gt; breadcrumbs.view
+
+### execution
+% ruby breadcrumbs.rb &gt; result.html
+</pre>
+<p><a href="breadcrumbs/breadcrumbs.view">breadcrumbs.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;div id="breadcrumbs"&gt;
+&lt;% for crumb in breadcrumbs do %&gt;
+      &lt;a href="&lt;%= crumb[:path] %&gt;"&gt;&lt;%= crumb[:name] %&gt;&lt;/a&gt;
+      &amp;gt;
+&lt;% end %&gt;
+      &lt;%= title %&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="breadcrumbs/result.html">result.html</a>
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;div id="breadcrumbs"&gt;
+      &lt;a href="/"&gt;HOME&lt;/a&gt;
+      &amp;gt;
+      &lt;a href="/kwartz/"&gt;Kwartz&lt;/a&gt;
+      &amp;gt;
+      &lt;a href="/kwartz/examples/"&gt;Examples&lt;/a&gt;
+      &amp;gt;
+      &lt;a href="/kwartz/examples/breadcrumbs/"&gt;Breadcrumbs&lt;/a&gt;
+      &amp;gt;
+      Result
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="calendar"></a>
+<h2 class="section1">Calendar</h2>
+<p><a href="calendar/calendar-month.html">calendar-month.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html <b>id="mark:document"</b>&gt;
+  &lt;head&gt;
+    &lt;title&gt;Calendar Month Template&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        .holiday   {color:#FF0000;}
+	td         {text-align:center;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;span <b>id="mark:calendar_month"</b>&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of <b>@{month}@, @{year}@</b>"&gt;
+              &lt;caption&gt;
+                &lt;i <b>id="value:month"</b>&gt;Jan&lt;/i&gt;&amp;nbsp;&lt;i <b>id="value:year"</b>&gt;20XX&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr <b>id="mark:week"</b>&gt;
+                  &lt;td&gt;&lt;span <b>id="mark:day"</b> class="holiday"&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+                  &lt;td <b>id="dummy:d1"</b>&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td <b>id="dummy:d2"</b>&gt;1&lt;/td&gt;
+                  &lt;td <b>id="dummy:d3"</b>&gt;2&lt;/td&gt;
+                  &lt;td <b>id="dummy:d4"</b>&gt;3&lt;/td&gt;
+                  &lt;td <b>id="dummy:d5"</b>&gt;4&lt;/td&gt;
+                  &lt;td <b>id="dummy:d6"</b>&gt;5&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr <b>id="dummy:d7"</b>&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;6&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;&lt;td&gt;8&lt;/td&gt;&lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;&lt;td&gt;11&lt;/td&gt;&lt;td&gt;12&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr <b>id="dummy:d8"</b>&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;13&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;&lt;td&gt;15&lt;/td&gt;&lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;19&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr <b>id="dummy:d9"</b>&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;20&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;&lt;td&gt;22&lt;/td&gt;&lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;&lt;td&gt;25&lt;/td&gt;&lt;td&gt;26&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr <b>id="dummy:d10"</b>&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;27&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;&lt;td&gt;29&lt;/td&gt;&lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+    &lt;/span&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="calendar/calendar-month.plogic">calendar-month.plogic</a> (presentation logic):
+</p>
+<pre class="program">#document {
+        // replace document element by calendar_month element
+        plogic:   {
+            @element(calendar_month);
+        }
+}
+
+#calendar_month {
+        plogic:   {
+            @cont;              // remove start tag and end tag
+        }
+}
+
+#week {
+        plogic:   {
+            day = '&amp;nbsp';
+            wday = 1;
+            while (wday &lt; first_weekday) {
+                if (wday == 1)  @stag;
+                @cont;
+                wday += 1;
+            }
+            
+            day = 0;
+            wday -= 1;
+            while (day &lt; num_days) {
+                day += 1;
+                wday = wday % 7 + 1;
+                if (wday == 1)  @stag;
+                @cont;
+                if (wday == 7)  @etag;
+            }
+
+            if (wday != 7) {
+                day = '&amp;nbsp;';
+                while (wday != 6) {
+                    @cont;
+                    wday += 1;
+                }
+                @etag;
+            }
+        }
+}
+
+#day {
+        value:    day;
+        plogic:   {
+            if (wday == 1) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;
+            }
+        }
+}
+</pre>
+<p><a href="calendar/calendar-page.html">calendar-page.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Calendar&amp;nbs; &lt;span <b>id="value:year"</b>&gt;2004&lt;/span&gt;&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        .title     {font-size:x-large; font-weight:bold;}
+        .holiday   {color:#FF0000;}
+	td         {text-align:center;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div <b>id="mark:navi"</b> align="center"&gt;
+      &lt;a href="<b>@{prev_link}@</b>"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
+      &amp;nbsp;
+      &lt;span class="title"&gt;
+	Calendar&amp;nbsp; &lt;span <b>id="value:year"</b>&gt;2004&lt;/span&gt;
+      &lt;/span&gt;
+      &amp;nbsp;
+      &lt;a href="<b>@{next_link}@</b>"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+
+    &lt;div align="center"&gt;
+      &lt;table border="0" summary=""&gt;
+        &lt;tr <b>id="mark:calendar_list"</b>&gt;
+          &lt;td <b>id="mark:calendar"</b> valign="top"&gt;
+            .... calendar here ...
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="calendar/calendar-page.plogic">calendar-page.plogic</a> (presentation logic):
+</p>
+<pre class="program">#calendar_list {
+	plogic: {
+	    calendar_ctr = 0;
+	    foreach (calendar in calendar_list) {
+	        calendar_ctr += 1;
+	        if (calendar_ctr % column == 1) {
+		    @stag;
+		}
+	        @cont;
+	        if (calendar_ctr % column == 0) {
+		    @etag;
+		}
+	    }
+	    if (calendar_ctr % column != 0) {
+		calendar = '';
+		while (calendar_ctr % column != 0) {
+		    @cont;
+		    calendar_ctr += 1;
+		}
+		@etag;
+	    }
+	}
+}
+
+#calendar {
+	value:  calendar;
+}
+</pre>
+<p><a href="calendar/calendar.rbx">calendar.rbx</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+require 'cgi'
+require 'erb'
+
+## set year
+cgi = nil
+if ENV['REQUEST_METHOD']
+   cgi = CGI.new
+   year = cgi.params['year'].first
+   if year &amp;&amp; !year.empty?
+      year = year.to_i
+   else
+      year = Time.new.year
+   end
+else
+   year = Time.new.year
+end
+
+## create erb
+trim_mode = 1
+str = File.open('calendar-month.view') { |f| f.read() }
+str.untaint
+erb_cal_month = ERB.new(str, $SAFE, trim_mode)
+str = File.open('calendar-page.view') { |f| f.read() }
+str.untaint
+erb_cal_page  = ERB.new(str, $SAFE, trim_mode)
+
+## set calendar_list
+calendar_list = []
+(1..12).each do |i|
+    t = Time.local(year, i, 1)
+    month = t.strftime("%B")
+    next_month = i == 12 ? Time.local(year+1, 1, 1) : Time.local(year, i+1, 1)
+    last_day = next_month - 60*60*24
+    num_days = last_day.day
+    first_weekday = t.strftime("%w").to_i + 1
+    #puts "year=#{year}, month=#{month}, num_days=#{num_days}, first_weekday=#{first_weekday}"
+    calendar_list &lt;&lt; erb_cal_month.result(binding())
+end
+#calendar_list.each do |s| print s end
+
+## include main page, with $calendar_list[]
+prev_link = "calendar.rbx?year=#{year-1}"
+next_link = "calendar.rbx?year=#{year+1}"
+column = 4
+print cgi.header if cgi
+print erb_cal_page.result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p calendar-month.plogic calendar-month.html &gt; calendar-month.view
+% kwartz -l eruby -p calendar-page.plogic  calendar-page.html  &gt; calendar-page.view
+
+### execution
+% ruby calendar.rbx &gt; result.html
+</pre>
+<p><a href="calendar/calendar-month.view">calendar-month.view</a> (output script for Ruby):
+</p>
+<pre class="program">            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of &lt;%= month %&gt;, &lt;%= year %&gt;"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;&lt;%= month %&gt;&lt;/i&gt;&amp;nbsp;&lt;i&gt;&lt;%= year %&gt;&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+&lt;% day = "&amp;nbsp" %&gt;
+&lt;% wday = 1 %&gt;
+&lt;% while wday &lt; first_weekday do %&gt;
+&lt;%   if wday == 1 then %&gt;
+                &lt;tr&gt;
+&lt;%   end %&gt;
+                  &lt;td&gt;&lt;% if wday == 1 then %&gt;
+&lt;span class="holiday"&gt;&lt;%= day %&gt;&lt;/span&gt;&lt;% else %&gt;
+&lt;%= day %&gt;&lt;% end %&gt;
+&lt;/td&gt;
+&lt;%   wday += 1 %&gt;
+&lt;% end %&gt;
+&lt;% day = 0 %&gt;
+&lt;% wday -= 1 %&gt;
+&lt;% while day &lt; num_days do %&gt;
+&lt;%   day += 1 %&gt;
+&lt;%   wday = wday % 7 + 1 %&gt;
+&lt;%   if wday == 1 then %&gt;
+                &lt;tr&gt;
+&lt;%   end %&gt;
+                  &lt;td&gt;&lt;% if wday == 1 then %&gt;
+&lt;span class="holiday"&gt;&lt;%= day %&gt;&lt;/span&gt;&lt;% else %&gt;
+&lt;%= day %&gt;&lt;% end %&gt;
+&lt;/td&gt;
+&lt;%   if wday == 7 then %&gt;
+                &lt;/tr&gt;
+&lt;%   end %&gt;
+&lt;% end %&gt;
+&lt;% if wday != 7 then %&gt;
+&lt;%   day = "&amp;nbsp;" %&gt;
+&lt;%   while wday != 6 do %&gt;
+                  &lt;td&gt;&lt;% if wday == 1 then %&gt;
+&lt;span class="holiday"&gt;&lt;%= day %&gt;&lt;/span&gt;&lt;% else %&gt;
+&lt;%= day %&gt;&lt;% end %&gt;
+&lt;/td&gt;
+&lt;%     wday += 1 %&gt;
+&lt;%   end %&gt;
+                &lt;/tr&gt;
+&lt;% end %&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+</pre>
+<p><a href="calendar/calendar-page.view">calendar-page.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Calendar&amp;nbs; &lt;%= year %&gt;&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        .title     {font-size:x-large; font-weight:bold;}
+        .holiday   {color:#FF0000;}
+	td         {text-align:center;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div align="center"&gt;
+      &lt;a href="&lt;%= prev_link %&gt;"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
+      &amp;nbsp;
+      &lt;span class="title"&gt;
+	Calendar&amp;nbsp; &lt;%= year %&gt;
+      &lt;/span&gt;
+      &amp;nbsp;
+      &lt;a href="&lt;%= next_link %&gt;"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+
+    &lt;div align="center"&gt;
+      &lt;table border="0" summary=""&gt;
+&lt;% calendar_ctr = 0 %&gt;
+&lt;% for calendar in calendar_list do %&gt;
+&lt;%   calendar_ctr += 1 %&gt;
+&lt;%   if calendar_ctr % column == 1 then %&gt;
+        &lt;tr&gt;
+&lt;%   end %&gt;
+          &lt;td valign="top"&gt;
+&lt;%= calendar %&gt;          &lt;/td&gt;
+&lt;%   if calendar_ctr % column == 0 then %&gt;
+        &lt;/tr&gt;
+&lt;%   end %&gt;
+&lt;% end %&gt;
+&lt;% if calendar_ctr % column != 0 then %&gt;
+&lt;%   calendar = "" %&gt;
+&lt;%   while calendar_ctr % column != 0 do %&gt;
+          &lt;td valign="top"&gt;
+&lt;%= calendar %&gt;          &lt;/td&gt;
+&lt;%     calendar_ctr += 1 %&gt;
+&lt;%   end %&gt;
+        &lt;/tr&gt;
+&lt;% end %&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="calendar/result.html">result.html</a>
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Calendar&amp;nbs; 2005&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        .title     {font-size:x-large; font-weight:bold;}
+        .holiday   {color:#FF0000;}
+	td         {text-align:center;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div align="center"&gt;
+      &lt;a href="calendar.rbx?year=2004"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
+      &amp;nbsp;
+      &lt;span class="title"&gt;
+	Calendar&amp;nbsp; 2005      &lt;/span&gt;
+      &amp;nbsp;
+      &lt;a href="calendar.rbx?year=2006"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+
+    &lt;div align="center"&gt;
+      &lt;table border="0" summary=""&gt;
+        &lt;tr&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of January, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;January&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;2&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;9&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;16&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;23&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;30&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of February, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;February&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;6&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;13&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;20&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;27&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of March, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;March&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;6&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;13&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;20&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;27&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of April, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;April&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;3&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;10&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;17&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;24&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of May, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;May&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;1&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;8&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;15&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;22&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;29&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of June, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;June&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;5&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;12&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;19&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;26&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of July, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;July&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;3&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;10&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;17&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;24&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;31&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of August, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;August&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;7&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;14&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;21&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;28&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of September, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;September&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;4&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;11&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;18&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;25&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of October, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;October&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;2&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;9&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;16&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;23&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;30&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of November, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;November&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                  &lt;td&gt;4&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;6&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                  &lt;td&gt;11&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;13&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                  &lt;td&gt;18&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;20&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                  &lt;td&gt;25&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;27&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+          &lt;td valign="top"&gt;
+            &lt;!-- calendar-month --&gt;
+            &lt;table cellpadding="2" summary="calendar of December, 2005"&gt;
+              &lt;caption&gt;
+                &lt;i&gt;December&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+              &lt;/caption&gt;
+              &lt;thead&gt;
+                &lt;tr bgcolor="#CCCCCC"&gt;
+                  &lt;th&gt;&lt;span class="holiday"&gt;S&lt;/span&gt;&lt;/th&gt;
+                  &lt;th&gt;M&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;W&lt;/th&gt;&lt;th&gt;T&lt;/th&gt;&lt;th&gt;F&lt;/th&gt;&lt;th&gt;S&lt;/th&gt;
+                &lt;/tr&gt;
+              &lt;/thead&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;&amp;nbsp&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp&lt;/td&gt;
+                  &lt;td&gt;1&lt;/td&gt;
+                  &lt;td&gt;2&lt;/td&gt;
+                  &lt;td&gt;3&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;4&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;5&lt;/td&gt;
+                  &lt;td&gt;6&lt;/td&gt;
+                  &lt;td&gt;7&lt;/td&gt;
+                  &lt;td&gt;8&lt;/td&gt;
+                  &lt;td&gt;9&lt;/td&gt;
+                  &lt;td&gt;10&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;11&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;12&lt;/td&gt;
+                  &lt;td&gt;13&lt;/td&gt;
+                  &lt;td&gt;14&lt;/td&gt;
+                  &lt;td&gt;15&lt;/td&gt;
+                  &lt;td&gt;16&lt;/td&gt;
+                  &lt;td&gt;17&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;18&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;19&lt;/td&gt;
+                  &lt;td&gt;20&lt;/td&gt;
+                  &lt;td&gt;21&lt;/td&gt;
+                  &lt;td&gt;22&lt;/td&gt;
+                  &lt;td&gt;23&lt;/td&gt;
+                  &lt;td&gt;24&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;span class="holiday"&gt;25&lt;/span&gt;&lt;/td&gt;
+                  &lt;td&gt;26&lt;/td&gt;
+                  &lt;td&gt;27&lt;/td&gt;
+                  &lt;td&gt;28&lt;/td&gt;
+                  &lt;td&gt;29&lt;/td&gt;
+                  &lt;td&gt;30&lt;/td&gt;
+                  &lt;td&gt;31&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;
+            &amp;nbsp;
+            &lt;!-- /calendar-month --&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="thumbnail"></a>
+<h2 class="section1">Thumbnail</h2>
+<p><a href="thumbnail/thumbnail.html">thumbnail.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
+    &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        body   {background-color:#FFFFFF;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  
+  &lt;body&gt;
+    
+    &lt;div align="center" <b>id="mark:navi"</b>&gt;
+      &lt;a <b>id="mark:navi_first"</b> href="..."&gt;|&amp;lt;&amp;lt; First&lt;/a&gt;
+      &amp;nbsp;
+      &lt;a <b>id="mark:navi_prev"</b>  href="..."&gt;&amp;lt; Prev&lt;/a&gt;
+      &amp;nbsp;
+      &lt;a <b>id="mark:navi_index"</b>  href="..."&gt;Index&lt;/a&gt;
+      &amp;nbsp;
+      &lt;a <b>id="mark:navi_next"</b>  href="..."&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+      &amp;nbsp;
+      &lt;a <b>id="mark:navi_last"</b>  href="..."&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
+    &lt;/div&gt;
+
+    &lt;div <b>id="mark:index"</b>&gt;
+      &lt;a <b>id="mark:thumbnail"</b> href="..."&gt;&lt;img width="200" height="150"
+         src="dummy1.png" <b>id="attr:src:image_url"</b> &gt;&lt;/a&gt;
+      &lt;a href="dummy2.png"&gt;&lt;img width="200" height="150"
+         src="dummy2.png"&gt;&lt;/a&gt;
+      &lt;a href="dummy3.png"&gt;&lt;img width="200" height="150"
+         src="dummy3.png"&gt;&lt;/a&gt;
+      &lt;br <b>id="mark:br"</b>&gt;
+    &lt;/div&gt;
+      
+    &lt;div <b>id="main_image"</b> align="center"&gt;
+      &lt;br&gt;
+      &lt;table border="1"&gt;
+        &lt;tr&gt;
+          &lt;td&gt;
+            &lt;img src="dummy0.png" alt="presentaion image" <b>id="attr:src:image_url"</b> &gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+      &lt;br&gt;
+    &lt;/div&gt;
+    
+    &lt;div <b>id="mark:navi2"</b>&gt;
+      |&amp;lt;&amp;lt; Fist &amp;nbsp; &amp;lt; Pref &amp;nbsp; List &amp;nbsp; &lt;b&gt;Next&lt;/b&gt; &amp;gt; &amp;nbsp; Last &amp;gt;&amp;gt;|
+    &lt;/div&gt;
+
+    &lt;!--
+    &lt;div <b>id="counter"</b> align="right"&gt;
+      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
+        alt="counter image file"&gt;
+    &lt;/div&gt;
+      --&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="thumbnail/thumbnail.plogic">thumbnail.plogic</a> (presentation logic):
+</p>
+<pre class="program">#navi {
+        plogic: {
+            if (page &gt; 0) {      // remove element when page is 0
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+
+#navi_first {
+        attrs:  "href" first_url;
+        plogic: {
+            if (first_url != empty) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;           // remove start tag and end tag
+            }
+        }
+}
+
+
+#navi_last {
+        attr:  "href" last_url;
+        plogic: {
+            if (last_url != empty) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;           // remove start tag and end tag
+            }
+        }
+}
+
+
+#navi_prev {
+        attr:  "href" prev_url;
+        plogic: {
+            if (prev_url != empty) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;           // remove start tag and end tag
+            }
+        }
+}
+
+
+#navi_next {
+        attr:  "href" next_url;
+        plogic: {
+            if (next_url != empty) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;           // remove start tag and end tag
+            }
+        }
+}
+
+
+#navi_index {
+        attr:  "href" index_url;
+        plogic: {
+            if (index_url != empty) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;           // remove start tag and end tag
+            }
+        }
+}
+
+
+#index {
+        plogic: {
+            @stag;
+            if (page == 0) {
+                i = 0;
+                foreach (thumb in thumb_list) {
+                    i += 1;
+                    link_url  = thumb[:link_url];
+                    image_url = thumb[:image_url];
+                    @element(thumbnail);
+                    if (i % 3 == 0) {
+                        @element(br);
+                    }
+                }
+            }
+            @etag;
+        }
+}
+
+
+#thumbnail {
+        attr: "href" link_url;
+}
+
+
+#main_image {
+        plogic: {
+            if (page != 0) {     // remove element when page is 0
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+
+#navi2 {
+        plogic: {
+            @element(navi);
+        }
+}
+</pre>
+<p><a href="thumbnail/thumbnail.rbx">thumbnail.rbx</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/ruby
+
+## get parameters
+params = {}
+cgi = nil
+if ENV['REQUEST_METHOD']
+   require 'cgi'
+   cgi = CGI.new
+   cgi.params.each do |key, value|
+      params[key] = value.first
+   end
+end
+
+## set url format of images
+base_url  = "http://www.kuwata-lab.com/kwartz/kwartz-overview/images";
+image_url_format = "#{base_url}/image%02d.png";
+
+## get parameters
+first = 1
+last  = 20
+page = params['page']
+if (!page || page.empty?)
+   page = 0
+else
+   page = page.to_i
+   page = 0 unless first &lt;= page &amp;&amp; page &lt;= last
+end
+
+## set URLs of previous, next, first, last, and index page
+script = cgi ? cgi.script_name : File::basename(__FILE__)
+prev_url  = page &gt; first ? "#{script}?page=#{page-1}" : nil
+next_url  = page &lt; last  ? "#{script}?page=#{page+1}" : nil
+first_url = page &gt; first ? "#{script}?page=#{first}"  : nil
+last_url  = page &lt; last  ? "#{script}?page=#{last}"   : nil
+index_url = page != 0    ? "#{script}?page=0"         : nil
+
+##
+if page &gt; 0
+   image_url = image_url_format % page
+elsif page == 0
+   thumb_list = []
+   (first..last).each do |i|
+      image_url = image_url_format % i
+      link_url  = "#{script}?page=#{i}"
+      thumb_list &lt;&lt; { :image_url =&gt; image_url, :link_url =&gt; link_url }
+   end
+else
+   # internal error
+end
+
+## load view
+require 'erb'
+str = File.open('thumbnail.view') { |f| f.read() }
+str.untaint
+trim_mode = 2
+print cgi.header if cgi
+ERB.new(str, $SAFE, trim_mode).run(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz -l eruby -p thumbnail.plogic thumbnail.html &gt; thumbnail.view
+
+### execution
+% ruby thumbnail.rb &gt; result.html
+</pre>
+<p><a href="thumbnail/thumbnail.view">thumbnail.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
+    &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        body   {background-color:#FFFFFF;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  
+  &lt;body&gt;
+    
+&lt;% if page &gt; 0 then %&gt;
+    &lt;div align="center"&gt;
+&lt;%   if first_url &amp;&amp; !first_url.empty? then %&gt;
+      &lt;a href="&lt;%= first_url %&gt;"&gt;|&amp;lt;&amp;lt; First&lt;/a&gt;
+&lt;%   else %&gt;
+|&amp;lt;&amp;lt; First&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if prev_url &amp;&amp; !prev_url.empty? then %&gt;
+      &lt;a href="&lt;%= prev_url %&gt;"&gt;&amp;lt; Prev&lt;/a&gt;
+&lt;%   else %&gt;
+&amp;lt; Prev&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if index_url &amp;&amp; !index_url.empty? then %&gt;
+      &lt;a href="&lt;%= index_url %&gt;"&gt;Index&lt;/a&gt;
+&lt;%   else %&gt;
+Index&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if next_url &amp;&amp; !next_url.empty? then %&gt;
+      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+&lt;%   else %&gt;
+&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if last_url &amp;&amp; !last_url.empty? then %&gt;
+      &lt;a href="&lt;%= last_url %&gt;"&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
+&lt;%   else %&gt;
+Last &amp;gt;&amp;gt;|&lt;% end %&gt;
+    &lt;/div&gt;
+&lt;% end %&gt;
+
+    &lt;div&gt;
+&lt;% if page == 0 then %&gt;
+&lt;%   i = 0 %&gt;
+&lt;%   for thumb in thumb_list do %&gt;
+&lt;%     i += 1 %&gt;
+&lt;%     link_url = thumb[:link_url] %&gt;
+&lt;%     image_url = thumb[:image_url] %&gt;
+      &lt;a href="&lt;%= link_url %&gt;"&gt;&lt;img width="200" height="150"
+         src="&lt;%= image_url %&gt;" &gt;&lt;/a&gt;
+&lt;%     if i % 3 == 0 then %&gt;
+      &lt;br&gt;
+&lt;%     end %&gt;
+&lt;%   end %&gt;
+&lt;% end %&gt;
+    &lt;/div&gt;
+      
+&lt;% if page != 0 then %&gt;
+    &lt;div id="main_image" align="center"&gt;
+      &lt;br&gt;
+      &lt;table border="1"&gt;
+        &lt;tr&gt;
+          &lt;td&gt;
+            &lt;img src="&lt;%= image_url %&gt;" alt="presentaion image" &gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+      &lt;br&gt;
+    &lt;/div&gt;
+&lt;% end %&gt;
+    
+&lt;% if page &gt; 0 then %&gt;
+    &lt;div align="center"&gt;
+&lt;%   if first_url &amp;&amp; !first_url.empty? then %&gt;
+      &lt;a href="&lt;%= first_url %&gt;"&gt;|&amp;lt;&amp;lt; First&lt;/a&gt;
+&lt;%   else %&gt;
+|&amp;lt;&amp;lt; First&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if prev_url &amp;&amp; !prev_url.empty? then %&gt;
+      &lt;a href="&lt;%= prev_url %&gt;"&gt;&amp;lt; Prev&lt;/a&gt;
+&lt;%   else %&gt;
+&amp;lt; Prev&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if index_url &amp;&amp; !index_url.empty? then %&gt;
+      &lt;a href="&lt;%= index_url %&gt;"&gt;Index&lt;/a&gt;
+&lt;%   else %&gt;
+Index&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if next_url &amp;&amp; !next_url.empty? then %&gt;
+      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+&lt;%   else %&gt;
+&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;% end %&gt;
+      &amp;nbsp;
+&lt;%   if last_url &amp;&amp; !last_url.empty? then %&gt;
+      &lt;a href="&lt;%= last_url %&gt;"&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
+&lt;%   else %&gt;
+Last &amp;gt;&amp;gt;|&lt;% end %&gt;
+    &lt;/div&gt;
+&lt;% end %&gt;
+
+    &lt;!--
+    &lt;div id="counter" align="right"&gt;
+      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
+        alt="counter image file"&gt;
+    &lt;/div&gt;
+      --&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="thumbnail/result.html">result.html</a>
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
+    &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+      &lt;!--
+        body   {background-color:#FFFFFF;}
+        --&gt;
+    &lt;/style&gt;
+  &lt;/head&gt;
+  
+  &lt;body&gt;
+    
+
+    &lt;div&gt;
+      &lt;a href="thumbnail.rbx?page=1"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image01.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=2"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image02.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=3"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image03.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=4"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image04.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=5"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image05.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=6"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image06.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=7"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image07.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=8"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image08.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=9"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image09.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=10"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image10.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=11"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image11.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=12"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image12.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=13"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image13.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=14"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image14.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=15"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image15.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=16"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image16.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=17"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image17.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=18"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image18.png" &gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=19"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image19.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=20"&gt;&lt;img width="200" height="150"
+         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image20.png" &gt;&lt;/a&gt;
+    &lt;/div&gt;
+      
+    
+
+    &lt;!--
+    &lt;div id="counter" align="right"&gt;
+      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
+        alt="counter image file"&gt;
+    &lt;/div&gt;
+      --&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="pagelayout"></a>
+<h2 class="section1">Page Layout</h2>
+<p><a href="pagelayout/layout.html">layout.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title <b>id="value:title"</b>&gt;...title...&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top"&gt;
+          &lt;div class="menu" <b>id="placeholder:menu"</b>&gt;
+            &lt;ul&gt;
+              &lt;li&gt;menu1&lt;/li&gt;
+              &lt;li&gt;menu2&lt;/li&gt;
+              &lt;li&gt;menu3&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td width="400" valign="top"&gt;
+          &lt;div class="article" <b>id="placeholder:article"</b>&gt;
+            aaa&lt;br&gt;
+            bbb&lt;br&gt;
+            ccc&lt;br&gt;
+            ddd&lt;br&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/contents.html">contents.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    
+    &lt;p&gt;menu:&lt;/p&gt;
+    &lt;ul <b>id="mark:menu"</b>&gt;
+      &lt;li&gt;&lt;a href="..." <b>id="mark:menu_item"</b>&gt;menu1&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;article:&lt;/p&gt;
+    &lt;div <b>id="mark:article"</b>&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the concept
+        &lt;strong&gt;`Independence of Presentation Logic'(IoPL)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/contents.plogic">contents.plogic</a> (presentation logic):
+</p>
+<pre class="program">#menu {
+  plogic: {
+    @stag;
+    foreach (item in menu_list) {
+      @cont;
+    }
+    @etag;
+  }
+}
+
+#menu_item {
+  value: item[:name];
+  attrs:  "href" item[:url];
+}
+</pre>
+<p><a href="pagelayout/main.rb">pagelayout.rb</a> (main program):
+</p>
+<pre class="program">#!/usr/bin/env ruby
+
+## menu
+menu_list = [
+  { :name =&gt; 'Mail',     :url =&gt; '/cgi-bin/mail.cgi' },
+  { :name =&gt; 'Calnedar', :url =&gt; '/cgi-bin/calendar.cgi' },
+  { :name =&gt; 'Todo',     :url =&gt; '/cgi-bin/todo.cgi' },
+]
+
+## title
+title = "My Homepage"
+
+## output
+require 'erb'
+filename = 'page.view'
+str = File.open(filename) { |f| f.read() }
+trim_mode = 1
+erb = ERB.new(str, $SAFE, trim_mode)
+print erb.result(binding())
+</pre>
+<p>Compile and execution:
+</p>
+<pre class="terminal">### compile
+% kwartz <b>-i contents.html</b> -p contents.plogic layout.html &gt; page.view
+
+### execution
+% ruby main.rb &gt; result.html
+</pre>
+<p><a href="pagelayout/page.view">page.view</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top"&gt;
+          &lt;div class="menu"&gt;
+    &lt;ul&gt;
+&lt;% for item in menu_list do %&gt;
+      &lt;li&gt;&lt;a href="&lt;%= item[:url] %&gt;"&gt;&lt;%= item[:name] %&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;% end %&gt;
+    &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td width="400" valign="top"&gt;
+          &lt;div class="article"&gt;
+    &lt;div&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the concept
+        &lt;strong&gt;`Independence of Presentation Data'(IoPL)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/result.html">result.html</a>
+</p>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;My Homepage&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td width="100" valign="top"&gt;
+          &lt;div class="menu"&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/calendar.cgi"&gt;Calnedar&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="/cgi-bin/todo.cgi"&gt;Todo&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td width="400" valign="top"&gt;
+          &lt;div class="article"&gt;
+    &lt;div&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the concept
+        &lt;strong&gt;`Independence of Presentation Data'(IoPL)&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2005 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+<a name="rails1"></a>
+<h2 class="section1">Rails 1</h2>
+<p><a href="rails1/recipes.html">recipes.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Recipes: &lt;span <b>id="value:controller.action_name"</b>&gt;action&lt;/span&gt;&lt;/title&gt;
+    &lt;link <b>id="mark:stylesheet_link"</b> type="text/css" rel="stylesheet" href="scaffold.css" /&gt;
+  &lt;/head&gt;
+  &lt;body <b>id="placeholder:contents"</b>&gt;
+
+      ... contents ...
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):
+</p>
+<pre class="program">#stylesheet_link {
+        plogic: {
+            // replace element with print statement
+            print(X(&lt;%= stylesheet_link_tag 'scaffold' %&gt;), "\n");
+        }
+}
+
+#list_recipes {
+        // set href attribute value with Rails function
+        attrs:  "href" X(&lt;%= url_for(:action=&gt;'list') %&gt;);
+}
+</pre>
+<p><a href="rails1/list.html">list.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="mark:contents"</b>&gt;
+
+      &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
+
+      &lt;table border="1"&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th width="40%"&gt;Recipe&lt;/th&gt;
+            &lt;th width="20%"&gt;Category&lt;/th&gt;
+            &lt;th width="20%"&gt;Date&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr bgcolor="#FFCCCC" <b>id="mark:recipes"</b>&gt;
+            &lt;td&gt;&lt;a href="..." <b>id="mark:recipe_title"</b>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
+            &lt;td <b>id="mark:recipe_category"</b>&gt;Snacks&lt;/td&gt;
+            &lt;td <b>id="mark:recipe_date"</b>&gt;2004-11-11&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr bgcolor="#CCCCFF" <b>id="dummy:d1"</b>&gt;
+            &lt;td&gt;&lt;a href="..."&gt;Ice Water&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;Beverages&lt;/td&gt;
+            &lt;td&gt;2004-11-11&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+
+      &lt;p&gt;
+        &lt;a href="..." <b>id="mark:new_recipe"</b>&gt;Create new recipe&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/list.plogic">list.plogic</a> (presentation logic):
+</p>
+<pre class="program">#recipes {
+        attrs:  "bgcolor"  X(color);
+        plogic: {
+            i = 0;
+            foreach (recipe in recipes) {
+                i += 1;
+                color = i % 2 == 0 ? '#CCCCFF' : '#FFCCCC';
+                @stag;   // start tag
+                @cont;   // content
+                @etag;   // end tag
+            }
+        }
+}
+
+#recipe_title {
+        value:  recipe.title;
+        attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;recipe.id) %&gt;);
+}
+
+#recipe_category {
+        value:  recipe.category.name;
+}
+
+#recipe_date {
+        value:  recipe.date;
+}
+
+#new_recipe {
+        attrs:  "href" X(&lt;%= url_for(:action=&gt;'new') %&gt;);
+}
+</pre>
+<p><a href="rails1/show.html">show.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="mark:contents"</b>&gt;
+
+      &lt;h1&gt;Show Recipe&lt;/h1&gt;
+      
+      &lt;table&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Title:&lt;/th&gt;
+          &lt;td <b>id="value:recipe.title"</b>&gt;Hot Chips&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Description:&lt;/th&gt;
+          &lt;td <b>id="value:recipe.description"</b>&gt;Only for the brave!&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Category:&lt;/th&gt;
+          &lt;td <b>id="value:recipe.category.name"</b>&gt;Snacks&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Date:&lt;/th&gt;
+          &lt;td <b>id="value:recipe.date"</b>&gt;2004-11-11&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Instructions:&lt;/th&gt;
+          &lt;td <b>id="mark:recipe_instructions"</b>&gt;Sprinkle hot-pepper sauce on corn chips.&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+
+      &lt;p&gt;
+        &lt;a href="..." <b>id="mark:edit_recipe"</b>&gt;Edit&lt;/a&gt;
+        |
+        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/show.plogic">show.plogic</a> (presentation logic):
+</p>
+<pre class="program">#recipe_instructions {
+        value:  X(str_linebreak(escape_xml(recipe.instructions)));
+}
+
+#edit_recipe {
+        attrs:  "href"  X(&lt;%= url_for(:action=&gt;'edit', :id=&gt;@recipe.id) %&gt;);
+}
+
+// #recipe_title {
+//   value:  recipe.title;
+// }
+// 
+// #recipe_description {
+//   value:  recipe.description;
+// }
+// 
+// #recipe_category {
+//   value:  recipe.category.name;
+// }
+// 
+// #recipe_date {
+//   value:  recipe.date;
+// }
+</pre>
+<p><a href="rails1/new.html">new.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="mark:contents"</b>&gt;
+
+      &lt;h1&gt;New Recipe&lt;/h1&gt;
+
+      &lt;form <b>id="new_form"</b> action="..." method="post"&gt;
+        
+        &lt;table&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Title:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input <b>id="recipe_title"</b> name="recipe[title]" type="text" value="" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Description:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input <b>id="recipe_description"</b> name="recipe[description]" type="text" value=""/&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Category:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;select name="recipe[category_id]"&gt;
+                &lt;option value="1" <b>id="mark:recipe_category"</b>&gt;Snacks&lt;/option&gt;
+                &lt;option value="2" <b>id="dummy:o1"</b>&gt;Drinks&lt;/option&gt;
+              &lt;/select&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Instructions:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;textarea <b>id="recipe_instructions"</b> name="recipe[instructions]"
+                cols="40" rows="20" wrap="virtual"&gt;&lt;/textarea&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/table&gt;
+        
+        &lt;input type="submit" value="Submit" /&gt;
+        
+      &lt;/form&gt;
+      
+      &lt;p&gt;
+        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/new.plogic">new.plogic</a> (presentation logic):
+</p>
+<pre class="program">#new_form {
+        attrs:  "action"  X(&lt;%= url_for(:action=&gt;'create') %&gt;);
+}
+
+#recipe_category {
+        value:  category.name;
+        attrs:  "value" category.id;
+        plogic: {
+            foreach (category in categories) {
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+</pre>
+<p><a href="rails1/edit.html">edit.html</a> (presentation data):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="mark:contents"</b>&gt;
+
+      &lt;h1&gt;Edit Recipe&lt;/h1&gt;
+
+      &lt;form <b>id="mark:edit_form"</b> action="..." method="post"&gt;
+        &lt;input <b>id="recipe_id"</b> name="recipe[id]" type="hidden" value="1" /&gt;
+
+        &lt;table&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Title:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input <b>id="recipe_title"</b> name="recipe[title]"
+                     size="30" type="text" value="Hot Chips" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Description:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input <b>id="recipe_description"</b> name="recipe[description]"
+                     size="30" type="text" value="Only for the brave!" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Category:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;select name="recipe[category_id]"&gt;
+                &lt;option value="1" <b>id="mark:category_name"</b>&gt;Snacks&lt;/option&gt;
+                &lt;option value="2" <b>id="dummy:o1"</b>&gt;Drinks&lt;/option&gt;
+              &lt;/select&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Instructions:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;textarea <b>id="recipe_instructions"</b> name="recipe[instructions]" wrap="virtual"
+                cols="40" rows="20"&gt;Sprinkle hot-pepper sauce on corn chips.&lt;/textarea&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;input type="submit" value="Update" /&gt;
+
+      &lt;/form&gt;
+
+      &lt;p&gt;
+        &lt;a href="..." <b>id="mark:show_recipe"</b>&gt;Show&lt;/a&gt;
+        |
+        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):
+</p>
+<pre class="program">#edit_form {
+  attrs:  "action" X(&lt;%= url_for(:action=&gt;'update') %&gt;);
+}
+
+#recipe_id {
+  attrs:  "value" recipe.id;
+}
+
+#recipe_title {
+  attrs:  "value" recipe.title;
+}
+
+#recipe_description {
+  attrs:  "value" recipe.description;
+}
+
+#category_name {
+  value:  category.name;
+  attrs:  "value"  category.id;
+  append: S(category.id==recipe.category.id);
+  plogic: {
+    foreach (category in categories) {
+      @stag;
+      @cont;
+      @etag;
+    }
+  }
+}
+
+#recipe_instructions {
+  value:  recipe.instructions;
+}
+
+#show_recipe {
+  attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;);
+}
+</pre>
+<p>Compile:
+</p>
+<pre class="terminal">### compile
+% kwartz -Rails -p recipes.plogic,list.plogic -e -i list.html recipes.html &gt; list.rhtml
+% kwartz -Rails -p recipes.plogic,show.plogic -e -i show.html recipes.html &gt; show.rhtml
+% kwartz -Rails -p recipes.plogic,new.plogic  -e -i new.html  recipes.html &gt; new.rhtml
+% kwartz -Rails -p recipes.plogic,edit.plogic -e -i edit.html recipes.html &gt; edit.rhtml
+</pre>
+<p><a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
+&lt;%= stylesheet_link_tag 'scaffold' %&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+
+      &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
+
+      &lt;table border="1"&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th width="40%"&gt;Recipe&lt;/th&gt;
+            &lt;th width="20%"&gt;Category&lt;/th&gt;
+            &lt;th width="20%"&gt;Date&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+&lt;% i = 0 %&gt;
+&lt;% for recipe in @recipes do %&gt;
+&lt;%   i += 1 %&gt;
+&lt;%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %&gt;
+          &lt;tr bgcolor="&lt;%= color %&gt;"&gt;
+            &lt;td&gt;&lt;a href="&lt;%= url_for(:action=&gt;'show', :id=&gt;recipe.id) %&gt;"&gt;&lt;%=h(recipe.title)%&gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;%=h(recipe.category.name)%&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;%=h(recipe.date)%&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+&lt;% end %&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+
+      &lt;p&gt;
+        &lt;a href="&lt;%= url_for(:action=&gt;'new') %&gt;"&gt;Create new recipe&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
+&lt;%= stylesheet_link_tag 'scaffold' %&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+
+      &lt;h1&gt;Show Recipe&lt;/h1&gt;
+      
+      &lt;table&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Title:&lt;/th&gt;
+          &lt;td&gt;&lt;%=h(@recipe.title)%&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Description:&lt;/th&gt;
+          &lt;td&gt;&lt;%=h(@recipe.description)%&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Category:&lt;/th&gt;
+          &lt;td&gt;&lt;%=h(@recipe.category.name)%&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Date:&lt;/th&gt;
+          &lt;td&gt;&lt;%=h(@recipe.date)%&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Instructions:&lt;/th&gt;
+          &lt;td&gt;&lt;%= html_escape(@recipe.instructions).gsub(/\r?\n/,'&lt;br /&gt;\&amp;') %&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+
+      &lt;p&gt;
+        &lt;a href="&lt;%= url_for(:action=&gt;'edit', :id=&gt;@recipe.id) %&gt;"&gt;Edit&lt;/a&gt;
+        |
+        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+      
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
+&lt;%= stylesheet_link_tag 'scaffold' %&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+
+      &lt;h1&gt;New Recipe&lt;/h1&gt;
+
+      &lt;form id="new_form" action="&lt;%= url_for(:action=&gt;'create') %&gt;" method="post"&gt;
+        
+        &lt;table&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Title:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input id="recipe_title" name="recipe[title]" type="text" value="" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Description:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input id="recipe_description" name="recipe[description]" type="text" value="" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Category:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;select name="recipe[category_id]"&gt;
+&lt;% for category in @categories do %&gt;
+                &lt;option value="&lt;%=h(category.id)%&gt;"&gt;&lt;%=h(category.name)%&gt;&lt;/option&gt;
+&lt;% end %&gt;
+              &lt;/select&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Instructions:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;textarea id="recipe_instructions" name="recipe[instructions]" cols="40" rows="20" wrap="virtual"&gt;&lt;/textarea&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/table&gt;
+        
+        &lt;input type="submit" value="Submit" /&gt;
+        
+      &lt;/form&gt;
+      
+      &lt;p&gt;
+        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):
+</p>
+<pre class="program">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
+&lt;%= stylesheet_link_tag 'scaffold' %&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+
+      &lt;h1&gt;Edit Recipe&lt;/h1&gt;
+
+      &lt;form action="&lt;%= url_for(:action=&gt;'update') %&gt;" method="post"&gt;
+        &lt;input id="recipe_id" name="recipe[id]" type="hidden" value="&lt;%=h(@recipe.id)%&gt;" /&gt;
+
+        &lt;table&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Title:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input id="recipe_title" name="recipe[title]" size="30" type="text" value="&lt;%=h(@recipe.title)%&gt;" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Description:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;input id="recipe_description" name="recipe[description]" size="30" type="text" value="&lt;%=h(@recipe.description)%&gt;" /&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Category:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;select name="recipe[category_id]"&gt;
+&lt;% for category in @categories do %&gt;
+                &lt;option value="&lt;%=h(category.id)%&gt;"&lt;%= category.id == @recipe.category.id ? " selected=\"selected\"" : "" %&gt;&gt;&lt;%=h(category.name)%&gt;&lt;/option&gt;
+&lt;% end %&gt;
+              &lt;/select&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Instructions:&lt;/th&gt;
+            &lt;td&gt;
+              &lt;textarea id="recipe_instructions" name="recipe[instructions]" wrap="virtual" cols="40" rows="20"&gt;&lt;%=h(@recipe.instructions)%&gt;&lt;/textarea&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;input type="submit" value="Update" /&gt;
+
+      &lt;/form&gt;
+
+      &lt;p&gt;
+        &lt;a href="&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;"&gt;Show&lt;/a&gt;
+        |
+        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+      &lt;/p&gt;
+
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

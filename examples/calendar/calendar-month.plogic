@@ -1,55 +1,56 @@
 #document {
-	plogic: {
-	    @element(calendar_month);
-	}
+        // replace document element by calendar_month element
+        plogic:   {
+            @element(calendar_month);
+        }
 }
 
 #calendar_month {
-	plogic: {
-	    @cont;
+        plogic:   {
+            @cont;              // remove start tag and end tag
         }
 }
 
 #week {
-	plogic: {
-	    day = '&nbsp';
-	    wday = 1;
-	    while (wday < first_weekday) {
-	        if (wday == 1)  @stag;
-	        @cont;
-	        wday += 1;
-	    }
-	    
-	    day = 0;
-	    wday -= 1;
-	    while (day < num_days) {
-	        day += 1;
-	        wday = wday % 7 + 1;
-	        if (wday == 1)  @stag;
-	        @cont;
-	        if (wday == 7)  @etag;
-	    }
+        plogic:   {
+            day = '&nbsp';
+            wday = 1;
+            while (wday < first_weekday) {
+                if (wday == 1)  @stag;
+                @cont;
+                wday += 1;
+            }
+            
+            day = 0;
+            wday -= 1;
+            while (day < num_days) {
+                day += 1;
+                wday = wday % 7 + 1;
+                if (wday == 1)  @stag;
+                @cont;
+                if (wday == 7)  @etag;
+            }
 
-	    if (wday != 7) {
-	        day = '&nbsp;';
-	        while (wday != 6) {
-	            @cont;
-		    wday += 1;
-		}
-		@etag;
-	    }
-	}
+            if (wday != 7) {
+                day = '&nbsp;';
+                while (wday != 6) {
+                    @cont;
+                    wday += 1;
+                }
+                @etag;
+            }
+        }
 }
 
 #day {
-	value:   day;
-	plogic: {
-	    if (wday == 1) {
-	        @stag;
-	        @cont;
-	        @etag;
-	    } else {
-	        @cont;
-	    }
-	}
+        value:    day;
+        plogic:   {
+            if (wday == 1) {
+                @stag;
+                @cont;
+                @etag;
+            } else {
+                @cont;
+            }
+        }
 }
