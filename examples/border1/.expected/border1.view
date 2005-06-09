@@ -3,17 +3,17 @@
 
     <table>
       <thead>
-	<th>Name</th><th>E-Mail</th>
+        <th>Name</th><th>E-Mail</th>
       </thead>
       <tbody>
 <% i = 0 %>
 <% for user in user_list do %>
 <%   i += 1 %>
 <%   color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC" %>
-	<tr bgcolor="<%= color %>">
-	  <td><%= user["name"] %></td>
-	  <td><a href="mailto:<%= user["email"] %>"><%= user["email"] %></a></td>
-	</tr>
+        <tr bgcolor="<%= color %>">
+          <td><%= user["name"] %></td>
+          <td><a href="mailto:<%= user["email"] %>"><%= user["email"] %></a></td>
+        </tr>
 <% end %>
       </tbody>
     </table>

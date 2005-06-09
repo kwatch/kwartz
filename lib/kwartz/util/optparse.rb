@@ -70,13 +70,9 @@ module Kwartz
                if !value || value.empty?
                   value = true
                elsif flag_str2value
-                  value = self.str2value(value)
+                  value = self.to_value(value)
                end
-               if name == 'help'
-                  options[?h] = value
-               else
-                  properties[name.intern] = value
-               end
+               properties[name.intern] = value
 
             else				## options
                optstr = opt.sub(/^-/, '')
@@ -95,6 +91,7 @@ module Kwartz
                      options[optchar] = arg
                   elsif optionals.include?(optchar)
                      arg = optstr && !optstr.empty? ? optstr : true
+                     optparse = nil
                      options[optchar] = arg
                   else
                      raise Kwartz::Util::OptparseError.new("invalid option.", :invalid_option, optchar)
@@ -108,22 +105,16 @@ module Kwartz
       end
 
 
-      def self.str2value(str)
+      def self.to_value(str)
          case str
-         when 'true', 'yes'
-            return true
-         when 'false', 'no'
-            return false
-         when 'null', 'nil'
-            return nil
-         when /^\d+$/
-            return str.to_i
-         when /^\d+\.\d+$/
-            return str.to_f
-         when /^\/.*\/$/
-            return eval(str)
-         when /^'.*'$/, /^".*"$/
-            return eval(str)
+         when 'true', 'yes'    ;  return true
+         when 'false', 'no'    ;  return false
+         when 'null', 'nil'    ;  return nil
+         when /\A\d+\z/        ;  return str.to_i
+         when /\A\d+\.\d+\z/   ;  return str.to_f
+         when /\A\/(.*)\/\z/   ;  return Regexp.new($1)
+         when /\A'.*'\z/       ;  return eval(str)
+         when /\A".*"\z/       ;  return eval(str)
          else
             return str
          end

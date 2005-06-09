@@ -2,7 +2,8 @@
 
 ###
 ### kwartz -- a template system which realized the concept of
-###    'Separation of Presentation Logic from Presentation Data'(SoPL/PD).
+### 'Separation of Presentation Logic from Presentation Data'(SoPL/PD)
+### or 'Independence of Presentation Logic'(IoPL).
 ###
 ### Copyright (C) 2004-2005 kuwata-lab
 ### All rights reserved.
@@ -46,9 +47,9 @@ module Kwartz
 
    class MainProgram
 
-      VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)*/ && $&)
-      LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/ && $&)
-      RELEASE     = ('$Release: 2.0.0-pre$' =~ /Release: (.*)\$/ && $1)
+      VERSION     = ('$Rev$' =~ /\d+(?:\.\d+)*/) && $&
+      LAST_UPDATE = ('$Date$' =~ /\d+[-\/]\d+[-\/]\d+/) && $&
+      RELEASE     = ('$Release: 1.9.9 $' =~ /Release: (.*)\$/) && $1
 
       def initialize(argv=ARGV)
          @argv = argv
@@ -73,7 +74,7 @@ module Kwartz
       def execute(argv=@argv)
          ## parse command-line options
          begin
-            options, properties = Kwartz::Util::optparse(@argv, "hves", "alpiRCFA", nil, true)
+            options, properties = Kwartz::Util::optparse(argv, "hves", "alpiRCFA", nil, true)
          rescue Kwartz::Util::OptparseError => ex
             case ex.type
             when :invalid_option
@@ -100,6 +101,7 @@ module Kwartz
          end
 
          ## help or version
+         options[?h] = true if properties[:help]
          if options[?h] || options[?v]
             #$stderr.puts "kwartz: #{RELEASE} (rev.#{VERSION}), kwartz.rb: #{Kwartz::RELEASE} (rev.#{Kwartz::VERSION})" if options[?v]
             if options[?v]
@@ -135,7 +137,7 @@ module Kwartz
             properties[key] = properties[key].split(/,/)
          end
 
-	 ## '-Rails' option
+         ## '-Rails' option
          if options[?R]
             if options[?R] == 'ails'
                properties[:globalvar_prefix] = '@'
@@ -195,14 +197,14 @@ module Kwartz
          end
 
          ## perform action and get output
-         if @argv.empty?
+         if argv.empty?
             input = ARGF.read()
             filename = ARGF.filename
             output << perform(action, compiler, input, filename, element_list, decl_list, lang)
             source = input
          else
             source = ''
-            @argv.each do |filename|
+            argv.each do |filename|
                unless test(?f, filename)
                   raise CommandOptionError.new("'#{filename}': not found.")
                end
@@ -340,7 +342,7 @@ end
 unless defined?(KWARTZ_NOEXEC)
    begin
       main_command = Kwartz::MainProgram.new(ARGV)
-      output = main_command.main()
+      output = main_command.execute()
       print output if output
    rescue Kwartz::KwartzError => ex
       $stderr.puts ex.message

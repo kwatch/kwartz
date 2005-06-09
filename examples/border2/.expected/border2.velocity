@@ -3,7 +3,7 @@
 
     <table>
       <thead>
-	<th>Name</th><th>E-Mail</th>
+        <th>Name</th><th>E-Mail</th>
       </thead>
       <tbody>
 #set($i = 0)
@@ -16,10 +16,10 @@
   #end
   #set($name = $user["name"])
   #set($email = $user["email"])
-	<tr bgcolor="$!{color}">
-	  <td>$!{name}</td>
-	  <td><a href="mailto:$!{email}">$!{email}</a></td>
-	</tr>
+        <tr bgcolor="$!{color}">
+          <td>$!{name}</td>
+          <td><a href="mailto:$!{email}">$!{email}</a></td>
+        </tr>
 #end
       </tbody>
     </table>

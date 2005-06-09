@@ -3,7 +3,7 @@
 
     <table>
       <thead>
-	<th>Name</th><th>E-Mail</th>
+        <th>Name</th><th>E-Mail</th>
       </thead>
       <tbody>
 #set($i = 0)
@@ -14,10 +14,10 @@
   #else
     #set($color = "#FFCCCC")
   #end
-	<tr bgcolor="$!{color}">
-	  <td>$!{user["name"]}</td>
-	  <td><a href="mailto:$!{user["email"]}">$!{user["email"]}</a></td>
-	</tr>
+        <tr bgcolor="$!{color}">
+          <td>$!{user["name"]}</td>
+          <td><a href="mailto:$!{user["email"]}">$!{user["email"]}</a></td>
+        </tr>
 #end
       </tbody>
     </table>

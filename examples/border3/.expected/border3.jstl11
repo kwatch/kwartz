@@ -5,7 +5,7 @@
 
     <table>
       <thead>
-	<th>Name</th><th>E-Mail</th>
+        <th>Name</th><th>E-Mail</th>
       </thead>
       <tbody>
 <c:set var="i" value="0"/>
@@ -14,15 +14,15 @@
   <c:set var="name" value="${user['name']}"/>
   <c:set var="email" value="${user['email']}"/>
   <c:choose><c:when test="${i % 2 eq 0}">
-	<tr bgcolor="#CCCCFF">
-	  <td><c:out value="${name}" escapeXml="false"/></td>
-	  <td><a href="mailto:<c:out value="${email}" escapeXml="false"/>"><c:out value="${email}" escapeXml="false"/></a></td>
-	</tr>
+        <tr bgcolor="#CCCCFF">
+          <td><c:out value="${name}" escapeXml="false"/></td>
+          <td><a href="mailto:<c:out value="${email}" escapeXml="false"/>"><c:out value="${email}" escapeXml="false"/></a></td>
+        </tr>
   </c:when><c:otherwise>
-	<tr bgcolor="#FFCCCC">
-	  <td><c:out value="${name}" escapeXml="false"/></td>
-	  <td><a href="mailto:<c:out value="${email}" escapeXml="false"/>"><c:out value="${email}" escapeXml="false"/></a></td>
-	</tr>
+        <tr bgcolor="#FFCCCC">
+          <td><c:out value="${name}" escapeXml="false"/></td>
+          <td><a href="mailto:<c:out value="${email}" escapeXml="false"/>"><c:out value="${email}" escapeXml="false"/></a></td>
+        </tr>
   </c:otherwise></c:choose>
 </c:forEach>
       </tbody>

@@ -3,7 +3,24 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
-.: 2005-05-09
+
+.: 2005-06-09 rev.81
+	.- [bugfix] Util.optparse() cannot handle argument-optional options.
+	.- [change] bin/kwartz-ruby a little refactored
+	.- [change] optparse.rb refactored
+	.- [change] test/examples-test.rb updated
+
+.: 2005-06-09 rev.80
+	.- [change] examples/rails1 changed
+	.- [change] examples/pagelayout changed
+
+.: 2005-06-09 rev.79
+	.- [change] examples/pagelayout renewed
+
+.: 2005-06-08 rev.78
+	.- [enhance] add examples/examples.txt
+
+.: 2005-05-09 rev.77
 	.- [change] test/defun-test.rb is added into test/test.rb
 
 .: 2005-05-09 rev.76

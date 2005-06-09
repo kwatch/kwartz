@@ -55,11 +55,11 @@ class ExamplesTest < Test::Unit::TestCase
       method_name() =~ /_([^_]+)\z/
       name = $1
       @path = "#{@@basedir}/#{name}"
-      `cd #{@path}; make; rook -b .expected/Rookbook :all`
+      `cd #{@path}; rook :all; rook -b .expected/Rookbook :all`
    end
 
    def teardown
-      `cd #{@path}; make clean; rook -b .expected/Rookbook :clean`
+      `cd #{@path}; rook :clear; rook -b .expected/Rookbook :clean`
    end
 
 
@@ -109,15 +109,18 @@ class ExamplesTest < Test::Unit::TestCase
 
 
    def test_example_pagelayout
-      _test('result.html')
-      _test('page.view')
-      _test_all('page')
+      _test('result1.html')
+      _test('result2.html')
+      _test('page1.view')
+      _test('page1.view')
+      _test_all('page1')
+      _test_all('page2')
    end
 
 
    def test_example_thumbnail
       _test('thumbnail.view')
-      _test_all()
+      _test_all('thumbnail')
    end
 
 

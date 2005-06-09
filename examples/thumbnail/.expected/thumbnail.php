@@ -5,8 +5,8 @@
     <title>Kwartz - a template system for Ruby, PHP and Java (brief overview)</title>
     <style type="text/css">
       <!--
-	body   {background-color:#FFFFFF;}
-	-->
+        body   {background-color:#FFFFFF;}
+        -->
     </style>
   </head>
   
@@ -41,16 +41,17 @@ Last &gt;&gt;|<?php } ?>
     </div>
 <?php } ?>
 
+    <div>
 <?php if ($page == 0) { ?>
 <?php   $i = 0; ?>
 <?php   foreach ($thumb_list as $thumb) { ?>
 <?php     $i += 1; ?>
 <?php     $link_url = $thumb['link_url']; ?>
 <?php     $image_url = $thumb['image_url']; ?>
-      <a href="<?php echo $link_url; ?>"><img src="<?php echo $image_url; ?>"
-	width="200" height="150" /></a>
+      <a href="<?php echo $link_url; ?>"><img width="200" height="150"
+         src="<?php echo $image_url; ?>" ></a>
 <?php     if ($i % 3 == 0) { ?>
-      <br />
+      <br>
 <?php     } ?>
 <?php   } ?>
 <?php } ?>
@@ -60,11 +61,11 @@ Last &gt;&gt;|<?php } ?>
     <div id="main_image" align="center">
       <br>
       <table border="1">
-	<tr>
-	  <td>
-	    <img src="<?php echo $image_url; ?>" alt="presentaion image" />
-	  </td>
-	</tr>
+        <tr>
+          <td>
+            <img src="<?php echo $image_url; ?>" alt="presentaion image" >
+          </td>
+        </tr>
       </table>
       <br>
     </div>

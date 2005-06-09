@@ -4,7 +4,7 @@
 
     <table>
       <thead>
-	<th>Name</th><th>E-Mail</th>
+        <th>Name</th><th>E-Mail</th>
       </thead>
       <tbody>
 <c:set var="i" value="0"/>
@@ -15,10 +15,10 @@
   </c:when><c:otherwise>
     <c:set var="color" value="#FFCCCC"/>
   </c:otherwise></c:choose>
-	<tr bgcolor="<c:out value="${color}" escapeXml="false"/>">
-	  <td><c:out value="${user['name']}" escapeXml="false"/></td>
-	  <td><a href="mailto:<c:out value="${user['email']}" escapeXml="false"/>"><c:out value="${user['email']}" escapeXml="false"/></a></td>
-	</tr>
+        <tr bgcolor="<c:out value="${color}" escapeXml="false"/>">
+          <td><c:out value="${user['name']}" escapeXml="false"/></td>
+          <td><a href="mailto:<c:out value="${user['email']}" escapeXml="false"/>"><c:out value="${user['email']}" escapeXml="false"/></a></td>
+        </tr>
 </c:forEach>
       </tbody>
     </table>

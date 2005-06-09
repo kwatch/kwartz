@@ -520,15 +520,15 @@ print erb.result(binding())
 <pre class="program">#user_list {
         plogic:   {
             @stag;                  // start tag
-            toggle = false;
+            i = 0;
             foreach (user in user_list) {
-                toggle = ! toggle;
+                i += 1;
                 name  = user['name'];
                 email = user['email'];
-                if (toggle) {
-                    @element(odd);  // element marked as id="mark:odd"
-                } else {
+                if (i % 2 == 0) {
                     @element(even); // element marked as id="mark:even"
+                } else {
+                    @element(odd);  // element marked as id="mark:odd"
                 }
             }
             @etag;                  // end tag
@@ -573,18 +573,18 @@ print erb.result(binding())
         &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-&lt;% toggle = false %&gt;
+&lt;% i = 0 %&gt;
 &lt;% for user in user_list do %&gt;
-&lt;%   toggle = !toggle %&gt;
+&lt;%   i += 1 %&gt;
 &lt;%   name = user["name"] %&gt;
 &lt;%   email = user["email"] %&gt;
-&lt;%   if toggle then %&gt;
-        &lt;tr bgcolor="#FFCCCC"&gt;
+&lt;%   if i % 2 == 0 then %&gt;
+        &lt;tr bgcolor="#CCCCFF"&gt;
           &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
           &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
 &lt;%   else %&gt;
-        &lt;tr bgcolor="#CCCCFF"&gt;
+        &lt;tr bgcolor="#FFCCCC"&gt;
           &lt;td&gt;&lt;%= name %&gt;&lt;/td&gt;
           &lt;td&gt;&lt;a href="mailto:&lt;%= email %&gt;"&gt;&lt;%= email %&gt;&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
