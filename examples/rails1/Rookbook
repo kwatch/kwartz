@@ -1,12 +1,14 @@
 
-t = 'recipes'
-all = %w[list.rhtml show.rhtml new.rhtml edit.rhtml]
+all = %w[recipes.rhtml list.rhtml show.rhtml new.rhtml edit.rhtml]
 
 recipe  :all			, all
 
-grecipe  "*.rhtml"		, "{1}.html", "{1}.plogic",  \
-			 	  "#{t}.html", "#{t}.plogic"	do |r|
-	cmd "kwartz -Rails -p #{t}.plogic,{1}.plogic -e -i {1}.html #{t}.html > {1}.rhtml"
+grecipe  "*.rhtml"	, "{1}.html", "{1}.plogic"			do |r|
+	cmd "kwartz -Rails -e -p {1}.plogic --extract=content {1}.html > {1}.rhtml"
+	end
+
+grecipe  "recipes.rhtml"	, "recipes.html", "recipes.plogic"	do |r|
+	cmd "kwartz -Rails -e -p recipes.plogic recipes.html > recipes.rhtml"
 	end
 
 recipe  :clear								do |r|

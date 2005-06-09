@@ -10,10 +10,16 @@ menulist = [
 
 ## contents data
 stocks = [
-  { :symbol => "AAPL", :price => 36.49, :rate => -0.32, },
-  { :symbol => "MSFT", :price => 26.53, :rate => 2.44, },
-  { :symbol => "ORCL", :price => 12.59, :rate => 2.02, },
-  { :symbol => "INTL", :price => 19.51, :rate => 2.90, },
+  { :symbol => "AAPL", :price => 36.49, :rate => -0.32,
+    :company => "Apple Computer, Inc."},
+  { :symbol => "MSFT", :price => 26.53, :rate => 1.44,
+    :company => "Microsoft Corp."},
+  { :symbol => "ORCL", :price => 12.59, :rate => -2.02,
+    :company => "Oracle Corporation"},
+  { :symbol => "SUNW", :price =>  3.62, :rate => 0.28,
+    :company => "Sun Microsystems, Inc." },
+  { :symbol => "INTC", :price => 19.51, :rate => 2.90,
+    :company => "Interl Corporation" },
 ]
 
 ## page filename

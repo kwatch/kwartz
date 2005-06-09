@@ -8,12 +8,18 @@
         }
 }
 
-#stock {
-        plogic: {
-            symbol = stock[:symbol];
-            price  = stock[:price];
-            rate   = stock[:rate];
-            style  = "";
+#stock_symbol {
+        value:  stock[:symbol];
+}
+
+#stock_price {
+        value:  stock[:price];
+}
+
+#stock_rate {
+        append:  style;
+        plogic:  {
+            rate = stock[:rate];
             if (rate < 0) {
                rate = - rate;
                style = ' style="color:red"';
@@ -22,8 +28,4 @@
             @cont;
             @etag;
         }
-}
-
-#stock_rate {
-        append: style;
 }

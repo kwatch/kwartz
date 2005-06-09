@@ -3,12 +3,12 @@
 .?lastupdate:	$Date$
 
 
-.$ Preface			| preface*
+.#.$ Preface			| preface*
 
 This document shows you examples of Kwartz, especially in Ruby.
 
 
-.$$ Table of Contents		| toc*
+.#.$$ Table of Contents		| toc*
 
 .<<< examples.toc
 
@@ -378,21 +378,15 @@ Compile and execution:
 .--------------------
 
 
-{{<page1.plogic|pagelayout/page1.plogic>}} (presentation logic):
-.--------------------
-.<<<: pagelayout/page1.plogic
-.--------------------
-
-
 {{<page2.html|pagelayout/page2.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb pagelayout/page2.html
 .--------------------
 
 
-{{<page2.plogic|pagelayout/page2.plogic>}} (presentation logic):
+{{<page.plogic|pagelayout/page.plogic>}} (presentation logic):
 .--------------------
-.<<<: pagelayout/page2.plogic
+.<<<: pagelayout/page.plogic
 .--------------------
 
 
@@ -405,8 +399,8 @@ Compile and execution:
 Compile and execution:
 .====================
 ### compile
-% kwartz -p menu.plogic,page1.plogic {{*-i menu.html,page1.html*}} layout.html > page1.view
-% kwartz -p menu.plogic,page2.plogic {{*-i menu.html,page2.html*}} layout.html > page2.view
+% kwartz -p menu.plogic,page.plogic {{*-i menu.html,page1.html*}} layout.html > page1.view
+% kwartz -p menu.plogic,page.plogic {{*-i menu.html,page2.html*}} layout.html > page2.view
 
 ### execution
 % ruby main.rb > result1.html
@@ -439,7 +433,7 @@ Compile and execution:
 
 
 
-.$ Rails 1			| rails1
+.$ Rails 			| rails1
 
 
 {{<recipes.html|rails1/recipes.html>}} (presentation data):
@@ -500,11 +494,18 @@ Compile and execution:
 Compile:
 .====================
 ### compile
-% kwartz -Rails -p recipes.plogic,list.plogic -e -i list.html recipes.html > list.rhtml
-% kwartz -Rails -p recipes.plogic,show.plogic -e -i show.html recipes.html > show.rhtml
-% kwartz -Rails -p recipes.plogic,new.plogic  -e -i new.html  recipes.html > new.rhtml
-% kwartz -Rails -p recipes.plogic,edit.plogic -e -i edit.html recipes.html > edit.rhtml
+% kwartz -Rails -e -p recipes.plogic recipes.html > recipes.rhtml
+% kwartz -Rails -e -p list.plogic {{*--extract=content*}} list.html > list.rhtml
+% kwartz -Rails -e -p show.plogic {{*--extract=content*}} show.html > show.rhtml
+% kwartz -Rails -e -p new.plogic  {{*--extract=content*}} new.html  > new.rhtml
+% kwartz -Rails -e -p edit.plogic {{*--extract=content*}} edit.html > edit.rhtml
 .====================
+
+
+{{<recipes.rhtml|rails1/recipes.rhtml>}} (output script for Ruby):
+.--------------------
+.<<<: rails1/recipes.rhtml
+.--------------------
 
 
 {{<list.rhtml|rails1/list.rhtml>}} (output script for Ruby):

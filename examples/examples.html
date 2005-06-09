@@ -187,19 +187,9 @@ h3, .subsection	{
       last update: $Date$<br>
     </div>
 
-<a name="preface"></a>
-<h2 class="section1">Preface</h2>
 <p>This document shows you examples of Kwartz, especially in Ruby.
 </p>
-<a name="toc"></a>
-<h3 class="section2">Table of Contents</h3>
 <ul>
-  <li><a href="#preface">Preface</a>
-  <ul>
-    <li><a href="#toc">Table of Contents</a>
-    </li>
-  </ul>
-  </li>
   <li><a href="#border1">Bordered Table 1</a>
   </li>
   <li><a href="#border2">Bordered Table 2</a>
@@ -216,15 +206,9 @@ h3, .subsection	{
   </li>
   <li><a href="#pagelayout">Page Layout</a>
   </li>
-  <li><a href="#rails1">Rails 1</a>
+  <li><a href="#rails1">Rails</a>
   </li>
 </ul>
-<br>
-
-
-<br>
-
-
 <a name="border1"></a>
 <h2 class="section1">Bordered Table 1</h2>
 <p><a href="border1/border1.html">border1.html</a> (presentation data):
@@ -2627,6 +2611,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 
         &lt;!-- menu part --&gt;
         &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;b&gt;Menu:&lt;/b&gt;
           &lt;div <b>id="placeholder:menulist"</b>&gt;
             * menu1 &lt;br&gt;
             * menu2 &lt;br&gt;
@@ -2695,39 +2680,36 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 <p><a href="pagelayout/page1.html">page1.html</a> (presentation data):
 </p>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
-&lt;html lang="ja"&gt;
-  &lt;head&gt;
-    &lt;style&gt;
-      &lt;!--
-        .minus { color: red; }
-        --&gt;
-    &lt;/style&gt;
-  &lt;/head&gt;
+&lt;html&gt;
   &lt;body&gt;
 
     &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Stock Quoting&lt;/span&gt;&lt;/h1&gt;
-    
+
     &lt;div <b>id="mark:contents"</b>&gt;
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Company&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
           &lt;/tr&gt;
         &lt;/thead&gt;
         &lt;tbody&gt;
           &lt;tr <b>id="mark:stocks"</b>&gt;
-            &lt;td <b>id="value:symbol"</b>&gt;AAAA&lt;/td&gt;
-            &lt;td <b>id="value:price"</b>&gt;11.11&lt;/td&gt;
-            &lt;td <b>id="mark:stock_rate"</b> class="minus"&gt;&lt;span <b>id="value:rate"</b>&gt;1.11&lt;/span&gt;%&lt;/td&gt;
+            &lt;td <b>id="mark:stock_symbol"</b>&gt;AAAA&lt;/td&gt;
+            &lt;td <b>id="mark:stock_company"</b>&gt;AAAA Corp.&lt;/td&gt;
+            &lt;td <b>id="mark:stock_price"</b> align="right"&gt;11.11&lt;/td&gt;
+            &lt;td <b>id="mark:stock_rate"</b> align="right"&gt;1.11%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr <b>id="dummy:s1"</b>&gt;
-            &lt;td&gt;BBBB&lt;/td&gt;&lt;td&gt;22.22&lt;/td&gt;&lt;td&gt;2.22%&lt;/td&gt;
+            &lt;td&gt;BBBB&lt;/td&gt;
+            &lt;td&gt;BBBB Corp.&lt;/td&gt;
+            &lt;td align="right"&gt;22.22&lt;/td&gt;
+            &lt;td align="right"&gt;2.22%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr <b>id="dummy:s2"</b>&gt;
-            &lt;td&gt;CCCC&lt;/td&gt;&lt;td&gt;33.33&lt;/td&gt;&lt;td&gt;3.33%&lt;/td&gt;
-          &lt;/tr&gt;
-          &lt;tr <b>id="dummy:s3"</b>&gt;
-            &lt;td&gt;DDDD&lt;/td&gt;&lt;td&gt;44.44&lt;/td&gt;&lt;td&gt;4.44%&lt;/td&gt;
+            &lt;td&gt;CCCC&lt;/td&gt;
+            &lt;td&gt;CCCC Corp.&lt;/td&gt;
+            &lt;td align="right"&gt;33.33&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;3.33%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
@@ -2736,19 +2718,42 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/page1.plogic">page1.plogic</a> (presentation logic):
+<p><a href="pagelayout/page2.html">page2.html</a> (presentation data):
+</p>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+  &lt;body&gt;
+
+    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Quoting Detail&lt;/span&gt;&lt;/h1&gt;
+    
+    &lt;div <b>id="mark:contents"</b>&gt;
+      &lt;table <b>id="mark:stock"</b>&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Symbol:&lt;/th&gt;&lt;td <b>id="mark:stock_symbol"</b>&gt;AAAA&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Company:&lt;/th&gt;&lt;td <b>id="mark:stock_company"</b>&gt;AAAA Corp.&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Price:&lt;/th&gt;&lt;td <b>id="mark:stock_price"</b>&gt;11.11&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change:&lt;/th&gt;
+            &lt;td <b>id="mark:stock_rate"</b>&gt;1.11%&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="pagelayout/page.plogic">page.plogic</a> (presentation logic):
 </p>
 <pre class="program">#stocks {
         plogic:  {
             foreach (stock in stocks) {
-                symbol = stock[:symbol];
-                price  = stock[:price];
-                rate   = stock[:rate];
-                style  = '';
-                if (rate &lt; 0) {
-                    rate = - rate;
-                    style = ' style="color:red"';
-                }
                 @stag;
                 @cont;
                 @etag;
@@ -2756,73 +2761,33 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
         }
 }
 
+#stock_symbol {
+        value:  stock[:symbol];
+}
+
+#stock_company {
+        value:  stock[:company];
+}
+
+#stock_price {
+        value:  stock[:price];
+}
+
 #stock_rate {
         append: style;
-}
-
-</pre>
-<p><a href="pagelayout/page2.html">page2.html</a> (presentation data):
-</p>
-<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
-&lt;html lang="ja"&gt;
-  &lt;body&gt;
-
-    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Quoting Detail&lt;/span&gt;&lt;/h1&gt;
-    
-    &lt;div <b>id="mark:contents"</b>&gt;
-      &lt;div <b>id="mark:message"</b> style="color:red"&gt;
-        Symbol `&lt;span <b>id="value:symbol"</b>&gt;AAAA&lt;/span&gt;' not found.
-      &lt;/div&gt;
-      &lt;table <b>id="mark:stock"</b>&gt;
-        &lt;tbody&gt;
-          &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;td <b>id="value:symbol"</b>&gt;AAPL&lt;/td&gt;
-          &lt;/tr&gt;
-          &lt;tr&gt;
-            &lt;th&gt;Price&lt;/th&gt;&lt;td <b>id="value:price"</b>&gt;36.49&lt;/td&gt;
-          &lt;/tr&gt;
-          &lt;tr&gt;
-            &lt;th&gt;Change&lt;/th&gt;
-            &lt;td <b>id="mark:stock_rate"</b>&gt;&lt;span <b>id="value:rate"</b>&gt;0.32&lt;/span&gt;%&lt;/td&gt;
-          &lt;/tr&gt;
-        &lt;/tbody&gt;
-      &lt;/table&gt;
-    &lt;/div&gt;
-
-  &lt;/body&gt;
-&lt;/html&gt;
-</pre>
-<p><a href="pagelayout/page2.plogic">page2.plogic</a> (presentation logic):
-</p>
-<pre class="program">#contents {
         plogic: {
-            if (stock == null) {
-                @element(message);
-            } else {
-                @element(stock);
-            }
-        }
-}
-
-#stock {
-        plogic: {
-            symbol = stock[:symbol];
-            price  = stock[:price];
-            rate   = stock[:rate];
-            style  = "";
+            rate = stock[:rate];
+            style = '';
             if (rate &lt; 0) {
-               rate = - rate;
-               style = ' style="color:red"';
+                rate = - rate;
+                style = ' style="color:red"';
             }
             @stag;
-            @cont;
+            print(rate, "%");
             @etag;
         }
 }
 
-#stock_rate {
-        append: style;
-}
 </pre>
 <p><a href="pagelayout/main.rb">main.rb</a> (main program):
 </p>
@@ -2838,10 +2803,16 @@ menulist = [
 
 ## contents data
 stocks = [
-  { :symbol =&gt; "AAPL", :price =&gt; 36.49, :rate =&gt; -0.32, },
-  { :symbol =&gt; "MSFT", :price =&gt; 26.53, :rate =&gt; 2.44, },
-  { :symbol =&gt; "ORCL", :price =&gt; 12.59, :rate =&gt; 2.02, },
-  { :symbol =&gt; "INTL", :price =&gt; 19.51, :rate =&gt; 2.90, },
+  { :symbol =&gt; "AAPL", :price =&gt; 36.49, :rate =&gt; -0.32,
+    :company =&gt; "Apple Computer, Inc."},
+  { :symbol =&gt; "MSFT", :price =&gt; 26.53, :rate =&gt; 1.44,
+    :company =&gt; "Microsoft Corp."},
+  { :symbol =&gt; "ORCL", :price =&gt; 12.59, :rate =&gt; -2.02,
+    :company =&gt; "Oracle Corporation"},
+  { :symbol =&gt; "SUNW", :price =&gt;  3.62, :rate =&gt; 0.28,
+    :company =&gt; "Sun Microsystems, Inc." },
+  { :symbol =&gt; "INTC", :price =&gt; 19.51, :rate =&gt; 2.90,
+    :company =&gt; "Interl Corporation" },
 ]
 
 ## page filename
@@ -2872,8 +2843,8 @@ print erb.result(binding())
 <p>Compile and execution:
 </p>
 <pre class="terminal">### compile
-% kwartz -p menu.plogic,page1.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
-% kwartz -p menu.plogic,page2.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
+% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
+% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
 
 ### execution
 % ruby main.rb &gt; result1.html
@@ -2895,6 +2866,7 @@ print erb.result(binding())
 
         &lt;!-- menu part --&gt;
         &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;b&gt;Menu:&lt;/b&gt;
           &lt;div&gt;
 &lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
@@ -2912,23 +2884,22 @@ print erb.result(binding())
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Company&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
           &lt;/tr&gt;
         &lt;/thead&gt;
         &lt;tbody&gt;
 &lt;% for stock in stocks do %&gt;
-&lt;%   symbol = stock[:symbol] %&gt;
-&lt;%   price = stock[:price] %&gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;%= stock[:symbol] %&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;%= stock[:company] %&gt;&lt;/td&gt;
+            &lt;td align="right"&gt;&lt;%= stock[:price] %&gt;&lt;/td&gt;
 &lt;%   rate = stock[:rate] %&gt;
 &lt;%   style = "" %&gt;
 &lt;%   if rate &lt; 0 then %&gt;
 &lt;%     rate = -rate %&gt;
 &lt;%     style = " style=\"color:red\"" %&gt;
 &lt;%   end %&gt;
-          &lt;tr&gt;
-            &lt;td&gt;&lt;%= symbol %&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;%= price %&gt;&lt;/td&gt;
-            &lt;td class="minus"&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
+            &lt;td align="right"&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
           &lt;/tr&gt;
 &lt;% end %&gt;
         &lt;/tbody&gt;
@@ -2966,6 +2937,7 @@ print erb.result(binding())
 
         &lt;!-- menu part --&gt;
         &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;b&gt;Menu:&lt;/b&gt;
           &lt;div&gt;
 &lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
@@ -2979,34 +2951,31 @@ print erb.result(binding())
         &lt;td width="400" valign="top" class="contents"&gt;
           &lt;h3&gt;Quoting Detail&lt;/h3&gt;
           &lt;div&gt;
-&lt;% if stock == nil then %&gt;
-      &lt;div style="color:red"&gt;
-        Symbol `&lt;%= symbol %&gt;' not found.
-      &lt;/div&gt;
-&lt;% else %&gt;
-&lt;%   symbol = stock[:symbol] %&gt;
-&lt;%   price = stock[:price] %&gt;
-&lt;%   rate = stock[:rate] %&gt;
-&lt;%   style = "" %&gt;
-&lt;%   if rate &lt; 0 then %&gt;
-&lt;%     rate = -rate %&gt;
-&lt;%     style = " style=\"color:red\"" %&gt;
-&lt;%   end %&gt;
+    &lt;div&gt;
       &lt;table&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;td&gt;&lt;%= symbol %&gt;&lt;/td&gt;
+            &lt;th&gt;Symbol:&lt;/th&gt;&lt;td&gt;&lt;%= stock[:symbol] %&gt;&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Price&lt;/th&gt;&lt;td&gt;&lt;%= price %&gt;&lt;/td&gt;
+            &lt;th&gt;Company:&lt;/th&gt;&lt;td&gt;&lt;%= stock[:company] %&gt;&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Change&lt;/th&gt;
+            &lt;th&gt;Price:&lt;/th&gt;&lt;td&gt;&lt;%= stock[:price] %&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change:&lt;/th&gt;
+&lt;% rate = stock[:rate] %&gt;
+&lt;% style = "" %&gt;
+&lt;% if rate &lt; 0 then %&gt;
+&lt;%   rate = -rate %&gt;
+&lt;%   style = " style=\"color:red\"" %&gt;
+&lt;% end %&gt;
             &lt;td&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
-&lt;% end %&gt;
+    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -3039,6 +3008,7 @@ print erb.result(binding())
 
         &lt;!-- menu part --&gt;
         &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;b&gt;Menu:&lt;/b&gt;
           &lt;div&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
@@ -3063,29 +3033,39 @@ print erb.result(binding())
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
+            &lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Company&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;th&gt;Change&lt;/th&gt;
           &lt;/tr&gt;
         &lt;/thead&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
             &lt;td&gt;AAPL&lt;/td&gt;
-            &lt;td&gt;36.49&lt;/td&gt;
-            &lt;td class="minus" style="color:red"&gt;0.32%&lt;/td&gt;
+            &lt;td&gt;Apple Computer, Inc.&lt;/td&gt;
+            &lt;td align="right"&gt;36.49&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;0.32%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;MSFT&lt;/td&gt;
-            &lt;td&gt;26.53&lt;/td&gt;
-            &lt;td class="minus"&gt;2.44%&lt;/td&gt;
+            &lt;td&gt;Microsoft Corp.&lt;/td&gt;
+            &lt;td align="right"&gt;26.53&lt;/td&gt;
+            &lt;td align="right"&gt;1.44%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;ORCL&lt;/td&gt;
-            &lt;td&gt;12.59&lt;/td&gt;
-            &lt;td class="minus"&gt;2.02%&lt;/td&gt;
+            &lt;td&gt;Oracle Corporation&lt;/td&gt;
+            &lt;td align="right"&gt;12.59&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;2.02%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;td&gt;INTL&lt;/td&gt;
-            &lt;td&gt;19.51&lt;/td&gt;
-            &lt;td class="minus"&gt;2.9%&lt;/td&gt;
+            &lt;td&gt;SUNW&lt;/td&gt;
+            &lt;td&gt;Sun Microsystems, Inc.&lt;/td&gt;
+            &lt;td align="right"&gt;3.62&lt;/td&gt;
+            &lt;td align="right"&gt;0.28%&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;INTC&lt;/td&gt;
+            &lt;td&gt;Interl Corporation&lt;/td&gt;
+            &lt;td align="right"&gt;19.51&lt;/td&gt;
+            &lt;td align="right"&gt;2.9%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
@@ -3122,6 +3102,7 @@ print erb.result(binding())
 
         &lt;!-- menu part --&gt;
         &lt;td width="100" valign="top" class="menulist"&gt;
+          &lt;b&gt;Menu:&lt;/b&gt;
           &lt;div&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
@@ -3142,20 +3123,25 @@ print erb.result(binding())
         &lt;td width="400" valign="top" class="contents"&gt;
           &lt;h3&gt;Quoting Detail&lt;/h3&gt;
           &lt;div&gt;
+    &lt;div&gt;
       &lt;table&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol&lt;/th&gt;&lt;td&gt;AAPL&lt;/td&gt;
+            &lt;th&gt;Symbol:&lt;/th&gt;&lt;td&gt;AAPL&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Price&lt;/th&gt;&lt;td&gt;36.49&lt;/td&gt;
+            &lt;th&gt;Company:&lt;/th&gt;&lt;td&gt;Apple Computer, Inc.&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Change&lt;/th&gt;
+            &lt;th&gt;Price:&lt;/th&gt;&lt;td&gt;36.49&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Change:&lt;/th&gt;
             &lt;td style="color:red"&gt;0.32%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
+    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -3176,15 +3162,15 @@ print erb.result(binding())
 
 
 <a name="rails1"></a>
-<h2 class="section1">Rails 1</h2>
+<h2 class="section1">Rails</h2>
 <p><a href="rails1/recipes.html">recipes.html</a> (presentation data):
 </p>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
-    &lt;title&gt;Recipes: &lt;span <b>id="value:controller.action_name"</b>&gt;action&lt;/span&gt;&lt;/title&gt;
+    &lt;title&gt;Recipes: &lt;span <b>id="mark:action_name"</b>&gt;action&lt;/span&gt;&lt;/title&gt;
     &lt;link <b>id="mark:stylesheet_link"</b> type="text/css" rel="stylesheet" href="scaffold.css" /&gt;
   &lt;/head&gt;
-  &lt;body <b>id="placeholder:contents"</b>&gt;
+  &lt;body <b>id="mark:content"</b>&gt;
 
       ... contents ...
 
@@ -3200,16 +3186,19 @@ print erb.result(binding())
         }
 }
 
-#list_recipes {
-        // set href attribute value with Rails function
-        attrs:  "href" X(&lt;%= url_for(:action=&gt;'list') %&gt;);
+#action_name {
+        value:  controller.action_name;
+}
+
+#content {
+        value:  X(content_for_layout);
 }
 </pre>
 <p><a href="rails1/list.html">list.html</a> (presentation data):
 </p>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:contents"</b>&gt;
+    &lt;div <b>id="mark:content"</b>&gt;
 
       &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
 
@@ -3280,7 +3269,7 @@ print erb.result(binding())
 </p>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:contents"</b>&gt;
+    &lt;div <b>id="mark:content"</b>&gt;
 
       &lt;h1&gt;Show Recipe&lt;/h1&gt;
       
@@ -3347,7 +3336,7 @@ print erb.result(binding())
 </p>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:contents"</b>&gt;
+    &lt;div <b>id="mark:content"</b>&gt;
 
       &lt;h1&gt;New Recipe&lt;/h1&gt;
 
@@ -3419,7 +3408,7 @@ print erb.result(binding())
 </p>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:contents"</b>&gt;
+    &lt;div <b>id="mark:content"</b>&gt;
 
       &lt;h1&gt;Edit Recipe&lt;/h1&gt;
 
@@ -3476,51 +3465,52 @@ print erb.result(binding())
 <p><a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):
 </p>
 <pre class="program">#edit_form {
-  attrs:  "action" X(&lt;%= url_for(:action=&gt;'update') %&gt;);
+        attrs:  "action" X(&lt;%= url_for(:action=&gt;'update') %&gt;);
 }
 
 #recipe_id {
-  attrs:  "value" recipe.id;
+        attrs:  "value" recipe.id;
 }
 
 #recipe_title {
-  attrs:  "value" recipe.title;
+        attrs:  "value" recipe.title;
 }
 
 #recipe_description {
-  attrs:  "value" recipe.description;
+        attrs:  "value" recipe.description;
 }
 
 #category_name {
-  value:  category.name;
-  attrs:  "value"  category.id;
-  append: S(category.id==recipe.category.id);
-  plogic: {
-    foreach (category in categories) {
-      @stag;
-      @cont;
-      @etag;
-    }
-  }
+        value:  category.name;
+        attrs:  "value" category.id;
+        append: S(category.id==recipe.category.id);
+        plogic: {
+            foreach (category in categories) {
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
 }
 
 #recipe_instructions {
-  value:  recipe.instructions;
+        value:  recipe.instructions;
 }
 
 #show_recipe {
-  attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;);
+        attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;);
 }
 </pre>
 <p>Compile:
 </p>
 <pre class="terminal">### compile
-% kwartz -Rails -p recipes.plogic,list.plogic -e -i list.html recipes.html &gt; list.rhtml
-% kwartz -Rails -p recipes.plogic,show.plogic -e -i show.html recipes.html &gt; show.rhtml
-% kwartz -Rails -p recipes.plogic,new.plogic  -e -i new.html  recipes.html &gt; new.rhtml
-% kwartz -Rails -p recipes.plogic,edit.plogic -e -i edit.html recipes.html &gt; edit.rhtml
+% kwartz -Rails -e -p recipes.plogic recipes.html &gt; recipes.rhtml
+% kwartz -Rails -e -p list.plogic <b>--extract=content</b> list.html &gt; list.rhtml
+% kwartz -Rails -e -p show.plogic <b>--extract=content</b> show.html &gt; show.rhtml
+% kwartz -Rails -e -p new.plogic  <b>--extract=content</b> new.html  &gt; new.rhtml
+% kwartz -Rails -e -p edit.plogic <b>--extract=content</b> edit.html &gt; edit.rhtml
 </pre>
-<p><a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):
+<p><a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):
 </p>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
@@ -3528,7 +3518,12 @@ print erb.result(binding())
 &lt;%= stylesheet_link_tag 'scaffold' %&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;div&gt;
+&lt;%= @content_for_layout %&gt;  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):
+</p>
+<pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
 
@@ -3559,18 +3554,10 @@ print erb.result(binding())
       &lt;/p&gt;
 
     &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
 </pre>
 <p><a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):
 </p>
-<pre class="program">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
-&lt;%= stylesheet_link_tag 'scaffold' %&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div&gt;
+<pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Show Recipe&lt;/h1&gt;
       
@@ -3600,22 +3587,14 @@ print erb.result(binding())
       &lt;p&gt;
         &lt;a href="&lt;%= url_for(:action=&gt;'edit', :id=&gt;@recipe.id) %&gt;"&gt;Edit&lt;/a&gt;
         |
-        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+        &lt;a href="..."&gt;Back&lt;/a&gt;
       &lt;/p&gt;
       
     &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
 </pre>
 <p><a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):
 </p>
-<pre class="program">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
-&lt;%= stylesheet_link_tag 'scaffold' %&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div&gt;
+<pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;New Recipe&lt;/h1&gt;
 
@@ -3657,22 +3636,14 @@ print erb.result(binding())
       &lt;/form&gt;
       
       &lt;p&gt;
-        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+        &lt;a href="..."&gt;Back&lt;/a&gt;
       &lt;/p&gt;
 
     &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
 </pre>
 <p><a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):
 </p>
-<pre class="program">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
-&lt;%= stylesheet_link_tag 'scaffold' %&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;div&gt;
+<pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Edit Recipe&lt;/h1&gt;
 
@@ -3717,12 +3688,10 @@ print erb.result(binding())
       &lt;p&gt;
         &lt;a href="&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;"&gt;Show&lt;/a&gt;
         |
-        &lt;a href="&lt;%= url_for(:action=&gt;'list') %&gt;"&gt;Back&lt;/a&gt;
+        &lt;a href="..."&gt;Back&lt;/a&gt;
       &lt;/p&gt;
 
     &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
 </pre>
 <br>
 

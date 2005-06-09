@@ -1,9 +1,8 @@
 recipe	:all		, "result1.html", "result2.html"
 
 
-grecipe  "page*.view"	, "page{1}.html", "page{1}.plogic",  \
-			"layout.html", "menu.html", "menu.plogic"	do |r|
-	cmd "kwartz -p menu.plogic,page{1}.plogic -i menu.html,page{1}.html layout.html > page{1}.view"
+grecipe  "page*.view"	, %w[page{1}.html page.plogic layout.html menu.html menu.plogic]	do |r|
+	cmd "kwartz -p menu.plogic,page.plogic -i menu.html,page{1}.html layout.html > page{1}.view"
 	end
 
 grecipe "result*.html"	, "main.rb", "page{1}.view"			do |r|

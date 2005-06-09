@@ -1,0 +1,37 @@
+#stocks {
+        plogic:  {
+            foreach (stock in stocks) {
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+#stock_symbol {
+        value:  stock[:symbol];
+}
+
+#stock_company {
+        value:  stock[:company];
+}
+
+#stock_price {
+        value:  stock[:price];
+}
+
+#stock_rate {
+        append: style;
+        plogic: {
+            rate = stock[:rate];
+            style = '';
+            if (rate < 0) {
+                rate = - rate;
+                style = ' style="color:red"';
+            }
+            @stag;
+            print(rate, "%");
+            @etag;
+        }
+}
+

@@ -1,8 +1,14 @@
-result.html:  main.rb page.view
-	ruby main.rb > result.html
+all:	result1.html result2.html
 
-page.view: layout.html contents.html contents.plogic
-	kwartz -i contents.html -p contents.plogic layout.html > page.view
+%.view:	%.html page.plogic layout.html menu.html menu.plogic
+	kwartz -p menu.plogic,page.plogic -i menu.html,$*.html layout.html > $*.view
 
-clean:
-	rm -f result.html page.view
+result1.html:	main.rb page1.view
+	ruby main.rb > result1.html
+
+result2.html:	main.rb page2.view
+	ruby main.rb AAPL > result2.html
+
+clear:
+	rm -rf result*.html page*.view
+
