@@ -344,9 +344,13 @@ END
    ##
    def test_expand_stmt1
       stmt = ExpandStatement.new(:stag)
-      expected = <<'END'
-@stag
-END
+      expected = "@stag\n"
+      _test(stmt, expected)
+      stmt = ExpandStatement.new(:cont)
+      expected = "@cont\n"
+      _test(stmt, expected)
+      stmt = ExpandStatement.new(:etag)
+      expected = "@etag\n"
       _test(stmt, expected)
    end
 
@@ -354,9 +358,10 @@ END
    ##
    def test_expand_stmt2
       stmt = ExpandStatement.new(:element, 'name')
-      expected = <<'END'
-@element(name)
-END
+      expected = "@element(name)\n"
+      _test(stmt, expected)
+      stmt = ExpandStatement.new(:content, 'name')
+      expected = "@content(name)\n"
       _test(stmt, expected)
    end
 

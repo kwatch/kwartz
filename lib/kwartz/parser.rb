@@ -511,16 +511,16 @@ module Kwartz
          case type
          when 'stag', 'cont', 'etag'
             name = nil
-         when 'element'
+         when 'element', 'content'
             t = scan()
-            syntax_error("@element() requires '('.") unless t == '('
+            syntax_error("@#{type}() requires '('.") unless t == '('
             t = scan()
-            syntax_error("@element() requires an element name.") unless t == :name
+            syntax_error("@#{type}() requires an element name.") unless t == :name
             name = value()
             t = scan()
-            syntax_error("@element() requires ')'.") unless t == ')'
+            syntax_error("@#{type}() requires ')'.") unless t == ')'
          else
-            syntax_error("'@' should be '@stag', '@cont', '@etag', or '@element(name)'.")
+            syntax_error("'@' should be '@stag', '@cont', '@etag', '@element(name)' or '@content(name).")
          end
          t = scan()
          syntax_error("@#{type} requires ';'.") unless t == ';'

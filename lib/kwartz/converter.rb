@@ -393,25 +393,29 @@ module Kwartz
             # nothing
 
          when :replace
-            name = directive_arg
-            unless name =~ /\A\w+\z/
+            if directive_arg =~ /\A(\w+)(:(content|element))?\z/
+               name = $1
+               type = $3 ? $3.intern : :element
+            else
                raise ConvertionError.new("'#{name}': invalid name for replace-directive.", linenum, @filename)
             end
-            stmt_list << ExpandStatement.new(:element, name)
+            stmt_list << ExpandStatement.new(type, name)
 
          when :placeholder
             if !etaginfo
                msg = "directive '#{directive_name}' cannot use with empty tag."
                raise ConvertionError.new(msg, linenum, @filename)
             end
-            name = directive_arg
-            unless name =~ /\A\w+\z/
+            if directive_arg =~ /\A(\w+)(:(content|element))?\z/
+               name = $1
+               type = $3 ? $3.intern : :element
+            else
                raise ConvertionError.new("'#{name}': invalid name for placeholder-directive.", linenum, @filename)
             end
             first_stmt = body_stmt_list.shift
             last_stmt  = body_stmt_list.pop
             stmt_list << first_stmt
-            stmt_list << ExpandStatement.new(:element, name)
+            stmt_list << ExpandStatement.new(type, name)
             stmt_list << last_stmt
 
          when :include, :Include, :INCLUDE

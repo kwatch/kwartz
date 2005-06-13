@@ -885,21 +885,26 @@ END
 
 
    ##
-   def test_parse_expand_stmt1  # @stag
+   def test_parse_expand_stmt1  # @stag, @cont, @etag
       input = "@stag;"
-      expected = <<'END'
-@stag
-END
+      expected = "@stag\n"
+      _test(input, expected, ExpandStatement)
+      input = "@cont;"
+      expected = "@cont\n"
+      _test(input, expected, ExpandStatement)
+      input = "@etag;"
+      expected = "@etag\n"
       _test(input, expected, ExpandStatement)
    end
 
 
    ##
-   def test_parse_expand_stmt2  # @element(foo)
+   def test_parse_expand_stmt2  # @element(foo), @content(foo)
       input = "@element(foo);"
-      expected = <<'END'
-@element(foo)
-END
+      expected = "@element(foo)\n"
+      _test(input, expected, ExpandStatement)
+      input = "@content(foo);"
+      expected = "@content(foo)\n"
       _test(input, expected, ExpandStatement)
    end
 

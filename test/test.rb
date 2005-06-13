@@ -34,6 +34,9 @@ suite << ParseDeclarationTest.suite()
 require 'element-test'
 suite << ElementTest.suite()
 
+require 'expander-test'
+suite << ExpanderTest.suite()
+
 require 'translator-test'
 suite << TranslatorTest.suite()
 

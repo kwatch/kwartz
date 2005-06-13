@@ -4,6 +4,14 @@
 .?lastupdate:	$Date$
 
 
+.: 2005-06-13 rev.83
+	.- [enhance] @content(name) support
+	.- [enhance] id="replace:name:content" and id="placeholder:name:content" support
+	.- [bugfix] text/expander-test.rb added into test/test.rb
+
+.: 2005-06-13 rev.82
+	.- [branch] create a branch 2.0.x
+
 .: 2005-06-09 rev.81
 	.- [bugfix] Util.optparse() cannot handle argument-optional options.
 	.- [change] bin/kwartz-ruby a little refactored

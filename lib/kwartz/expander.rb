@@ -27,18 +27,28 @@ module Kwartz
       def expand(stmt, elem=nil)
          case stmt.token
          when :expand
+            t = stmt.token
+            Kwartz::assert("elem is nil, t==#{t.inspect}") if !elem && (t == :stag || t == :etag || t == :cont)
             if    stmt.type == :stag
                return elem.stag_stmt
+            elsif stmt.type == :etag
+               return elem.etag_stmt
             elsif stmt.type == :cont
                cont_st = elem.cont_stmt
-               st = expand(cont_st, elem)
-               return st || cont_st
+               stmt2 = expand(cont_st, nil)
+               return stmt2 || cont_st
                #Kwartz::assert unless cont_st.token == :block
                #st = expand(cont_st, elem)
                #Kwartz::assert unless st == nil
                #return const_st
-            elsif stmt.type == :etag
-               return elem.etag_stmt
+            elsif stmt.type == :content
+               elem2 = @element_table[stmt.name]
+               unless elem2
+                  raise ExpantionError.new("'@content(#{stmt.name})': element not found.")
+               end
+               cont_st = elem2.cont_stmt
+               stmt2 = expand(cont_st, nil)
+               return stmt2 || cont_st
             elsif stmt.type == :element
                elem2 = @element_table[stmt.name]
                unless elem2

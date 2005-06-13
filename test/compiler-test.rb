@@ -1020,6 +1020,85 @@ END
    end
 
 
+   ## -------------------- replace and placefolder
+
+   @@pdata21 = <<'END'
+<div id="replace:doctitle">AAA</div>
+<div id="replace:doctitle:content">AAA</div>
+
+<div id="placeholder:doctitle">AAA</div>
+<div id="placeholder:doctitle:content">AAA</div>
+
+<h1 id="mark:doctitle">DOCTITLE</h1>
+END
+   @@plogic21 = ''
+
+   def test_compile21_eruby	# replace and placeholder
+      expected = <<'END'
+<h1>DOCTITLE</h1>
+DOCTITLE
+<div><h1>DOCTITLE</h1>
+</div>
+<div>DOCTITLE</div>
+
+<h1>DOCTITLE</h1>
+END
+      _test(@@pdata21, @@plogic21, expected)
+   end
+
+
+   ## -------------------- @element(name) and @content(name)
+
+   @@pdata22 = <<'END'
+<div id="mark:replace_element_by_element">AAA</div>
+<div id="mark:replace_element_by_content">BBB</div>
+
+<div id="mark:replace_content_by_element">CCC</div>
+<div id="mark:replace_content_by_content">DDD</div>
+
+<h1 id="mark:doctitle">DOCTITLE</h1>
+END
+   @@plogic22 = <<'END'
+#replace_element_by_element {
+  plogic: {
+    @element(doctitle);
+  }
+}
+#replace_element_by_content {
+  plogic: {
+    @content(doctitle);
+  }
+}
+#replace_content_by_element {
+  plogic: {
+    @stag;
+    @element(doctitle);
+    @etag;
+  }
+}
+#replace_content_by_content {
+  plogic: {
+    @stag;
+    @content(doctitle);
+    @etag;
+  }
+}
+END
+
+   def test_compile22_eruby	# replace and placeholder
+      expected = <<'END'
+<h1>DOCTITLE</h1>
+DOCTITLE
+<div><h1>DOCTITLE</h1>
+</div>
+<div>DOCTITLE</div>
+
+<h1>DOCTITLE</h1>
+END
+      _test(@@pdata22, @@plogic22, expected)
+   end
+
+
 end
 
 

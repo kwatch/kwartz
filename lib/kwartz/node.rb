@@ -596,18 +596,14 @@ module Kwartz
    class ExpandStatement < Statement
       def initialize(type, name=nil)
          super(:expand)
-         @type = type		# :stag :etag :cont :element
+         @type = type		# :stag :etag :cont :element, :content
          @name = name           # required only when :element
       end
       attr_accessor :type, :name
 
       def _inspect(depth=0, s='')
          indent(depth, s)
-         if @type == :element
-            s << '@element(' << @name << ")\n"
-         else
-            s << "@#{type}\n"
-         end
+         s << "@#{@type}" << (@name ? "(#{@name})\n" : "\n")
          return s
       end
 

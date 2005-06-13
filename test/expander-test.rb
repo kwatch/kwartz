@@ -28,8 +28,8 @@ class ExpanderTest < Test::Unit::TestCase
    def _test(pdata_str, plogic_str, expected, properties={})
       return if @flag_suspend
       ## convert
-      converter = Kwartz::Converter.new(pdata_str, properties)
-      block_stmt = converter.convert()
+      converter = Kwartz::Converter.new(properties)
+      block_stmt = converter.convert(pdata_str)
       elem_list = converter.element_list
       ## parse plogic
       parser = Kwartz::Parser.new(plogic_str, properties)
@@ -252,7 +252,9 @@ END
   :block
     :print
       "<table"
-      " id=\"table\""
+      " id=\""
+      "table"
+      "\""
       " summary=\""
       title
       "\""
@@ -325,7 +327,7 @@ END
    ## --------------------
    def test_expand5	# empty tag
       pdata = <<'END'
-<input type="text" size="30" name="username" id="username" />
+<input type="text" id="username" />
 END
       plogic = <<'END'
 #username {
@@ -337,10 +339,12 @@ END
   :block
     :print
       "<input"
-      " name=\"username\""
-      " size=\"30\""
-      " type=\"text\""
-      " id=\"username\""
+      " type=\""
+      "text"
+      "\""
+      " id=\""
+      "username"
+      "\""
       " value=\""
       .
         user
@@ -357,7 +361,7 @@ END
    ## --------------------
    def test_expand6	# empty tag and append
       pdata = <<'END'
-checkbox:  <input type="checkbox" size="30" name="chkbox" id="chkbox" checked="checked"/>
+checkbox:  <input type="checkbox" id="chkbox"/>
 END
       plogic = <<'END'
 #chkbox {
@@ -372,10 +376,12 @@ END
   :block
     :print
       "  <input"
-      " name=\"chkbox\""
-      " size=\"30\""
-      " type=\"checkbox\""
-      " id=\"chkbox\""
+      " type=\""
+      "checkbox"
+      "\""
+      " id=\""
+      "chkbox"
+      "\""
       ?:
         flag
         " checked=\"checked\""
@@ -383,6 +389,73 @@ END
       " />\n"
     :block
     :block
+END
+      _test(pdata, plogic, expected)
+   end
+
+
+   ## --------------------
+   def test_expand7	# @element(name) and @content(name)
+      pdata = <<'END'
+<tr id="mark:list">
+  <td id="mark:item">foo</td>
+</tr>
+ - - -
+<div id="mark:space">...</div>
+END
+
+      plogic = <<'END'
+#space {
+  plogic: {
+    if (cond1) @element(item);
+    while (cond2) @content(list);
+  }
+}
+END
+      expected = <<'END'
+:block
+  :block
+    :print
+      "<tr"
+      ">\n"
+    :block
+      :block
+        :print
+          "  <td"
+          ">"
+        :block
+          :print
+            "foo"
+        :print
+          "</td>\n"
+    :print
+      "</tr>\n"
+  :print
+    " - - -\n"
+  :block
+    :if
+      cond1
+      :block
+        :print
+          "  <td"
+          ">"
+        :block
+          :print
+            "foo"
+        :print
+          "</td>\n"
+    :while
+      cond2
+      :block
+        :block
+          :print
+            "  <td"
+            ">"
+          :block
+            :print
+              "foo"
+          :print
+            "</td>\n"
 END
       _test(pdata, plogic, expected)
    end

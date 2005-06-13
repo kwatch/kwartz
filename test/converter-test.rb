@@ -1654,6 +1654,34 @@ END
     end
 
 
+    def test_convert_replace2	# replace:foo:element
+	input = <<-'END'
+		<div kw:d="replace:foo:element">
+		foo
+		</div>
+	END
+	expected = <<-'END'
+		:block
+		  @element(foo)
+	END
+	_test_convert(input, expected)
+    end
+
+
+    def test_convert_replace3	# replace:foo:content
+	input = <<-'END'
+		<div kw:d="replace:foo:content">
+		foo
+		</div>
+	END
+	expected = <<-'END'
+		:block
+		  @content(foo)
+	END
+	_test_convert(input, expected)
+    end
+
+
     def test_convert_placeholder1	# placeholder
 	input = <<-'END'
 		<div id="placeholder:foo">
@@ -1669,6 +1697,53 @@ END
 		    "</div>\n"
 	END
 	_test_convert(input, expected)
+    end
+
+
+    def test_convert_placeholder2	# placeholder:foo:element
+	input = <<-'END'
+		<div id="placeholder:foo:element">
+		foo
+		</div>
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<div>\n"
+		  @element(foo)
+		  :print
+		    "</div>\n"
+	END
+	_test_convert(input, expected)
+    end
+
+
+    def test_convert_placeholder3	# placeholder:foo:content
+	input = <<-'END'
+		<div id="placeholder:foo:content">
+		foo
+		</div>
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "<div>\n"
+		  @content(foo)
+		  :print
+		    "</div>\n"
+	END
+	_test_convert(input, expected)
+    end
+
+
+    def test_convert_placeholder4	# placeholder with empty tag 
+	input = <<-'END'
+		<div id="placeholder:foo:content"/>
+	END
+	expected = ""
+	assert_raise(Kwartz::ConvertionError) do
+	    _test_convert(input, expected)
+	end
     end
 
 
