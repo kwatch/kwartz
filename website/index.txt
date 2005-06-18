@@ -1,22 +1,63 @@
 .=title:	Kwartz
 .#.?author:	kwa(at)kuwata-lab.com
 .#.?keywords:	kwartz,html,xml,template,Ruby,PHP,JSP,Velocity,eRuby,ERB,erbscan
+.?stylesheet:	docstyle.css
 
-Welcome to the Kwartz home page.
 
-Kwartz is a template system which realized the concept of 
-{{*'Separation of Presentation Logic and Presentaion data' (SoPL/PD)*}}
-or {{*'Independence of Presentation Logic'(IoPL)*}}.
+
+.$ Introduction
+
+.+++++
+<!--div style="float:right"><img src="img/fig01.png"/></div-->
+<!--div div="align:right" style="float:right"><img src="img/fig02.png"/></div-->
+<!--div div="align:right" style="float:right"><img src="img/fig03.png"/></div-->
+<table style="float:right; width:424px; margin:0px 0px 10px 10px">
+ <tr>
+  <td style="padding:10px 0px 0px 0px">
+  Fig1. Business layer and presentation layer have their own data and logic.
+  </td>
+ </tr>
+ <tr>
+  <td style="border-width:1px; border-style:solid; border-color:#999999">
+   <img src="img/fig02.png" alt="figure of kwartz"/>
+  </td>
+ </tr>
+ <tr>
+  <td style="padding:20px 0px 0px 0px">
+  Fig2. Kwartz vs. Other template system: Kwartz separates presentation logic from presentaion data(=HTML).
+  </td>
+ </tr>
+ <tr>
+  <td style="border-width:1px; border-style:solid; border-color:#999999">
+   <img src="img/fig03.png" alt="figure of kwartz"/>
+  </td>
+ </tr>
+</table>
+.+++++
+
+
+Kwartz is a template system which realized the concept of
+{{*'Independence of Presentation Logic'(IoPL)*}}.
+.# or {{*'Separation of Presentation Logic and Presentaion data' (SoPL/PD)*}}.
 
 It is available to separate the presentation layer from the
 main program with any template system. In addition, Kwartz
-enables you to separate the presentation logic (such as iteration or 
+enables you to separate the presentation logic (such as iteration or
 conditional branching) from the presentation data (HTML file).
 
-.#See {{<Brief Overview|kwartz-overview/index.php?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
+In a broad way, application can be divided into two layers: Business layer and
+Presentaion layer. These layers have their own data and logic.
+It is important that presentation layer should have it's own logic and that
+presentation logic should not be in business layer (Fig1).
 
+Traditional template system, such as Jakarta Velocity or Smarty, forces you to mix
+presentation logic and presentation data in a template, and breaks HTML design in the result.
+Some other template system, such as Enhydra XMLC or amrita, doesn't break HTML design
+but they mix presentation logic into business layer(=main program).
+Kwartz divides template into presentation logic and presentation data.
+Therefore Kwartz doesn't break HTML design at all and keep main program 'clean' (Fig2).
 
-.% Features:
+In addition, Kwartz has more features:
 	.* Separates presentation logic from presentation data.
 	.* Runs very fast
 	.* Supports multiple programing languages: Ruby(eRuby), PHP, Java(JSP)
@@ -24,33 +65,40 @@ conditional branching) from the presentation data (HTML file).
 	.* Handle any text file
 	.* Supports auto-sanitizing and partial-sanitizing
 
-.% Download
+See {{<Brief Overview|overview/index.cgi?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
+
+
+.$ Download
 	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz-ruby,}}' to install Kwartz-ruby.
-	.* Or download {{<kwartz-ruby_2.0.1.tar.bz2|download.html>}} (2005-04-30 released)
+	.* Or download from {{<sourceforge.net/projects/kwartz/|download.cgi>}}
+           .- kwartz-ruby_2.0.2.tar.gz (2005-05-09 released)
 
-.% Documents
+.$ Documents
 	.* README           ({{<English|README.en.html>}}      | {{<Japanese|README.ja.html>}})
-	.* Users' Guide     ({{<English|users-guide.en.html>}} | {{<Japanese|users-guide.ja.html>}})
-	.* Reference Manual ({{<English|reference.en.html>}}   | {{<Japanese|reference.ja.html>}})
-	.* Presentation Pattern Catalog ({{<English|p-pattern.en.html>}} | {{<Japanese|p-pattern.ja.html>}})
-	.* {{<ChangeLog|ChangeLog.txt>}}
+	.* Users' guide     ({{<English|users-guide.en.html>}} | {{<Japanese|users-guide.ja.html>}})
+	.* Reference manual ({{<English|reference.en.html>}}   | {{<Japanese|reference.ja.html>}})
+	.* Presentation pattern catalog ({{<English|p-pattern.en.html>}} | {{<Japanese|p-pattern.ja.html>}})
+	.* Brief overview ({{<English|overview/index.cgi?page=1>}})
+	.* Changelog ({{<English|ChangeLog.txt>}})
 
-.% License
-	.* {{<GNU General Public License|http://www.gnu.org/copyleft/gpl.html>}}
+.$ License
+	.* {{<GNU General Public License ver.2|http://www.gnu.org/copyleft/gpl.html>}}
+	   
+	   If you need more looser license, please contact me.
 
-.% Author
+.$ Author
 	.* Makoto Kuwata <kwa(at)kuwata-lab.com>.^
-	   (If you send me a mail, please make it's title starting with '[Kwartz]'.)
-	   .# If not, I may miss your mail.)
+	   (If you send me a mail, please make it's subject starting with '[Kwartz]'.
+	    Otherwise, I may miss your mail.)
 
-.% Other
+.$ Other
 	.* {{<Bug reports|http://sourceforge.net/tracker/?group_id=127304&atid=708267>}} and
 	   {{<enhance requests|http://sourceforge.net/tracker/?group_id=127304&atid=708270>}} are welcome.
 	.* This project was subsidized by Exploratory Software Project of
 	   {{<IPA|http://www.ipa.go.jp/about/english/index.html>}}
 	   (Information-Technology Promotion Agency Japan).
 
-.% Special Thanks
+.$ Special Thanks
 	.* Shu-yu Guo - He corrected my English of documents.
 	.* Andreas Schwarz - He gave me several good advices.
 	.* Wesley J Landaker - He created a Debian package of Kwartz.

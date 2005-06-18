@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title id="doc_title">Kwartz Overview</title>
+    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="docstyle.css" />
+  </head>
+
+  <body>
+
+    <div id="page_header">
+      <div id="logo1">
+        <span>kuwata-lab.com</span>
+      </div>
+      <div id="tabs" class="tabs">
+        <a href="/">Home</a>
+        <a href="/kwartz/">Kwartz</a>
+
+        <a href="/kwaff/" class="current">Kwaff</a>
+      </div>
+    </div>
+
+    <div id="mainbody">
+
+      <div id="breadcrumbs">
+        <a href="/">Home</a> &gt;
+        <a href="/kwartz/">Kwartz</a> &gt;
+        Kwartz Overview
+      </div>
+
+
+      <!-- BeginEditable "doc_content" -->
+
+<% if page > 0 then %>
+      <div style="text-align:center">
+<%   if first_url && !first_url.empty? then %>
+        <a href="<%= first_url %>">|&lt;&lt; First</a>
+<%   else %>
+|&lt;&lt; First<% end %>
+        &nbsp;
+<%   if prev_url && !prev_url.empty? then %>
+        <a href="<%= prev_url %>">&lt; Prev</a>
+<%   else %>
+&lt; Prev<% end %>
+        &nbsp;
+<%   if index_url && !index_url.empty? then %>
+        <a href="<%= index_url %>">Index</a>
+<%   else %>
+Index<% end %>
+        &nbsp;
+<%   if next_url && !next_url.empty? then %>
+        <a href="<%= next_url %>"><b>Next &gt;</b></a>
+<%   else %>
+<b>Next &gt;</b><% end %>
+        &nbsp;
+<%   if last_url && !last_url.empty? then %>
+        <a href="<%= last_url %>">Last &gt;&gt;|</a>
+<%   else %>
+Last &gt;&gt;|<% end %>
+      </div>
+<% end %>
+
+      <div style="text-align:center; margin:20px 20px 20px 20px">
+        <div style="text-align:left">
+<% if page == 0 then %>
+<%   i = 0 %>
+<%   for thumb in thumb_list do %>
+<%     i += 1 %>
+<%     link_url = thumb[:link_url] %>
+<%     image_url = thumb[:image_url] %>
+          <a href="<%= link_url %>"><img width="200" height="150"
+            src="<%= image_url %>" /></a>
+<%     if i % 3 == 0 then %>
+          <br />
+<%     end %>
+<%   end %>
+<% end %>
+        </div>
+      </div>
+
+<% if page != 0 then %>
+      <div id="main_image" style="text-align:center; margin:20px 20px 20px 20px">
+        <a href="img/overview_01.png" src="<%= image_url %>"><img src="<%= image_url %>" alt="presentaion image" /></a>
+      </div>
+<% end %>
+
+<% if page > 0 then %>
+      <div style="text-align:center">
+<%   if first_url && !first_url.empty? then %>
+        <a href="<%= first_url %>">|&lt;&lt; First</a>
+<%   else %>
+|&lt;&lt; First<% end %>
+        &nbsp;
+<%   if prev_url && !prev_url.empty? then %>
+        <a href="<%= prev_url %>">&lt; Prev</a>
+<%   else %>
+&lt; Prev<% end %>
+        &nbsp;
+<%   if index_url && !index_url.empty? then %>
+        <a href="<%= index_url %>">Index</a>
+<%   else %>
+Index<% end %>
+        &nbsp;
+<%   if next_url && !next_url.empty? then %>
+        <a href="<%= next_url %>"><b>Next &gt;</b></a>
+<%   else %>
+<b>Next &gt;</b><% end %>
+        &nbsp;
+<%   if last_url && !last_url.empty? then %>
+        <a href="<%= last_url %>">Last &gt;&gt;|</a>
+<%   else %>
+Last &gt;&gt;|<% end %>
+      </div>
+<% end %>
+
+      <!-- EndEditable "doc_content" -->
+    </div>
+
+    <div id="counter"><img src="/count/c.cgi?fn=/kwartz/overview/index.cgi/page<%= pagenum %>" alt="counter" /></div>
+    <div id="copyright">copyright&copy; 2004-2005 kuwata-lab.com all rights reserved</div>
+
+    <div id="page_footer">
+      <div id="logo2">
+        <span>kuwata-lab.com</span>
+      </div>
+    </div>
+
+  </body>
+</html>

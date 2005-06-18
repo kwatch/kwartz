@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-18 rev.84
+	.- [enhance] add doc/overview
+	.- [change] document update for new style homepage
+	.- [enhance] add KwartzOverview.ppt
 
 .: 2005-06-13 rev.83
 	.- [enhance] @content(name) support
