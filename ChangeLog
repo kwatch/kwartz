@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-18 rev.85
+	.- [change] doc/overview is moved to topdir
+
 .: 2005-06-18 rev.84
 	.- [enhance] add doc/overview
 	.- [change] document update for new style homepage
