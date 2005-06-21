@@ -52,7 +52,7 @@ grecipe	'*.{en|ja}.01.xhtml'	, '{1}.{2}.txt', 'output.rb'		do |r|
 	cmd "kwaser -t #{tagfile} -bsn    {1}.{2}.txt"
         files = Dir.glob("#{m[1]}.#{m[2]}.??.html")
         files << "#{m[1]}.#{m[2]}.html"
-        p files
+        #p files
         files.each do |old|
             new = old.sub(/\.html$/, '.xhtml')
             File.rename(old, new) if old != new

@@ -52,7 +52,7 @@
 .	
 .	
 .JA	Kwartz{{(Kwartzは'Quartz'と同じように発音してください。)}}とは、
-.JA	{{*『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data(SoPL/PD)』*}}という概念を実現したテンプレートシステムです。
+.JA	{{*『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data, SoPL/PD)』*}}または{{*『プレゼンテーションロジックの独立(Independence of Presentation Logic, IoPL)』*}}という概念を実現したテンプレートシステムです。
 .EN	Kwartz{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
 .EN	which realized the concept of {{*'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)*}} or 
 .EN	{{*'Independence of Presentation Logic'(IoPL)*}}.
@@ -600,10 +600,10 @@
 .	
 .JA	Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
 .JA	ここではその例を示します。
-.JA	なお『{{<プレゼンテーションパターンカタログ|p-pattern.html>}}』もご覧ください。
+.JA	なお『{{<プレゼンテーションパターンカタログ|p-pattern.ja.html>}}』もご覧ください。
 .EN	Kwartz enables you to write complex presentation logic natulally.
 .EN	This section shows some examples.
-.EN	See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
+.EN	See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
 .	
 .	
 .	
