@@ -3,6 +3,14 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-21 rev.87
+	.- [bugfix] typo fixed in users-guide
+	.- [change] delete website/{default.css,Howto.cook,download.html}
+	.- [change] update overview/overview.{xhtml,view}
+
+.: 2005-06-21 rev.86
+	.- [bugix] document typo fixed
+
 .: 2005-06-18 rev.85
 	.- [change] doc/overview is moved to topdir
 

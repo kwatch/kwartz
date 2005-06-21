@@ -97,7 +97,7 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
 <a name="whatis"></a>
 <h3 class="section2">Kwartzとは？</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup>とは、
-<b>『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data(SoPL/PD)』</b>という概念を実現したテンプレートシステムです。
+<b>『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data, SoPL/PD)』</b>または<b>『プレゼンテーションロジックの独立(Independence of Presentation Logic, IoPL)』</b>という概念を実現したテンプレートシステムです。
 </p>
 <p>Kwartz-rubyは、RubyによるKwartzの実装です。
 このほか、PHPやJavaによる実装も予定されています。
@@ -603,7 +603,7 @@ $ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
 <h3 class="section2">プレゼンテーションロジックの応用例</h3>
 <p>Kwartzでは、複雑なプレゼンテーションロジックが素直に記述できます。
 ここではその例を示します。
-なお『<a href="p-pattern.html">プレゼンテーションパターンカタログ</a>』もご覧ください。
+なお『<a href="p-pattern.ja.html">プレゼンテーションパターンカタログ</a>』もご覧ください。
 </p>
 <ul type="disc">
 <li>エレメント全体を繰り返すことができます。
@@ -978,14 +978,14 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>またコマンドラインオプションに関係なく、「<code>id="Value:<i>expr</i>"</code>」や「<code>id="Attr:<i>name</i>=<i>expr</i>)"</code>」は式<code><i>expr</i></code>を必ずサニタイズします。
+<p>またコマンドラインオプションに関係なく、「<code>id="Value:<i>expr</i>"</code>」や「<code>id="Attr:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズします。
 逆に、「<code>id="VALUE:<i>expr</i>"</code>」や「<code>id="ATTR:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズしません。
 これらはそれぞれ、「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>」と同じです。
 </p>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:5" href="#fnlink:5">*5</a>)</dt>
-  <dd>E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「<code>@{E(...)</code>}@」や「<code>id="value:E(...)"</code>」と書くことはできますが、「<code>id="set:str=E(...)"</code>」のようには書けません。</dd>
+  <dd>E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「<code>@{E(...)}@</code>」や「<code>id="value:E(...)"</code>」と書くことはできますが、「<code>id="set:str=E(...)"</code>」のようには書けません。</dd>
  </dl>
 </div>
 <br>
@@ -1514,9 +1514,9 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
     function view_hoge1($__args) {
         $user = $__args['user']
         $list = $__args['list']
-        return _view_hoge1(user,list)
+        return _view_hoge1($user, $list)
     }
-    function _view_hoge1(user,list) {
+    function _view_hoge1($user, $list) {
         ob_start();
 ?&gt;Hello &lt;?php echo $user; ?&gt; !
 &lt;ul&gt;

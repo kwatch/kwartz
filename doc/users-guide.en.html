@@ -605,7 +605,7 @@ $ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
 <h3 class="section2">Other Examples of Presentation Logic</h3>
 <p>Kwartz enables you to write complex presentation logic natulally.
 This section shows some examples.
-See <a href="p-pattern.html">Presentation Pattern Catalog</a> for details.
+See <a href="p-pattern.en.html">Presentation Pattern Catalog</a> for details.
 </p>
 <ul type="disc">
 <li>You can choose to iterate an element.
@@ -1515,9 +1515,9 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
     function view_hoge1($__args) {
         $user = $__args['user']
         $list = $__args['list']
-        return _view_hoge1(user,list)
+        return _view_hoge1($user, $list)
     }
-    function _view_hoge1(user,list) {
+    function _view_hoge1($user, $list) {
         ob_start();
 ?&gt;Hello &lt;?php echo $user; ?&gt; !
 &lt;ul&gt;

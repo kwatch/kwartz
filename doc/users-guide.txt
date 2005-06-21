@@ -902,7 +902,7 @@
 .	
 .JA	関数{{,E({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズします。
 .JA	また関数{{,X({{/expr/}}),}}は、コマンドラインオプションに関わらず式{{,{{/expr/}},}}をサニタイズしません
-.JA	{{(E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「{{,@{E(...),}}}@」や「{{,id="value:E(...)",}}」と書くことはできますが、「{{,id="set:str=E(...)",}}」のようには書けません。)}}。
+.JA	{{(E()とX()は正確には擬似関数であり、PLにおけるprint文の引数に指定することはできますが、任意の式として使用できるわけではありません。例えば「{{,@{E(...)}@,}}」や「{{,id="value:E(...)",}}」と書くことはできますが、「{{,id="set:str=E(...)",}}」のようには書けません。)}}。
 .EN	The function {{,E({{/expr/}}),}} always sanitizes expression {{,{{/expr/}},}} even when '-e' is not specified.
 .EN	The function {{,X({{/expr/}}),}} doesn't sanitize expression {{,{{/expr/}},}} even when '-e' is specified.
 .EN	{{(E() and X() are pseudo-function. They are not expression but allowed to appear as argument of print statement of PL. For example, '{{,@{E(...)}@,}}' and '{{,id="value:E(...),}}' are valid, but '{{,id="set:str=E(...)",}}' is invalid.)}}
@@ -942,7 +942,7 @@
 .	.<<<:! ./output.rb -l eruby,erb,php,jstl,velocity guide.d/sanitize-partial1.pdata
 .	.--------------------
 .	
-.JA	またコマンドラインオプションに関係なく、「{{,id="Value:{{/expr/}}",}}」や「{{,id="Attr:{{/name/}}={{/expr/}})",}}」は式{{,{{/expr/}},}}を必ずサニタイズします。
+.JA	またコマンドラインオプションに関係なく、「{{,id="Value:{{/expr/}}",}}」や「{{,id="Attr:{{/name/}}={{/expr/}}",}}」は式{{,{{/expr/}},}}を必ずサニタイズします。
 .JA	逆に、「{{,id="VALUE:{{/expr/}}",}}」や「{{,id="ATTR:{{/name/}}={{/expr/}}",}}」は式{{,{{/expr/}},}}を必ずサニタイズしません。
 .JA	これらはそれぞれ、「{{,id="value:E({{/expr/}})",}}」や「{{,id="attr:{{/name/}}=X({{/expr/}})",}}」と同じです。
 .EN	Directives {{,id="Value:{{/expr/}}",}} and {{,id="Attr:{{/name/}}={{/expr/}}",}} always sanitize expression {{,{{/expr/}},}} even when the sanitizing command-line option is not specified.
