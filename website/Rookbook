@@ -48,7 +48,7 @@ grecipe	'*.{en|ja}.01.xhtml'	, '{1}.{2}.txt', 'output.rb'		do |r|
 	mkdir_p "guide.d"
 	cmd "retrieve -d guide.d {1}.{2}.txt"
 	## -b: .profile and breadcrumbs, -s: separate, -n: number
-	cmd "kwaser -t #{tagfile} -bsn -T {1}.{2}.txt > {1}.{2}.toc.html"
+	cmd "kwaser -t #{tagfile} -bsn -T2 {1}.{2}.txt > {1}.{2}.toc.html"
 	cmd "kwaser -t #{tagfile} -bsn    {1}.{2}.txt"
         files = Dir.glob("#{m[1]}.#{m[2]}.??.html")
         files << "#{m[1]}.#{m[2]}.html"

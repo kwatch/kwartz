@@ -12,7 +12,8 @@ if ENV['REQUEST_METHOD']
 end
 
 ## set url format of images
-base_url  = "http://www.kuwata-lab.com/kwartz/overview/img";
+#base_url  = "http://www.kuwata-lab.com/kwartz/overview/img";
+base_url  = "/kwartz/overview/img";
 image_url_format = "#{base_url}/overview_%02d.png";
 
 ## get parameters
