@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-23 rev.89
+	.- [bugfix] typo fixed of overview.xhtml
+
 .: 2005-06-23 rev.88
 	.- [bugfix] fix image url of overview.xhtml
 	.- [change] change website/index.txt
