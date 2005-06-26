@@ -17,25 +17,25 @@ This document shows you examples of Kwartz, especially in Ruby.
 .$ Bordered Table 1		| border1
 
 
-{{<border1.html|border1/border1.html>}} (presentation data):
+.? {{<border1.html|border1/border1.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb border1/border1.html
 .--------------------
 
 
-{{<border1.plogic|border1/border1.plogic>}} (presentation logic):
+.? {{<border1.plogic|border1/border1.plogic>}} (presentation logic):
 .--------------------
 .<<<: border1/border1.plogic
 .--------------------
 
 
-{{<border1.rb|border1/border1.rb>}} (main program):
+.? {{<border1.rb|border1/border1.rb>}} (main program):
 .--------------------
 .<<<: border1/border1.rb
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p border1.plogic border1.html > border1.view
@@ -45,13 +45,13 @@ Compile and execution:
 .====================
 
 
-{{<border1.view|border1/border1.view>}} (output script for Ruby):
+.? {{<border1.view|border1/border1.view>}} (output script for Ruby):
 .--------------------
 .<<<: border1/border1.view
 .--------------------
 
 
-{{<result.html|border1/result.html>}}
+.? {{<result.html|border1/result.html>}}
 .--------------------
 .<<<: border1/result.html
 .--------------------
@@ -61,25 +61,25 @@ Compile and execution:
 .$ Bordered Table 2		| border2
 
 
-{{<border2.html|border2/border2.html>}} (presentation data):
+.? {{<border2.html|border2/border2.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb border2/border2.html
 .--------------------
 
 
-{{<border2.plogic|border2/border2.plogic>}} (presentation logic):
+.? {{<border2.plogic|border2/border2.plogic>}} (presentation logic):
 .--------------------
 .<<<: border2/border2.plogic
 .--------------------
 
 
-{{<border2.rb|border2/border2.rb>}} (main program):
+.? {{<border2.rb|border2/border2.rb>}} (main program):
 .--------------------
 .<<<: border2/border2.rb
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p border2.plogic border2.html > border2.view
@@ -89,13 +89,13 @@ Compile and execution:
 .====================
 
 
-{{<border2.view|border2/border2.view>}} (output script for Ruby):
+.? {{<border2.view|border2/border2.view>}} (output script for Ruby):
 .--------------------
 .<<<: border2/border2.view
 .--------------------
 
 
-{{<result.html|border2/result.html>}}
+.? {{<result.html|border2/result.html>}}
 .--------------------
 .<<<: border2/result.html
 .--------------------
@@ -106,25 +106,25 @@ Compile and execution:
 .$ Bordered Table 3		| bordered3
 
 
-{{<border3.html|border3/border3.html>}} (presentation data):
+.? {{<border3.html|border3/border3.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb border3/border3.html
 .--------------------
 
 
-{{<border3.plogic|border3/border3.plogic>}} (presentation logic):
+.? {{<border3.plogic|border3/border3.plogic>}} (presentation logic):
 .--------------------
 .<<<: border3/border3.plogic
 .--------------------
 
 
-{{<border3.rb|border3/border3.rb>}} (main program):
+.? {{<border3.rb|border3/border3.rb>}} (main program):
 .--------------------
 .<<<: border3/border3.rb
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p border3.plogic border3.html > border3.view
@@ -134,13 +134,13 @@ Compile and execution:
 .====================
 
 
-{{<border3.view|border3/border3.view>}} (output script for Ruby):
+.? {{<border3.view|border3/border3.view>}} (output script for Ruby):
 .--------------------
 .<<<: border3/border3.view
 .--------------------
 
 
-{{<result.html|border3/result.html>}}
+.? {{<result.html|border3/result.html>}}
 .--------------------
 .<<<: border3/result.html
 .--------------------
@@ -150,31 +150,31 @@ Compile and execution:
 .$ HTML Form			| form1
 
 
-{{<register.html|form1/register.html>}} (presentation data):
+.? {{<register.html|form1/register.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb form1/register.html
 .--------------------
 
 
-{{<register.plogic|form1/register.plogic>}} (presentation logic):
+.? {{<register.plogic|form1/register.plogic>}} (presentation logic):
 .--------------------
 .<<<: form1/register.plogic
 .--------------------
 
 
-{{<finish.html|form1/finish.html>}} (presentation data):
+.? {{<finish.html|form1/finish.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb form1/finish.html
 .--------------------
 
 
-{{<register.rbx|form1/register.rbx>}} (main program):
+.? {{<register.rbx|form1/register.rbx>}} (main program):
 .--------------------
 .<<<: form1/register.rbx
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -e -p register.plogic register.html > register.view
@@ -185,13 +185,13 @@ Compile and execution:
 .====================
 
 
-{{<register.view|form1/register.view>}} (output script for Ruby):
+.? {{<register.view|form1/register.view>}} (output script for Ruby):
 .--------------------
 .<<<: form1/register.view
 .--------------------
 
 
-{{<finish.view|form1/finish.view>}} (output script for Ruby):
+.? {{<finish.view|form1/finish.view>}} (output script for Ruby):
 .--------------------
 .<<<: form1/finish.view
 .--------------------
@@ -201,25 +201,25 @@ Compile and execution:
 
 .$ Breadcrumbs			| breadcrumbs
 
-{{<breadcrumbs.html|breadcrumbs/breadcrumbs.html>}} (presentation data):
+.? {{<breadcrumbs.html|breadcrumbs/breadcrumbs.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb breadcrumbs/breadcrumbs.html
 .--------------------
 
 
-{{<breadcrumbs.plogic|breadcrumbs/breadcrumbs.plogic>}} (presentation logic):
+.? {{<breadcrumbs.plogic|breadcrumbs/breadcrumbs.plogic>}} (presentation logic):
 .--------------------
 .<<<: breadcrumbs/breadcrumbs.plogic
 .--------------------
 
 
-{{<breadcrumbs.rb|breadcrumbs/breadcrumbs.rb>}} (main program):
+.? {{<breadcrumbs.rb|breadcrumbs/breadcrumbs.rb>}} (main program):
 .--------------------
 .<<<: breadcrumbs/breadcrumbs.rb
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p breadcrumbs.plogic breadcrumbs.html > breadcrumbs.view
@@ -229,13 +229,13 @@ Compile and execution:
 .====================
 
 
-{{<breadcrumbs.view|breadcrumbs/breadcrumbs.view>}} (output script for Ruby):
+.? {{<breadcrumbs.view|breadcrumbs/breadcrumbs.view>}} (output script for Ruby):
 .--------------------
 .<<<: breadcrumbs/breadcrumbs.view
 .--------------------
 
 
-{{<result.html|breadcrumbs/result.html>}}
+.? {{<result.html|breadcrumbs/result.html>}}
 .--------------------
 .<<<: breadcrumbs/result.html
 .--------------------
@@ -245,38 +245,37 @@ Compile and execution:
 
 .$ Calendar			| calendar
 
-{{<calendar-month.html|calendar/calendar-month.html>}} (presentation data):
+.? {{<calendar-month.html|calendar/calendar-month.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb calendar/calendar-month.html
 .--------------------
 
 
-{{<calendar-month.plogic|calendar/calendar-month.plogic>}} (presentation logic):
+.? {{<calendar-month.plogic|calendar/calendar-month.plogic>}} (presentation logic):
 .--------------------
 .<<<: calendar/calendar-month.plogic
 .--------------------
 
 
-{{<calendar-page.html|calendar/calendar-page.html>}} (presentation data):
+.? {{<calendar-page.html|calendar/calendar-page.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb calendar/calendar-page.html
 .--------------------
 
 
-{{<calendar-page.plogic|calendar/calendar-page.plogic>}} (presentation logic):
+.? {{<calendar-page.plogic|calendar/calendar-page.plogic>}} (presentation logic):
 .--------------------
 .<<<: calendar/calendar-page.plogic
 .--------------------
 
 
-
-{{<calendar.rbx|calendar/calendar.rbx>}} (main program):
+.? {{<calendar.rbx|calendar/calendar.rbx>}} (main program):
 .--------------------
 .<<<: calendar/calendar.rbx
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p calendar-month.plogic calendar-month.html > calendar-month.view
@@ -287,19 +286,19 @@ Compile and execution:
 .====================
 
 
-{{<calendar-month.view|calendar/calendar-month.view>}} (output script for Ruby):
+.? {{<calendar-month.view|calendar/calendar-month.view>}} (output script for Ruby):
 .--------------------
 .<<<: calendar/calendar-month.view
 .--------------------
 
 
-{{<calendar-page.view|calendar/calendar-page.view>}} (output script for Ruby):
+.? {{<calendar-page.view|calendar/calendar-page.view>}} (output script for Ruby):
 .--------------------
 .<<<: calendar/calendar-page.view
 .--------------------
 
 
-{{<result.html|calendar/result.html>}}
+.? {{<result.html|calendar/result.html>}}
 .--------------------
 .<<<: calendar/result.html
 .--------------------
@@ -309,25 +308,25 @@ Compile and execution:
 .$ Thumbnail		| thumbnail
 
 
-{{<thumbnail.html|thumbnail/thumbnail.html>}} (presentation data):
+.? {{<thumbnail.html|thumbnail/thumbnail.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb thumbnail/thumbnail.html
 .--------------------
 
 
-{{<thumbnail.plogic|thumbnail/thumbnail.plogic>}} (presentation logic):
+.? {{<thumbnail.plogic|thumbnail/thumbnail.plogic>}} (presentation logic):
 .--------------------
 .<<<: thumbnail/thumbnail.plogic
 .--------------------
 
 
-{{<thumbnail.rbx|thumbnail/thumbnail.rbx>}} (main program):
+.? {{<thumbnail.rbx|thumbnail/thumbnail.rbx>}} (main program):
 .--------------------
 .<<<: thumbnail/thumbnail.rbx
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -l eruby -p thumbnail.plogic thumbnail.html > thumbnail.view
@@ -337,13 +336,13 @@ Compile and execution:
 .====================
 
 
-{{<thumbnail.view|thumbnail/thumbnail.view>}} (output script for Ruby):
+.? {{<thumbnail.view|thumbnail/thumbnail.view>}} (output script for Ruby):
 .--------------------
 .<<<: thumbnail/thumbnail.view
 .--------------------
 
 
-{{<result.html|thumbnail/result.html>}}
+.? {{<result.html|thumbnail/result.html>}}
 .--------------------
 .<<<: thumbnail/result.html
 .--------------------
@@ -354,49 +353,49 @@ Compile and execution:
 .$ Page Layout		| pagelayout
 
 
-{{<layout.html|pagelayout/layout.html>}} (presentation data):
+.? {{<layout.html|pagelayout/layout.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb pagelayout/layout.html
 .--------------------
 
 
-{{<menu.html|pagelayout/menu.html>}} (presentation data):
+.? {{<menu.html|pagelayout/menu.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb pagelayout/menu.html
 .--------------------
 
 
-{{<menu.plogic|pagelayout/menu.plogic>}} (presentation logic):
+.? {{<menu.plogic|pagelayout/menu.plogic>}} (presentation logic):
 .--------------------
 .<<<: pagelayout/menu.plogic
 .--------------------
 
 
-{{<page1.html|pagelayout/page1.html>}} (presentation data):
+.? {{<page1.html|pagelayout/page1.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb pagelayout/page1.html
 .--------------------
 
 
-{{<page2.html|pagelayout/page2.html>}} (presentation data):
+.? {{<page2.html|pagelayout/page2.html>}} (presentation data):
 .--------------------
 .<<<! ruby examples.rb pagelayout/page2.html
 .--------------------
 
 
-{{<page.plogic|pagelayout/page.plogic>}} (presentation logic):
+.? {{<page.plogic|pagelayout/page.plogic>}} (presentation logic):
 .--------------------
 .<<<: pagelayout/page.plogic
 .--------------------
 
 
-{{<main.rb|pagelayout/main.rb>}} (main program):
+.? {{<main.rb|pagelayout/main.rb>}} (main program):
 .--------------------
 .<<<: pagelayout/main.rb
 .--------------------
 
 
-Compile and execution:
+.? Compile and execution:
 .====================
 ### compile
 % kwartz -p menu.plogic,page.plogic {{*-i menu.html,page1.html*}} layout.html > page1.view
@@ -408,25 +407,25 @@ Compile and execution:
 .====================
 
 
-{{<page1.view|pagelayout/page1.view>}} (output script for Ruby):
+.? {{<page1.view|pagelayout/page1.view>}} (output script for Ruby):
 .--------------------
 .<<<: pagelayout/page1.view
 .--------------------
 
 
-{{<page2.view|pagelayout/page2.view>}} (output script for Ruby):
+.? {{<page2.view|pagelayout/page2.view>}} (output script for Ruby):
 .--------------------
 .<<<: pagelayout/page2.view
 .--------------------
 
 
-{{<result1.html|pagelayout/result1.html>}}
+.? {{<result1.html|pagelayout/result1.html>}}
 .--------------------
 .<<<: pagelayout/result1.html
 .--------------------
 
 
-{{<result2.html|pagelayout/result2.html>}}
+.? {{<result2.html|pagelayout/result2.html>}}
 .--------------------
 .<<<: pagelayout/result2.html
 .--------------------
@@ -436,62 +435,62 @@ Compile and execution:
 .$ Rails 			| rails1
 
 
-{{<recipes.html|rails1/recipes.html>}} (presentation data):
+.? {{<recipes.html|rails1/recipes.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb rails1/recipes.html
 .--------------------
 
-{{<recipes.plogic|rails1/recipes.plogic>}} (presentation logic):
+.? {{<recipes.plogic|rails1/recipes.plogic>}} (presentation logic):
 .--------------------
 .<<<: rails1/recipes.plogic
 .--------------------
 
 
-{{<list.html|rails1/list.html>}} (presentation data):
+.? {{<list.html|rails1/list.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb rails1/list.html
 .--------------------
 
-{{<list.plogic|rails1/list.plogic>}} (presentation logic):
+.? {{<list.plogic|rails1/list.plogic>}} (presentation logic):
 .--------------------
 .<<<: rails1/list.plogic
 .--------------------
 
 
-{{<show.html|rails1/show.html>}} (presentation data):
+.? {{<show.html|rails1/show.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb rails1/show.html
 .--------------------
 
-{{<show.plogic|rails1/show.plogic>}} (presentation logic):
+.? {{<show.plogic|rails1/show.plogic>}} (presentation logic):
 .--------------------
 .<<<: rails1/show.plogic
 .--------------------
 
 
-{{<new.html|rails1/new.html>}} (presentation data):
+.? {{<new.html|rails1/new.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb rails1/new.html
 .--------------------
 
-{{<new.plogic|rails1/new.plogic>}} (presentation logic):
+.? {{<new.plogic|rails1/new.plogic>}} (presentation logic):
 .--------------------
 .<<<: rails1/new.plogic
 .--------------------
 
 
-{{<edit.html|rails1/edit.html>}} (presentation data):
+.? {{<edit.html|rails1/edit.html>}} (presentation data):
 .-------------------- 
 .<<<! ruby examples.rb rails1/edit.html
 .--------------------
 
-{{<edit.plogic|rails1/edit.plogic>}} (presentation logic):
+.? {{<edit.plogic|rails1/edit.plogic>}} (presentation logic):
 .--------------------
 .<<<: rails1/edit.plogic
 .--------------------
 
 
-Compile:
+.? Compile:
 .====================
 ### compile
 % kwartz -Rails -e -p recipes.plogic recipes.html > recipes.rhtml
@@ -502,31 +501,31 @@ Compile:
 .====================
 
 
-{{<recipes.rhtml|rails1/recipes.rhtml>}} (output script for Ruby):
+.? {{<recipes.rhtml|rails1/recipes.rhtml>}} (output script for Ruby):
 .--------------------
 .<<<: rails1/recipes.rhtml
 .--------------------
 
 
-{{<list.rhtml|rails1/list.rhtml>}} (output script for Ruby):
+.? {{<list.rhtml|rails1/list.rhtml>}} (output script for Ruby):
 .--------------------
 .<<<: rails1/list.rhtml
 .--------------------
 
 
-{{<show.rhtml|rails1/show.rhtml>}} (output script for Ruby):
+.? {{<show.rhtml|rails1/show.rhtml>}} (output script for Ruby):
 .--------------------
 .<<<: rails1/show.rhtml
 .--------------------
 
 
-{{<new.rhtml|rails1/new.rhtml>}} (output script for Ruby):
+.? {{<new.rhtml|rails1/new.rhtml>}} (output script for Ruby):
 .--------------------
 .<<<: rails1/new.rhtml
 .--------------------
 
 
-{{<edit.rhtml|rails1/edit.rhtml>}} (output script for Ruby):
+.? {{<edit.rhtml|rails1/edit.rhtml>}} (output script for Ruby):
 .--------------------
 .<<<: rails1/edit.rhtml
 .--------------------

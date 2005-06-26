@@ -1,21 +1,27 @@
 body {
-	background-color:#FFFFFF;
+        background-color:#FFFFFF;
 }
 
-.menulist , .contents {
-	border-style:solid;
-	border-color:#006699;
-	border-width:2px;
-	padding:10px;
+.menu_part , .contents_part {
+        border-style:solid;
+        border-color:#006699;
+        border-width:2px;
+        padding:10px;
+}
+
+.menulist {
+}
+
+.contents {
 }
 
 .copyright {
-	text-align:center;
-	color:#FFFFFF;
-	background-color:#006699;
+        text-align:center;
+        color:#FFFFFF;
+        background-color:#006699;
 }
 
 ul  {
-	margin:0px;
-	padding-left:15px;
+        margin:0px;
+        padding-left:15px;
 }

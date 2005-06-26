@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-26 rev.90
+	.- [change] examples/{pagelayout,thumbnail} updated
+
 .: 2005-06-23 rev.89
 	.- [bugfix] typo fixed of overview.xhtml
 

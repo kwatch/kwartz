@@ -1,5 +1,9 @@
 #!/usr/bin/ruby
 
+## set url format of images
+base_url  = "http://www.kuwata-lab.com/kwartz/overview/img";
+image_url_format = "#{base_url}/overview_%02d.png";
+
 ## get parameters
 params = {}
 cgi = nil
@@ -11,13 +15,9 @@ if ENV['REQUEST_METHOD']
    end
 end
 
-## set url format of images
-base_url  = "http://www.kuwata-lab.com/kwartz/kwartz-overview/images";
-image_url_format = "#{base_url}/image%02d.png";
-
 ## get parameters
 first = 1
-last  = 20
+last  = 22
 page = params['page']
 if (!page || page.empty?)
    page = 0

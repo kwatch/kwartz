@@ -4,7 +4,7 @@ while line = gets()
    line.gsub!(/&/, '&amp;')
    line.gsub!(/</, '&lt;')
    line.gsub!(/>/, '&gt;')
-   line.gsub!(/id=".*?"/, '<b>\&</b>')
-   line.gsub!(/@\{.*\}@/, '<b>\&</b>')
+   line.gsub!(/id=".*?"/, '<strong>\&</strong>')
+   line.gsub!(/@\{.*\}@/, '<strong>\&</strong>')
    print line
 end
