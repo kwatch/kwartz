@@ -356,7 +356,7 @@ Velocityではエラーになります。
 
 <a name="pl-print"></a>
 <h3 class="section2">出力</h3>
-<p>出力は「<code>print(<i>...</i>);</code>」で表します。
+<p>出力は「<code>print(<em>...</em>);</code>」で表します。
 引数には任意の式を書くことができます。
 </p>
 <p>PLプログラム：
@@ -553,8 +553,8 @@ $!{hash.key}</pre>
 
 <a name="pl-property"></a>
 <h3 class="section2">プロパティとメソッド</h3>
-<p>オブジェクトのプロパティは、「<code><i>object</i>.<i>property</i></code>」の形式で参照します。
-また「<code><i>object</i>.<i>method</i>(<i>arg1</i>, <i>arg2</i>, ..)</code>」のように引数をつけてメソッドを呼ぶこともできます。
+<p>オブジェクトのプロパティは、「<code><em>object</em>.<em>property</em></code>」の形式で参照します。
+また「<code><em>object</em>.<em>method</em>(<em>arg1</em>, <em>arg2</em>, ..)</code>」のように引数をつけてメソッドを呼ぶこともできます。
 ただし、メソッド呼び出しはJSTLではサポートしてませんので、JSTLへの変換時にはエラーになります。
 </p>
 <p>PLプログラム：
@@ -606,8 +606,8 @@ $!{user.method(10, 20)}</pre>
 
 <a name="pl-foreach"></a>
 <h3 class="section2">繰り返し</h3>
-<p>繰り返しは「<code>foreach(<i>loopvar</i> in <i>list</i>) { ... }</code>」で表します。
-いわゆるforeach文であり、<code><i>list</i></code>の要素をひとつひとつ<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
+<p>繰り返しは「<code>foreach(<em>loopvar</em> in <em>list</em>) { ... }</code>」で表します。
+いわゆるforeach文であり、<code><em>list</em></code>の要素をひとつひとつ<code><em>loopvar</em></code>に代入しながら繰り返しを行います。
 </p>
 <p>PLプログラム：
 </p>
@@ -672,7 +672,7 @@ while(i &lt; length) {
 
 <a name="pl-if"></a>
 <h3 class="section2">条件分岐</h3>
-<p>条件分岐は「<code>if(<i>condition</i>) { ... } else if(<i>condition</i>) { ... } else { ... }</code>」で表します。
+<p>条件分岐は「<code>if(<em>condition</em>) { ... } else if(<em>condition</em>) { ... } else { ... }</code>」で表します。
 </p>
 <p>PLプログラム：
 </p>
@@ -731,167 +731,167 @@ while(i &lt; length) {
 <p>PLでは、以下の関数を使用することができます。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-E(<i>expr</i>) </b></dt>
+<dt class="dt3"><strong>
+E(<em>expr</em>) </strong></dt>
 <dd class="dd3">
-	式 <i>expr</i> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
+	式 <em>expr</em> をサニタイズします。サニタイズはコマンドラインオプションの指定に関わらず行われます。
 	E()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-X(<i>expr</i>) </b></dt>
+<dt class="dt3"><strong>
+X(<em>expr</em>) </strong></dt>
 <dd class="dd3">
 	式 expr をサニタイズしません。つまりコマンドラインオプションでサニタイズするよう指定されていても、
-	X(<i>expr</i>)で指定された式はサニタイズされません。
+	X(<em>expr</em>)で指定された式はサニタイズされません。
 	X()は擬似関数であり、実際にはprint文の引数でしか使用できません。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-C(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+C(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	「<code><i>expression</i> ? ' checked="checked"' : ''</code>」と同じです。
+	「<code><em>expression</em> ? ' checked="checked"' : ''</code>」と同じです。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-S(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+S(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	「<code><i>expression</i> ? ' selected="selected"' : ''</code>」と同じです。
+	「<code><em>expression</em> ? ' selected="selected"' : ''</code>」と同じです。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-D(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+D(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	「<code><i>expression</i> ? ' disabled="disabled"' : ''</code>」と同じです。
+	「<code><em>expression</em> ? ' disabled="disabled"' : ''</code>」と同じです。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_new() </b></dt>
+<dt class="dt3"><strong>
+list_new() </strong></dt>
 <dd class="dd3">
 	  新しいリストを作成します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_length(<i>list</i>) </b></dt>
+<dt class="dt3"><strong>
+list_length(<em>list</em>) </strong></dt>
 <dd class="dd3">
-	  リスト<i>list</i>の長さを返します。
+	  リスト<em>list</em>の長さを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_empty(<i>list</i>) </b></dt>
+<dt class="dt3"><strong>
+list_empty(<em>list</em>) </strong></dt>
 <dd class="dd3">
-	  リスト<i>list</i>が空ならtrueを、空でないならfalseを返します。
+	  リスト<em>list</em>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_new() </b></dt>
+<dt class="dt3"><strong>
+hash_new() </strong></dt>
 <dd class="dd3">
 	  新しいハッシュを作成します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_length(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_length(<em>hash</em>) </strong></dt>
 <dd class="dd3">
-	  ハッシュ<i>hash</i>の長さ（要素の数）を返します。
+	  ハッシュ<em>hash</em>の長さ（要素の数）を返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_empty(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_empty(<em>hash</em>) </strong></dt>
 <dd class="dd3">
-	  ハッシュ<i>hash</i>が空ならtrueを、空でないならfalseを返します。
+	  ハッシュ<em>hash</em>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_keys(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_keys(<em>hash</em>) </strong></dt>
 <dd class="dd3">
 	  ハッシュの全キーをリストで返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_length(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_length(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>の長さを返します。
+	  文字列<em>string</em>の長さを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_empty(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_empty(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>が空ならtrueを、空でないならfalseを返します。
+	  文字列<em>string</em>が空ならtrueを、空でないならfalseを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_tolower(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_tolower(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>を小文字にして返します。
+	  文字列<em>string</em>を小文字にして返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_toupper(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_toupper(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>を大文字にして返します。
+	  文字列<em>string</em>を大文字にして返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_trim(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_trim(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>の前後から空白を取り除いた文字列を返します。
+	  文字列<em>string</em>の前後から空白を取り除いた文字列を返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_index(<i>string</i>, <i>char</i>) </b></dt>
+<dt class="dt3"><strong>
+str_index(<em>string</em>, <em>char</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>において文字<i>char</i>のある場所を返します。
+	  文字列<em>string</em>において文字<em>char</em>のある場所を返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_replace(<i>string</i>, <i>before</i>, <i>after</i>) </b></dt>
+<dt class="dt3"><strong>
+str_replace(<em>string</em>, <em>before</em>, <em>after</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>において、文字列<i>before</i>を文字列<i>after</i>に置き換えたものを返します。
+	  文字列<em>string</em>において、文字列<em>before</em>を文字列<em>after</em>に置き換えたものを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_linebreak(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_linebreak(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>string</i>において、改行のまえに<code>&lt;br /&gt;</code>を挿入したものを返します。
+	  文字列<em>string</em>において、改行のまえに<code>&lt;br /&gt;</code>を挿入したものを返します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_xml(<i>html_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_xml(<em>html_string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>html_string</i>をサニタイズします。
+	  文字列<em>html_string</em>をサニタイズします。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_url(<i>url_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_url(<em>url_string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>url_string</i>をURL形式でエンコードします。
+	  文字列<em>url_string</em>をURL形式でエンコードします。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_sql(<i>sql_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_sql(<em>sql_string</em>) </strong></dt>
 <dd class="dd3">
-	  文字列<i>sql_string</i>中の「<code>'</code>」「<code>"</code>」「<code>\</code>」をバックスラッシュでエスケープします。
+	  文字列<em>sql_string</em>中の「<code>'</code>」「<code>"</code>」「<code>\</code>」をバックスラッシュでエスケープします。
 </dd>
 </dl>
 <p>どのように変換されるかは次をご覧ください。
@@ -913,18 +913,18 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_length(<i>list</i>)</code></td>
-  <td class="td1"><code><i>list</i>.length</code></td>
-  <td class="td1"><code>array_length(<i>list</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>list</i>)</code></td>
-  <td class="td1"><code>(<i>list</i>).size()</code></td>
+  <td class="td1"><code>list_length(<em>list</em>)</code></td>
+  <td class="td1"><code><em>list</em>.length</code></td>
+  <td class="td1"><code>array_length(<em>list</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>list</em>)</code></td>
+  <td class="td1"><code>(<em>list</em>).size()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_empty(<i>list</i>)</code></td>
-  <td class="td1"><code><i>list</i>.empty?</code></td>
-  <td class="td1"><code>array_length(<i>list</i>)==0</code></td>
-  <td class="td1"><code>fn:length(<i>list</i>)==0</code></td>
-  <td class="td1"><code>(<i>list</i>).size()==0</code></td>
+  <td class="td1"><code>list_empty(<em>list</em>)</code></td>
+  <td class="td1"><code><em>list</em>.empty?</code></td>
+  <td class="td1"><code>array_length(<em>list</em>)==0</code></td>
+  <td class="td1"><code>fn:length(<em>list</em>)==0</code></td>
+  <td class="td1"><code>(<em>list</em>).size()==0</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>hash_new()</code></td>
@@ -934,88 +934,88 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_length(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.length</code></td>
-  <td class="td1"><code>array_length(<i>hash</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.size()</code></td>
+  <td class="td1"><code>hash_length(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.length</code></td>
+  <td class="td1"><code>array_length(<em>hash</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.size()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_empty(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.empty?</code></td>
-  <td class="td1"><code>array_length(<i>hash</i>)==0</code></td>
-  <td class="td1"><code>fn:length(<i>hash</i>)==0</code></td>
-  <td class="td1"><code><i>hash</i>.size()==0</code></td>
+  <td class="td1"><code>hash_empty(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.empty?</code></td>
+  <td class="td1"><code>array_length(<em>hash</em>)==0</code></td>
+  <td class="td1"><code>fn:length(<em>hash</em>)==0</code></td>
+  <td class="td1"><code><em>hash</em>.size()==0</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_keys(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.keys</code></td>
-  <td class="td1"><code>array_keys(<i>hash</i>)</code></td>
+  <td class="td1"><code>hash_keys(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.keys</code></td>
+  <td class="td1"><code>array_keys(<em>hash</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code><i>hash</i>.keySet().toArray()</code></td>
+  <td class="td1"><code><em>hash</em>.keySet().toArray()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_length(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.lenth</code></td>
-  <td class="td1"><code>strlen(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.length()</code></td>
+  <td class="td1"><code>str_length(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.lenth</code></td>
+  <td class="td1"><code>strlen(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.length()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_tolower(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.downcase</code></td>
-  <td class="td1"><code>strtolower(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:toLowerCase(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.toLowerCase()</code></td>
+  <td class="td1"><code>str_tolower(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.downcase</code></td>
+  <td class="td1"><code>strtolower(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:toLowerCase(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.toLowerCase()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_toupper(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.upcase</code></td>
-  <td class="td1"><code>strtoupper(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:toUpperCase(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.toUpperCase()</code></td>
+  <td class="td1"><code>str_toupper(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.upcase</code></td>
+  <td class="td1"><code>strtoupper(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:toUpperCase(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.toUpperCase()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_index(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code><i>str</i>.index(<i>ch</i>)</code></td>
-  <td class="td1"><code>strchr(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code>fn:indexOf(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+  <td class="td1"><code>str_index(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code><em>str</em>.index(<em>ch</em>)</code></td>
+  <td class="td1"><code>strchr(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code>fn:indexOf(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code><em>str</em>.indexOf(<em>ch</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_replace(<i>str</i>,<i>before</i>, <i>after</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(<i>before</i>,<i>after</i>)</code></td>
-  <td class="td1"><code>str_replace(<i>before</i>,<i>after</i>,<i>str</i>)</code></td>
-  <td class="td1"><code>fn:replace(<i>str</i>,<i>before</i>,<i>after</i>)</code></td>
-  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+  <td class="td1"><code>str_replace(<em>str</em>,<em>before</em>, <em>after</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(<em>before</em>,<em>after</em>)</code></td>
+  <td class="td1"><code>str_replace(<em>before</em>,<em>after</em>,<em>str</em>)</code></td>
+  <td class="td1"><code>fn:replace(<em>str</em>,<em>before</em>,<em>after</em>)</code></td>
+  <td class="td1"><code><em>str</em>.indexOf(<em>ch</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_linebreak(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
-  <td class="td1"><code>nl2br(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:replace(<i>str</i>,'\n','&lt;br /&gt;\n')</code></td>
-  <td class="td1"><code><i>str</i>.replaceAll('$','&lt;br /&gt;')</code></td>
+  <td class="td1"><code>str_linebreak(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
+  <td class="td1"><code>nl2br(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:replace(<em>str</em>,'\n','&lt;br /&gt;\n')</code></td>
+  <td class="td1"><code><em>str</em>.replaceAll('$','&lt;br /&gt;')</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_xml(<i>str</i>)</code></td>
-  <td class="td1"><code>CGI::escapeHTML(<i>str</i>)</code> (when eRuby) <br> <code>html_escape(<i>str</i>)</code> (when ERB)</td>
-  <td class="td1"><code>htmlspecialchars(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:escapeXml(<i>str</i>)</code></td>
-  <td class="td1"><code>$esc.xml(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_xml(<em>str</em>)</code></td>
+  <td class="td1"><code>CGI::escapeHTML(<em>str</em>)</code> (when eRuby) <br> <code>html_escape(<em>str</em>)</code> (when ERB)</td>
+  <td class="td1"><code>htmlspecialchars(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:escapeXml(<em>str</em>)</code></td>
+  <td class="td1"><code>$esc.xml(<em>str</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_url(<i>str</i>)</code></td>
-  <td class="td1"><code>CGI::escape(<i>str</i>)</code> (when eRuby) <br> <code>url_encode(<i>str</i>)</code> (when ERB)</td>
-  <td class="td1"><code>urlencode(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_url(<em>str</em>)</code></td>
+  <td class="td1"><code>CGI::escape(<em>str</em>)</code> (when eRuby) <br> <code>url_encode(<em>str</em>)</code> (when ERB)</td>
+  <td class="td1"><code>urlencode(<em>str</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code>$link.setURI(<i>str</i>).toString()</code></td>
+  <td class="td1"><code>$link.setURI(<em>str</em>).toString()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_sql(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
-  <td class="td1"><code>addslashes(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_sql(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
+  <td class="td1"><code>addslashes(<em>str</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code>$esc.sql(<i>str</i>)</code></td>
+  <td class="td1"><code>$esc.sql(<em>str</em>)</code></td>
  </tr>
 </table>
 </div>
@@ -1092,55 +1092,55 @@ str2 is not empty.
 
 <a name="pl-decl"></a>
 <h3 class="section2">エレメント宣言</h3>
-<p>エレメント宣言とは、「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」でマーキングされたエレメントに対して、属性を操作したり、プレゼンテーションロジックを変更するための記述です。
+<p>エレメント宣言とは、「<code>id="<em>name</em>"</code>」または「<code>id="mark:<em>name</em>"</code>」でマーキングされたエレメントに対して、属性を操作したり、プレゼンテーションロジックを変更するための記述です。
 Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述されます。
 </p>
-<p>エレメント宣言は、「<code>#<i>name</i></code>」および複数の宣言部から構成されます。
+<p>エレメント宣言は、「<code>#<em>name</em></code>」および複数の宣言部から構成されます。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>value: <i>expression</i>;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>value: <em>expression</em>;</code> </strong></dt>
 <dd class="dd3">
-	エレメントの内容を式<code><i>expression</i></code>の値で置き換えます。
+	エレメントの内容を式<code><em>expression</em></code>の値で置き換えます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>attrs: "<i>attr1</i>" <i>expr1</i> , "<i>attr2</i>" <i>expr2</i> , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>attrs: "<em>attr1</em>" <em>expr1</em> , "<em>attr2</em>" <em>expr2</em> , ... ;</code> </strong></dt>
 <dd class="dd3">
-	属性<code><i>attr</i></code>の値を式<code><i>expr</i></code>で置き換えます。
+	属性<code><em>attr</em></code>の値を式<code><em>expr</em></code>で置き換えます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>remove: "<i>attr1</i>" , "<i>attr2</i>" , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>remove: "<em>attr1</em>" , "<em>attr2</em>" , ... ;</code> </strong></dt>
 <dd class="dd3">
-	属性<code><i>attr</i></code>を削除します。
+	属性<code><em>attr</em></code>を削除します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>append: <i>expr1</i> , <i>expr2</i> , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>append: <em>expr1</em> , <em>expr2</em> , ... ;</code> </strong></dt>
 <dd class="dd3">
-	タグに式<code><i>expr</i></code>の値を追加します。
+	タグに式<code><em>expr</em></code>の値を追加します。
 	&lt;input&gt;タグや&lt;option&gt;タグにおいて「<code>checked</code>」や「<code>selected</code>」を追加するときに使用します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>tagname: <i>expression</i>;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>tagname: <em>expression</em>;</code> </strong></dt>
 <dd class="dd3">
-	タグの名前を式<code><i>expression</i></code>で置き換えます。
+	タグの名前を式<code><em>expression</em></code>で置き換えます。
 	StrutsやJSFのカスタムタグを利用するときに使用します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>plogic: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>plogic: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	プレゼンテーションロジックを記述します。
 	<code>{ ... }</code> の中では <code>@stag</code>、<code>@cont</code>、<code>@etag</code> が使用でき、それぞれ開始タグ、内容、終了タグを表します。
-	また <code>@element(<i>other</i>)</code> も使用でき、これはほかの名前がつけられたエレメントを展開することを表します。
+	また <code>@element(<em>other</em>)</code> も使用でき、これはほかの名前がつけられたエレメントを展開することを表します。
 </dd>
 </dl>
 <p>プレゼンテーションデータ：
@@ -1231,40 +1231,40 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 
 <a name="pl-doc"></a>
 <h3 class="section2">ドキュメント宣言</h3>
-<p><code>#DOCUMENT { <i>...</i> }</code>は、ドキュメントのための特殊なエレメント宣言です。
+<p><code>#DOCUMENT { <em>...</em> }</code>は、ドキュメントのための特殊なエレメント宣言です。
 この宣言はドキュメント全体の情報を表し、次の宣言部を使用します。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>begin: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>begin: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	出力用スクリプトの先頭に、指定されたPLコードを追加します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>end: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>end: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	出力用スクリプトの末尾に、指定されたPLコードを追加します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>require: "<i>filename1</i>" , "<i>filename2</i>", <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>require: "<em>filename1</em>" , "<em>filename2</em>", <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	プレゼンテーションロジックファイルを読み込みます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>global: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>global: <em>varname1</em> , <em>varname2</em> , <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	グローバル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>local: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>local: <em>varname1</em> , <em>varname2</em> , <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	ローカル変数を列挙します。現在は何も使われていませんが、将来は使う予定です。
 </dd>
@@ -1345,10 +1345,10 @@ Kwartzでは、プレゼンテーションロジックファイルはエレメント宣言の集合として記述さ
 Kwartzではターゲット言語で書かれたコードをRawcodeと呼んでいます。
 </p>
 <ul type="disc">
-<li>「<code>&lt;%=<i>expression</i>%&gt;</code>」または「<code>&lt;?=<i>expression</i>?&gt;</code>」は、ターゲット言語で書かれた式です。
+<li>「<code>&lt;%=<em>expression</em>%&gt;</code>」または「<code>&lt;?=<em>expression</em>?&gt;</code>」は、ターゲット言語で書かれた式です。
    これはRawcode式(Rawcode Expression)といい、文法的には文字列や数字と同じようにリテラルとして扱われます。
 </li>
-<li>「<code>&lt;%<i>statement</i>%&gt;</code>」または「<code>&lt;?<i>statement</i>?&gt;</code>」は、ターゲット言語で書かれた文です。
+<li>「<code>&lt;%<em>statement</em>%&gt;</code>」または「<code>&lt;?<em>statement</em>?&gt;</code>」は、ターゲット言語で書かれた文です。
    これはRawcode文(Rawcode Statement)といい、ひとつの文として扱われます。
    ただし行末の「<code>;</code>」は必要ありません。
 </li>
@@ -1359,12 +1359,12 @@ Kwartzではターゲット言語で書かれたコードをRawcodeと呼んでいます。
 </p>
 <a name="pl-rawcode1.plogic"></a>
 <pre class="program">// Rawcode式
-hash = <b>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</b>;
+hash = <strong>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</strong>;
 
 // Rawcode文
-<b>&lt;% hash.each do |key, value| %&gt;</b>
+<strong>&lt;% hash.each do |key, value| %&gt;</strong>
 print("key=", key, " value=", value, "\n");
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1380,12 +1380,12 @@ key=&lt;%= key %&gt; value=&lt;%= value %&gt;
 </p>
 <a name="pl-rawcode2.plogic"></a>
 <pre class="program">// Rawcode式
-hash = <b>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</b>;
+hash = <strong>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</strong>;
 
 // Rawcode文
-<b>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</b>
+<strong>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</strong>
 print("key=", key, " value=", value, "\n");
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1397,7 +1397,7 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 </pre>
 <p>Rawcode文は、エレメント宣言の「plogic:」部に記述できます。
 またRawcode式は、「value:」部や「attrs:」部に記述できます。
-なおRawcode式を「<code>X(&lt;%= <i>...</i> %&gt;)</code>」のように記述すれば、サニタイズしません。
+なおRawcode式を「<code>X(&lt;%= <em>...</em> %&gt;)</code>」のように記述すれば、サニタイズしません。
 </p>
 <p>Rawcodeを用いてKwartzをRuby on Railsで使うサンプルが、Kwartzアーカイブのexamples/rails1ディレクトリにあります。
 参考にしてください。
@@ -1418,9 +1418,9 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 </p>
 <a name="analyze.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;caption id="value:<b>title</b>"&gt;Sample&lt;/caption&gt;
-  &lt;tr id="mark:items" bgcolor="@{<b>color</b>}@"&gt;
-    &lt;td id="value:<b>item</b>"&gt;Foo&lt;/td&gt;
+  &lt;caption id="value:<strong>title</strong>"&gt;Sample&lt;/caption&gt;
+  &lt;tr id="mark:items" bgcolor="@{<strong>color</strong>}@"&gt;
+    &lt;td id="value:<strong>item</strong>"&gt;Foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -1429,10 +1429,10 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 <a name="analyze.plogic"></a>
 <pre class="program">#items {
   plogic: {
-    <b>ctr</b> = 0;
-    foreach (<b>item</b> in <b>list</b>) {
-      <b>ctr</b> += 1;
-      <b>color</b> = <b>ctr</b>%2 == 0 ? '#FFCCCC' : '#CCCCFF';
+    <strong>ctr</strong> = 0;
+    foreach (<strong>item</strong> in <strong>list</strong>) {
+      <strong>ctr</strong> += 1;
+      <strong>color</strong> = <strong>ctr</strong>%2 == 0 ? '#FFCCCC' : '#CCCCFF';
       @stag;
       @cont;
       @etag;
@@ -1443,14 +1443,14 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 <p>いくつかの変数がでてきますが、これらは次のように分類できます。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-テンプレートグローバル変数 </b></dt>
+<dt class="dt3"><strong>
+テンプレートグローバル変数 </strong></dt>
 <dd class="dd3">
 	 変数「<code>title</code>」と「<code>list</code>」は、メインプログラムからテンプレートに渡される変数であり、メインプログラムで値を設定する必要があります。
 	Kwartzではこれをテンプレートグローバル変数と呼んでいます。
 </dd>
-<dt class="dt3"><b>
-テンプレートローカル変数 </b></dt>
+<dt class="dt3"><strong>
+テンプレートローカル変数 </strong></dt>
 <dd class="dd3">
 	変数「<code>item</code>」と「<code>ctr</code>」と「<code>color</code>」はテンプレートの中だけで使用される変数であり、メインプログラムで設定する必要はありません。
 	Kwartzではこれをテンプレートローカル変数と呼んでいます。
@@ -1459,8 +1459,8 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 <p>kwartzコマンドにオプション「<code>-a analyze</code>」をつけて起動すると、テンプレートを分析してテンプレートグローバル変数とテンプレートローカル変数を報告してくれます。
 </p>
 <pre class="program">$ kwartz -p analyze.plogic -a analyze analyze.html
-Global: <b>title</b> <b>list</b>
-Local:  <b>ctr</b> <b>item</b> <b>color</b>
+Global: <strong>title</strong> <strong>list</strong>
+Local:  <strong>ctr</strong> <strong>item</strong> <strong>color</strong>
 </pre>
 <p>このとき、Kwartzは次のようなルールでグローバルかローカルかを判定しています。
 </p>
@@ -1512,11 +1512,11 @@ Local:  <b>ctr</b> <b>item</b> <b>color</b>
 </p>
 <p>ディレクティブとは、プレゼンテーションデータの中にプレゼンテーションロジックを埋め込むための命令です。
 Kwartzでは、ディレクティブはid属性またはid属性を使用します（使い方はどちらも同じです）。
-「<code>id="<i>name</i>"</code>」や「<code>id="mark:<i>name</i>"</code>」も、「マーキング」というディレクティブです。
+「<code>id="<em>name</em>"</code>」や「<code>id="mark:<em>name</em>"</code>」も、「マーキング」というディレクティブです。
 </p>
 <p>Kwartzではせっかくプレゼンテーションデータとプレゼンテーションロジックとを分離することができるのに、なぜ両者を一体化するような機能も用意されているのでしょう？
 </p>
-<p>それは、開発者の好みに応じてどちらも選べるようにするため、つまり「<b>選択可能性(choosability)</b>」を高めるためです。
+<p>それは、開発者の好みに応じてどちらも選べるようにするため、つまり「<strong>選択可能性(choosability)</strong>」を高めるためです。
 Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 分離するほうが望ましいのであれば分離すればよいし、一体化するほうが好みであれば一体化すればよいのです。
 </p>
@@ -1540,17 +1540,17 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 
 <a name="kd-mark"></a>
 <h3 class="section2">マーキング</h3>
-<p>「<code>id="<i>name</i>"</code>」または「<code>id="mark:<i>name</i>"</code>」とすることで、マーキングを行います。
+<p>「<code>id="<em>name</em>"</code>」または「<code>id="mark:<em>name</em>"</code>」とすることで、マーキングを行います。
 マーキングとは、エレメントに対してその名前で目印をつけることです。
 </p>
-<p>「<code>id="<i>name</i>"</code>」と「<code>id="mark:<i>name</i>"</code>」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
+<p>「<code>id="<em>name</em>"</code>」と「<code>id="mark:<em>name</em>"</code>」との違いは、コンパイルされると前者ではid属性が残るのに対し後者は取り除かれるという点です。
 またkw:d属性は必ず取り除かれます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-mark.pdata"></a>
-<pre class="program">&lt;div <b>id="foo"</b>&gt;foo&lt;/div&gt;
-&lt;div <b>id="mark:bar"</b>&gt;bar&lt;/div&gt;
+<pre class="program">&lt;div <strong>id="foo"</strong>&gt;foo&lt;/div&gt;
+&lt;div <strong>id="mark:bar"</strong>&gt;bar&lt;/div&gt;
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1575,13 +1575,13 @@ Kwartzは、開発者にどちらか一方を押しつけるようなことはしません。
 
 <a name="kd-output"></a>
 <h3 class="section2">値の出力</h3>
-<p>「<code>@{<i>expression</i>}@</code>」は、式の値を出力するディレクティブです。
+<p>「<code>@{<em>expression</em>}@</code>」は、式の値を出力するディレクティブです。
 このパターンは、設定ファイルのEMBED_PATTERNに設定されています。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-output.html"></a>
-<pre class="program">Hello <b>@{user.name}@</b>!
+<pre class="program">Hello <strong>@{user.name}@</strong>!
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1615,13 +1615,13 @@ Hello &lt;c:out value="${user.name}"/&gt;!
 Hello $!esc.html($user.name)!
 </pre>
 <p>コマンドオプションの有無に関わらずサニタイズをする/しないを指定するには、関数<code>E()</code>と<code>X()</code>を使用します。
-<code>E(<i>expr</i>)</code>は式<code><i>expr</i></code>をサニタイズし、<code>X(<i>expr</i>)</code>はサニタイズしません。
+<code>E(<em>expr</em>)</code>は式<code><em>expr</em></code>をサニタイズし、<code>X(<em>expr</em>)</code>はサニタイズしません。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-output2.html"></a>
-<pre class="program">With sanitizing:    <b>@{E(var)}@</b>!
-Without sanitizing: <b>@{X(var)}@</b>!
+<pre class="program">With sanitizing:    <strong>@{E(var)}@</strong>!
+Without sanitizing: <strong>@{X(var)}@</strong>!
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1649,13 +1649,13 @@ Without sanitizing: $!{var}!
 
 <a name="kd-value"></a>
 <h3 class="section2">値の出力2</h3>
-<p>「<code>id="value:<i>expression</i>"</code>」とすることで、内容のかわりに式の値を出力します。
-ダミーデータを利用できるため、「<code>@{<i>expression</i>}@</code>」と比べてHTMLデザインがより崩れません。
+<p>「<code>id="value:<em>expression</em>"</code>」とすることで、内容のかわりに式の値を出力します。
+ダミーデータを利用できるため、「<code>@{<em>expression</em>}@</code>」と比べてHTMLデザインがより崩れません。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-value.html"></a>
-<pre class="program">&lt;li <b>id="value:hash['name']"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;li <strong>id="value:hash['name']"</strong>&gt;foo&lt;/li&gt;
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1671,15 +1671,15 @@ Without sanitizing: $!{var}!
 ### for Velocity
 &lt;li&gt;$!{hash["name"]}&lt;/li&gt;
 </pre>
-<p>また「<code>id="Value:<i>expr</i>"</code>」でサニタイズすることを、「<code>id="VALUE:<i>expr</i>"</code>」でサニタイズしないことを指定できます。
-これらはそれぞれ「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="value:X(<i>expr</i>)"</code>」と同じです。
+<p>また「<code>id="Value:<em>expr</em>"</code>」でサニタイズすることを、「<code>id="VALUE:<em>expr</em>"</code>」でサニタイズしないことを指定できます。
+これらはそれぞれ「<code>id="value:E(<em>expr</em>)"</code>」や「<code>id="value:X(<em>expr</em>)"</code>」と同じです。
 </p>
 <br>
 
 
 <a name="kd-attr"></a>
 <h3 class="section2">属性値の設定</h3>
-<p>「<code>id="attr:<i>name</i>=<i>value</i>"</code>」または「<code>id="attr:<i>name</i>:<i>value</i>"</code>」とすることで、タグの属性値を設定できます。
+<p>「<code>id="attr:<em>name</em>=<em>value</em>"</code>」または「<code>id="attr:<em>name</em>:<em>value</em>"</code>」とすることで、タグの属性値を設定できます。
 これを用いると、「<code>@{...}@</code>」を使わずに属性値を設定でき、またダミーの属性値を設定できます。
 </p>
 <p>次の例では、属性classにダミーの属性値 "<code>odd</code>" を設定していますが、実際には変数<code>klass</code>の値を用いるようにしています。
@@ -1687,7 +1687,7 @@ Without sanitizing: $!{var}!
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-attr.pdata"></a>
-<pre class="program">&lt;tr class="odd" <b>id="attr:class=klass"</b>&gt;
+<pre class="program">&lt;tr class="odd" <strong>id="attr:class=klass"</strong>&gt;
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -1713,15 +1713,15 @@ Without sanitizing: $!{var}!
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
-<p>また「<code>id="Attr:<i>name</i>=<i>value</i>"</code>」でサニタイズすることを、「<code>id="ATTR:<i>name</i>=<i>value</i>"</code>」でサニタイズしないことを指定できます。
-これらはそれぞれ「<code>id="attr:<i>name</i>=E(<i>value</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>value</i>)"</code>」と同じです。
+<p>また「<code>id="Attr:<em>name</em>=<em>value</em>"</code>」でサニタイズすることを、「<code>id="ATTR:<em>name</em>=<em>value</em>"</code>」でサニタイズしないことを指定できます。
+これらはそれぞれ「<code>id="attr:<em>name</em>=E(<em>value</em>)"</code>」や「<code>id="attr:<em>name</em>=X(<em>value</em>)"</code>」と同じです。
 </p>
-<p>なお「<code>;</code>」で区切ることにより、「<code>attr:<i>name</i>=<i>value</i></code>」を複数設定したり他のテンプレートコマンドと一緒に設定したりできます。
+<p>なお「<code>;</code>」で区切ることにより、「<code>attr:<em>name</em>=<em>value</em></code>」を複数設定したり他のテンプレートコマンドと一緒に設定したりできます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-attr2.pdata"></a>
-<pre class="program">&lt;font id="if:message!=empty<b>;attr:class=klass;attr:bgcolor=color</b>"&gt;
+<pre class="program">&lt;font id="if:message!=empty<strong>;attr:class=klass;attr:bgcolor=color</strong>"&gt;
  @{message}@
 &lt;/font&gt;
 </pre>
@@ -1760,16 +1760,16 @@ Without sanitizing: $!{var}!
 
 <a name="kd-append"></a>
 <h3 class="section2">属性の追加</h3>
-<p>「<code>id="append:<i>expression</i>"</code>」とすることで、タグの中に式の値を追加できます。
+<p>「<code>id="append:<em>expression</em>"</code>」とすることで、タグの中に式の値を追加できます。
 これは主に「&lt;input ... checked /&gt;」や「&lt;option ... selected&gt;&lt;/option&gt;」を実現するための機能です。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-append.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
-       <b>id="append:lang=='ruby'?' selected':''"</b>&gt;Ruby&lt;/option&gt;
+       <strong>id="append:lang=='ruby'?' selected':''"</strong>&gt;Ruby&lt;/option&gt;
 &lt;input type="radio" name="gender" value="M"
-       <b>id="append:gender=='M'?' checked':''"</b>&gt;
+       <strong>id="append:gender=='M'?' checked':''"</strong>&gt;
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1799,20 +1799,20 @@ Ruby&lt;/option&gt;
 &lt;input type="radio" name="gender" value="M"&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
-<p>なお「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」の出力を簡単にするための機能として、関数「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」が用意されています。
-これらは、式<code><i>expr</i></code>が真のときにそれぞれ「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」を出力します。
+<p>なお「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」の出力を簡単にするための機能として、関数「<code>C(<em>expr</em>)</code>」「<code>S(<em>expr</em>)</code>」「<code>D(<em>expr</em>)</code>」が用意されています。
+これらは、式<code><em>expr</em></code>が真のときにそれぞれ「<code>checked="checked"</code>」「<code>selected="selected"</code>」「<code>disabled="disabled"</code>」を出力します。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-append2.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
-       id="append:<b>S(lang=='ruby')</b>"&gt;Ruby&lt;/option&gt;
+       id="append:<strong>S(lang=='ruby')</strong>"&gt;Ruby&lt;/option&gt;
 
 &lt;input type="radio" name="gender" value="M"
-       id="append:<b>C(gender=='M')</b>" /&gt;Male
+       id="append:<strong>C(gender=='M')</strong>" /&gt;Male
 
 &lt;input type="radio" name="os" value="win"
-       id="append:<b>D(os=='mac')</b>" /&gt;Windows
+       id="append:<strong>D(os=='mac')</strong>" /&gt;Windows
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1861,14 +1861,14 @@ Windows
 
 <a name="kd-set"></a>
 <h3 class="section2">変数への代入</h3>
-<p>「<code>id="set:<i>var</i>=<i>value</i>"</code>」は、変数<i>var</i>に値<i>value</i>を設定します。
+<p>「<code>id="set:<em>var</em>=<em>value</em>"</code>」は、変数<em>var</em>に値<em>value</em>を設定します。
 「<code>=</code>」だけでなく「<code>+=</code>」「<code>-=</code>」「<code>*=</code>」「<code>/=</code>」「<code>.=</code>」が使用できます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-set.pdata"></a>
-<pre class="program">&lt;dt <b>id="set:var=value"</b>&gt;foo&lt;/dt&gt;
-&lt;dd <b>id="set:count+=1"</b>&gt;123&lt;/dd&gt;
+<pre class="program">&lt;dt <strong>id="set:var=value"</strong>&gt;foo&lt;/dt&gt;
+&lt;dd <strong>id="set:count+=1"</strong>&gt;123&lt;/dd&gt;
 </pre>
 <p>出力用プログラム：
 </p>
@@ -1901,19 +1901,19 @@ Windows
 
 <a name="kd-if"></a>
 <h3 class="section2">条件分岐</h3>
-<p>「<code>id="if:<i>expression</i>"</code>」とすることで、条件分岐を行います。
+<p>「<code>id="if:<em>expression</em>"</code>」とすることで、条件分岐を行います。
 elseやelseifも使用できます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-if.pdata"></a>
-<pre class="program">&lt;div <b>id="if:value &gt; 0"</b>&gt;
+<pre class="program">&lt;div <strong>id="if:value &gt; 0"</strong>&gt;
   Value is positive.
 &lt;/div&gt;
-&lt;div <b>id="elseif:value &lt; 0"</b>&gt;
+&lt;div <strong>id="elseif:value &lt; 0"</strong>&gt;
   Value is negative.
 &lt;/div&gt;
-&lt;div <b>id="else:"</b>&gt;
+&lt;div <strong>id="else:"</strong>&gt;
   Value is zero.
 &lt;/div&gt;
 </pre>
@@ -1986,12 +1986,12 @@ elseやelseifも使用できます。
 
 <a name="kd-foreach"></a>
 <h3 class="section2">繰り返し(foreach)</h3>
-<p>「<code>id="foreach:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="foreach:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら、繰り返しを行います。
+<p>「<code>id="foreach:<em>loopvar</em>=<em>list</em>"</code>」（または「<code>id="foreach:<em>loopvar</em>:<em>list</em>"</code>」）とすることで、リスト<code><em>list</em></code>の要素をひとつずつ変数<code><em>loopvar</em></code>に代入しながら、繰り返しを行います。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-foreach.pdata"></a>
-<pre class="program">&lt;tr <b>id="foreach:item=list"</b>&gt;
+<pre class="program">&lt;tr <strong>id="foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2030,14 +2030,14 @@ elseやelseifも使用できます。
 
 <a name="kd-loop"></a>
 <h3 class="section2">繰り返し(loop)</h3>
-<p>「<code>id="loop:<i>loopvar</i>=<i>list</i>"</code>」（または「<code>id="loop:<i>loopvar</i>:<i>list</i>"</code>」）とすることで、リスト<code><i>list</i></code>の要素をひとつずつ変数<code><i>loopvar</i></code>に代入しながら繰り返しを行います。
-「<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
+<p>「<code>id="loop:<em>loopvar</em>=<em>list</em>"</code>」（または「<code>id="loop:<em>loopvar</em>:<em>list</em>"</code>」）とすることで、リスト<code><em>list</em></code>の要素をひとつずつ変数<code><em>loopvar</em></code>に代入しながら繰り返しを行います。
+「<code>id="foreach:<em>loopvar</em>=<em>list</em>)"</code>」とよく似ていますが、開始タグと終了タグを含めず、内容だけ繰り返す点が異なります。
 &lt;dl&gt;&lt;/dl&gt;で使うと非常に便利です。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-loop.pdata"></a>
-<pre class="program">&lt;dl <b>id="loop:item=list"</b>&gt;
+<pre class="program">&lt;dl <strong>id="loop:item=list"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/dl&gt;
@@ -2081,13 +2081,13 @@ elseやelseifも使用できます。
 
 <a name="kd-foreach2"></a>
 <h3 class="section2">カウンタつき繰り返し(Foreach,Loop)</h3>
-<p>「<code>id="Foreach:<i>var</i>=<i>list</i>)"</code>」や「<code>id="Loop:<i>var</i>=<i>list</i>)"</code>」を使うと、カウンタを増やしながら繰り返しを行います。
-カウンタは1から始まり、変数名は<code><i>var</i>_ctr</code>です。
+<p>「<code>id="Foreach:<em>var</em>=<em>list</em>)"</code>」や「<code>id="Loop:<em>var</em>=<em>list</em>)"</code>」を使うと、カウンタを増やしながら繰り返しを行います。
+カウンタは1から始まり、変数名は<code><em>var</em>_ctr</code>です。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-foreach2.pdata"></a>
-<pre class="program">&lt;tr <b>id="Foreach:item=list"</b>&gt;
+<pre class="program">&lt;tr <strong>id="Foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item_ctr}@&lt;/td&gt;
   &lt;td&gt;@{item}@&lt;td&gt;
 &lt;/tr&gt;
@@ -2139,9 +2139,9 @@ elseやelseifも使用できます。
 
 <a name="kd-foreach3"></a>
 <h3 class="section2">トグルつき繰り返し(FOREACH,LOOP)</h3>
-<p>「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」や「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」とすると、トグルつきの繰り返しを行うことができます。
+<p>「<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>」や「<code>id="LOOP:<em>var</em>=<em>list</em>"</code>」とすると、トグルつきの繰り返しを行うことができます。
 トグルは、繰り返し回数が奇数回か偶数回かによって、値が入れ替わります。
-トグル変数の名前は<code><i>var</i>_tgl</code>です。
+トグル変数の名前は<code><em>var</em>_tgl</code>です。
 トグルの値はデフォルトで「<code>"odd"</code>」と「<code>"even"</code>」が使われますが、コマンドオプション --odd と --even で指定できます。
 また設定ファイルkwartz/config.rbの定数ODDとEVENでも指定できます。
 </p>
@@ -2149,8 +2149,8 @@ elseやelseifも使用できます。
 </p>
 <a name="directive-foreach3.pdata"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tbody <b>id="LOOP:item=list"</b>&gt;
-    &lt;tr class="<b>@{item_tgl}@</b>"&gt;
+  &lt;tbody <strong>id="LOOP:item=list"</strong>&gt;
+    &lt;tr class="<strong>@{item_tgl}@</strong>"&gt;
       &lt;td&gt;@{item}@&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
@@ -2223,7 +2223,7 @@ elseやelseifも使用できます。
 
 <a name="kd-while"></a>
 <h3 class="section2">繰り返し(while)</h3>
-<p>「<code>id="while:<i>expression</i>"</code>」とすることで、繰り返しを行うことができます。
+<p>「<code>id="while:<em>expression</em>"</code>」とすることで、繰り返しを行うことができます。
 </p>
 <p>またJSPとVelocityでは、whileを変換しようとするとエラーになります。
 これは、whileに対応するカスタムタグやディレクティブがないからです。
@@ -2231,7 +2231,7 @@ elseやelseifも使用できます。
 <p>プレゼンテーションデータ：
 </p>
 <a name="directive-while.pdata"></a>
-<pre class="program">&lt;tr <b>id="while:row=sth.fetch()"</b>&gt;
+<pre class="program">&lt;tr <strong>id="while:row=sth.fetch()"</strong>&gt;
   &lt;td&gt;@{row[0]}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2256,16 +2256,16 @@ elseやelseifも使用できます。
 
 <a name="kd-dummy"></a>
 <h3 class="section2">ダミーデータ</h3>
-<p>「<code>id="dummy:<i>str</i>"</code>」とすることで、そのノードをダミーデータとみなして読み飛ばします。
+<p>「<code>id="dummy:<em>str</em>"</code>」とすることで、そのノードをダミーデータとみなして読み飛ばします。
 </p>
-<p><code><i>str</i></code>は、id属性の値が重ならないようにするためのものであり、意味はありません。
+<p><code><em>str</em></code>は、id属性の値が重ならないようにするためのものであり、意味はありません。
 </p>
 <p>プレゼンテーションデータ：
 </p>
-<pre class="program">&lt;tr <b>id="dummy:d1"</b>&gt;
+<pre class="program">&lt;tr <strong>id="dummy:d1"</strong>&gt;
   &lt;td&gt;bar&lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr <b>id="dummy:d2"</b>&gt;
+&lt;tr <strong>id="dummy:d2"</strong>&gt;
   &lt;td&gt;baz&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2282,7 +2282,7 @@ elseやelseifも使用できます。
 
 <a name="kd-replace"></a>
 <h3 class="section2">エレメントの置換</h3>
-<p>「<code>id="replace:<i>name</i>"</code>」とすることで、そのエレメントを別のエレメントに置き換えることができます。
+<p>「<code>id="replace:<em>name</em>"</code>」とすることで、そのエレメントを別のエレメントに置き換えることができます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -2290,7 +2290,7 @@ elseやelseifも使用できます。
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- ナビゲーション --&gt;
-    &lt;div <b>id="mark:breadcrumbs"</b>&gt;
+    &lt;div <strong>id="mark:breadcrumbs"</strong>&gt;
       &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
@@ -2298,7 +2298,7 @@ elseやelseifも使用できます。
 
    ....
 
-    &lt;div <b>id="replace:breadcrumbs"</b>&gt;
+    &lt;div <strong>id="replace:breadcrumbs"</strong>&gt;
       Home &amp;gt; Kwartz &amp;gt; Kwartz-ruby
     &lt;/span&gt;
   &lt;/div&gt;
@@ -2324,7 +2324,7 @@ elseやelseifも使用できます。
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p>なおコマンドラインオプション「<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>」を指定すると、
+<p>なおコマンドラインオプション「<code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>」を指定すると、
 他のファイルのエレメントを利用できます。
 </p>
 <br>
@@ -2332,8 +2332,8 @@ elseやelseifも使用できます。
 
 <a name="kd-placeholder"></a>
 <h3 class="section2">プレースホルダ</h3>
-<p>「<code>id="placeholder:<i>name</i>"</code>」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
-通常は、コマンドラインオプション「<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>」とともに使用し、
+<p>「<code>id="placeholder:<em>name</em>"</code>」とすることで、そのエレメントの内容を別のエレメントで置き換えます。
+通常は、コマンドラインオプション「<code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>」とともに使用し、
 他のファイルで定義されたエレメントを取り込むために使われます。
 </p>
 <p>プレゼンテーションデータ(article.html)：
@@ -2342,7 +2342,7 @@ elseやelseifも使用できます。
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
-    &lt;div <b>id="mark:article"</b>&gt;
+    &lt;div <strong>id="mark:article"</strong>&gt;
       &lt;p&gt;Kwartz is a template system, which realized the
          concept &lt;strong&gt;`Separation of Presentation Logic
          and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
@@ -2366,7 +2366,7 @@ elseやelseifも使用できます。
 
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        &lt;td width="400" <b>id="placeholder:article"</b>&gt;
+        &lt;td width="400" <strong>id="placeholder:article"</strong>&gt;
           aaa&lt;br&gt;
           bbb&lt;br&gt;
           ccc&lt;br&gt;
@@ -2380,7 +2380,7 @@ elseやelseifも使用できます。
 </pre>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz <b>-i article.html</b> layout.html
+<pre class="terminal">$ kwartz <strong>-i article.html</strong> layout.html
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -2413,7 +2413,7 @@ elseやelseifも使用できます。
 
 <a name="kd-include"></a>
 <h3 class="section2">プレゼンテーションデータファイルの読み込み</h3>
-<p>「<code>id="include:<i>filename</i>"</code>」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
+<p>「<code>id="include:<em>filename</em>"</code>」で他のプレゼンテーションデータファイル（HTMLファイル）を読み込むことができます。
 読み込まれる側のファイルでも、ディレクティブを使用できます。
 </p>
 <p>プレゼンテーションデータ(copyright.html)：
@@ -2472,7 +2472,7 @@ elseやelseifも使用できます。
 </li>
 </ul>
 <p><code>include</code>ディレクティブで読み込むファイルは、別ディレクトリに置くことができます。
-ファイルが置いてあるディレクトリは、コマンドラインオプション <code>--incdirs=<i>dir1</i>,<i>dir2</i>,...</code>
+ファイルが置いてあるディレクトリは、コマンドラインオプション <code>--incdirs=<em>dir1</em>,<em>dir2</em>,...</code>
 または設定ファイルの <code>INCDIRS</code> で指定できます。
 </p>
 <br>
@@ -2506,7 +2506,7 @@ elseやelseifも使用できます。
 </li>
 </ul>
 <ul type="disc">
-<li>kw:d属性の名前は、コマンドラインオプション <code>--dattr=<i>xxx</i></code> で変更することができます。
+<li>kw:d属性の名前は、コマンドラインオプション <code>--dattr=<em>xxx</em></code> で変更することができます。
    例えばkw:d属性のかわりにstyle属性を使う場合は、 --dattr=style としてください。
    また設定ファイルの <code>DATTR</code> でも変更できます。
 </li>
@@ -2559,12 +2559,12 @@ Hello &lt;%= name %&gt;!
 </li>
 </ul>
 <ul type="disc">
-<li>ディレクティブを含むタグでは、ほかの属性は必ず「<code><i>attr</i>="<i>value</i>"</code>」の形で記述し、属性名や属性値を省略しないようにしてください。
+<li>ディレクティブを含むタグでは、ほかの属性は必ず「<code><em>attr</em>="<em>value</em>"</code>」の形で記述し、属性名や属性値を省略しないようにしてください。
    これはHTML/XML以外でもKwartzを使用できるようにするための意図した仕様であり、バグではありません。
 <pre class="program">## NG
-&lt;input type="checkbox" id="foreach:item=list" <b>checked</b>/&gt;
+&lt;input type="checkbox" id="foreach:item=list" <strong>checked</strong>/&gt;
 ## OK
-&lt;input type="checkbox" id="foreach:item=list" <b>checked="checked"</b>/&gt;
+&lt;input type="checkbox" id="foreach:item=list" <strong>checked="checked"</strong>/&gt;
 
 ## NG
 &lt;option id="attr:value=val" @{flag ? 'selected' : ''}@/&gt;
@@ -2585,23 +2585,23 @@ Hello &lt;%= name %&gt;!
 </p>
 <p>プレゼンテーションロジック：
 </p>
-<pre class="program">「id="mark:<i>name</i>"」でマーキングされたエレメントの宣言
-#<i>name</i> {
+<pre class="program">「id="mark:<em>name</em>"」でマーキングされたエレメントの宣言
+#<em>name</em> {
   
   // 内容のかわりに出力する式
-  value:  <i>expression</i>;
+  value:  <em>expression</em>;
   
   // 属性（名前と値）
-  attrs: "<i>attr1</i>" <i>expr1</i>, "<i>attr2</i>" <i>expr2</i>, "<i>attr3</i>" <i>expr3</i>;
+  attrs: "<em>attr1</em>" <em>expr1</em>, "<em>attr2</em>" <em>expr2</em>, "<em>attr3</em>" <em>expr3</em>;
   
   // 削除する属性の名前
-  remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
+  remove:  "<em>attr1</em>", "<em>attr2</em>", "<em>attr3</em>";
   
   // 開始タグに追加する式
-  append:  <i>expr1</i>, <i>expr2</i>, <i>expr3</i>;
+  append:  <em>expr1</em>, <em>expr2</em>, <em>expr3</em>;
   
   // タグ名
-  tagname: "<i>tagname</i>",
+  tagname: "<em>tagname</em>",
 
   // プレゼンテーションロジック本体
   plogic: {
@@ -2635,29 +2635,29 @@ Hello &lt;%= name %&gt;!
 <p>テンプレートを出力用プログラムへコンパイルするには、kwartzコマンドを使用します。
 </p>
 <p>使い方：
-<b><code>kwartz [options...] [-p plogic ] pdata.html &gt; output-script</code></b>
+<strong><code>kwartz [options...] [-p plogic ] pdata.html &gt; output-script</code></strong>
 </p>
 <p>オプションは次の通りです。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
--h, --help</b></dt>
+<dt class="dt3"><strong>
+-h, --help</strong></dt>
 <dd class="dd3">
 	ヘルプを表示。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--v</b></dt>
+<dt class="dt3"><strong>
+-v</strong></dt>
 <dd class="dd3">
 	バージョン情報を表示
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--a <i>action</i></b></dt>
+<dt class="dt3"><strong>
+-a <em>action</em></strong></dt>
 <dd class="dd3">
-	実行する処理。<i>action</i>には次のどれかを指定する（デフォルトはcompile）。
+	実行する処理。<em>action</em>には次のどれかを指定する（デフォルトはcompile）。
 	<dl class="dl1" compact>
 	<dt class="dt1">
 compile</dt>
@@ -2688,38 +2688,38 @@ transalte</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--e , -s</b></dt>
+<dt class="dt3"><strong>
+-e , -s</strong></dt>
 <dd class="dd3">
 	サニタイズを行う。<code>--escape=true</code>と同じ。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--i <i>file1,file2,...</i></b></dt>
+<dt class="dt3"><strong>
+-i <em>file1,file2,...</em></strong></dt>
 <dd class="dd3">
 	外部ファイルで定義されたエレメントをインポートする。
-	主にplaceholderディレクティブ（「<code>id="placeholder:<i>name</i></code>」）のために使用される。
+	主にplaceholderディレクティブ（「<code>id="placeholder:<em>name</em></code>」）のために使用される。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--l <i>lang</i></b></dt>
+<dt class="dt3"><strong>
+-l <em>lang</em></strong></dt>
 <dd class="dd3">
 	ターゲット言語を指定。指定できるのは
 	eruby, erb, php, jstl11, jstl10, velocity.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--p <i>plogic-file</i></b></dt>
+<dt class="dt3"><strong>
+-p <em>plogic-file</em></strong></dt>
 <dd class="dd3">
 	プレゼンテーションロジックのファイル名。「<code>,</code>」で区切ることで、複数のファイル名を指定できる。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--R <i>arg</i></b></dt>
+<dt class="dt3"><strong>
+-R <em>arg</em></strong></dt>
 <dd class="dd3">
 	特殊オプション。今のところ以下の引数のみ指定可能。
 	<ul type="disc">
@@ -2729,50 +2729,50 @@ transalte</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---charset=<i>charset</i></b></dt>
+<dt class="dt3"><strong>
+--charset=<em>charset</em></strong></dt>
 <dd class="dd3">
-	文字コード。JSTLにおいて '<code>&lt;%@ page contentType="text/html; charset=<i>charset</i> "%&gt;</code>' を出力する。
+	文字コード。JSTLにおいて '<code>&lt;%@ page contentType="text/html; charset=<em>charset</em> "%&gt;</code>' を出力する。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---dname=<i>name</i></b></dt>
+<dt class="dt3"><strong>
+--dname=<em>name</em></strong></dt>
 <dd class="dd3">
 	ディレクティブで使用する属性名。デフォルトは 'kw:d'。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---escape=<i>true</i>|<i>false</i></b></dt>
+<dt class="dt3"><strong>
+--escape=<em>true</em>|<em>false</em></strong></dt>
 <dd class="dd3">
 	式をサニタイズして出力する。値が省略されたときはtrueが指定されたものとみなす。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---even=<i>value</i></b></dt>
+<dt class="dt3"><strong>
+--even=<em>value</em></strong></dt>
 <dd class="dd3">
 	偶数のときの値。デフォルトは「<code>'even'</code>」。ディレクティブFOREACHとLISTで使われる。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---extract=<i>name</i></b></dt>
+<dt class="dt3"><strong>
+--extract=<em>name</em></strong></dt>
 <dd class="dd3">
 	指定された名前でマーキングされたエレメントだけを抽出する。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---footer=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--footer=<em>string</em></strong></dt>
 <dd class="dd3">
 	フッター文字列。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---header=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--header=<em>string</em></strong></dt>
 <dd class="dd3">
 	ヘッダー文字列。
 	JSPではデフォルトで '<code>&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;</code>'
@@ -2781,36 +2781,36 @@ transalte</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---indent=' '</b></dt>
+<dt class="dt3"><strong>
+--indent=' '</strong></dt>
 <dd class="dd3">
 	出力用スクリプトのインデントを指定する。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---incdirs=<i>dir1</i>,<i>dir2</i>,...</b></dt>
+<dt class="dt3"><strong>
+--incdirs=<em>dir1</em>,<em>dir2</em>,...</strong></dt>
 <dd class="dd3">
 	<code>include</code>ディレクティブで読み込むファイル（プレゼンテーションデータファイル）のディレクトリを指定する。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---odd=<i>value</i></b></dt>
+<dt class="dt3"><strong>
+--odd=<em>value</em></strong></dt>
 <dd class="dd3">
 	奇数のときの値。デフォルトは「<code>'odd'</code>」。ディレクティブFOREACHとLISTで使われる。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---localvar-prefix=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--localvar-prefix=<em>string</em></strong></dt>
 <dd class="dd3">
 	テンプレートローカル変数につけるプレフィックスを指定する。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---globalvar-prefix=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--globalvar-prefix=<em>string</em></strong></dt>
 <dd class="dd3">
 	テンプレートグローバル変数につけるプレフィックスを指定する。
 </dd>
@@ -2849,111 +2849,111 @@ Kwartz-rubyでは、kwartz/config.rbです。
 <p>設定ファイルでは、以下のオプションが設定できます。
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-ESCAPE </b></dt>
+<dt class="dt3"><strong>
+ESCAPE </strong></dt>
 <dd class="dd3">
 	自動サニタイズをデフォルトでオンにするか、オフにするかを指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-NEWLINE </b></dt>
+<dt class="dt3"><strong>
+NEWLINE </strong></dt>
 <dd class="dd3">
 	改行を表す文字列を指定します。
 	ただし、Kwartzは改行が「\n」か「\r\n」かを自動判別することができるので、通常は変更する必要はありません。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-INDENT </b></dt>
+<dt class="dt3"><strong>
+INDENT </strong></dt>
 <dd class="dd3">
 	インデントとして使う空白文字列を指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-LOCALVAR_PREFIX </b></dt>
+<dt class="dt3"><strong>
+LOCALVAR_PREFIX </strong></dt>
 <dd class="dd3">
 	テンプレートローカル変数のプレフィックス（頭につける文字列）を指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-GLOBALVAR_PREFIX </b></dt>
+<dt class="dt3"><strong>
+GLOBALVAR_PREFIX </strong></dt>
 <dd class="dd3">
 	テンプレートグローバル変数のプレフィックス（頭につける文字列）を指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-LANG </b></dt>
+<dt class="dt3"><strong>
+LANG </strong></dt>
 <dd class="dd3">
 	デフォルトの出力用言語を指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-ODD </b></dt>
+<dt class="dt3"><strong>
+ODD </strong></dt>
 <dd class="dd3">
 	トグル変数の奇数値を指定します。
-	「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」と「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」で使用されます。
+	「<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>」と「<code>id="LOOP:<em>var</em>=<em>list</em>"</code>」で使用されます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-EVEN </b></dt>
+<dt class="dt3"><strong>
+EVEN </strong></dt>
 <dd class="dd3">
 	トグル変数の偶数値を指定します。
-	「<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>」と「<code>id="LOOP:<i>var</i>=<i>list</i>"</code>」で使用されます。
+	「<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>」と「<code>id="LOOP:<em>var</em>=<em>list</em>"</code>」で使用されます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DATTR </b></dt>
+<dt class="dt3"><strong>
+DATTR </strong></dt>
 <dd class="dd3">
 	ディレクティブで使用する属性名を指定します。デフォルトは<code>kw:d</code>です。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-NOEND </b></dt>
+<dt class="dt3"><strong>
+NOEND </strong></dt>
 <dd class="dd3">
 	終了タグを必要としないタグ名のリストです。デフォルトは [ "input", "br", "meta", "img", "hr" ] です。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DEFUN_CLASS </b></dt>
+<dt class="dt3"><strong>
+DEFUN_CLASS </strong></dt>
 <dd class="dd3">
 	コマンドラインオプション'-a defun'を使って関数を定義するときの、
 	デフォルトのクラス名またはモジュール名です。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DEFUN_FUNCTION </b></dt>
+<dt class="dt3"><strong>
+DEFUN_FUNCTION </strong></dt>
 <dd class="dd3">
 	コマンドラインオプション'-a defun'を使って関数を定義するときの、
 	デフォルトの関数名またはメソッド名です。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-CHARSET </b></dt>
+<dt class="dt3"><strong>
+CHARSET </strong></dt>
 <dd class="dd3">
 	文字コードを指定します。出力用言語がjstl11、jstl10のときに使用されます。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-EMBED_PATTERN </b></dt>
+<dt class="dt3"><strong>
+EMBED_PATTERN </strong></dt>
 <dd class="dd3">
 	プレゼンテーションデータ中に式を埋め込むためのパターンを指定します。
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-INCDIRS </b></dt>
+<dt class="dt3"><strong>
+INCDIRS </strong></dt>
 <dd class="dd3">
 	「<code>include:</code>」ディレクティブで読み込むファイルを探すディレクトリを指定します。
 	デフォルトは [ "." ] つまりカレントディレクトリです。

@@ -9,6 +9,6 @@ result1.html:	main.rb page1.view
 result2.html:	main.rb page2.view
 	ruby main.rb AAPL > result2.html
 
-clear:
+clean:
 	rm -rf result*.html page*.view
 

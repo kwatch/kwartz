@@ -98,8 +98,8 @@ a template system which realized the concept of 'Separation of Presentation Logi
 <a name="whatis"></a>
 <h3 class="section2">What's Kwartz?</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system
-which realized the concept of <b>'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)</b> or 
-<b>'Independence of Presentation Logic'(IoPL)</b>.
+which realized the concept of <strong>'Separation of Presentation Logic and Presentaion Data'(SoPL/PD)</strong> or 
+<strong>'Independence of Presentation Logic'(IoPL)</strong>.
 </p>
 <p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
 There is a plan to implement Kwartz in PHP or Java.
@@ -187,17 +187,17 @@ They may be described in separate files.
 <p>This is an example of a presentation data file.
 </p>
 <ul type="disc">
-<li>'<b><code>id="list"</code></b>' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
+<li>'<strong><code>id="list"</code></strong>' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
 </li>
-<li>'<b><code>id="item"</code></b>' is also an marking.
+<li>'<strong><code>id="item"</code></strong>' is also an marking.
 </li>
 </ul>
 <p>Presentation data file(example1.html):
 </p>
 <a name="example1.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>id="list"</b>&gt;
-    &lt;td <b>id="item"</b>&gt;foo&lt;/td&gt;
+  &lt;tr <strong>id="list"</strong>&gt;
+    &lt;td <strong>id="item"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -205,25 +205,25 @@ They may be described in separate files.
 In presentation logic, you can operate on elements which are marked in presentation data.
 </p>
 <ul type="disc">
-<li>'<b><code>#item { ... }</code></b>' represents an element marked with name 'item' (= '&lt;td&gt;...&lt;/td&gt;').
+<li>'<strong><code>#item { ... }</code></strong>' represents an element marked with name 'item' (= '&lt;td&gt;...&lt;/td&gt;').
     <ul type="circle">
-    <li>'<b><code>value: <i>expression</i>;</code></b>' represents that the content of the element is replaced by value of <code><i>expression</i></code>, which is value of a variable <code>member</code> in this case.
+    <li>'<strong><code>value: <em>expression</em>;</code></strong>' represents that the content of the element is replaced by value of <code><em>expression</em></code>, which is value of a variable <code>member</code> in this case.
     </li>
-    <li>'<b><code>remove: "id";</code></b>' represents that the id attribute is to be deleted.
+    <li>'<strong><code>remove: "id";</code></strong>' represents that the id attribute is to be deleted.
     </li>
     </ul>
 </li>
-<li>'<b><code>#list { ... }</code></b>' represents an element marked with name 'list' (= '&lt;tr&gt;...&lt;/tr&gt;')
+<li>'<strong><code>#list { ... }</code></strong>' represents an element marked with name 'list' (= '&lt;tr&gt;...&lt;/tr&gt;')
     <ul type="circle">
-    <li>'<b><code>plogic: { ... }</code></b>' represents presentation logic of the element.
+    <li>'<strong><code>plogic: { ... }</code></strong>' represents presentation logic of the element.
     </li>
-    <li>'<b><code>@stag</code></b>' represents a start tag (= '&lt;tr&gt;').
+    <li>'<strong><code>@stag</code></strong>' represents a start tag (= '&lt;tr&gt;').
     </li>
-    <li>'<b><code>@cont</code></b>' represents content(= '&lt;td id="item"&gt;foo&lt;/td&gt;').
+    <li>'<strong><code>@cont</code></strong>' represents content(= '&lt;td id="item"&gt;foo&lt;/td&gt;').
     </li>
-    <li>'<b><code>@etag</code></b>' represents an end tag(= '&lt;/tr&gt;').
+    <li>'<strong><code>@etag</code></strong>' represents an end tag(= '&lt;/tr&gt;').
     </li>
-    <li>'<b><code>foreach (<i>var</i> in <i>list</i>) { ... }</code></b>' represents an iteration.
+    <li>'<strong><code>foreach (<em>var</em> in <em>list</em>) { ... }</code></strong>' represents an iteration.
     </li>
     </ul>
 </li>
@@ -445,7 +445,7 @@ public class Main1 {
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
-  <dd>if you specify the command-line option '--charset=<i>CHARSET</i>', Kwartz will output <code>&lt;%@ page contentType="text/html; charset=<i>CHARSET</i>" %&gt;</code> when the language is JSTL.</dd>
+  <dd>if you specify the command-line option '--charset=<em>CHARSET</em>', Kwartz will output <code>&lt;%@ page contentType="text/html; charset=<em>CHARSET</em>" %&gt;</code> when the language is JSTL.</dd>
  </dl>
 </div>
 <br>
@@ -455,19 +455,19 @@ public class Main1 {
 <h3 class="section2">Complex Example</h3>
 <p>The following is a little complex example which is borderd table.
 </p>
-<p>Marking is done with <code>id="mark:<i>name</i>"</code> instead of <code>id="<i>name</i>"</code>
+<p>Marking is done with <code>id="mark:<em>name</em>"</code> instead of <code>id="<em>name</em>"</code>
 in the following presentation data.
 You don't have to write <code>remove: "id"</code> in presentation logic file
-because Kwartz removes <code>id="mark:<i>name</i>"</code> automatically.
+because Kwartz removes <code>id="mark:<em>name</em>"</code> automatically.
 </p>
 <p>Presentation Data (example2.html):
 </p>
 <a name="example2.html"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="#CCCCFF" <b>id="mark:list"</b>&gt;
-  &lt;td <b>id="mark:name"</b>&gt;foo&lt;/td&gt;
+ &lt;tr bgcolor="#CCCCFF" <strong>id="mark:list"</strong>&gt;
+  &lt;td <strong>id="mark:name"</strong>&gt;foo&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com" <b>id="mark:email"</b>&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:foo@mail.com" <strong>id="mark:email"</strong>&gt;foo@mail.com&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
@@ -746,30 +746,30 @@ In Kwartz, 'id' and 'kw:d' attributes are used to describe directives.
 <p>The following is an example to use directives.
 </p>
 <ul type="disc">
-<li>Directive <code>id="foreach:<i>var</i>=<i>list</i>"</code> means to iterate the element.
+<li>Directive <code>id="foreach:<em>var</em>=<em>list</em>"</code> means to iterate the element.
 </li>
-<li>Directive <code>id="value:<i>expression</i>"</code> means to print value of expression as content of the element.
+<li>Directive <code>id="value:<em>expression</em>"</code> means to print value of expression as content of the element.
 </li>
-<li>Directive <code>id="dummy:<i>str</i>"</code> means that the element is a dummy and is not printed out.
-   (<i>Str</i> is a string only to keep unique value of id attribute.)
+<li>Directive <code>id="dummy:<em>str</em>"</code> means that the element is a dummy and is not printed out.
+   (<em>Str</em> is a string only to keep unique value of id attribute.)
 </li>
-<li><code>@{<i>expression</i>}@</code><sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> is also a directive to print out expression value.
+<li><code>@{<em>expression</em>}@</code><sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> is also a directive to print out expression value.
 </li>
 </ul>
 <p>Presentation Data(example3.html):
 </p>
 <a name="example3.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>id="foreach:member=member_list"</b>&gt;
-    &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
-    &lt;td&gt;&lt;a href="mailto:<b>@{member['email']}@</b>"&gt;
-         <b>@{member['email']}@</b>&lt;/a&gt;&lt;/td&gt;
+  &lt;tr <strong>id="foreach:member=member_list"</strong>&gt;
+    &lt;td <strong>id="value:member['name']"</strong>&gt;foo&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<strong>@{member['email']}@</strong>"&gt;
+         <strong>@{member['email']}@</strong>&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>id="dummy:d1"</b>&gt;
+  &lt;tr <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;bar&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>id="dummy:d2"</b>&gt;
+  &lt;tr <strong>id="dummy:d2"</strong>&gt;
     &lt;td&gt;baz&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
@@ -912,16 +912,16 @@ Conditional expression such as '<code>flag ? " checked" : ""</code>' is not sani
 
 <a name="sanitize2"></a>
 <h3 class="section2">Partially Sanitizing</h3>
-<p>The function <code>E(<i>expr</i>)</code> always sanitizes expression <code><i>expr</i></code> even when '-e' is not specified.
-The function <code>X(<i>expr</i>)</code> doesn't sanitize expression <code><i>expr</i></code> even when '-e' is specified.
+<p>The function <code>E(<em>expr</em>)</code> always sanitizes expression <code><em>expr</em></code> even when '-e' is not specified.
+The function <code>X(<em>expr</em>)</code> doesn't sanitize expression <code><em>expr</em></code> even when '-e' is specified.
 <sup>(<a href="#fnref:5" name="fnlink:5">*5</a>)</sup>
 </p>
 <p>Presentaion Data:
 </p>
 <a name="sanitize-partial1.pdata"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="<b>@{X(color)}@</b>"&gt;
-   &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
+ &lt;tr bgcolor="<strong>@{X(color)}@</strong>"&gt;
+   &lt;td <strong>id="value:E(str)"</strong>&gt;foo&lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -979,10 +979,10 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>Directives <code>id="Value:<i>expr</i>"</code> and <code>id="Attr:<i>name</i>=<i>expr</i>"</code> always sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is not specified.
-Directives <code>id="VALUE:<i>expr</i>:"</code> and <code>id="ATTR:<i>name</i>=<i>expr</i>"</code> doesn't sanitize expression <code><i>expr</i></code> even when the sanitizing command-line option is specified.
-These are equivalent to <code>id="value:E(<i>expr</i>)"</code>, <code>id="attr:<i>name</i>=E(<i>expr</i>)"</code>, 
-<code>id="value:X(<i>expr</i>)"</code>, and <code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>.
+<p>Directives <code>id="Value:<em>expr</em>"</code> and <code>id="Attr:<em>name</em>=<em>expr</em>"</code> always sanitize expression <code><em>expr</em></code> even when the sanitizing command-line option is not specified.
+Directives <code>id="VALUE:<em>expr</em>:"</code> and <code>id="ATTR:<em>name</em>=<em>expr</em>"</code> doesn't sanitize expression <code><em>expr</em></code> even when the sanitizing command-line option is specified.
+These are equivalent to <code>id="value:E(<em>expr</em>)"</code>, <code>id="attr:<em>name</em>=E(<em>expr</em>)"</code>, 
+<code>id="value:X(<em>expr</em>)"</code>, and <code>id="attr:<em>name</em>=X(<em>expr</em>)"</code>.
 </p>
 <div class="footnote">
  <dl compact>
@@ -1055,10 +1055,10 @@ Kwartz have a function to detect whether variables are template global or local 
 <p>Presentation Data (analyze.html):
 </p>
 <a name="analyze.html"></a>
-<pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+<pre class="program">&lt;span kw:d="value:<strong>title</strong>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
-  &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
-  &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+  &lt;dt kw:d="value:<strong>ctr</strong>"&gt;&lt;/dt&gt;
+  &lt;dd kw:d="value:<strong>item</strong>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>Presentation Logic (analyze.plogic):
@@ -1067,9 +1067,9 @@ Kwartz have a function to detect whether variables are template global or local 
 <pre class="program">#items {
   plogic: {
     @stag;
-    <b>ctr</b> = 0;
-    foreach (<b>item</b> in <b>list</b>) {
-      <b>ctr</b> += 1;
+    <strong>ctr</strong> = 0;
+    foreach (<strong>item</strong> in <strong>list</strong>) {
+      <strong>ctr</strong> += 1;
       @cont;
     }
     @etag;
@@ -1084,15 +1084,15 @@ Variables <code>title</code> and <code>list</code> are template global variables
 <p>Analyzing Example:
 </p>
 <pre class="terminal">$ kwartz -a analyze -p analyze.plogic analyze.html
-<b>Global: title list</b>
-<b>Local:  ctr item</b>
+<strong>Global: title list</strong>
+<strong>Local:  ctr item</strong>
 </pre>
 <br>
 
 
 <a name="rename"></a>
 <h3 class="section2">Rename Template Global/Local Variable Names</h3>
-<p>The command-line option <code>--globalvar-prefix=<i>prefix</i></code> and <code>--localvar-prefix=<i>prefix</i></code>
+<p>The command-line option <code>--globalvar-prefix=<em>prefix</em></code> and <code>--localvar-prefix=<em>prefix</em></code>
 add a prefix to global/local variable names in template.
 </p>
 <p>In Ruby or PHP, for example, if template local variables in templates have the same name of variables in main program,
@@ -1103,10 +1103,10 @@ To avoid this confliction, you should add a prefix such as '_' to template local
 </p>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l php    -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l jstl11 -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l php    -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l velocity -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
 </pre>
 <p>Output Script:
 </p>
@@ -1245,7 +1245,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 &lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
 #end
 </pre>
-<p>A directive <code>append(<i>expr</i>)</code> appends the value of the expression <code><i>expr</i></code> in the element tag.
+<p>A directive <code>append(<em>expr</em>)</code> appends the value of the expression <code><em>expr</em></code> in the element tag.
 </p>
 <p>Presentation Data:
 </p>
@@ -1253,9 +1253,9 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 <pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" /&gt;
 </pre>
 <p>There are useful functions to print <code>checked="checked"</code> or <code>selected="selected"</code> easily.
-<code>C(<i>expr</i>)</code>, <code>S(<i>expr</i>)</code>, <code>D(<i>expr</i>)</code> prints 
+<code>C(<em>expr</em>)</code>, <code>S(<em>expr</em>)</code>, <code>D(<em>expr</em>)</code> prints 
 <code> checked="checked"</code>, <code> selected="selected"</code>, <code> disabled="disabled"</code> respectively
-when the expression <code><i>expr</i></code> is true.
+when the expression <code><em>expr</em></code> is true.
 </p>
 <p>Presentation Data:
 </p>
@@ -1305,9 +1305,9 @@ when the expression <code><i>expr</i></code> is true.
 <p>Kwartz allows you to write presentation logics in target language (such as Ruby, PHP, Java, etc).
 </p>
 <ul type="disc">
-<li><code>&lt;%= <i>expression</i> %&gt;</code> or <code>&lt;?= <i>expression</i> ?&gt;</code> means expression in target language.
+<li><code>&lt;%= <em>expression</em> %&gt;</code> or <code>&lt;?= <em>expression</em> ?&gt;</code> means expression in target language.
 </li>
-<li><code>&lt;% <i>statement</i> %&gt;</code> or <code>&lt;? <i>statement</i> ?&gt;</code> means statement in target language.
+<li><code>&lt;% <em>statement</em> %&gt;</code> or <code>&lt;? <em>statement</em> ?&gt;</code> means statement in target language.
    Semicolon(`<code>;</code>') is not needed after <code>%&gt;</code> and <code>?&gt;</code>.
 </li>
 </ul>
@@ -1315,12 +1315,12 @@ when the expression <code><i>expr</i></code> is true.
 </p>
 <a name="topics-rawcode.plogic"></a>
 <pre class="program">#foo {
-  value:  <b>&lt;%= str.empty? ? "null" : str %&gt;</b>;
+  value:  <strong>&lt;%= str.empty? ? "null" : str %&gt;</strong>;
   plogic: {
     @stag;
-    <b>&lt;% ENV.each do |name, value| %&gt;</b>
+    <strong>&lt;% ENV.each do |name, value| %&gt;</strong>
       @cont;
-    <b>&lt;% end %&gt;</b>
+    <strong>&lt;% end %&gt;</strong>
     @etag;
   }
 }
@@ -1329,12 +1329,12 @@ when the expression <code><i>expr</i></code> is true.
 </p>
 <a name="topics-rawcode2.plogic"></a>
 <pre class="program">#foo {
-  value:  <b>&lt;?= $str === NULL ? "null" : str ?&gt;</b>;
+  value:  <strong>&lt;?= $str === NULL ? "null" : str ?&gt;</strong>;
   plogic: {
     @stag;
-    <b>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</b>
+    <strong>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</strong>
       @cont;
-    <b>&lt;?php } ?&gt;</b>
+    <strong>&lt;?php } ?&gt;</strong>
     @etag;
   }
 }
@@ -1343,7 +1343,7 @@ when the expression <code><i>expr</i></code> is true.
 Therefore Kwartz doesn't report syntax error in the target code
  nor report analyzing template local/global variables.
 </p>
-<p>Write <code>X(&lt;%= <i>expression</i> %&gt;)</code> if you don't want to sanitize <i>expression</i>.
+<p>Write <code>X(&lt;%= <em>expression</em> %&gt;)</code> if you don't want to sanitize <em>expression</em>.
 </p>
 <br>
 
@@ -1354,7 +1354,7 @@ Therefore Kwartz doesn't report syntax error in the target code
 It is equivarent to <code>-l erb --globalvar-prefix='@'</code>.
 </p>
 <p>If you want to use Rails-specific functions such as <code>link_to()</code> or <code>url_for()</code>,
-use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> (or embed them into presentation data file).
+use <code>&lt;% <em>...</em> %&gt;</code> or <code>&lt;%= <em>...</em> %&gt;</code> (or embed them into presentation data file).
 </p>
 <p>Presentation Data (list.html)
 </p>
@@ -1369,18 +1369,18 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
     &lt;th width="80%"&gt;Recipe&lt;/th&gt;
     &lt;th width="20%"&gt;Date&lt;/th&gt;
    &lt;/tr&gt;
-   &lt;tr <b>id="mark:recipes"</b>&gt;
-    &lt;td&gt;&lt;a href="..." <b>id="mark:recipe_title"</b>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
-    &lt;td <b>id="mark:recipe_date"</b>&gt;2004 November 11&lt;/td&gt;
+   &lt;tr <strong>id="mark:recipes"</strong>&gt;
+    &lt;td&gt;&lt;a href="..." <strong>id="mark:recipe_title"</strong>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
+    &lt;td <strong>id="mark:recipe_date"</strong>&gt;2004 November 11&lt;/td&gt;
    &lt;/tr&gt;
-   &lt;tr <b>id="dummy:d1"</b>&gt;
+   &lt;tr <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;&lt;a href="..."&gt;Ice Water&lt;/a&gt;&lt;/td&gt;
     &lt;td&gt;2004 November 11&lt;/td&gt;
    &lt;/tr&gt;
   &lt;/table&gt;
 
   &lt;p&gt;
-   &lt;a href="..." <b>id="mark:recipe_new"</b>&gt;Create new recipe&lt;/a&gt;
+   &lt;a href="..." <strong>id="mark:recipe_new"</strong>&gt;Create new recipe&lt;/a&gt;
   &lt;/p&gt;
 
  &lt;/body&gt;
@@ -1428,7 +1428,7 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 </pre>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz <b>-Rails</b> -p list.plogic list.html &gt; list.rhtml
+<pre class="terminal">$ kwartz <strong>-Rails</strong> -p list.plogic list.html &gt; list.rhtml
 </pre>
 <p>Output Script:
 </p>
@@ -1457,7 +1457,7 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Write <code>X(&lt;%= <i>expression</i> %&gt;)</code> if you don't want to sanitize <i>expression</i>.
+<p>Write <code>X(&lt;%= <em>expression</em> %&gt;)</code> if you don't want to sanitize <em>expression</em>.
 </p>
 <br>
 
@@ -1489,8 +1489,8 @@ use <code>&lt;% <i>...</i> %&gt;</code> or <code>&lt;%= <i>...</i> %&gt;</code> 
 </pre>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz -l eruby <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.rb
-$ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
+<pre class="terminal">$ kwartz -l eruby <strong>-a defun</strong> -p hoge1.plogic hoge1.html &gt; hoge1.rb
+$ kwartz -l php   <strong>-a defun</strong> -p hoge1.plogic hoge1.html &gt; hoge1.php
 </pre>
 <p>Output Script:
 </p>
@@ -1534,13 +1534,13 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
 <p>Two functions are defined by '-a defun' option. You can use whichever you prefer.
 </p>
 <ul type="disc">
-<li><code>view_<i>filename</i>()</code> - a function which takes arguments by a hash object.
+<li><code>view_<em>filename</em>()</code> - a function which takes arguments by a hash object.
 </li>
-<li><code>_view_<i>filename</i>()</code> - a function which takes arguments explicitly.
+<li><code>_view_<em>filename</em>()</code> - a function which takes arguments explicitly.
 </li>
 </ul>
-<p>You can specify funtion or method name with the command-line option '<code>-F <i>name</i></code>',
-class or module name with '<code>-C <i>name</i></code>', and arguments with '<code>-A <i>arg1,arg2,...</i></code>'.
+<p>You can specify funtion or method name with the command-line option '<code>-F <em>name</em></code>',
+class or module name with '<code>-C <em>name</em></code>', and arguments with '<code>-A <em>arg1,arg2,...</em></code>'.
 The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
 default class/module name and default function/method name.
 </p>

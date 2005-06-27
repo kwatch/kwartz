@@ -37,8 +37,8 @@ grecipe '*.*.html'				, '{1}.{2}.txt'		do |r|
 	mkdir_p 'guide.d'
 	cmd "retrieve -d guide.d #{r.ingredients[0]}"
 	tagfile = m[2] == 'ja' ? 'html-css,euc' : 'html-css'
-	cmd "kwaser -t #{tagfile} -T #{r.ingredients[0]} > {1}.{2}.toc.html"
-	cmd "kwaser -t #{tagfile}    #{r.ingredients[0]} > {1}.{2}.html"
+	cmd "kwaser -t #{tagfile} -T2 #{r.ingredients[0]} > {1}.{2}.toc.html"
+	cmd "kwaser -t #{tagfile}     #{r.ingredients[0]} > {1}.{2}.html"
 	end
 
 desc

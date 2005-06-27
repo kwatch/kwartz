@@ -359,7 +359,7 @@ Therefore, conditional operators will be translated to corresponding if statemen
 
 <a name="pl-print"></a>
 <h3 class="section2">Printing</h3>
-<p><code>print(<i>...</i>)</code> is print statement.
+<p><code>print(<em>...</em>)</code> is print statement.
 Any expression can be in arguments.
 </p>
 <p>PL Program:
@@ -556,8 +556,8 @@ $!{hash.key}</pre>
 
 <a name="pl-property"></a>
 <h3 class="section2">Properties &amp; Methods</h3>
-<p>You can reference a property of an object as '<code><i>object</i>.<i>property</i></code>'.
-You can also call a method with arguments such as '<code><i>object</i>.<i>method</i>(<i>arg1</i>, <i>arg2</i>, ..)</code>'.
+<p>You can reference a property of an object as '<code><em>object</em>.<em>property</em></code>'.
+You can also call a method with arguments such as '<code><em>object</em>.<em>method</em>(<em>arg1</em>, <em>arg2</em>, ..)</code>'.
 Translation of method call into JSTL will raise an error because JSTL's Expression Language doesn't support method call.
 </p>
 <p>PL Program:
@@ -609,8 +609,8 @@ These tasks must be done in the main program.
 
 <a name="pl-foreach"></a>
 <h3 class="section2">Iteration</h3>
-<p><code>foreach(<i>loopvar</i> in <i>list</i>) { ... }</code> represents a foreach iteration.
-Items in the <code><i>list</i></code> is assigned into the variable <code><i>loopvar</i></code> each time through the iteration.
+<p><code>foreach(<em>loopvar</em> in <em>list</em>) { ... }</code> represents a foreach iteration.
+Items in the <code><em>list</em></code> is assigned into the variable <code><em>loopvar</em></code> each time through the iteration.
 </p>
 <p>PL Program:
 </p>
@@ -675,7 +675,7 @@ while(i &lt; length) {
 
 <a name="pl-if"></a>
 <h3 class="section2">Conditional Branching</h3>
-<p>'<code>if(<i>condition</i>) { ... } else if(<i>condition</i>) { ... } else { ... }</code>' represents a  conditional branch.
+<p>'<code>if(<em>condition</em>) { ... } else if(<em>condition</em>) { ... } else { ... }</code>' represents a  conditional branch.
 </p>
 <p>PL Program:
 </p>
@@ -734,168 +734,168 @@ while(i &lt; length) {
 <p>The following functions are available in PL.
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-E(<i>expr</i>) </b></dt>
+<dt class="dt3"><strong>
+E(<em>expr</em>) </strong></dt>
 <dd class="dd3">
-	Sanitizes(escapes) the expression <i>expr</i>. Using this function sanitizes
+	Sanitizes(escapes) the expression <em>expr</em>. Using this function sanitizes
 	even when the command-line option for sanitizing is not specified.
 	E() is pseudo-function and allowed to appear only as argument of print statement.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-X(<i>expr</i>) </b></dt>
+<dt class="dt3"><strong>
+X(<em>expr</em>) </strong></dt>
 <dd class="dd3">
-	Don't sanitize expression <i>expr</i>, even when the command-line option for
+	Don't sanitize expression <em>expr</em>, even when the command-line option for
 	sanitizing is specified.
 	X() is pseudo-function and allowed to appear only as argument of print statement.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-C(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+C(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	Equivarent to <code><i>expression</i> ? ' checked="checked"' : ''</code>.
+	Equivarent to <code><em>expression</em> ? ' checked="checked"' : ''</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-S(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+S(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	Equivarent to <code><i>expression</i> ? ' selected="selected"' : ''</code>.
+	Equivarent to <code><em>expression</em> ? ' selected="selected"' : ''</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-D(<i>expression</i>) </b></dt>
+<dt class="dt3"><strong>
+D(<em>expression</em>) </strong></dt>
 <dd class="dd3">
-	Equivarent to <code><i>expression</i> ? ' disabled="disabled"' : ''</code>.
+	Equivarent to <code><em>expression</em> ? ' disabled="disabled"' : ''</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_new() </b></dt>
+<dt class="dt3"><strong>
+list_new() </strong></dt>
 <dd class="dd3">
 	  Create a new list. 
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_length(<i>list</i>) </b></dt>
+<dt class="dt3"><strong>
+list_length(<em>list</em>) </strong></dt>
 <dd class="dd3">
-	  Return the length of the <i>list</i>.
+	  Return the length of the <em>list</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-list_empty(<i>list</i>) </b></dt>
+<dt class="dt3"><strong>
+list_empty(<em>list</em>) </strong></dt>
 <dd class="dd3">
-	  Return true if <i>list</i> is empty or false if not empty.
+	  Return true if <em>list</em> is empty or false if not empty.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_new() </b></dt>
+<dt class="dt3"><strong>
+hash_new() </strong></dt>
 <dd class="dd3">
 	  Create a new hash. 
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_length(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_length(<em>hash</em>) </strong></dt>
 <dd class="dd3">
-	  Return the count of the <i>hash</i>.
+	  Return the count of the <em>hash</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_empty(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_empty(<em>hash</em>) </strong></dt>
 <dd class="dd3">
-	  Return true if <i>hash</i> is empty or false if not empty.
+	  Return true if <em>hash</em> is empty or false if not empty.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-hash_keys(<i>hash</i>) </b></dt>
+<dt class="dt3"><strong>
+hash_keys(<em>hash</em>) </strong></dt>
 <dd class="dd3">
-	  Return a list which contains all keys of the <i>hash</i>.
+	  Return a list which contains all keys of the <em>hash</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_length(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_length(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Return the length of the <i>string</i>.
+	  Return the length of the <em>string</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_empty(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_empty(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Return true if <i>string</i> is empty, or false if not empty.
+	  Return true if <em>string</em> is empty, or false if not empty.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_tolower(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_tolower(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Make a <i>string</i> to lowercase and return it.
+	  Make a <em>string</em> to lowercase and return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_toupper(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_toupper(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Make a <i>string</i> to uppercase an return it.
+	  Make a <em>string</em> to uppercase an return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_trim(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_trim(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Strip whitespace from the beginning and end of a <i>string</i> and return it.
+	  Strip whitespace from the beginning and end of a <em>string</em> and return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_index(<i>string</i>, <i>char</i>) </b></dt>
+<dt class="dt3"><strong>
+str_index(<em>string</em>, <em>char</em>) </strong></dt>
 <dd class="dd3">
-	  Return the first positin a <i>char</i> occurs in a <i>string</i>.
+	  Return the first positin a <em>char</em> occurs in a <em>string</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_replace(<i>string</i>, <i>before</i>, <i>after</i>) </b></dt>
+<dt class="dt3"><strong>
+str_replace(<em>string</em>, <em>before</em>, <em>after</em>) </strong></dt>
 <dd class="dd3">
-	  Replace <i>before</i> to <i>after</i> in <i>string</i> and return it.
+	  Replace <em>before</em> to <em>after</em> in <em>string</em> and return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-str_linebreak(<i>string</i>) </b></dt>
+<dt class="dt3"><strong>
+str_linebreak(<em>string</em>) </strong></dt>
 <dd class="dd3">
-	  Insert <code>&lt;br /&gt;</code> before newline character in <i>string</i> and return it.
+	  Insert <code>&lt;br /&gt;</code> before newline character in <em>string</em> and return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_xml(<i>html_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_xml(<em>html_string</em>) </strong></dt>
 <dd class="dd3">
-	  return the sanitaized <i>html_string</i>.
+	  return the sanitaized <em>html_string</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_url(<i>url_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_url(<em>url_string</em>) </strong></dt>
 <dd class="dd3">
-	  Encode <i>url_string</i> and return it.
+	  Encode <em>url_string</em> and return it.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-escape_sql(<i>sql_string</i>) </b></dt>
+<dt class="dt3"><strong>
+escape_sql(<em>sql_string</em>) </strong></dt>
 <dd class="dd3">
-	  Escape quotation(<code>'</code>), double quotation(<code>"</code>), backslash(<code>\</code>) in <i>sql_string</i> with backslash and return it.
+	  Escape quotation(<code>'</code>), double quotation(<code>"</code>), backslash(<code>\</code>) in <em>sql_string</em> with backslash and return it.
 </dd>
 </dl>
 <p>The following table shows the translation of functions in each target languages.
@@ -917,18 +917,18 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_length(<i>list</i>)</code></td>
-  <td class="td1"><code><i>list</i>.length</code></td>
-  <td class="td1"><code>array_length(<i>list</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>list</i>)</code></td>
-  <td class="td1"><code>(<i>list</i>).size()</code></td>
+  <td class="td1"><code>list_length(<em>list</em>)</code></td>
+  <td class="td1"><code><em>list</em>.length</code></td>
+  <td class="td1"><code>array_length(<em>list</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>list</em>)</code></td>
+  <td class="td1"><code>(<em>list</em>).size()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>list_empty(<i>list</i>)</code></td>
-  <td class="td1"><code><i>list</i>.empty?</code></td>
-  <td class="td1"><code>array_length(<i>list</i>)==0</code></td>
-  <td class="td1"><code>fn:length(<i>list</i>)==0</code></td>
-  <td class="td1"><code>(<i>list</i>).size()==0</code></td>
+  <td class="td1"><code>list_empty(<em>list</em>)</code></td>
+  <td class="td1"><code><em>list</em>.empty?</code></td>
+  <td class="td1"><code>array_length(<em>list</em>)==0</code></td>
+  <td class="td1"><code>fn:length(<em>list</em>)==0</code></td>
+  <td class="td1"><code>(<em>list</em>).size()==0</code></td>
  </tr>
  <tr class="tr1">
   <td class="td1"><code>hash_new()</code></td>
@@ -938,88 +938,88 @@ escape_sql(<i>sql_string</i>) </b></dt>
   <td class="td1">-</td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_length(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.length</code></td>
-  <td class="td1"><code>array_length(<i>hash</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.size()</code></td>
+  <td class="td1"><code>hash_length(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.length</code></td>
+  <td class="td1"><code>array_length(<em>hash</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.size()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_empty(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.empty?</code></td>
-  <td class="td1"><code>array_length(<i>hash</i>)==0</code></td>
-  <td class="td1"><code>fn:length(<i>hash</i>)==0</code></td>
-  <td class="td1"><code><i>hash</i>.size()==0</code></td>
+  <td class="td1"><code>hash_empty(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.empty?</code></td>
+  <td class="td1"><code>array_length(<em>hash</em>)==0</code></td>
+  <td class="td1"><code>fn:length(<em>hash</em>)==0</code></td>
+  <td class="td1"><code><em>hash</em>.size()==0</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>hash_keys(<i>hash</i>)</code></td>
-  <td class="td1"><code><i>hash</i>.keys</code></td>
-  <td class="td1"><code>array_keys(<i>hash</i>)</code></td>
+  <td class="td1"><code>hash_keys(<em>hash</em>)</code></td>
+  <td class="td1"><code><em>hash</em>.keys</code></td>
+  <td class="td1"><code>array_keys(<em>hash</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code><i>hash</i>.keySet().toArray()</code></td>
+  <td class="td1"><code><em>hash</em>.keySet().toArray()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_length(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.lenth</code></td>
-  <td class="td1"><code>strlen(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:length(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.length()</code></td>
+  <td class="td1"><code>str_length(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.lenth</code></td>
+  <td class="td1"><code>strlen(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:length(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.length()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_tolower(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.downcase</code></td>
-  <td class="td1"><code>strtolower(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:toLowerCase(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.toLowerCase()</code></td>
+  <td class="td1"><code>str_tolower(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.downcase</code></td>
+  <td class="td1"><code>strtolower(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:toLowerCase(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.toLowerCase()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_toupper(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.upcase</code></td>
-  <td class="td1"><code>strtoupper(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:toUpperCase(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.toUpperCase()</code></td>
+  <td class="td1"><code>str_toupper(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.upcase</code></td>
+  <td class="td1"><code>strtoupper(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:toUpperCase(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.toUpperCase()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_index(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code><i>str</i>.index(<i>ch</i>)</code></td>
-  <td class="td1"><code>strchr(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code>fn:indexOf(<i>str</i>,<i>ch</i>)</code></td>
-  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+  <td class="td1"><code>str_index(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code><em>str</em>.index(<em>ch</em>)</code></td>
+  <td class="td1"><code>strchr(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code>fn:indexOf(<em>str</em>,<em>ch</em>)</code></td>
+  <td class="td1"><code><em>str</em>.indexOf(<em>ch</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_replace(<i>str</i>,<i>before</i>, <i>after</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(<i>before</i>,<i>after</i>)</code></td>
-  <td class="td1"><code>str_replace(<i>before</i>,<i>after</i>,<i>str</i>)</code></td>
-  <td class="td1"><code>fn:replace(<i>str</i>,<i>before</i>,<i>after</i>)</code></td>
-  <td class="td1"><code><i>str</i>.indexOf(<i>ch</i>)</code></td>
+  <td class="td1"><code>str_replace(<em>str</em>,<em>before</em>, <em>after</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(<em>before</em>,<em>after</em>)</code></td>
+  <td class="td1"><code>str_replace(<em>before</em>,<em>after</em>,<em>str</em>)</code></td>
+  <td class="td1"><code>fn:replace(<em>str</em>,<em>before</em>,<em>after</em>)</code></td>
+  <td class="td1"><code><em>str</em>.indexOf(<em>ch</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>str_linebreak(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
-  <td class="td1"><code>nl2br(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:replace(<i>str</i>,'\n','&lt;br /&gt;\n')</code></td>
-  <td class="td1"><code><i>str</i>.replaceAll('$','&lt;br /&gt;')</code></td>
+  <td class="td1"><code>str_linebreak(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(/\r?\n/,'&lt;br /&gt;\&amp;')</code></td>
+  <td class="td1"><code>nl2br(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:replace(<em>str</em>,'\n','&lt;br /&gt;\n')</code></td>
+  <td class="td1"><code><em>str</em>.replaceAll('$','&lt;br /&gt;')</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_xml(<i>str</i>)</code></td>
-  <td class="td1"><code>CGI::escapeHTML(<i>str</i>)</code> (when eRuby) <br> <code>html_escape(<i>str</i>)</code> (when ERB)</td>
-  <td class="td1"><code>htmlspecialchars(<i>str</i>)</code></td>
-  <td class="td1"><code>fn:escapeXml(<i>str</i>)</code></td>
-  <td class="td1"><code>$esc.xml(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_xml(<em>str</em>)</code></td>
+  <td class="td1"><code>CGI::escapeHTML(<em>str</em>)</code> (when eRuby) <br> <code>html_escape(<em>str</em>)</code> (when ERB)</td>
+  <td class="td1"><code>htmlspecialchars(<em>str</em>)</code></td>
+  <td class="td1"><code>fn:escapeXml(<em>str</em>)</code></td>
+  <td class="td1"><code>$esc.xml(<em>str</em>)</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_url(<i>str</i>)</code></td>
-  <td class="td1"><code>CGI::escape(<i>str</i>)</code> (when eRuby) <br> <code>url_encode(<i>str</i>)</code> (when ERB)</td>
-  <td class="td1"><code>urlencode(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_url(<em>str</em>)</code></td>
+  <td class="td1"><code>CGI::escape(<em>str</em>)</code> (when eRuby) <br> <code>url_encode(<em>str</em>)</code> (when ERB)</td>
+  <td class="td1"><code>urlencode(<em>str</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code>$link.setURI(<i>str</i>).toString()</code></td>
+  <td class="td1"><code>$link.setURI(<em>str</em>).toString()</code></td>
  </tr>
  <tr class="tr1">
-  <td class="td1"><code>escape_sql(<i>str</i>)</code></td>
-  <td class="td1"><code><i>str</i>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
-  <td class="td1"><code>addslashes(<i>str</i>)</code></td>
+  <td class="td1"><code>escape_sql(<em>str</em>)</code></td>
+  <td class="td1"><code><em>str</em>.gsub(/['"\\\0]/,'\\\&amp;')</code></td>
+  <td class="td1"><code>addslashes(<em>str</em>)</code></td>
   <td class="td1">-</td>
-  <td class="td1"><code>$esc.sql(<i>str</i>)</code></td>
+  <td class="td1"><code>$esc.sql(<em>str</em>)</code></td>
  </tr>
 </table>
 </div>
@@ -1092,57 +1092,57 @@ str2 is not empty.
 <a name="pl-decl"></a>
 <h3 class="section2">Element declaration</h3>
 <p>Element declaration is description to manipulate elements
-marked by '<code>id="<i>name</i>"</code>' or '<code>id="mark:<i>name</i>"</code>',
+marked by '<code>id="<em>name</em>"</code>' or '<code>id="mark:<em>name</em>"</code>',
 for example, delete attributes or change presentation logic.
 In Kwartz, presentation logic file is described as a set of element declarations.
 </p>
-<p>Element declaration starts with '<code>#<i>name</i></code>' and is followed by some declaration parts.
+<p>Element declaration starts with '<code>#<em>name</em></code>' and is followed by some declaration parts.
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>value: <i>expression</i>;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>value: <em>expression</em>;</code> </strong></dt>
 <dd class="dd3">
-	Replace content of the element by value of <code><i>expression</i></code>.
+	Replace content of the element by value of <code><em>expression</em></code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>attrs: "<i>attr1</i>" <i>expr1</i> , "<i>attr2</i>" <i>expr2</i> , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>attrs: "<em>attr1</em>" <em>expr1</em> , "<em>attr2</em>" <em>expr2</em> , ... ;</code> </strong></dt>
 <dd class="dd3">
-	Replace value of attribute <code><i>attr</i></code> by value of <code><i>expr</i></code>.
+	Replace value of attribute <code><em>attr</em></code> by value of <code><em>expr</em></code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>remove: "<i>attr1</i>" , "<i>attr2</i>" , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>remove: "<em>attr1</em>" , "<em>attr2</em>" , ... ;</code> </strong></dt>
 <dd class="dd3">
-	Remove attribute <code><i>attr</i></code>.
+	Remove attribute <code><em>attr</em></code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>append: <i>expr1</i> , <i>expr2</i> , ... ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>append: <em>expr1</em> , <em>expr2</em> , ... ;</code> </strong></dt>
 <dd class="dd3">
-	Append expression <code><i>expr</i></code> at the end of start tag.
+	Append expression <code><em>expr</em></code> at the end of start tag.
 	This is useful for appending <code>checked</code> or <code>selected</code> in &lt;input&gt; tag or &lt;option&gt; tag.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>tagname: <i>expression</i>;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>tagname: <em>expression</em>;</code> </strong></dt>
 <dd class="dd3">
-	Replace tag name by value of <code><i>expression</i></code>.
+	Replace tag name by value of <code><em>expression</em></code>.
 	This may be useful for Struts or JSF.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>plogic: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>plogic: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	Change the presentation logic of the element.
 	<code>@stag</code>, <code>@cont</code>, and <code>@etag</code> are available in <code>{ ... }</code>.
 	These represents start tag, content, end tag of the element respectively.
-	And <code>@element(<i>other</i>)</code> is also available which represents other element and expand it.
+	And <code>@element(<em>other</em>)</code> is also available which represents other element and expand it.
 </dd>
 </dl>
 <p>Presentation Data:
@@ -1233,40 +1233,40 @@ In Kwartz, presentation logic file is described as a set of element declarations
 
 <a name="pl-doc"></a>
 <h3 class="section2">Document declaration</h3>
-<p><code>#DOCUMENT { <i>...</i> }</code> is a special element declaration for document.
+<p><code>#DOCUMENT { <em>...</em> }</code> is a special element declaration for document.
 It represents document information and takes the following declaration parts.
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>begin: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>begin: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	Represents PL code which is added at the beginning of the output script.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>end: { <i>...</i> }</code> </b></dt>
+<dt class="dt3"><strong>
+<code>end: { <em>...</em> }</code> </strong></dt>
 <dd class="dd3">
 	Represents PL code which is added at the end of the output script.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>require: "<i>filename1</i>" , "<i>filename2</i>", <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>require: "<em>filename1</em>" , "<em>filename2</em>", <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	Load presentation logic file.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>global: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>global: <em>varname1</em> , <em>varname2</em> , <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	List of global variables. Currently this part have no means but will be used in future release.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-<code>local: <i>varname1</i> , <i>varname2</i> , <i>...</i> ;</code> </b></dt>
+<dt class="dt3"><strong>
+<code>local: <em>varname1</em> , <em>varname2</em> , <em>...</em> ;</code> </strong></dt>
 <dd class="dd3">
 	List of local variables. Currently this part have no means but will be used in future release.
 </dd>
@@ -1347,10 +1347,10 @@ It represents document information and takes the following declaration parts.
 These are called `Raw Code'.  There are two type of raw code: expression and statement.
 </p>
 <ul type="disc">
-<li><code>&lt;%=<i>expression</i>%&gt;</code> and <code>&lt;?=<i>expression</i>?&gt;</code> represents raw code expression.
+<li><code>&lt;%=<em>expression</em>%&gt;</code> and <code>&lt;?=<em>expression</em>?&gt;</code> represents raw code expression.
    They are treated as literal like string and number.
 </li>
-<li><code>&lt;%<i>statement</i>%&gt;</code> and <code>&lt;?<i>statement</i>?&gt;</code> represents raw code statement.
+<li><code>&lt;%<em>statement</em>%&gt;</code> and <code>&lt;?<em>statement</em>?&gt;</code> represents raw code statement.
    They are treated as a statment. Semicolon ('<code>;</code>') is not needed at the end of the statement.
 </li>
 </ul>
@@ -1360,12 +1360,12 @@ These are called `Raw Code'.  There are two type of raw code: expression and sta
 </p>
 <a name="pl-rawcode1.plogic"></a>
 <pre class="program">// Rawcode expression
-hash = <b>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</b>;
+hash = <strong>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</strong>;
 
 // Rawcode statement
-<b>&lt;% hash.each do |key, value| %&gt;</b>
+<strong>&lt;% hash.each do |key, value| %&gt;</strong>
 print("key=", key, " value=", value, "\n");
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 </pre>
 <p>Output Script:
 </p>
@@ -1381,12 +1381,12 @@ key=&lt;%= key %&gt; value=&lt;%= value %&gt;
 </p>
 <a name="pl-rawcode2.plogic"></a>
 <pre class="program">// Rawcode expression
-hash = <b>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</b>;
+hash = <strong>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</strong>;
 
 // Rawcode statement
-<b>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</b>
+<strong>&lt;?php foreach($hash as $key =&gt; $value) { ?&gt;</strong>
 print("key=", key, " value=", value, "\n");
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 </pre>
 <p>Output Script:
 </p>
@@ -1398,7 +1398,7 @@ key=&lt;?php echo $key; ?&gt; value=&lt;?php echo $value; ?&gt;
 </pre>
 <p>Rawocde statement is available at the `plogic:' part of the element declaration.
 Rawcode expression is available at the `value:' part, `attrs:' part, or `append:' part.
-You can prevent to sanitize rawcode expression if you write <code>X(&lt;%= <i>...</i> %&gt;)</code>.
+You can prevent to sanitize rawcode expression if you write <code>X(&lt;%= <em>...</em> %&gt;)</code>.
 </p>
 <p>There is an example which use Kwartz with Ruby on Rails in examples/rails1 directory of Kwartz archive.
 </p>
@@ -1418,9 +1418,9 @@ Variables are called 'Template Local Variables' if they are used only in the tem
 </p>
 <a name="analyze.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;caption id="value:<b>title</b>"&gt;Sample&lt;/caption&gt;
-  &lt;tr id="mark:items" bgcolor="@{<b>color</b>}@"&gt;
-    &lt;td id="value:<b>item</b>"&gt;Foo&lt;/td&gt;
+  &lt;caption id="value:<strong>title</strong>"&gt;Sample&lt;/caption&gt;
+  &lt;tr id="mark:items" bgcolor="@{<strong>color</strong>}@"&gt;
+    &lt;td id="value:<strong>item</strong>"&gt;Foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -1429,10 +1429,10 @@ Variables are called 'Template Local Variables' if they are used only in the tem
 <a name="analyze.plogic"></a>
 <pre class="program">#items {
   plogic: {
-    <b>ctr</b> = 0;
-    foreach (<b>item</b> in <b>list</b>) {
-      <b>ctr</b> += 1;
-      <b>color</b> = <b>ctr</b>%2 == 0 ? '#FFCCCC' : '#CCCCFF';
+    <strong>ctr</strong> = 0;
+    foreach (<strong>item</strong> in <strong>list</strong>) {
+      <strong>ctr</strong> += 1;
+      <strong>color</strong> = <strong>ctr</strong>%2 == 0 ? '#FFCCCC' : '#CCCCFF';
       @stag;
       @cont;
       @etag;
@@ -1443,14 +1443,14 @@ Variables are called 'Template Local Variables' if they are used only in the tem
 <p>There are several variables. They are classified as follows:
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-Template global variables </b></dt>
+<dt class="dt3"><strong>
+Template global variables </strong></dt>
 <dd class="dd3">
 	The variables '<code>title</code>' and '<code>list</code>' need to be set in the main program and be passed to template.
 	These variables are called 'Template Global Variables' in Kwartz.
 </dd>
-<dt class="dt3"><b>
-Template local variables </b></dt>
+<dt class="dt3"><strong>
+Template local variables </strong></dt>
 <dd class="dd3">
 	The variables '<code>item</code>', '<code>ctr</code>', and '<code>color</code>' are used only in the template.
 	These variables are called 'Template Local Variables' in Kwartz.
@@ -1459,8 +1459,8 @@ Template local variables </b></dt>
 <p>Invoking Kwartz with the command-line option '<code>-a analyze</code>' analyzes the template and reports template global/local variables.
 </p>
 <pre class="program">$ kwartz -p analyze.plogic -a analyze analyze.html
-Global: <b>title</b> <b>list</b>
-Local:  <b>ctr</b> <b>item</b> <b>color</b>
+Global: <strong>title</strong> <strong>list</strong>
+Local:  <strong>ctr</strong> <strong>item</strong> <strong>color</strong>
 </pre>
 <p>Kwartz detemines whether variables are global or local according to the following rule:
 </p>
@@ -1514,13 +1514,13 @@ Commands for that purpose are called 'directives'.
 <p>'Directives' is a set of commands to embed presentation logic into presentation data.
 Kwartz uses the id attribute and the kw:d attribute to embed directives in presentation data.
 Kw:d is an original attribute of Kwartz, but the ability of id and kw:d attributes are equivalent for Kwartz.
-Marking (<code>id="<i>name</i>"</code> or <code>id="mark:<i>name</i>"</code>) is also a directive.
+Marking (<code>id="<em>name</em>"</code> or <code>id="mark:<em>name</em>"</code>) is also a directive.
 </p>
 <p>You may have a question: 
 If it is the most important feature for Kwartz that separates presentation logic from presentation data,
 why does Kwartz allow me to embed presentation logic into presentation data? 
 </p>
-<p>The answer is <b>choosability</b> - to make it possible for developers to choose either approach.
+<p>The answer is <strong>choosability</strong> - to make it possible for developers to choose either approach.
 In other words, to increase options of development styles.
 Kwartz doesn't force you to use one approach.
 Separate presentation logic and presentation data if you like to separate them, or mix them if you like.
@@ -1545,18 +1545,18 @@ But Kwartz has the following merits compared to other template systems;
 
 <a name="kd-mark"></a>
 <h3 class="section2">Marking</h3>
-<p>The directive '<code>id="<i>name</i>"</code>' or '<code>id="mark:<i>name</i>"</code>' marks an element
- with a name <code><i>name</i></code>.  This is called 'marking'.
+<p>The directive '<code>id="<em>name</em>"</code>' or '<code>id="mark:<em>name</em>"</code>' marks an element
+ with a name <code><em>name</em></code>.  This is called 'marking'.
 </p>
-<p>The difference between '<code>id="<i>name</i>"</code>' and '<code>id="mark:<i>name</i>"</code>' is
+<p>The difference between '<code>id="<em>name</em>"</code>' and '<code>id="mark:<em>name</em>"</code>' is
  that the former is left in but the latter is removed when compiling.
 kw:d attributes are always removed.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-mark.pdata"></a>
-<pre class="program">&lt;div <b>id="foo"</b>&gt;foo&lt;/div&gt;
-&lt;div <b>id="mark:bar"</b>&gt;bar&lt;/div&gt;
+<pre class="program">&lt;div <strong>id="foo"</strong>&gt;foo&lt;/div&gt;
+&lt;div <strong>id="mark:bar"</strong>&gt;bar&lt;/div&gt;
 </pre>
 <p>Output Script:
 </p>
@@ -1581,13 +1581,13 @@ kw:d attributes are always removed.
 
 <a name="kd-output"></a>
 <h3 class="section2">Printing Values of Expressions</h3>
-<p>'<code>@{<i>expression</i>}@</code>' is a directive which prints the value of an expression.
+<p>'<code>@{<em>expression</em>}@</code>' is a directive which prints the value of an expression.
 This pattern is changeable with a constant EMBED_PATTERN in configuration file (kwartz/config.rb).
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-output.html"></a>
-<pre class="program">Hello <b>@{user.name}@</b>!
+<pre class="program">Hello <strong>@{user.name}@</strong>!
 </pre>
 <p>Output Program:
 </p>
@@ -1621,15 +1621,15 @@ Hello &lt;c:out value="${user.name}"/&gt;!
 Hello $!esc.html($user.name)!
 </pre>
 <p>Using the functions <code>E()</code> or <code>X()</code>, you can toggle sanitizing on/off for each expression.
-<code>E(<i>expr</i>)</code> means that the expression <code><i>expr</i></code> is sanitized
-and <code>X(<i>expr</i>)</code> means that <code><i>expr</i></code> is not sanitized.
+<code>E(<em>expr</em>)</code> means that the expression <code><em>expr</em></code> is sanitized
+and <code>X(<em>expr</em>)</code> means that <code><em>expr</em></code> is not sanitized.
 These are not effected by the command-line option '<code>-e</code>'.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-output2.html"></a>
-<pre class="program">With sanitizing:    <b>@{E(var)}@</b>!
-Without sanitizing: <b>@{X(var)}@</b>!
+<pre class="program">With sanitizing:    <strong>@{E(var)}@</strong>!
+Without sanitizing: <strong>@{X(var)}@</strong>!
 </pre>
 <p>Output Program:
 </p>
@@ -1657,13 +1657,13 @@ Without sanitizing: $!{var}!
 
 <a name="kd-value"></a>
 <h3 class="section2">Printing value of expression 2</h3>
-<p>'<code>id="value:<i>expression</i>"</code>' is a directive to print the value of expression instead of the content.
-It is more suitable for HTML design than '<code>@{<i>expression</i>}@</code>' because it allows for the use of dummy data.
+<p>'<code>id="value:<em>expression</em>"</code>' is a directive to print the value of expression instead of the content.
+It is more suitable for HTML design than '<code>@{<em>expression</em>}@</code>' because it allows for the use of dummy data.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-value.html"></a>
-<pre class="program">&lt;li <b>id="value:hash['name']"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;li <strong>id="value:hash['name']"</strong>&gt;foo&lt;/li&gt;
 </pre>
 <p>Output Program:
 </p>
@@ -1679,24 +1679,24 @@ It is more suitable for HTML design than '<code>@{<i>expression</i>}@</code>' be
 ### for Velocity
 &lt;li&gt;$!{hash["name"]}&lt;/li&gt;
 </pre>
-<p>'<code>id="Value:<i>expr</i>"</code>' sanitizes the expression.
-'<code>id="VALUE:<i>expr</i>"</code>' un-sanitizes the expression.
-These are equal to '<code>id="value:E(<i>expr</i>)"</code>' and '<code>id="value:X(<i>expr</i>)"</code>'.
+<p>'<code>id="Value:<em>expr</em>"</code>' sanitizes the expression.
+'<code>id="VALUE:<em>expr</em>"</code>' un-sanitizes the expression.
+These are equal to '<code>id="value:E(<em>expr</em>)"</code>' and '<code>id="value:X(<em>expr</em>)"</code>'.
 </p>
 <br>
 
 
 <a name="kd-attr"></a>
 <h3 class="section2">Attribute Values</h3>
-<p>'<code>id="attr:<i>name</i>=<i>value</i>"</code>' (or '<code>id="attr:<i>name</i>:<i>value</i>"</code>') is a directive to set an attribute value.
-It overwrites the existing value if attribute <code><i>name</i></code> is already set.
+<p>'<code>id="attr:<em>name</em>=<em>value</em>"</code>' (or '<code>id="attr:<em>name</em>:<em>value</em>"</code>') is a directive to set an attribute value.
+It overwrites the existing value if attribute <code><em>name</em></code> is already set.
 </p>
 <p>In the following example, attribute 'class' has the dummy value '<code>odd</code>', and the actual value is derived from the variable '<code>klass</code>'.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-attr.pdata"></a>
-<pre class="program">&lt;tr class="odd" <b>id="attr:class=klass"</b>&gt;
+<pre class="program">&lt;tr class="odd" <strong>id="attr:class=klass"</strong>&gt;
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -1722,17 +1722,17 @@ It overwrites the existing value if attribute <code><i>name</i></code> is alread
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
-<p>'<code>id="Attr:<i>name</i>=<i>value</i>"</code>' sanitizes the value.
-'<code>id="ATTR:<i>name</i>=<i>value</i>"</code>' un-sanitizes the value.
-These are equal to '<code>id="attr:<i>name</i>=E(<i>value</i>)"</code>' and '<code>id="attr:<i>name</i>=X(<i>value</i>)"</code>'.
+<p>'<code>id="Attr:<em>name</em>=<em>value</em>"</code>' sanitizes the value.
+'<code>id="ATTR:<em>name</em>=<em>value</em>"</code>' un-sanitizes the value.
+These are equal to '<code>id="attr:<em>name</em>=E(<em>value</em>)"</code>' and '<code>id="attr:<em>name</em>=X(<em>value</em>)"</code>'.
 </p>
-<p>Separating with '<code>;</code>', you can have several '<code>attr:<i>name</i>=<i>value</i></code>' directives in one id attribute.
+<p>Separating with '<code>;</code>', you can have several '<code>attr:<em>name</em>=<em>value</em></code>' directives in one id attribute.
 You can enumerate other attributes this way as well.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-attr2.pdata"></a>
-<pre class="program">&lt;font id="if:message!=empty<b>;attr:class=klass;attr:bgcolor=color</b>"&gt;
+<pre class="program">&lt;font id="if:message!=empty<strong>;attr:class=klass;attr:bgcolor=color</strong>"&gt;
  @{message}@
 &lt;/font&gt;
 </pre>
@@ -1771,16 +1771,16 @@ You can enumerate other attributes this way as well.
 
 <a name="kd-apend"></a>
 <h3 class="section2">Appending Attribute Expression</h3>
-<p>'<code>id="append:<i>expression</i>"</code>' is a directive to append expression into a tag.
+<p>'<code>id="append:<em>expression</em>"</code>' is a directive to append expression into a tag.
 This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... selected&gt;&lt;/option&gt;'.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-append.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
-       <b>id="append:lang=='ruby'?' selected':''"</b>&gt;Ruby&lt;/option&gt;
+       <strong>id="append:lang=='ruby'?' selected':''"</strong>&gt;Ruby&lt;/option&gt;
 &lt;input type="radio" name="gender" value="M"
-       <b>id="append:gender=='M'?' checked':''"</b>&gt;
+       <strong>id="append:gender=='M'?' checked':''"</strong>&gt;
 </pre>
 <p>Output Script:
 </p>
@@ -1811,19 +1811,19 @@ Ruby&lt;/option&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 </pre>
 <p>A function to output <code>'checked="checked"'</code>, <code>'selected="selected"'</code> and <code>'disabled="disabled"'</code> easily for HTML/XHTML is available in Kwartz.
-<code>C(<i>expr</i>)</code>, <code>S(<i>expr</i>)</code>, and <code>D(<i>expr</i>)</code> print <code>' checked="checked"'</code>, <code>' selected="selected"'</code> and <code>' disabled="disabled"'</code> respectively when expression <code><i>expr</i></code> is true.
+<code>C(<em>expr</em>)</code>, <code>S(<em>expr</em>)</code>, and <code>D(<em>expr</em>)</code> print <code>' checked="checked"'</code>, <code>' selected="selected"'</code> and <code>' disabled="disabled"'</code> respectively when expression <code><em>expr</em></code> is true.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-append2.pdata"></a>
 <pre class="program">&lt;option name="lang" value="ruby"
-       id="append:<b>S(lang=='ruby')</b>"&gt;Ruby&lt;/option&gt;
+       id="append:<strong>S(lang=='ruby')</strong>"&gt;Ruby&lt;/option&gt;
 
 &lt;input type="radio" name="gender" value="M"
-       id="append:<b>C(gender=='M')</b>" /&gt;Male
+       id="append:<strong>C(gender=='M')</strong>" /&gt;Male
 
 &lt;input type="radio" name="os" value="win"
-       id="append:<b>D(os=='mac')</b>" /&gt;Windows
+       id="append:<strong>D(os=='mac')</strong>" /&gt;Windows
 </pre>
 <p>Output Script:
 </p>
@@ -1872,14 +1872,14 @@ Windows
 
 <a name="kd-set"></a>
 <h3 class="section2">Assignment</h3>
-<p>'<code>id="set:<i>var</i>=<i>value</i>"</code>' is a directive for assigning values into variables.
+<p>'<code>id="set:<em>var</em>=<em>value</em>"</code>' is a directive for assigning values into variables.
 Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</code>', '<code>/=</code>', '<code>.=</code>' are also available.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-set.pdata"></a>
-<pre class="program">&lt;dt <b>id="set:var=value"</b>&gt;foo&lt;/dt&gt;
-&lt;dd <b>id="set:count+=1"</b>&gt;123&lt;/dd&gt;
+<pre class="program">&lt;dt <strong>id="set:var=value"</strong>&gt;foo&lt;/dt&gt;
+&lt;dd <strong>id="set:count+=1"</strong>&gt;123&lt;/dd&gt;
 </pre>
 <p>Output Program:
 </p>
@@ -1912,19 +1912,19 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 
 <a name="kd-if"></a>
 <h3 class="section2">Conditional Branching</h3>
-<p>'<code>id="if:<i>expression</i>"</code>' is a directive for conditional branching.
+<p>'<code>id="if:<em>expression</em>"</code>' is a directive for conditional branching.
 '<code>else</code>' and '<code>elseif</code>' are also available.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-if.pdata"></a>
-<pre class="program">&lt;div <b>id="if:value &gt; 0"</b>&gt;
+<pre class="program">&lt;div <strong>id="if:value &gt; 0"</strong>&gt;
   Value is positive.
 &lt;/div&gt;
-&lt;div <b>id="elseif:value &lt; 0"</b>&gt;
+&lt;div <strong>id="elseif:value &lt; 0"</strong>&gt;
   Value is negative.
 &lt;/div&gt;
-&lt;div <b>id="else:"</b>&gt;
+&lt;div <strong>id="else:"</strong>&gt;
   Value is zero.
 &lt;/div&gt;
 </pre>
@@ -1997,12 +1997,12 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 
 <a name="kd-foreach"></a>
 <h3 class="section2">Iteration (foreach)</h3>
-<p>'<code>id="foreach:<i>loopvar</i>=<i>list</i>)"</code>' (or '<code>id="foreach:<i>loopvar</i>:<i>list</i>)"</code>') is a directive for iteration, assigning each value in the array into a variable each time through the loop.
+<p>'<code>id="foreach:<em>loopvar</em>=<em>list</em>)"</code>' (or '<code>id="foreach:<em>loopvar</em>:<em>list</em>)"</code>') is a directive for iteration, assigning each value in the array into a variable each time through the loop.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-foreach.pdata"></a>
-<pre class="program">&lt;tr <b>id="foreach:item=list"</b>&gt;
+<pre class="program">&lt;tr <strong>id="foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2041,14 +2041,14 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 
 <a name="kd-loop"></a>
 <h3 class="section2">Iteration(loop)</h3>
-<p>'<code>id="loop:<i>loopvar</i>=<i>list</i>"</code>' (or '<code>id="loop:<i>loopvar</i>:<i>list</i>"</code>') is a directive for iteration.
+<p>'<code>id="loop:<em>loopvar</em>=<em>list</em>"</code>' (or '<code>id="loop:<em>loopvar</em>:<em>list</em>"</code>') is a directive for iteration.
 It iterates only contents. The start tag and the end tag are not iterated.
 It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-loop.pdata"></a>
-<pre class="program">&lt;dl <b>id="loop:item=list"</b>&gt;
+<pre class="program">&lt;dl <strong>id="loop:item=list"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/dl&gt;
@@ -2092,13 +2092,13 @@ It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 
 <a name="kd-foreach2"></a>
 <h3 class="section2">Iteration with Count</h3>
-<p>'<code>id="Foreach:<i>var</i>=<i>list</i>"</code>' and '<code>id="Loop:<i>var</i>=<i>list</i>"</code>' are directives for iteration with loop counting.
-The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
+<p>'<code>id="Foreach:<em>var</em>=<em>list</em>"</code>' and '<code>id="Loop:<em>var</em>=<em>list</em>"</code>' are directives for iteration with loop counting.
+The counter variable is <code><em>var</em>_ctr</code>. It starts at 1.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-foreach2.pdata"></a>
-<pre class="program">&lt;tr <b>id="Foreach:item=list"</b>&gt;
+<pre class="program">&lt;tr <strong>id="Foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item_ctr}@&lt;/td&gt;
   &lt;td&gt;@{item}@&lt;td&gt;
 &lt;/tr&gt;
@@ -2150,19 +2150,19 @@ The counter variable is <code><i>var</i>_ctr</code>. It starts at 1.
 
 <a name="kd-foreach3"></a>
 <h3 class="section2">Iteration with a Toggle Switch</h3>
-<p>'<code>id="FOREACH:<i>var</i>=<i>list</i>"</code>' and '<code>id="LOOP:<i>var</i>=<i>list</i>"</code>' are directives for iteration with toggle switching.
+<p>'<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>' and '<code>id="LOOP:<em>var</em>=<em>list</em>"</code>' are directives for iteration with toggle switching.
 The toggle switch's value changes depending on whether loop counter is odd or even.
-The toggle switch is named <code><i>var</i>_tgl</code>.
+The toggle switch is named <code><em>var</em>_tgl</code>.
 The value of the toggle switch is '<code>"odd"</code>' or '<code>"even"</code>' by default.
-You can change them with the command-line option '<code>--odd=<i>value</i></code>' and '<code>--even=<i>value</i></code>',
+You can change them with the command-line option '<code>--odd=<em>value</em></code>' and '<code>--even=<em>value</em></code>',
 or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 </p>
 <p>Presentation Data:
 </p>
 <a name="directive-foreach3.pdata"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tbody <b>id="LOOP:item=list"</b>&gt;
-    &lt;tr class="<b>@{item_tgl}@</b>"&gt;
+  &lt;tbody <strong>id="LOOP:item=list"</strong>&gt;
+    &lt;tr class="<strong>@{item_tgl}@</strong>"&gt;
       &lt;td&gt;@{item}@&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
@@ -2235,7 +2235,7 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 
 <a name="kd-while"></a>
 <h3 class="section2">Iteration (while)</h3>
-<p>'<code>id="while:<i>expression</i>"</code>' is a directive to iterate with a while statement. 
+<p>'<code>id="while:<em>expression</em>"</code>' is a directive to iterate with a while statement. 
 </p>
 <p>Kwartz will raise an error when compiling a while statement into JSP or Velocity,
 because there is no custom tag in JSTL nor Directives in Velocity which is equivalent to while statement.
@@ -2243,7 +2243,7 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
 <p>Presentation Data:
 </p>
 <a name="directive-while.pdata"></a>
-<pre class="program">&lt;tr <b>id="while:row=sth.fetch()"</b>&gt;
+<pre class="program">&lt;tr <strong>id="while:row=sth.fetch()"</strong>&gt;
   &lt;td&gt;@{row[0]}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2268,16 +2268,16 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
 
 <a name="kd-dummy"></a>
 <h3 class="section2">Dummy data</h3>
-<p>'<code>id="dummy:<i>str</i>"</code>' is a directive for ignoring an element.
+<p>'<code>id="dummy:<em>str</em>"</code>' is a directive for ignoring an element.
 </p>
-<p>'<code><i>str</i></code>' has no effect. It is to make id attribute value to be unique in the HTML file.
+<p>'<code><em>str</em></code>' has no effect. It is to make id attribute value to be unique in the HTML file.
 </p>
 <p>Presentation Data:
 </p>
-<pre class="program">&lt;tr <b>id="dummy:d1"</b>&gt;
+<pre class="program">&lt;tr <strong>id="dummy:d1"</strong>&gt;
   &lt;td&gt;bar&lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr <b>id="dummy:d2"</b>&gt;
+&lt;tr <strong>id="dummy:d2"</strong>&gt;
   &lt;td&gt;baz&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2294,8 +2294,8 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
 
 <a name="kd-replace"></a>
 <h3 class="section2">Replacement of Elements</h3>
-<p>'<code>id="replace:<i>name</i>"</code>' replaces an element with other element
-which is already marked with the name <i>name</i>.
+<p>'<code>id="replace:<em>name</em>"</code>' replaces an element with other element
+which is already marked with the name <em>name</em>.
 </p>
 <p>Presentation Data:
 </p>
@@ -2303,7 +2303,7 @@ which is already marked with the name <i>name</i>.
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- breadcrumbs navigation --&gt;
-    &lt;div <b>id="mark:breadcrumbs"</b>&gt;
+    &lt;div <strong>id="mark:breadcrumbs"</strong>&gt;
       &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
@@ -2311,7 +2311,7 @@ which is already marked with the name <i>name</i>.
 
    ....
 
-    &lt;div <b>id="replace:breadcrumbs"</b>&gt;
+    &lt;div <strong>id="replace:breadcrumbs"</strong>&gt;
       Home &amp;gt; Kwartz &amp;gt; Kwartz-ruby
     &lt;/span&gt;
   &lt;/div&gt;
@@ -2337,7 +2337,7 @@ which is already marked with the name <i>name</i>.
     &lt;/div&gt;
 &lt;/html
 </pre>
-<p>The command-line option '<code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>' enables you to use elements
+<p>The command-line option '<code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>' enables you to use elements
 in other files.
 </p>
 <br>
@@ -2345,10 +2345,10 @@ in other files.
 
 <a name="kd-placeholder"></a>
 <h3 class="section2">Placeholder</h3>
-<p>'<code>id="placeholder:<i>name</i>"</code>' replaces content of the element by other element
-which is already marked with the name <i>name</i>.
+<p>'<code>id="placeholder:<em>name</em>"</code>' replaces content of the element by other element
+which is already marked with the name <em>name</em>.
 Usually this directive is used to import elements defined in other files,
-with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code>.
+with the command-line option <code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>.
 </p>
 <p>Presentation Data(article.html):
 </p>
@@ -2356,7 +2356,7 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
-    &lt;div <b>id="mark:article"</b>&gt;
+    &lt;div <strong>id="mark:article"</strong>&gt;
       &lt;p&gt;Kwartz is a template system, which realized the
          concept &lt;strong&gt;`Separation of Presentation Logic
          and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
@@ -2380,7 +2380,7 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        &lt;td width="400" <b>id="placeholder:article"</b>&gt;
+        &lt;td width="400" <strong>id="placeholder:article"</strong>&gt;
           aaa&lt;br&gt;
           bbb&lt;br&gt;
           ccc&lt;br&gt;
@@ -2394,7 +2394,7 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 </pre>
 <p>Compile:
 </p>
-<pre class="terminal">$ kwartz <b>-i article.html</b> layout.html
+<pre class="terminal">$ kwartz <strong>-i article.html</strong> layout.html
 </pre>
 <p>Output Script:
 </p>
@@ -2427,7 +2427,7 @@ with the command-line option <code>-i <i>file1</i>,<i>file2</i>,<i>...</i></code
 
 <a name="kd-include"></a>
 <h3 class="section2">Including Presentation Data Files</h3>
-<p><code>id="include:<i>filename</i>"</code> is a directive to read and to include another presentation data file (HTML file).
+<p><code>id="include:<em>filename</em>"</code> is a directive to read and to include another presentation data file (HTML file).
 Included data file can contain directives.
 </p>
 <p>Presentation Data (copyright.html) :
@@ -2486,7 +2486,7 @@ Included data file can contain directives.
 </li>
 </ul>
 <p>When presentation data files to be included are placed in other directories,
-you can specify those directories with the command-line option <code>--incdirs=<i>dir1</i>,<i>dir2</i>,...</code>
+you can specify those directories with the command-line option <code>--incdirs=<em>dir1</em>,<em>dir2</em>,...</code>
 or the constant <code>INCDIRS</code> in configuration file.
 </p>
 <br>
@@ -2520,7 +2520,7 @@ or the constant <code>INCDIRS</code> in configuration file.
 </li>
 </ul>
 <ul type="disc">
-<li>You can change the kw:d attribte name with the command-line option <code>--dattr=<i>xxx</i></code>.
+<li>You can change the kw:d attribte name with the command-line option <code>--dattr=<em>xxx</em></code>.
    For example, <code>--dattr=style</code> make Kwartz to use 'style' attributes instead of 'kw:d' attributes.
    Constant <code>DATTR</code> in configuration file also enables you to change 'kw:d' attribute name.
 </li>
@@ -2541,7 +2541,7 @@ or the constant <code>INCDIRS</code> in configuration file.
 </li>
 </ul>
 <ul type="disc">
-<li>However, the '<code>attr:<i>name</i>=<i>value</i></code>' directive and the '<code>append=<i>expression</i></code>' directive can be used with other directive in an id attribute,
+<li>However, the '<code>attr:<em>name</em>=<em>value</em></code>' directive and the '<code>append=<em>expression</em></code>' directive can be used with other directive in an id attribute,
    as well as with itself.
 <pre class="program">## OK
 &lt;foo id="foreach:item=list;attr:class=item.class;attr:href=item.url"&gt;
@@ -2573,13 +2573,13 @@ Hello &lt;%= name %&gt;!
 </li>
 </ul>
 <ul type="disc">
-<li>You must describe attributes like <code><i>attr</i>="<i>value</i>"</code> in the start tag which contains directives.
+<li>You must describe attributes like <code><em>attr</em>="<em>value</em>"</code> in the start tag which contains directives.
    In other words, you cannot omit attribute names or attribute values when using directives.
    This is not a bug; it's an intended behavior so as to make Kwartz available in any text file.
 <pre class="program">## NG
-&lt;input type="checkbox" id="foreach:item=list" <b>checked</b>/&gt;
+&lt;input type="checkbox" id="foreach:item=list" <strong>checked</strong>/&gt;
 ## OK
-&lt;input type="checkbox" id="foreach:item=list" <b>checked="checked"</b>/&gt;
+&lt;input type="checkbox" id="foreach:item=list" <strong>checked="checked"</strong>/&gt;
 
 ## NG
 &lt;option id="attr:value=val" @{flag ? 'selected' : ''}@/&gt;
@@ -2600,23 +2600,23 @@ Hello &lt;%= name %&gt;!
 </p>
 <p>Presentation logic:
 </p>
-<pre class="program">// element declaration for 'id="mark:<i>name</i>"'
-#<i>name</i> {
+<pre class="program">// element declaration for 'id="mark:<em>name</em>"'
+#<em>name</em> {
   
   // print value of expression instead of content
-  value:  <i>expression</i>;
+  value:  <em>expression</em>;
   
   // set attribute values
-  attrs: "<i>attr1</i>" <i>expr1</i>, "<i>attr2</i>" <i>expr2</i>, "<i>attr3</i>" <i>expr3</i>;
+  attrs: "<em>attr1</em>" <em>expr1</em>, "<em>attr2</em>" <em>expr2</em>, "<em>attr3</em>" <em>expr3</em>;
   
   // remove attributes
-  remove:  "<i>attr1</i>", "<i>attr2</i>", "<i>attr3</i>";
+  remove:  "<em>attr1</em>", "<em>attr2</em>", "<em>attr3</em>";
   
   // append expression to start tag
-  append:  <i>expr1</i>, <i>expr2</i>, <i>expr3</i>;
+  append:  <em>expr1</em>, <em>expr2</em>, <em>expr3</em>;
   
   // change tag name
-  tagname: "<i>tagname</i>",
+  tagname: "<em>tagname</em>",
 
   // set presentation logic
   plogic: {
@@ -2650,29 +2650,29 @@ Hello &lt;%= name %&gt;!
 <p>The script 'kwartz' is a commad-line script to compile templates (presentation data file and presentation logic file) into output scripts.
 </p>
 <p>Usage:
-<b><code>kwartz [options...] [-p plogic ] pdata.html &gt; output-script</code></b>
+<strong><code>kwartz [options...] [-p plogic ] pdata.html &gt; output-script</code></strong>
 </p>
 <p>Options:
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
--h, --help</b></dt>
+<dt class="dt3"><strong>
+-h, --help</strong></dt>
 <dd class="dd3">
 	Print help.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--v</b></dt>
+<dt class="dt3"><strong>
+-v</strong></dt>
 <dd class="dd3">
 	Version information.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--a <i>action</i></b></dt>
+<dt class="dt3"><strong>
+-a <em>action</em></strong></dt>
 <dd class="dd3">
-	Action to do. <i>action</i> may be one of the following (default is 'compile').
+	Action to do. <em>action</em> may be one of the following (default is 'compile').
 	<dl class="dl1" compact>
 	<dt class="dt1">
 compile</dt>
@@ -2703,38 +2703,38 @@ translate</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--e , -s</b></dt>
+<dt class="dt3"><strong>
+-e , -s</strong></dt>
 <dd class="dd3">
 	Enable auto-sanitizing. This option is equal to <code>--escape=true</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--i <i>file1,file2,...</i></b></dt>
+<dt class="dt3"><strong>
+-i <em>file1,file2,...</em></strong></dt>
 <dd class="dd3">
 	Import elements defined in outer files.
-	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<i>name</i></code>').
+	Usually this option is used for 'placeholder' directive ('<code>id="placeholder:<em>name</em></code>').
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--l <i>lang</i></b></dt>
+<dt class="dt3"><strong>
+-l <em>lang</em></strong></dt>
 <dd class="dd3">
-	Target language of the output script. <i>lang</i> may be
+	Target language of the output script. <em>lang</em> may be
 	eruby, erb, php, jstl11, jstl10, velocity.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--p <i>plogic-file</i></b></dt>
+<dt class="dt3"><strong>
+-p <em>plogic-file</em></strong></dt>
 <dd class="dd3">
 	Filename of the presentation logics. It is possible to specify several filename using '<code>,</code>' as a separator.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
--R <i>arg</i></b></dt>
+<dt class="dt3"><strong>
+-R <em>arg</em></strong></dt>
 <dd class="dd3">
 	Special option. Currently, only the following argument is avairable.
 	<ul type="disc">
@@ -2744,50 +2744,50 @@ translate</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---charset=<i>charset</i></b></dt>
+<dt class="dt3"><strong>
+--charset=<em>charset</em></strong></dt>
 <dd class="dd3">
-	Character set. Kwartz will print '<code>&lt;%@ page contentType="text/html; charset=<i>charset</i>" %&gt;</code>' in JSTL.
+	Character set. Kwartz will print '<code>&lt;%@ page contentType="text/html; charset=<em>charset</em>" %&gt;</code>' in JSTL.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---dname=<i>name</i></b></dt>
+<dt class="dt3"><strong>
+--dname=<em>name</em></strong></dt>
 <dd class="dd3">
 	Attribute name used as a directive. Default is 'kw:d'.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---escape=<i>true</i>|<i>false</i></b></dt>
+<dt class="dt3"><strong>
+--escape=<em>true</em>|<em>false</em></strong></dt>
 <dd class="dd3">
 	Auto-sanitizing. If value is ommited then true is used as value.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---even=<i>value</i></b></dt>
+<dt class="dt3"><strong>
+--even=<em>value</em></strong></dt>
 <dd class="dd3">
 	Even value. Default is <code>'even'</code>. Directives FOREACH and LIST will use this value.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---extract=<i>name</i></b></dt>
+<dt class="dt3"><strong>
+--extract=<em>name</em></strong></dt>
 <dd class="dd3">
-	Extract an element which is marked with name <i>name</i>.
+	Extract an element which is marked with name <em>name</em>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---footer=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--footer=<em>string</em></strong></dt>
 <dd class="dd3">
 	Footer string.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---header=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--header=<em>string</em></strong></dt>
 <dd class="dd3">
 	Header string.
 	'<code>&lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;</code>' is used as default in JSP.
@@ -2795,36 +2795,36 @@ translate</dt>
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---indent=' '</b></dt>
+<dt class="dt3"><strong>
+--indent=' '</strong></dt>
 <dd class="dd3">
 	Specifies the indent space of output script.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---incdirs=<i>dir1</i>,<i>dir2</i>,...</b></dt>
+<dt class="dt3"><strong>
+--incdirs=<em>dir1</em>,<em>dir2</em>,...</strong></dt>
 <dd class="dd3">
 	Specify directories from which '<code>include</code>' directive includes.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---odd=<i>value</i></b></dt>
+<dt class="dt3"><strong>
+--odd=<em>value</em></strong></dt>
 <dd class="dd3">
 	Odd value. Default is <code>'odd'</code>. Directives FOREACH and LIST will use this value.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---localvar-prefix=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--localvar-prefix=<em>string</em></strong></dt>
 <dd class="dd3">
 	Prefix of template local variables.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
---globalvar-prefix=<i>string</i></b></dt>
+<dt class="dt3"><strong>
+--globalvar-prefix=<em>string</em></strong></dt>
 <dd class="dd3">
 	Prefix of template global variables.
 </dd>
@@ -2863,109 +2863,109 @@ It is kwartz/config.rb in Kwartz-ruby.
 <p>The following is the options for Kwartz.
 </p>
 <dl class="dl3">
-<dt class="dt3"><b>
-ESCAPE </b></dt>
+<dt class="dt3"><strong>
+ESCAPE </strong></dt>
 <dd class="dd3">
 	Specify auto-sanitizing on/off.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-NEWLINE </b></dt>
+<dt class="dt3"><strong>
+NEWLINE </strong></dt>
 <dd class="dd3">
 	Specify a string which represents newline characters ("\n" or "\r\n") of output script.
 	You don't have to change this option because Kwartz detects newline characters automatically.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-INDENT </b></dt>
+<dt class="dt3"><strong>
+INDENT </strong></dt>
 <dd class="dd3">
 	Specify a string which represents indent of output script.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-LOCALVAR_PREFIX </b></dt>
+<dt class="dt3"><strong>
+LOCALVAR_PREFIX </strong></dt>
 <dd class="dd3">
 	Specify the prefix of template local variable name.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-GLOBALVAR_PREFIX </b></dt>
+<dt class="dt3"><strong>
+GLOBALVAR_PREFIX </strong></dt>
 <dd class="dd3">
 	Specify the prefix of template global variable name.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-LANG </b></dt>
+<dt class="dt3"><strong>
+LANG </strong></dt>
 <dd class="dd3">
 	Specify default language for output script.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-ODD </b></dt>
+<dt class="dt3"><strong>
+ODD </strong></dt>
 <dd class="dd3">
 	Specify odd value of toggle variable.
-	This is used by <code>id="FOREACH:<i>var</i>=<i>list</i>"</code> and <code>id="LOOP:<i>var</i>=<i>list</i>"</code>.
+	This is used by <code>id="FOREACH:<em>var</em>=<em>list</em>"</code> and <code>id="LOOP:<em>var</em>=<em>list</em>"</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-EVEN </b></dt>
+<dt class="dt3"><strong>
+EVEN </strong></dt>
 <dd class="dd3">
 	Specify even value of toggle variable.
-	This is used by <code>id="FOREACH:<i>var</i>=<i>list</i>"</code> and <code>id="LOOP:<i>var</i>=<i>list</i>"</code>.
+	This is used by <code>id="FOREACH:<em>var</em>=<em>list</em>"</code> and <code>id="LOOP:<em>var</em>=<em>list</em>"</code>.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DATTR </b></dt>
+<dt class="dt3"><strong>
+DATTR </strong></dt>
 <dd class="dd3">
 	Specify an attribute name for directives. Default is '<code>kw:d</code>'.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-NOEND </b></dt>
+<dt class="dt3"><strong>
+NOEND </strong></dt>
 <dd class="dd3">
 	List of tag name which doesn't require end tag. Default is [ "input", "br", "meta", "img", "hr" ].
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DEFUN_CLASS </b></dt>
+<dt class="dt3"><strong>
+DEFUN_CLASS </strong></dt>
 <dd class="dd3">
 	Default name of class or module when defining functions with the command-line option '-a defun'.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-DEFUN_FUNCTION </b></dt>
+<dt class="dt3"><strong>
+DEFUN_FUNCTION </strong></dt>
 <dd class="dd3">
 	Default name of function or method when defining functions with the command-line option '-a defun'.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-CHARSET </b></dt>
+<dt class="dt3"><strong>
+CHARSET </strong></dt>
 <dd class="dd3">
 	Specify character encoding name for jstl11 and jstl10.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-EMBED_PATTERN </b></dt>
+<dt class="dt3"><strong>
+EMBED_PATTERN </strong></dt>
 <dd class="dd3">
 	Specify a pattern to embed expression into presentation data.
 </dd>
 </dl>
 <dl class="dl3">
-<dt class="dt3"><b>
-INCDIRS </b></dt>
+<dt class="dt3"><strong>
+INCDIRS </strong></dt>
 <dd class="dd3">
 	Specify a list of directories from which '<code>include</code>' directive includes.
 	Default is [ "." ].

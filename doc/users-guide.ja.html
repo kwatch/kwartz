@@ -97,7 +97,7 @@ Kwartzは、『プレゼンテーションロジックとプレゼンテーションデータの分離(Separatio
 <a name="whatis"></a>
 <h3 class="section2">Kwartzとは？</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup>とは、
-<b>『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data, SoPL/PD)』</b>または<b>『プレゼンテーションロジックの独立(Independence of Presentation Logic, IoPL)』</b>という概念を実現したテンプレートシステムです。
+<strong>『プレゼンテーションロジックとプレゼンテーションデータの分離(Separation of Presentation Logic and Presentaion Data, SoPL/PD)』</strong>または<strong>『プレゼンテーションロジックの独立(Independence of Presentation Logic, IoPL)』</strong>という概念を実現したテンプレートシステムです。
 </p>
 <p>Kwartz-rubyは、RubyによるKwartzの実装です。
 このほか、PHPやJavaによる実装も予定されています。
@@ -193,8 +193,8 @@ HTMLテンプレートがSGML形式を崩さない</dt>
 </p>
 <a name="example1.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>id="list"</b>&gt;
-    &lt;td <b>id="item"</b>&gt;foo&lt;/td&gt;
+  &lt;tr <strong>id="list"</strong>&gt;
+    &lt;td <strong>id="item"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -204,10 +204,10 @@ HTMLテンプレートがSGML形式を崩さない</dt>
 <ul type="disc">
 <li>「<code>#item { ... }</code>」は目印「item」がつけられたエレメント（Element, ここでは<code>&lt;td&gt;</code>から<code>&lt;t/d&gt;</code>まで）を表します。
     <ul type="circle">
-    <li>「<code>value: <i>expression</i>;</code>」は、エレメントの内容を式<code><i>expression</i></code>の値（ここでは変数<code>member</code>の値）で置き換えることを表します。
+    <li>「<code>value: <em>expression</em>;</code>」は、エレメントの内容を式<code><em>expression</em></code>の値（ここでは変数<code>member</code>の値）で置き換えることを表します。
     </li>
     <li>「<code>remove: "id";</code>」は、エレメントからid属性を取り除くことを表します。
-       なお「<code>id="<i>name</i></code>"」のかわりに「<code>id="mark:<i>name</i>"</code>」を使用するとid属性は自動的に削除され、「<code>remove: "id";</code>」をいちいち記述する必要はなくなります。
+       なお「<code>id="<em>name</em></code>"」のかわりに「<code>id="mark:<em>name</em>"</code>」を使用するとid属性は自動的に削除され、「<code>remove: "id";</code>」をいちいち記述する必要はなくなります。
     </li>
     </ul>
 </li>
@@ -444,7 +444,7 @@ public class Main1 {
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
-  <dd>コマンドラインオプションとして「--charset=<i>CHARSET</i>」をつけると、JSTL用出力スクリプトでは「<code>&lt;%@ page contentType="text/html; charset=<i>CHARSET</i>" %&gt;</code>」をつけてくれます。</dd>
+  <dd>コマンドラインオプションとして「--charset=<em>CHARSET</em>」をつけると、JSTL用出力スクリプトでは「<code>&lt;%@ page contentType="text/html; charset=<em>CHARSET</em>" %&gt;</code>」をつけてくれます。</dd>
  </dl>
 </div>
 <br>
@@ -455,17 +455,17 @@ public class Main1 {
 <p>もう少し複雑な例として、色つきのテーブルを示します。
 </p>
 <p>プレゼンテーションデータは次のようになります。
-マーキングは「<code>id="<i>name</i>"</code>」ではなく「<code>id="mark:<i>name</i>"</code>」としています。
+マーキングは「<code>id="<em>name</em>"</code>」ではなく「<code>id="mark:<em>name</em>"</code>」としています。
 こうするとid属性は自動的に削除されますので、プレゼンテーションロジックファイルでいちいち「<code>remove: "id"</code>」と書く必要がなくなります。
 </p>
 <p>プレゼンテーションデータ(example2.html)：
 </p>
 <a name="example2.html"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="#CCCCFF" <b>id="mark:list"</b>&gt;
-  &lt;td <b>id="mark:name"</b>&gt;foo&lt;/td&gt;
+ &lt;tr bgcolor="#CCCCFF" <strong>id="mark:list"</strong>&gt;
+  &lt;td <strong>id="mark:name"</strong>&gt;foo&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com" <b>id="mark:email"</b>&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:foo@mail.com" <strong>id="mark:email"</strong>&gt;foo@mail.com&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
@@ -721,7 +721,7 @@ $ kwartz -l velocity -p example2.plogic example2.html &gt; example2.vm
 </pre>
 </li>
 </ul>
-<p>ここで重要なのは、<b>プレゼンテーションロジックにはタグ名や属性名が一切出てきていない</b>という点です。
+<p>ここで重要なのは、<strong>プレゼンテーションロジックにはタグ名や属性名が一切出てきていない</strong>という点です。
 プレゼンテーションデータのほうでどんなにタグを変更したとしても、プレゼンテーションロジックはまったく変更する必要はありません。
 </p>
 <p>つまり、プレゼンテーションデータとプレゼンテーションロジックとが完全に分離されているわけです。
@@ -744,30 +744,30 @@ Kwartzでは、id属性とkw:d属性を用いてディレクティブを記述します。
 <p>次はディレクティブを使った例です：
 </p>
 <ul type="disc">
-<li>「<code>id="foreach:<i>var</i>=<i>list</i>"</code>」は、繰り返しを表します。
+<li>「<code>id="foreach:<em>var</em>=<em>list</em>"</code>」は、繰り返しを表します。
 </li>
-<li>「<code>id="value:<i>expression</i>"</code>」は、内容のかわりに式の値を出力することを表します。
+<li>「<code>id="value:<em>expression</em>"</code>」は、内容のかわりに式の値を出力することを表します。
 </li>
-<li>「<code>id="dummy:<i>str</i>"</code>」は、そのエレメントがダミーであることを表します（つまり出力されません）。
-    ここで<code><i>str</i></code>はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
+<li>「<code>id="dummy:<em>str</em>"</code>」は、そのエレメントがダミーであることを表します（つまり出力されません）。
+    ここで<code><em>str</em></code>はid属性の値が同じにならないようにするためのものであり、特に意味はありません。
 </li>
-<li>「<code>@{<i>expression</i>}@</code>」<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup>は、式の値を出力するためのディレクティブです。
+<li>「<code>@{<em>expression</em>}@</code>」<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup>は、式の値を出力するためのディレクティブです。
 </li>
 </ul>
 <p>プレゼンテーションデータ(example3.html)：
 </p>
 <a name="example3.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>id="foreach:member=member_list"</b>&gt;
-    &lt;td <b>id="value:member['name']"</b>&gt;foo&lt;/td&gt;
-    &lt;td&gt;&lt;a href="mailto:<b>@{member['email']}@</b>"&gt;
-         <b>@{member['email']}@</b>&lt;/a&gt;&lt;/td&gt;
+  &lt;tr <strong>id="foreach:member=member_list"</strong>&gt;
+    &lt;td <strong>id="value:member['name']"</strong>&gt;foo&lt;/td&gt;
+    &lt;td&gt;&lt;a href="mailto:<strong>@{member['email']}@</strong>"&gt;
+         <strong>@{member['email']}@</strong>&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>id="dummy:d1"</b>&gt;
+  &lt;tr <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;bar&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>id="dummy:d2"</b>&gt;
+  &lt;tr <strong>id="dummy:d2"</strong>&gt;
     &lt;td&gt;baz&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
@@ -911,16 +911,16 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
 
 <a name="sanitize2"></a>
 <h3 class="section2">部分サニタイズ</h3>
-<p>関数<code>E(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズします。
-また関数<code>X(<i>expr</i>)</code>は、コマンドラインオプションに関わらず式<code><i>expr</i></code>をサニタイズしません
+<p>関数<code>E(<em>expr</em>)</code>は、コマンドラインオプションに関わらず式<code><em>expr</em></code>をサニタイズします。
+また関数<code>X(<em>expr</em>)</code>は、コマンドラインオプションに関わらず式<code><em>expr</em></code>をサニタイズしません
 <sup>(<a href="#fnref:5" name="fnlink:5">*5</a>)</sup>。
 </p>
 <p>プレゼンテーションデータ：
 </p>
 <a name="sanitize-partial1.pdata"></a>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="<b>@{X(color)}@</b>"&gt;
-   &lt;td <b>id="value:E(str)"</b>&gt;foo&lt;/td&gt;
+ &lt;tr bgcolor="<strong>@{X(color)}@</strong>"&gt;
+   &lt;td <strong>id="value:E(str)"</strong>&gt;foo&lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -978,9 +978,9 @@ $ kwartz -e -l velocity sanitize1.html &gt; sanitize1.vm
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>またコマンドラインオプションに関係なく、「<code>id="Value:<i>expr</i>"</code>」や「<code>id="Attr:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズします。
-逆に、「<code>id="VALUE:<i>expr</i>"</code>」や「<code>id="ATTR:<i>name</i>=<i>expr</i>"</code>」は式<code><i>expr</i></code>を必ずサニタイズしません。
-これらはそれぞれ、「<code>id="value:E(<i>expr</i>)"</code>」や「<code>id="attr:<i>name</i>=X(<i>expr</i>)"</code>」と同じです。
+<p>またコマンドラインオプションに関係なく、「<code>id="Value:<em>expr</em>"</code>」や「<code>id="Attr:<em>name</em>=<em>expr</em>"</code>」は式<code><em>expr</em></code>を必ずサニタイズします。
+逆に、「<code>id="VALUE:<em>expr</em>"</code>」や「<code>id="ATTR:<em>name</em>=<em>expr</em>"</code>」は式<code><em>expr</em></code>を必ずサニタイズしません。
+これらはそれぞれ、「<code>id="value:E(<em>expr</em>)"</code>」や「<code>id="attr:<em>name</em>=X(<em>expr</em>)"</code>」と同じです。
 </p>
 <div class="footnote">
  <dl compact>
@@ -1052,10 +1052,10 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <p>プレゼンテーションデータ(analyze.html)：
 </p>
 <a name="analyze.html"></a>
-<pre class="program">&lt;span kw:d="value:<b>title</b>"&gt;Analyzer Example&lt;/span&gt;
+<pre class="program">&lt;span kw:d="value:<strong>title</strong>"&gt;Analyzer Example&lt;/span&gt;
 &lt;dl id="mark:items"&gt;
-  &lt;dt kw:d="value:<b>ctr</b>"&gt;&lt;/dt&gt;
-  &lt;dd kw:d="value:<b>item</b>"&gt;Foo&lt;/dd&gt;
+  &lt;dt kw:d="value:<strong>ctr</strong>"&gt;&lt;/dt&gt;
+  &lt;dd kw:d="value:<strong>item</strong>"&gt;Foo&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <p>プレゼンテーションロジック(analyze.plogic)：
@@ -1064,9 +1064,9 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <pre class="program">#items {
   plogic: {
     @stag;
-    <b>ctr</b> = 0;
-    foreach (<b>item</b> in <b>list</b>) {
-      <b>ctr</b> += 1;
+    <strong>ctr</strong> = 0;
+    foreach (<strong>item</strong> in <strong>list</strong>) {
+      <strong>ctr</strong> += 1;
       @cont;
     }
     @etag;
@@ -1082,8 +1082,8 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <p>実行例：
 </p>
 <pre class="terminal">$ kwartz -a analyze -p analyze.plogic analyze.html
-<b>Global: title list</b>
-<b>Local:  ctr item</b>
+<strong>Global: title list</strong>
+<strong>Local:  ctr item</strong>
 </pre>
 <br>
 
@@ -1091,7 +1091,7 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 <a name="rename"></a>
 <h3 class="section2">テンプレートグローバル/ローカル変数の名前を変更する</h3>
 <p>Kwartzでは、テンプレートグローバル変数とテンプレートローカル変数の、両方または一方の名前にプレフィックスをつけることができます。
-プレフィックスをつけるには、コマンドラインオプション「<code>--globalvar-prefix=<i>prefix</i></code>」と「<code>--localvar-prefix=<i>prefix</i></code>」を使用します。
+プレフィックスをつけるには、コマンドラインオプション「<code>--globalvar-prefix=<em>prefix</em></code>」と「<code>--localvar-prefix=<em>prefix</em></code>」を使用します。
 </p>
 <p>例えばRubyやPHPでは、メインプログラムで使用している変数名と、テンプレートのローカル変数名とが一致した場合、
 テンプレート側の変数を変更することでメインプログラムの動作に影響を与えてしまうという問題があります。
@@ -1101,10 +1101,10 @@ Kwartzは、変数がグローバルかローカルかを調べて報告する機能があります。
 </p>
 <p>実行例：
 </p>
-<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l php    -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l jstl11 -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
-$ kwartz -l velocity -p analyze.plogic <b>--localvar-prefix='_'</b> analyze.html
+<pre class="terminal">$ kwartz -l eruby  -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l php    -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l jstl11 -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
+$ kwartz -l velocity -p analyze.plogic <strong>--localvar-prefix='_'</strong> analyze.html
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1244,7 +1244,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 &lt;input type="checkbox" name="foo" value="Y" id="foo" /&gt;
 #end
 </pre>
-<p>ディレクティブ <code>id="append:<i>expr</i>"</code> でも同じことができます。
+<p>ディレクティブ <code>id="append:<em>expr</em>"</code> でも同じことができます。
 </p>
 <p>プレゼンテーションデータ：
 </p>
@@ -1252,7 +1252,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 <pre class="program">&lt;input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" /&gt;
 </pre>
 <p>また<code>checked="checked"</code>や<code>selected="selected"</code>を簡単に出力するための関数を用意しています。
-「<code>C(<i>expr</i>)</code>」「<code>S(<i>expr</i>)</code>」「<code>D(<i>expr</i>)</code>」は式<code><i>expr</i></code>が真だった場合に、
+「<code>C(<em>expr</em>)</code>」「<code>S(<em>expr</em>)</code>」「<code>D(<em>expr</em>)</code>」は式<code><em>expr</em></code>が真だった場合に、
 それぞれ「<code> checked="checked"</code>」「<code> selected="selected"</code>」「<code> disabled="disabled"</code>」を出力します。
 </p>
 <p>プレゼンテーションデータ：
@@ -1303,10 +1303,10 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 <p>Kwartzでは、ターゲット言語（RubyやPHPやJavaなど）でプレゼンテーションロジックを記述することができます。
 </p>
 <ul type="disc">
-<li>「<code>&lt;%= <i>expression</i> %&gt;</code> 」または「<code>&lt;?= <i>expression</i> ?&gt;</code> 」は、
+<li>「<code>&lt;%= <em>expression</em> %&gt;</code> 」または「<code>&lt;?= <em>expression</em> ?&gt;</code> 」は、
    ターゲット言語で式を記述します。
 </li>
-<li>「<code>&lt;% <i>statement</i> %&gt;</code>」または「<code>&lt;? <i>statement</i> ?&gt;</code>」は、
+<li>「<code>&lt;% <em>statement</em> %&gt;</code>」または「<code>&lt;? <em>statement</em> ?&gt;</code>」は、
    ターゲット言語で文を記述します。「<code>%&gt;</code>」や「<code>?&gt;</code>」のあとに「;」はつけません。
 </li>
 </ul>
@@ -1314,12 +1314,12 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </p>
 <a name="topics-rawcode.plogic"></a>
 <pre class="program">#foo {
-  value:  <b>&lt;%= str.empty? ? "null" : str %&gt;</b>;
+  value:  <strong>&lt;%= str.empty? ? "null" : str %&gt;</strong>;
   plogic: {
     @stag;
-    <b>&lt;% ENV.each do |name, value| %&gt;</b>
+    <strong>&lt;% ENV.each do |name, value| %&gt;</strong>
       @cont;
-    <b>&lt;% end %&gt;</b>
+    <strong>&lt;% end %&gt;</strong>
     @etag;
   }
 }
@@ -1328,12 +1328,12 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 </p>
 <a name="topics-rawcode2.plogic"></a>
 <pre class="program">#foo {
-  value:  <b>&lt;?= $str === NULL ? "null" : str ?&gt;</b>;
+  value:  <strong>&lt;?= $str === NULL ? "null" : str ?&gt;</strong>;
   plogic: {
     @stag;
-    <b>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</b>
+    <strong>&lt;?php foreach ($_ENV as $name =&gt; $value) { ?&gt;</strong>
       @cont;
-    <b>&lt;?php } ?&gt;</b>
+    <strong>&lt;?php } ?&gt;</strong>
     @etag;
   }
 }
@@ -1342,7 +1342,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 中身を一切解析しませんので、文法に間違いがあっても検出されませんし、
 テンプレートローカル変数/グローバル変数の解析もできません。
 </p>
-<p>なお「<code>X(&lt;%= <i>expression</i> %&gt;)</code>」とすれば、<i>expression</i>をサニタイズせずに出力できます。
+<p>なお「<code>X(&lt;%= <em>expression</em> %&gt;)</code>」とすれば、<em>expression</em>をサニタイズせずに出力できます。
 </p>
 <br>
 
@@ -1353,7 +1353,7 @@ Hello &lt;span style="color:black"&gt;&lt;%= user %&gt;&lt;/span&gt;!
 Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特別に用意しています。
 </p>
 <p>またプレゼンテーションロジックファイルにおいてRuby on Rails特有の関数を使う場合は、
-「<code>&lt;% <i>...</i> %&gt;</code>」や「<code>&lt;%= <i>...</i> %&gt;</code>」を使います（もちろん、プレゼンテーションデータファイルに直接埋め込んでもよいです）。
+「<code>&lt;% <em>...</em> %&gt;</code>」や「<code>&lt;%= <em>...</em> %&gt;</code>」を使います（もちろん、プレゼンテーションデータファイルに直接埋め込んでもよいです）。
 </p>
 <p>プレゼンテーションデータ(list.html)：
 </p>
@@ -1368,18 +1368,18 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
     &lt;th width="80%"&gt;Recipe&lt;/th&gt;
     &lt;th width="20%"&gt;Date&lt;/th&gt;
    &lt;/tr&gt;
-   &lt;tr <b>id="mark:recipes"</b>&gt;
-    &lt;td&gt;&lt;a href="..." <b>id="mark:recipe_title"</b>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
-    &lt;td <b>id="mark:recipe_date"</b>&gt;2004 November 11&lt;/td&gt;
+   &lt;tr <strong>id="mark:recipes"</strong>&gt;
+    &lt;td&gt;&lt;a href="..." <strong>id="mark:recipe_title"</strong>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
+    &lt;td <strong>id="mark:recipe_date"</strong>&gt;2004 November 11&lt;/td&gt;
    &lt;/tr&gt;
-   &lt;tr <b>id="dummy:d1"</b>&gt;
+   &lt;tr <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;&lt;a href="..."&gt;Ice Water&lt;/a&gt;&lt;/td&gt;
     &lt;td&gt;2004 November 11&lt;/td&gt;
    &lt;/tr&gt;
   &lt;/table&gt;
 
   &lt;p&gt;
-   &lt;a href="..." <b>id="mark:recipe_new"</b>&gt;Create new recipe&lt;/a&gt;
+   &lt;a href="..." <strong>id="mark:recipe_new"</strong>&gt;Create new recipe&lt;/a&gt;
   &lt;/p&gt;
 
  &lt;/body&gt;
@@ -1427,7 +1427,7 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
 </pre>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz <b>-Rails</b> -p list.plogic list.html &gt; list.rhtml
+<pre class="terminal">$ kwartz <strong>-Rails</strong> -p list.plogic list.html &gt; list.rhtml
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1456,7 +1456,7 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>なお「<code>X(&lt;%= <i>expression</i> %&gt;)</code>」とすれば、<i>expression</i>をサニタイズせずに出力できます。
+<p>なお「<code>X(&lt;%= <em>expression</em> %&gt;)</code>」とすれば、<em>expression</em>をサニタイズせずに出力できます。
 </p>
 <br>
 
@@ -1488,8 +1488,8 @@ Kwartz-rubyでは、これをまとめて行うコマンドオプション「<code>-Rails</code>」を特
 </pre>
 <p>コンパイル：
 </p>
-<pre class="terminal">$ kwartz -l eruby <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.rb
-$ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
+<pre class="terminal">$ kwartz -l eruby <strong>-a defun</strong> -p hoge1.plogic hoge1.html &gt; hoge1.rb
+$ kwartz -l php   <strong>-a defun</strong> -p hoge1.plogic hoge1.html &gt; hoge1.php
 </pre>
 <p>出力用スクリプト：
 </p>
@@ -1533,14 +1533,14 @@ $ kwartz -l php   <b>-a defun</b> -p hoge1.plogic hoge1.html &gt; hoge1.php
 <p>関数は2つ定義されます。どちらでもお好きなほうをお使いください。
 </p>
 <ul type="disc">
-<li>引数をハッシュで与える関数<code>view_<i>filename</i>()</code>
+<li>引数をハッシュで与える関数<code>view_<em>filename</em>()</code>
 </li>
-<li>引数を明示的に指定する関数<code>_view_<i>filename</i>()</code>
+<li>引数を明示的に指定する関数<code>_view_<em>filename</em>()</code>
 </li>
 </ul>
-<p>コマンドラインオプション「<code>-C <i>name</i></code>」でクラス名またはモジュール名を、
-「<code>-F <i>name</i></code>」で関数名またはメソッド名を、
-「<code>-A <i>name</i></code>」で引数を指定できます。
+<p>コマンドラインオプション「<code>-C <em>name</em></code>」でクラス名またはモジュール名を、
+「<code>-F <em>name</em></code>」で関数名またはメソッド名を、
+「<code>-A <em>name</em></code>」で引数を指定できます。
 また設定ファイルの「DEFUN_CLASS」でクラス名またはモジュール名を、
 「DEFUN_FUNCTION」で関数名またはメソッド名を指定できます。
 </p>

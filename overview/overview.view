@@ -82,7 +82,7 @@ Last &gt;&gt;|<% end %>
 
 <% if page != 0 then %>
       <div id="main_image" style="text-align:center; margin:20px 20px 20px 20px">
-        <a href="img/overview_01.png" src="<%= image_url %>"><img src="<%= image_url %>" alt="presentaion image" /></a>
+        <a href="<%= image_url %>"><img src="<%= image_url %>" alt="presentaion image" /></a>
       </div>
 <% end %>
 

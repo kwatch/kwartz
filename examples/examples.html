@@ -19,6 +19,26 @@
 
 <p>This document shows you examples of Kwartz, especially in Ruby.
 </p>
+<ul>
+  <li><a href="#border1">Bordered Table 1</a>
+  </li>
+  <li><a href="#border2">Bordered Table 2</a>
+  </li>
+  <li><a href="#bordered3">Bordered Table 3</a>
+  </li>
+  <li><a href="#form1">HTML Form</a>
+  </li>
+  <li><a href="#breadcrumbs">Breadcrumbs</a>
+  </li>
+  <li><a href="#calendar">Calendar</a>
+  </li>
+  <li><a href="#thumbnail">Thumbnail</a>
+  </li>
+  <li><a href="#pagelayout">Page Layout</a>
+  </li>
+  <li><a href="#rails1">Rails</a>
+  </li>
+</ul>
 <a name="border1"></a>
 <h2 class="section1">Bordered Table 1</h2>
 <div class="program_caption">
@@ -2631,8 +2651,8 @@ print erb.result(binding())
 <div class="terminal_caption">
 Compile and execution:</div>
 <pre class="terminal">### compile
-% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
-% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
+% kwartz -p menu.plogic,page.plogic <strong>-i menu.html,page1.html</strong> layout.html &gt; page1.view
+% kwartz -p menu.plogic,page.plogic <strong>-i menu.html,page2.html</strong> layout.html &gt; page2.view
 
 ### execution
 % ruby main.rb &gt; result1.html
@@ -3283,10 +3303,10 @@ Compile and execution:</div>
 Compile:</div>
 <pre class="terminal">### compile
 % kwartz -Rails -e -p recipes.plogic recipes.html &gt; recipes.rhtml
-% kwartz -Rails -e -p list.plogic <b>--extract=content</b> list.html &gt; list.rhtml
-% kwartz -Rails -e -p show.plogic <b>--extract=content</b> show.html &gt; show.rhtml
-% kwartz -Rails -e -p new.plogic  <b>--extract=content</b> new.html  &gt; new.rhtml
-% kwartz -Rails -e -p edit.plogic <b>--extract=content</b> edit.html &gt; edit.rhtml
+% kwartz -Rails -e -p list.plogic <strong>--extract=content</strong> list.html &gt; list.rhtml
+% kwartz -Rails -e -p show.plogic <strong>--extract=content</strong> show.html &gt; show.rhtml
+% kwartz -Rails -e -p new.plogic  <strong>--extract=content</strong> new.html  &gt; new.rhtml
+% kwartz -Rails -e -p edit.plogic <strong>--extract=content</strong> edit.html &gt; edit.rhtml
 </pre>
 <div class="program_caption">
 <a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):</div>

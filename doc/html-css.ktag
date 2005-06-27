@@ -416,3 +416,11 @@ end_tag   = <<END
 END
 tagtable.regist(Kwaser::Note, begin_tag, end_tag)
 
+
+
+### --------------------
+### Inline
+### --------------------
+tagtable.regist(Kwaser::Bold,    '<strong>',  '</strong>')
+tagtable.regist(Kwaser::Italic,  '<em>',      '</em>')
+
