@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
-    <title>MyGroupware: Quoting Detail</title>
+    <title>Quoting Detail</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="design.css">
   </head>
@@ -13,7 +13,7 @@
         <!-- menu part -->
         <td width="100" valign="top" class="menu_part">
           <b>Menu:</b>
-          <div>
+          <div class="menulist">
 <% for menu in menulist do %>
     <ul>
       <li><a href="<%= menu[:url] %>"><%= menu[:label] %></a></li>
@@ -25,8 +25,7 @@
         <!-- content part -->
         <td width="400" valign="top" class="contents_part">
           <h3>Quoting Detail</h3>
-          <div>
-    <div>
+          <div class="contents">
       <table>
         <tbody>
           <tr>
@@ -50,7 +49,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
           </div>
         </td>
 

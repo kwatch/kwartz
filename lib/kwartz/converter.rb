@@ -91,21 +91,12 @@ module Kwartz
          @is_whole_line = @is_begline && @is_endline
          @prev_last_char = @tag_str[-1]
 
-         #if @is_begline && @is_endline
-         #   # nothing
-         #else
-         #   @before_text += @before_space
-         #   @before_space = ''
-         #   @after_text   = @after_space + @after_text
-         #   @after_space  = ''
-         #end
-         if @tagname == 'span'
-            unless @is_begline && @is_endline
-               @before_text += @before_space
-               @before_space = ''
-               @after_text   = @after_space + @after_text
-               @after_space  = ''
-            end
+         if !@is_begline && !@is_endline  ## && @tagname == 'span'
+            @before_text += @before_space
+            @before_space = ''
+            @after_text   = @after_space + @after_text
+            @after_space  = ''
+            @tag_str.strip!
          end
 
          @input    = @after_text

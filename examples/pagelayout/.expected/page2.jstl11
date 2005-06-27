@@ -1,21 +1,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
-    <title>MyGroupware: Stock Quoting</title>
+    <title>Stock Quoting</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <link rel="stylesheet" type="text/css" href="design.css">
   </head>
   <body>
 
-    <table border="0">
+    <table border="0" summary="">
       <tr>
 
         <!-- menu part -->
-        <td width="100" valign="top" class="menulist">
+        <td width="100" valign="top" class="menu_part">
           <b>Menu:</b>
-          <div>
+          <div class="menulist">
 <c:forEach var="menu" items="${menulist}">
     <ul>
       <li><a href="<c:out value="${menu['url']}" escapeXml="false"/>"><c:out value="${menu['label']}" escapeXml="false"/></a></li>
@@ -25,10 +25,9 @@
         </td>
 
         <!-- content part -->
-        <td width="400" valign="top" class="contents">
+        <td width="400" valign="top" class="contents_part">
           <h3>Stock Quoting</h3>
-          <div>
-    <div>
+          <div class="contents">
       <table>
         <thead>
           <tr>
@@ -52,7 +51,6 @@
 </c:forEach>
         </tbody>
       </table>
-    </div>
           </div>
         </td>
 

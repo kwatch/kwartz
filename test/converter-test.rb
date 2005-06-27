@@ -1909,21 +1909,21 @@ END
 	expected = <<-'END'
 		:block
 		  :print
-		    "Hello"
+		    "Hello  "
 		  @element(user1)
 		  :print
-		    "!\nHello  "
+		    "  !\nHello  "
 		  @element(user2)
 		  :print
-		    "  !\nHello"
+		    "  !\nHello  "
 		  :print
-		    "  <div>  "
+		    "<div>"
 		  :print
 		    user3
 		  :print
-		    "  </div>  "
+		    "</div>"
 		  :print
-		    "!\nHello  "
+		    "  !\nHello  "
 		  :print
 		  :print
 		    user4
@@ -1937,9 +1937,9 @@ END
 		[content]
 		:block
 		  :print
-		    "World"
+		    "  World  "
 		[spaces]
-		["  ", "  ", "  ", "  "]
+		["", "", "", ""]
 		[plogic]
 		:block
 		  @stag

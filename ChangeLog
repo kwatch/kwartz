@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-27 rev.94
+	.- [change] spaces around span tag is not included in @stag and @etag only if they are not beginning of line nor end of line ([bug#1228039])
+	.- [change] update examples/*/.expected/*.*
+
 .: 2005-06-27 rev.93
 	.- [bugfix] spaces around span tag is not included in @stag and @etag ([bug#1228039])
 

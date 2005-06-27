@@ -10,6 +10,8 @@ recipe :all								do |r|
 	end
 
 recipe :clean								do |r|
-	files = langs.collect { |lang| "page.#{lang}" }
+	files = []
+	files.concat langs.collect { |lang| "page1.#{lang}" }
+	files.concat langs.collect { |lang| "page2.#{lang}" }
 	rm_rf files
 	end

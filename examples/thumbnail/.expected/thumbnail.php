@@ -3,15 +3,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1">
     <title>Kwartz - a template system for Ruby, PHP and Java (brief overview)</title>
-    <style type="text/css">
-      <!--
-        body   {background-color:#FFFFFF;}
-        -->
-    </style>
   </head>
-  
-  <body>
-    
+
+  <body style="background-color:#FFFFFF">
+
 <?php if ($page > 0) { ?>
     <div align="center">
 <?php   if ($first_url) { ?>
@@ -30,9 +25,9 @@
 Index<?php } ?>
       &nbsp;
 <?php   if ($next_url) { ?>
-      <a href="<?php echo $next_url; ?>"><b>Next &gt;</b></a>
+      <a href="<?php echo $next_url; ?>"><strong>Next &gt;</strong></a>
 <?php   } else { ?>
-<b>Next &gt;</b><?php } ?>
+<strong>Next &gt;</strong><?php } ?>
       &nbsp;
 <?php   if ($last_url) { ?>
       <a href="<?php echo $last_url; ?>">Last &gt;&gt;|</a>
@@ -48,29 +43,29 @@ Last &gt;&gt;|<?php } ?>
 <?php     $i += 1; ?>
 <?php     $link_url = $thumb['link_url']; ?>
 <?php     $image_url = $thumb['image_url']; ?>
-      <a href="<?php echo $link_url; ?>"><img width="200" height="150"
-         src="<?php echo $image_url; ?>" ></a>
+      <a href="<?php echo $link_url; ?>"><!--
+    --><img width="200" height="150" src="<?php echo $image_url; ?>"></a>
 <?php     if ($i % 3 == 0) { ?>
       <br>
 <?php     } ?>
 <?php   } ?>
 <?php } ?>
     </div>
-      
+
 <?php if ($page != 0) { ?>
     <div id="main_image" align="center">
       <br>
       <table border="1">
         <tr>
           <td>
-            <img src="<?php echo $image_url; ?>" alt="presentaion image" >
+            <img src="<?php echo $image_url; ?>" alt="presentaion image">
           </td>
         </tr>
       </table>
       <br>
     </div>
 <?php } ?>
-    
+
 <?php if ($page > 0) { ?>
     <div align="center">
 <?php   if ($first_url) { ?>
@@ -89,9 +84,9 @@ Last &gt;&gt;|<?php } ?>
 Index<?php } ?>
       &nbsp;
 <?php   if ($next_url) { ?>
-      <a href="<?php echo $next_url; ?>"><b>Next &gt;</b></a>
+      <a href="<?php echo $next_url; ?>"><strong>Next &gt;</strong></a>
 <?php   } else { ?>
-<b>Next &gt;</b><?php } ?>
+<strong>Next &gt;</strong><?php } ?>
       &nbsp;
 <?php   if ($last_url) { ?>
       <a href="<?php echo $last_url; ?>">Last &gt;&gt;|</a>
@@ -100,12 +95,5 @@ Last &gt;&gt;|<?php } ?>
     </div>
 <?php } ?>
 
-    <!--
-    <div id="counter" align="right">
-      <img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&dd=A&ft=0&tr=T&trgb=000000&prgb=CCCCCC&md=7"
-        alt="counter image file">
-    </div>
-      -->
-    
   </body>
 </html>

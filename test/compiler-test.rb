@@ -1289,9 +1289,9 @@ END
 }
 END
       expected = <<'END'
-Hello<%= var1 %>!
+Hello  <%= var1 %>  !
 Hello  <%= var2 %>  !
-Hello  <div>  <%= user3 %>  </div>  !
+Hello  <div><%= user3 %></div>  !
 Hello  <%= user4 %>  !
 END
       _test(pdata, plogic, expected)
