@@ -27,7 +27,7 @@ begin_tag = Proc.new do |attrs, tagtable|
     desc       = attrs['description'] || attrs['desc']
     charset    = attrs['charset'] || context[:charset]
     lang       = attrs['lang']    || context[:lang]
-    stylesheet = attrs['stylesheet']# || context[:stylesheet] || 'html-css.css'
+    stylesheet = attrs['stylesheet'] || context[:stylesheet] || 'html-css.css'
     #outer_header = $var['outer_header']
     #inner_header = $var['inner_header']
     s = ''
@@ -350,7 +350,7 @@ tagtable.regist(Kwaser::DefinitionListWord2, "<dt class=\"dt2\">\n", "</dt>\n")
 tagtable.regist(Kwaser::DefinitionListDesc2, "<dd class=\"dd2\">\n", "</dd>\n")
 
 tagtable.regist(Kwaser::DefinitionList3,     _proc_dl("dl3"),        "</dl>\n")
-tagtable.regist(Kwaser::DefinitionListWord3, "<dt class=\"dt3\"><b>\n", "</b></dt>\n")
+tagtable.regist(Kwaser::DefinitionListWord3, "<dt class=\"dt3\"><strong>\n", "</strong></dt>\n")
 tagtable.regist(Kwaser::DefinitionListDesc3, "<dd class=\"dd3\">\n", "</dd>\n")
 
 

@@ -3,6 +3,10 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-27 rev.91
+	.- [change] examples/examples.txt update
+	.- [change] doc/docstyle.css update
+
 .: 2005-06-26 rev.90
 	.- [change] examples/{pagelayout,thumbnail} updated
 

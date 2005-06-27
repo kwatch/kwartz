@@ -1,218 +1,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="ja">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+  <meta http-equiv="Content-Type" content="text/html">
   <title>Kwartz Examples</title>
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
-
-  <style type="text/css">
-   <!--
-
-body		{
-		background-color:#FFFFFF;
-		}
-.mainbody	{
-		color:#333333;
-		line-height:150%;
-		}
-
-a:link, a:active, a:hover {
-		color:#CC6600;
-		}
-a:visited	{
-		color:#DD9900;
-		}
-
-p		{
-		color:#333333;
-		line-height:150%;
-		}
-
-pre		{
-		width: 100%;
-		line-height:130%;
-		white-space:pre;
-		}
-.program	{
-		border-style:solid;
-		border-width:2;
-		border-color:#6699FF;
-		color:#333333;
-		background-color:#DDEEFF;
-		padding:8 9 8 9;
-		margin:0;
-		word-break:keep-all;
-		}
-.terminal	{
-		border-style:solid;
-		border-width:1;
-		border-color:#FFFFFF;
-		color:#333333;
-		background-color:#E0E0E0;
-		padding:9 10 9 10;
-		margin:0;
-		word-break:keep-all;
-		}
-.output		{
-		border-style:solid;
-		border-width:2;
-		border-color:#CCCCCC;
-		color:#333333;
-		background-color:#FFFFFF;
-		padding:8 9 8 9;
-		margin:0;
-		word-break:keep-all;
-		}
-.program_caption {
-		}
-.terminal_caption {
-		}
-.output_caption {
-		}
-
-
-ul,ol,dl	{
-	 	Xmargin:0px;
-		Xpadding:0px;
-		color:#333333;
-		line-height:130%;
-		}
-
-.dt2, .dt3	{
-		font-weight:bold;
-		}
-
-.table1		{
-		padding:2;
-		color:#333333;
-		background-color:#DDDDCC;
-		line-height:130%;
-		Xborder-width:1;
-		Xborder-style:solid;
-		Xborder-color:#FFFFFF;
-		margin:5;
-		}
-.th1, .th2	{
-		padding:1;
-		color:#333333;
-		Xbackground-color:#DDDDCC;
-		background-color:#CCCCBB;
-		line-height:130%;
-		}
-.td1, .th2	{
-		padding:1;
-		color:#333333;
-		background-color:#EEEEDD;
-		line-height:130%;
-		}
-.caption1, .caption2 {
-		Xfont-size:x-small;
-		color:#333333;
-		}
-.table2		{
-		padding:1;
-		color:#333333;
-		background-color:#DDDDCC;
-		line-height:130%;
-		Xborder-width:1;
-		Xborder-style:solid;
-		Xborder-color:#FFFFFF;
-		margin:5;
-		}
-
-h1, .chapter, .doctitle {
-	  	Xfont-size:20pt;
-		color:#333333;
-	 	font-weight:bold;
-		padding:30 0 10 0;
-		}
-h2, .section	{
-		Xfont-size:16pt;
-		color:#333333;
-		font-weight:bold;
-		border-style:solid;
-		border-color:#6699FF;
-		border-width:0 0 2 30;
-		padding:10 20 0 5;
-		}
-h3, .subsection	{
-		Xfont-size:12pt;
-		color:#333333;
-		font-weight:bold;
-		border-style:solid;
-		border-color:#6699FF;
-		border-width: 0 0 0 15;
-		padding: 10 20 0 5;
-		}
-
-.em		{
-		font-weight:bold;
-		}
-
-.toc		{
-		font-size:small;
-		line-height:100%;
-		}
-.footnote	{
-		font-size:small;
-		}
-.note		{
-		background-color:#FFFFDD;
-		border-style:solid;
-		border-width:0 1 0 1;
-		border-color:#DDDD66;
-		color:#333300;
-		Xfont-size:small;
-		line-height:120%;
-		padding: 5 20 5 20;
-		}
-.figure		{
-		Xborder-width:1;
-		Xborder-color:#DDDD66;
-		Xwhite-space:pre;
-		}
-
-   -->
-  </style>
-
+  <link rel="stylesheet" href="docstyle.css" type="text/css">
  </head>
  <body>
 
   <blockquote>
    <div class="mainbody">
-    <div align="left"><h1>Kwartz Examples</h1></div>
 
+    <div align="left"><h1>Kwartz Examples</h1></div>
     <div align="left">
       last update: $Date$<br>
     </div>
 
 <p>This document shows you examples of Kwartz, especially in Ruby.
 </p>
-<ul>
-  <li><a href="#border1">Bordered Table 1</a>
-  </li>
-  <li><a href="#border2">Bordered Table 2</a>
-  </li>
-  <li><a href="#bordered3">Bordered Table 3</a>
-  </li>
-  <li><a href="#form1">HTML Form</a>
-  </li>
-  <li><a href="#breadcrumbs">Breadcrumbs</a>
-  </li>
-  <li><a href="#calendar">Calendar</a>
-  </li>
-  <li><a href="#thumbnail">Thumbnail</a>
-  </li>
-  <li><a href="#pagelayout">Page Layout</a>
-  </li>
-  <li><a href="#rails1">Rails</a>
-  </li>
-</ul>
 <a name="border1"></a>
 <h2 class="section1">Bordered Table 1</h2>
-<p><a href="border1/border1.html">border1.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="border1/border1.html">border1.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -221,11 +31,11 @@ h3, .subsection	{
         &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-        &lt;tr bgcolor="#FFCCCC" <b>id="user_list"</b>&gt;
-          &lt;td <b>id="name"</b>&gt;Foo&lt;/td&gt;
-          &lt;td&gt;&lt;a href="mailto:foo@email.com" <b>id="email"</b>&gt;foo@email.com&lt;/a&gt;&lt;/td&gt;
+        &lt;tr bgcolor="#FFCCCC" <strong>id="user_list"</strong>&gt;
+          &lt;td <strong>id="name"</strong>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:foo@email.com" <strong>id="email"</strong>&gt;foo@email.com&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
-        &lt;tr bgcolor="#CCCCFF" <b>id="dummy"</b>&gt;
+        &lt;tr bgcolor="#CCCCFF" <strong>id="dummy"</strong>&gt;
           &lt;td&gt;Foo&lt;/td&gt;
           &lt;td&gt;&lt;a href="mailto:bar@emai.net"&gt;bar@email.net&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
@@ -235,8 +45,8 @@ h3, .subsection	{
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border1/border1.plogic">border1.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="border1/border1.plogic">border1.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {
         attrs:   "bgcolor" color;   // set bgcolor attribute value
         remove:  "id";              // remove id attribute
@@ -267,8 +77,8 @@ h3, .subsection	{
         plogic: { }                 // remove an element
 }
 </pre>
-<p><a href="border1/border1.rb">border1.rb</a> (main program):
-</p>
+<div class="program_caption">
+<a href="border1/border1.rb">border1.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -287,16 +97,16 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border1.plogic border1.html &gt; border1.view
 
 ### execution
 % ruby border1.rb &gt; result.html
 </pre>
-<p><a href="border1/border1.view">border1.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="border1/border1.view">border1.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -320,8 +130,8 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border1/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="border1/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -357,8 +167,8 @@ print erb.result(binding())
 
 <a name="border2"></a>
 <h2 class="section1">Bordered Table 2</h2>
-<p><a href="border2/border2.html">border2.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="border2/border2.html">border2.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -367,11 +177,11 @@ print erb.result(binding())
         &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
       &lt;tbody&gt;
-        &lt;tr bgcolor="#FFCCCC" <b>id="mark:user_list"</b>&gt;
-          &lt;td <b>id="value:name"</b>&gt;Foo&lt;/td&gt;
-          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
+        &lt;tr bgcolor="#FFCCCC" <strong>id="mark:user_list"</strong>&gt;
+          &lt;td <strong>id="value:name"</strong>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<strong>@{email}@</strong>" <strong>id="value:email"</strong>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
-        &lt;tr bgcolor="#CCCCFF" <b>id="dummy:d1"</b>&gt;
+        &lt;tr bgcolor="#CCCCFF" <strong>id="dummy:d1"</strong>&gt;
           &lt;td&gt;Bar&lt;/td&gt;
           &lt;td&gt;&lt;a href="bar@mail.net"&gt;bar@mail.net&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
@@ -381,8 +191,8 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border2/border2.plogic">border2.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="border2/border2.plogic">border2.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {                        // id attribute is removed automatically
         attrs:   "bgcolor" color;   // set bgcolor attribute value
         plogic:  {
@@ -399,8 +209,8 @@ print erb.result(binding())
         }
 }
 </pre>
-<p><a href="border2/border2.rb">border2.rb</a> (main program):
-</p>
+<div class="program_caption">
+<a href="border2/border2.rb">border2.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -419,16 +229,16 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border2.plogic border2.html &gt; border2.view
 
 ### execution
 % ruby border2.rb &gt; result.html
 </pre>
-<p><a href="border2/border2.view">border2.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="border2/border2.view">border2.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -454,8 +264,8 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border2/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="border2/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -491,8 +301,8 @@ print erb.result(binding())
 
 <a name="bordered3"></a>
 <h2 class="section1">Bordered Table 3</h2>
-<p><a href="border3/border3.html">border3.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="border3/border3.html">border3.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -500,14 +310,14 @@ print erb.result(binding())
       &lt;thead&gt;
         &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;E-Mail&lt;/th&gt;
       &lt;/thead&gt;
-      &lt;tbody <b>id="mark:user_list"</b>&gt;
-        &lt;tr bgcolor="#FFCCCC" <b>id="mark:odd"</b>&gt;
-          &lt;td <b>id="value:name"</b>&gt;Foo&lt;/td&gt;
-          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
+      &lt;tbody <strong>id="mark:user_list"</strong>&gt;
+        &lt;tr bgcolor="#FFCCCC" <strong>id="mark:odd"</strong>&gt;
+          &lt;td <strong>id="value:name"</strong>&gt;Foo&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<strong>@{email}@</strong>" <strong>id="value:email"</strong>&gt;foo@mail.com&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
-        &lt;tr bgcolor="#CCCCFF" <b>id="mark:even"</b>&gt;
-          &lt;td <b>id="value:name"</b>&gt;Bar&lt;/td&gt;
-          &lt;td&gt;&lt;a href="mailto:<b>@{email}@</b>" <b>id="value:email"</b>&gt;bar@mail.net&lt;/a&gt;&lt;/td&gt;
+        &lt;tr bgcolor="#CCCCFF" <strong>id="mark:even"</strong>&gt;
+          &lt;td <strong>id="value:name"</strong>&gt;Bar&lt;/td&gt;
+          &lt;td&gt;&lt;a href="mailto:<strong>@{email}@</strong>" <strong>id="value:email"</strong>&gt;bar@mail.net&lt;/a&gt;&lt;/td&gt;
         &lt;/tr&gt;
       &lt;/tbody&gt;
     &lt;/table&gt;
@@ -515,8 +325,8 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border3/border3.plogic">border3.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="border3/border3.plogic">border3.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {
         plogic:   {
             @stag;                  // start tag
@@ -535,8 +345,8 @@ print erb.result(binding())
         }
 }
 </pre>
-<p><a href="border3/border3.rb">border3.rb</a> (main program):
-</p>
+<div class="program_caption">
+<a href="border3/border3.rb">border3.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -555,16 +365,16 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border3.plogic border3.html &gt; border3.view
 
 ### execution
 % ruby border3.rb &gt; result.html
 </pre>
-<p><a href="border3/border3.view">border3.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="border3/border3.view">border3.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -596,8 +406,8 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="border3/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="border3/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -633,8 +443,8 @@ print erb.result(binding())
 
 <a name="form1"></a>
 <h2 class="section1">HTML Form</h2>
-<p><a href="form1/register.html">register.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="form1/register.html">register.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
  &lt;head&gt;
   &lt;style type="text/css"&gt;
@@ -650,12 +460,12 @@ print erb.result(binding())
  &lt;body&gt;
   &lt;form action="register.rbx" method="POST"&gt;
 
-   &lt;span <b>id="if:error_list!=null"</b>&gt;
-    &lt;font color="#FF0000" <b>id="foreach:error=error_list"</b>&gt;
-     &lt;span <b>id="value:error"</b>&gt;Name is empty.&lt;/span&gt;&lt;br&gt;
+   &lt;span <strong>id="if:error_list!=null"</strong>&gt;
+    &lt;font color="#FF0000" <strong>id="foreach:error=error_list"</strong>&gt;
+     &lt;span <strong>id="value:error"</strong>&gt;Name is empty.&lt;/span&gt;&lt;br&gt;
     &lt;/font&gt;
    &lt;/span&gt;
-   &lt;span <b>id="else:"</b>&gt;
+   &lt;span <strong>id="else:"</strong>&gt;
     Enter your personal information:
    &lt;/span&gt;
 
@@ -664,22 +474,22 @@ print erb.result(binding())
     &lt;tr&gt;
      &lt;td class="label"&gt;Name:&lt;/td&gt;
      &lt;td&gt;
-      &lt;input type="text" name="name" size="20" <b>id="name"</b> /&gt;
+      &lt;input type="text" name="name" size="20" <strong>id="name"</strong> /&gt;
      &lt;/td&gt;
     &lt;/tr&gt;
 
     &lt;tr&gt;
      &lt;td class="label"&gt;Gender:&lt;/td&gt;
      &lt;td&gt;
-      &lt;input type="radio" name="gender" value="M" <b>id="mark:gender_m"</b> /&gt;Man
+      &lt;input type="radio" name="gender" value="M" <strong>id="mark:gender_m"</strong> /&gt;Man
       &amp;nbsp;
-      &lt;input type="radio" name="gender" value="W" <b>id="mark:gender_w"</b> /&gt;Woman
+      &lt;input type="radio" name="gender" value="W" <strong>id="mark:gender_w"</strong> /&gt;Woman
      &lt;/td&gt;
     &lt;/tr&gt;
 
     &lt;tr&gt;
      &lt;td colspan="2" align="center"&gt;
-      &lt;input type="submit" value=" Regist "&gt;
+      &lt;input type="submit" value=" Register "&gt;
       &lt;input type="reset"  value="reset"&gt;
      &lt;/td&gt;
     &lt;/tr&gt;
@@ -689,8 +499,8 @@ print erb.result(binding())
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="form1/register.plogic">register.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="form1/register.plogic">register.plogic</a> (presentation logic):</div>
 <pre class="program">#name {
     attrs: "value" name;
 }
@@ -705,22 +515,22 @@ print erb.result(binding())
     append: C(gender=='M');
 }
 </pre>
-<p><a href="form1/finish.html">finish.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="form1/finish.html">finish.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
  &lt;body&gt;
   Registration has finished with the following data:&lt;br&gt;
   &lt;br&gt;
   Name:
-   &lt;span <b>id="value:name"</b>&gt;Foo&lt;/span&gt;&lt;br&gt;
+   &lt;span <strong>id="value:name"</strong>&gt;Foo&lt;/span&gt;&lt;br&gt;
   Gender:
-   &lt;span <b>id="if:gender=='M'"</b>&gt;Man&lt;/span&gt;
-   &lt;span <b>id="else:"</b>&gt;Woman&lt;/span&gt;
+   &lt;span <strong>id="if:gender=='M'"</strong>&gt;Man&lt;/span&gt;
+   &lt;span <strong>id="else:"</strong>&gt;Woman&lt;/span&gt;
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="form1/register.rbx">register.rbx</a> (main program):
-</p>
+<div class="program_caption">
+<a href="form1/register.rbx">register.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## get parameters
@@ -758,8 +568,8 @@ trim_mode = 1
 print cgi.header
 print ERB.new(str, $SAFE, trim_mode).result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -e -p register.plogic register.html &gt; register.view
 % kwartz -l eruby -e                    finish.html   &gt; finish.view
@@ -767,8 +577,8 @@ print ERB.new(str, $SAFE, trim_mode).result(binding())
 ### execution
 % ruby form1.rb &gt; result.html
 </pre>
-<p><a href="form1/register.view">register.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="form1/register.view">register.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
  &lt;head&gt;
   &lt;style type="text/css"&gt;
@@ -814,7 +624,7 @@ print ERB.new(str, $SAFE, trim_mode).result(binding())
 
     &lt;tr&gt;
      &lt;td colspan="2" align="center"&gt;
-      &lt;input type="submit" value=" Regist "&gt;
+      &lt;input type="submit" value=" Register "&gt;
       &lt;input type="reset"  value="reset"&gt;
      &lt;/td&gt;
     &lt;/tr&gt;
@@ -824,8 +634,8 @@ print ERB.new(str, $SAFE, trim_mode).result(binding())
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="form1/finish.view">finish.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="form1/finish.view">finish.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
  &lt;body&gt;
   Registration has finished with the following data:&lt;br&gt;
@@ -846,25 +656,25 @@ print ERB.new(str, $SAFE, trim_mode).result(binding())
 
 <a name="breadcrumbs"></a>
 <h2 class="section1">Breadcrumbs</h2>
-<p><a href="breadcrumbs/breadcrumbs.html">breadcrumbs.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="breadcrumbs/breadcrumbs.html">breadcrumbs.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
-    &lt;div <b>id="breadcrumbs"</b>&gt;
-      &lt;a href="/" <b>id="mark:crumb"</b>&gt;Home&lt;/a&gt;
-      &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
+    &lt;div <strong>id="breadcrumbs"</strong>&gt;
+      &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
+      &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
       &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
       &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
       &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;span <b>id="mark:title"</b>&gt;Page Titlte&lt;/span&gt;
+      &lt;span <strong>id="mark:title"</strong>&gt;Page Titlte&lt;/span&gt;
     &lt;/div&gt;
 
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="breadcrumbs/breadcrumbs.plogic">breadcrumbs.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="breadcrumbs/breadcrumbs.plogic">breadcrumbs.plogic</a> (presentation logic):</div>
 <pre class="program">#breadcrumbs {
         plogic: {
             @stag;
@@ -886,8 +696,8 @@ print ERB.new(str, $SAFE, trim_mode).result(binding())
         value: title;
 }
 </pre>
-<p><a href="breadcrumbs/breadcrumbs.rb">breadcrumbs.rb</a> (main program):
-</p>
+<div class="program_caption">
+<a href="breadcrumbs/breadcrumbs.rb">breadcrumbs.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set breadcrumbs
@@ -908,16 +718,16 @@ str = File.open(filename) { |f| f.read }  ## or File.read(filename)
 trim_mode = 2
 ERB.new(str, $SAFE, trim_mode).run(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p breadcrumbs.plogic breadcrumbs.html &gt; breadcrumbs.view
 
 ### execution
 % ruby breadcrumbs.rb &gt; result.html
 </pre>
-<p><a href="breadcrumbs/breadcrumbs.view">breadcrumbs.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="breadcrumbs/breadcrumbs.view">breadcrumbs.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -932,8 +742,8 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="breadcrumbs/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="breadcrumbs/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -957,9 +767,9 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
 
 <a name="calendar"></a>
 <h2 class="section1">Calendar</h2>
-<p><a href="calendar/calendar-month.html">calendar-month.html</a> (presentation data):
-</p>
-<pre class="program">&lt;html <b>id="mark:document"</b>&gt;
+<div class="program_caption">
+<a href="calendar/calendar-month.html">calendar-month.html</a> (presentation data):</div>
+<pre class="program">&lt;html <strong>id="mark:document"</strong>&gt;
   &lt;head&gt;
     &lt;title&gt;Calendar Month Template&lt;/title&gt;
     &lt;style type="text/css"&gt;
@@ -970,11 +780,11 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
     &lt;/style&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;span <b>id="mark:calendar_month"</b>&gt;
+    &lt;span <strong>id="mark:calendar_month"</strong>&gt;
             &lt;!-- calendar-month --&gt;
-            &lt;table cellpadding="2" summary="calendar of <b>@{month}@, @{year}@</b>"&gt;
+            &lt;table cellpadding="2" summary="calendar of <strong>@{month}@, @{year}@</strong>"&gt;
               &lt;caption&gt;
-                &lt;i <b>id="value:month"</b>&gt;Jan&lt;/i&gt;&amp;nbsp;&lt;i <b>id="value:year"</b>&gt;20XX&lt;/i&gt;
+                &lt;i <strong>id="value:month"</strong>&gt;Jan&lt;/i&gt;&amp;nbsp;&lt;i <strong>id="value:year"</strong>&gt;20XX&lt;/i&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -983,31 +793,31 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
                 &lt;/tr&gt;
               &lt;/thead&gt;
               &lt;tbody&gt;
-                &lt;tr <b>id="mark:week"</b>&gt;
-                  &lt;td&gt;&lt;span <b>id="mark:day"</b> class="holiday"&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
-                  &lt;td <b>id="dummy:d1"</b>&gt;&amp;nbsp;&lt;/td&gt;
-                  &lt;td <b>id="dummy:d2"</b>&gt;1&lt;/td&gt;
-                  &lt;td <b>id="dummy:d3"</b>&gt;2&lt;/td&gt;
-                  &lt;td <b>id="dummy:d4"</b>&gt;3&lt;/td&gt;
-                  &lt;td <b>id="dummy:d5"</b>&gt;4&lt;/td&gt;
-                  &lt;td <b>id="dummy:d6"</b>&gt;5&lt;/td&gt;
+                &lt;tr <strong>id="mark:week"</strong>&gt;
+                  &lt;td&gt;&lt;span <strong>id="mark:day"</strong> class="holiday"&gt;&amp;nbsp;&lt;/span&gt;&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d1"</strong>&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d2"</strong>&gt;1&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d3"</strong>&gt;2&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d4"</strong>&gt;3&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d5"</strong>&gt;4&lt;/td&gt;
+                  &lt;td <strong>id="dummy:d6"</strong>&gt;5&lt;/td&gt;
                 &lt;/tr&gt;
-                &lt;tr <b>id="dummy:d7"</b>&gt;
+                &lt;tr <strong>id="dummy:d7"</strong>&gt;
                   &lt;td&gt;&lt;span class="holiday"&gt;6&lt;/span&gt;&lt;/td&gt;
                   &lt;td&gt;7&lt;/td&gt;&lt;td&gt;8&lt;/td&gt;&lt;td&gt;9&lt;/td&gt;
                   &lt;td&gt;10&lt;/td&gt;&lt;td&gt;11&lt;/td&gt;&lt;td&gt;12&lt;/td&gt;
                 &lt;/tr&gt;
-                &lt;tr <b>id="dummy:d8"</b>&gt;
+                &lt;tr <strong>id="dummy:d8"</strong>&gt;
                   &lt;td&gt;&lt;span class="holiday"&gt;13&lt;/span&gt;&lt;/td&gt;
                   &lt;td&gt;14&lt;/td&gt;&lt;td&gt;15&lt;/td&gt;&lt;td&gt;16&lt;/td&gt;
                   &lt;td&gt;17&lt;/td&gt;&lt;td&gt;18&lt;/td&gt;&lt;td&gt;19&lt;/td&gt;
                 &lt;/tr&gt;
-                &lt;tr <b>id="dummy:d9"</b>&gt;
+                &lt;tr <strong>id="dummy:d9"</strong>&gt;
                   &lt;td&gt;&lt;span class="holiday"&gt;20&lt;/span&gt;&lt;/td&gt;
                   &lt;td&gt;21&lt;/td&gt;&lt;td&gt;22&lt;/td&gt;&lt;td&gt;23&lt;/td&gt;
                   &lt;td&gt;24&lt;/td&gt;&lt;td&gt;25&lt;/td&gt;&lt;td&gt;26&lt;/td&gt;
                 &lt;/tr&gt;
-                &lt;tr <b>id="dummy:d10"</b>&gt;
+                &lt;tr <strong>id="dummy:d10"</strong>&gt;
                   &lt;td&gt;&lt;span class="holiday"&gt;27&lt;/span&gt;&lt;/td&gt;
                   &lt;td&gt;28&lt;/td&gt;&lt;td&gt;29&lt;/td&gt;&lt;td&gt;30&lt;/td&gt;
                   &lt;td&gt;31&lt;/td&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;
@@ -1020,8 +830,8 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="calendar/calendar-month.plogic">calendar-month.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar-month.plogic">calendar-month.plogic</a> (presentation logic):</div>
 <pre class="program">#document {
         // replace document element by calendar_month element
         plogic:   {
@@ -1079,12 +889,12 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
         }
 }
 </pre>
-<p><a href="calendar/calendar-page.html">calendar-page.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar-page.html">calendar-page.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
-    &lt;title&gt;Calendar&amp;nbs; &lt;span <b>id="value:year"</b>&gt;2004&lt;/span&gt;&lt;/title&gt;
+    &lt;title&gt;Calendar&amp;nbs; &lt;span <strong>id="value:year"</strong>&gt;2004&lt;/span&gt;&lt;/title&gt;
     &lt;style type="text/css"&gt;
       &lt;!--
         .title     {font-size:x-large; font-weight:bold;}
@@ -1095,21 +905,21 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;div <b>id="mark:navi"</b> align="center"&gt;
-      &lt;a href="<b>@{prev_link}@</b>"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
+    &lt;div <strong>id="mark:navi"</strong> align="center"&gt;
+      &lt;a href="<strong>@{prev_link}@</strong>"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
       &amp;nbsp;
       &lt;span class="title"&gt;
-	Calendar&amp;nbsp; &lt;span <b>id="value:year"</b>&gt;2004&lt;/span&gt;
+	Calendar&amp;nbsp; &lt;span <strong>id="value:year"</strong>&gt;2004&lt;/span&gt;
       &lt;/span&gt;
       &amp;nbsp;
-      &lt;a href="<b>@{next_link}@</b>"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
+      &lt;a href="<strong>@{next_link}@</strong>"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
     &lt;/div&gt;
     &lt;br&gt;
 
     &lt;div align="center"&gt;
       &lt;table border="0" summary=""&gt;
-        &lt;tr <b>id="mark:calendar_list"</b>&gt;
-          &lt;td <b>id="mark:calendar"</b> valign="top"&gt;
+        &lt;tr <strong>id="mark:calendar_list"</strong>&gt;
+          &lt;td <strong>id="mark:calendar"</strong> valign="top"&gt;
             .... calendar here ...
           &lt;/td&gt;
         &lt;/tr&gt;
@@ -1119,8 +929,8 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="calendar/calendar-page.plogic">calendar-page.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar-page.plogic">calendar-page.plogic</a> (presentation logic):</div>
 <pre class="program">#calendar_list {
 	plogic: {
 	    calendar_ctr = 0;
@@ -1149,8 +959,8 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
 	value:  calendar;
 }
 </pre>
-<p><a href="calendar/calendar.rbx">calendar.rbx</a> (main program):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar.rbx">calendar.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 require 'cgi'
@@ -1200,8 +1010,8 @@ column = 4
 print cgi.header if cgi
 print erb_cal_page.result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p calendar-month.plogic calendar-month.html &gt; calendar-month.view
 % kwartz -l eruby -p calendar-page.plogic  calendar-page.html  &gt; calendar-page.view
@@ -1209,8 +1019,8 @@ print erb_cal_page.result(binding())
 ### execution
 % ruby calendar.rbx &gt; result.html
 </pre>
-<p><a href="calendar/calendar-month.view">calendar-month.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar-month.view">calendar-month.view</a> (output script for Ruby):</div>
 <pre class="program">            &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of &lt;%= month %&gt;, &lt;%= year %&gt;"&gt;
               &lt;caption&gt;
@@ -1267,8 +1077,8 @@ print erb_cal_page.result(binding())
             &amp;nbsp;
             &lt;!-- /calendar-month --&gt;
 </pre>
-<p><a href="calendar/calendar-page.view">calendar-page.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="calendar/calendar-page.view">calendar-page.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -1323,8 +1133,8 @@ print erb_cal_page.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="calendar/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="calendar/result.html">result.html</a></div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -2141,198 +1951,199 @@ print erb_cal_page.result(binding())
 
 <a name="thumbnail"></a>
 <h2 class="section1">Thumbnail</h2>
-<p><a href="thumbnail/thumbnail.html">thumbnail.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="thumbnail/thumbnail.html">thumbnail.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
     &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
-    &lt;style type="text/css"&gt;
-      &lt;!--
-        body   {background-color:#FFFFFF;}
-        --&gt;
-    &lt;/style&gt;
   &lt;/head&gt;
-  
-  &lt;body&gt;
-    
-    &lt;div align="center" <b>id="mark:navi"</b>&gt;
-      &lt;a <b>id="mark:navi_first"</b> href="..."&gt;|&amp;lt;&amp;lt; First&lt;/a&gt;
+
+  &lt;body style="background-color:#FFFFFF"&gt;
+
+    &lt;div align="center" <strong>id="mark:navi"</strong>&gt;
+      &lt;a <strong>id="mark:navi_first"</strong> href="..."&gt;|&amp;lt;&amp;lt; First&lt;/a&gt;
       &amp;nbsp;
-      &lt;a <b>id="mark:navi_prev"</b>  href="..."&gt;&amp;lt; Prev&lt;/a&gt;
+      &lt;a <strong>id="mark:navi_prev"</strong>  href="..."&gt;&amp;lt; Prev&lt;/a&gt;
       &amp;nbsp;
-      &lt;a <b>id="mark:navi_index"</b>  href="..."&gt;Index&lt;/a&gt;
+      &lt;a <strong>id="mark:navi_index"</strong>  href="..."&gt;Index&lt;/a&gt;
       &amp;nbsp;
-      &lt;a <b>id="mark:navi_next"</b>  href="..."&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+      &lt;a <strong>id="mark:navi_next"</strong>  href="..."&gt;&lt;strong&gt;Next &amp;gt;&lt;/strong&gt;&lt;/a&gt;
       &amp;nbsp;
-      &lt;a <b>id="mark:navi_last"</b>  href="..."&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
+      &lt;a <strong>id="mark:navi_last"</strong>  href="..."&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
     &lt;/div&gt;
 
-    &lt;div <b>id="mark:index"</b>&gt;
-      &lt;a <b>id="mark:thumbnail"</b> href="..."&gt;&lt;img width="200" height="150"
-         src="dummy1.png" <b>id="attr:src:image_url"</b> &gt;&lt;/a&gt;
-      &lt;a href="dummy2.png"&gt;&lt;img width="200" height="150"
-         src="dummy2.png"&gt;&lt;/a&gt;
-      &lt;a href="dummy3.png"&gt;&lt;img width="200" height="150"
-         src="dummy3.png"&gt;&lt;/a&gt;
-      &lt;br <b>id="mark:br"</b>&gt;
+    &lt;div <strong>id="mark:index"</strong>&gt;
+      &lt;a <strong>id="mark:thumbnail_link"</strong> href="..."&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="dummy1.png" <strong>id="mark:thumbnail_image"</strong> &gt;&lt;/a&gt;
+      &lt;a href="dummy2.png"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="dummy2.png"&gt;&lt;/a&gt;
+      &lt;a href="dummy3.png"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="dummy3.png"&gt;&lt;/a&gt;
+      &lt;br <strong>id="mark:br"</strong>&gt;
     &lt;/div&gt;
-      
-    &lt;div <b>id="main_image"</b> align="center"&gt;
+
+    &lt;div <strong>id="main_image"</strong> align="center"&gt;
       &lt;br&gt;
       &lt;table border="1"&gt;
         &lt;tr&gt;
           &lt;td&gt;
-            &lt;img src="dummy0.png" alt="presentaion image" <b>id="attr:src:image_url"</b> &gt;
+            &lt;img src="dummy0.png" alt="presentaion image" <strong>id="mark:page_image"</strong> &gt;
           &lt;/td&gt;
         &lt;/tr&gt;
       &lt;/table&gt;
       &lt;br&gt;
     &lt;/div&gt;
-    
-    &lt;div <b>id="mark:navi2"</b>&gt;
-      |&amp;lt;&amp;lt; Fist &amp;nbsp; &amp;lt; Pref &amp;nbsp; List &amp;nbsp; &lt;b&gt;Next&lt;/b&gt; &amp;gt; &amp;nbsp; Last &amp;gt;&amp;gt;|
+
+    &lt;div <strong>id="mark:navi2"</strong>&gt;
+      |&amp;lt;&amp;lt; Fist &amp;nbsp; &amp;lt; Pref &amp;nbsp; List &amp;nbsp;
+      &lt;strong&gt;Next&lt;/strong&gt; &amp;gt; &amp;nbsp; Last &amp;gt;&amp;gt;|
     &lt;/div&gt;
 
-    &lt;!--
-    &lt;div <b>id="counter"</b> align="right"&gt;
-      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
-        alt="counter image file"&gt;
-    &lt;/div&gt;
-      --&gt;
-    
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="thumbnail/thumbnail.plogic">thumbnail.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="thumbnail/thumbnail.plogic">thumbnail.plogic</a> (presentation logic):</div>
 <pre class="program">#navi {
-        plogic: {
-            if (page &gt; 0) {      // remove element when page is 0
-                @stag;
-                @cont;
-                @etag;
-            }
+    plogic: {
+        if (page &gt; 0) {      // remove element when page is 0
+            @stag;
+            @cont;
+            @etag;
         }
+    }
 }
 
 
 #navi_first {
-        attrs:  "href" first_url;
-        plogic: {
-            if (first_url != empty) {
-                @stag;
-                @cont;
-                @etag;
-            } else {
-                @cont;           // remove start tag and end tag
-            }
+    attrs:  "href" first_url;
+    plogic: {
+        if (first_url != empty) {
+            @stag;
+            @cont;
+            @etag;
+        } else {
+            @cont;           // remove start tag and end tag
         }
+    }
 }
 
 
 #navi_last {
-        attr:  "href" last_url;
-        plogic: {
-            if (last_url != empty) {
-                @stag;
-                @cont;
-                @etag;
-            } else {
-                @cont;           // remove start tag and end tag
-            }
+    attr:  "href" last_url;
+    plogic: {
+        if (last_url != empty) {
+            @stag;
+            @cont;
+            @etag;
+        } else {
+            @cont;           // remove start tag and end tag
         }
+    }
 }
 
 
 #navi_prev {
-        attr:  "href" prev_url;
-        plogic: {
-            if (prev_url != empty) {
-                @stag;
-                @cont;
-                @etag;
-            } else {
-                @cont;           // remove start tag and end tag
-            }
+    attr:  "href" prev_url;
+    plogic: {
+        if (prev_url != empty) {
+            @stag;
+            @cont;
+            @etag;
+        } else {
+            @cont;           // remove start tag and end tag
         }
+    }
 }
 
 
 #navi_next {
-        attr:  "href" next_url;
-        plogic: {
-            if (next_url != empty) {
-                @stag;
-                @cont;
-                @etag;
-            } else {
-                @cont;           // remove start tag and end tag
-            }
+    attr:  "href" next_url;
+    plogic: {
+        if (next_url != empty) {
+            @stag;
+            @cont;
+            @etag;
+        } else {
+            @cont;           // remove start tag and end tag
         }
+    }
 }
 
 
 #navi_index {
-        attr:  "href" index_url;
-        plogic: {
-            if (index_url != empty) {
-                @stag;
-                @cont;
-                @etag;
-            } else {
-                @cont;           // remove start tag and end tag
-            }
+    attr:  "href" index_url;
+    plogic: {
+        if (index_url != empty) {
+            @stag;
+            @cont;
+            @etag;
+        } else {
+            @cont;           // remove start tag and end tag
         }
+    }
 }
 
 
 #index {
-        plogic: {
-            @stag;
-            if (page == 0) {
-                i = 0;
-                foreach (thumb in thumb_list) {
-                    i += 1;
-                    link_url  = thumb[:link_url];
-                    image_url = thumb[:image_url];
-                    @element(thumbnail);
-                    if (i % 3 == 0) {
-                        @element(br);
-                    }
+    plogic: {
+        @stag;
+        if (page == 0) {
+            i = 0;
+            foreach (thumb in thumb_list) {
+                i += 1;
+                link_url  = thumb[:link_url];
+                image_url = thumb[:image_url];
+                @element(thumbnail_link);
+                if (i % 3 == 0) {
+                    @element(br);
                 }
             }
-            @etag;
         }
+        @etag;
+    }
 }
 
 
-#thumbnail {
-        attr: "href" link_url;
+#thumbnail_link {
+    attr: "href" link_url;
+}
+
+#thumbnail_image {
+    attr: "src" image_url;
 }
 
 
 #main_image {
-        plogic: {
-            if (page != 0) {     // remove element when page is 0
-                @stag;
-                @cont;
-                @etag;
-            }
+    plogic: {
+        if (page != 0) {     // remove element when page is 0
+            @stag;
+            @cont;
+            @etag;
         }
+    }
+}
+
+#page_image {
+    attr: "src" image_url;
 }
 
 
 #navi2 {
-        plogic: {
-            @element(navi);
-        }
+    plogic: {
+        @element(navi);
+    }
 }
 </pre>
-<p><a href="thumbnail/thumbnail.rbx">thumbnail.rbx</a> (main program):
-</p>
+<div class="program_caption">
+<a href="thumbnail/thumbnail.rbx">thumbnail.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
+
+## set url format of images
+base_url  = "http://www.kuwata-lab.com/kwartz/overview/img";
+image_url_format = "#{base_url}/overview_%02d.png";
 
 ## get parameters
 params = {}
@@ -2345,13 +2156,9 @@ if ENV['REQUEST_METHOD']
    end
 end
 
-## set url format of images
-base_url  = "http://www.kuwata-lab.com/kwartz/kwartz-overview/images";
-image_url_format = "#{base_url}/image%02d.png";
-
 ## get parameters
 first = 1
-last  = 20
+last  = 22
 page = params['page']
 if (!page || page.empty?)
    page = 0
@@ -2390,30 +2197,25 @@ trim_mode = 2
 print cgi.header if cgi
 ERB.new(str, $SAFE, trim_mode).run(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p thumbnail.plogic thumbnail.html &gt; thumbnail.view
 
 ### execution
 % ruby thumbnail.rb &gt; result.html
 </pre>
-<p><a href="thumbnail/thumbnail.view">thumbnail.view</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="thumbnail/thumbnail.view">thumbnail.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
     &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
-    &lt;style type="text/css"&gt;
-      &lt;!--
-        body   {background-color:#FFFFFF;}
-        --&gt;
-    &lt;/style&gt;
   &lt;/head&gt;
-  
-  &lt;body&gt;
-    
+
+  &lt;body style="background-color:#FFFFFF"&gt;
+
 &lt;% if page &gt; 0 then %&gt;
     &lt;div align="center"&gt;
 &lt;%   if first_url &amp;&amp; !first_url.empty? then %&gt;
@@ -2432,9 +2234,9 @@ ERB.new(str, $SAFE, trim_mode).run(binding())
 Index&lt;% end %&gt;
       &amp;nbsp;
 &lt;%   if next_url &amp;&amp; !next_url.empty? then %&gt;
-      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;strong&gt;Next &amp;gt;&lt;/strong&gt;&lt;/a&gt;
 &lt;%   else %&gt;
-&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;% end %&gt;
+&lt;strong&gt;Next &amp;gt;&lt;/strong&gt;&lt;% end %&gt;
       &amp;nbsp;
 &lt;%   if last_url &amp;&amp; !last_url.empty? then %&gt;
       &lt;a href="&lt;%= last_url %&gt;"&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
@@ -2450,29 +2252,29 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 &lt;%     i += 1 %&gt;
 &lt;%     link_url = thumb[:link_url] %&gt;
 &lt;%     image_url = thumb[:image_url] %&gt;
-      &lt;a href="&lt;%= link_url %&gt;"&gt;&lt;img width="200" height="150"
-         src="&lt;%= image_url %&gt;" &gt;&lt;/a&gt;
+      &lt;a href="&lt;%= link_url %&gt;"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="&lt;%= image_url %&gt;"&gt;&lt;/a&gt;
 &lt;%     if i % 3 == 0 then %&gt;
       &lt;br&gt;
 &lt;%     end %&gt;
 &lt;%   end %&gt;
 &lt;% end %&gt;
     &lt;/div&gt;
-      
+
 &lt;% if page != 0 then %&gt;
     &lt;div id="main_image" align="center"&gt;
       &lt;br&gt;
       &lt;table border="1"&gt;
         &lt;tr&gt;
           &lt;td&gt;
-            &lt;img src="&lt;%= image_url %&gt;" alt="presentaion image" &gt;
+            &lt;img src="&lt;%= image_url %&gt;" alt="presentaion image"&gt;
           &lt;/td&gt;
         &lt;/tr&gt;
       &lt;/table&gt;
       &lt;br&gt;
     &lt;/div&gt;
 &lt;% end %&gt;
-    
+
 &lt;% if page &gt; 0 then %&gt;
     &lt;div align="center"&gt;
 &lt;%   if first_url &amp;&amp; !first_url.empty? then %&gt;
@@ -2491,9 +2293,9 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 Index&lt;% end %&gt;
       &amp;nbsp;
 &lt;%   if next_url &amp;&amp; !next_url.empty? then %&gt;
-      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;/a&gt;
+      &lt;a href="&lt;%= next_url %&gt;"&gt;&lt;strong&gt;Next &amp;gt;&lt;/strong&gt;&lt;/a&gt;
 &lt;%   else %&gt;
-&lt;b&gt;Next &amp;gt;&lt;/b&gt;&lt;% end %&gt;
+&lt;strong&gt;Next &amp;gt;&lt;/strong&gt;&lt;% end %&gt;
       &amp;nbsp;
 &lt;%   if last_url &amp;&amp; !last_url.empty? then %&gt;
       &lt;a href="&lt;%= last_url %&gt;"&gt;Last &amp;gt;&amp;gt;|&lt;/a&gt;
@@ -2502,91 +2304,77 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
     &lt;/div&gt;
 &lt;% end %&gt;
 
-    &lt;!--
-    &lt;div id="counter" align="right"&gt;
-      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
-        alt="counter image file"&gt;
-    &lt;/div&gt;
-      --&gt;
-    
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="thumbnail/result.html">result.html</a>
-</p>
+<div class="program_caption">
+<a href="thumbnail/result.html">result.html</a></div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1"&gt;
     &lt;title&gt;Kwartz - a template system for Ruby, PHP and Java (brief overview)&lt;/title&gt;
-    &lt;style type="text/css"&gt;
-      &lt;!--
-        body   {background-color:#FFFFFF;}
-        --&gt;
-    &lt;/style&gt;
   &lt;/head&gt;
-  
-  &lt;body&gt;
-    
+
+  &lt;body style="background-color:#FFFFFF"&gt;
+
 
     &lt;div&gt;
-      &lt;a href="thumbnail.rbx?page=1"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image01.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=2"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image02.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=3"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image03.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=1"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_01.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=2"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_02.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=3"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_03.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=4"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image04.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=5"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image05.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=6"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image06.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=4"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_04.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=5"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_05.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=6"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_06.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=7"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image07.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=8"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image08.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=9"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image09.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=7"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_07.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=8"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_08.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=9"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_09.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=10"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image10.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=11"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image11.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=12"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image12.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=10"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_10.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=11"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_11.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=12"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_12.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=13"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image13.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=14"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image14.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=15"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image15.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=13"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_13.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=14"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_14.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=15"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_15.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=16"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image16.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=17"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image17.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=18"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image18.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=16"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_16.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=17"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_17.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=18"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_18.png"&gt;&lt;/a&gt;
       &lt;br&gt;
-      &lt;a href="thumbnail.rbx?page=19"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image19.png" &gt;&lt;/a&gt;
-      &lt;a href="thumbnail.rbx?page=20"&gt;&lt;img width="200" height="150"
-         src="http://www.kuwata-lab.com/kwartz/kwartz-overview/images/image20.png" &gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=19"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_19.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=20"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_20.png"&gt;&lt;/a&gt;
+      &lt;a href="thumbnail.rbx?page=21"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_21.png"&gt;&lt;/a&gt;
+      &lt;br&gt;
+      &lt;a href="thumbnail.rbx?page=22"&gt;&lt;!--
+    --&gt;&lt;img width="200" height="150" src="http://www.kuwata-lab.com/kwartz/overview/img/overview_22.png"&gt;&lt;/a&gt;
     &lt;/div&gt;
-      
-    
 
-    &lt;!--
-    &lt;div id="counter" align="right"&gt;
-      &lt;img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&amp;dd=A&amp;ft=0&amp;tr=T&amp;trgb=000000&amp;prgb=CCCCCC&amp;md=7"
-        alt="counter image file"&gt;
-    &lt;/div&gt;
-      --&gt;
-    
+
+
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -2595,24 +2383,24 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 
 <a name="pagelayout"></a>
 <h2 class="section1">Page Layout</h2>
-<p><a href="pagelayout/layout.html">layout.html</a> (presentation data):
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+<a href="pagelayout/layout.html">layout.html</a> (presentation data):</div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;MyGroupware: &lt;span <b>id="placeholder:pagetitle"</b>&gt;&lt;/span&gt;&lt;/title&gt;
+    &lt;title <strong>id="placeholder:pagetitle:content"</strong>&gt;pagetitle&lt;/span&gt;&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;table border="0"&gt;
+    &lt;table border="0" summary=""&gt;
       &lt;tr&gt;
 
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top" class="menulist"&gt;
+        &lt;td width="100" valign="top" class="menu_part"&gt;
           &lt;b&gt;Menu:&lt;/b&gt;
-          &lt;div <b>id="placeholder:menulist"</b>&gt;
+          &lt;div <strong>id="placeholder:menulist"</strong> class="menulist"&gt;
             * menu1 &lt;br&gt;
             * menu2 &lt;br&gt;
             * menu3 &lt;br&gt;
@@ -2621,9 +2409,9 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
         &lt;/td&gt;
 
         &lt;!-- content part --&gt;
-        &lt;td width="400" valign="top" class="contents"&gt;
-          &lt;h3&gt;&lt;span <b>id="placeholder:pagetitle"</b>&gt;...title...&lt;/span&gt;&lt;/h3&gt;
-          &lt;div <b>id="placeholder:contents"</b>&gt;
+        &lt;td width="400" valign="top" class="contents_part"&gt;
+          &lt;h3 <strong>id="placeholder:pagetitle:content"</strong>&gt;...title...&lt;/h3&gt;
+          &lt;div <strong>id="placeholder:contents:content"</strong> class="contents"&gt;
             content&lt;br&gt;
             content&lt;br&gt;
             content&lt;br&gt;
@@ -2644,24 +2432,24 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/menu.html">menu.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="pagelayout/menu.html">menu.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     
     &lt;h1&gt;Menu&lt;/h1&gt;
     
-    &lt;ul <b>id="mark:menulist"</b>&gt;
-      &lt;li&gt;&lt;a href="..." <b>id="mark:menu"</b>&gt;menu0&lt;/a&gt;&lt;/li&gt;
-      &lt;li <b>id="dummy:m1"</b>&gt;&lt;a href="..."&gt;menu1&lt;/a&gt;&lt;/li&gt;
-      &lt;li <b>id="dummy:m2"</b>&gt;&lt;a href="..."&gt;menu2&lt;/a&gt;&lt;/li&gt;
+    &lt;ul <strong>id="mark:menulist"</strong>&gt;
+      &lt;li&gt;&lt;a href="..." <strong>id="mark:menu"</strong>&gt;menu0&lt;/a&gt;&lt;/li&gt;
+      &lt;li <strong>id="dummy:m1"</strong>&gt;&lt;a href="..."&gt;menu1&lt;/a&gt;&lt;/li&gt;
+      &lt;li <strong>id="dummy:m2"</strong>&gt;&lt;a href="..."&gt;menu2&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
     
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/menu.plogic">menu.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="pagelayout/menu.plogic">menu.plogic</a> (presentation logic):</div>
 <pre class="program">#menulist {
         plogic:  {
             foreach (menu in menulist) {
@@ -2677,15 +2465,15 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
         attrs:  "href" menu[:url];
 }
 </pre>
-<p><a href="pagelayout/page1.html">page1.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="pagelayout/page1.html">page1.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;body&gt;
 
-    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Stock Quoting&lt;/span&gt;&lt;/h1&gt;
+    &lt;h1 <strong>id="mark:pagetitle"</strong>&gt;Stock Quoting&lt;/h1&gt;
 
-    &lt;div <b>id="mark:contents"</b>&gt;
+    &lt;div <strong>id="mark:contents"</strong>&gt;
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
@@ -2693,19 +2481,19 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
           &lt;/tr&gt;
         &lt;/thead&gt;
         &lt;tbody&gt;
-          &lt;tr <b>id="mark:stocks"</b>&gt;
-            &lt;td <b>id="mark:stock_symbol"</b>&gt;AAAA&lt;/td&gt;
-            &lt;td <b>id="mark:stock_company"</b>&gt;AAAA Corp.&lt;/td&gt;
-            &lt;td <b>id="mark:stock_price"</b> align="right"&gt;11.11&lt;/td&gt;
-            &lt;td <b>id="mark:stock_rate"</b> align="right"&gt;1.11%&lt;/td&gt;
+          &lt;tr <strong>id="mark:stocks"</strong>&gt;
+            &lt;td <strong>id="mark:stock_symbol"</strong>&gt;AAAA&lt;/td&gt;
+            &lt;td <strong>id="mark:stock_company"</strong>&gt;AAAA Corp.&lt;/td&gt;
+            &lt;td <strong>id="mark:stock_price"</strong> align="right"&gt;11.11&lt;/td&gt;
+            &lt;td <strong>id="mark:stock_rate"</strong> align="right"&gt;1.11%&lt;/td&gt;
           &lt;/tr&gt;
-          &lt;tr <b>id="dummy:s1"</b>&gt;
+          &lt;tr <strong>id="dummy:s1"</strong>&gt;
             &lt;td&gt;BBBB&lt;/td&gt;
             &lt;td&gt;BBBB Corp.&lt;/td&gt;
             &lt;td align="right"&gt;22.22&lt;/td&gt;
             &lt;td align="right"&gt;2.22%&lt;/td&gt;
           &lt;/tr&gt;
-          &lt;tr <b>id="dummy:s2"</b>&gt;
+          &lt;tr <strong>id="dummy:s2"</strong>&gt;
             &lt;td&gt;CCCC&lt;/td&gt;
             &lt;td&gt;CCCC Corp.&lt;/td&gt;
             &lt;td align="right"&gt;33.33&lt;/td&gt;
@@ -2718,29 +2506,29 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/page2.html">page2.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="pagelayout/page2.html">page2.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;body&gt;
 
-    &lt;h1&gt;&lt;span <b>id="mark:pagetitle"</b>&gt;Quoting Detail&lt;/span&gt;&lt;/h1&gt;
+    &lt;h1 <strong>id="mark:pagetitle"</strong>&gt;Quoting Detail&lt;/h1&gt;
     
-    &lt;div <b>id="mark:contents"</b>&gt;
-      &lt;table <b>id="mark:stock"</b>&gt;
+    &lt;div <strong>id="mark:contents"</strong>&gt;
+      &lt;table <strong>id="mark:stock"</strong>&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
-            &lt;th&gt;Symbol:&lt;/th&gt;&lt;td <b>id="mark:stock_symbol"</b>&gt;AAAA&lt;/td&gt;
+            &lt;th&gt;Symbol:&lt;/th&gt;&lt;td <strong>id="mark:stock_symbol"</strong>&gt;AAAA&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Company:&lt;/th&gt;&lt;td <b>id="mark:stock_company"</b>&gt;AAAA Corp.&lt;/td&gt;
+            &lt;th&gt;Company:&lt;/th&gt;&lt;td <strong>id="mark:stock_company"</strong>&gt;AAAA Corp.&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
-            &lt;th&gt;Price:&lt;/th&gt;&lt;td <b>id="mark:stock_price"</b>&gt;11.11&lt;/td&gt;
+            &lt;th&gt;Price:&lt;/th&gt;&lt;td <strong>id="mark:stock_price"</strong>&gt;11.11&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Change:&lt;/th&gt;
-            &lt;td <b>id="mark:stock_rate"</b>&gt;1.11%&lt;/td&gt;
+            &lt;td <strong>id="mark:stock_rate"</strong>&gt;1.11%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
@@ -2749,8 +2537,8 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/page.plogic">page.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="pagelayout/page.plogic">page.plogic</a> (presentation logic):</div>
 <pre class="program">#stocks {
         plogic:  {
             foreach (stock in stocks) {
@@ -2779,7 +2567,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
             rate = stock[:rate];
             style = '';
             if (rate &lt; 0) {
-                rate = - rate;
+                //rate = - rate;
                 style = ' style="color:red"';
             }
             @stag;
@@ -2789,8 +2577,8 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
 }
 
 </pre>
-<p><a href="pagelayout/main.rb">main.rb</a> (main program):
-</p>
+<div class="program_caption">
+<a href="pagelayout/main.rb">main.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/env ruby
 
 ## menu
@@ -2840,8 +2628,8 @@ erb = ERB.new(str, $SAFE, trim_mode)
 print cgi.header if cgi
 print erb.result(binding())
 </pre>
-<p>Compile and execution:
-</p>
+<div class="terminal_caption">
+Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -p menu.plogic,page.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
 % kwartz -p menu.plogic,page.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
@@ -2850,24 +2638,24 @@ print erb.result(binding())
 % ruby main.rb &gt; result1.html
 % ruby main.rb AAPL &gt; result2.html
 </pre>
-<p><a href="pagelayout/page1.view">page1.view</a> (output script for Ruby):
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+<a href="pagelayout/page1.view">page1.view</a> (output script for Ruby):</div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;MyGroupware: Stock Quoting&lt;/title&gt;
+    &lt;title&gt;Stock Quoting&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;table border="0"&gt;
+    &lt;table border="0" summary=""&gt;
       &lt;tr&gt;
 
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top" class="menulist"&gt;
+        &lt;td width="100" valign="top" class="menu_part"&gt;
           &lt;b&gt;Menu:&lt;/b&gt;
-          &lt;div&gt;
+          &lt;div class="menulist"&gt;
 &lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="&lt;%= menu[:url] %&gt;"&gt;&lt;%= menu[:label] %&gt;&lt;/a&gt;&lt;/li&gt;
@@ -2877,10 +2665,9 @@ print erb.result(binding())
         &lt;/td&gt;
 
         &lt;!-- content part --&gt;
-        &lt;td width="400" valign="top" class="contents"&gt;
+        &lt;td width="400" valign="top" class="contents_part"&gt;
           &lt;h3&gt;Stock Quoting&lt;/h3&gt;
-          &lt;div&gt;
-    &lt;div&gt;
+          &lt;div class="contents"&gt;
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
@@ -2896,7 +2683,6 @@ print erb.result(binding())
 &lt;%   rate = stock[:rate] %&gt;
 &lt;%   style = "" %&gt;
 &lt;%   if rate &lt; 0 then %&gt;
-&lt;%     rate = -rate %&gt;
 &lt;%     style = " style=\"color:red\"" %&gt;
 &lt;%   end %&gt;
             &lt;td align="right"&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
@@ -2904,7 +2690,6 @@ print erb.result(binding())
 &lt;% end %&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
-    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -2921,24 +2706,24 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/page2.view">page2.view</a> (output script for Ruby):
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+<a href="pagelayout/page2.view">page2.view</a> (output script for Ruby):</div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;MyGroupware: Quoting Detail&lt;/title&gt;
+    &lt;title&gt;Quoting Detail&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;table border="0"&gt;
+    &lt;table border="0" summary=""&gt;
       &lt;tr&gt;
 
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top" class="menulist"&gt;
+        &lt;td width="100" valign="top" class="menu_part"&gt;
           &lt;b&gt;Menu:&lt;/b&gt;
-          &lt;div&gt;
+          &lt;div class="menulist"&gt;
 &lt;% for menu in menulist do %&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="&lt;%= menu[:url] %&gt;"&gt;&lt;%= menu[:label] %&gt;&lt;/a&gt;&lt;/li&gt;
@@ -2948,10 +2733,9 @@ print erb.result(binding())
         &lt;/td&gt;
 
         &lt;!-- content part --&gt;
-        &lt;td width="400" valign="top" class="contents"&gt;
+        &lt;td width="400" valign="top" class="contents_part"&gt;
           &lt;h3&gt;Quoting Detail&lt;/h3&gt;
-          &lt;div&gt;
-    &lt;div&gt;
+          &lt;div class="contents"&gt;
       &lt;table&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
@@ -2968,14 +2752,12 @@ print erb.result(binding())
 &lt;% rate = stock[:rate] %&gt;
 &lt;% style = "" %&gt;
 &lt;% if rate &lt; 0 then %&gt;
-&lt;%   rate = -rate %&gt;
 &lt;%   style = " style=\"color:red\"" %&gt;
 &lt;% end %&gt;
             &lt;td&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
-    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -2992,24 +2774,24 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/result1.html">result1.html</a>
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+<a href="pagelayout/result1.html">result1.html</a></div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;MyGroupware: Stock Quoting&lt;/title&gt;
+    &lt;title&gt;Stock Quoting&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;table border="0"&gt;
+    &lt;table border="0" summary=""&gt;
       &lt;tr&gt;
 
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top" class="menulist"&gt;
+        &lt;td width="100" valign="top" class="menu_part"&gt;
           &lt;b&gt;Menu:&lt;/b&gt;
-          &lt;div&gt;
+          &lt;div class="menulist"&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
@@ -3026,10 +2808,9 @@ print erb.result(binding())
         &lt;/td&gt;
 
         &lt;!-- content part --&gt;
-        &lt;td width="400" valign="top" class="contents"&gt;
+        &lt;td width="400" valign="top" class="contents_part"&gt;
           &lt;h3&gt;Stock Quoting&lt;/h3&gt;
-          &lt;div&gt;
-    &lt;div&gt;
+          &lt;div class="contents"&gt;
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
@@ -3041,7 +2822,7 @@ print erb.result(binding())
             &lt;td&gt;AAPL&lt;/td&gt;
             &lt;td&gt;Apple Computer, Inc.&lt;/td&gt;
             &lt;td align="right"&gt;36.49&lt;/td&gt;
-            &lt;td align="right" style="color:red"&gt;0.32%&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;-0.32%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;MSFT&lt;/td&gt;
@@ -3053,7 +2834,7 @@ print erb.result(binding())
             &lt;td&gt;ORCL&lt;/td&gt;
             &lt;td&gt;Oracle Corporation&lt;/td&gt;
             &lt;td align="right"&gt;12.59&lt;/td&gt;
-            &lt;td align="right" style="color:red"&gt;2.02%&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;-2.02%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;SUNW&lt;/td&gt;
@@ -3069,7 +2850,6 @@ print erb.result(binding())
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
-    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -3086,24 +2866,24 @@ print erb.result(binding())
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="pagelayout/result2.html">result2.html</a>
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+<a href="pagelayout/result2.html">result2.html</a></div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
-    &lt;title&gt;MyGroupware: Quoting Detail&lt;/title&gt;
+    &lt;title&gt;Quoting Detail&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-    &lt;table border="0"&gt;
+    &lt;table border="0" summary=""&gt;
       &lt;tr&gt;
 
         &lt;!-- menu part --&gt;
-        &lt;td width="100" valign="top" class="menulist"&gt;
+        &lt;td width="100" valign="top" class="menu_part"&gt;
           &lt;b&gt;Menu:&lt;/b&gt;
-          &lt;div&gt;
+          &lt;div class="menulist"&gt;
     &lt;ul&gt;
       &lt;li&gt;&lt;a href="/cgi-bin/mail.cgi"&gt;Mail&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
@@ -3120,10 +2900,9 @@ print erb.result(binding())
         &lt;/td&gt;
 
         &lt;!-- content part --&gt;
-        &lt;td width="400" valign="top" class="contents"&gt;
+        &lt;td width="400" valign="top" class="contents_part"&gt;
           &lt;h3&gt;Quoting Detail&lt;/h3&gt;
-          &lt;div&gt;
-    &lt;div&gt;
+          &lt;div class="contents"&gt;
       &lt;table&gt;
         &lt;tbody&gt;
           &lt;tr&gt;
@@ -3137,11 +2916,10 @@ print erb.result(binding())
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Change:&lt;/th&gt;
-            &lt;td style="color:red"&gt;0.32%&lt;/td&gt;
+            &lt;td style="color:red"&gt;-0.32%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
-    &lt;/div&gt;
           &lt;/div&gt;
         &lt;/td&gt;
 
@@ -3163,22 +2941,22 @@ print erb.result(binding())
 
 <a name="rails1"></a>
 <h2 class="section1">Rails</h2>
-<p><a href="rails1/recipes.html">recipes.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="rails1/recipes.html">recipes.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
-    &lt;title&gt;Recipes: &lt;span <b>id="mark:action_name"</b>&gt;action&lt;/span&gt;&lt;/title&gt;
-    &lt;link <b>id="mark:stylesheet_link"</b> type="text/css" rel="stylesheet" href="scaffold.css" /&gt;
+    &lt;title&gt;Recipes: &lt;span <strong>id="mark:action_name"</strong>&gt;action&lt;/span&gt;&lt;/title&gt;
+    &lt;link <strong>id="mark:stylesheet_link"</strong> type="text/css" rel="stylesheet" href="scaffold.css" /&gt;
   &lt;/head&gt;
-  &lt;body <b>id="mark:content"</b>&gt;
+  &lt;body <strong>id="mark:content"</strong>&gt;
 
       ... contents ...
 
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):</div>
 <pre class="program">#stylesheet_link {
         // replace element with print statement
         plogic: {
@@ -3194,11 +2972,11 @@ print erb.result(binding())
         value:  X(content_for_layout);
 }
 </pre>
-<p><a href="rails1/list.html">list.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="rails1/list.html">list.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:content"</b>&gt;
+    &lt;div <strong>id="mark:content"</strong>&gt;
 
       &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
 
@@ -3211,12 +2989,12 @@ print erb.result(binding())
           &lt;/tr&gt;
         &lt;/thead&gt;
         &lt;tbody&gt;
-          &lt;tr bgcolor="#FFCCCC" <b>id="mark:recipes"</b>&gt;
-            &lt;td&gt;&lt;a href="..." <b>id="mark:recipe_title"</b>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
-            &lt;td <b>id="mark:recipe_category"</b>&gt;Snacks&lt;/td&gt;
-            &lt;td <b>id="mark:recipe_date"</b>&gt;2004-11-11&lt;/td&gt;
+          &lt;tr bgcolor="#FFCCCC" <strong>id="mark:recipes"</strong>&gt;
+            &lt;td&gt;&lt;a href="..." <strong>id="mark:recipe_title"</strong>&gt;Hot Chips&lt;/a&gt;&lt;/td&gt;
+            &lt;td <strong>id="mark:recipe_category"</strong>&gt;Snacks&lt;/td&gt;
+            &lt;td <strong>id="mark:recipe_date"</strong>&gt;2004-11-11&lt;/td&gt;
           &lt;/tr&gt;
-          &lt;tr bgcolor="#CCCCFF" <b>id="dummy:d1"</b>&gt;
+          &lt;tr bgcolor="#CCCCFF" <strong>id="dummy:d1"</strong>&gt;
             &lt;td&gt;&lt;a href="..."&gt;Ice Water&lt;/a&gt;&lt;/td&gt;
             &lt;td&gt;Beverages&lt;/td&gt;
             &lt;td&gt;2004-11-11&lt;/td&gt;
@@ -3225,15 +3003,15 @@ print erb.result(binding())
       &lt;/table&gt;
 
       &lt;p&gt;
-        &lt;a href="..." <b>id="mark:new_recipe"</b>&gt;Create new recipe&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:new_recipe"</strong>&gt;Create new recipe&lt;/a&gt;
       &lt;/p&gt;
 
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/list.plogic">list.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="rails1/list.plogic">list.plogic</a> (presentation logic):</div>
 <pre class="program">#recipes {
         attrs:  "bgcolor"  X(color);
         plogic: {
@@ -3265,49 +3043,49 @@ print erb.result(binding())
         attrs:  "href" X(&lt;%= url_for(:action=&gt;'new') %&gt;);
 }
 </pre>
-<p><a href="rails1/show.html">show.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="rails1/show.html">show.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:content"</b>&gt;
+    &lt;div <strong>id="mark:content"</strong>&gt;
 
       &lt;h1&gt;Show Recipe&lt;/h1&gt;
       
       &lt;table&gt;
         &lt;tr&gt;
           &lt;th&gt;Title:&lt;/th&gt;
-          &lt;td <b>id="value:recipe.title"</b>&gt;Hot Chips&lt;/td&gt;
+          &lt;td <strong>id="value:recipe.title"</strong>&gt;Hot Chips&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
           &lt;th&gt;Description:&lt;/th&gt;
-          &lt;td <b>id="value:recipe.description"</b>&gt;Only for the brave!&lt;/td&gt;
+          &lt;td <strong>id="value:recipe.description"</strong>&gt;Only for the brave!&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
           &lt;th&gt;Category:&lt;/th&gt;
-          &lt;td <b>id="value:recipe.category.name"</b>&gt;Snacks&lt;/td&gt;
+          &lt;td <strong>id="value:recipe.category.name"</strong>&gt;Snacks&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
           &lt;th&gt;Date:&lt;/th&gt;
-          &lt;td <b>id="value:recipe.date"</b>&gt;2004-11-11&lt;/td&gt;
+          &lt;td <strong>id="value:recipe.date"</strong>&gt;2004-11-11&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
           &lt;th&gt;Instructions:&lt;/th&gt;
-          &lt;td <b>id="mark:recipe_instructions"</b>&gt;Sprinkle hot-pepper sauce on corn chips.&lt;/td&gt;
+          &lt;td <strong>id="mark:recipe_instructions"</strong>&gt;Sprinkle hot-pepper sauce on corn chips.&lt;/td&gt;
         &lt;/tr&gt;
       &lt;/table&gt;
 
       &lt;p&gt;
-        &lt;a href="..." <b>id="mark:edit_recipe"</b>&gt;Edit&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:edit_recipe"</strong>&gt;Edit&lt;/a&gt;
         |
-        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:list_recipes"</strong>&gt;Back&lt;/a&gt;
       &lt;/p&gt;
       
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/show.plogic">show.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="rails1/show.plogic">show.plogic</a> (presentation logic):</div>
 <pre class="program">#recipe_instructions {
         value:  X(str_linebreak(escape_xml(recipe.instructions)));
 }
@@ -3332,42 +3110,42 @@ print erb.result(binding())
 //   value:  recipe.date;
 // }
 </pre>
-<p><a href="rails1/new.html">new.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="rails1/new.html">new.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:content"</b>&gt;
+    &lt;div <strong>id="mark:content"</strong>&gt;
 
       &lt;h1&gt;New Recipe&lt;/h1&gt;
 
-      &lt;form <b>id="new_form"</b> action="..." method="post"&gt;
+      &lt;form <strong>id="new_form"</strong> action="..." method="post"&gt;
         
         &lt;table&gt;
           &lt;tr&gt;
             &lt;th&gt;Title:&lt;/th&gt;
             &lt;td&gt;
-              &lt;input <b>id="recipe_title"</b> name="recipe[title]" type="text" value="" /&gt;
+              &lt;input <strong>id="recipe_title"</strong> name="recipe[title]" type="text" value="" /&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Description:&lt;/th&gt;
             &lt;td&gt;
-              &lt;input <b>id="recipe_description"</b> name="recipe[description]" type="text" value=""/&gt;
+              &lt;input <strong>id="recipe_description"</strong> name="recipe[description]" type="text" value=""/&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Category:&lt;/th&gt;
             &lt;td&gt;
               &lt;select name="recipe[category_id]"&gt;
-                &lt;option value="1" <b>id="mark:recipe_category"</b>&gt;Snacks&lt;/option&gt;
-                &lt;option value="2" <b>id="dummy:o1"</b>&gt;Drinks&lt;/option&gt;
+                &lt;option value="1" <strong>id="mark:recipe_category"</strong>&gt;Snacks&lt;/option&gt;
+                &lt;option value="2" <strong>id="dummy:o1"</strong>&gt;Drinks&lt;/option&gt;
               &lt;/select&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Instructions:&lt;/th&gt;
             &lt;td&gt;
-              &lt;textarea <b>id="recipe_instructions"</b> name="recipe[instructions]"
+              &lt;textarea <strong>id="recipe_instructions"</strong> name="recipe[instructions]"
                 cols="40" rows="20" wrap="virtual"&gt;&lt;/textarea&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
@@ -3378,15 +3156,15 @@ print erb.result(binding())
       &lt;/form&gt;
       
       &lt;p&gt;
-        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:list_recipes"</strong>&gt;Back&lt;/a&gt;
       &lt;/p&gt;
 
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/new.plogic">new.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="rails1/new.plogic">new.plogic</a> (presentation logic):</div>
 <pre class="program">#new_form {
         attrs:  "action"  X(&lt;%= url_for(:action=&gt;'create') %&gt;);
 }
@@ -3404,29 +3182,29 @@ print erb.result(binding())
 }
 
 </pre>
-<p><a href="rails1/edit.html">edit.html</a> (presentation data):
-</p>
+<div class="program_caption">
+<a href="rails1/edit.html">edit.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
-    &lt;div <b>id="mark:content"</b>&gt;
+    &lt;div <strong>id="mark:content"</strong>&gt;
 
       &lt;h1&gt;Edit Recipe&lt;/h1&gt;
 
-      &lt;form <b>id="mark:edit_form"</b> action="..." method="post"&gt;
-        &lt;input <b>id="recipe_id"</b> name="recipe[id]" type="hidden" value="1" /&gt;
+      &lt;form <strong>id="mark:edit_form"</strong> action="..." method="post"&gt;
+        &lt;input <strong>id="recipe_id"</strong> name="recipe[id]" type="hidden" value="1" /&gt;
 
         &lt;table&gt;
           &lt;tr&gt;
             &lt;th&gt;Title:&lt;/th&gt;
             &lt;td&gt;
-              &lt;input <b>id="recipe_title"</b> name="recipe[title]"
+              &lt;input <strong>id="recipe_title"</strong> name="recipe[title]"
                      size="30" type="text" value="Hot Chips" /&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Description:&lt;/th&gt;
             &lt;td&gt;
-              &lt;input <b>id="recipe_description"</b> name="recipe[description]"
+              &lt;input <strong>id="recipe_description"</strong> name="recipe[description]"
                      size="30" type="text" value="Only for the brave!" /&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
@@ -3434,15 +3212,15 @@ print erb.result(binding())
             &lt;th&gt;Category:&lt;/th&gt;
             &lt;td&gt;
               &lt;select name="recipe[category_id]"&gt;
-                &lt;option value="1" <b>id="mark:category_name"</b>&gt;Snacks&lt;/option&gt;
-                &lt;option value="2" <b>id="dummy:o1"</b>&gt;Drinks&lt;/option&gt;
+                &lt;option value="1" <strong>id="mark:category_name"</strong>&gt;Snacks&lt;/option&gt;
+                &lt;option value="2" <strong>id="dummy:o1"</strong>&gt;Drinks&lt;/option&gt;
               &lt;/select&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Instructions:&lt;/th&gt;
             &lt;td&gt;
-              &lt;textarea <b>id="recipe_instructions"</b> name="recipe[instructions]" wrap="virtual"
+              &lt;textarea <strong>id="recipe_instructions"</strong> name="recipe[instructions]" wrap="virtual"
                 cols="40" rows="20"&gt;Sprinkle hot-pepper sauce on corn chips.&lt;/textarea&gt;
             &lt;/td&gt;
           &lt;/tr&gt;
@@ -3453,17 +3231,17 @@ print erb.result(binding())
       &lt;/form&gt;
 
       &lt;p&gt;
-        &lt;a href="..." <b>id="mark:show_recipe"</b>&gt;Show&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:show_recipe"</strong>&gt;Show&lt;/a&gt;
         |
-        &lt;a href="..." <b>id="mark:list_recipes"</b>&gt;Back&lt;/a&gt;
+        &lt;a href="..." <strong>id="mark:list_recipes"</strong>&gt;Back&lt;/a&gt;
       &lt;/p&gt;
 
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):
-</p>
+<div class="program_caption">
+<a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):</div>
 <pre class="program">#edit_form {
         attrs:  "action" X(&lt;%= url_for(:action=&gt;'update') %&gt;);
 }
@@ -3501,8 +3279,8 @@ print erb.result(binding())
         attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;);
 }
 </pre>
-<p>Compile:
-</p>
+<div class="terminal_caption">
+Compile:</div>
 <pre class="terminal">### compile
 % kwartz -Rails -e -p recipes.plogic recipes.html &gt; recipes.rhtml
 % kwartz -Rails -e -p list.plogic <b>--extract=content</b> list.html &gt; list.rhtml
@@ -3510,8 +3288,8 @@ print erb.result(binding())
 % kwartz -Rails -e -p new.plogic  <b>--extract=content</b> new.html  &gt; new.rhtml
 % kwartz -Rails -e -p edit.plogic <b>--extract=content</b> edit.html &gt; edit.rhtml
 </pre>
-<p><a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
@@ -3521,8 +3299,8 @@ print erb.result(binding())
 &lt;%= @content_for_layout %&gt;  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p><a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
@@ -3555,8 +3333,8 @@ print erb.result(binding())
 
     &lt;/div&gt;
 </pre>
-<p><a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Show Recipe&lt;/h1&gt;
@@ -3592,8 +3370,8 @@ print erb.result(binding())
       
     &lt;/div&gt;
 </pre>
-<p><a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;New Recipe&lt;/h1&gt;
@@ -3641,8 +3419,8 @@ print erb.result(binding())
 
     &lt;/div&gt;
 </pre>
-<p><a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):
-</p>
+<div class="program_caption">
+<a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Edit Recipe&lt;/h1&gt;

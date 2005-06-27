@@ -1,6 +1,7 @@
 .=title:	Kwartz Examples
 .?version:	$Rev$
 .?lastupdate:	$Date$
+.?stylesheet:	docstyle.css
 
 
 .#.$ Preface			| preface*

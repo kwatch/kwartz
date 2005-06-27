@@ -59,13 +59,17 @@ pre {
 	word-break:break-all;
 }
 
+
 .program_caption {
+        margin-top: 20px;
 }
 
 .terminal_caption {
+        margin-top: 20px;
 }
 
 .output_caption {
+        margin-top: 20px;
 }
 
 
