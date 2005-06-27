@@ -3,15 +3,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO8859-1">
     <title>Kwartz - a template system for Ruby, PHP and Java (brief overview)</title>
-    <style type="text/css">
-      <!--
-        body   {background-color:#FFFFFF;}
-        -->
-    </style>
   </head>
-  
-  <body>
-    
+
+  <body style="background-color:#FFFFFF">
+
 <% if page > 0 then %>
     <div align="center">
 <%   if first_url && !first_url.empty? then %>
@@ -30,9 +25,9 @@
 Index<% end %>
       &nbsp;
 <%   if next_url && !next_url.empty? then %>
-      <a href="<%= next_url %>"><b>Next &gt;</b></a>
+      <a href="<%= next_url %>"><strong>Next &gt;</strong></a>
 <%   else %>
-<b>Next &gt;</b><% end %>
+<strong>Next &gt;</strong><% end %>
       &nbsp;
 <%   if last_url && !last_url.empty? then %>
       <a href="<%= last_url %>">Last &gt;&gt;|</a>
@@ -48,29 +43,29 @@ Last &gt;&gt;|<% end %>
 <%     i += 1 %>
 <%     link_url = thumb[:link_url] %>
 <%     image_url = thumb[:image_url] %>
-      <a href="<%= link_url %>"><img width="200" height="150"
-         src="<%= image_url %>" ></a>
+      <a href="<%= link_url %>"><!--
+    --><img width="200" height="150" src="<%= image_url %>"></a>
 <%     if i % 3 == 0 then %>
       <br>
 <%     end %>
 <%   end %>
 <% end %>
     </div>
-      
+
 <% if page != 0 then %>
     <div id="main_image" align="center">
       <br>
       <table border="1">
         <tr>
           <td>
-            <img src="<%= image_url %>" alt="presentaion image" >
+            <img src="<%= image_url %>" alt="presentaion image">
           </td>
         </tr>
       </table>
       <br>
     </div>
 <% end %>
-    
+
 <% if page > 0 then %>
     <div align="center">
 <%   if first_url && !first_url.empty? then %>
@@ -89,9 +84,9 @@ Last &gt;&gt;|<% end %>
 Index<% end %>
       &nbsp;
 <%   if next_url && !next_url.empty? then %>
-      <a href="<%= next_url %>"><b>Next &gt;</b></a>
+      <a href="<%= next_url %>"><strong>Next &gt;</strong></a>
 <%   else %>
-<b>Next &gt;</b><% end %>
+<strong>Next &gt;</strong><% end %>
       &nbsp;
 <%   if last_url && !last_url.empty? then %>
       <a href="<%= last_url %>">Last &gt;&gt;|</a>
@@ -100,12 +95,5 @@ Last &gt;&gt;|<% end %>
     </div>
 <% end %>
 
-    <!--
-    <div id="counter" align="right">
-      <img src="/cgi-bin/Count.cgi?df=kwartz.kwarz-overview.index&dd=A&ft=0&tr=T&trgb=000000&prgb=CCCCCC&md=7"
-        alt="counter image file">
-    </div>
-      -->
-    
   </body>
 </html>

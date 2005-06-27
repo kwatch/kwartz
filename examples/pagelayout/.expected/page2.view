@@ -1,4 +1,4 @@
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
     <title>MyGroupware: Quoting Detail</title>
@@ -7,11 +7,11 @@
   </head>
   <body>
 
-    <table border="0">
+    <table border="0" summary="">
       <tr>
 
         <!-- menu part -->
-        <td width="100" valign="top" class="menulist">
+        <td width="100" valign="top" class="menu_part">
           <b>Menu:</b>
           <div>
 <% for menu in menulist do %>
@@ -23,7 +23,7 @@
         </td>
 
         <!-- content part -->
-        <td width="400" valign="top" class="contents">
+        <td width="400" valign="top" class="contents_part">
           <h3>Quoting Detail</h3>
           <div>
     <div>

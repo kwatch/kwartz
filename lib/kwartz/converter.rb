@@ -99,6 +99,14 @@ module Kwartz
          #   @after_text   = @after_space + @after_text
          #   @after_space  = ''
          #end
+         if @tagname == 'span'
+            unless @is_begline && @is_endline
+               @before_text += @before_space
+               @before_space = ''
+               @after_text   = @after_space + @after_text
+               @after_space  = ''
+            end
+         end
 
          @input    = @after_text
          return @tagname

@@ -1267,6 +1267,37 @@ END
    end
 
 
+   ## ----------------------------------------
+   def test_span7	# spaces around span tag
+      pdata = <<'END'
+Hello  <div id="mark:user1">  World  </div>  !
+Hello  <span id="mark:user2">  World  </span>  !
+Hello  <div id="value:user3">  World  </div>  !
+Hello  <span id="value:user4">  World  </span>  !
+END
+      plogic = <<END
+#user1  {
+	plogic: {
+	    print(var1);
+	}
+}
+
+#user2 {
+	plogic: {
+	    print(var2);
+	}
+}
+END
+      expected = <<'END'
+Hello<%= var1 %>!
+Hello  <%= var2 %>  !
+Hello  <div>  <%= user3 %>  </div>  !
+Hello  <%= user4 %>  !
+END
+      _test(pdata, plogic, expected)
+   end
+
+
 end
 
 

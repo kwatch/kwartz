@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-06-27 rev.93
+	.- [bugfix] spaces around span tag is not included in @stag and @etag ([bug#1228039])
+
 .: 2005-06-27 rev.92
 	.- [change] documents update
 

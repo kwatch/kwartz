@@ -1827,15 +1827,13 @@ END
 		[content]
 		:block
 		  :print
-		    "  copyright&copy;"
+		    "  copyright&copy; "
 		  :print
-		    " "
 		  :print
 		    year
 		  :print
-		    " "
 		  :print
-		    "kuwata-lab all rights reserverd\n"
+		    " kuwata-lab all rights reserverd\n"
 		[spaces]
 		["", "\n", "", "\n"]
 		[plogic]
@@ -1850,15 +1848,13 @@ END
 		[content]
 		:block
 		  :print
-		    "  copyright&copy;"
+		    "  copyright&copy; "
 		  :print
-		    " "
 		  :print
 		    year
 		  :print
-		    " "
 		  :print
-		    "kuwata-lab all rights reserverd\n"
+		    " kuwata-lab all rights reserverd\n"
 		[spaces]
 		["", "\n", "", "\n"]
 		[plogic]
@@ -1873,15 +1869,13 @@ END
 		[content]
 		:block
 		  :print
-		    "  copyright&copy;"
+		    "  copyright&copy; "
 		  :print
-		    " "
 		  :print
 		    year
 		  :print
-		    " "
 		  :print
-		    "kuwata-lab all rights reserverd\n"
+		    " kuwata-lab all rights reserverd\n"
 		[spaces]
 		["", "\n", "", "\n"]
 		[plogic]
@@ -1902,6 +1896,74 @@ END
            Dir.rmdir(dirname)
         end
     end
+
+
+
+    def test_convert_span1	# span
+	input = <<-'END'
+		Hello  <div id="mark:user1">  World  </div>  !
+		Hello  <span id="mark:user2">  World  </span>  !
+		Hello  <div id="value:user3">  World  </div>  !
+		Hello  <span id="value:user4">  World  </span>  !
+	END
+	expected = <<-'END'
+		:block
+		  :print
+		    "Hello"
+		  @element(user1)
+		  :print
+		    "!\nHello  "
+		  @element(user2)
+		  :print
+		    "  !\nHello"
+		  :print
+		    "  <div>  "
+		  :print
+		    user3
+		  :print
+		    "  </div>  "
+		  :print
+		    "!\nHello  "
+		  :print
+		  :print
+		    user4
+		  :print
+		  :print
+		    "  !\n"
+		===== marking=user1 =====
+		[tagname]
+		div
+		[attrs]
+		[content]
+		:block
+		  :print
+		    "World"
+		[spaces]
+		["  ", "  ", "  ", "  "]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+		===== marking=user2 =====
+		[tagname]
+		span
+		[attrs]
+		[content]
+		:block
+		  :print
+		    "  World  "
+		[spaces]
+		["", "", "", ""]
+		[plogic]
+		:block
+		  @stag
+		  @cont
+		  @etag
+	END
+	_test_convert(input, expected)
+    end
+
 
 
     def test_convert_properties1	# 'even' and 'odd'

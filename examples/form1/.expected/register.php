@@ -43,7 +43,7 @@
 
     <tr>
      <td colspan="2" align="center">
-      <input type="submit" value=" Regist ">
+      <input type="submit" value=" Register ">
       <input type="reset"  value="reset">
      </td>
     </tr>
