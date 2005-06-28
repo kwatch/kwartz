@@ -21,8 +21,8 @@
 
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>Kwartz is the template system which realized the concept of '<strong>Separation of Presentation Logic and Presentation Data (SoPL/PD)</strong>.'
-SoPL/PD enables to use complex presentation logics without breaking HTML design at all.
+<p>Kwartz is a template system which realized the concept '<strong>Separation of Presentation Logic and Presentation Data (SoPL/PD)</strong>' or '<strong>Independence of Presentation Logic (IoPL)</strong>'.
+SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
 </p>
 <p>There are several patterns which help you to separate presentation logic and presentation data well.
 These patterns are called 'Presentation Patterns.'
@@ -43,38 +43,6 @@ These patterns are called 'Presentation Patterns.'
   <li><a href="#replacement">Replacement</a>
   <ul>
     <li><a href="#replace-elem-by-value">Replace Element by Value Pattern</a>
-    </li>
-    <li><a href="#replace-cont-by-value">Replace Content by Value Pattern</a>
-    </li>
-    <li><a href="#replace-elem-by-elem">Replace Element by Element Pattern</a>
-    </li>
-    <li><a href="#replace-cont-by-elem">Replace Content by Element Pattern</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#deletion">Deletion</a>
-  <ul>
-    <li><a href="#delete-elem">Delete Element Pattern</a>
-    </li>
-    <li><a href="#delete-tag">Delete Tag Pattern</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#iteration">Iteration</a>
-  <ul>
-    <li><a href="#iterate-elem">Iterate Element Pattern</a>
-    </li>
-    <li><a href="#iterate-cont">Iterate Content Pattern</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#selection">Selection</a>
-  <ul>
-    <li><a href="#select-elem">Select Element Pattern</a>
-    </li>
-    <li><a href="#pickup-elem">Pick-up Element Pattern</a>
-    </li>
-    <li><a href="#extract-elem">Extract Element Pattern</a>
     </li>
   </ul>
   </li>
@@ -1101,7 +1069,8 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
   &lt;body&gt;
 &lt;% for item in list do %&gt;
       &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
-&amp;gt;&lt;% end %&gt;
+      &amp;gt;
+&lt;% end %&gt;
       &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1111,7 +1080,8 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
   &lt;body&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
       &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
-&amp;gt;&lt;?php } ?&gt;
+      &amp;gt;
+&lt;?php } ?&gt;
       &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1121,7 +1091,8 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
   &lt;body&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
       &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
-&amp;gt;&lt;/c:forEach&gt;
+      &amp;gt;
+&lt;/c:forEach&gt;
       &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1131,7 +1102,8 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
   &lt;body&gt;
 #foreach($item in $list)
       &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
-&amp;gt;#end
+      &amp;gt;
+#end
       &lt;b&gt;$!{title}&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1370,24 +1342,24 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
 <pre class="program">### for eRuby
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
-
       &lt;div class="menus"&gt;
 &lt;% for menu in menulist do %&gt;
 &lt;%   klass = current_menu == menu["name"] ? "selected" : "" %&gt;
         &lt;a href="&lt;%= menu["cgipath"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu["name"] %&gt;&lt;/a&gt;
-&lt;br&gt;&lt;% end %&gt;
+        &lt;br&gt;
+&lt;% end %&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 
 ### for PHP
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;?php echo $menu_title; ?&gt;&lt;/span&gt;
-
       &lt;div class="menus"&gt;
 &lt;?php foreach ($menulist as $menu) { ?&gt;
 &lt;?php   $klass = $current_menu == $menu["name"] ? "selected" : ""; ?&gt;
         &lt;a href="&lt;?php echo $menu["cgipath"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $menu["name"]; ?&gt;&lt;/a&gt;
-&lt;br&gt;&lt;?php } ?&gt;
+        &lt;br&gt;
+&lt;?php } ?&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>

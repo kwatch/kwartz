@@ -21,7 +21,7 @@
 
 <a name="preface"></a>
 <h2 class="section1">はじめに</h2>
-<p>Kwartzは、<strong>「プレゼンテーションロジックとプレゼンテーションデータの分離」</strong>という概念を実現したテンプレートシステムです。
+<p>Kwartzは、<strong>「プレゼンテーションロジックとプレゼンテーションデータの分離」</strong>または<strong>「プレゼンテーションロジックの独立」</strong>という概念を実現したテンプレートシステムです。
 プレゼンテーションロジックとプレゼンテーションデータを分離すると、HTMLデザインをまったく崩すことなく、複雑なプレゼンテーションロジックを利用することができます。
 </p>
 <p>またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。
@@ -43,38 +43,6 @@
   <li><a href="#replacement">置換</a>
   <ul>
     <li><a href="#replace-elem-by-value">Replace Element by Valueパターン</a>
-    </li>
-    <li><a href="#replace-cont-by-value">Replace Content by Valueパターン</a>
-    </li>
-    <li><a href="#replace-elem-by-elem">Replace Element by Elementパターン</a>
-    </li>
-    <li><a href="#replace-cont-by-elem">Replace Content by Elementパターン</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#deletion">削除</a>
-  <ul>
-    <li><a href="#delete-elem">Delete Elementパターン</a>
-    </li>
-    <li><a href="#delete-tag">Delete Tagパターン</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#iteration">繰り返し</a>
-  <ul>
-    <li><a href="#iterate-elem">Iterate Elementパターン</a>
-    </li>
-    <li><a href="#iterate-cont">Iterate Contentパターン</a>
-    </li>
-  </ul>
-  </li>
-  <li><a href="#selection">選択</a>
-  <ul>
-    <li><a href="#select-elem">Select Elementパターン</a>
-    </li>
-    <li><a href="#pickup-elem">Pick-up Elementパターン</a>
-    </li>
-    <li><a href="#extract-elem">Extract Elementパターン</a>
     </li>
   </ul>
   </li>
@@ -1107,7 +1075,8 @@ Next#else
   &lt;body&gt;
 &lt;% for item in list do %&gt;
       &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
-&amp;gt;&lt;% end %&gt;
+      &amp;gt;
+&lt;% end %&gt;
       &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1117,7 +1086,8 @@ Next#else
   &lt;body&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
       &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
-&amp;gt;&lt;?php } ?&gt;
+      &amp;gt;
+&lt;?php } ?&gt;
       &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1127,7 +1097,8 @@ Next#else
   &lt;body&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
       &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
-&amp;gt;&lt;/c:forEach&gt;
+      &amp;gt;
+&lt;/c:forEach&gt;
       &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1137,7 +1108,8 @@ Next#else
   &lt;body&gt;
 #foreach($item in $list)
       &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
-&amp;gt;#end
+      &amp;gt;
+#end
       &lt;b&gt;$!{title}&lt;/b&gt;
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1376,24 +1348,24 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
 <pre class="program">### for eRuby
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
-
       &lt;div class="menus"&gt;
 &lt;% for menu in menulist do %&gt;
 &lt;%   klass = current_menu == menu["name"] ? "selected" : "" %&gt;
         &lt;a href="&lt;%= menu["cgipath"] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu["name"] %&gt;&lt;/a&gt;
-&lt;br&gt;&lt;% end %&gt;
+        &lt;br&gt;
+&lt;% end %&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 
 ### for PHP
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;?php echo $menu_title; ?&gt;&lt;/span&gt;
-
       &lt;div class="menus"&gt;
 &lt;?php foreach ($menulist as $menu) { ?&gt;
 &lt;?php   $klass = $current_menu == $menu["name"] ? "selected" : ""; ?&gt;
         &lt;a href="&lt;?php echo $menu["cgipath"]; ?&gt;" class="&lt;?php echo $klass; ?&gt;"&gt;&lt;?php echo $menu["name"]; ?&gt;&lt;/a&gt;
-&lt;br&gt;&lt;?php } ?&gt;
+        &lt;br&gt;
+&lt;?php } ?&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>

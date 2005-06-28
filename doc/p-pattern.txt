@@ -10,10 +10,10 @@
 .JA	●はじめに	| preface*
 .EN	.$ Preface	| preface*
 .	
-.JA	Kwartzは、{{*「プレゼンテーションロジックとプレゼンテーションデータの分離」*}}という概念を実現したテンプレートシステムです。
+.JA	Kwartzは、{{*「プレゼンテーションロジックとプレゼンテーションデータの分離」*}}または{{*「プレゼンテーションロジックの独立」*}}という概念を実現したテンプレートシステムです。
 .JA	プレゼンテーションロジックとプレゼンテーションデータを分離すると、HTMLデザインをまったく崩すことなく、複雑なプレゼンテーションロジックを利用することができます。
-.EN	Kwartz is the template system which realized the concept of '{{*Separation of Presentation Logic and Presentation Data (SoPL/PD)*}}.'
-.EN	SoPL/PD enables to use complex presentation logics without breaking HTML design at all.
+.EN	Kwartz is a template system which realized the concept '{{*Separation of Presentation Logic and Presentation Data (SoPL/PD)*}}' or '{{*Independence of Presentation Logic (IoPL)*}}'.
+.EN	SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
 .	
 .	
 .JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。

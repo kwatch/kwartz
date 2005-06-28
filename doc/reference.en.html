@@ -94,13 +94,15 @@ in this document.
     </li>
     <li><a href="#kd-foreach">Iteration (foreach)</a>
     </li>
-    <li><a href="#kd-loop">Iteration(loop)</a>
+    <li><a href="#kd-list">Iteration(list)</a>
     </li>
     <li><a href="#kd-foreach2">Iteration with Count</a>
     </li>
     <li><a href="#kd-foreach3">Iteration with a Toggle Switch</a>
     </li>
     <li><a href="#kd-while">Iteration (while)</a>
+    </li>
+    <li><a href="#kd-loop">Iteration (loop)</a>
     </li>
     <li><a href="#kd-dummy">Dummy data</a>
     </li>
@@ -209,9 +211,9 @@ because Velocity doesn't have a keyword which is equivalent to <code>null</code>
 However, Kwartz will translate '<code>expr==null</code>' and '<code>expr!=null</code>' to '<code>!expr</code>' and '<code>expr</code>'
 when translating to Velocity.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-boolean.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">flag = obj == null? true : false;
 
 if (expr != null) {
@@ -220,8 +222,8 @@ if (expr != null) {
   print("epxr is null.\n");
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for Velocity
 #if($obj)
   #set($flag = true)
@@ -289,13 +291,13 @@ a function '<code>fn:join()</code>' in JSTL1.1.
 There is no concatenation operator in JSTL1.0, so Kwartz converts it into a little tricky code.
 Concatenation operator will be error in Velocity.
 </p>
-<p>PL Program (PL):
-</p>
 <a name="pl-concatop.plogic"></a>
+<div class="program_caption">
+PL Program (PL):</div>
 <pre class="program">filename = basename .+ '.plogic';
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% filename = basename + ".plogic" %&gt;
 
@@ -315,13 +317,13 @@ Concatenation operator will be error in Velocity.
 However, it is not available in JSTL1.0 and Velocity.
 Therefore, conditional operators will be translated to corresponding if statements in JSTL1.0 and velocity.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-condop.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">color = ctr % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% color = ctr % 2 == 0 ? "#FFCCCC" : "#CCCCFF" %&gt;
 
@@ -362,13 +364,13 @@ Therefore, conditional operators will be translated to corresponding if statemen
 <p><code>print(<em>...</em>)</code> is print statement.
 Any expression can be in arguments.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-print.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">print('foo', bar, "baz\n");    // print a string and the value of a variable
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 foo&lt;%= bar %&gt;baz
 
@@ -383,6 +385,8 @@ foo$!{bar}baz
 </pre>
 <p>When you enable auto-sanitizing, the output scripts will be one of the following:
 </p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 foo&lt;%= CGI::escapeHTML((bar).to_s) %&gt;baz
 
@@ -397,16 +401,16 @@ foo$!esc.html($bar)baz
 </pre>
 <p>If conditional operator returns constant string or number, sanitizing will be off even when using auto-sanitizing.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-print2.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">// Sanitized.
 print("&lt;option ", condition ? var1 : var2, "&gt;\n");
 // Not sanitized.
 print("&lt;option ", condition ? 'selected' : '', "&gt;\n");
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;option &lt;%= CGI::escapeHTML((condition ? var1 : var2).to_s) %&gt;&gt;
 &lt;option &lt;%= condition ? "selected" : "" %&gt;&gt;
@@ -430,15 +434,15 @@ This is for some languages which doesn't support string concatenation operator (
 <p>Assignment statement is such as <code>var = 100;</code>.
 Also '<code>+=</code>', '<code>-=</code>', '<code>*=</code>', '<code>/=</code>', '<code>%=</code>' and '<code>+=</code>' are allowed.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-set.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">name = 'Foo';		// assign a string
 count += 1;		// increment the value of the variable
 str .+= '.txt';		// append a string
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for PHP
 &lt;?php $name = "Foo"; ?&gt;
 &lt;?php $count += 1; ?&gt;
@@ -472,16 +476,16 @@ You can reference a hash element in the same way.<sup>(<a href="#fnref:3" name="
 </p>
 <p>In JSTL, assignment into an array element or a hash element is not available.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-array.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">list[n] = 10;           // assign into n-th element of the array
 print(list[i], "\n");   // print  i-th element of the array
 hash['key'] = 'foo';    // assign into a hash element
 print(hash['key'], "\n"); // print a hash element
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% list[n] = 10 %&gt;
 &lt;%= list[i] %&gt;
@@ -527,13 +531,13 @@ print(hash['key'], "\n"); // print a hash element
  </tr>
 </table>
 </div>
-<p>PL Program:
-</p>
 <a name="pl-hash.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">print(hash[:key]);
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;%= hash[:key] %&gt;
 
@@ -560,15 +564,15 @@ $!{hash.key}</pre>
 You can also call a method with arguments such as '<code><em>object</em>.<em>method</em>(<em>arg1</em>, <em>arg2</em>, ..)</code>'.
 Translation of method call into JSTL will raise an error because JSTL's Expression Language doesn't support method call.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-property.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">// property
 user.name = 'Foo';
 print(user.name, "\n");
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% user.name = "Foo" %&gt;
 &lt;%= user.name %&gt;
@@ -585,14 +589,14 @@ print(user.name, "\n");
 #set($user.name = "Foo")
 $!{user.name}
 </pre>
-<p>PL Program:
-</p>
 <a name="pl-method.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">// method call
 print(user.method(10, 20));
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;%= user.method(10, 20) %&gt;
 
@@ -612,15 +616,15 @@ These tasks must be done in the main program.
 <p><code>foreach(<em>loopvar</em> in <em>list</em>) { ... }</code> represents a foreach iteration.
 Items in the <code><em>list</em></code> is assigned into the variable <code><em>loopvar</em></code> each time through the iteration.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-foreach.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">foreach(item in list) {
   print(item, "\n");
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% for item in list do %&gt;
 &lt;%= item %&gt;
@@ -645,17 +649,17 @@ $!{item}
 Kwartz will raise an error if you try to translate a while statement into a JSTL or Velocity script,
 because there is no JSTL tag or Velocity directive which is equivalent to the while statment.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-while.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">i = 0;
 while(i &lt; length) {
   i += 1;
   print(list[i]);
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% i = 0 %&gt;
 &lt;% while i &lt; length do %&gt;
@@ -677,9 +681,9 @@ while(i &lt; length) {
 <h3 class="section2">Conditional Branching</h3>
 <p>'<code>if(<em>condition</em>) { ... } else if(<em>condition</em>) { ... } else { ... }</code>' represents a  conditional branch.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-if.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">if (val &gt; 0) {
   print ("* value is positive.\n");
 } else if (val &lt; 0) {
@@ -688,8 +692,8 @@ while(i &lt; length) {
   print ("* value is zero.\n");
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% if val &gt; 0 then %&gt;
 * value is positive.
@@ -1047,17 +1051,17 @@ You shouldn't use them in other place.
 <p>'<code>empty</code>' is a keyword used to check whether a value is either null or an empty string.
 It can be placed only at the right-side of the operators '<code>==</code>' and '<code>!=</code>'.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-empty.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">if (str1 == empty) {
   print("str1 is empty.\n");
 } else if (str2 != empty) {
   print("str2 is not empty.\n");
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% if !str1 || str1.empty? then %&gt;
 str1 is empty.
@@ -1142,12 +1146,13 @@ In Kwartz, presentation logic file is described as a set of element declarations
 	Change the presentation logic of the element.
 	<code>@stag</code>, <code>@cont</code>, and <code>@etag</code> are available in <code>{ ... }</code>.
 	These represents start tag, content, end tag of the element respectively.
-	And <code>@element(<em>other</em>)</code> is also available which represents other element and expand it.
+	<code>@element(<em>other</em>)</code> is also available which represents other element
+	and <code>@content(<em>other</em>)</code> represents content of other element.
 </dd>
 </dl>
-<p>Presentation Data:
-</p>
 <a name="pl-decl.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;ul&gt;
   &lt;li id="foo" class="foo"&gt;dummy&lt;/li&gt;
 &lt;/ul&gt;
@@ -1156,9 +1161,9 @@ In Kwartz, presentation logic file is described as a set of element declarations
   &lt;input type="checkbox" name="user" value="Y" checked="checked" id="mark:chkbox"/&gt;
 &lt;/form&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="pl-decl.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#foo {
   value:  item;
   attrs:  "class" klass;
@@ -1176,8 +1181,8 @@ In Kwartz, presentation logic file is described as a set of element declarations
   tagname: "html:text";
 }
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;ul&gt;
 &lt;% for item in list do %&gt;
@@ -1271,16 +1276,16 @@ It represents document information and takes the following declaration parts.
 	List of local variables. Currently this part have no means but will be used in future release.
 </dd>
 </dl>
-<p>Presentation data:
-</p>
 <a name="pl-doc.html"></a>
+<div class="program_caption">
+Presentation data:</div>
 <pre class="program">&lt;ul id="mark:list"&gt;
   &lt;li id="value:item"&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-<p>PL Program:
-</p>
 <a name="pl-doc.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">#DOCUMENT {
   begin: {
     list = context[:list];
@@ -1300,8 +1305,8 @@ It represents document information and takes the following declaration parts.
   }
 }
 </pre>
-<p>Output script:
-</p>
+<div class="output_caption">
+Output script:</div>
 <pre class="output">### for eRuby
 &lt;% list = context[:list] %&gt;
 &lt;ul&gt;
@@ -1356,9 +1361,9 @@ These are called `Raw Code'.  There are two type of raw code: expression and sta
 </ul>
 <p>The following is an example to write Ruby code directly.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-rawcode1.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">// Rawcode expression
 hash = <strong>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</strong>;
 
@@ -1367,8 +1372,8 @@ hash = <strong>&lt;%= { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;</stron
 print("key=", key, " value=", value, "\n");
 <strong>&lt;% end %&gt;</strong>
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% hash = { :a =&gt; 123, :b =&gt; 456, :c =&gt; 789, } %&gt;
 &lt;% hash.each do |key, value| %&gt;
@@ -1377,9 +1382,9 @@ key=&lt;%= key %&gt; value=&lt;%= value %&gt;
 </pre>
 <p>The following is an example which includes PHP code.
 </p>
-<p>PL Program:
-</p>
 <a name="pl-rawcode2.plogic"></a>
+<div class="program_caption">
+PL Program:</div>
 <pre class="program">// Rawcode expression
 hash = <strong>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</strong>;
 
@@ -1388,8 +1393,8 @@ hash = <strong>&lt;?= array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789) ?&gt;</strong
 print("key=", key, " value=", value, "\n");
 <strong>&lt;?php } ?&gt;</strong>
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for PHP
 &lt;?php $hash = array("a"=&gt;123, "b"=&gt;456, "c"=&gt;789); ?&gt;
 &lt;?php foreach($hash as $key =&gt; $value) { ?&gt;
@@ -1414,9 +1419,9 @@ Variables are called 'Template Local Variables' if they are used only in the tem
 </p>
 <p>Assume the following presentation data and presentation logic:
 </p>
-<p>Presentation data (analyze.html) :
-</p>
 <a name="analyze.html"></a>
+<div class="program_caption">
+Presentation data (analyze.html) :</div>
 <pre class="program">&lt;table&gt;
   &lt;caption id="value:<strong>title</strong>"&gt;Sample&lt;/caption&gt;
   &lt;tr id="mark:items" bgcolor="@{<strong>color</strong>}@"&gt;
@@ -1424,9 +1429,9 @@ Variables are called 'Template Local Variables' if they are used only in the tem
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>Presentation logic (analyze.plogic) :
-</p>
 <a name="analyze.plogic"></a>
+<div class="program_caption">
+Presentation logic (analyze.plogic) :</div>
 <pre class="program">#items {
   plogic: {
     <strong>ctr</strong> = 0;
@@ -1458,7 +1463,7 @@ Template local variables </strong></dt>
 </dl>
 <p>Invoking Kwartz with the command-line option '<code>-a analyze</code>' analyzes the template and reports template global/local variables.
 </p>
-<pre class="program">$ kwartz -p analyze.plogic -a analyze analyze.html
+<pre class="terminal">$ kwartz -p analyze.plogic -a analyze analyze.html
 Global: <strong>title</strong> <strong>list</strong>
 Local:  <strong>ctr</strong> <strong>item</strong> <strong>color</strong>
 </pre>
@@ -1552,14 +1557,14 @@ But Kwartz has the following merits compared to other template systems;
  that the former is left in but the latter is removed when compiling.
 kw:d attributes are always removed.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-mark.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div <strong>id="foo"</strong>&gt;foo&lt;/div&gt;
 &lt;div <strong>id="mark:bar"</strong>&gt;bar&lt;/div&gt;
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;div id="foo"&gt;foo&lt;/div&gt;
 &lt;div&gt;bar&lt;/div&gt;
@@ -1584,13 +1589,13 @@ kw:d attributes are always removed.
 <p>'<code>@{<em>expression</em>}@</code>' is a directive which prints the value of an expression.
 This pattern is changeable with a constant EMBED_PATTERN in configuration file (kwartz/config.rb).
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-output.html"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">Hello <strong>@{user.name}@</strong>!
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 Hello &lt;%= user.name %&gt;!
 
@@ -1606,8 +1611,8 @@ Hello $!{user.name}!
 <p>Expressions are sanitized if you specified the command-line option '<code>-e</code>' when compiling templates.
 Notice that all expressions except string and numbers constants are sanitized.
 </p>
-<p>Output Program (with command-line option <code>-e</code>) :
-</p>
+<div class="output_caption">
+Output Program (with command-line option <code>-e</code>) :</div>
 <pre class="output">### for eRuby
 Hello &lt;%= CGI::escapeHTML((user.name).to_s) %&gt;!
 
@@ -1625,14 +1630,14 @@ Hello $!esc.html($user.name)!
 and <code>X(<em>expr</em>)</code> means that <code><em>expr</em></code> is not sanitized.
 These are not effected by the command-line option '<code>-e</code>'.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-output2.html"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">With sanitizing:    <strong>@{E(var)}@</strong>!
 Without sanitizing: <strong>@{X(var)}@</strong>!
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 With sanitizing:    &lt;%= CGI::escapeHTML((var).to_s) %&gt;!
 Without sanitizing: &lt;%= var %&gt;!
@@ -1660,13 +1665,13 @@ Without sanitizing: $!{var}!
 <p>'<code>id="value:<em>expression</em>"</code>' is a directive to print the value of expression instead of the content.
 It is more suitable for HTML design than '<code>@{<em>expression</em>}@</code>' because it allows for the use of dummy data.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-value.html"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;li <strong>id="value:hash['name']"</strong>&gt;foo&lt;/li&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;li&gt;&lt;%= hash["name"] %&gt;&lt;/li&gt;
 
@@ -1693,15 +1698,15 @@ It overwrites the existing value if attribute <code><em>name</em></code> is alre
 </p>
 <p>In the following example, attribute 'class' has the dummy value '<code>odd</code>', and the actual value is derived from the variable '<code>klass</code>'.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-attr.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;tr class="odd" <strong>id="attr:class=klass"</strong>&gt;
   &lt;td&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;tr class="&lt;%= klass %&gt;"&gt;
   &lt;td&gt;foo&lt;/td&gt;
@@ -1729,15 +1734,15 @@ These are equal to '<code>id="attr:<em>name</em>=E(<em>value</em>)"</code>' and 
 <p>Separating with '<code>;</code>', you can have several '<code>attr:<em>name</em>=<em>value</em></code>' directives in one id attribute.
 You can enumerate other attributes this way as well.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-attr2.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;font id="if:message!=empty<strong>;attr:class=klass;attr:bgcolor=color</strong>"&gt;
  @{message}@
 &lt;/font&gt;
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">### for eRuby
 &lt;% if message &amp;&amp; !message.empty? then %&gt;
 &lt;font class="&lt;%= klass %&gt;" bgcolor="&lt;%= color %&gt;"&gt;
@@ -1774,16 +1779,16 @@ You can enumerate other attributes this way as well.
 <p>'<code>id="append:<em>expression</em>"</code>' is a directive to append expression into a tag.
 This is useful to output '&lt;input ... checked /&gt;' or '&lt;option ... selected&gt;&lt;/option&gt;'.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-append.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;option name="lang" value="ruby"
        <strong>id="append:lang=='ruby'?' selected':''"</strong>&gt;Ruby&lt;/option&gt;
 &lt;input type="radio" name="gender" value="M"
        <strong>id="append:gender=='M'?' checked':''"</strong>&gt;
 </pre>
-<p>Output Script:
-</p>
+<div class="program_caption">
+Output Script:</div>
 <pre class="program">### for eRuby
 &lt;option name="lang" value="ruby"&lt;%= lang == "ruby" ? " selected" : "" %&gt;&gt;Ruby&lt;/option&gt;
 &lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked" : "" %&gt;&gt;
@@ -1813,9 +1818,9 @@ Ruby&lt;/option&gt;
 <p>A function to output <code>'checked="checked"'</code>, <code>'selected="selected"'</code> and <code>'disabled="disabled"'</code> easily for HTML/XHTML is available in Kwartz.
 <code>C(<em>expr</em>)</code>, <code>S(<em>expr</em>)</code>, and <code>D(<em>expr</em>)</code> print <code>' checked="checked"'</code>, <code>' selected="selected"'</code> and <code>' disabled="disabled"'</code> respectively when expression <code><em>expr</em></code> is true.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-append2.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;option name="lang" value="ruby"
        id="append:<strong>S(lang=='ruby')</strong>"&gt;Ruby&lt;/option&gt;
 
@@ -1825,8 +1830,8 @@ Ruby&lt;/option&gt;
 &lt;input type="radio" name="os" value="win"
        id="append:<strong>D(os=='mac')</strong>" /&gt;Windows
 </pre>
-<p>Output Script:
-</p>
+<div class="program_caption">
+Output Script:</div>
 <pre class="program">### for PHP
 &lt;option name="lang" value="ruby"&lt;?php echo $lang == "ruby" ? " selected=\"selected\"" : ""; ?&gt;&gt;Ruby&lt;/option&gt;
 
@@ -1875,14 +1880,14 @@ Windows
 <p>'<code>id="set:<em>var</em>=<em>value</em>"</code>' is a directive for assigning values into variables.
 Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</code>', '<code>/=</code>', '<code>.=</code>' are also available.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-set.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;dt <strong>id="set:var=value"</strong>&gt;foo&lt;/dt&gt;
 &lt;dd <strong>id="set:count+=1"</strong>&gt;123&lt;/dd&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;% var = value %&gt;
 &lt;dt&gt;foo&lt;/dt&gt;
@@ -1915,9 +1920,9 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <p>'<code>id="if:<em>expression</em>"</code>' is a directive for conditional branching.
 '<code>else</code>' and '<code>elseif</code>' are also available.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-if.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div <strong>id="if:value &gt; 0"</strong>&gt;
   Value is positive.
 &lt;/div&gt;
@@ -1928,8 +1933,8 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
   Value is zero.
 &lt;/div&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;% if value &gt; 0 then %&gt;
 &lt;div&gt;
@@ -1999,15 +2004,15 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <h3 class="section2">Iteration (foreach)</h3>
 <p>'<code>id="foreach:<em>loopvar</em>=<em>list</em>)"</code>' (or '<code>id="foreach:<em>loopvar</em>:<em>list</em>)"</code>') is a directive for iteration, assigning each value in the array into a variable each time through the loop.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-foreach.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;tr <strong>id="foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item}@&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;% for item in list do %&gt;
 &lt;tr&gt;
@@ -2039,22 +2044,22 @@ Other than '<code>=</code>', '<code>+=</code>', '<code>-=</code>', '<code>*=</co
 <br>
 
 
-<a name="kd-loop"></a>
-<h3 class="section2">Iteration(loop)</h3>
-<p>'<code>id="loop:<em>loopvar</em>=<em>list</em>"</code>' (or '<code>id="loop:<em>loopvar</em>:<em>list</em>"</code>') is a directive for iteration.
+<a name="kd-list"></a>
+<h3 class="section2">Iteration(list)</h3>
+<p>'<code>id="list:<em>loopvar</em>=<em>list</em>"</code>' (or '<code>id="list:<em>loopvar</em>:<em>list</em>"</code>') is a directive for iteration.
 It iterates only contents. The start tag and the end tag are not iterated.
 It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 </p>
-<p>Presentation Data:
-</p>
-<a name="directive-loop.pdata"></a>
-<pre class="program">&lt;dl <strong>id="loop:item=list"</strong>&gt;
+<a name="directive-list.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;dl <strong>id="list:item=list"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;dl&gt;
 &lt;% for item in list do %&gt;
@@ -2087,24 +2092,28 @@ It is very useful especially for &lt;dl&gt;&lt;/dl&gt; tag.
 #end
 &lt;/dl&gt;
 </pre>
+<p><span style="color:#FF0000">NOTICE: <code>list</code> directive was named <code>loop</code> in previous version of Kwartz-ruby.</span>
+<span style="color:#FF0000">However <code>loop</code> directive is planned to mean as inner loop of <code>while</code>,</span>
+<span style="color:#FF0000">so you should use <code>list</code> directive from now on.</span>
+</p>
 <br>
 
 
 <a name="kd-foreach2"></a>
 <h3 class="section2">Iteration with Count</h3>
-<p>'<code>id="Foreach:<em>var</em>=<em>list</em>"</code>' and '<code>id="Loop:<em>var</em>=<em>list</em>"</code>' are directives for iteration with loop counting.
+<p>'<code>id="Foreach:<em>var</em>=<em>list</em>"</code>' and '<code>id="List:<em>var</em>=<em>list</em>"</code>' are directives for iteration with loop counting.
 The counter variable is <code><em>var</em>_ctr</code>. It starts at 1.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-foreach2.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;tr <strong>id="Foreach:item=list"</strong>&gt;
   &lt;td&gt;@{item_ctr}@&lt;/td&gt;
   &lt;td&gt;@{item}@&lt;td&gt;
 &lt;/tr&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;% item_ctr = 0 %&gt;
 &lt;% for item in list do %&gt;
@@ -2145,31 +2154,35 @@ The counter variable is <code><em>var</em>_ctr</code>. It starts at 1.
 &lt;/tr&gt;
 #end
 </pre>
+<p><span style="color:#FF0000">NOTICE: <code>List</code> directive was named <code>Loop</code> in previous version of Kwartz-ruby.</span>
+<span style="color:#FF0000">However <code>Loop</code> directive is planned to mean as inner loop of <code>while</code>,</span>
+<span style="color:#FF0000">so you should use <code>List</code> directive from now on.</span>
+</p>
 <br>
 
 
 <a name="kd-foreach3"></a>
 <h3 class="section2">Iteration with a Toggle Switch</h3>
-<p>'<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>' and '<code>id="LOOP:<em>var</em>=<em>list</em>"</code>' are directives for iteration with toggle switching.
+<p>'<code>id="FOREACH:<em>var</em>=<em>list</em>"</code>' and '<code>id="LIST:<em>var</em>=<em>list</em>"</code>' are directives for iteration with toggle switching.
 The toggle switch's value changes depending on whether loop counter is odd or even.
 The toggle switch is named <code><em>var</em>_tgl</code>.
 The value of the toggle switch is '<code>"odd"</code>' or '<code>"even"</code>' by default.
 You can change them with the command-line option '<code>--odd=<em>value</em></code>' and '<code>--even=<em>value</em></code>',
 or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-foreach3.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;table&gt;
-  &lt;tbody <strong>id="LOOP:item=list"</strong>&gt;
+  &lt;tbody <strong>id="LIST:item=list"</strong>&gt;
     &lt;tr class="<strong>@{item_tgl}@</strong>"&gt;
       &lt;td&gt;@{item}@&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;table&gt;
   &lt;tbody&gt;
@@ -2230,6 +2243,10 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
   &lt;/tbody&gt;
 &lt;/table&gt;
 </pre>
+<p><span style="color:#FF0000">NOTICE: <code>LIST</code> directive was named <code>LOOP</code> in previous version of Kwartz-ruby.</span>
+<span style="color:#FF0000">However <code>LOOP</code> directive is planned to mean as inner loop of <code>while</code>,</span>
+<span style="color:#FF0000">so you should use <code>LIST</code> directive from now on.</span>
+</p>
 <br>
 
 
@@ -2240,28 +2257,71 @@ or constant variable ODD and EVEN in configuration file kwartz/config.rb.
 <p>Kwartz will raise an error when compiling a while statement into JSP or Velocity,
 because there is no custom tag in JSTL nor Directives in Velocity which is equivalent to while statement.
 </p>
-<p>Presentation Data:
-</p>
 <a name="directive-while.pdata"></a>
-<pre class="program">&lt;tr <strong>id="while:row=sth.fetch()"</strong>&gt;
-  &lt;td&gt;@{row[0]}@&lt;/td&gt;
-&lt;/tr&gt;
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;table <strong>id="while:row=sth.fetch()"</strong>&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;@{row[0]}@&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;@{row[1]}@&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">### for eRuby
 &lt;% while row = sth.fetch() do %&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;
-&lt;/tr&gt;
+&lt;table&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;&lt;%= row[1] %&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
 &lt;% end %&gt;
 
 ### for PHP
 &lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
-&lt;tr&gt;
-  &lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;
-&lt;/tr&gt;
+&lt;table&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;&lt;?php echo $row[1]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
 &lt;?php } ?&gt;
+</pre>
+<br>
+
+
+<a name="kd-loop"></a>
+<h3 class="section2">Iteration (loop)</h3>
+<p><span style="color:#FF0000">CAUTION: This is a plan and not implemented yet</span>
+</p>
+<p>'<code>id="loop:<em>expression</em>"</code>' is a directive to iterate with a while statement. 
+Difference between <code>while</code> directive is that <code>loop</code> directive iterates only content of the element
+and <code>while</code> directive iterates start tag, content, and end tag of the element.
+</p>
+<p>Kwartz will raise an error when compiling a while statement into JSP or Velocity,
+because there is no custom tag in JSTL nor Directives in Velocity which is equivalent to loop(while) statement.
+</p>
+<a name="directive-loop.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;table <strong>id="loop:row=sth.fetch()"</strong>&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;@{row[0]}@&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;@{row[1]}@&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<div class="output_caption">
+Output Program:</div>
+<pre class="output">### for eRuby
+&lt;table&gt;
+&lt;% while row = sth.fetch() do %&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;&lt;%= row[0] %&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;&lt;%= row[1] %&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;% end %&gt;
+&lt;/table&gt;
+
+### for PHP
+&lt;table&gt;
+&lt;?php while ($row = $sth-&gt;fetch()) { ?&gt;
+  &lt;tr&gt;&lt;td&gt;name:&lt;/td&gt;&lt;td&gt;&lt;?php echo $row[0]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;mail:&lt;/td&gt;&lt;td&gt;&lt;?php echo $row[1]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;?php } ?&gt;
+&lt;/table&gt;
 </pre>
 <br>
 
@@ -2272,8 +2332,8 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
 </p>
 <p>'<code><em>str</em></code>' has no effect. It is to make id attribute value to be unique in the HTML file.
 </p>
-<p>Presentation Data:
-</p>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;tr <strong>id="dummy:d1"</strong>&gt;
   &lt;td&gt;bar&lt;/td&gt;
 &lt;/tr&gt;
@@ -2281,12 +2341,12 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
   &lt;td&gt;baz&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
-<p>Intermediate Code:
-</p>
+<div class="output_caption">
+Intermediate Code:</div>
 <pre class="output">                          // Nothing
 </pre>
-<p>Output Program:
-</p>
+<div class="output_caption">
+Output Program:</div>
 <pre class="output">                          // Nothing
 </pre>
 <br>
@@ -2296,10 +2356,11 @@ because there is no custom tag in JSTL nor Directives in Velocity which is equiv
 <h3 class="section2">Replacement of Elements</h3>
 <p>'<code>id="replace:<em>name</em>"</code>' replaces an element with other element
 which is already marked with the name <em>name</em>.
-</p>
-<p>Presentation Data:
+'<code>id="replace:<em>name</em>:content"</code>' replaces an element with content of other element.
 </p>
 <a name="directive-replace.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- breadcrumbs navigation --&gt;
@@ -2311,14 +2372,21 @@ which is already marked with the name <em>name</em>.
 
    ....
 
+    &lt;!-- replace an element by other element --&gt;
     &lt;div <strong>id="replace:breadcrumbs"</strong>&gt;
       Home &amp;gt; Kwartz &amp;gt; Kwartz-ruby
-    &lt;/span&gt;
-  &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- replace an element by content of other element --&gt;
+    &lt;div <strong>id="replace:breadcrumbs:content"</strong>&gt;
+      Home &amp;gt; Kwartz &amp;gt; Kwartz-ruby
+    &lt;/div&gt;
+
+  &lt;/body&gt;
 &lt;/html
 </pre>
-<p>Output Script:
-</p>
+<div class="output_caption">
+Output Script:</div>
 <pre class="output">&lt;html&gt;
   &lt;body&gt;
     &lt;!-- breadcrumbs navigation --&gt;
@@ -2330,11 +2398,19 @@ which is already marked with the name <em>name</em>.
 
    ....
 
+    &lt;!-- replace an element by other element --&gt;
     &lt;div&gt;
       &lt;a href="/"&gt;Home&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
       &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
     &lt;/div&gt;
+
+    &lt;!-- replace an element by content of other element --&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz"&gt;Kwartz&lt;/a&gt;
+      &amp;gt; &lt;a href="/kwartz/ruby"&gt;Kwartz-ruby&lt;/a&gt;
+
+  &lt;/body&gt;
 &lt;/html
 </pre>
 <p>The command-line option '<code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>' enables you to use elements
@@ -2347,14 +2423,17 @@ in other files.
 <h3 class="section2">Placeholder</h3>
 <p>'<code>id="placeholder:<em>name</em>"</code>' replaces content of the element by other element
 which is already marked with the name <em>name</em>.
+'<code>id="placeholder:<em>name</em>:content"</code>' replaces content of the element by content of other element.
 Usually this directive is used to import elements defined in other files,
 with the command-line option <code>-i <em>file1</em>,<em>file2</em>,<em>...</em></code>.
 </p>
-<p>Presentation Data(article.html):
-</p>
 <a name="directive-placeholder-article.pdata"></a>
+<div class="program_caption">
+Presentation Data(article.html):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
+
+    &lt;h1 <strong>id="mark:title"</strong>&gt;Kwartz Reference Manual&lt;/h1&gt;
 
     &lt;div <strong>id="mark:article"</strong>&gt;
       &lt;p&gt;Kwartz is a template system, which realized the
@@ -2365,22 +2444,24 @@ with the command-line option <code>-i <em>file1</em>,<em>file2</em>,<em>...</em>
     
   &lt;/body&gt;
 &lt;/html&gt;
-
 </pre>
-<p>Presentation Data(layout.html):
-</p>
 <a name="directive-placeholder-layout.pdata"></a>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="program_caption">
+Presentation Data(layout.html):</div>
+<pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
+    &lt;title <strong>id="placeholder:title:content"</strong>&gt;...title...&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
+    &lt;h1 <strong>id="placeholder:title:content"</strong>&gt;...title...&lt;/h1&gt;
+
     &lt;table border="0"&gt;
       &lt;tr&gt;
-        &lt;td width="400" <strong>id="placeholder:article"</strong>&gt;
+        &lt;td width="400" <strong>id="placeholder:article:content"</strong>&gt;
           aaa&lt;br&gt;
           bbb&lt;br&gt;
           ccc&lt;br&gt;
@@ -2392,29 +2473,30 @@ with the command-line option <code>-i <em>file1</em>,<em>file2</em>,<em>...</em>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Compile:
-</p>
+<div class="terminal_caption">
+Compile:</div>
 <pre class="terminal">$ kwartz <strong>-i article.html</strong> layout.html
 </pre>
-<p>Output Script:
-</p>
-<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
+    &lt;title&gt;Kwartz Reference Manual&lt;/title&gt;
     &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
     &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
+    &lt;h1&gt;Kwartz Reference Manual&lt;/h1&gt;
+
     &lt;table border="0"&gt;
       &lt;tr&gt;
         &lt;td width="400"&gt;
-    &lt;div&gt;
       &lt;p&gt;Kwartz is a template system, which realized the
          concept &lt;strong&gt;`Separation of Presentation Logic
          and Presentation Data'(SoPL/PD)&lt;/strong&gt;.
       &lt;/p&gt;
-    &lt;/div&gt;
         &lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
@@ -2430,18 +2512,18 @@ with the command-line option <code>-i <em>file1</em>,<em>file2</em>,<em>...</em>
 <p><code>id="include:<em>filename</em>"</code> is a directive to read and to include another presentation data file (HTML file).
 Included data file can contain directives.
 </p>
-<p>Presentation Data (copyright.html) :
-</p>
 <a name="copyright.html"></a>
+<div class="program_caption">
+Presentation Data (copyright.html) :</div>
 <pre class="program">&lt;!-- begin footer --&gt;
 &lt;center&gt;
   copyright&amp;copy; &lt;span id="value:year"&gt;2005&lt;/span&gt; kuwata-lab all rights reserverd
 &lt;/center&gt;
 &lt;!-- end footer --&gt;
 </pre>
-<p>Presentation Data (mainpage.html) :
-</p>
 <a name="mainpage.html"></a>
+<div class="program_caption">
+Presentation Data (mainpage.html) :</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -2454,12 +2536,12 @@ Included data file can contain directives.
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Compile:
-</p>
+<div class="terminal_caption">
+Compile:</div>
 <pre class="terminal">$ kwartz -l eruby mainpage.html &gt; mainpage.view
 </pre>
-<p>Output Script:
-</p>
+<div class="program_caption">
+Output Script:</div>
 <pre class="program">### for eRuby
 &lt;html&gt;
   &lt;body&gt;
@@ -2598,8 +2680,8 @@ Hello &lt;%= name %&gt;!
 <h2 class="section1">Presentation Logic File Format</h2>
 <p>The following is an example of presentation logic file.
 </p>
-<p>Presentation logic:
-</p>
+<div class="program_caption">
+Presentation logic:</div>
 <pre class="program">// element declaration for 'id="mark:<em>name</em>"'
 #<em>name</em> {
   
