@@ -885,6 +885,44 @@ END
 
 
    ##
+   def test_parse_if_stmt6       # 'elseif' and 'else if'
+      input = <<'END'
+if (x > 10)     y = 10;
+elseif (x > 5)  y = 5;
+else if (x > 0) y = 0;
+END
+      expected = <<'END'
+:if
+  >
+    x
+    10
+  :expr
+    =
+      y
+      10
+  :if
+    >
+      x
+      5
+    :expr
+      =
+        y
+        5
+    :if
+      >
+        x
+        0
+      :expr
+        =
+          y
+          0
+END
+      _test(input, expected)
+   end
+
+
+
+   ##
    def test_parse_expand_stmt1  # @stag, @cont, @etag
       input = "@stag;"
       expected = "@stag\n"

@@ -12,8 +12,14 @@
 .	
 .JA	Kwartzは、{{*「プレゼンテーションロジックとプレゼンテーションデータの分離」*}}または{{*「プレゼンテーションロジックの独立」*}}という概念を実現したテンプレートシステムです。
 .JA	プレゼンテーションロジックとプレゼンテーションデータを分離すると、HTMLデザインをまったく崩すことなく、複雑なプレゼンテーションロジックを利用することができます。
+<<<<<<< .mine
+.EN	Kwartz is the template system which realized the concept of '{{*Separation of Presentation Logic and Presentation Data (SoPL/PD)*}}'
+.EN	or '{{*Independence of Presentation Logic (IoPL)*}}.'
+.EN	SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
+=======
 .EN	Kwartz is a template system which realized the concept '{{*Separation of Presentation Logic and Presentation Data (SoPL/PD)*}}' or '{{*Independence of Presentation Logic (IoPL)*}}'.
 .EN	SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
+>>>>>>> .r95
 .	
 .	
 .JA	またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。
@@ -37,6 +43,12 @@
 .	
 .JA	◎更新履歴		| changelog*
 .EN	.$$ ChangeLog		| changelog*
+.	
+.	.: 2005-06-27
+.JA		.- 「Iterate Elementパターン」において出力用スクリプトの間違いを修正（[bug:1228301]）
+.JA		.- 「Iterate Contentパターン」において<dl></dl>が<ul></ul>となっていたのを修正（[bug:1228301]）
+.EN		.- Wrong output script in the section 'Iterate Element Pattern' is corrected ([bug:1228301]).
+.EN		.- '<ul></ul>' is changed to '<dl></dl>' in the section 'Iterate Content Pattern' ([bug:1228301]).
 .	
 .	.: 2005-03-21
 .JA		.- Kwartzディレクティブについての説明を追加
@@ -79,14 +91,14 @@
 .JA	○サンプルコード			| replace-elem-by-value-example
 .EN	.$$$ Example Code			| replace-elem-by-value-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- teq-replace1.pdata
 .	Hello <span {{*id="mark:user"*}}>World</span>!
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- teq-replace1.plogic
 .	#user {
 .	  plogic: {
@@ -96,11 +108,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/teq-replace1.plogic guide.d/teq-replace1.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| replace-elem-by-value-suppliment
@@ -111,8 +123,8 @@
 .EN	The following is an example to print content text as default value when value is null or empty.
 .EN	This examples is an combination of 'Replace Element by Value Pattern' and 'Delete Tag Pattern'.
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- teq-replace2b.plogic
 .	#user {
 .	  plogic: {
@@ -157,14 +169,14 @@
 .JA	○サンプルコード			| replace-cont-by-value-example
 .EN	.$$$ Example Code			| replace-cont-by-value-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- teq-replace2.pdata
 .	<h1 {{*id="mark:title"*}}>Example</h1>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- teq-replace2.plogic
 .	#title {
 .	  plogic: {
@@ -176,21 +188,21 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/teq-replace2.plogic guide.d/teq-replace2.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
-.JA	○補足					| replace-elem-by-value-suppliment
-.EN	.$$$ Supplement				| replace-elem-by-value-suppliment
+.JA	○補足					| replace-cont-by-value-suppliment
+.EN	.$$$ Supplement				| replace-cont-by-value-suppliment
 .	
 .JA	「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
 .EN	The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.--------------------
 .	#title {
 .JA	  {{*value: title;*}}  // 内容のかわりに変数titleの値を出力する
@@ -202,8 +214,8 @@
 .JA	プレゼンテーションデータファイルだけでパターンを使用できます。
 .EN	Kwartz Directive '{{,id="value:{{/expression/}}",}}' lets you to use this pattern without presentation logic file.
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- teq-replace2b.pdata
 .	<h1 {{*id="value:title"*}}>Example</h1>
 .	.--------------------
@@ -234,8 +246,8 @@
 .JA	○サンプルコード			| replace-elem-by-elem-example
 .EN	.$$$ Example Code			| replace-elem-by-elem-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- replace-elem-by-elem.pdata
 .	<div {{*id="mark:links"*}}>
 .	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
@@ -249,8 +261,8 @@
 .	.--------------------
 .	
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- replace-elem-by-elem.plogic
 .	#links2 {
 .	  plogic: {
@@ -265,11 +277,11 @@
 .EN	{{,@element({{/name/}}),}} represents the element which is marked by {{,id="mark:{{/name/}}",}} or {{,id="{{/name/}}",}}.
 .	
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! kwartz -p guide.d/replace-elem-by-elem.plogic guide.d/replace-elem-by-elem.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| replace-elem-by-elem-supplement
@@ -278,6 +290,9 @@
 .JA	Kwartzでは、ディレクティブ「{{,id="replace:{{/name/}}",}}」を使うと、
 .JA	プレゼンテーションロジックファイルなしでこのパターンが使用できます。
 .EN	Directive '{{,id="replace:{{/name/}}",}}' lets you to use this pattern without presentation logic file.
+.	
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.--------------------
 .	<div {{*id="mark:links"*}}>
 .	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
@@ -295,16 +310,16 @@
 .EN	The command-line option '{{,-i {{/file/}},{{/file2/}},...,}}' enables you to use elements
 .EN	which are described in other files.
 .	
-.JA	プレゼンテーションデータ(links.html)：
-.EN	Presentation Data(links.html):
+.JA	.? プレゼンテーションデータ(links.html)：
+.EN	.? Presentation Data(links.html):
 .	.-------------------- links.html
 .	<div {{*id="mark:links"*}}>
 .	 <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
 .	</div>
 .	.--------------------
 .	
-.JA	プレゼンテーションデータ(page.html)：
-.EN	Presentation Data(page.html):
+.JA	.? プレゼンテーションデータ(page.html)：
+.EN	.? Presentation Data(page.html):
 .	.-------------------- page.html
 .	<div {{*id="mark:links1"*}}> Home | Document | FAQ </div>
 .	
@@ -313,8 +328,8 @@
 .	<div {{*id="mark:links2"*}}> Home | Document | FAQ </div>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック(page.plogic)：
-.EN	Presentation Logic(page.plogic):
+.JA	.? プレゼンテーションロジック(page.plogic)：
+.EN	.? Presentation Logic(page.plogic):
 .	.-------------------- page.plogic
 .	#links1 {
 .	  plogic: {
@@ -328,17 +343,17 @@
 .	}
 .	.--------------------
 .	
-.JA	コンパイル：
-.EN	Compile:
+.JA	.? コンパイル：
+.EN	.? Compile:
 .	.====================
 .	$ kwartz -l eruby {{*-i links.html*}} -p page.plogic page.html
 .	.====================
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! kwartz -i guide.d/links.html -p guide.d/page.plogic guide.d/page.html
-.	.--------------------
+.	.____________________
 .	
 .	
 .	
@@ -375,8 +390,8 @@
 .EN	.* contents.html, contents.plogic - repsesents contents data.
 .EN	.* layout.html, layout.plogic - represents desing layout.
 .	
-.JA	プレゼンテーションデータ(contents.html)：
-.EN	Presentation Data(contents.html):
+.JA	.? プレゼンテーションデータ(contents.html)：
+.EN	.? Presentation Data(contents.html):
 .	.-------------------- contents.html
 .	<html>
 .	  <body>
@@ -399,8 +414,8 @@
 .	</html>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック(contents.plogic)：
-.EN	Presentation Logic(contents.plogic):
+.JA	.? プレゼンテーションロジック(contents.plogic)：
+.EN	.? Presentation Logic(contents.plogic):
 .	.-------------------- contents.plogic
 .	#menu {
 .	  plogic: {
@@ -413,13 +428,13 @@
 .	}
 .	
 .	#menu_item {
-.	  value: item['name'];
-.	  attr:  "href" item['url'];
+.	  value:  item['name'];
+.	  attrs:  "href" item['url'];
 .	}
 .	.--------------------
 .	
-.JA	プレゼンテーションデータ(layout.html)：
-.EN	Presentation Data(layout.html):
+.JA	.? プレゼンテーションデータ(layout.html)：
+.EN	.? Presentation Data(layout.html):
 .	.-------------------- layout.html
 .	<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
 .	<html lang="en">
@@ -468,8 +483,8 @@
 .	</html>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック(layout.plogic)：
-.EN	Presentation Logic(layout.plogic):
+.JA	.? プレゼンテーションロジック(layout.plogic)：
+.EN	.? Presentation Logic(layout.plogic):
 .	.-------------------- layout.plogic
 .	#placeholder_menu {
 .	  plogic: {
@@ -503,11 +518,11 @@
 .	.#$ kwartz -l jstl11 {{*-i contents.html*}} -p contens.plogic,layout.plogic layout.html
 .	.====================
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! kwartz -i guide.d/contents.html -p guide.d/contents.plogic,guide.d/layout.plogic guide.d/layout.html
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| replace-cont-by-elem-supplement
@@ -576,8 +591,8 @@
 .JA	○サンプルコード			| delete-elem-example
 .EN	.$$$ Example Code			| delete-elem-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- dummy-elem.pdata
 .	<ul>
 .	  <li>foo</li>
@@ -585,8 +600,8 @@
 .	</ul>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- dummy-elem.plogic
 .	#dummy {
 .	  plogic: {
@@ -595,11 +610,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/dummy-elem.plogic guide.d/dummy-elem.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| delete-elem-supplement
@@ -609,8 +624,8 @@
 .JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 .EN	Kwartz directive '{{,id="dummy:{{/str/}}",}}' lets you to use this pattern without presentation logic file.
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.--------------------
 .	<ul>
 .	  <li>foo</li>
@@ -646,21 +661,21 @@
 .JA	○サンプルコード			| delete-tag-example
 .EN	.$$$ Example Code			| delete-tag-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- dummy-tag.pdata
 .	<a href="..." {{*id="mark:next"*}}>Next</a>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- dummy-tag.plogic
 .	#next {
-.	  attr: "href" url;
+.	  attrs:  "href" url;
 .	  plogic: {
 .	    if (url == null) {
 .JA	      {{*@cont;*}}   // urlがnullのときはタグを出力しない
-.EN	      {{*@cont;*}}   // don't print tags when url is null
+.EN	      {{*@cont;*}}   // delete tags when url is null
 .	    } else {
 .	      @stag;
 .	      @cont;
@@ -670,11 +685,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/dummy-tag.plogic guide.d/dummy-tag.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .	
@@ -706,8 +721,8 @@
 .JA	○サンプルコード			| iterate-elem-example
 .EN	.$$$ Example Code			| iterate-elem-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- iterate-elem.pdata
 .	<table>
 .	  <tr {{*id="mark:items"*}}>
@@ -716,8 +731,8 @@
 .	</table>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- iterate-elem.plogic
 .	#items {
 .	  plogic: {
@@ -732,11 +747,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/iterate-elem.plogic guide.d/iterate-elem.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| iterate-elem-supplement
@@ -746,8 +761,8 @@
 .JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 .EN	Kwartz directive {{,id="foreach:{{/item/}}={{/list/}}",}} lets you to use this pattern without presentation logic file.
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.--------------------
 .	<table>
 .	  <tr {{*id="foreach:item=list"*}}>
@@ -782,18 +797,18 @@
 .JA	○サンプルコード			| iterate-cont-example
 .EN	.$$$ Example Code			| iterate-cont-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- iterate-elem.pdata
-.	<ul {{*id="mark:items"*}}>
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
+.	.-------------------- iterate-cont.pdata
+.	<dl {{*id="mark:items"*}}>
 .	  <dt>@{item.text}@</dt>
 .	  <dd>@{item.desc}@</dd>
-.	</ul>
+.	</dl>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- iterate-elem.plogic
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
+.	.-------------------- iterate-cont.plogic
 .	#items {
 .	  plogic: {
 .JA	    // 内容だけを繰り返す
@@ -807,11 +822,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! ./output.rb -p guide.d/iterate-elem.plogic guide.d/iterate-elem.pdata
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
+.	.<<<:! ./output.rb -p guide.d/iterate-cont.plogic guide.d/iterate-cont.pdata
+.	.____________________
 .	
 .	
 .JA	○補足					| iterate-cont-supplement
@@ -820,11 +835,14 @@
 .JA	Kwartzではディレクティブ「{{,id="loop:{{/item/}}={{/list/}}",}}」を使うことで、
 .JA	プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 .EN	Kwartz directive {{,id="loop:{{/item/}}={{/list/}}",}} lets you to use this pattern without presentation logic file.
+.	
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.--------------------
-.	<ul {{*id="loop:item=list"*}}>
+.	<dl {{*id="loop:item=list"*}}>
 .	  <dt>@{item.text}@</dt>
 .	  <dd>@{item.desc}@</dd>
-.	</ul>
+.	</dl>
 .	.--------------------
 .	
 .	
@@ -857,18 +875,18 @@
 .JA	○サンプルコード			| select-elem-example
 .EN	.$$$ Example Code			| select-elem-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.-------------------- select-elem.pdata
 .	<div id="mark:message">
-.	  <font color="red"   {{*id="mark:error"*}}>ERROR!</font>
-.	  <font color="blue"  {{*id="mark:warning"*}}>Warning:</font>
-.	  <font color="black" {{*id="mark:good"*}}>No error.</font>
+.	  <span style="color:red"   {{*id="mark:error"*}}>ERROR!</span>
+.	  <span style="color:blue"  {{*id="mark:warning"*}}>Warning:</span>
+.	  <span style="color:black" {{*id="mark:good"*}}>No error.</span>
 .	</div>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- select-elem.plogic
 .	#message {
 .	  plogic: {
@@ -883,11 +901,11 @@
 .	}
 .	.--------------------
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -p guide.d/select-elem.plogic guide.d/select-elem.pdata
-.	.--------------------
+.	.____________________
 .	
 .	
 .JA	○補足					| select-elem-supplement
@@ -898,13 +916,13 @@
 .EN	Kwartz directive '{{,id="if:{{/condition/}}",}}', '{{,id="elseif:{{/condition/}}",}}', and '{{,id="else:",}}'
 .EN	let you to use this pattern without presentation logic file.
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
 .	.--------------------
 .	<div>
-.	  <font color="red"   {{*id="if:status=='error'"*}}>ERROR!</font>
-.	  <font color="blue"  {{*id="elseif:status=='warning'"*}}>Warning:</font>
-.	  <font color="black" {{*id="else"*}}>No error.</font>
+.	  <span style="color:red"   {{*id="if:status=='error'"*}}>ERROR!</span>
+.	  <span style="color:blue"  {{*id="elseif:status=='warning'"*}}>Warning:</span>
+.	  <span style="color:black" {{*id="else:"*}}>No error.</span>
 .	</div>
 .	.--------------------
 .	
@@ -935,7 +953,7 @@
 .EN	In 'Pick-up Element' pattern, necessary elements are marked and leaved so that dummy elements are removed.
 .	
 .	
-.JA	○適用場面					| pickup-elem-situation
+.JA	○適用場面				| pickup-elem-situation
 .EN	.$$$ Situation				| pickup-elem-situation
 .	
 .JA	このパターンは、ダミーデータが多い場合に使われます。
@@ -945,49 +963,22 @@
 .JA	○サンプルコード			| pickup-elem-example
 .EN	.$$$ Example Code			| pickup-elem-example
 .	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
-.	.-------------------- pickup-elem.pdata
-.	<html>
-.	  <body>
-.	    <div {{*id="breadcrumbs"*}}>
-.	      <a href="@{item['path']}@" {{*id="mark:crumb"*}}>@{item['name']}@</a>
-.	      <span {{*id="mark:separator"*}}>&gt;</span>
-.	      <a href="/aaa/">AAA</a> &lt;
-.	      <a href="/aaa/bbb/">BBB</a> &lgt;
-.	      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
-.	      <b {{*id="mark:title"*}}>@{title}@</b>
-.	    </div>
-.	  </body>
-.	</html>
-.	.--------------------
-.	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
-.	.-------------------- pickup-elem.plogic
-.	#breadcrumbs {
-.	  plogic: {
-.	    foreach (item in list) {
-.	      {{*@element(crumb);*}}          // print <a>...</a>
-.	      {{*@element(separator);*}}      // print '&gt;'
-.	    }
-.	    {{*@element(title);*}}            // print <b>title</b>
-.	  }
-.	}
-.	.--------------------
-.	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
-.	.<<<:! ./output.rb -p guide.d/pickup-elem.plogic guide.d/pickup-elem.pdata
-.	.--------------------
-.	
-.	
-.JA	この例では「{{,@{...}@,}}」を使用しましたが、これを使わないようにすると次のようになります。
-.EN	The above example should be described as following.
-.	
-.JA	プレゼンテーションデータ：
-.EN	Presentation Data:
+.JA	.? プレゼンテーションデータ：
+.EN	.? Presentation Data:
+.	.#.-------------------- pickup-elem.pdata
+.	.#<html>
+.	.#  <body>
+.	.#    <div {{*id="breadcrumbs"*}}>
+.	.#      <a href="@{item['path']}@" {{*id="mark:crumb"*}}>@{item['name']}@</a>
+.	.#      <span {{*id="mark:separator"*}}>&gt;</span>
+.	.#      <a href="/aaa/">AAA</a> &lt;
+.	.#      <a href="/aaa/bbb/">BBB</a> &lgt;
+.	.#      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
+.	.#      <strong {{*id="mark:title"*}}>@{title}@</strong>
+.	.#    </div>
+.	.#  </body>
+.	.#</html>
+.	.#.--------------------
 .	.-------------------- pickup-elem.pdata
 .	<html>
 .	  <body>
@@ -997,14 +988,14 @@
 .	      <a href="/aaa/">AAA</a> &lt;
 .	      <a href="/aaa/bbb/">BBB</a> &lgt;
 .	      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
-.	      <b {{*id="mark:title"*}}>Page Title</b>
+.	      <strong {{*id="mark:title"*}}>@{title}@</strong>
 .	    </div>
 .	  </body>
 .	</html>
 .	.--------------------
 .	
-.JA	プレゼンテーションロジック：
-.EN	Presentation Logic:
+.JA	.? プレゼンテーションロジック：
+.EN	.? Presentation Logic:
 .	.-------------------- pickup-elem.plogic
 .	#breadcrumbs {
 .	  plogic: {
@@ -1015,14 +1006,63 @@
 .	    {{*@element(title);*}}            // print <b>title</b>
 .	  }
 .	}
+.	
 .	#crumb {
-.	  value: item['name'];
-.	  attr:  "href" item['path'];
+.	  value:  item['name'];
+.	  attrs:  "href" item['path'];
 .	}
 .	#title {
 .	  value: title;
 .	}
 .	.--------------------
+.	
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
+.	.<<<:! ./output.rb -p guide.d/pickup-elem.plogic guide.d/pickup-elem.pdata
+.	.____________________
+.	
+.	
+.JA	.#この例では「{{,@{...}@,}}」を使用しましたが、これを使わないようにすると次のようになります。
+.EN	.#The above example should be described as following.
+.	.#
+.JA	.#.? プレゼンテーションデータ：
+.EN	.#.? Presentation Data:
+.	.#.-------------------- pickup-elem.pdata
+.	.#<html>
+.	.#  <body>
+.	.#    <div {{*id="breadcrumbs"*}}>
+.	.#      <a href="/" {{*id="mark:crumb"*}}>Home</a>
+.	.#      <span {{*id="mark:separator"*}}>&gt;</span>
+.	.#      <a href="/aaa/">AAA</a> &lt;
+.	.#      <a href="/aaa/bbb/">BBB</a> &lgt;
+.	.#      <a href="/aaa/bbb/ccc">CCC</a> &lgt;
+.	.#      <strong {{*id="mark:title"*}}>Page Title</strong>
+.	.#    </div>
+.	.#  </body>
+.	.#</html>
+.	.#.--------------------
+.	.#
+.JA	.#.? プレゼンテーションロジック：
+.EN	.#.? Presentation Logic:
+.	.#.-------------------- pickup-elem.plogic
+.	.##breadcrumbs {
+.	.#  plogic: {
+.	.#    foreach (item in list) {
+.	.#      {{*@element(crumb);*}}          // print <a>...</a>
+.	.#      {{*@element(separator);*}}      // print '&gt;'
+.	.#    }
+.	.#    {{*@element(title);*}}            // print <b>title</b>
+.	.#  }
+.	.#}
+.	.##crumb {
+.	.#  value:  item['name'];
+.	.#  attrs:  "href" item['path'];
+.	.#}
+.	.##title {
+.	.#  value: title;
+.	.#}
+.	.#.--------------------
 .	
 .	
 .	
@@ -1031,8 +1071,8 @@
 .EN	.$$ Extract Element Pattern	| extract-elem
 .	
 .	
-.JA	○説明					| pickup-elem-desc
-.EN	.$$$ Description			| pickup-elem-desc
+.JA	○説明					| extract-elem-desc
+.EN	.$$$ Description			| extract-elem-desc
 .	
 .JA	プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 .JA	ほかは一切表示しないようにすることができます。
@@ -1042,22 +1082,22 @@
 .EN	This pattern is named 'Extract Element Pattern.'
 .	
 .	
-.JA	○適用場面					| pickup-elem-situation
-.EN	.$$$ Situation				| pickup-elem-situation
+.JA	○適用場面				| extract-elem-situation
+.EN	.$$$ Situation				| extract-elem-situation
 .	
 .JA	このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
 .EN	This pattern is very useful to extract HTML fragments and make them libraries.
 .	
 .	
-.JA	○サンプルコード			| pickup-elem-example
-.EN	.$$$ Example Code			| pickup-elem-example
+.JA	○サンプルコード			| extract-elem-example
+.EN	.$$$ Example Code			| extract-elem-example
 .	
 .JA	次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
 .EN	The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
 .	
 .	.#++++++
-.JA	スタイルシート(design.css)：
-.EN	Style Sheet (design.css):
+.JA	.? スタイルシート(design.css)：
+.EN	.? Style Sheet (design.css):
 .	.-------------------- design.css
 .	.tabs a {
 .		border-style: solid;
@@ -1113,8 +1153,8 @@
 .	.--------------------
 .	.#------
 .	
-.JA	プレゼンテーションデータ({{<design.html>}})：
-.EN	Presentation Data ({{<design.html>}}):
+.JA	.? プレゼンテーションデータ({{<design.html>}})：
+.EN	.? Presentation Data ({{<design.html>}}):
 .	.-------------------- design.html
 .	<html {{*id="mark:whole"*}}>
 .	  <head>
@@ -1161,8 +1201,8 @@
 .	.--------------------
 .	
 .	
-.JA	プレゼンテーションロジック(copyright.plogic)：
-.EN	Presentation Logic (copyright.plogic):
+.JA	.? プレゼンテーションロジック(copyright.plogic)：
+.EN	.? Presentation Logic (copyright.plogic):
 .	.-------------------- copyright.plogic
 .	{{*#whole*}} {
 .JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
@@ -1174,8 +1214,8 @@
 .	.--------------------
 .	
 .	
-.JA	プレゼンテーションロジック(tablist.plogic)：
-.EN	Presentation Logic (tablist.plogic):
+.JA	.? プレゼンテーションロジック(tablist.plogic)：
+.EN	.? Presentation Logic (tablist.plogic):
 .	.-------------------- tablist.plogic
 .	{{*#whole*}} {
 .JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
@@ -1197,14 +1237,14 @@
 .	}
 .	
 .	#tab {
-.	  value: tab['name'];
-.	  attr:  "href" tab['href'], "class" klass;
+.	  value:  tab['name'];
+.	  attrs:  "href" tab['href'], "class" klass;
 .	}
 .	.--------------------
 .	
 .	
-.JA	プレゼンテーションロジック(menulist.plogic)：
-.EN	Presentation Logic (menulist.plogic):
+.JA	.? プレゼンテーションロジック(menulist.plogic)：
+.EN	.? Presentation Logic (menulist.plogic):
 .	.-------------------- menulist.plogic
 .	{{*#whole*}} {
 .JA	  // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
@@ -1226,10 +1266,10 @@
 .	}
 .	
 .	#menu {
-.	  value:  menu['name'];
-.	.#  attr:   "href" menu['cgipath'] ,
+.	  value:   menu['name'];
+.	.#  attrs:   "href" menu['cgipath'] ,
 .	.#          "class" current_menu == menu['name'] ? 'selected' : '';
-.	  attr:   "href" menu['cgipath'], "class" klass;
+.	  attrs:   "href" menu['cgipath'], "class" klass;
 .	  plogic: {
 .	    klass = current_menu == menu['name'] ? 'selected' : '';
 .	    @stag;
@@ -1240,8 +1280,8 @@
 .	.--------------------
 .	
 .	
-.JA	コンパイル：
-.EN	Compile:
+.JA	.? コンパイル：
+.EN	.? Compile:
 .	.====================
 .	### copyright
 .	$ kwartz -l eruby -p copyright.plogic design.pdata
@@ -1257,27 +1297,27 @@
 .	.====================
 .	
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -l eruby,php -p guide.d/copyright.plogic guide.d/design.html
-.	.--------------------
+.	.____________________
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -l eruby,php -p guide.d/tablist.plogic guide.d/design.html
-.	.--------------------
+.	.____________________
 .	
-.JA	出力用スクリプト：
-.EN	Output Script:
-.	.--------------------
+.JA	.? 出力用スクリプト：
+.EN	.? Output Script:
+.	.____________________
 .	.<<<:! ./output.rb -l eruby,php -p guide.d/menulist.plogic guide.d/design.html
-.	.--------------------
+.	.____________________
 .	
 .	
-.JA	○補足					| pickup-elem-supplement
-.EN	.$$$ Supplement				| pickup-elem-supplement
+.JA	○補足					| extract-elem-supplement
+.EN	.$$$ Supplement				| extract-elem-supplement
 .	
 .JA	Kwartzでは、コマンドラインオプション「{{,--extract={{/name/}},}}」でも、{{,{{/name/}},}}でマーキングされたエレメントを抽出できます。
 .EN	The command-line option {{,--extract={{/name/}},}} extracts the element marked with {{,{{/name/}},}} in Kwartz.

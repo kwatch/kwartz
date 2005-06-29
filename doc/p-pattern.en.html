@@ -21,8 +21,14 @@
 
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>Kwartz is a template system which realized the concept '<strong>Separation of Presentation Logic and Presentation Data (SoPL/PD)</strong>' or '<strong>Independence of Presentation Logic (IoPL)</strong>'.
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+Kwartz is the template system which realized the concept of '<strong>Separation of Presentation Logic and Presentation Data (SoPL/PD)</strong>'
+or '<strong>Independence of Presentation Logic (IoPL)</strong>.'
 SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
+=======
+Kwartz is a template system which realized the concept '<strong>Separation of Presentation Logic and Presentation Data (SoPL/PD)</strong>' or '<strong>Independence of Presentation Logic (IoPL)</strong>'.
+SoPL/PD (or IoPL) enables to use complex presentation logics without breaking HTML design at all.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r95
 </p>
 <p>There are several patterns which help you to separate presentation logic and presentation data well.
 These patterns are called 'Presentation Patterns.'
@@ -44,6 +50,38 @@ These patterns are called 'Presentation Patterns.'
   <ul>
     <li><a href="#replace-elem-by-value">Replace Element by Value Pattern</a>
     </li>
+    <li><a href="#replace-cont-by-value">Replace Content by Value Pattern</a>
+    </li>
+    <li><a href="#replace-elem-by-elem">Replace Element by Element Pattern</a>
+    </li>
+    <li><a href="#replace-cont-by-elem">Replace Content by Element Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#deletion">Deletion</a>
+  <ul>
+    <li><a href="#delete-elem">Delete Element Pattern</a>
+    </li>
+    <li><a href="#delete-tag">Delete Tag Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#iteration">Iteration</a>
+  <ul>
+    <li><a href="#iterate-elem">Iterate Element Pattern</a>
+    </li>
+    <li><a href="#iterate-cont">Iterate Content Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#selection">Selection</a>
+  <ul>
+    <li><a href="#select-elem">Select Element Pattern</a>
+    </li>
+    <li><a href="#pickup-elem">Pick-up Element Pattern</a>
+    </li>
+    <li><a href="#extract-elem">Extract Element Pattern</a>
+    </li>
   </ul>
   </li>
 </ul>
@@ -52,6 +90,18 @@ These patterns are called 'Presentation Patterns.'
 
 <a name="changelog"></a>
 <h3 class="section2">ChangeLog</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-06-27</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>Wrong output script in the section 'Iterate Element Pattern' is corrected ([bug:1228301]).
+	</li>
+	<li>'&lt;ul&gt;&lt;/ul&gt;' is changed to '&lt;dl&gt;&lt;/dl&gt;' in the section 'Iterate Content Pattern' ([bug:1228301]).
+	</li>
+	</ul>
+</dd>
+</dl>
 <dl class="dl1">
 <dt class="dt1">
 2005-03-21</dt>
@@ -91,23 +141,23 @@ This is named 'Replace Element by Value Pattern.'
 
 <a name="replace-elem-by-value-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="teq-replace1.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">Hello &lt;span <strong>id="mark:user"</strong>&gt;World&lt;/span&gt;!
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="teq-replace1.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#user {
   plogic: {
     <strong>print(username);</strong>  // print value of variable 'username' instead of the element
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 Hello &lt;%= username %&gt;!
 
 ### for PHP
@@ -126,9 +176,9 @@ Hello $!{username}!
 <p>The following is an example to print content text as default value when value is null or empty.
 This examples is an combination of 'Replace Element by Value Pattern' and 'Delete Tag Pattern'.
 </p>
-<p>Presentation Logic:
-</p>
 <a name="teq-replace2b.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#user {
   plogic: {
     // Print out value of variable 'username'.
@@ -163,14 +213,14 @@ This is named 'Replace Content by Value Pattern.'
 
 <a name="replace-cont-by-value-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="teq-replace2.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;h1 <strong>id="mark:title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="teq-replace2.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#title {
   plogic: {
     @stag;
@@ -179,9 +229,9 @@ This is named 'Replace Content by Value Pattern.'
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 &lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
 
 ### for PHP
@@ -195,21 +245,21 @@ This is named 'Replace Content by Value Pattern.'
 </pre>
 <br>
 
-<a name="replace-elem-by-value-suppliment"></a>
+<a name="replace-cont-by-value-suppliment"></a>
 <h4 class="section3">Supplement</h4>
 <p>The 'Replace Content by Value Pattern' is to be described as the following in Kwartz.
 </p>
-<p>Presentation Logic:
-</p>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#title {
   <strong>value: title;</strong>  // print value of a variable 'title' instead of content
 }
 </pre>
 <p>Kwartz Directive '<code>id="value:<em>expression</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
-<p>Presentation Data:
-</p>
 <a name="teq-replace2b.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;h1 <strong>id="value:title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
 <br>
@@ -234,9 +284,9 @@ This pattern is named 'Replace Element by Element Pattern.'
 
 <a name="replace-elem-by-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="replace-elem-by-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
@@ -247,9 +297,9 @@ This pattern is named 'Replace Element by Element Pattern.'
   Home | Document | FAQ
 &lt;/div&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="replace-elem-by-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#links2 {
   plogic: {
     <strong>@element(links);</strong>  // replace the element 'links2' by the element 'links'
@@ -258,9 +308,9 @@ This pattern is named 'Replace Element by Element Pattern.'
 </pre>
 <p><code>@element(<em>name</em>)</code> represents the element which is marked by <code>id="mark:<em>name</em>"</code> or <code>id="<em>name</em>"</code>.
 </p>
-<p>Output Script:
-</p>
-<pre class="program">&lt;div&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -276,6 +326,8 @@ This pattern is named 'Replace Element by Element Pattern.'
 <h4 class="section3">Supplement</h4>
 <p>Directive '<code>id="replace:<em>name</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
@@ -289,25 +341,25 @@ This pattern is named 'Replace Element by Element Pattern.'
 <p>The command-line option '<code>-i <em>file</em>,<em>file2</em>,...</code>' enables you to use elements
 which are described in other files.
 </p>
-<p>Presentation Data(links.html):
-</p>
 <a name="links.html"></a>
+<div class="program_caption">
+Presentation Data(links.html):</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>Presentation Data(page.html):
-</p>
 <a name="page.html"></a>
+<div class="program_caption">
+Presentation Data(page.html):</div>
 <pre class="program">&lt;div <strong>id="mark:links1"</strong>&gt; Home | Document | FAQ &lt;/div&gt;
 
 &lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
 
 &lt;div <strong>id="mark:links2"</strong>&gt; Home | Document | FAQ &lt;/div&gt;
 </pre>
-<p>Presentation Logic(page.plogic):
-</p>
 <a name="page.plogic"></a>
+<div class="program_caption">
+Presentation Logic(page.plogic):</div>
 <pre class="program">#links1 {
   plogic: {
     <strong>@element(links);</strong>
@@ -319,13 +371,13 @@ which are described in other files.
   }
 }
 </pre>
-<p>Compile:
-</p>
+<div class="terminal_caption">
+Compile:</div>
 <pre class="terminal">$ kwartz -l eruby <strong>-i links.html</strong> -p page.plogic page.html
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">&lt;div&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -365,9 +417,9 @@ This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Patte
 <li>layout.html, layout.plogic - represents desing layout.
 </li>
 </ul>
-<p>Presentation Data(contents.html):
-</p>
 <a name="contents.html"></a>
+<div class="program_caption">
+Presentation Data(contents.html):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     
@@ -388,9 +440,9 @@ This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Patte
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Presentation Logic(contents.plogic):
-</p>
 <a name="contents.plogic"></a>
+<div class="program_caption">
+Presentation Logic(contents.plogic):</div>
 <pre class="program">#menu {
   plogic: {
     @stag;
@@ -402,13 +454,13 @@ This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Patte
 }
 
 #menu_item {
-  value: item['name'];
-  attr:  "href" item['url'];
+  value:  item['name'];
+  attrs:  "href" item['url'];
 }
 </pre>
-<p>Presentation Data(layout.html):
-</p>
 <a name="layout.html"></a>
+<div class="program_caption">
+Presentation Data(layout.html):</div>
 <pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -455,9 +507,9 @@ This pattern is named 'Replace Content by Element Pattern' or 'Placeholder Patte
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Presentation Logic(layout.plogic):
-</p>
 <a name="layout.plogic"></a>
+<div class="program_caption">
+Presentation Logic(layout.plogic):</div>
 <pre class="program">#placeholder_menu {
   plogic: {
     @stag;
@@ -481,9 +533,9 @@ which enables to import elements defined in other files.
 </p>
 <pre class="terminal">$ kwartz -l eruby  <strong>-i contents.html</strong> -p contens.plogic,layout.plogic layout.html
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
@@ -592,26 +644,26 @@ This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 
 <a name="delete-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="dummy-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
   &lt;li <strong>id="dummy"</strong>&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="dummy-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#dummy {
   plogic: {
     // empty
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
@@ -637,8 +689,8 @@ This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 <h4 class="section3">Supplement</h4>
 <p>Kwartz directive '<code>id="dummy:<em>str</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
-<p>Presentation Data:
-</p>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
   &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
@@ -667,19 +719,19 @@ This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
 
 <a name="delete-tag-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="dummy-tag.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;a href="..." <strong>id="mark:next"</strong>&gt;Next&lt;/a&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="dummy-tag.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#next {
-  attr: "href" url;
+  attrs:  "href" url;
   plogic: {
     if (url == null) {
-      <strong>@cont;</strong>   // don't print tags when url is null
+      <strong>@cont;</strong>   // delete tags when url is null
     } else {
       @stag;
       @cont;
@@ -688,9 +740,9 @@ This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 &lt;% if url == nil then %&gt;
 Next&lt;% else %&gt;
 &lt;a href="&lt;%= url %&gt;"&gt;Next&lt;/a&gt;
@@ -742,18 +794,18 @@ This pattern is very useful for all these situations.
 
 <a name="iterate-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="iterate-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="mark:items"</strong>&gt;
    &lt;td&gt;@{item}@&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="iterate-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#items {
   plogic: {
     // iterate start tag, content, and end tag
@@ -765,39 +817,43 @@ This pattern is very useful for all these situations.
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
+&lt;table&gt;
 &lt;% for item in list do %&gt;
-  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;% end %&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for PHP
-&lt;ul&gt;
+&lt;table&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
-  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;?php } ?&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for JSTL
-&lt;ul&gt;
+&lt;table&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
-  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;/c:forEach&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for Velocity
-&lt;ul&gt;
+&lt;table&gt;
 #foreach($item in $list)
-  &lt;dt&gt;$!{item.text}&lt;/dt&gt;
-  &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;$!{item}&lt;/td&gt;
+  &lt;/tr&gt;
 #end
-&lt;/ul&gt;
+&lt;/table&gt;
 </pre>
 <br>
 
@@ -805,8 +861,8 @@ This pattern is very useful for all these situations.
 <h4 class="section3">Supplement</h4>
 <p>Kwartz directive <code>id="foreach:<em>item</em>=<em>list</em>"</code> lets you to use this pattern without presentation logic file.
 </p>
-<p>Presentation Data:
-</p>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="foreach:item=list"</strong>&gt;
    &lt;td&gt;@{item}@&lt;/td&gt;
@@ -835,17 +891,17 @@ This pattern is named 'Iterate Content' pattern.
 
 <a name="iterate-cont-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
-<a name="iterate-elem.pdata"></a>
-<pre class="program">&lt;ul <strong>id="mark:items"</strong>&gt;
+<a name="iterate-cont.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;dl <strong>id="mark:items"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
-<p>Presentation Logic:
-</p>
-<a name="iterate-elem.plogic"></a>
+<a name="iterate-cont.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#items {
   plogic: {
     // iterate only content
@@ -857,39 +913,39 @@ This pattern is named 'Iterate Content' pattern.
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
+&lt;dl&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for PHP
-&lt;ul&gt;
+&lt;dl&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
   &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
 &lt;?php } ?&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for JSTL
-&lt;ul&gt;
+&lt;dl&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for Velocity
-&lt;ul&gt;
+&lt;dl&gt;
 #foreach($item in $list)
   &lt;dt&gt;$!{item.text}&lt;/dt&gt;
   &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
 #end
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
 <br>
 
@@ -897,10 +953,12 @@ This pattern is named 'Iterate Content' pattern.
 <h4 class="section3">Supplement</h4>
 <p>Kwartz directive <code>id="loop:<em>item</em>=<em>list</em>"</code> lets you to use this pattern without presentation logic file.
 </p>
-<pre class="program">&lt;ul <strong>id="loop:item=list"</strong>&gt;
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;dl <strong>id="loop:item=list"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
 <br>
 
@@ -929,18 +987,18 @@ This pattern is named 'Select Element Pattern.'
 
 <a name="select-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="select-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div id="mark:message"&gt;
-  &lt;font color="red"   <strong>id="mark:error"</strong>&gt;ERROR!&lt;/font&gt;
-  &lt;font color="blue"  <strong>id="mark:warning"</strong>&gt;Warning:&lt;/font&gt;
-  &lt;font color="black" <strong>id="mark:good"</strong>&gt;No error.&lt;/font&gt;
+  &lt;span style="color:red"   <strong>id="mark:error"</strong>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <strong>id="mark:warning"</strong>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <strong>id="mark:good"</strong>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="select-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#message {
   plogic: {
     if (status == 'error') {
@@ -953,42 +1011,42 @@ This pattern is named 'Select Element Pattern.'
   }
 }
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 &lt;% if status == "error" then %&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;% elsif status == "warning" then %&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;% else %&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;% end %&gt;
 
 ### for PHP
 &lt;?php if ($status == "error") { ?&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;?php } elseif ($status == "warning") { ?&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;?php } else { ?&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;?php } ?&gt;
 
 ### for JSTL
 &lt;c:choose&gt;&lt;c:when test="${status eq 'error'}"&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;/c:when&gt;&lt;c:when test="${status eq 'warning'}"&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;/c:when&gt;&lt;c:otherwise&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 
 ### for Velocity
 #if($status == "error")
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 #elseif($status == "warning")
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 #else
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 #end
 </pre>
 <br>
@@ -998,12 +1056,12 @@ This pattern is named 'Select Element Pattern.'
 <p>Kwartz directive '<code>id="if:<em>condition</em>"</code>', '<code>id="elseif:<em>condition</em>"</code>', and '<code>id="else:"</code>'
 let you to use this pattern without presentation logic file.
 </p>
-<p>Presentation Data:
-</p>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;div&gt;
-  &lt;font color="red"   <strong>id="if:status=='error'"</strong>&gt;ERROR!&lt;/font&gt;
-  &lt;font color="blue"  <strong>id="elseif:status=='warning'"</strong>&gt;Warning:&lt;/font&gt;
-  &lt;font color="black" <strong>id="else"</strong>&gt;No error.&lt;/font&gt;
+  &lt;span style="color:red"   <strong>id="if:status=='error'"</strong>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <strong>id="elseif:status=='warning'"</strong>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <strong>id="else:"</strong>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
 <br>
@@ -1033,25 +1091,25 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 
 <a name="pickup-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<p>Presentation Data:
-</p>
 <a name="pickup-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="breadcrumbs"</strong>&gt;
-      &lt;a href="@{item['path']}@" <strong>id="mark:crumb"</strong>&gt;@{item['name']}@&lt;/a&gt;
+      &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
       &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
       &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
       &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
       &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <strong>id="mark:title"</strong>&gt;@{title}@&lt;/b&gt;
+      &lt;strong <strong>id="mark:title"</strong>&gt;@{title}@&lt;/strong&gt;
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Presentation Logic:
-</p>
 <a name="pickup-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
 <pre class="program">#breadcrumbs {
   plogic: {
     foreach (item in list) {
@@ -1061,17 +1119,25 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
     <strong>@element(title);</strong>            // print &lt;b&gt;title&lt;/b&gt;
   }
 }
+
+#crumb {
+  value:  item['name'];
+  attrs:  "href" item['path'];
+}
+#title {
+  value: title;
+}
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
 &lt;html&gt;
   &lt;body&gt;
 &lt;% for item in list do %&gt;
       &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
       &amp;gt;
 &lt;% end %&gt;
-      &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;%= title %&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1082,7 +1148,7 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
       &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
       &amp;gt;
 &lt;?php } ?&gt;
-      &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;?php echo $title; ?&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1093,7 +1159,7 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
       &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
       &amp;gt;
 &lt;/c:forEach&gt;
-      &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1104,47 +1170,9 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
       &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
       &amp;gt;
 #end
-      &lt;b&gt;$!{title}&lt;/b&gt;
+      &lt;strong&gt;$!{title}&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
-</pre>
-<p>The above example should be described as following.
-</p>
-<p>Presentation Data:
-</p>
-<a name="pickup-elem.pdata"></a>
-<pre class="program">&lt;html&gt;
-  &lt;body&gt;
-    &lt;div <strong>id="breadcrumbs"</strong>&gt;
-      &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
-      &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
-      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
-      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
-      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <strong>id="mark:title"</strong>&gt;Page Title&lt;/b&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</pre>
-<p>Presentation Logic:
-</p>
-<a name="pickup-elem.plogic"></a>
-<pre class="program">#breadcrumbs {
-  plogic: {
-    foreach (item in list) {
-      <strong>@element(crumb);</strong>          // print &lt;a&gt;...&lt;/a&gt;
-      <strong>@element(separator);</strong>      // print '&amp;gt;'
-    }
-    <strong>@element(title);</strong>            // print &lt;b&gt;title&lt;/b&gt;
-  }
-}
-#crumb {
-  value: item['name'];
-  attr:  "href" item['path'];
-}
-#title {
-  value: title;
-}
 </pre>
 <br>
 
@@ -1153,7 +1181,7 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 
 <a name="extract-elem"></a>
 <h3 class="section2">Extract Element Pattern</h3>
-<a name="pickup-elem-desc"></a>
+<a name="extract-elem-desc"></a>
 <h4 class="section3">Description</h4>
 <p>It is able to extract a certain element form the whole presentation data.
 Other element and text strings are not printed.
@@ -1161,19 +1189,19 @@ This pattern is named 'Extract Element Pattern.'
 </p>
 <br>
 
-<a name="pickup-elem-situation"></a>
+<a name="extract-elem-situation"></a>
 <h4 class="section3">Situation</h4>
 <p>This pattern is very useful to extract HTML fragments and make them libraries.
 </p>
 <br>
 
-<a name="pickup-elem-example"></a>
+<a name="extract-elem-example"></a>
 <h4 class="section3">Example Code</h4>
 <p>The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
 </p>
-<p>Presentation Data (<a href="design.html">design.html</a>):
-</p>
 <a name="design.html"></a>
+<div class="program_caption">
+Presentation Data (<a href="design.html">design.html</a>):</div>
 <pre class="program">&lt;html <strong>id="mark:whole"</strong>&gt;
   &lt;head&gt;
     &lt;title&gt;Design Examples&lt;/title&gt;
@@ -1217,9 +1245,9 @@ This pattern is named 'Extract Element Pattern.'
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>Presentation Logic (copyright.plogic):
-</p>
 <a name="copyright.plogic"></a>
+<div class="program_caption">
+Presentation Logic (copyright.plogic):</div>
 <pre class="program"><strong>#whole</strong> {
   // replace the element 'whole' with the element you want to extract
   plogic: {
@@ -1227,9 +1255,9 @@ This pattern is named 'Extract Element Pattern.'
   }
 }
 </pre>
-<p>Presentation Logic (tablist.plogic):
-</p>
 <a name="tablist.plogic"></a>
+<div class="program_caption">
+Presentation Logic (tablist.plogic):</div>
 <pre class="program"><strong>#whole</strong> {
   // replace the element 'whole' with the element you want to extract
   plogic: {
@@ -1249,13 +1277,13 @@ This pattern is named 'Extract Element Pattern.'
 }
 
 #tab {
-  value: tab['name'];
-  attr:  "href" tab['href'], "class" klass;
+  value:  tab['name'];
+  attrs:  "href" tab['href'], "class" klass;
 }
 </pre>
-<p>Presentation Logic (menulist.plogic):
-</p>
 <a name="menulist.plogic"></a>
+<div class="program_caption">
+Presentation Logic (menulist.plogic):</div>
 <pre class="program"><strong>#whole</strong> {
   // replace the element 'whole' with the element you want to extract
   plogic: {
@@ -1275,8 +1303,8 @@ This pattern is named 'Extract Element Pattern.'
 }
 
 #menu {
-  value:  menu['name'];
-  attr:   "href" menu['cgipath'], "class" klass;
+  value:   menu['name'];
+  attrs:   "href" menu['cgipath'], "class" klass;
   plogic: {
     klass = current_menu == menu['name'] ? 'selected' : '';
     @stag;
@@ -1285,8 +1313,8 @@ This pattern is named 'Extract Element Pattern.'
   }
 }
 </pre>
-<p>Compile:
-</p>
+<div class="terminal_caption">
+Compile:</div>
 <pre class="terminal">### copyright
 $ kwartz -l eruby -p copyright.plogic design.pdata
 $ kwartz -l php   -p copyright.plogic design.pdata
@@ -1299,9 +1327,9 @@ $ kwartz -l php   -p tablist.plogic   design.pdata
 $ kwartz -l eruby -p menulist.plogic  design.pdata
 $ kwartz -l php   -p menulist.plogic  design.pdata
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
     &lt;div align="center" class="copyright"&gt;
       Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
@@ -1311,9 +1339,9 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
     &lt;div&gt;
       &lt;div class="tabs"&gt;
 &lt;% for tab in tablist do %&gt;
@@ -1337,9 +1365,9 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>
-<p>Output Script:
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">### for eRuby
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
       &lt;div class="menus"&gt;
@@ -1365,7 +1393,7 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
 </pre>
 <br>
 
-<a name="pickup-elem-supplement"></a>
+<a name="extract-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
 <p>The command-line option <code>--extract=<em>name</em></code> extracts the element marked with <code><em>name</em></code> in Kwartz.
 </p>

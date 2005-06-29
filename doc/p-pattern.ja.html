@@ -23,6 +23,9 @@
 <h2 class="section1">はじめに</h2>
 <p>Kwartzは、<strong>「プレゼンテーションロジックとプレゼンテーションデータの分離」</strong>または<strong>「プレゼンテーションロジックの独立」</strong>という概念を実現したテンプレートシステムです。
 プレゼンテーションロジックとプレゼンテーションデータを分離すると、HTMLデザインをまったく崩すことなく、複雑なプレゼンテーションロジックを利用することができます。
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+=======
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r95
 </p>
 <p>またプレゼンテーションデータとプレゼンテーションロジックとをうまく分離するための、いくつかのパターンが存在します。
 これらのパターンを「プレゼンテーションパターン」といいます。
@@ -44,6 +47,38 @@
   <ul>
     <li><a href="#replace-elem-by-value">Replace Element by Valueパターン</a>
     </li>
+    <li><a href="#replace-cont-by-value">Replace Content by Valueパターン</a>
+    </li>
+    <li><a href="#replace-elem-by-elem">Replace Element by Elementパターン</a>
+    </li>
+    <li><a href="#replace-cont-by-elem">Replace Content by Elementパターン</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#deletion">削除</a>
+  <ul>
+    <li><a href="#delete-elem">Delete Elementパターン</a>
+    </li>
+    <li><a href="#delete-tag">Delete Tagパターン</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#iteration">繰り返し</a>
+  <ul>
+    <li><a href="#iterate-elem">Iterate Elementパターン</a>
+    </li>
+    <li><a href="#iterate-cont">Iterate Contentパターン</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#selection">選択</a>
+  <ul>
+    <li><a href="#select-elem">Select Elementパターン</a>
+    </li>
+    <li><a href="#pickup-elem">Pick-up Elementパターン</a>
+    </li>
+    <li><a href="#extract-elem">Extract Elementパターン</a>
+    </li>
   </ul>
   </li>
 </ul>
@@ -52,6 +87,18 @@
 
 <a name="changelog"></a>
 <h3 class="section2">更新履歴</h3>
+<dl class="dl1">
+<dt class="dt1">
+2005-06-27</dt>
+<dd class="dd1">
+	<ul type="circle">
+	<li>「Iterate Elementパターン」において出力用スクリプトの間違いを修正（[bug:1228301]）
+	</li>
+	<li>「Iterate Contentパターン」において&lt;dl&gt;&lt;/dl&gt;が&lt;ul&gt;&lt;/ul&gt;となっていたのを修正（[bug:1228301]）
+	</li>
+	</ul>
+</dd>
+</dl>
 <dl class="dl1">
 <dt class="dt1">
 2005-03-21</dt>
@@ -91,23 +138,23 @@
 
 <a name="replace-elem-by-value-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="teq-replace1.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">Hello &lt;span <strong>id="mark:user"</strong>&gt;World&lt;/span&gt;!
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="teq-replace1.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#user {
   plogic: {
     <strong>print(username);</strong>  // エレメントのかわりに変数usernameを出力する
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 Hello &lt;%= username %&gt;!
 
 ### for PHP
@@ -126,9 +173,9 @@ Hello $!{username}!
 <p>値がnullまたは空文字列のときに、コンテンツテキストをデフォルト値として出力したい場合は次のようにします。
 これは「Replace Element by Valueパターン」と「Delete Tagパターン」の組み合わせです。
 </p>
-<p>プレゼンテーションロジック：
-</p>
 <a name="teq-replace2b.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#user {
   plogic: {
     // 変数usernameの値を出力する。
@@ -163,14 +210,14 @@ Hello $!{username}!
 
 <a name="replace-cont-by-value-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="teq-replace2.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;h1 <strong>id="mark:title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="teq-replace2.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#title {
   plogic: {
     @stag;
@@ -179,9 +226,9 @@ Hello $!{username}!
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 &lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
 
 ### for PHP
@@ -195,12 +242,12 @@ Hello $!{username}!
 </pre>
 <br>
 
-<a name="replace-elem-by-value-suppliment"></a>
+<a name="replace-cont-by-value-suppliment"></a>
 <h4 class="section3">補足</h4>
 <p>「Replace Content by Valueパターン」は、Kwartzでは次のように書くことができます。
 </p>
-<p>プレゼンテーションロジック：
-</p>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#title {
   <strong>value: title;</strong>  // 内容のかわりに変数titleの値を出力する
 }
@@ -208,9 +255,9 @@ Hello $!{username}!
 <p>またディレクティブ「<code>id="value:<em>expression</em>"</code>」を使うと、
 プレゼンテーションデータファイルだけでパターンを使用できます。
 </p>
-<p>プレゼンテーションデータ：
-</p>
 <a name="teq-replace2b.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;h1 <strong>id="value:title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
 <br>
@@ -235,9 +282,9 @@ Hello $!{username}!
 
 <a name="replace-elem-by-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="replace-elem-by-elem.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
@@ -248,9 +295,9 @@ Hello $!{username}!
   Home | Document | FAQ
 &lt;/div&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="replace-elem-by-elem.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#links2 {
   plogic: {
     <strong>@element(links);</strong>  // エレメントlins2をエレメントlinksで置き換える
@@ -259,9 +306,9 @@ Hello $!{username}!
 </pre>
 <p>ここで「<code>@element(<em>name</em>)</code>」は、「<code>id="mark:<em>name</em>"</code>」や「<code>id="<em>name</em>"</code>」でマーキングされたエレメントを表しています。
 </p>
-<p>出力用スクリプト：
-</p>
-<pre class="program">&lt;div&gt;
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -278,6 +325,8 @@ Hello $!{username}!
 <p>Kwartzでは、ディレクティブ「<code>id="replace:<em>name</em>"</code>」を使うと、
 プレゼンテーションロジックファイルなしでこのパターンが使用できます。
 </p>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
@@ -291,25 +340,25 @@ Hello $!{username}!
 <p>またコマンドラインオプション「<code>-i <em>file</em>,<em>file2</em>,...</code>」を指定すると、
 他のファイルのエレメントを利用できます。
 </p>
-<p>プレゼンテーションデータ(links.html)：
-</p>
 <a name="links.html"></a>
+<div class="program_caption">
+プレゼンテーションデータ(links.html)：</div>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 </pre>
-<p>プレゼンテーションデータ(page.html)：
-</p>
 <a name="page.html"></a>
+<div class="program_caption">
+プレゼンテーションデータ(page.html)：</div>
 <pre class="program">&lt;div <strong>id="mark:links1"</strong>&gt; Home | Document | FAQ &lt;/div&gt;
 
 &lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
 
 &lt;div <strong>id="mark:links2"</strong>&gt; Home | Document | FAQ &lt;/div&gt;
 </pre>
-<p>プレゼンテーションロジック(page.plogic)：
-</p>
 <a name="page.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(page.plogic)：</div>
 <pre class="program">#links1 {
   plogic: {
     <strong>@element(links);</strong>
@@ -321,13 +370,13 @@ Hello $!{username}!
   }
 }
 </pre>
-<p>コンパイル：
-</p>
+<div class="terminal_caption">
+コンパイル：</div>
 <pre class="terminal">$ kwartz -l eruby <strong>-i links.html</strong> -p page.plogic page.html
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">&lt;div&gt;
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">&lt;div&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
 &lt;/div&gt;
 
@@ -367,9 +416,9 @@ Hello $!{username}!
 <li>layout.html, layout.plogic - 全体のレイアウトを表します。
 </li>
 </ul>
-<p>プレゼンテーションデータ(contents.html)：
-</p>
 <a name="contents.html"></a>
+<div class="program_caption">
+プレゼンテーションデータ(contents.html)：</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     
@@ -390,9 +439,9 @@ Hello $!{username}!
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>プレゼンテーションロジック(contents.plogic)：
-</p>
 <a name="contents.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(contents.plogic)：</div>
 <pre class="program">#menu {
   plogic: {
     @stag;
@@ -404,13 +453,13 @@ Hello $!{username}!
 }
 
 #menu_item {
-  value: item['name'];
-  attr:  "href" item['url'];
+  value:  item['name'];
+  attrs:  "href" item['url'];
 }
 </pre>
-<p>プレゼンテーションデータ(layout.html)：
-</p>
 <a name="layout.html"></a>
+<div class="program_caption">
+プレゼンテーションデータ(layout.html)：</div>
 <pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -457,9 +506,9 @@ Hello $!{username}!
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>プレゼンテーションロジック(layout.plogic)：
-</p>
 <a name="layout.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(layout.plogic)：</div>
 <pre class="program">#placeholder_menu {
   plogic: {
     @stag;
@@ -483,9 +532,9 @@ Hello $!{username}!
 </p>
 <pre class="terminal">$ kwartz -l eruby  <strong>-i contents.html</strong> -p contens.plogic,layout.plogic layout.html
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
@@ -595,26 +644,26 @@ Hello $!{username}!
 
 <a name="delete-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="dummy-elem.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
   &lt;li <strong>id="dummy"</strong>&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="dummy-elem.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#dummy {
   plogic: {
     // empty
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
@@ -641,8 +690,8 @@ Hello $!{username}!
 <p>Kwartzではディレクティブ「<code>id="dummy:<em>str</em>"</code>」を使うことで、
 プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 </p>
-<p>プレゼンテーションデータ：
-</p>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
   &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
@@ -671,16 +720,16 @@ Hello $!{username}!
 
 <a name="delete-tag-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="dummy-tag.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;a href="..." <strong>id="mark:next"</strong>&gt;Next&lt;/a&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="dummy-tag.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#next {
-  attr: "href" url;
+  attrs:  "href" url;
   plogic: {
     if (url == null) {
       <strong>@cont;</strong>   // urlがnullのときはタグを出力しない
@@ -692,9 +741,9 @@ Hello $!{username}!
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 &lt;% if url == nil then %&gt;
 Next&lt;% else %&gt;
 &lt;a href="&lt;%= url %&gt;"&gt;Next&lt;/a&gt;
@@ -745,18 +794,18 @@ Next#else
 
 <a name="iterate-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="iterate-elem.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="mark:items"</strong>&gt;
    &lt;td&gt;@{item}@&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="iterate-elem.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#items {
   plogic: {
     // 開始タグ、内容、終了タグを繰り返す
@@ -768,39 +817,43 @@ Next#else
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
+&lt;table&gt;
 &lt;% for item in list do %&gt;
-  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;% end %&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for PHP
-&lt;ul&gt;
+&lt;table&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
-  &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;?php } ?&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for JSTL
-&lt;ul&gt;
+&lt;table&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
-  &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
-  &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;c:out value="${item}" escapeXml="false"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
 &lt;/c:forEach&gt;
-&lt;/ul&gt;
+&lt;/table&gt;
 
 ### for Velocity
-&lt;ul&gt;
+&lt;table&gt;
 #foreach($item in $list)
-  &lt;dt&gt;$!{item.text}&lt;/dt&gt;
-  &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
+  &lt;tr&gt;
+   &lt;td&gt;$!{item}&lt;/td&gt;
+  &lt;/tr&gt;
 #end
-&lt;/ul&gt;
+&lt;/table&gt;
 </pre>
 <br>
 
@@ -809,8 +862,8 @@ Next#else
 <p>Kwartzではディレクティブ「<code>id="foreach:<em>item</em>=<em>list</em>"</code>」を使うことで、
 プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 </p>
-<p>プレゼンテーションデータ：
-</p>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="foreach:item=list"</strong>&gt;
    &lt;td&gt;@{item}@&lt;/td&gt;
@@ -839,17 +892,17 @@ Next#else
 
 <a name="iterate-cont-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
-<a name="iterate-elem.pdata"></a>
-<pre class="program">&lt;ul <strong>id="mark:items"</strong>&gt;
+<a name="iterate-cont.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
+<pre class="program">&lt;dl <strong>id="mark:items"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
-<a name="iterate-elem.plogic"></a>
+<a name="iterate-cont.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#items {
   plogic: {
     // 内容だけを繰り返す
@@ -861,39 +914,39 @@ Next#else
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
-&lt;ul&gt;
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
+&lt;dl&gt;
 &lt;% for item in list do %&gt;
   &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
 &lt;% end %&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for PHP
-&lt;ul&gt;
+&lt;dl&gt;
 &lt;?php foreach ($list as $item) { ?&gt;
   &lt;dt&gt;&lt;?php echo $item-&gt;text; ?&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;?php echo $item-&gt;desc; ?&gt;&lt;/dd&gt;
 &lt;?php } ?&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for JSTL
-&lt;ul&gt;
+&lt;dl&gt;
 &lt;c:forEach var="item" items="${list}"&gt;
   &lt;dt&gt;&lt;c:out value="${item.text}" escapeXml="false"/&gt;&lt;/dt&gt;
   &lt;dd&gt;&lt;c:out value="${item.desc}" escapeXml="false"/&gt;&lt;/dd&gt;
 &lt;/c:forEach&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 
 ### for Velocity
-&lt;ul&gt;
+&lt;dl&gt;
 #foreach($item in $list)
   &lt;dt&gt;$!{item.text}&lt;/dt&gt;
   &lt;dd&gt;$!{item.desc}&lt;/dd&gt;
 #end
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
 <br>
 
@@ -902,10 +955,12 @@ Next#else
 <p>Kwartzではディレクティブ「<code>id="loop:<em>item</em>=<em>list</em>"</code>」を使うことで、
 プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 </p>
-<pre class="program">&lt;ul <strong>id="loop:item=list"</strong>&gt;
+<div class="program_caption">
+プレゼンテーションデータ：</div>
+<pre class="program">&lt;dl <strong>id="loop:item=list"</strong>&gt;
   &lt;dt&gt;@{item.text}@&lt;/dt&gt;
   &lt;dd&gt;@{item.desc}@&lt;/dd&gt;
-&lt;/ul&gt;
+&lt;/dl&gt;
 </pre>
 <br>
 
@@ -934,18 +989,18 @@ Next#else
 
 <a name="select-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="select-elem.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;div id="mark:message"&gt;
-  &lt;font color="red"   <strong>id="mark:error"</strong>&gt;ERROR!&lt;/font&gt;
-  &lt;font color="blue"  <strong>id="mark:warning"</strong>&gt;Warning:&lt;/font&gt;
-  &lt;font color="black" <strong>id="mark:good"</strong>&gt;No error.&lt;/font&gt;
+  &lt;span style="color:red"   <strong>id="mark:error"</strong>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <strong>id="mark:warning"</strong>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <strong>id="mark:good"</strong>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="select-elem.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#message {
   plogic: {
     if (status == 'error') {
@@ -958,42 +1013,42 @@ Next#else
   }
 }
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 &lt;% if status == "error" then %&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;% elsif status == "warning" then %&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;% else %&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;% end %&gt;
 
 ### for PHP
 &lt;?php if ($status == "error") { ?&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;?php } elseif ($status == "warning") { ?&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;?php } else { ?&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;?php } ?&gt;
 
 ### for JSTL
 &lt;c:choose&gt;&lt;c:when test="${status eq 'error'}"&gt;
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 &lt;/c:when&gt;&lt;c:when test="${status eq 'warning'}"&gt;
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 &lt;/c:when&gt;&lt;c:otherwise&gt;
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 &lt;/c:otherwise&gt;&lt;/c:choose&gt;
 
 ### for Velocity
 #if($status == "error")
-  &lt;font color="red"&gt;ERROR!&lt;/font&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
 #elseif($status == "warning")
-  &lt;font color="blue"&gt;Warning:&lt;/font&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
 #else
-  &lt;font color="black"&gt;No error.&lt;/font&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
 #end
 </pre>
 <br>
@@ -1003,12 +1058,12 @@ Next#else
 <p>Kwartzではディレクティブ「<code>id="if:<em>condition</em>"</code>」「<code>id="elseif:<em>condition</em>"</code>」「<code>id="else:"</code>」を使うことで、
 プレゼンテーションロジックファイルなしでこのパターンを使用できます。
 </p>
-<p>プレゼンテーションデータ：
-</p>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;div&gt;
-  &lt;font color="red"   <strong>id="if:status=='error'"</strong>&gt;ERROR!&lt;/font&gt;
-  &lt;font color="blue"  <strong>id="elseif:status=='warning'"</strong>&gt;Warning:&lt;/font&gt;
-  &lt;font color="black" <strong>id="else"</strong>&gt;No error.&lt;/font&gt;
+  &lt;span style="color:red"   <strong>id="if:status=='error'"</strong>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <strong>id="elseif:status=='warning'"</strong>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <strong>id="else:"</strong>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
 <br>
@@ -1039,25 +1094,25 @@ Next#else
 
 <a name="pickup-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
-<p>プレゼンテーションデータ：
-</p>
 <a name="pickup-elem.pdata"></a>
+<div class="program_caption">
+プレゼンテーションデータ：</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="breadcrumbs"</strong>&gt;
-      &lt;a href="@{item['path']}@" <strong>id="mark:crumb"</strong>&gt;@{item['name']}@&lt;/a&gt;
+      &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
       &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
       &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
       &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
       &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <strong>id="mark:title"</strong>&gt;@{title}@&lt;/b&gt;
+      &lt;strong <strong>id="mark:title"</strong>&gt;@{title}@&lt;/strong&gt;
     &lt;/div&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>プレゼンテーションロジック：
-</p>
 <a name="pickup-elem.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック：</div>
 <pre class="program">#breadcrumbs {
   plogic: {
     foreach (item in list) {
@@ -1067,17 +1122,25 @@ Next#else
     <strong>@element(title);</strong>            // print &lt;b&gt;title&lt;/b&gt;
   }
 }
+
+#crumb {
+  value:  item['name'];
+  attrs:  "href" item['path'];
+}
+#title {
+  value: title;
+}
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
 &lt;html&gt;
   &lt;body&gt;
 &lt;% for item in list do %&gt;
       &lt;a href="&lt;%= item["path"] %&gt;"&gt;&lt;%= item["name"] %&gt;&lt;/a&gt;
       &amp;gt;
 &lt;% end %&gt;
-      &lt;b&gt;&lt;%= title %&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;%= title %&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1088,7 +1151,7 @@ Next#else
       &lt;a href="&lt;?php echo $item["path"]; ?&gt;"&gt;&lt;?php echo $item["name"]; ?&gt;&lt;/a&gt;
       &amp;gt;
 &lt;?php } ?&gt;
-      &lt;b&gt;&lt;?php echo $title; ?&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;?php echo $title; ?&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1099,7 +1162,7 @@ Next#else
       &lt;a href="&lt;c:out value="${item['path']}" escapeXml="false"/&gt;"&gt;&lt;c:out value="${item['name']}" escapeXml="false"/&gt;&lt;/a&gt;
       &amp;gt;
 &lt;/c:forEach&gt;
-      &lt;b&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/b&gt;
+      &lt;strong&gt;&lt;c:out value="${title}" escapeXml="false"/&gt;&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 
@@ -1110,47 +1173,9 @@ Next#else
       &lt;a href="$!{item["path"]}"&gt;$!{item["name"]}&lt;/a&gt;
       &amp;gt;
 #end
-      &lt;b&gt;$!{title}&lt;/b&gt;
+      &lt;strong&gt;$!{title}&lt;/strong&gt;
   &lt;/body&gt;
 &lt;/html&gt;
-</pre>
-<p>この例では「<code>@{...}@</code>」を使用しましたが、これを使わないようにすると次のようになります。
-</p>
-<p>プレゼンテーションデータ：
-</p>
-<a name="pickup-elem.pdata"></a>
-<pre class="program">&lt;html&gt;
-  &lt;body&gt;
-    &lt;div <strong>id="breadcrumbs"</strong>&gt;
-      &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
-      &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
-      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
-      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
-      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
-      &lt;b <strong>id="mark:title"</strong>&gt;Page Title&lt;/b&gt;
-    &lt;/div&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</pre>
-<p>プレゼンテーションロジック：
-</p>
-<a name="pickup-elem.plogic"></a>
-<pre class="program">#breadcrumbs {
-  plogic: {
-    foreach (item in list) {
-      <strong>@element(crumb);</strong>          // print &lt;a&gt;...&lt;/a&gt;
-      <strong>@element(separator);</strong>      // print '&amp;gt;'
-    }
-    <strong>@element(title);</strong>            // print &lt;b&gt;title&lt;/b&gt;
-  }
-}
-#crumb {
-  value: item['name'];
-  attr:  "href" item['path'];
-}
-#title {
-  value: title;
-}
 </pre>
 <br>
 
@@ -1159,7 +1184,7 @@ Next#else
 
 <a name="extract-elem"></a>
 <h3 class="section2">Extract Elementパターン</h3>
-<a name="pickup-elem-desc"></a>
+<a name="extract-elem-desc"></a>
 <h4 class="section3">説明</h4>
 <p>プレゼンテーションデータ全体から、ある特定のエレメントだけを抽出し、
 ほかは一切表示しないようにすることができます。
@@ -1167,19 +1192,19 @@ Next#else
 </p>
 <br>
 
-<a name="pickup-elem-situation"></a>
+<a name="extract-elem-situation"></a>
 <h4 class="section3">適用場面</h4>
 <p>このパターンを使うと、HTMLデータの一部だけを取り出し、部品化することができます。
 </p>
 <br>
 
-<a name="pickup-elem-example"></a>
+<a name="extract-elem-example"></a>
 <h4 class="section3">サンプルコード</h4>
 <p>次の例では、HTMLファイルからタブとメニューと著作権表示を抜き出しています。
 </p>
-<p>プレゼンテーションデータ(<a href="design.html">design.html</a>)：
-</p>
 <a name="design.html"></a>
+<div class="program_caption">
+プレゼンテーションデータ(<a href="design.html">design.html</a>)：</div>
 <pre class="program">&lt;html <strong>id="mark:whole"</strong>&gt;
   &lt;head&gt;
     &lt;title&gt;Design Examples&lt;/title&gt;
@@ -1223,9 +1248,9 @@ Next#else
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<p>プレゼンテーションロジック(copyright.plogic)：
-</p>
 <a name="copyright.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(copyright.plogic)：</div>
 <pre class="program"><strong>#whole</strong> {
   // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
   plogic: {
@@ -1233,9 +1258,9 @@ Next#else
   }
 }
 </pre>
-<p>プレゼンテーションロジック(tablist.plogic)：
-</p>
 <a name="tablist.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(tablist.plogic)：</div>
 <pre class="program"><strong>#whole</strong> {
   // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
   plogic: {
@@ -1255,13 +1280,13 @@ Next#else
 }
 
 #tab {
-  value: tab['name'];
-  attr:  "href" tab['href'], "class" klass;
+  value:  tab['name'];
+  attrs:  "href" tab['href'], "class" klass;
 }
 </pre>
-<p>プレゼンテーションロジック(menulist.plogic)：
-</p>
 <a name="menulist.plogic"></a>
+<div class="program_caption">
+プレゼンテーションロジック(menulist.plogic)：</div>
 <pre class="program"><strong>#whole</strong> {
   // 全体を表すエレメントwholeを、抽出したいエレメントで置き換える
   plogic: {
@@ -1281,8 +1306,8 @@ Next#else
 }
 
 #menu {
-  value:  menu['name'];
-  attr:   "href" menu['cgipath'], "class" klass;
+  value:   menu['name'];
+  attrs:   "href" menu['cgipath'], "class" klass;
   plogic: {
     klass = current_menu == menu['name'] ? 'selected' : '';
     @stag;
@@ -1291,8 +1316,8 @@ Next#else
   }
 }
 </pre>
-<p>コンパイル：
-</p>
+<div class="terminal_caption">
+コンパイル：</div>
 <pre class="terminal">### copyright
 $ kwartz -l eruby -p copyright.plogic design.pdata
 $ kwartz -l php   -p copyright.plogic design.pdata
@@ -1305,9 +1330,9 @@ $ kwartz -l php   -p tablist.plogic   design.pdata
 $ kwartz -l eruby -p menulist.plogic  design.pdata
 $ kwartz -l php   -p menulist.plogic  design.pdata
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
     &lt;div align="center" class="copyright"&gt;
       Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
@@ -1317,9 +1342,9 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
     &lt;div&gt;
       &lt;div class="tabs"&gt;
 &lt;% for tab in tablist do %&gt;
@@ -1343,9 +1368,9 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>
-<p>出力用スクリプト：
-</p>
-<pre class="program">### for eRuby
+<div class="output_caption">
+出力用スクリプト：</div>
+<pre class="output">### for eRuby
     &lt;div&gt;
       &lt;span class="menu_title"&gt;&lt;%= menu_title %&gt;&lt;/span&gt;
       &lt;div class="menus"&gt;
@@ -1371,7 +1396,7 @@ $ kwartz -l php   -p menulist.plogic  design.pdata
 </pre>
 <br>
 
-<a name="pickup-elem-supplement"></a>
+<a name="extract-elem-supplement"></a>
 <h4 class="section3">補足</h4>
 <p>Kwartzでは、コマンドラインオプション「<code>--extract=<em>name</em></code>」でも、<code><em>name</em></code>でマーキングされたエレメントを抽出できます。
 </p>

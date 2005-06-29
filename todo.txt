@@ -21,6 +21,8 @@
 .- [_] translator/pl.rb
 .- [_] translator/template-toolkit.rb
 .- [_] translator/dtml.rb
+.- [_] translator/groovy.rb
+.- [_] translator/freemarker.rb
 .- [x] mkmethod
 .- [v] action 'defun'
 .- [v] macro C() S() D()
@@ -35,7 +37,7 @@
 .- [v] retrieve or extract (-r name)
 .- [_] /* comment */
 .- [_] parse type appropriately in 'vartype { type var; }'
-.- [_] rubygems package
+.- [v] rubygems package
 .- [x] load statement
 .- [v] 'include' directive
 .- [x] load library path
@@ -44,12 +46,12 @@
 .- [_] API doc
 .- [v] auto-rename local variable to '_var'
 .- [v] placeholder
-.- [_] rewrite Scanner.rb
+.- [v] rewrite Scanner.rb
 .- [_] integrate element definition and declaration
 .- [v] bin/kwartz -> bin/kwartz-ruby and create new bin/kwartz
 .- [v] rename 'kd' attribute to 'kw:d'
 .- [_] man page
-.- [_] re-design website
+.- [v] re-design website
 .- [v] function 'escape_xml'
 .- [v] function 'escape_sql'
 .- [v] function 'escape_url'
@@ -63,4 +65,5 @@
 .- [_] change '@stag', '@cont', '@etag', '@element' to 'stag()', 'cont()', 'etag()', 'element()'
 .- [_] phuny parser for ruby
 .- [_] unit test for visitor.rb
+.- [_] support of not only id tag but also class and tag in Converter
 .- [_] correct my English (>_<)

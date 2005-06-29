@@ -299,44 +299,6 @@ module Kwartz
             @elem_list << Element.create_from_taginfo(marking, staginfo, etaginfo, body_stmt_list)
             stmt_list << ExpandStatement.new(:element, marking)
 
-         when :foreach, :Foreach, :FOREACH, :loop, :Loop, :LOOP, :list, :List, :LIST
-            flag_loop, flag_counter, flag_toggle = @@flag_matrix[directive_name]
-            if flag_loop && !etaginfo
-               msg = "directive '#{directive_name}' cannot use with empty tag."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            unless directive_arg =~ /\A(\w+)\s*[:=]\s*(.*)/
-               msg = "'#{directive_name}:#{directive_arg}': invalid directive."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            var_name = $1
-            list_str = $2
-            loopvar_expr = VariableExpression.new(var_name)
-            list_expr = parse_expression(list_str, linenum)
-            if flag_loop
-               first_stmt = body_stmt_list.shift
-               last_stmt  = body_stmt_list.pop
-            end
-            stmt_list << first_stmt if flag_loop
-            if !flag_counter && !flag_toggle
-               stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            elsif flag_counter && !flag_toggle
-               ctr_name = $1 + "_ctr"
-               stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
-               body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
-               stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            elsif flag_counter && flag_toggle
-               ctr_name = $1 + "_ctr"
-               tgl_name = $1 + "_tgl"
-               stmt_list << parse_expr_stmt("#{ctr_name} = 0;")
-               body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even} : #{@odd};"))
-               body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))
-               stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            else
-               Kwartz::assert
-            end
-            stmt_list << last_stmt if flag_loop
-
          when :value, :Value, :VALUE
             if !etaginfo
                msg = "directive '#{directive_name}' cannot use with empty tag."
@@ -353,6 +315,34 @@ module Kwartz
             stmt_list << first_stmt
             stmt_list << PrintStatement.new( [ expr ] )
             stmt_list << last_stmt
+
+         when :foreach, :Foreach, :FOREACH, :list, :List, :LIST, :loop, :Loop, :LOOP
+            flag_inner, flag_counter, flag_toggle = @@flag_matrix[directive_name]
+            Kwartz::assert if !flag_counter && flag_toggle
+            if flag_inner && !etaginfo
+               msg = "directive '#{directive_name}' cannot use with empty tag."
+               raise ConvertionError.new(msg, linenum, @filename)
+            end
+            unless directive_arg =~ /\A(\w+)\s*[:=]\s*(.*)/
+               msg = "'#{directive_name}:#{directive_arg}': invalid directive."
+               raise ConvertionError.new(msg, linenum, @filename)
+            end
+            var_name = $1
+            list_str = $2
+            loopvar_expr = VariableExpression.new(var_name)
+            list_expr = parse_expression(list_str, linenum)
+            if flag_inner
+               first_stmt = body_stmt_list.shift
+               last_stmt  = body_stmt_list.pop
+            end
+            stmt_list << first_stmt        if flag_inner
+            ctr_name = var_name + "_ctr"   if flag_counter
+            tgl_name = var_name + "_tgl"   if flag_toggle
+            stmt_list << parse_expr_stmt("#{ctr_name} = 0;")              if flag_counter
+            body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even} : #{@odd};")) if flag_toggle
+            body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))  if flag_counter
+            stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
+            stmt_list << last_stmt         if flag_inner
 
          when :if
             expr = parse_expression(directive_arg, linenum)
@@ -384,38 +374,43 @@ module Kwartz
             stmt_list << ExprStatement.new(expr)
             stmt_list.concat(body_stmt_list)
 
-         when :while
-            expr = parse_expression(directive_arg, linenum)
-            stmt_list << WhileStatement.new(expr, BlockStatement.new(body_stmt_list))
-
          when :dummy
             # nothing
 
-         when :replace
+         when :while, :loop
+            expr = parse_expression(directive_arg, linenum)
+            flag_inner = directive_name == :loop
+            if flag_inner
+               first_stmt = body_stmt_list.shift
+               last_stmt  = body_stmt_list.pop
+               stmt_list << first_stmt
+               stmt_list << WhileStatement.new(expr, BlockStatement.new(body_stmt_list))
+               stmt_list << last_stmt
+            else
+               stmt_list << WhileStatement.new(expr, BlockStatement.new(body_stmt_list))
+            end
+
+         when :replace, :placeholder
             if directive_arg =~ /\A(\w+)(:(content|element))?\z/
                name = $1
                type = $3 ? $3.intern : :element
             else
                raise ConvertionError.new("'#{name}': invalid name for replace-directive.", linenum, @filename)
             end
-            stmt_list << ExpandStatement.new(type, name)
-
-         when :placeholder
-            if !etaginfo
-               msg = "directive '#{directive_name}' cannot use with empty tag."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            if directive_arg =~ /\A(\w+)(:(content|element))?\z/
-               name = $1
-               type = $3 ? $3.intern : :element
+            flag_inner = directive_name == :placeholder
+            if flag_inner
+               unless etaginfo
+                  msg = "directive '#{directive_name}' cannot use with empty tag."
+                  raise ConvertionError.new(msg, linenum, @filename)
+               end
+               first_stmt = body_stmt_list.shift
+               last_stmt  = body_stmt_list.pop
+               stmt_list << first_stmt
+               stmt_list << ExpandStatement.new(type, name)
+               stmt_list << last_stmt
             else
-               raise ConvertionError.new("'#{name}': invalid name for placeholder-directive.", linenum, @filename)
+               stmt_list << ExpandStatement.new(type, name)
             end
-            first_stmt = body_stmt_list.shift
-            last_stmt  = body_stmt_list.pop
-            stmt_list << first_stmt
-            stmt_list << ExpandStatement.new(type, name)
-            stmt_list << last_stmt
 
          when :include, :Include, :INCLUDE
             basename = directive_arg
@@ -510,8 +505,8 @@ module Kwartz
          :attr    =>  true,     :Attr    =>  true,     :ATTR    =>  true,
          :append  =>  true,     :Append  =>  true,     :APPEND  =>  true,
          :foreach =>  true,     :Foreach =>  true,     :FOREACH =>  true,
-         :loop    =>  true,     :Loop    =>  true,     :LOOP    =>  true,
          :list    =>  true,     :List    =>  true,     :LIST    =>  true,
+         :loop    =>  true,     :Loop    =>  true,     :LOOP    =>  true,
          :include =>  true,     :Include =>  true,     :INCLUDE =>  true,
          :value   =>  true,     :Value   =>  true,     :VALUE   =>  true,
          :if      =>  true,
@@ -520,6 +515,7 @@ module Kwartz
          :else    =>  true,
          :set     =>  true,
          :while   =>  true,
+         #:loop    =>  true,
          :mark    =>  true,
          :dummy   =>  true,
          :replace =>  true,
@@ -637,16 +633,16 @@ module Kwartz
 
 
       @@flag_matrix = {
-         # directive_name => [ flag_loop, flag_counter, flag_toggle ]
+         # directive_name => [ flag_inner, flag_counter, flag_toggle ]
          :foreach => [ false, false, false],
          :Foreach => [ false, true,  false],
          :FOREACH => [ false, true,  true ],
-         :loop    => [ true,  false, false],
-         :Loop    => [ true,  true,  false],
-         :LOOP    => [ true,  true,  true ],
          :list    => [ true,  false, false],
          :List    => [ true,  true,  false],
          :LIST    => [ true,  true,  true ],
+         :loop    => [ true,  false, false],
+         :Loop    => [ true,  true,  false],
+         :LOOP    => [ true,  true,  true ],
       }
 
       @@escape_matrix = {

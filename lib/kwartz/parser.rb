@@ -440,18 +440,15 @@ module Kwartz
       ##
       def parse_if_stmt()
          Kwartz::assert unless token() == :if || token() == :elseif
+         word = token() == :if ? 'if' : 'elseif'
          tkn = scan()
-         syntax_error("if-statement requires '('.") unless tkn == '('
+         syntax_error("#{word}-statement requires '('.") unless tkn == '('
          scan()
          cond_expr = parse_expression()
-         syntax_error("if-statement requires ')'.") unless token() == ')'
+         syntax_error("#{word}-statement requires ')'.") unless token() == ')'
          scan()
          then_body = parse_statement()
          if token() == :elseif
-            scan()
-            tkn = scan()
-            syntax_error("elseif-statement requires ')'.") unless tkn == '('
-            scan()
             else_body = parse_if_stmt()
          elsif token() == :else
             scan()
