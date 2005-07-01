@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -11,12 +10,12 @@ public class RelationalExpression extends BinaryExpression {
     public RelationalExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
-    
+
     /*
     public Object evaluate(Map context, Evaluator evaluator) {
         return evaluator.evaluateRelationalExpression(context, self);
     }*/
-    
+
     public Object evaluate(Map context) {
         Object lvalue = _left.evaluate(context);
         Object rvalue = _right.evaluate(context);
@@ -77,7 +76,7 @@ public class RelationalExpression extends BinaryExpression {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitRelationalExpression(this);
     }

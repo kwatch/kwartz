@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 
 abstract public class Expression extends Node {

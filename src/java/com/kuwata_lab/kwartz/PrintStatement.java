@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.io.Writer;
@@ -15,7 +14,7 @@ public class PrintStatement extends Statement {
         super(TokenType.PRINT);
         _arguments = arguments;
     }
-    
+
     public Object execute(Map context, Writer writer) throws IOException {
         Expression expr;
         Object value;
@@ -28,7 +27,7 @@ public class PrintStatement extends Statement {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitPrintStatement(this);
     }

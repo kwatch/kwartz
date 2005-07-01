@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import junit.framework.TestCase;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class StatementTest extends TestCase {
     public void _testPrint(String expected) {
         _testPrint(expected, _stmt);
     }
-    
+
     public void _testPrint(String expected, Statement stmt) {
         try {
             StringWriter writer = new StringWriter();
@@ -37,11 +36,11 @@ public class StatementTest extends TestCase {
     public void _testInspect(String expected) {
         _testInspect(expected, _stmt);
     }
-    
+
     public void _testInspect(String expected, Statement stmt) {
         assertEquals(expected, stmt._inspect());
     }
-    
+
     public void testPrintStatement1() {  // literal
         Expression[] arglist = {
             new IntegerExpression(123),
@@ -211,7 +210,7 @@ public class StatementTest extends TestCase {
     }
 
     // -----
-    
+
     public static void main(String[] args) {
        junit.textui.TestRunner.run(StatementTest.class);
     }

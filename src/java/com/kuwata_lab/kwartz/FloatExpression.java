@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class FloatExpression extends LiteralExpression {
     public Object accept(Visitor visitor) {
         return visitor.visitFloatExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append(_value);

@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -15,7 +14,7 @@ public class FunctionExpression extends Expression {
         _funcname = funcname;
         _arguments = arguments;
     }
-    
+
     public Object evaluate(Map context) {
         Function func = Function.getInstance(_funcname);
         if (func == null) {

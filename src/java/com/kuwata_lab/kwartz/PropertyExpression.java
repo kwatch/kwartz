@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.util.List;
@@ -26,7 +25,7 @@ public class PropertyExpression extends Expression {
     }
     public String _getter() { return _getter; }
     public String _setter() { return _setter; }
-    
+
     public Object evaluate(Map context) {
         Object value = _object.evaluate(context);
         try {
@@ -51,7 +50,7 @@ public class PropertyExpression extends Expression {
             throw new EvaluationException(_name + ": cannot access to the property.", ex);
         }
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitPropertyExpression(this);
     }

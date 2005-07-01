@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.util.List;
@@ -14,14 +13,14 @@ public class ForeachStatement extends Statement {
     private VariableExpression _loopvar;
     private Expression _list;
     private Statement _body;
-    
+
     public ForeachStatement(VariableExpression loopvar, Expression list, Statement body) {
         super(TokenType.FOREACH);
         _loopvar = loopvar;
         _list    = list;
         _body    = body;
     }
-    
+
     public Object execute(Map context, Writer writer) throws IOException {
         Object listval = _list.evaluate(context);
         Object[] array = null;
@@ -39,7 +38,7 @@ public class ForeachStatement extends Statement {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitForeachStatement(this);
     }

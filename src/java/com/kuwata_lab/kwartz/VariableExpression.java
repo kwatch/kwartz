@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ public class VariableExpression extends Expression {
         //return val != null ? val : NullExpression.instance();
         return context.get(_name);
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitVariableExpression(this);
     }

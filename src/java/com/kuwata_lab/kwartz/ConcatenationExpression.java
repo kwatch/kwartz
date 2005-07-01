@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class ConcatenationExpression extends BinaryExpression {
         }
         return lvalue.toString() + rvalue.toString();
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitConcatenationExpression(this);
     }

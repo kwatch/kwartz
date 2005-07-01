@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class ConditionalExpression extends Expression {
     public void setLeft(Expression expr) { _left = expr; }
     public Expression getRight() { return _right; }
     public void setRight(Expression expr) { _right = expr; }
-    
+
     public Object evaluate(Map context) {
         Object val = _condition.evaluate(context);
         return BooleanExpression.isFalse(val) ? _right.evaluate(context) : _left.evaluate(context);
@@ -32,11 +31,11 @@ public class ConditionalExpression extends Expression {
                                                    : _left.evaluate(context);
           */
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitConditionalExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         super._inspect(level, sb);
         _condition._inspect(level+1, sb);

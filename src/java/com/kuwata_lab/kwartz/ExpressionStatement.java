@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.io.Writer;
@@ -14,7 +13,7 @@ public class ExpressionStatement extends Statement {
         super(TokenType.EXPR);
         _expr = expr;
     }
-    
+
     public Object execute(Map context, Writer writer) {
         _expr.evaluate(context);
         return null;

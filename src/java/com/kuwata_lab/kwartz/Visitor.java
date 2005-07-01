@@ -3,14 +3,13 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 
 public class Visitor {
     public final Object visit(Node node) {
         return node.accept(this);
     }
-    
+
     //
     public Object visitNode(Node expr)             { return null; }
     public Object visitExpression(Expression expr) { return visitNode(expr); }

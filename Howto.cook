@@ -22,6 +22,9 @@ src_path  = [src_root]'/'[subst . / [package]];
 test_path = [test_root]'/'[subst . / [package]];
 
 junit_jar = /usr/local/java/j2sdk/jre/lib/ext/junit.jar;
+if [not [exists [junit_jar]]] then {
+	junit_jar = /usr/local/java/junit/junit.jar;
+}
 
 
 compile:

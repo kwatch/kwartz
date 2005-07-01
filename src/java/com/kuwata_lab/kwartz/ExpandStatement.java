@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.io.Writer;
@@ -20,10 +19,10 @@ public class ExpandStatement extends Statement {
     public ExpandStatement(int type) {
         this(type, null);
     }
-    
+
     public String getName() { return _name; }
     public int getType() { return _type; }
-    
+
     public Object execute(Map context, Writer writer) {
         return null;
     }

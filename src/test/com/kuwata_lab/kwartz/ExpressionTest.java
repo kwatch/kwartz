@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import junit.framework.TestCase;
 import java.util.Map;
@@ -31,24 +30,24 @@ public class ExpressionTest extends TestCase {
             assertEquals(expected, actual.evaluate(_context));
         }
     }
-    
+
     // ---
 
     public void testStringExpression1() {
         _expr = new StringExpression("foo");
         _testExpr("foo");
     }
-    
+
     public void testIntegerExpression1() {
         _expr = new IntegerExpression(123);
         _testExpr(new Integer(123));
     }
-    
+
     public void testFloatExpression1() {
         _expr = new FloatExpression(3.14159f);
         _testExpr(new Float(3.14159));
     }
-    
+
     public void testTrueExpression1() {
         _expr = new BooleanExpression(true);
         _testExpr(Boolean.TRUE);
@@ -58,27 +57,27 @@ public class ExpressionTest extends TestCase {
         _expr = new BooleanExpression(false);
         _testExpr(Boolean.FALSE);
     }
-    
+
     public void testVariableExpression1() {
         _expr = new VariableExpression("var1");
         _context.put("var1", new Integer(20));
         _testExpr(new Integer(20));
     }
-    
+
     public void testVariableExpression2() {
         _expr = new VariableExpression("var1");
         _context.put("var1", new String("foo"));
         _testExpr("foo");
     }
-    
+
     public void testVariableExpression3() {
         _expr = new VariableExpression("var1");
         _context.put("var1", Boolean.FALSE);
         _testExpr(Boolean.FALSE);
     }
-    
+
     // -----
-    
+
     Expression _i1 = new IntegerExpression(30);
     Expression _i2 = new IntegerExpression(13);
     public void testArithmeticExpression1() {
@@ -117,17 +116,17 @@ public class ExpressionTest extends TestCase {
         _expr = new ConcatenationExpression(TokenType.CONCAT, _s1, _s2);
         _testExpr(new String("FooBar"));
     }
-    
+
     public void testAssignmentExpression1() {
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new StringExpression("foo"));
         _testExpr("foo");
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new IntegerExpression(10));
         _testExpr(new Integer(10));
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new FloatExpression(0.5f));
         _testExpr(new Float(0.5f));
@@ -278,7 +277,7 @@ public class ExpressionTest extends TestCase {
         } catch (IndexOutOfBoundsException ex) {
             // ok
         }
-        
+
         arraylist.add(null);
         _context.put("i", new Integer(1));
         _testExpr(null);
@@ -404,7 +403,7 @@ public class ExpressionTest extends TestCase {
     }
 
     // -----
-    
+
     public static void main(String[] args) {
        junit.textui.TestRunner.run(ExpressionTest.class);
     }

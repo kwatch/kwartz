@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.util.List;
@@ -40,13 +39,13 @@ public class PostfixExpression extends BinaryExpression {
           case TokenType.PROPERTY:
             // TBC
             break;
-            
+
           case TokenType.HASH:
             if (lvalue instanceof Map) {
                 return ((Map)lvalue).get(rvalue);
             }
             throw new EvaluationException("invalid '[:]' operator for non-map object.");
-          
+
           default:
             assert false;
         }

@@ -32,9 +32,9 @@ while line = DATA.gets()
          break if line =~ /\A\}$/
       end
       unless klass
-         raise "cannot detect class name. ($.=#{$.})" 
+         raise "cannot detect class name. ($.=#{$.})"
       end
-      
+
       root = klass =~ /Test$/ ? TEST_ROOT : SRC_ROOT
       path = root.dup
       package.split('.').each do |name|
@@ -54,97 +54,115 @@ end
 ###
 ### generate TokenType.java
 ###
-i = 0
-template = <<END
+tokentype_str = <<END
+// EOF
+EOF		<<EOF>>
 
-    // arithmetic
-    public static final int ADD		= #{ i += 1 } ;	// '+'
-    public static final int SUB		= #{ i += 1 } ;	// '-'
-    public static final int MUL		= #{ i += 1 } ;	// '*'
-    public static final int DIV		= #{ i += 1 } ;	// '/'
-    public static final int MOD		= #{ i += 1 } ;	// '%'
-    public static final int CONCAT	= #{ i += 1 } ;	// '.+'
+// arithmetic
+ADD		+
+SUB		-
+MUL		*
+DIV		/
+MOD		%
+CONCAT		.+
 
-    // assignment
-    public static final int ASSIGN	= #{ i += 1 } ;	// '='
-    public static final int ADD_TO	= #{ i += 1 } ;	// '+='
-    public static final int SUB_TO	= #{ i += 1 } ;	// '-='
-    public static final int MUL_TO	= #{ i += 1 } ;	// '*='
-    public static final int DIV_TO	= #{ i += 1 } ;	// '/='
-    public static final int MOD_TO	= #{ i += 1 } ;	// '%='
-    public static final int CONCAT_TO	= #{ i += 1 } ;	// '.+='
+// assignment
+ASSIGN		=
+ADD_TO		+=
+SUB_TO		-=
+MUL_TO		*=
+DIV_TO		/=
+MOD_TO		%=
+CONCAT_TO	.+=
 
-    // literal
-    public static final int STRING	= #{ i += 1 } ;	// string
-    public static final int INTEGER	= #{ i += 1 } ;	// integer
-    public static final int FLOAT	= #{ i += 1 } ;	// float
-    public static final int VARIABLE	= #{ i += 1 } ;	// variable
-    public static final int TRUE	= #{ i += 1 } ;	// variable
-    public static final int FALSE	= #{ i += 1 } ;	// variable
-    public static final int NULL	= #{ i += 1 } ;	// variable
-    
+// literal
+STRING		<<string>>
+INTEGER		<<integer>>
+FLOAT		<<float>>
+VARIABLE	<<variable>>
+TRUE		true
+FALSE		false
+NULL		null
+EMPTY		empty
+NAME		<<name>>
 
-    // array, hash, property
-    public static final int ARRAY	= #{ i += 1 } ;	// var[expr]
-    public static final int HASH	= #{ i += 1 } ;	// var[:name]
-    public static final int PROPERTY	= #{ i += 1 } ;	// var.name
+// array, hash, property
+ARRAY		[]
+HASH		[:]
+PROPERTY	.
+L_BRACKET	[
+R_BRACKET	]
+L_BRACKETCOLON	[:
 
-    // function
-    public static final int FUNCTION	= #{ i += 1 } ;	// func(arg1, arg2)
-    
-    // conditional operator
-    public static final int CONDITIONAL	= #{ i += 1 } ; // flag ? true : false
+// function
+FUNCTION	<<function>>
 
-    // relational op
-    public static final int EQ		= #{ i += 1 } ;	// '=='
-    public static final int NE		= #{ i += 1 } ;	// '!='
-    public static final int LT		= #{ i += 1 } ;	// '<'
-    public static final int LE		= #{ i += 1 } ;	// '<='
-    public static final int GT		= #{ i += 1 } ;	// '>'
-    public static final int GE		= #{ i += 1 } ;	// '>='
+// conditional operator
+CONDITIONAL	?
 
-    // logical op
-    public static final int NOT		= #{ i += 1 } ;	// '!'
-    public static final int AND		= #{ i += 1 } ;	// '&&'
-    public static final int OR		= #{ i += 1 } ;	// '||'
+// relational op
+EQ		==
+NE		!=
+LT		<
+LE		<=
+GT		>
+GE		>=
 
-    // statement
-    public static final int BLOCK	= #{ i += 1 } ;	// { ... }
-    public static final int PRINT	= #{ i += 1 } ;	// print(...)
-    public static final int EXPR	= #{ i += 1 } ;	// expression ;
-    public static final int FOREACH	= #{ i += 1 } ;	// foreach(var in list) ...
-    public static final int WHILE	= #{ i += 1 } ;	// while(...) ...
-    public static final int IF		= #{ i += 1 } ;	// while(...) ...
-    public static final int EXPAND	= #{ i += 1 } ;	// @stag, @cont, @etag, @element(name)
+// logical op
+NOT		!
+AND		&&
+OR		||
 
-    // element
-    public static final int ELEMENT	= #{ i += 1 } ;	// element foo { ... }
-    public static final int VALUE	= #{ i += 1 } ;	// value:
-    public static final int ATTR	= #{ i += 1 } ;	// attr:
-    public static final int APPEND	= #{ i += 1 } ;	// append:
-    public static final int REMOVE	= #{ i += 1 } ;	// remove:
-    public static final int PLOGIC	= #{ i += 1 } ;	// plogic:
+// statement
+BLOCK		<<block>>
+PRINT		:print
+EXPR		:expr
+FOREACH		:foreach
+IN		:in
+WHILE		:while
+IF		:if
+ELSEIF		:elseif
+ELSE		:else
+EXPAND		@
+
+// raw expression and raw statement
+RAWEXPR		<%= %>
+RAWSTMT		<% %>
+
+// element
+ELEMENT		#
+VALUE		value:
+ATTR		attr:
+APPEND		append:
+REMOVE		remove:
+PLOGIC		plogic:
+TAGNAME		tagname:
 END
 
 words = []
-template.each_line do |line|
-  if line =~ /public\s+static\s+final\s+int\s+([A-Z_]+)/
-    words << $1
-  end
-end
-
-elems = words.collect { |w| '        "' + w + '",' }.join("\n")
 
 klass = 'TokenType'
 package = PACKAGE.dup;
 path = SRC_ROOT + "/" + package.gsub(/\./, '/')
-File.open("#{path}/#{klass}.java", "w") do |f|
-   f.print header.gsub(/__CLASS__/, klass).gsub(/__PACKAGE__/, PACKAGE)
-   f.print <<END
+
+template = <<END
+#{ header.gsub(/__CLASS__/, klass).gsub(/__PACKAGE__/, PACKAGE) }
 package #{PACKAGE};
 
+END
+
+template << <<'END'
 public class TokenType {
-#{template}
+
+% i = -1
+% tokentype_str.each_line do |line|
+%    if line =~ /^$/ || line =~ /^\/\//
+    <%= line.chop %>
+%    elsif line =~ /^(\w+)\s+(.*)/
+%       i += 1; word = $1;  text = $2;  words << [word, text]
+    public static final int <%= "%-14s" % word %> = <%= "%3d" % i %>;  // <%= text %>
+%    end
+% end
 
     public static int assignToArithmetic(int token) {
         return token - TokenType.ADD_TO + TokenType.ADD;
@@ -152,17 +170,78 @@ public class TokenType {
     public static int arithmeticToAssign(int token) {
         return token - TokenType.ADD + TokenType.ADD_TO;
     }
-    
+
     public static String[] tokenNames = {
-        "(dummy)",
-#{elems}
+        //"(dummy)",
+% words.each do |tuple|
+%    word = tuple[0]
+        "<%= word %>",
+% end
     };
     public static String tokenName(int token) {
         return tokenNames[token];
     }
+
+    public static String[] tokenTexts = {
+        //"(dummy)",
+% words.each do |tuple|
+%    word = tuple[0]; text = tuple[1];
+        "<%= text %>",
+% end
+    };
+    public static String tokenText(int token) {
+        return tokenTexts[token];
+    }
+
+
+    public static String inspect(int token) {
+        return inspect(token, null);
+    }
+
+    public static String inspect(int token, String value) {
+        switch (token) {
+          case TokenType.STRING:
+            return inspectString(value);
+          case TokenType.INTEGER:
+            return value;
+          case TokenType.FLOAT:
+            return value;
+          case TokenType.VARIABLE:
+            return value;
+          case TokenType.NAME:
+            return value;
+          default:
+            return tokenTexts[token];
+        }
+    }
+
+    public static String inspectString(String s) {
+        StringBuffer sb = new StringBuffer();
+        sb.append('"');
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+              case '\n':  sb.append("\\n");   break;
+              case '\r':  sb.append("\\r");   break;
+              case '\t':  sb.append("\\t");   break;
+              case '"':   sb.append("\\\"");  break;
+              default:
+                sb.append(ch);
+            }
+        }
+        sb.append('"');
+        return sb.toString();
+    }
+
 }
 END
-end
+
+
+require 'erb'
+trim_mode = '%'
+erb = ERB.new(template, $SAFE, trim_mode)
+s = erb.result(binding())
+File.open("#{path}/#{klass}.java", "w") { |f| f.write(s) }
 
 __END__
 /**
@@ -170,7 +249,6 @@ __END__
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
@@ -307,10 +385,10 @@ abstract class Node {
     }
     public int getToken() { return _token; }
     public void setToken(int token) { _token = token; }
-    
+
     abstract public Object evaluate(Map context);
     abstract public Object accept(Visitor visitor);
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append(TokenType.tokenName(_token));
@@ -330,7 +408,7 @@ public class Visitor {
     public final Object visit(Node node) {
         return node.accept(this);
     }
-    
+
     //
     public Object visitNode(Node expr)             { return null; }
     public Object visitExpression(Expression expr) { return visitNode(expr); }
@@ -388,13 +466,13 @@ import java.util.Map;
 public class BinaryExpression extends Expression {
     protected Expression _left;
     protected Expression _right;
-    
+
     public BinaryExpression(int token, Expression left, Expression right) {
         super(token);
         _left = left;
         _right = right;
     }
-    
+
     public Expression getLeft() { return _left; }
     public void setLeft(Expression expr) { _left = expr; }
     public Expression getRight() { return _right; }
@@ -407,11 +485,11 @@ public class BinaryExpression extends Expression {
     public Object accept(Visitor visitor) {
         return visitor.visitBinaryExpression(this);
     }
-    
+
     public Object evaluate(Map context) {
         return null;
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         super._inspect(level, sb);
         _left._inspect(level+1, sb);
@@ -473,7 +551,7 @@ public class ArithmeticExpression extends BinaryExpression {
         }
         //return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitArithmeticExpression(this);
     }
@@ -503,7 +581,7 @@ public class ConcatenationExpression extends BinaryExpression {
         }
         return lvalue.toString() + rvalue.toString();
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitConcatenationExpression(this);
     }
@@ -518,7 +596,7 @@ public class AssignmentExpression extends BinaryExpression {
     public AssignmentExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
-    
+
     public Object evaluate(Map context) {
         // convert 'foo += 1'  to 'foo = foo + 1'
         if (_token != TokenType.ASSIGN) {
@@ -541,7 +619,7 @@ public class AssignmentExpression extends BinaryExpression {
 
         // get right-hand value
         Object rvalue = _right.evaluate(context);
-        
+
         // assgin into variable
         switch (_left.getToken()) {
           case TokenType.VARIABLE:
@@ -560,7 +638,7 @@ public class AssignmentExpression extends BinaryExpression {
         }
         return rvalue;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitAssignmentExpression(this);
     }
@@ -575,12 +653,12 @@ public class RelationalExpression extends BinaryExpression {
     public RelationalExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
-    
+
     /*
     public Object evaluate(Map context, Evaluator evaluator) {
         return evaluator.evaluateRelationalExpression(context, self);
     }*/
-    
+
     public Object evaluate(Map context) {
         Object lvalue = _left.evaluate(context);
         Object rvalue = _right.evaluate(context);
@@ -641,7 +719,7 @@ public class RelationalExpression extends BinaryExpression {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitRelationalExpression(this);
     }
@@ -685,13 +763,13 @@ public class PostfixExpression extends BinaryExpression {
           case TokenType.PROPERTY:
             // TBC
             break;
-            
+
           case TokenType.HASH:
             if (lvalue instanceof Map) {
                 return ((Map)lvalue).get(rvalue);
             }
             throw new EvaluationException("invalid '[:]' operator for non-map object.");
-          
+
           default:
             assert false;
         }
@@ -726,7 +804,7 @@ public class PropertyExpression extends Expression {
     }
     public String _getter() { return _getter; }
     public String _setter() { return _setter; }
-    
+
     public Object evaluate(Map context) {
         Object value = _object.evaluate(context);
         try {
@@ -751,7 +829,7 @@ public class PropertyExpression extends Expression {
             throw new EvaluationException(_name + ": cannot access to the property.", ex);
         }
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitPropertyExpression(this);
     }
@@ -826,7 +904,7 @@ public class ConditionalExpression extends Expression {
     public void setLeft(Expression expr) { _left = expr; }
     public Expression getRight() { return _right; }
     public void setRight(Expression expr) { _right = expr; }
-    
+
     public Object evaluate(Map context) {
         Object val = _condition.evaluate(context);
         return BooleanExpression.isFalse(val) ? _right.evaluate(context) : _left.evaluate(context);
@@ -835,11 +913,11 @@ public class ConditionalExpression extends Expression {
                                                    : _left.evaluate(context);
           */
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitConditionalExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         super._inspect(level, sb);
         _condition._inspect(level+1, sb);
@@ -857,16 +935,16 @@ import java.util.HashMap;
 
 abstract public class Macro {
     protected String _name;
-    
+
     public Macro(String macroname) {
         _name = macroname;
     }
-    
+
     public String getName() { return _name; }
     public void setName(String name) { _name = name; }
-    
+
     abstract public Expression call(Expression expr);
-    
+
     static Map _instances = new HashMap();
     public static void register(Macro macro) {
         register(macro.getName(), macro);
@@ -944,16 +1022,16 @@ import java.util.HashMap;
 
 abstract public class Function {
     protected String _name;
-    
+
     public Function(String funcname) {
         _name = funcname;
     }
-    
+
     public String getName() { return _name; }
     public void setName(String name) { _name = name; }
-    
+
     abstract public Object call(Map context, Expression[] arguments);
-    
+
     static Map _instances = new HashMap();
     public static void register(Function function) {
         register(function.getName(), function);
@@ -961,11 +1039,11 @@ abstract public class Function {
     public static void register(String funcname, Function function) {
         _instances.put(funcname, function);
     }
-    
+
     public static Function getInstance(String funcname) {
         return (Function)_instances.get(funcname);
     }
-    
+
     public static boolean isRegistered(String funcname) {
         return _instances.containsKey(funcname);
     }
@@ -980,7 +1058,7 @@ public class SanitizeFunction extends Function {
     public SanitizeFunction() {
         super("E");	// 'E' means 'escape'
     }
-    
+
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
         Expression expr = arguments[0];
@@ -992,7 +1070,7 @@ public class SanitizeFunction extends Function {
         s = s.replaceAll("\"", "&quot");
         return s;
     }
-    
+
     static {
         Function.register(new SanitizeFunction());
     }
@@ -1007,13 +1085,13 @@ public class AsIsFunction extends Function {
     public AsIsFunction() {
         super("X");
     }
-    
+
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
         Expression expr = arguments[0];
         return expr.evaluate(context);
     }
-    
+
     static {
         Function.register(new AsIsFunction());
     }
@@ -1057,7 +1135,7 @@ public class FunctionExpression extends Expression {
         _funcname = funcname;
         _arguments = arguments;
     }
-    
+
     public Object evaluate(Map context) {
         Function func = Function.getInstance(_funcname);
         if (func == null) {
@@ -1097,7 +1175,7 @@ public class VariableExpression extends Expression {
         //return val != null ? val : NullExpression.instance();
         return context.get(_name);
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitVariableExpression(this);
     }
@@ -1139,7 +1217,7 @@ public class StringExpression extends LiteralExpression {
     public Object accept(Visitor visitor) {
         return visitor.visitStringExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append('"');
@@ -1167,7 +1245,7 @@ public class IntegerExpression extends LiteralExpression {
     public Object accept(Visitor visitor) {
         return visitor.visitIntegerExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append(_value);
@@ -1193,7 +1271,7 @@ public class FloatExpression extends LiteralExpression {
     public Object accept(Visitor visitor) {
         return visitor.visitFloatExpression(this);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append(_value);
@@ -1219,7 +1297,7 @@ public class BooleanExpression extends LiteralExpression {
     public Object accept(Visitor visitor) {
         return visitor.visitBooleanExpression(this);
     }
-    
+
     public static boolean isFalse(Object value) {
         //return (value == null || value.equals(Boolean.FALSE));
         return (value == null || value == (Object)Boolean.FALSE);
@@ -1229,7 +1307,7 @@ public class BooleanExpression extends LiteralExpression {
         //return (value != null && ! value.equals(Boolean.FALSE));
         return (value != null && value != (Object)Boolean.FALSE);
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append(_value ? "true\n" : "false\n");
@@ -1331,7 +1409,7 @@ public class PrintStatement extends Statement {
         super(TokenType.PRINT);
         _arguments = arguments;
     }
-    
+
     public Object execute(Map context, Writer writer) throws IOException {
         Expression expr;
         Object value;
@@ -1344,7 +1422,7 @@ public class PrintStatement extends Statement {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitPrintStatement(this);
     }
@@ -1362,7 +1440,7 @@ public class ExpressionStatement extends Statement {
         super(TokenType.EXPR);
         _expr = expr;
     }
-    
+
     public Object execute(Map context, Writer writer) {
         _expr.evaluate(context);
         return null;
@@ -1385,14 +1463,14 @@ public class ForeachStatement extends Statement {
     private VariableExpression _loopvar;
     private Expression _list;
     private Statement _body;
-    
+
     public ForeachStatement(VariableExpression loopvar, Expression list, Statement body) {
         super(TokenType.FOREACH);
         _loopvar = loopvar;
         _list    = list;
         _body    = body;
     }
-    
+
     public Object execute(Map context, Writer writer) throws IOException {
         Object listval = _list.evaluate(context);
         Object[] array = null;
@@ -1410,7 +1488,7 @@ public class ForeachStatement extends Statement {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitForeachStatement(this);
     }
@@ -1427,13 +1505,13 @@ public class WhileStatement extends Statement {
     private Expression _condition;
     private Statement _body;
     public static int MaxCount = 10000;
-    
+
     public WhileStatement(Expression condition, Statement body) {
         super(TokenType.WHILE);
         _condition = condition;
         _body = body;
     }
-    
+
     public Object execute(Map context, Writer writer) throws IOException {
         int i = 0;
         while (BooleanExpression.isTrue(_condition.evaluate(context))) {
@@ -1443,7 +1521,7 @@ public class WhileStatement extends Statement {
         }
         return null;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitWhileStatement(this);
     }
@@ -1522,10 +1600,10 @@ public class ExpandStatement extends Statement {
     public ExpandStatement(int type) {
         this(type, null);
     }
-    
+
     public String getName() { return _name; }
     public int getType() { return _type; }
-    
+
     public Object execute(Map context, Writer writer) {
         return null;
     }
@@ -1534,6 +1612,529 @@ public class ExpandStatement extends Statement {
     }
 }
 
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.util.HashMap;
+
+public class Scanner {
+    private String _code;
+    private int    _index;
+    private int    _column;
+    private int    _linenum;
+    private String _filename;
+    private char   _ch;
+
+    private int    _token;
+    private StringBuffer _value = new StringBuffer();
+
+    public Scanner(String code, String filename) {
+        reset(code);
+        _filename = filename;
+
+    }
+    public Scanner(String code) {
+        this(code, null);
+    }
+    public Scanner() {
+        this(null, null);
+    }
+
+    public int getLinenum() { return _linenum; }
+    public int getColumn()  { return _column; }
+    public String getFilename() { return _filename; }
+    public void setFilename(String filename) { _filename = filename; }
+    public int getToken()   { return _token; }
+    public String getValue()   { return _value.toString(); }
+
+    private void _clearValue() {
+        _value.delete(0, _value.length());
+    }
+
+    public void reset(String code, int linenum) {
+        _code    = code;
+        _index   = -1;
+        _column  = -1;
+        _linenum = linenum;
+        _token   = -1;
+        _clearValue();
+        read();
+    }
+
+    public void reset(String code) {
+        reset(code, 1);
+    }
+
+    public char read() {
+        _index++;
+        _column++;
+        if (_index >= _code.length()) {
+            _ch = '\0';
+            return _ch;
+        }
+        _ch = _code.charAt(_index);
+        if (_ch == '\n') {
+            _linenum++;
+            _column = -1;         // Aha!
+        }
+        return _ch;
+    }
+
+    protected static Map keywords;
+    protected static byte[] _op_table  = new byte[Byte.MAX_VALUE];
+    protected static byte[] _op_table2 = new byte[Byte.MAX_VALUE];
+    static {
+        keywords = new HashMap();
+        keywords.put("foreach", new Integer(TokenType.FOREACH));
+        keywords.put("in",      new Integer(TokenType.IN));
+        keywords.put("while",   new Integer(TokenType.WHILE));
+        keywords.put("if",      new Integer(TokenType.IF));
+        keywords.put("else",    new Integer(TokenType.ELSE));
+        keywords.put("elseif",  new Integer(TokenType.ELSEIF));
+        keywords.put("true",    new Integer(TokenType.TRUE));
+        keywords.put("false",   new Integer(TokenType.FALSE));
+        keywords.put("null",    new Integer(TokenType.NULL));
+        keywords.put("empty",   new Integer(TokenType.EMPTY));
+        //
+        _op_table['+'] = TokenType.ADD;
+        _op_table['-'] = TokenType.SUB;
+        _op_table['*'] = TokenType.MUL;
+        _op_table['/'] = TokenType.DIV;
+        _op_table['%'] = TokenType.MOD;
+        _op_table['='] = TokenType.ASSIGN;
+        _op_table['!'] = TokenType.NOT;
+        _op_table['<'] = TokenType.LT;
+        _op_table['>'] = TokenType.GT;
+        //
+        _op_table2['+'] = TokenType.ADD_TO;
+        _op_table2['-'] = TokenType.SUB_TO;
+        _op_table2['*'] = TokenType.MUL_TO;
+        _op_table2['/'] = TokenType.DIV_TO;
+        _op_table2['%'] = TokenType.MOD_TO;
+        _op_table2['='] = TokenType.EQ;
+        _op_table2['!'] = TokenType.NE;
+        _op_table2['<'] = TokenType.LE;
+        _op_table2['>'] = TokenType.GE;
+    }
+
+    public int scan() throws LexicalException {
+        // ignore whitespaces
+        char ch = _ch;
+        while (CharacterUtil.isWhitespace(ch)) {
+            ch = read();
+        }
+
+        // EOF
+        if (ch == '\0')
+            return _token = TokenType.EOF;
+
+        // keyword, ture, false, null, name
+        if (CharacterUtil.isAlphabet(ch)) {
+            //System.out.println("*** debug: _ch = " + _ch + ", _index = " + _index);
+            _clearValue();
+            _value.append(ch);
+            while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
+                _value.append(ch);
+            }
+            Integer keyword = (Integer)keywords.get(_value.toString());
+            _token = keyword != null ? keyword.intValue() : TokenType.NAME;
+            return _token;
+        }
+
+        // integer, float
+        if (CharacterUtil.isDigit(ch)) {
+            _clearValue();
+            _value.append(ch);
+            _token = TokenType.INTEGER;
+            while (true) {
+                while ((ch = read()) != '\0' && CharacterUtil.isDigit(ch)) {
+                    _value.append(ch);
+                }
+                if (CharacterUtil.isAlphabet(ch) || ch == '_') {
+                    _value.append(ch);
+                    while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
+                        _value.append(ch);
+                    }
+                    String msg = "'" + _value.toString() + "': invalid token.";
+                    throw new LexicalException(msg, getFilename(), _linenum, _column);
+                }
+                if (ch != '.') {
+                    break;
+                } else if (_token == TokenType.INTEGER) {
+                    _token = TokenType.FLOAT;
+                    _value.append('.');
+                    continue;
+                } else {
+                    String msg = "'" + _value.toString() + "': invalid float.";
+                    throw new LexicalException(msg, getFilename(), _linenum, _column);
+                }
+            }
+            return _token;
+        }
+
+        // string literal
+        if (ch == '\'' || ch == '"') {
+            int start_linenum = _linenum;
+            int start_column  = _column;
+            _clearValue();
+            char quote = ch;
+            while ((ch = read()) != '\0' && ch != quote) {
+                if (ch == '\\') {
+                    switch (quote) {
+                      case '\'':
+                        if ((ch = read()) != '\'' && ch != '\\') _value.append('\\');
+                        break;
+                      case '"':
+                        ch = read();
+                        switch (ch) {
+                          case 'n':  ch = '\n';  break;
+                          case 't':  ch = '\t';  break;
+                          case 'r':  ch = '\r';  break;
+                        }
+                        break;
+                      default:
+                        assert false;
+                    }
+                }
+                _value.append(ch);
+            }
+            if (ch == '\0') {
+                String msg = "string literal is not closed by " + (quote == '\'' ? "\"'\"." : "'\"'.");
+                throw new LexicalException(msg, getFilename(), start_linenum, start_column);
+            }
+            read();
+            return _token = TokenType.STRING;
+        }
+
+        // true, false
+
+        // null
+
+        // comment
+        if (ch == '/') {
+            ch = read();
+            if (ch == '/') {   // line comment
+                while ((ch = read()) != '\0' && ch != '\n')
+                    ;
+                if (ch == '\0')
+                    return _token = TokenType.EOF;
+                read();
+                return scan();
+            }
+            if (ch == '*') {   // region comment
+                int start_linenum = _linenum;
+                int start_column  = _column;
+                while ((ch = read()) != '\0') {
+                    if (ch == '*') {
+                        if ((ch = read()) == '/') {
+                            read();
+                            return scan();
+                        }
+                    }
+                }
+                if (ch == '\0') {
+                    String msg = "'/*' is not closed by '*/'.";
+                    throw new LexicalException(msg, getFilename(), start_linenum, start_column);
+                }
+                assert false;
+            }
+            if (ch == '=') {
+                read();
+                return _token = TokenType.DIV_TO;
+            }
+            return _token = TokenType.DIV;
+        }
+
+        // < <= <%...%> <?...?>
+        if (ch == '<') {
+            ch = read();
+            if (ch == '=') {
+                read();
+                return _token = TokenType.LE;
+            }
+            if (ch == '%' || ch == '?') {
+                char delim = ch;
+                int start_linenum = _linenum;
+                int start_column  = _column;
+                _clearValue();
+                ch = read();
+                if (ch == '=') {
+                    ch = read();
+                    _token = TokenType.RAWEXPR;
+                } else {
+                    _token = TokenType.RAWSTMT;
+                }
+                while (ch != '\0') {
+                    if (ch == delim) {
+                        ch = read();
+                        if (ch == '>') break;
+                        _value.append('%');
+                    }
+                    _value.append(ch);
+                    ch = read();
+                }
+                if (ch == '\0') {
+                    String stag = "<" + delim + (_token == TokenType.RAWEXPR ? "=" : "");
+                    String etag = "" + delim + ">";
+                    String msg = "'" + stag + "' is not closed by '" + etag + "'.";
+                    throw new LexicalException(msg, getFilename(), start_linenum, start_column);
+                }
+                read();
+                return _token;
+            }
+            return _token = TokenType.LT;
+        }
+
+        // + - * / % = ! < >
+        if (ch < 128 && _op_table[ch] != 0) {
+            char ch2 = read();
+            if (ch2 == '=') {
+                read();
+                return _token = _op_table2[ch];
+            }
+            return _token = _op_table[ch];
+        }
+
+        // &&, || 
+        if (ch == '&' || ch == '|') {
+            char ch2 = read();
+            if (ch != ch2) {
+                String msg = "'" + ch + "': invalid token.";
+                throw new LexicalException(msg, getFilename(), _linenum, _column);
+            }
+            read();
+            return _token = ch == '&' ? TokenType.AND : TokenType.OR;
+        }
+
+        // [ [:
+        
+        // ( ) ? : [ ] [:
+        
+        
+
+        
+        return _token;
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class CharacterUtil {
+
+    public static boolean isWhitespace(char ch) {
+        return Character.isWhitespace(ch);
+    }
+
+    public static boolean isAlphabet(char ch) {
+        //return Character.isLetter(ch);
+        return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z');
+    }
+
+    public static boolean isDigit(char ch) {
+        return Character.isDigit(ch);
+    }
+
+    public static boolean isWordLetter(char ch) {
+        return isAlphabet(ch) || isDigit(ch) || ch == '_';
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class LexicalException extends SyntaxException {
+    public LexicalException(String message, String filename, int linenum, int column) {
+        super(message, filename, linenum, column);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class SyntaxException extends BaseException {
+    private int    _linenum;
+    private int    _column;
+    private String _filename;
+
+    public SyntaxException(String message, String filename, int linenum, int column) {
+        super(message);
+        _linenum  = linenum;
+        _column   = column;
+        _filename = filename;
+    }
+
+    public String toString() {
+        return super.toString() + "(filename " + _filename + ", line " + _linenum + ", column " + _column + ")";
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.io.Writer;
+import java.io.IOException;
+
+public class ExpressionParser {
+    private Scanner _scanner;
+
+    public ExpressionParser(Scanner scanner) {
+        _scanner = scanner;
+    }
+
+    public Expression parse_expression() {
+        return null;
+    }
+    public Expression parse(String expr_code) throws SyntaxException {
+        _scanner.reset(expr_code);
+        Expression expr = parse_expression();
+        if (_scanner.getToken() != TokenType.EOF) {
+            throw new SyntaxException("Expression is not ended.", _scanner.getFilename(), _scanner.getLinenum(), _scanner.getColumn());
+        }
+        return expr;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.List;
+import java.util.Iterator;
+
+public class ScannerTest extends TestCase {
+
+
+    public Scanner _test(String input, String expected) {
+        return _test(input, expected, true);
+    }
+    
+    public Scanner _test(String input, String expected, boolean flag_test) {
+        if (! flag_test) return null;
+        Scanner scanner = new Scanner(input);
+        StringBuffer sbuf = new StringBuffer();
+        while (scanner.scan() != TokenType.EOF) {
+            sbuf.append(TokenType.tokenName(scanner.getToken()));
+            sbuf.append(' ');
+            String s = TokenType.inspect(scanner.getToken(), scanner.getValue());
+            sbuf.append(s);
+            sbuf.append("\n");
+        }
+        assertEquals(expected, sbuf.toString());
+        return scanner;
+    }
+
+    public void testScanner0() {  // basic test
+        String input = "if while foo";
+        String expected = "IF :if\nWHILE :while\nNAME foo\nEOF <<EOF>>\nEOF <<EOF>>\n";
+        Scanner scanner = new Scanner(input);
+        StringBuffer sbuf = new StringBuffer();
+        for (int i = 0; i < 5; i++) {
+            scanner.scan();
+            sbuf.append(TokenType.tokenName(scanner.getToken()));
+            sbuf.append(' ');
+            sbuf.append(TokenType.inspect(scanner.getToken(), scanner.getValue()));
+            sbuf.append("\n");
+        }
+        String actual = sbuf.toString();
+        assertEquals(expected, actual);
+    }
+
+    public void testScanner11() {  // keywords
+        String input = "  if while  foreach else\nelseif\t\nin  ";
+        String expected = "IF :if\nWHILE :while\nFOREACH :foreach\nELSE :else\nELSEIF :elseif\nIN :in\n";
+        _test(input, expected);
+        input = "true false null nil empty";
+        expected = "TRUE true\nFALSE false\nNULL null\nNAME nil\nEMPTY empty\n";
+        _test(input, expected);
+    }
+
+    public void testScanner12() {  // integer, float
+        String input = "100 3.14";
+        String expected = "INTEGER 100\nFLOAT 3.14\n";
+        _test(input, expected);
+        input = "100abc";
+        expected = null;
+        try {
+            _test(input, expected);
+            fail("'100abc': LexicalException expected.");
+        } catch (LexicalException ex) {
+            // OK
+        } catch (Exception ex) {
+            fail("'100abc': LexicalException expected.");
+        }
+        input = "3.14abc";
+        expected = null;
+        try {
+            _test(input, expected);
+            fail("'3.14abc': LexicalException expected.");
+        } catch (LexicalException ex) {
+            // OK
+        } catch (Exception ex) {
+            fail("'3.14abc': LexicalException expected.");
+        }
+    }
+
+    public void testScanner13() {   // comment
+        String input = "// foo\n123/* // \n*/456";
+        String expected = "INTEGER 123\nINTEGER 456\n";
+        _test(input, expected);
+        input = "/* \n//";
+        try {
+            _test(input, null);
+            fail("LexicalException expected.");
+        } catch (LexicalException ex) {
+            // OK
+        } catch (Exception ex) {
+            fail("LexicalException expected but " + ex.getClass().getName() + " throwed.");
+        }
+    }
+
+    public void testScanner14() {   // 'string'
+        String input = "'str1'";
+        String expected = "STRING \"str1\"\n";
+        _test(input, expected);
+        input = "'\\n\\r\\t\\''";
+        expected = "STRING \"\\n\\r\\t'\"\n";
+        _test(input, expected);
+    }
+
+    public void testScanner15() {   // "string"
+        String input = "\"str\"";
+        String expected = "STRING \"str\"\n";
+        _test(input, expected);
+        input = "\"\\n\\r\\t\\'\\\"\"";
+        expected = "STRING \"\\n\\r\\t'\\\"\"\n";
+        _test(input, expected);
+    }
+
+    public void testScanner21() {  // alithmetic op
+        String input = "+ - * / %";
+        String expected = "ADD +\nSUB -\nMUL *\nDIV /\nMOD %\n";
+        _test(input, expected);
+    }
+    
+    public void testScanner22() {  // assignment op
+        String input = "= += -= *= /= %=";
+        String expected = "ASSIGN =\nADD_TO +=\nSUB_TO -=\nMUL_TO *=\nDIV_TO /=\nMOD_TO %=\n";
+        _test(input, expected);
+    }
+    
+    public void testScanner23() {  // comparable op
+        String input = "== != < <= > >=";
+        String expected = "EQ ==\nNE !=\nLT <\nLE <=\nGT >\nGE >=\n";
+        _test(input, expected);
+    }
+
+}
 
 // --------------------------------------------------------------------------------
 
@@ -1564,24 +2165,24 @@ public class ExpressionTest extends TestCase {
             assertEquals(expected, actual.evaluate(_context));
         }
     }
-    
+
     // ---
 
     public void testStringExpression1() {
         _expr = new StringExpression("foo");
         _testExpr("foo");
     }
-    
+
     public void testIntegerExpression1() {
         _expr = new IntegerExpression(123);
         _testExpr(new Integer(123));
     }
-    
+
     public void testFloatExpression1() {
         _expr = new FloatExpression(3.14159f);
         _testExpr(new Float(3.14159));
     }
-    
+
     public void testTrueExpression1() {
         _expr = new BooleanExpression(true);
         _testExpr(Boolean.TRUE);
@@ -1591,27 +2192,27 @@ public class ExpressionTest extends TestCase {
         _expr = new BooleanExpression(false);
         _testExpr(Boolean.FALSE);
     }
-    
+
     public void testVariableExpression1() {
         _expr = new VariableExpression("var1");
         _context.put("var1", new Integer(20));
         _testExpr(new Integer(20));
     }
-    
+
     public void testVariableExpression2() {
         _expr = new VariableExpression("var1");
         _context.put("var1", new String("foo"));
         _testExpr("foo");
     }
-    
+
     public void testVariableExpression3() {
         _expr = new VariableExpression("var1");
         _context.put("var1", Boolean.FALSE);
         _testExpr(Boolean.FALSE);
     }
-    
+
     // -----
-    
+
     Expression _i1 = new IntegerExpression(30);
     Expression _i2 = new IntegerExpression(13);
     public void testArithmeticExpression1() {
@@ -1650,17 +2251,17 @@ public class ExpressionTest extends TestCase {
         _expr = new ConcatenationExpression(TokenType.CONCAT, _s1, _s2);
         _testExpr(new String("FooBar"));
     }
-    
+
     public void testAssignmentExpression1() {
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new StringExpression("foo"));
         _testExpr("foo");
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new IntegerExpression(10));
         _testExpr(new Integer(10));
-        _expr = new AssignmentExpression(TokenType.ASSIGN, 
+        _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
                                          new FloatExpression(0.5f));
         _testExpr(new Float(0.5f));
@@ -1811,7 +2412,7 @@ public class ExpressionTest extends TestCase {
         } catch (IndexOutOfBoundsException ex) {
             // ok
         }
-        
+
         arraylist.add(null);
         _context.put("i", new Integer(1));
         _testExpr(null);
@@ -1937,12 +2538,12 @@ public class ExpressionTest extends TestCase {
     }
 
     // -----
-    
+
     public static void main(String[] args) {
        junit.textui.TestRunner.run(ExpressionTest.class);
     }
 }
-    
+
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
@@ -1962,7 +2563,7 @@ public class StatementTest extends TestCase {
     public void _testPrint(String expected) {
         _testPrint(expected, _stmt);
     }
-    
+
     public void _testPrint(String expected, Statement stmt) {
         try {
             StringWriter writer = new StringWriter();
@@ -1978,11 +2579,11 @@ public class StatementTest extends TestCase {
     public void _testInspect(String expected) {
         _testInspect(expected, _stmt);
     }
-    
+
     public void _testInspect(String expected, Statement stmt) {
         assertEquals(expected, stmt._inspect());
     }
-    
+
     public void testPrintStatement1() {  // literal
         Expression[] arglist = {
             new IntegerExpression(123),
@@ -2152,7 +2753,7 @@ public class StatementTest extends TestCase {
     }
 
     // -----
-    
+
     public static void main(String[] args) {
        junit.textui.TestRunner.run(StatementTest.class);
     }
@@ -2169,6 +2770,7 @@ public class KwartzTest extends TestCase {
         TestSuite suite = new TestSuite();
         suite.addTest(new TestSuite(ExpressionTest.class));
         suite.addTest(new TestSuite(StatementTest.class));
+        suite.addTest(new TestSuite(ScannerTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

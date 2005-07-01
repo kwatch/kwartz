@@ -3,20 +3,19 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
 public class BinaryExpression extends Expression {
     protected Expression _left;
     protected Expression _right;
-    
+
     public BinaryExpression(int token, Expression left, Expression right) {
         super(token);
         _left = left;
         _right = right;
     }
-    
+
     public Expression getLeft() { return _left; }
     public void setLeft(Expression expr) { _left = expr; }
     public Expression getRight() { return _right; }
@@ -29,11 +28,11 @@ public class BinaryExpression extends Expression {
     public Object accept(Visitor visitor) {
         return visitor.visitBinaryExpression(this);
     }
-    
+
     public Object evaluate(Map context) {
         return null;
     }
-    
+
     public StringBuffer _inspect(int level, StringBuffer sb) {
         super._inspect(level, sb);
         _left._inspect(level+1, sb);

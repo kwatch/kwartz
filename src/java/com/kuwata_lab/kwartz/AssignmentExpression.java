@@ -3,7 +3,6 @@
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
-
 package com.kuwata_lab.kwartz;
 import java.util.Map;
 
@@ -11,7 +10,7 @@ public class AssignmentExpression extends BinaryExpression {
     public AssignmentExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
-    
+
     public Object evaluate(Map context) {
         // convert 'foo += 1'  to 'foo = foo + 1'
         if (_token != TokenType.ASSIGN) {
@@ -34,7 +33,7 @@ public class AssignmentExpression extends BinaryExpression {
 
         // get right-hand value
         Object rvalue = _right.evaluate(context);
-        
+
         // assgin into variable
         switch (_left.getToken()) {
           case TokenType.VARIABLE:
@@ -53,7 +52,7 @@ public class AssignmentExpression extends BinaryExpression {
         }
         return rvalue;
     }
-    
+
     public Object accept(Visitor visitor) {
         return visitor.visitAssignmentExpression(this);
     }
