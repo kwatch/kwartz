@@ -236,7 +236,7 @@ public class ExpressionTest extends TestCase {
         _testExpr(Boolean.TRUE);
     }
 
-    public void testPostfixExpression1() {	// list[i]
+    public void testIndexExpression1() {	// list[i]
         // list = [ "foo", "bar", "baz" ]
         Expression list = new VariableExpression("list");
         List arraylist = new ArrayList();
@@ -247,7 +247,7 @@ public class ExpressionTest extends TestCase {
 
         // var = list[i];
         Expression i = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("i", new Integer(0));
         _testExpr("foo");
         _context.put("i", new Integer(1));
@@ -256,12 +256,12 @@ public class ExpressionTest extends TestCase {
         _testExpr("baz");
     }
 
-    public void testPostfixExpression2() {	// out of range access
+    public void testIndexExpression2() {	// out of range access
         // list = []
         List arraylist = new ArrayList();
         Expression list = new VariableExpression("list");
         Expression i    = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("list", arraylist);
         _context.put("i", new Integer(0));
         try {
@@ -283,22 +283,22 @@ public class ExpressionTest extends TestCase {
         _testExpr(null);
     }
 
-    public void testPostfixExpression3() {	// list[0] == null
+    public void testIndexExpression3() {	// list[0] == null
         List arraylist  = new ArrayList();
         Expression list = new VariableExpression("list");
         Expression i    = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("list", arraylist);
         arraylist.add(null);
         _context.put("i", new Integer(0));
         _testExpr(null);
     }
 
-    public void testPostfixExpression4() {	// hash['key']
+    public void testIndexExpression4() {	// hash['key']
         // hash[key]
         Expression hash = new VariableExpression("hash");
         Expression key  = new VariableExpression("key");
-        _expr = new PostfixExpression(TokenType.ARRAY, hash, key);
+        _expr = new IndexExpression(TokenType.ARRAY, hash, key);
 
         // { "a" => "AAA", 1 => "one", "two" => 2 }
         Map hashmap = new HashMap();
@@ -318,11 +318,11 @@ public class ExpressionTest extends TestCase {
         _testExpr(new Integer(2));
     }
 
-    public void testPostfixExpression5() {	// hash['key'] is null
+    public void testIndexExpression5() {	// hash['key'] is null
         // hash[key]
         Expression hash = new VariableExpression("hash");
         Expression key  = new VariableExpression("key");
-        _expr = new PostfixExpression(TokenType.ARRAY, hash, key);
+        _expr = new IndexExpression(TokenType.ARRAY, hash, key);
 
         // { "a" => "AAA" }
         Map hashmap = new HashMap();

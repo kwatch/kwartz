@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class LogicalOrExpression extends BinaryExpression {
     public LogicalOrExpression(Expression left, Expression right) {
-        super(TokenType.AND, left, right);
+        super(TokenType.OR, left, right);
     }
     public Object evaluate(Map context) {
         Object value;

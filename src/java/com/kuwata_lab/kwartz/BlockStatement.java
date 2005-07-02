@@ -27,4 +27,13 @@ public class BlockStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitBlockStatement(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        sb.append(":block\n");
+        for (int i = 0; i < _statements.length; i++) {
+            _statements[i]._inspect(level + 1, sb);
+        }
+        return sb;
+    }
 }

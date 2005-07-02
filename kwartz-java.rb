@@ -8,8 +8,9 @@ SRC_ROOT   = 'src/java'
 TEST_ROOT  = 'src/test'
 PACKAGE = 'com.kuwata_lab.kwartz'
 
-Dir.mkdir(SRC_ROOT)  unless test(?d, SRC_ROOT)
-Dir.mkdir(TEST_ROOT) unless test(?d, TEST_ROOT)
+require 'fileutils'
+FileUtils.mkdir_p(SRC_ROOT)  unless test(?d, SRC_ROOT)
+FileUtils.mkdir_p(TEST_ROOT) unless test(?d, TEST_ROOT)
 
 header = ''
 while line = DATA.gets()
@@ -83,22 +84,23 @@ VARIABLE	<<variable>>
 TRUE		true
 FALSE		false
 NULL		null
-EMPTY		empty
 NAME		<<name>>
 
-// array, hash, property
+// empty, not empty
+EMPTY		empty
+NOTEMPTY	notempty
+
+// array, hash
 ARRAY		[]
 HASH		[:]
-PROPERTY	.
 L_BRACKET	[
 R_BRACKET	]
 L_BRACKETCOLON	[:
 
-// function
+// function, method, property
 FUNCTION	<<function>>
-
-// conditional operator
-CONDITIONAL	?
+METHOD		.()
+PROPERTY	.
 
 // relational op
 EQ		==
@@ -113,6 +115,10 @@ NOT		!
 AND		&&
 OR		||
 
+// unary op
+PLUS		+.
+MINUS		-.
+
 // statement
 BLOCK		<<block>>
 PRINT		:print
@@ -123,7 +129,17 @@ WHILE		:while
 IF		:if
 ELSEIF		:elseif
 ELSE		:else
+
+// symbols
 EXPAND		@
+COLON		:
+SEMICOLON	;
+L_PAREN		(
+R_PAREN		)
+CONDITIONAL	?:
+PERIOD		.
+COMMA		,
+
 
 // raw expression and raw statement
 RAWEXPR		<%= %>
@@ -210,6 +226,12 @@ public class TokenType {
             return value;
           case TokenType.NAME:
             return value;
+          case TokenType.RAWEXPR:
+            return "<" + "%=" + value + "%" + ">";
+          case TokenType.RAWSTMT:
+            return "<" + "%" + value + "%" + ">";
+          case TokenType.EXPAND:
+            return "@" + value;
           default:
             return tokenTexts[token];
         }
@@ -224,6 +246,7 @@ public class TokenType {
               case '\n':  sb.append("\\n");   break;
               case '\r':  sb.append("\\r");   break;
               case '\t':  sb.append("\\t");   break;
+              case '\\':  sb.append("\\\\");  break;
               case '"':   sb.append("\\\"");  break;
               default:
                 sb.append(ch);
@@ -262,16 +285,6 @@ public class BaseException extends RuntimeException {
     }
     public BaseException(Throwable cause) {
         super(cause);
-    }
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-
-public class SemanticException extends BaseException {
-    public SemanticException(String message) {
-        super(message);
     }
 }
 
@@ -391,7 +404,7 @@ abstract class Node {
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
-        sb.append(TokenType.tokenName(_token));
+        sb.append(TokenType.tokenText(_token));
         sb.append("\n");
         return sb;
     }
@@ -414,16 +427,19 @@ public class Visitor {
     public Object visitExpression(Expression expr) { return visitNode(expr); }
     public Object visitStatement(Statement stmt)   { return visitNode(stmt); }
     //
+    public Object visitUnaryExpression(UnaryExpression expr)                 { return visitExpression(expr); }
     public Object visitBinaryExpression(BinaryExpression expr)               { return visitExpression(expr); }
     public Object visitArithmeticExpression(ArithmeticExpression expr)       { return visitExpression(expr); }
     public Object visitConcatenationExpression(ConcatenationExpression expr) { return visitExpression(expr); }
-    public Object visitRelationalExpression(RelationalExpression expr) { return visitExpression(expr); }
+    public Object visitRelationalExpression(RelationalExpression expr)       { return visitExpression(expr); }
     public Object visitAssignmentExpression(AssignmentExpression expr)       { return visitExpression(expr); }
-    public Object visitPostfixExpression(PostfixExpression expr)             { return visitExpression(expr); }
+    public Object visitIndexExpression(IndexExpression expr)                 { return visitExpression(expr); }
     public Object visitPropertyExpression(PropertyExpression expr)           { return visitExpression(expr); }
+    public Object visitMethodExpression(MethodExpression expr)               { return visitExpression(expr); }
     public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return visitExpression(expr); }
     public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return visitExpression(expr); }
     public Object visitConditionalExpression(ConditionalExpression expr)     { return visitExpression(expr); }
+    public Object visitEmptyExpression(EmptyExpression expr)                 { return visitExpression(expr); }
     public Object visitFunctionExpression(FunctionExpression expr)           { return visitExpression(expr); }
     //
     public Object visitLiteralExpression(LiteralExpression expr)             { return visitExpression(expr); }
@@ -433,6 +449,7 @@ public class Visitor {
     public Object visitVariableExpression(VariableExpression expr)           { return visitExpression(expr); }
     public Object visitBooleanExpression(BooleanExpression expr)             { return visitExpression(expr); }
     public Object visitNullExpression(NullExpression expr)                   { return visitExpression(expr); }
+    public Object visitRawcodeExpression(RawcodeExpression expr)             { return visitExpression(expr); }
     //
     public Object visitBlockStatement(BlockStatement stmt)                   { return visitStatement(stmt); }
     public Object visitPrintStatement(PrintStatement stmt)                   { return visitStatement(stmt); }
@@ -442,6 +459,7 @@ public class Visitor {
     public Object visitIfStatement(IfStatement stmt)                         { return visitStatement(stmt); }
     public Object visitElementStatement(ElementStatement stmt)               { return visitStatement(stmt); }
     public Object visitExpandStatement(ExpandStatement stmt)                 { return visitStatement(stmt); }
+    public Object visitRawcodeStatement(RawcodeStatement stmt)               { return visitStatement(stmt); }
 }
 
 // ================================================================================
@@ -494,6 +512,68 @@ public class BinaryExpression extends Expression {
         super._inspect(level, sb);
         _left._inspect(level+1, sb);
         _right._inspect(level+1, sb);
+        return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class UnaryExpression extends Expression {
+    protected Expression _factor;
+
+    public UnaryExpression(int token, Expression factor) {
+        super(token);
+        _factor = factor;
+    }
+
+    public Expression getFactor() { return _factor; }
+
+    /*
+    public Object evaluate(Map context, Visitor executer) {
+        executer.executeUnaryExpression(context, _factor);
+    }
+     */
+
+    public Object accept(Visitor visitor) {
+        return visitor.visitUnaryExpression(this);
+    }
+
+    public Object evaluate(Map context) {
+        Object val = _factor.evaluate(context);
+        switch (_token) {
+          case TokenType.PLUS:
+            if (val instanceof Integer || val instanceof Float) {
+                return val;
+            } else {
+                throw new EvaluationException("unary plus operator should be used with number.");
+            }
+          case TokenType.MINUS:
+            if (val instanceof Integer) {
+                return new Integer(((Integer)val).intValue() * -1);
+            } else if (val instanceof Float) {
+                return new Float(((Float)val).floatValue() * -1);
+            } else {
+                throw new EvaluationException("unary plus operator should be used with number.");
+            }
+          case TokenType.NOT:
+            if (val == Boolean.TRUE) {
+                return Boolean.FALSE;
+            } else if (val == Boolean.FALSE) {
+                return Boolean.TRUE;
+            } else {
+                throw new EvaluationException("unary not operator should be used with boolean.");
+            }
+        }
+        assert false;
+        return null;
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _factor._inspect(level+1, sb);
         return sb;
     }
 }
@@ -634,7 +714,8 @@ public class AssignmentExpression extends BinaryExpression {
             break;
           default:
             // error
-            throw new SemanticException("invalid assignment: left-value should be varaible, array or hash.");
+            //throw new SemanticException("invalid assignment: left-value should be varaible, array or hash.");
+            throw new EvaluationException("invalid assignment: left-value should be varaible, array or hash.");
         }
         return rvalue;
     }
@@ -731,8 +812,8 @@ package __PACKAGE__;
 import java.util.Map;
 import java.util.List;
 
-public class PostfixExpression extends BinaryExpression {
-    public PostfixExpression(int token, Expression left, Expression right) {
+public class IndexExpression extends BinaryExpression {
+    public IndexExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
     public Object evaluate(Map context) {
@@ -760,10 +841,6 @@ public class PostfixExpression extends BinaryExpression {
             throw new EvaluationException("invalid '[]' operator for non-list,map,nor array.");
             //break;
 
-          case TokenType.PROPERTY:
-            // TBC
-            break;
-
           case TokenType.HASH:
             if (lvalue instanceof Map) {
                 return ((Map)lvalue).get(rvalue);
@@ -776,8 +853,9 @@ public class PostfixExpression extends BinaryExpression {
         return null;
     }
     public Object accept(Visitor visitor) {
-        return visitor.visitPostfixExpression(this);
+        return visitor.visitIndexExpression(this);
     }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -833,6 +911,77 @@ public class PropertyExpression extends Expression {
     public Object accept(Visitor visitor) {
         return visitor.visitPropertyExpression(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _object._inspect(level+1, sb);
+        for (int i = 0; i < level + 1; i++) sb.append("  ");
+        sb.append(_name);
+        sb.append('\n');
+        return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.util.List;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+
+public class MethodExpression extends Expression {
+    private Expression _object;
+    private String _name;
+    private Expression[] _args;
+    protected Class[] _argtypes;
+    public MethodExpression(Expression object, String method_name, Expression[] args) {
+        super(TokenType.METHOD);
+        _object = object;
+        _name = method_name;
+        _args = args;
+        _argtypes = new Class[args.length];
+        for (int i = 0; i < args.length; i++) {
+            _argtypes[i] = Object.class;
+        }
+    }
+
+    public Object evaluate(Map context) {
+        Object value = _object.evaluate(context);
+        try {
+            java.lang.reflect.Method method =
+                value.getClass().getMethod(_name, _argtypes);
+            return method.invoke(value, null);
+        }
+        catch (java.lang.NoSuchMethodException ex) {
+            throw new EvaluationException(ex.toString());
+        }
+        catch (java.lang.reflect.InvocationTargetException ex) {
+            throw new EvaluationException("invalid object to invoke method '" + _name + "'.", ex);
+        }
+        catch (java.lang.IllegalArgumentException ex) {
+            throw new EvaluationException(_name + ": invalid method argument.", ex);
+        }
+        catch (java.lang.IllegalAccessException ex) {
+            throw new EvaluationException(_name + ": cannot access to the method.", ex);
+        }
+    }
+
+    public Object accept(Visitor visitor) {
+        return visitor.visitMethodExpression(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _object._inspect(level+1, sb);
+        for (int i = 0; i < level + 1; i++) sb.append("  ");
+        sb.append(_name);
+        sb.append("()\n");
+        for (int i = 0; i < _args.length; i++) {
+            _args[i]._inspect(level+2, sb);
+        }
+        return sb;
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -866,7 +1015,7 @@ import java.util.Map;
 
 public class LogicalOrExpression extends BinaryExpression {
     public LogicalOrExpression(Expression left, Expression right) {
-        super(TokenType.AND, left, right);
+        super(TokenType.OR, left, right);
     }
     public Object evaluate(Map context) {
         Object value;
@@ -880,6 +1029,46 @@ public class LogicalOrExpression extends BinaryExpression {
     }
     public Object accept(Visitor visitor) {
         return visitor.visitLogicalOrExpression(this);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class EmptyExpression extends Expression {
+    protected Expression _arithmetic;
+    public EmptyExpression(int token, Expression arithmetic) {
+        super(token);
+        _arithmetic = arithmetic;
+    }
+    public Expression getArithmetic() { return _arithmetic; }
+    public void setArithmetic(Expression arithmetic) { _arithmetic = arithmetic; }
+
+    public Object evaluate(Map context) {
+        Object val = _arithmetic.evaluate(context);
+        if (_token == TokenType.EMPTY) {
+            if (val == null) return Boolean.TRUE;
+            if (val instanceof String && val.equals("")) return Boolean.TRUE;
+            return Boolean.FALSE;
+        } else if (_token == TokenType.NOTEMPTY) {
+            if (val == null) return Boolean.FALSE;
+            if (val instanceof String && val.equals("")) return Boolean.FALSE;
+            return Boolean.TRUE;
+        }
+        assert false;
+        return null;
+    }
+
+    public Object accept(Visitor visitor) {
+        return visitor.visitEmptyExpression(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _arithmetic._inspect(level+1, sb);
+        return sb;
     }
 }
 
@@ -1221,7 +1410,17 @@ public class StringExpression extends LiteralExpression {
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append('"');
-        sb.append(_value);
+        for (int i = 0; i < _value.length(); i++) {
+            char ch = _value.charAt(i);
+            switch (ch) {
+              case '\n':  sb.append("\\n"); break;
+              case '\r':  sb.append("\\r"); break;
+              case '\t':  sb.append("\\t"); break;
+              case '\\':  sb.append("\\\\");  break;
+              case '"':   sb.append("\\\"");  break;
+              default:    sb.append(ch);
+            }
+        }
         sb.append('"');
         sb.append("\n");
         return sb;
@@ -1339,6 +1538,34 @@ public class NullExpression extends LiteralExpression {
     }
 }
 
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class RawcodeExpression extends LiteralExpression {
+    String _rawcode;
+    public RawcodeExpression(String rawcode) {
+        super(TokenType.RAWEXPR);
+        _rawcode = rawcode;
+    }
+    public String getRawcode() { return _rawcode; }
+    public void setRawcode(String rawcode) { _rawcode = rawcode; }
+
+    public Object evaluate(Map context) {
+        throw new EvaluationException("cannot evaluate rawcode expression");
+        //return null;
+    }
+    public Object accept(Visitor visitor) {
+        return visitor.visitRawcodeExpression(this);
+    }
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        sb.append("<" + "%=" + _rawcode + "%" + ">");
+        return sb;
+    }
+}
+
 // ================================================================================
 
 package __PACKAGE__;
@@ -1393,6 +1620,15 @@ public class BlockStatement extends Statement {
 
     public Object accept(Visitor visitor) {
         return visitor.visitBlockStatement(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        sb.append(":block\n");
+        for (int i = 0; i < _statements.length; i++) {
+            _statements[i]._inspect(level + 1, sb);
+        }
+        return sb;
     }
 }
 
@@ -1479,7 +1715,8 @@ public class ForeachStatement extends Statement {
         } else if (listval.getClass().isArray()) {
             array = (Object[])listval;
         } else {
-            throw new SemanticException("List or Array required in foreach-statement.");
+            //throw new SemanticException("List or Array required in foreach-statement.");
+            throw new EvaluationException("List or Array required in foreach-statement.");
         }
         String loopvar_name = _loopvar.getName();
         for (int i = 0; i < array.length; i++) {
@@ -1617,6 +1854,39 @@ public class ExpandStatement extends Statement {
 
 package __PACKAGE__;
 import java.util.Map;
+import java.io.Writer;
+import java.io.IOException;
+
+public class RawcodeStatement extends Statement {
+    private String _rawcode;
+    public RawcodeStatement(String rawcode) {
+        super(TokenType.RAWSTMT);
+        _rawcode = rawcode;
+    }
+
+    public String getRawcode() { return _rawcode; }
+    public void setRawcode(String rawcode) { _rawcode = rawcode; }
+
+    public Object execute(Map context, Writer writer) {
+        throw new EvaluationException("cannot evaluate rawcode statement.");
+        //return null;
+    }
+    public Object accept(Visitor visitor) {
+        return visitor.visitRawcodeStatement(this);
+    }
+}
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        sb.append("<" + "%=" + _rawcode + "%" + ">");
+        return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
 import java.util.HashMap;
 
 public class Scanner {
@@ -1639,7 +1909,7 @@ public class Scanner {
         this(code, null);
     }
     public Scanner() {
-        this(null, null);
+        this("", null);
     }
 
     public int getLinenum() { return _linenum; }
@@ -1683,8 +1953,9 @@ public class Scanner {
     }
 
     protected static Map keywords;
-    protected static byte[] _op_table  = new byte[Byte.MAX_VALUE];
+    protected static byte[] _op_table1  = new byte[Byte.MAX_VALUE];
     protected static byte[] _op_table2 = new byte[Byte.MAX_VALUE];
+    protected static byte[] _op_table3 = new byte[Byte.MAX_VALUE];
     static {
         keywords = new HashMap();
         keywords.put("foreach", new Integer(TokenType.FOREACH));
@@ -1698,15 +1969,15 @@ public class Scanner {
         keywords.put("null",    new Integer(TokenType.NULL));
         keywords.put("empty",   new Integer(TokenType.EMPTY));
         //
-        _op_table['+'] = TokenType.ADD;
-        _op_table['-'] = TokenType.SUB;
-        _op_table['*'] = TokenType.MUL;
-        _op_table['/'] = TokenType.DIV;
-        _op_table['%'] = TokenType.MOD;
-        _op_table['='] = TokenType.ASSIGN;
-        _op_table['!'] = TokenType.NOT;
-        _op_table['<'] = TokenType.LT;
-        _op_table['>'] = TokenType.GT;
+        _op_table1['+'] = TokenType.ADD;
+        _op_table1['-'] = TokenType.SUB;
+        _op_table1['*'] = TokenType.MUL;
+        _op_table1['/'] = TokenType.DIV;
+        _op_table1['%'] = TokenType.MOD;
+        _op_table1['='] = TokenType.ASSIGN;
+        _op_table1['!'] = TokenType.NOT;
+        _op_table1['<'] = TokenType.LT;
+        _op_table1['>'] = TokenType.GT;
         //
         _op_table2['+'] = TokenType.ADD_TO;
         _op_table2['-'] = TokenType.SUB_TO;
@@ -1717,11 +1988,24 @@ public class Scanner {
         _op_table2['!'] = TokenType.NE;
         _op_table2['<'] = TokenType.LE;
         _op_table2['>'] = TokenType.GE;
+        //
+        _op_table3['('] = TokenType.L_PAREN;
+        _op_table3[')'] = TokenType.R_PAREN;
+        _op_table3[']'] = TokenType.R_BRACKET;
+        _op_table3['?'] = TokenType.CONDITIONAL;
+        _op_table3[':'] = TokenType.COLON;
+        _op_table3[';'] = TokenType.SEMICOLON;
+        _op_table3[','] = TokenType.COMMA;
+        _op_table3['#'] = TokenType.ELEMENT;
     }
 
     public int scan() throws LexicalException {
+        String msg;
+        char ch, ch2;
+        int start_linenum, start_column;
+
         // ignore whitespaces
-        char ch = _ch;
+        ch = _ch;
         while (CharacterUtil.isWhitespace(ch)) {
             ch = read();
         }
@@ -1732,7 +2016,6 @@ public class Scanner {
 
         // keyword, ture, false, null, name
         if (CharacterUtil.isAlphabet(ch)) {
-            //System.out.println("*** debug: _ch = " + _ch + ", _index = " + _index);
             _clearValue();
             _value.append(ch);
             while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
@@ -1757,7 +2040,7 @@ public class Scanner {
                     while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
                         _value.append(ch);
                     }
-                    String msg = "'" + _value.toString() + "': invalid token.";
+                    msg = "'" + _value.toString() + "': invalid token.";
                     throw new LexicalException(msg, getFilename(), _linenum, _column);
                 }
                 if (ch != '.') {
@@ -1767,7 +2050,7 @@ public class Scanner {
                     _value.append('.');
                     continue;
                 } else {
-                    String msg = "'" + _value.toString() + "': invalid float.";
+                    msg = "'" + _value.toString() + "': invalid float.";
                     throw new LexicalException(msg, getFilename(), _linenum, _column);
                 }
             }
@@ -1776,8 +2059,8 @@ public class Scanner {
 
         // string literal
         if (ch == '\'' || ch == '"') {
-            int start_linenum = _linenum;
-            int start_column  = _column;
+            start_linenum = _linenum;
+            start_column  = _column;
             _clearValue();
             char quote = ch;
             while ((ch = read()) != '\0' && ch != quote) {
@@ -1801,16 +2084,12 @@ public class Scanner {
                 _value.append(ch);
             }
             if (ch == '\0') {
-                String msg = "string literal is not closed by " + (quote == '\'' ? "\"'\"." : "'\"'.");
+                msg = "string literal is not closed by " + (quote == '\'' ? "\"'\"." : "'\"'.");
                 throw new LexicalException(msg, getFilename(), start_linenum, start_column);
             }
             read();
             return _token = TokenType.STRING;
         }
-
-        // true, false
-
-        // null
 
         // comment
         if (ch == '/') {
@@ -1824,8 +2103,8 @@ public class Scanner {
                 return scan();
             }
             if (ch == '*') {   // region comment
-                int start_linenum = _linenum;
-                int start_column  = _column;
+                start_linenum = _linenum;
+                start_column  = _column;
                 while ((ch = read()) != '\0') {
                     if (ch == '*') {
                         if ((ch = read()) == '/') {
@@ -1835,7 +2114,7 @@ public class Scanner {
                     }
                 }
                 if (ch == '\0') {
-                    String msg = "'/*' is not closed by '*/'.";
+                    msg = "'/*' is not closed by '*/'.";
                     throw new LexicalException(msg, getFilename(), start_linenum, start_column);
                 }
                 assert false;
@@ -1856,8 +2135,8 @@ public class Scanner {
             }
             if (ch == '%' || ch == '?') {
                 char delim = ch;
-                int start_linenum = _linenum;
-                int start_column  = _column;
+                start_linenum = _linenum;
+                start_column  = _column;
                 _clearValue();
                 ch = read();
                 if (ch == '=') {
@@ -1878,7 +2157,7 @@ public class Scanner {
                 if (ch == '\0') {
                     String stag = "<" + delim + (_token == TokenType.RAWEXPR ? "=" : "");
                     String etag = "" + delim + ">";
-                    String msg = "'" + stag + "' is not closed by '" + etag + "'.";
+                    msg = "'" + stag + "' is not closed by '" + etag + "'.";
                     throw new LexicalException(msg, getFilename(), start_linenum, start_column);
                 }
                 read();
@@ -1888,20 +2167,20 @@ public class Scanner {
         }
 
         // + - * / % = ! < >
-        if (ch < 128 && _op_table[ch] != 0) {
-            char ch2 = read();
+        if (ch < 128 && _op_table1[ch] != 0) {
+            ch2 = read();
             if (ch2 == '=') {
                 read();
                 return _token = _op_table2[ch];
             }
-            return _token = _op_table[ch];
+            return _token = _op_table1[ch];
         }
 
-        // &&, || 
+        // &&, ||
         if (ch == '&' || ch == '|') {
-            char ch2 = read();
+            ch2 = read();
             if (ch != ch2) {
-                String msg = "'" + ch + "': invalid token.";
+                msg = "'" + ch + "': invalid token.";
                 throw new LexicalException(msg, getFilename(), _linenum, _column);
             }
             read();
@@ -1909,13 +2188,53 @@ public class Scanner {
         }
 
         // [ [:
-        
-        // ( ) ? : [ ] [:
-        
-        
+        if (ch == '[') {
+            ch = read();
+            if (ch == ':') {
+                read();
+                return _token = TokenType.L_BRACKETCOLON;
+            }
+            return _token = TokenType.L_BRACKET;
+        }
 
-        
-        return _token;
+        // @
+        if (ch == '@') {
+            _clearValue();
+            while ((ch = read()) != '\0' || CharacterUtil.isWordLetter(ch)) {
+                _value.append(ch);
+            }
+            return _token = TokenType.EXPAND;
+        }
+
+        // .
+        if (ch == '.') {
+            if ((ch = read()) != '+') return _token = TokenType.PERIOD;
+            if ((ch = read()) != '=') return _token = TokenType.CONCAT;
+            read();
+            return _token = TokenType.CONCAT_TO;
+        }
+        //if (ch == '.') {
+        //    ch = read();
+        //    if (ch == '+') {
+        //        ch = read();
+        //        if (ch == '=') {
+        //            read();
+        //            return _token = TokenType.CONCAT_TO;
+        //        }
+        //        return _token = TokenType.CONCAT;
+        //    }
+        //    return _token = TokenType.PERIOD;
+        //}
+
+
+        // ( ) ] : ? ; , #
+        if (ch < Byte.MAX_VALUE && _op_table3[ch] != 0) {
+            read();
+            return _token = _op_table3[ch];
+        }
+
+        msg = "'" + ch + "': invalid character.";
+        throw new LexicalException(msg, getFilename(), _linenum, _column);
     }
 
 }
@@ -1959,12 +2278,12 @@ public class LexicalException extends SyntaxException {
 
 package __PACKAGE__;
 
-public class SyntaxException extends BaseException {
+public class ParseException extends BaseException {
     private int    _linenum;
     private int    _column;
     private String _filename;
 
-    public SyntaxException(String message, String filename, int linenum, int column) {
+    public ParseException(String message, String filename, int linenum, int column) {
         super(message);
         _linenum  = linenum;
         _column   = column;
@@ -1979,25 +2298,462 @@ public class SyntaxException extends BaseException {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+
+public class SyntaxException extends ParseException {
+    public SyntaxException(String message, String filename, int linenum, int column) {
+        super(message, filename, linenum, column);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class SemanticException extends ParseException {
+    public SemanticException(String message, String filename, int linenum, int column) {
+        super(message, filename, linenum, column);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class Parser {
+    protected Scanner _scanner;
+
+    public Parser(Scanner scanner) {
+        _scanner = scanner;
+        _scanner.scan();
+    }
+
+    public int token() {
+        return _scanner.getToken();
+    }
+    public String value() {
+        return _scanner.getValue();
+    }
+    public int linenum() {
+        return _scanner.getLinenum();
+    }
+    public int column() {
+        return _scanner.getColumn();
+    }
+    public String filename() {
+        return _scanner.getFilename();
+    }
+    public int scan() {
+        return _scanner.scan();
+    }
+
+    public void reset(String input, int linenum) {
+        _scanner.reset(input, linenum);
+        _scanner.scan();
+    }
+
+
+    //abstract public Node parse(String code) throws SyntaxExpression;
+
+
+    public void syntaxError(String msg) {
+        throw new SyntaxException(msg, filename(), linenum(), column());
+    }
+
+    public void semanticError(String msg) {
+        throw new SemanticException(msg, filename(), linenum(), column());
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.Writer;
 import java.io.IOException;
 
-public class ExpressionParser {
-    private Scanner _scanner;
+public class ExpressionParser extends Parser {
 
     public ExpressionParser(Scanner scanner) {
-        _scanner = scanner;
+        super(scanner);
     }
 
-    public Expression parse_expression() {
+
+    /*
+     * BNF:
+     *  arguments    ::=  expression | arguments ',' expression | e
+     *               ::=  [ expression { ',' expression } ]
+     */
+    public Expression[] parseArguments() {
+        if (token() == TokenType.R_PAREN) {
+            Expression[] args = {};
+            return args;
+        }
+        List list = new ArrayList();
+        Expression expr = parseExpression();
+        list.add(expr);
+        while (token() == TokenType.COMMA) {
+            scan();
+            expr = parseExpression();
+            list.add(expr);
+        }
+        Expression[] args = new Expression[list.size()];
+        list.toArray(args);
+        return args;
+    }
+
+    /*
+     *
+     * BNF:
+     *  item         ::=  variable | function '(' arguments ')' | '(' expression ')'
+     */
+    public Expression parseItem() {
+        int t = token();
+        if (t == TokenType.NAME) {
+            String name = value();
+            t = scan();
+            if (t != TokenType.L_PAREN) return new VariableExpression(name);
+            scan();
+            Expression[] args = parseArguments();
+            if (token() != TokenType.R_PAREN) syntaxError("missing ')' of function '" + name + "().");
+            scan();
+            String s = null;
+            if      (name.equals("C")) s = " checked=\"checked\"";
+            else if (name.equals("S")) s = " selected=\"selected\"";
+            else if (name.equals("D")) s = " disabled=\"disabled\"";
+            if (s == null) {
+                return new FunctionExpression(name, args);
+            } else {
+                if (args.length != 1)
+                    semanticError(name + "(): should take only one argument.");
+                Expression condition = (Expression)args[0];
+                return new ConditionalExpression(condition, new StringExpression(s), new StringExpression(""));
+            }
+        }
+        else if (t == TokenType.L_PAREN) {
+            scan();
+            Expression expr = parseExpression();
+            if (token() != TokenType.R_PAREN)
+                syntaxError("')' expected ('(' is not closed by ')').");
+            scan();
+            return expr;
+        }
+        assert false;
         return null;
     }
+
+    /*
+     *  BNF:
+     *    literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty' | rawcode-expr
+     */
+    public Expression parseLiteral() {
+        int t = token();
+        String val;
+        switch (t) {
+          case TokenType.INTEGER:
+            val = value();
+            scan();
+            return new IntegerExpression(Integer.parseInt(val));
+          case TokenType.FLOAT:
+            val = value();
+            scan();
+            return new FloatExpression(Float.parseFloat(val));
+          case TokenType.STRING:
+            val = value();
+            scan();
+            return new StringExpression(val);
+          case TokenType.TRUE:
+          case TokenType.FALSE:
+            scan();
+            return new BooleanExpression(t == TokenType.TRUE);
+          case TokenType.NULL:
+            scan();
+            return new NullExpression();
+          case TokenType.EMPTY:
+            syntaxError("'empty' is allowed only in right-side of '==' or '!='.");
+            return null;
+          case TokenType.RAWEXPR:
+            val = value();
+            scan();
+            return new RawcodeExpression(val);
+          default:
+            assert false;
+            return null;
+        }
+    }
+
+
+    /*
+     *  BNF:
+     *   factor       ::=  literal | item | factor '[' expression ']' | factor '[:' name ']'
+     *                  |  factor '.' property | factor '.' method '(' [ arguments ] ')'
+     */
+    public Expression parseFactor() {
+        int t = token();
+        Expression expr;
+        switch (t) {
+          case TokenType.INTEGER:
+          case TokenType.FLOAT:
+          case TokenType.STRING:
+          case TokenType.TRUE:
+          case TokenType.FALSE:
+          case TokenType.NULL:
+          case TokenType.EMPTY:
+          case TokenType.RAWEXPR:
+            expr = parseLiteral();
+            return expr;
+
+          case TokenType.NAME:
+          case TokenType.L_PAREN:
+            expr = parseItem();
+            while (true) {
+                t = token();
+                if (t == TokenType.L_BRACKET) {
+                    scan();
+                    Expression expr2 = parseExpression();
+                    if (token() != TokenType.R_BRACKET)
+                        syntaxError("']' expected ('[' is not closed by ']').");
+                    scan();
+                    expr = new IndexExpression(TokenType.ARRAY, expr, expr2);
+                }
+                else if (t == TokenType.L_BRACKETCOLON) {
+                    scan();
+                    if (token() != TokenType.NAME)
+                        syntaxError("'[:' requires a word following.");
+                    String word = value();
+                    scan();
+                    if (token() != TokenType.R_BRACKET)
+                        syntaxError("'[:' is not closed by ']'.");
+                    scan();
+                    expr = new IndexExpression(TokenType.HASH, expr, new StringExpression(word));
+                }
+                else if (t == TokenType.PERIOD) {
+                    scan();
+                    if (token() != TokenType.NAME)
+                        syntaxError("'.' requires a property or method name following.");
+                    String name = value();
+                    scan();
+                    if (token() == TokenType.L_PAREN) {
+                        scan();
+                        Expression[] args = parseArguments();
+                        if (token() != TokenType.R_PAREN)
+                            syntaxError("method '" + name + "(' is not closed by ')'.");
+                        scan();
+                        expr = new MethodExpression(expr, name, args);
+                    } else {
+                        expr = new PropertyExpression(expr, name);
+                    }
+                }
+                else {
+                    break;  // escape 'while(true)' loop
+                }
+            }
+            return expr;
+
+          default:
+            syntaxError("'" + TokenType.tokenText(t) + "': unexpected token.");
+            return null;
+        }
+    }
+
+
+    /*
+     * BNF:
+     *  unary        ::=  factor | '+' factor | '-' factor | '!' factor
+     *               ::=  [ '+' | '-' | '!' ] factor
+     */
+    public Expression parseUnary() {
+        int t = token();
+        int unary_t = 0;
+        Expression expr;
+        if      (t == TokenType.ADD) unary_t = TokenType.PLUS;
+        else if (t == TokenType.SUB) unary_t = TokenType.MINUS;
+        else if (t == TokenType.NOT) unary_t = TokenType.NOT;
+        if (unary_t > 0) {
+            scan();
+            Expression factor = parseFactor();
+            expr = new UnaryExpression(unary_t, factor);
+        } else {
+            expr = parseFactor();
+        }
+        return expr;
+    }
+
+
+    /*
+     *  BNF:
+     *    term         ::=  unary | term * factor | term '/' factor | term '%' factor
+     *                 ::=  unary { ('*' | '/' | '%') factor }
+     */
+    public Expression parseTerm() {
+        Expression expr = parseUnary();
+        int t;
+        while ((t = token()) == TokenType.MUL || t == TokenType.DIV || t == TokenType.MOD) {
+            scan();
+            Expression expr2 = parseFactor();
+            expr = new ArithmeticExpression(t, expr, expr2);
+        }
+        return expr;
+    }
+
+
+    /*
+     * BNF:
+     *   arith        ::=  term | arith '+' term | arith '-' term | arith '.+' term
+     *                ::=  term { ('+' | '-' | '.+') term }
+     */
+    public Expression parseArithmetic() {
+        Expression expr = parseTerm();
+        int t;
+        while ((t = token()) == TokenType.ADD || t == TokenType.SUB || t == TokenType.CONCAT) {
+            scan();
+            Expression expr2 = parseTerm();
+            expr = new ArithmeticExpression(t, expr, expr2);
+        }
+        return expr;
+    }
+
+
+    /*
+     *  BNF:
+     *    relational-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
+     *    relational      ::=  arith | arith relational-op arith | arith '==' 'empty' | arith '!=' 'empty'
+     *                    ::=  arith [ relational-op arith ] | arith ('==' | '!=') 'empty'
+     */
+    public Expression parseRelational() {
+        Expression expr = parseArithmetic();
+        int t;
+        while ((t = token()) == TokenType.EQ || t == TokenType.NE
+               || t == TokenType.GT || t == TokenType.GE
+               || t == TokenType.LT || t == TokenType.LE) {
+            scan();
+            if (token() == TokenType.EMPTY || (token() == TokenType.NAME && value().equals("empty"))) {
+                if (t == TokenType.EQ) {
+                    scan();
+                    expr = new EmptyExpression(TokenType.EMPTY, expr);
+                } else if (t == TokenType.NE) {
+                    scan();
+                    expr = new EmptyExpression(TokenType.NOTEMPTY, expr);
+                } else {
+                    syntaxError("'empty' is allowed only at the right-side of '==' or '!='.");
+                }
+            }
+            else {
+                Expression expr2 = parseArithmetic();
+                expr = new RelationalExpression(t, expr, expr2);
+            }
+        }
+        return expr;
+    }
+
+
+    /*
+     *  BNF:
+     *    logical-and  ::=  relational | logical-and '&&' relational
+     *                 ::=  relational { '&&' relational }
+     */
+    public Expression parseLogicalAnd() {
+        Expression expr = parseRelational();
+        int t;
+        while ((t = token()) == TokenType.AND) {
+            scan();
+            Expression expr2 = parseRelational();
+            expr = new LogicalAndExpression(expr, expr2);
+        }
+        return expr;
+    }
+
+
+    /*
+     * BNF:
+     *  logical-or   ::=  logical-and | logical-or '||' logical-and
+     *               ::=  logical-and { '||' logical-and }
+     */
+    public Expression parseLogicalOr() {
+        Expression expr = parseLogicalAnd();
+        int t;
+        while ((t = token()) == TokenType.OR) {
+            scan();
+            Expression expr2 = parseLogicalAnd();
+            expr = new LogicalOrExpression(expr, expr2);
+        }
+        return expr;
+    }
+
+
+    /*
+     *  BNF:
+     *    conditional  ::=  logical-or | logical-or '?' expression ':' conditional
+     *                 ::=  logical-or [ '?' expression ':' conditional ]
+     */
+    public Expression parseConditional() {
+        Expression expr = parseLogicalOr();
+        int t;
+        if ((t = token()) == TokenType.CONDITIONAL) {
+            scan();
+            Expression expr2 = parseExpression();
+            if (token() != TokenType.COLON)
+                syntaxError("':' expected ('?' requires ':').");
+            scan();
+            Expression expr3 = parseConditional();
+            expr = new ConditionalExpression(expr, expr2, expr3);
+        }
+        return expr;
+    }
+
+
+    /*
+     *  BNF:
+     *    assign-op    ::=  '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '.+='
+     *    assignment   ::=  conditional | assign-op assignment
+     */
+    public Expression parseAssignment() {
+        Expression expr = parseConditional();
+        int op = token();
+        if (    op == TokenType.ASSIGN || op == TokenType.ADD_TO ||  op == TokenType.SUB_TO
+            ||  op == TokenType.MUL_TO || op == TokenType.DIV_TO ||  op == TokenType.MOD_TO
+            ||  op == TokenType.CONCAT_TO) {
+            if (! isLhs(expr))
+                semanticError("invalid assignment.");
+            scan();
+            Expression expr2 = parseAssignment();
+            expr = new AssignmentExpression(op, expr, expr2);
+        }
+        return expr;
+    }
+
+    protected boolean isLhs(Expression expr) {
+        switch (expr.getToken()) {
+          case TokenType.VARIABLE:
+          case TokenType.ARRAY:
+          case TokenType.HASH:
+          case TokenType.PROPERTY:
+            return true;
+          default:
+            return false;
+        }
+    }
+
+
+    /*
+     *  BNF:
+     *    expression   ::=  assignment
+     */
+    public Expression parseExpression() {
+        return parseAssignment();
+    }
+
+
+    /*
+     *
+     */
     public Expression parse(String expr_code) throws SyntaxException {
         _scanner.reset(expr_code);
-        Expression expr = parse_expression();
+        Expression expr = parseExpression();
         if (_scanner.getToken() != TokenType.EOF) {
-            throw new SyntaxException("Expression is not ended.", _scanner.getFilename(), _scanner.getLinenum(), _scanner.getColumn());
+            syntaxError("Expression is not ended.");
         }
         return expr;
     }
@@ -2007,8 +2763,297 @@ public class ExpressionParser {
 
 package __PACKAGE__;
 import junit.framework.TestCase;
-import java.util.List;
-import java.util.Iterator;
+
+public class ExpressionParserTest extends TestCase {
+
+    String input;
+    String expected;
+
+    public ExpressionParser _test(String input, String expected, String method) {
+        return _test(input, expected, method, null);
+    }
+
+    public ExpressionParser _test(String input, String expected, String method, Class klass) {
+        Scanner scanner = new Scanner(input);
+        ExpressionParser parser = new ExpressionParser(scanner);
+        Expression expr = null;
+        if (method.equals("parseLiteral")) {
+            expr = parser.parseLiteral();
+        } else if (method.equals("parseItem")) {
+            expr = parser.parseItem();
+        } else if (method.equals("parseFactor")) {
+            expr = parser.parseFactor();
+        } else if (method.equals("parseUnary")) {
+            expr = parser.parseUnary();
+        } else if (method.equals("parseTerm")) {
+            expr = parser.parseTerm();
+        } else if (method.equals("parseArithmetic")) {
+            expr = parser.parseArithmetic();
+        } else if (method.equals("parseRelational")) {
+            expr = parser.parseRelational();
+        } else if (method.equals("parseLogicalAnd")) {
+            expr = parser.parseLogicalAnd();
+        } else if (method.equals("parseLogicalOr")) {
+            expr = parser.parseLogicalOr();
+        } else if (method.equals("parseConditional")) {
+            expr = parser.parseConditional();
+        } else if (method.equals("parseAssignment")) {
+            expr = parser.parseAssignment();
+        } else if (method.equals("parseExpression")) {
+            expr = parser.parseExpression();
+        } else {
+            fail("*** invalid method name ***");
+        }
+        if (expr == null) fail("*** expr is null ***");
+        if (klass != null) {
+            assertEquals(klass, expr.getClass());
+        }
+        StringBuffer actual = expr._inspect();
+        assertEquals(expected, actual.toString());
+        assertTrue("*** EOF expected ***", scanner.getToken() == TokenType.EOF);
+        return parser;
+    }
+
+    public void testParseLiteral1() {  // integer
+        input = "100";
+        expected = "100\n";
+        _test(input, expected, "parseLiteral", IntegerExpression.class);
+    }
+    public void testParseLiteral2() {  // float
+        input = "3.14";
+        expected = "3.14\n";
+        _test(input, expected, "parseLiteral", FloatExpression.class);
+    }
+    public void testParseLiteral3() {  // 'string'
+        input = "'foo'";
+        expected = "\"foo\"\n";
+        _test(input, expected, "parseLiteral", StringExpression.class);
+        input = "'\\n\\r\\t\\\\ \\''";              // '\n\r\t\\\\ \''
+        expected = "\"\\\\n\\\\r\\\\t\\\\ '\"\n";   // "\\n\\r\\t\\ '"
+        _test(input, expected, "parseLiteral", StringExpression.class);
+    }
+    public void testParseLiteral4() {  // "string"
+        input = "\"foo\"";
+        expected = "\"foo\"\n";
+        _test(input, expected, "parseLiteral", StringExpression.class);
+        input = "\"\\n\\r\\t \\\\ \\\" \"";        // "\n\r\t \\ \" "
+        expected = "\"\\n\\r\\t \\\\ \\\" \"\n";   // "\n\r\t \\ \" "
+        _test(input, expected, "parseLiteral", StringExpression.class);
+    }
+    public void testParseLiteral5() {  // true, false
+        input = "true";
+        expected = "true\n";
+        _test(input, expected, "parseLiteral", BooleanExpression.class);
+        input = "false";
+        expected = "false\n";
+        _test(input, expected, "parseLiteral", BooleanExpression.class);
+    }
+    public void testParseLiteral6() {  // null
+        input = "null";
+        expected = "null\n";
+        _test(input, expected, "parseLiteral", NullExpression.class);
+    }
+
+
+    public void testParseItem1() {  // variable
+        input = "foo";
+        expected = "foo\n";
+        _test(input, expected, "parseItem", VariableExpression.class);
+    }
+    public void testParseItem2() {  // function()
+        input = "foo()";
+        expected = "foo()\n";
+        _test(input, expected, "parseItem", FunctionExpression.class);
+    }
+    public void testParseItem3() {  // function(100, 'va', arg)
+        input = "foo(100, 'val', arg)";
+        expected = "foo()\n  100\n  \"val\"\n  arg\n";
+        _test(input, expected, "parseItem", FunctionExpression.class);
+    }
+    public void testParseItem4() {  // (expr)
+        input = "(a+b)";
+        expected = "+\n  a\n  b\n";
+        _test(input, expected, "parseItem", ArithmeticExpression.class);
+    }
+
+    public void testParseFactor1() {  // array
+        input = "a[10]";
+        expected = "[]\n  a\n  10\n";
+        _test(input, expected, "parseFactor", IndexExpression.class);
+        input = "a[i+1]";
+        expected = "[]\n  a\n  +\n    i\n    1\n";
+        _test(input, expected, "parseFactor", IndexExpression.class);
+    }
+    public void testParseFactor2() {  // hash
+        input = "a[:foo]";
+        expected = "[:]\n  a\n  \"foo\"\n";
+        _test(input, expected, "parseFactor", IndexExpression.class);
+    }
+    public void testParseFactor3() {  // property
+        input = "obj.prop1";
+        expected = ".\n  obj\n  prop1\n";
+        _test(input, expected, "parseFactor", PropertyExpression.class);
+    }
+    public void testParseFactor4() {  // method
+        input = "obj.method1(arg1,arg2)";
+        expected = ".()\n  obj\n  method1()\n    arg1\n    arg2\n";
+        _test(input, expected, "parseFactor", MethodExpression.class);
+    }
+    public void testParseFactor5() {  // nested array,hash
+        input = "a[i][:j][k]";
+        expected = "[]\n  [:]\n    []\n      a\n      i\n    \"j\"\n  k\n";
+        _test(input, expected, "parseFactor", IndexExpression.class);
+        input = "foo.bar.baz()";
+        expected = ".()\n  .\n    foo\n    bar\n  baz()\n";
+        _test(input, expected, "parseFactor", MethodExpression.class);
+    }
+
+    public void testParseFactor6() {  // invalid array
+        input = "a[10;";
+        expected = null;
+        try {
+            _test(input, expected, "parseFactor", IndexExpression.class);
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+    public void testParseFactor7() {
+        input = "a[:+]";
+        expected = null;
+        try {
+            _test(input, expected, "parseFactor", IndexExpression.class);
+        } catch (SyntaxException ex) {
+            // OK
+        }
+        input = "a[:foo-bar]";
+        expected = null;
+        try {
+            _test(input, expected, "parseFactor", IndexExpression.class);
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+
+
+    public void testParseUnary1() {  // -1, +a, !false
+        input = "-1";
+        expected = "-.\n  1\n";
+        _test(input, expected, "parseUnary", UnaryExpression.class);
+        input = "+a";
+        expected = "+.\n  a\n";
+        _test(input, expected, "parseUnary", UnaryExpression.class);
+        input = "!false";
+        expected = "!\n  false\n";
+        _test(input, expected, "parseUnary", UnaryExpression.class);
+    }
+
+    public void testParseUnary2() { // - - 1
+        input = "- -1";
+        try {
+            _test(input, null, "parseUnary");
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+
+    public void testParseTerm1() {  // term
+        input = "-x*y";
+        expected = "*\n  -.\n    x\n  y\n";
+        _test(input, expected, "parseTerm", ArithmeticExpression.class);
+        input = "a*b/c%d";
+        expected = "%\n  /\n    *\n      a\n      b\n    c\n  d\n";
+        _test(input, expected, "parseTerm", ArithmeticExpression.class);
+    }
+
+    public void testParseArithmetic1() {  // arithmetic
+        input = "-a + b - c .+ d";
+        expected =".+\n  -\n    +\n      -.\n        a\n      b\n    c\n  d\n";
+        _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
+    }
+
+    public void testParseArithmetic2() {  // arithmetic
+        input = "-a*b + -c/d";
+        expected = "+\n  *\n    -.\n      a\n    b\n  /\n    -.\n      c\n    d\n";
+        _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
+    }
+
+
+    public void testParseRelational1() {
+        input = "a==b";
+        expected = "==\n  a\n  b\n";
+        _test(input, expected, "parseRelational", RelationalExpression.class);
+        input = "a!=b";
+        expected = "!=\n  a\n  b\n";
+        _test(input, expected, "parseRelational", RelationalExpression.class);
+        input = "a<b";
+        expected = "<\n  a\n  b\n";
+        _test(input, expected, "parseRelational", RelationalExpression.class);
+        input = "a<=b";
+        expected = "<=\n  a\n  b\n";
+        _test(input, expected, "parseRelational", RelationalExpression.class);
+        input = "a>b";
+        expected = ">\n  a\n  b\n";
+        _test(input, expected, "parseRelational", RelationalExpression.class);
+        input = "a>=b";
+        expected = ">=\n  a\n  b\n";
+    }
+
+
+    public void testParseLogicalAnd1() {  // a && b
+        input = "a && b";
+        expected = "&&\n  a\n  b\n";
+        _test(input, expected, "parseLogicalAnd", LogicalAndExpression.class);
+        input = "0<x&&x<100&&cond1&&cond2";
+        expected = "&&\n  &&\n    &&\n      <\n        0\n        x\n      <\n        x\n        100\n    cond1\n  cond2\n";
+        _test(input, expected, "parseLogicalAnd", LogicalAndExpression.class);
+    }
+
+    public void testParseLogicalOr1() {   // a || b
+        input = "a||b";
+        expected = "||\n  a\n  b\n";
+        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
+        input = "0<x||x<100||cond1||cond2";
+        expected = "||\n  ||\n    ||\n      <\n        0\n        x\n      <\n        x\n        100\n    cond1\n  cond2\n";
+        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
+        input = "a&&b || c&&d || e&&f";
+        expected = "||\n  ||\n    &&\n      a\n      b\n    &&\n      c\n      d\n  &&\n    e\n    f\n";
+        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
+    }
+
+    public void testParseConditional1() {
+        input = "a ? b : c";
+        expected = "?:\n  a\n  b\n  c\n";
+        _test(input, expected, "parseConditional", ConditionalExpression.class);
+    }
+
+    public void testParseAssignment1() {
+        input = "a = b";
+        expected = "=\n  a\n  b\n";
+        _test(input, expected, "parseAssignment", AssignmentExpression.class);
+        input = "a = 1+f(2)";
+        expected = "=\n  a\n  +\n    1\n    f()\n      2\n";
+        _test(input, expected, "parseAssignment", AssignmentExpression.class);
+    }
+
+    public void testParseAssignment2() {
+        input = "a[i] = b";
+        expected = "=\n  []\n    a\n    i\n  b\n";
+        _test(input, expected, "parseAssignment", AssignmentExpression.class);
+    }
+
+
+    public void testParseExpression1() {
+        input = "color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'";
+        expected = "=\n  color\n  ?:\n    ==\n      %\n        i\n        2\n      0\n    \"#FFCCCC\"\n    \"#CCCCFF\"\n";
+        _test(input, expected, "parseExpression", AssignmentExpression.class);
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
 
 public class ScannerTest extends TestCase {
 
@@ -2016,7 +3061,7 @@ public class ScannerTest extends TestCase {
     public Scanner _test(String input, String expected) {
         return _test(input, expected, true);
     }
-    
+
     public Scanner _test(String input, String expected, boolean flag_test) {
         if (! flag_test) return null;
         Scanner scanner = new Scanner(input);
@@ -2083,7 +3128,7 @@ public class ScannerTest extends TestCase {
         }
     }
 
-    public void testScanner13() {   // comment
+    public void testScanner13() {  // comment
         String input = "// foo\n123/* // \n*/456";
         String expected = "INTEGER 123\nINTEGER 456\n";
         _test(input, expected);
@@ -2098,16 +3143,16 @@ public class ScannerTest extends TestCase {
         }
     }
 
-    public void testScanner14() {   // 'string'
+    public void testScanner14() {  // 'string'
         String input = "'str1'";
         String expected = "STRING \"str1\"\n";
-        _test(input, expected);
-        input = "'\\n\\r\\t\\''";
-        expected = "STRING \"\\n\\r\\t'\"\n";
+        //_test(input, expected);
+        input = "'\n\r\t\\ \\''";
+        expected = "STRING \"\\n\\r\\t\\\\ '\"\n";
         _test(input, expected);
     }
 
-    public void testScanner15() {   // "string"
+    public void testScanner15() {  // "string"
         String input = "\"str\"";
         String expected = "STRING \"str\"\n";
         _test(input, expected);
@@ -2117,21 +3162,73 @@ public class ScannerTest extends TestCase {
     }
 
     public void testScanner21() {  // alithmetic op
-        String input = "+ - * / %";
-        String expected = "ADD +\nSUB -\nMUL *\nDIV /\nMOD %\n";
+        String input = "+ - * / % .+";
+        String expected = "ADD +\nSUB -\nMUL *\nDIV /\nMOD %\nCONCAT .+\n";
         _test(input, expected);
     }
-    
+
     public void testScanner22() {  // assignment op
-        String input = "= += -= *= /= %=";
-        String expected = "ASSIGN =\nADD_TO +=\nSUB_TO -=\nMUL_TO *=\nDIV_TO /=\nMOD_TO %=\n";
+        String input = "= += -= *= /= %= .+=";
+        String expected = "ASSIGN =\nADD_TO +=\nSUB_TO -=\nMUL_TO *=\nDIV_TO /=\nMOD_TO %=\nCONCAT_TO .+=\n";
         _test(input, expected);
     }
-    
+
     public void testScanner23() {  // comparable op
         String input = "== != < <= > >=";
         String expected = "EQ ==\nNE !=\nLT <\nLE <=\nGT >\nGE >=\n";
         _test(input, expected);
+    }
+
+    public void testScanner24() {  // logical op
+        String input = "! && ||";
+        String expected = "NOT !\nAND &&\nOR ||\n";
+        _test(input, expected);
+    }
+
+    public void testScanner25() {  // symbols
+        String input = "[][::;?.,#";
+        String expected = "L_BRACKET [\nR_BRACKET ]\nL_BRACKETCOLON [:\nCOLON :\n"
+                         + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nELEMENT #\n";
+        _test(input, expected);
+    }
+
+    public void testScanner26() {  // expand
+        String input = "@stag";
+        String expected = "EXPAND @stag\n";
+        _test(input, expected);
+    }
+
+    public void testScanner31() {  // raw expr
+        String input = "s=" + "<" + "%= $foo %" + ">;";
+        String expected = "NAME s\nASSIGN =\nRAWEXPR <" + "%= $foo %" + ">\nSEMICOLON ;\n";
+        _test(input, expected);
+    }
+
+    public void testScanner32() {  // raw stmt
+        String input = "<" + "% $foo %" + ">";
+        String expected = "RAWSTMT <" + "% $foo %" + ">\n";
+        _test(input, expected);
+    }
+
+    public void testScanner41() {  // invalid char
+        try {
+            _test("~", null);
+            fail("LexicalException expected (ch = '~').");
+        } catch (LexicalException ex) {
+            // OK
+        }
+        try {
+            _test("^", null);
+            fail("LexicalException expected (ch = '~').");
+        } catch (LexicalException ex) {
+            // OK
+        }
+        try {
+            _test("$", null);
+            fail("LexicalException expected (ch = '~').");
+        } catch (LexicalException ex) {
+            // OK
+        }
     }
 
 }
@@ -2371,7 +3468,7 @@ public class ExpressionTest extends TestCase {
         _testExpr(Boolean.TRUE);
     }
 
-    public void testPostfixExpression1() {	// list[i]
+    public void testIndexExpression1() {	// list[i]
         // list = [ "foo", "bar", "baz" ]
         Expression list = new VariableExpression("list");
         List arraylist = new ArrayList();
@@ -2382,7 +3479,7 @@ public class ExpressionTest extends TestCase {
 
         // var = list[i];
         Expression i = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("i", new Integer(0));
         _testExpr("foo");
         _context.put("i", new Integer(1));
@@ -2391,12 +3488,12 @@ public class ExpressionTest extends TestCase {
         _testExpr("baz");
     }
 
-    public void testPostfixExpression2() {	// out of range access
+    public void testIndexExpression2() {	// out of range access
         // list = []
         List arraylist = new ArrayList();
         Expression list = new VariableExpression("list");
         Expression i    = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("list", arraylist);
         _context.put("i", new Integer(0));
         try {
@@ -2418,22 +3515,22 @@ public class ExpressionTest extends TestCase {
         _testExpr(null);
     }
 
-    public void testPostfixExpression3() {	// list[0] == null
+    public void testIndexExpression3() {	// list[0] == null
         List arraylist  = new ArrayList();
         Expression list = new VariableExpression("list");
         Expression i    = new VariableExpression("i");
-        _expr = new PostfixExpression(TokenType.ARRAY, list, i);
+        _expr = new IndexExpression(TokenType.ARRAY, list, i);
         _context.put("list", arraylist);
         arraylist.add(null);
         _context.put("i", new Integer(0));
         _testExpr(null);
     }
 
-    public void testPostfixExpression4() {	// hash['key']
+    public void testIndexExpression4() {	// hash['key']
         // hash[key]
         Expression hash = new VariableExpression("hash");
         Expression key  = new VariableExpression("key");
-        _expr = new PostfixExpression(TokenType.ARRAY, hash, key);
+        _expr = new IndexExpression(TokenType.ARRAY, hash, key);
 
         // { "a" => "AAA", 1 => "one", "two" => 2 }
         Map hashmap = new HashMap();
@@ -2453,11 +3550,11 @@ public class ExpressionTest extends TestCase {
         _testExpr(new Integer(2));
     }
 
-    public void testPostfixExpression5() {	// hash['key'] is null
+    public void testIndexExpression5() {	// hash['key'] is null
         // hash[key]
         Expression hash = new VariableExpression("hash");
         Expression key  = new VariableExpression("key");
-        _expr = new PostfixExpression(TokenType.ARRAY, hash, key);
+        _expr = new IndexExpression(TokenType.ARRAY, hash, key);
 
         // { "a" => "AAA" }
         Map hashmap = new HashMap();
@@ -2771,6 +3868,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(ExpressionTest.class));
         suite.addTest(new TestSuite(StatementTest.class));
         suite.addTest(new TestSuite(ScannerTest.class));
+        suite.addTest(new TestSuite(ExpressionParserTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

@@ -15,16 +15,19 @@ public class Visitor {
     public Object visitExpression(Expression expr) { return visitNode(expr); }
     public Object visitStatement(Statement stmt)   { return visitNode(stmt); }
     //
+    public Object visitUnaryExpression(UnaryExpression expr)                 { return visitExpression(expr); }
     public Object visitBinaryExpression(BinaryExpression expr)               { return visitExpression(expr); }
     public Object visitArithmeticExpression(ArithmeticExpression expr)       { return visitExpression(expr); }
     public Object visitConcatenationExpression(ConcatenationExpression expr) { return visitExpression(expr); }
-    public Object visitRelationalExpression(RelationalExpression expr) { return visitExpression(expr); }
+    public Object visitRelationalExpression(RelationalExpression expr)       { return visitExpression(expr); }
     public Object visitAssignmentExpression(AssignmentExpression expr)       { return visitExpression(expr); }
-    public Object visitPostfixExpression(PostfixExpression expr)             { return visitExpression(expr); }
+    public Object visitIndexExpression(IndexExpression expr)                 { return visitExpression(expr); }
     public Object visitPropertyExpression(PropertyExpression expr)           { return visitExpression(expr); }
+    public Object visitMethodExpression(MethodExpression expr)               { return visitExpression(expr); }
     public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return visitExpression(expr); }
     public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return visitExpression(expr); }
     public Object visitConditionalExpression(ConditionalExpression expr)     { return visitExpression(expr); }
+    public Object visitEmptyExpression(EmptyExpression expr)                 { return visitExpression(expr); }
     public Object visitFunctionExpression(FunctionExpression expr)           { return visitExpression(expr); }
     //
     public Object visitLiteralExpression(LiteralExpression expr)             { return visitExpression(expr); }
@@ -34,6 +37,7 @@ public class Visitor {
     public Object visitVariableExpression(VariableExpression expr)           { return visitExpression(expr); }
     public Object visitBooleanExpression(BooleanExpression expr)             { return visitExpression(expr); }
     public Object visitNullExpression(NullExpression expr)                   { return visitExpression(expr); }
+    public Object visitRawcodeExpression(RawcodeExpression expr)             { return visitExpression(expr); }
     //
     public Object visitBlockStatement(BlockStatement stmt)                   { return visitStatement(stmt); }
     public Object visitPrintStatement(PrintStatement stmt)                   { return visitStatement(stmt); }
@@ -43,4 +47,5 @@ public class Visitor {
     public Object visitIfStatement(IfStatement stmt)                         { return visitStatement(stmt); }
     public Object visitElementStatement(ElementStatement stmt)               { return visitStatement(stmt); }
     public Object visitExpandStatement(ExpandStatement stmt)                 { return visitStatement(stmt); }
+    public Object visitRawcodeStatement(RawcodeStatement stmt)               { return visitStatement(stmt); }
 }

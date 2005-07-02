@@ -5,8 +5,8 @@
  */
 package com.kuwata_lab.kwartz;
 
-public class SemanticException extends BaseException {
-    public SemanticException(String message) {
-        super(message);
+public class SemanticException extends ParseException {
+    public SemanticException(String message, String filename, int linenum, int column) {
+        super(message, filename, linenum, column);
     }
 }

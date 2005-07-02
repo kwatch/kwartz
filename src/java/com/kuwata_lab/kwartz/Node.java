@@ -19,7 +19,7 @@ abstract class Node {
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
-        sb.append(TokenType.tokenName(_token));
+        sb.append(TokenType.tokenText(_token));
         sb.append("\n");
         return sb;
     }

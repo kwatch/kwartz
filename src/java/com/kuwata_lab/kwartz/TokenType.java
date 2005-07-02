@@ -36,60 +36,75 @@ public class TokenType {
     public static final int TRUE           =  18;  // true
     public static final int FALSE          =  19;  // false
     public static final int NULL           =  20;  // null
-    public static final int EMPTY          =  21;  // empty
-    public static final int NAME           =  22;  // <<name>>
+    public static final int NAME           =  21;  // <<name>>
     
-    // array, hash, property
-    public static final int ARRAY          =  23;  // []
-    public static final int HASH           =  24;  // [:]
-    public static final int PROPERTY       =  25;  // .
+    // empty, not empty
+    public static final int EMPTY          =  22;  // empty
+    public static final int NOTEMPTY       =  23;  // notempty
+    
+    // array, hash
+    public static final int ARRAY          =  24;  // []
+    public static final int HASH           =  25;  // [:]
     public static final int L_BRACKET      =  26;  // [
     public static final int R_BRACKET      =  27;  // ]
     public static final int L_BRACKETCOLON =  28;  // [:
     
-    // function
+    // function, method, property
     public static final int FUNCTION       =  29;  // <<function>>
-    
-    // conditional operator
-    public static final int CONDITIONAL    =  30;  // ?
+    public static final int METHOD         =  30;  // .()
+    public static final int PROPERTY       =  31;  // .
     
     // relational op
-    public static final int EQ             =  31;  // ==
-    public static final int NE             =  32;  // !=
-    public static final int LT             =  33;  // <
-    public static final int LE             =  34;  // <=
-    public static final int GT             =  35;  // >
-    public static final int GE             =  36;  // >=
+    public static final int EQ             =  32;  // ==
+    public static final int NE             =  33;  // !=
+    public static final int LT             =  34;  // <
+    public static final int LE             =  35;  // <=
+    public static final int GT             =  36;  // >
+    public static final int GE             =  37;  // >=
     
     // logical op
-    public static final int NOT            =  37;  // !
-    public static final int AND            =  38;  // &&
-    public static final int OR             =  39;  // ||
+    public static final int NOT            =  38;  // !
+    public static final int AND            =  39;  // &&
+    public static final int OR             =  40;  // ||
+    
+    // unary op
+    public static final int PLUS           =  41;  // +.
+    public static final int MINUS          =  42;  // -.
     
     // statement
-    public static final int BLOCK          =  40;  // <<block>>
-    public static final int PRINT          =  41;  // :print
-    public static final int EXPR           =  42;  // :expr
-    public static final int FOREACH        =  43;  // :foreach
-    public static final int IN             =  44;  // :in
-    public static final int WHILE          =  45;  // :while
-    public static final int IF             =  46;  // :if
-    public static final int ELSEIF         =  47;  // :elseif
-    public static final int ELSE           =  48;  // :else
-    public static final int EXPAND         =  49;  // @
+    public static final int BLOCK          =  43;  // <<block>>
+    public static final int PRINT          =  44;  // :print
+    public static final int EXPR           =  45;  // :expr
+    public static final int FOREACH        =  46;  // :foreach
+    public static final int IN             =  47;  // :in
+    public static final int WHILE          =  48;  // :while
+    public static final int IF             =  49;  // :if
+    public static final int ELSEIF         =  50;  // :elseif
+    public static final int ELSE           =  51;  // :else
+    
+    // symbols
+    public static final int EXPAND         =  52;  // @
+    public static final int COLON          =  53;  // :
+    public static final int SEMICOLON      =  54;  // ;
+    public static final int L_PAREN        =  55;  // (
+    public static final int R_PAREN        =  56;  // )
+    public static final int CONDITIONAL    =  57;  // ?:
+    public static final int PERIOD         =  58;  // .
+    public static final int COMMA          =  59;  // ,
+    
     
     // raw expression and raw statement
-    public static final int RAWEXPR        =  50;  // <%= %>
-    public static final int RAWSTMT        =  51;  // <% %>
+    public static final int RAWEXPR        =  60;  // <%= %>
+    public static final int RAWSTMT        =  61;  // <% %>
     
     // element
-    public static final int ELEMENT        =  52;  // #
-    public static final int VALUE          =  53;  // value:
-    public static final int ATTR           =  54;  // attr:
-    public static final int APPEND         =  55;  // append:
-    public static final int REMOVE         =  56;  // remove:
-    public static final int PLOGIC         =  57;  // plogic:
-    public static final int TAGNAME        =  58;  // tagname:
+    public static final int ELEMENT        =  62;  // #
+    public static final int VALUE          =  63;  // value:
+    public static final int ATTR           =  64;  // attr:
+    public static final int APPEND         =  65;  // append:
+    public static final int REMOVE         =  66;  // remove:
+    public static final int PLOGIC         =  67;  // plogic:
+    public static final int TAGNAME        =  68;  // tagname:
 
     public static int assignToArithmetic(int token) {
         return token - TokenType.ADD_TO + TokenType.ADD;
@@ -121,16 +136,17 @@ public class TokenType {
         "TRUE",
         "FALSE",
         "NULL",
-        "EMPTY",
         "NAME",
+        "EMPTY",
+        "NOTEMPTY",
         "ARRAY",
         "HASH",
-        "PROPERTY",
         "L_BRACKET",
         "R_BRACKET",
         "L_BRACKETCOLON",
         "FUNCTION",
-        "CONDITIONAL",
+        "METHOD",
+        "PROPERTY",
         "EQ",
         "NE",
         "LT",
@@ -140,6 +156,8 @@ public class TokenType {
         "NOT",
         "AND",
         "OR",
+        "PLUS",
+        "MINUS",
         "BLOCK",
         "PRINT",
         "EXPR",
@@ -150,6 +168,13 @@ public class TokenType {
         "ELSEIF",
         "ELSE",
         "EXPAND",
+        "COLON",
+        "SEMICOLON",
+        "L_PAREN",
+        "R_PAREN",
+        "CONDITIONAL",
+        "PERIOD",
+        "COMMA",
         "RAWEXPR",
         "RAWSTMT",
         "ELEMENT",
@@ -187,16 +212,17 @@ public class TokenType {
         "true",
         "false",
         "null",
-        "empty",
         "<<name>>",
+        "empty",
+        "notempty",
         "[]",
         "[:]",
-        ".",
         "[",
         "]",
         "[:",
         "<<function>>",
-        "?",
+        ".()",
+        ".",
         "==",
         "!=",
         "<",
@@ -206,6 +232,8 @@ public class TokenType {
         "!",
         "&&",
         "||",
+        "+.",
+        "-.",
         "<<block>>",
         ":print",
         ":expr",
@@ -216,6 +244,13 @@ public class TokenType {
         ":elseif",
         ":else",
         "@",
+        ":",
+        ";",
+        "(",
+        ")",
+        "?:",
+        ".",
+        ",",
         "<%= %>",
         "<% %>",
         "#",
@@ -247,6 +282,12 @@ public class TokenType {
             return value;
           case TokenType.NAME:
             return value;
+          case TokenType.RAWEXPR:
+            return "<" + "%=" + value + "%" + ">";
+          case TokenType.RAWSTMT:
+            return "<" + "%" + value + "%" + ">";
+          case TokenType.EXPAND:
+            return "@" + value;
           default:
             return tokenTexts[token];
         }
@@ -261,6 +302,7 @@ public class TokenType {
               case '\n':  sb.append("\\n");   break;
               case '\r':  sb.append("\\r");   break;
               case '\t':  sb.append("\\t");   break;
+              case '\\':  sb.append("\\\\");  break;
               case '"':   sb.append("\\\"");  break;
               default:
                 sb.append(ch);

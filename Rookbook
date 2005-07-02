@@ -1,0 +1,46 @@
+
+desc    "compile and test"
+recipe  :all		, :compile, :test
+
+
+source    = "kwartz-java.rb"
+package   = "com.kuwata_lab.kwartz"
+src_root  = "src/java"
+test_root = "src/test"
+src_path  = src_root  + "/" + package.gsub(/\./, '/')
+test_path = test_root + "/" + package.gsub(/\./, '/')
+
+junit_jar = "/usr/local/java/j2sdk/jre/lib/ext/junit.jar"
+junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
+
+
+desc	"create *.java and compile them"
+recipe  :compile			do |r|
+	cmd "ruby #{source}"
+	cmd "jikes #{src_path}/*.java"
+	end
+
+
+classpath = ".:#{src_root}:#{test_root}:#{junit_jar}"
+
+desc	"unit test"
+recipe  :test				do |r|
+	cmd "jikes -classpath #{classpath} #{test_path}/*.java"
+	cmd "java  -classpath #{classpath} #{package}.KwartzTest"
+	end
+
+recipe :clean				do |r|
+	list = []
+	list.concat Dir.glob("#{src_path}/*.class")
+	list.concat Dir.glob("#{test_path}/*.class")
+        remove list
+        end
+
+recipe :clear				do |r|
+	list = []
+	list.concat Dir.glob("#{src_path}/*.class")
+	list.concat Dir.glob("#{src_path}/*.java")
+	list.concat Dir.glob("#{test_path}/*.class")
+	list.concat Dir.glob("#{test_path}/*.java")
+	remove list
+	end

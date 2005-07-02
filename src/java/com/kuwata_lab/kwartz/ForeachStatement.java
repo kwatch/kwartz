@@ -29,7 +29,8 @@ public class ForeachStatement extends Statement {
         } else if (listval.getClass().isArray()) {
             array = (Object[])listval;
         } else {
-            throw new SemanticException("List or Array required in foreach-statement.");
+            //throw new SemanticException("List or Array required in foreach-statement.");
+            throw new EvaluationException("List or Array required in foreach-statement.");
         }
         String loopvar_name = _loopvar.getName();
         for (int i = 0; i < array.length; i++) {

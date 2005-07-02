@@ -22,7 +22,17 @@ public class StringExpression extends LiteralExpression {
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append('"');
-        sb.append(_value);
+        for (int i = 0; i < _value.length(); i++) {
+            char ch = _value.charAt(i);
+            switch (ch) {
+              case '\n':  sb.append("\\n"); break;
+              case '\r':  sb.append("\\r"); break;
+              case '\t':  sb.append("\\t"); break;
+              case '\\':  sb.append("\\\\");  break;
+              case '"':   sb.append("\\\"");  break;
+              default:    sb.append(ch);
+            }
+        }
         sb.append('"');
         sb.append("\n");
         return sb;

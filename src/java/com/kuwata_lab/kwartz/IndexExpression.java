@@ -1,5 +1,5 @@
 /**
- *  @(#) PostfixExpression.java
+ *  @(#) IndexExpression.java
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
  */
@@ -7,8 +7,8 @@ package com.kuwata_lab.kwartz;
 import java.util.Map;
 import java.util.List;
 
-public class PostfixExpression extends BinaryExpression {
-    public PostfixExpression(int token, Expression left, Expression right) {
+public class IndexExpression extends BinaryExpression {
+    public IndexExpression(int token, Expression left, Expression right) {
         super(token, left, right);
     }
     public Object evaluate(Map context) {
@@ -36,10 +36,6 @@ public class PostfixExpression extends BinaryExpression {
             throw new EvaluationException("invalid '[]' operator for non-list,map,nor array.");
             //break;
 
-          case TokenType.PROPERTY:
-            // TBC
-            break;
-
           case TokenType.HASH:
             if (lvalue instanceof Map) {
                 return ((Map)lvalue).get(rvalue);
@@ -52,6 +48,7 @@ public class PostfixExpression extends BinaryExpression {
         return null;
     }
     public Object accept(Visitor visitor) {
-        return visitor.visitPostfixExpression(this);
+        return visitor.visitIndexExpression(this);
     }
+
 }

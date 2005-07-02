@@ -54,4 +54,13 @@ public class PropertyExpression extends Expression {
     public Object accept(Visitor visitor) {
         return visitor.visitPropertyExpression(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _object._inspect(level+1, sb);
+        for (int i = 0; i < level + 1; i++) sb.append("  ");
+        sb.append(_name);
+        sb.append('\n');
+        return sb;
+    }
 }

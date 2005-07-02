@@ -13,6 +13,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(ExpressionTest.class));
         suite.addTest(new TestSuite(StatementTest.class));
         suite.addTest(new TestSuite(ScannerTest.class));
+        suite.addTest(new TestSuite(ExpressionParserTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

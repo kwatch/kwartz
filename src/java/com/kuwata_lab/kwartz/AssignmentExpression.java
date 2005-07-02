@@ -48,7 +48,8 @@ public class AssignmentExpression extends BinaryExpression {
             break;
           default:
             // error
-            throw new SemanticException("invalid assignment: left-value should be varaible, array or hash.");
+            //throw new SemanticException("invalid assignment: left-value should be varaible, array or hash.");
+            throw new EvaluationException("invalid assignment: left-value should be varaible, array or hash.");
         }
         return rvalue;
     }
