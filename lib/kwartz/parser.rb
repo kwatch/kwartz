@@ -117,17 +117,19 @@ module Kwartz
             arguments = parse_arguments()
             syntax_error("missing ')' of function '#{name}()'.") unless token() == ')'
             scan()
-            if ! (name == 'C' || name == 'S' || name == 'D')
-               return FunctionExpression.new(name, arguments)
-            end
-            semantic_error("#{name}(): should take only one argument.") unless arguments.length == 1
-            condition = arguments.first
+            s = nil
             case name
             when 'C';  s = ' checked="checked"'
             when 'S';  s = ' selected="selected"'
             when 'D';  s = ' disabled="disabled"'
             end
-            return ConditionalExpression.new(condition, StringExpression.new(s), StringExpression.new(''))
+            if s == nil
+               return FunctionExpression.new(name, arguments)
+            else
+               semantic_error("#{name}(): should take only one argument.") unless arguments.length == 1
+               condition = arguments.first
+               return ConditionalExpression.new(condition, StringExpression.new(s), StringExpression.new(''))
+            end
          elsif tkn == '('
             scan()
             expr = parse_expression()
@@ -287,7 +289,7 @@ module Kwartz
       ##
       def parse_relational_expr
          expr = parse_arith_expr()
-         while (op = token()) == '==' || op == '!=' || op == '>' || op == '>=' || op == '<' || op == '<='
+         if (op = token()) == '==' || op == '!=' || op == '>' || op == '>=' || op == '<' || op == '<='
             scan()
             if token() == :empty
                if op == '=='
@@ -400,6 +402,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  print-stmt   ::=  'print' '(' arguments ')' ';'
       ##
       def parse_print_stmt()
@@ -417,6 +420,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  expr-stmt    ::=  expression ';'
       ##
       def parse_expr_stmt()
@@ -428,9 +432,10 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  elseif-part  ::=  'elseif' '(' expression ')' statement elseif-part | e
       ##
-      ##
+      ## BNF:
       ##  if-stmt      ::=  'if' '(' expression ')' statement
       ##                  | 'if' '(' expression ')' statement elseif-part
       ##                  | 'if' '(' expression ')' statement elseif-part 'else' statement
@@ -461,6 +466,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
       ##
       def parse_foreach_stmt()
@@ -483,6 +489,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  while-stmt   ::=  'while' '(' expression ')' statement
       ##
       def parse_while_stmt()
@@ -499,7 +506,8 @@ module Kwartz
 
 
       ##
-      ##  @stag,  @cont,  @etag,  @element(name)
+      ## BNF:
+      ##  expand-stmt   ::= '@stag' | '@cont' || '@etag' | '@element' '(' name ')' | '@content' '(' name ')'
       ##
       def parse_expand_stmt()
          Kwartz::assert unless token() == '@'
@@ -527,7 +535,7 @@ module Kwartz
 
 
       ##
-      ## rawcode-stmt ::= '<%' strings "\n" | '<?' strings "\n"
+      ## rawcode-stmt ::= '<%' strings '%>' | '<?' strings '?>'
       ##
       def parse_rawcode_stmt()
          Kwartz::assert unless token() == :rawcode
@@ -549,6 +557,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  stmt-list    ::=  statement | stmt-list statement
       ##               ::=  statement { statement }
       ##  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
@@ -565,6 +574,7 @@ module Kwartz
 
 
       ##
+      ## BNF:
       ##  statement    ::=  print-stmt | if-stmt | foreach-stmt | while-stmt
       ##                  | expr-stmt | block-stmt | expand-stmt | ';'
       ##

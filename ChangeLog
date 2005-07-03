@@ -3,6 +3,8 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-07-04 rev.97
+	.- [bugfix] Parser#parse_relational() accepted continued relational operator.
 
 .: 2005-06-29 rev.96
 	.- [change] Converter class is now ready to support new 'loop' directive

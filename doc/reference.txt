@@ -119,8 +119,10 @@
 .	JSP(JSTL)	., true		., false	., null
 .	Velocity	., true		., false	., -
 .	.+--------------------
-.JA		{{,true,}}、{{,false,}}、{{,null,}}の変換
-.EN		Translation of {{,true,}}, {{,false,}} and {{,null,}}
+.JA		true、false、nullの変換
+.EN		Translation of true, false, and null
+.JA	.#	{{,true,}}、{{,false,}}、{{,null,}}の変換
+.EN	.#	Translation of {{,true,}}, {{,false,}} and {{,null,}}
 .	
 .	
 .JA	なおVelocityではnullやそれに類するキーワードがありません。
@@ -373,8 +375,10 @@
 .	   JSTL			., {{,hash['key'],}}
 .	   Velocity		., {{,hash.key,}}
 .	.+--------------------
-.JA		「{{,hash[:key],}}」の変換結果
-.EN		Translation of '{{,hash[:key],}}'
+.JA		「hash[:key]」の変換結果
+.EN		Translation of 'hash[:key]'
+.JA	.#	「{{,hash[:key],}}」の変換結果
+.EN	.#	Translation of '{{,hash[:key],}}'
 .	
 .	
 .JA	.? PLプログラム：

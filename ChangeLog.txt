@@ -1,12 +1,18 @@
 $Release$
 $Id$
 
-: release 2.0.3 (2005-06-29) (rev.96)
+: release 2.0.3 (2005-07-04) (rev.97)
 	* [change] 'loop' directive is re-renamed to 'list'
+		- http://www.kuwata-lab.com/kwartz/reference.en.02.html#kd-list
 	* [bugfix] spaces around tags in the middle of line are now left (bug#1228039)
+		- http://sourceforge.net/tracker/index.php?func=detail&aid=1228039&group_id=127304&atid=708267
 	* [bugfix] document eratta fixed (bug#1228301)
+		- http://sourceforge.net/tracker/index.php?func=detail&aid=1228301&group_id=127304&atid=708267
 	* [enhance] 'replace' and 'placeholder' directive support ':content' option
+		- http://www.kuwata-lab.com/kwartz/reference.en.02.html#kd-replace
+		- http://www.kuwata-lab.com/kwartz/reference.en.02.html#kd-placeholder
 	* [enhance] '@content(name)' represents content of an element marked with 'name'.
+		- http://www.kuwata-lab.com/kwartz/reference.en.01.html#pl-decl
 	* [change] examples updated (rails1, thumbnail, pagelayout)
 
 : release 2.0.2 (2005-05-09) (rev.77)
