@@ -1,6 +1,9 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-03 (rev.6)
+	.- [enhance] add Converter.FetchData class
+
 .: 2005-07-03 (rev.5)
 	.- [enhance] add StatementParser class
 	.- [enhance] add Interpreter class

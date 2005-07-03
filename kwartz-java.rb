@@ -392,28 +392,27 @@ public class Utility {
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
-    //public String capitalize(String str) {
-    //    return Character.toUpperCase(str.charAt(0)) + str.substring(1);
-    //}
+    public static String inspectString(String s) {
+        return inspectString(s, false);
+    }
 
-    public String escapeString(String str) {
-        if (str == null) return null;
+    public static String inspectString(String s, boolean flag_escape_only) {
+        if (s == null) return null;
         StringBuffer sb = new StringBuffer();
-        char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length ; i++) {
-            switch (chars[i]) {
-              case '"':
-                sb.append("\\\"");   break;
-              case '\\':
-                sb.append("\\\\");   break;
-              case '\n':
-                sb.append("\\n");    break;
-              case '\r':
-                sb.append("\\r");    break;
+        if (! flag_escape_only) sb.append('"');
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+              case '\n':  sb.append("\\n");   break;
+              case '\r':  sb.append("\\r");   break;
+              case '\t':  sb.append("\\t");   break;
+              case '\\':  sb.append("\\\\");  break;
+              case '"':   sb.append("\\\"");  break;
               default:
-                sb.append(chars[i]);
+                sb.append(ch);
             }
         }
+        if (! flag_escape_only) sb.append('"');
         return sb.toString();
     }
 
@@ -3200,6 +3199,341 @@ public class Interpreter {
     public Object execute(Map context, Writer writer) throws java.io.IOException {
         if (_stmt == null) return null;
         return _stmt.execute(context, writer);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public interface Converter {
+    public Statement[] convert(String pdata);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class DefaultConverter implements Converter {
+
+    private String _pdata;
+    private String _filename;
+
+    public DefaultConverter() {
+    }
+
+
+    protected static class FetchData {
+        public String tag_str;
+        public String before_text;
+        public String before_space;
+        //public String slash_etag;
+        public String tagname;
+        public String attr_str;
+        public String extra_space;
+        //public String slash_empty;
+        public String after_space;
+        public boolean is_etag;
+        public boolean is_empty;
+        public boolean is_begline;
+        public boolean is_endline;
+        public int start_pos;
+        public int end_pos;
+        public int linenum;
+
+        public String _inspect() {
+            StringBuffer sb = new StringBuffer();
+            if (tag_str != null) {
+                sb.append("tag_str      = " + Utility.inspectString(tag_str)       + "\n");
+                sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
+                sb.append("before_space = " + Utility.inspectString(before_space)  + "\n");
+                sb.append("tagname      = " + Utility.inspectString(tagname)       + "\n");
+                sb.append("attr_str     = " + Utility.inspectString(attr_str)      + "\n");
+                sb.append("extra_space  = " + Utility.inspectString(extra_space)   + "\n");
+                sb.append("after_space  = " + Utility.inspectString(after_space)   + "\n");
+                sb.append("is_etag      = " + is_etag       + "\n");
+                sb.append("is_empty     = " + is_empty      + "\n");
+                sb.append("is_begline   = " + is_begline    + "\n");
+                sb.append("is_endline   = " + is_endline    + "\n");
+                sb.append("start_pos    = " + start_pos     + "\n");
+                sb.append("end_pos      = " + end_pos       + "\n");
+                sb.append("linenum      = " + linenum       + "\n");
+            } else {
+                sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
+                sb.append("linenum      = " + linenum       + "\n");
+            }
+            return sb.toString();
+        }
+    }
+
+
+    protected final Pattern FETCH_PATTERN =
+        Pattern.compile("([ \t]*)<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n?)");
+
+    public List fetchAll(String pdata) {
+        _pdata = pdata;
+        int index = 0;
+        int linenum = 1;
+        char lastchar = '\0';
+        Matcher m = FETCH_PATTERN.matcher(pdata);
+        List list = new ArrayList();
+        FetchData data;
+        while (m.find()) {
+            data = new FetchData();
+            data.tag_str      = m.group(0);
+            data.before_space = m.group(1);
+            data.is_etag      = "/".equals(m.group(2));
+            //data.slash_etag   = m.group(2);
+            data.tagname      = m.group(3);
+            data.attr_str     = m.group(4);
+            data.extra_space  = m.group(5);
+            data.is_empty     = "/".equals(m.group(6));
+            //data.slash_empty = m.group(6);
+            data.after_space  = m.group(7);
+            data.start_pos    = m.start();
+            data.end_pos      = m.end();
+            data.before_text  = pdata.substring(index, m.start());
+            list.add(data);
+            index = m.end();
+
+            // linenum
+            String before_text = data.before_text;
+            int len = before_text.length();
+            for (int i = 0; i < len; i++) {
+                if (before_text.charAt(i) == '\n') linenum += 1;
+            }
+            data.linenum  = linenum;
+            String tag_str = data.tag_str;
+            len = tag_str.length();
+            for (int i = 0; i < len; i++) {
+                if (tag_str.charAt(i) == '\n') linenum += 1;
+            }
+
+            // is_begline, is_endline
+            if (before_text.length() > 0) {
+                data.is_begline = before_text.charAt(before_text.length() - 1) == '\n';
+            } else {
+                data.is_begline = lastchar == '\n' || lastchar == '\0';
+            }
+            lastchar = tag_str.charAt(tag_str.length() - 1);
+            data.is_endline = lastchar == '\n';
+        }
+
+        // remained text
+        data = new FetchData();
+        data.linenum     = linenum;
+        data.before_text = pdata.substring(index);
+        list.add(data);
+
+        return list;
+    }
+
+    public static void main(String[] args) {
+        try {
+            java.io.Writer writer = new java.io.OutputStreamWriter(System.out);
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < args.length; i++) {
+                java.io.InputStream input = new java.io.FileInputStream(args[i]);
+                java.io.Reader reader = new java.io.InputStreamReader(input);
+                int ch;
+                while ((ch = reader.read()) > 0) {
+                    sb.append((char)ch);
+                }
+            }
+            DefaultConverter converter = new DefaultConverter();
+            List list = converter.fetchAll(sb.toString());
+            for (Iterator it = list.iterator(); it.hasNext(); ) {
+                FetchData data = (FetchData)it.next();
+                System.out.println(data._inspect());
+            }
+        } catch (java.io.UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+//    protected Object fetch() {
+//        char ch;
+//        StringBuffer sb = new StringBuffer();
+//        while ((ch = read()) != '\0') {
+//            if (ch != '<') {
+//                sb.append(ch);
+//            } else {
+//                ch = read();
+//                if (ch == '\0') {      // eof
+//                    sb.append(ch);
+//                    break;
+//                }
+//                else if (ch == '/') {  // etag candidate
+//                    ch = read();
+//                    if (ch == '\0') {
+//                        sb.append(ch);
+//                        break;
+//                    }
+//                    if (! CharacterUtil.isAlphabet(ch)) {
+//                        sb.append('<');
+//                        sb.append('/');
+//                        sb.append(ch);
+//                        continue;
+//                    }
+//
+//                }
+//                else if (CharacterUtil.isAlphabet(ch)) { // stag or empty tag
+//
+//                }
+//                else { // not a tag
+//                    sb.append('<');
+//                    sb.append(ch);
+//                }
+//            }
+//        }
+//        return null;
+//    }
+
+    public Statement[] convert(String pdata) {
+        List list = fetchAll(pdata);
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
+            FetchData data = (FetchData)it.next();
+            
+        }
+        return null;
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class ConverterTest extends TestCase {
+
+    public void _testFetchAll(String input, String expected) {
+        DefaultConverter converter = new DefaultConverter();
+        List list = converter.fetchAll(input);
+        StringBuffer actual = new StringBuffer();
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
+            DefaultConverter.FetchData data = (DefaultConverter.FetchData)it.next();
+            actual.append(data._inspect().toString());
+        }
+        assertEquals(expected, actual.toString());
+    }
+
+    public void testFetchAll1() {
+        String input = <<'END';
+<html lang="ja">
+  <body>
+    <h1 style="color: #fffff">title</h1>
+  </body>
+</html>
+END
+        String expected = <<'END';
+tag_str      = "<html lang=\"ja\">\n"
+before_text  = ""
+before_space = ""
+after_space  = "\n"
+tagname      = "html"
+attr_str     = " lang=\"ja\""
+extra_space  = ""
+is_etag      = false
+is_empty     = false
+is_begline   = true
+is_endline   = true
+start_pos    = 0
+end_pos      = 17
+linenum      = 1
+
+tag_str      = "  <body>\n"
+before_text  = ""
+before_space = "  "
+after_space  = "\n"
+tagname      = "body"
+attr_str     = ""
+extra_space  = ""
+is_etag      = false
+is_empty     = false
+is_begline   = true
+is_endline   = true
+start_pos    = 17
+end_pos      = 26
+linenum      = 2
+
+tag_str      = "    <h1 style=\"color: #fffff\">"
+before_text  = ""
+before_space = "    "
+after_space  = ""
+tagname      = "h1"
+attr_str     = " style=\"color: #fffff\""
+extra_space  = ""
+is_etag      = false
+is_empty     = false
+is_begline   = true
+is_endline   = false
+start_pos    = 26
+end_pos      = 56
+linenum      = 3
+
+tag_str      = "</h1>\n"
+before_text  = "title"
+before_space = ""
+after_space  = "\n"
+tagname      = "h1"
+attr_str     = ""
+extra_space  = ""
+is_etag      = true
+is_empty     = false
+is_begline   = false
+is_endline   = true
+start_pos    = 61
+end_pos      = 67
+linenum      = 3
+
+tag_str      = "  </body>\n"
+before_text  = ""
+before_space = "  "
+after_space  = "\n"
+tagname      = "body"
+attr_str     = ""
+extra_space  = ""
+is_etag      = true
+is_empty     = false
+is_begline   = true
+is_endline   = true
+start_pos    = 67
+end_pos      = 77
+linenum      = 4
+
+tag_str      = "</html>\n"
+before_text  = ""
+before_space = ""
+after_space  = "\n"
+tagname      = "html"
+attr_str     = ""
+extra_space  = ""
+is_etag      = true
+is_empty     = false
+is_begline   = true
+is_endline   = true
+start_pos    = 77
+end_pos      = 85
+linenum      = 5
+
+END
+        _testFetchAll(input, expected);
+    }
+
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(ConverterTest.class);
     }
 }
 
