@@ -12,6 +12,46 @@ require 'fileutils'
 FileUtils.mkdir_p(SRC_ROOT)  unless test(?d, SRC_ROOT)
 FileUtils.mkdir_p(TEST_ROOT) unless test(?d, TEST_ROOT)
 
+def expand_heredoc(str)
+   flag = false
+   s = ""
+   terminator = nil
+   head = tail = word = indent = nil
+   heredoc = nil
+   lines = nil
+   str.each_line do |line|
+      if line =~ /<<<?'(\w+)'/
+         head, word, tail = $`, $1, $'                     #'
+         terminator = Regexp.compile("^(\\s*)#{word}$")
+         flag = true
+         indent = " " * head.length
+         s << head << '""' << "\n"
+         lines = []
+      elsif line =~ terminator
+         flag = false
+         space = $1
+         lines.each do |line|
+            line.gsub!(/^#{space}/, '')  if space && !space.empty?
+            line.gsub!(/\\/, '\\\\\\\\')
+            line.gsub!(/\"/, '\\\\"')
+            line.gsub!(/\n/, '\\\\n')
+            line.gsub!(/\r/, '\\\\r')
+            line.gsub!(/\t/, '\\\\t')
+            s << "#{indent}+ \"#{line}\"\n"
+         end
+         s << indent << tail
+      else
+         if flag
+            lines << line
+         else
+            s << line
+         end
+      end
+   end
+   return s
+end
+
+
 header = ''
 while line = DATA.gets()
    break if line =~ /^\/\/ -----/
@@ -41,6 +81,10 @@ while line = DATA.gets()
       package.split('.').each do |name|
          path << "/#{name}"
          Dir.mkdir(path) unless test(?d, path)
+      end
+
+      if klass =~ /Test$/
+         code = expand_heredoc(code)
       end
 
       filename = "#{path}/#{klass}.java"
@@ -120,7 +164,7 @@ PLUS		+.
 MINUS		-.
 
 // statement
-BLOCK		<<block>>
+BLOCK		:block
 PRINT		:print
 EXPR		:expr
 FOREACH		:foreach
@@ -129,24 +173,33 @@ WHILE		:while
 IF		:if
 ELSEIF		:elseif
 ELSE		:else
+EMPTYSTMT	:empty_stmt
 
 // symbols
-EXPAND		@
 COLON		:
 SEMICOLON	;
 L_PAREN		(
 R_PAREN		)
+L_CURLY		{
+R_CURLY		}
 CONDITIONAL	?:
 PERIOD		.
 COMMA		,
 
+// expand
+EXPAND		@
+STAG		@stag
+ETAG		@etag
+CONT		@cont
+ELEMENT		@element
+CONTENT		@content
 
 // raw expression and raw statement
 RAWEXPR		<%= %>
 RAWSTMT		<% %>
 
 // element
-ELEMENT		#
+ELEMDECL	#
 VALUE		value:
 ATTR		attr:
 APPEND		append:
@@ -460,6 +513,7 @@ public class Visitor {
     public Object visitElementStatement(ElementStatement stmt)               { return visitStatement(stmt); }
     public Object visitExpandStatement(ExpandStatement stmt)                 { return visitStatement(stmt); }
     public Object visitRawcodeStatement(RawcodeStatement stmt)               { return visitStatement(stmt); }
+    public Object visitEmptyStatement(EmptyStatement stmt)                   { return visitStatement(stmt); }
 }
 
 // ================================================================================
@@ -1662,6 +1716,14 @@ public class PrintStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitPrintStatement(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        for (int i = 0; i < _arguments.length; i++) {
+            _arguments[i]._inspect(level+1, sb);
+        }
+        return sb;
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -1684,6 +1746,12 @@ public class ExpressionStatement extends Statement {
 
     public Object accept(Visitor visitor) {
         return visitor.visitExpressionStatement(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _expr._inspect(level+1, sb);
+        return sb;
     }
 }
 
@@ -1729,6 +1797,14 @@ public class ForeachStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitForeachStatement(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _loopvar._inspect(level+1, sb);
+        _list._inspect(level+1, sb);
+        _body._inspect(level+1, sb);
+        return sb;
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -1761,6 +1837,13 @@ public class WhileStatement extends Statement {
 
     public Object accept(Visitor visitor) {
         return visitor.visitWhileStatement(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _condition._inspect(level+1, sb);
+        _body._inspect(level+1, sb);
+        return sb;
     }
 }
 
@@ -1796,6 +1879,15 @@ public class IfStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitIfStatement(this);
     }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _condition._inspect(level+1, sb);
+        _then_body._inspect(level+1, sb);
+        if (_else_body != null)
+            _else_body._inspect(level+1, sb);
+        return sb;
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -1808,7 +1900,7 @@ import java.io.IOException;
 public class ElementStatement extends Statement {
     private Statement _plogic;
     public ElementStatement(Statement plogic) {
-        super(TokenType.ELEMENT);
+        super(TokenType.ELEMDECL);
         _plogic = plogic;
     }
     public Object execute(Map context, Writer writer) {
@@ -1816,6 +1908,12 @@ public class ElementStatement extends Statement {
     }
     public Object accept(Visitor visitor) {
         return visitor.visitElementStatement(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        super._inspect(level, sb);
+        _plogic._inspect(level+1, sb);
+        return sb;
     }
 }
 
@@ -1847,8 +1945,27 @@ public class ExpandStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitExpandStatement(this);
     }
-}
 
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        switch (_type) {
+          case TokenType.STAG:
+            sb.append("@stag"); break;
+          case TokenType.ETAG:
+            sb.append("@etag"); break;
+          case TokenType.CONT:
+            sb.append("@cont"); break;
+          case TokenType.ELEMENT:
+            sb.append("@element(" + _name + ")");  break;
+          case TokenType.CONTENT:
+            sb.append("@content(" + _name + ")");  break;
+          default:
+            assert false;
+        }
+        sb.append("\n");
+        return sb;
+    }
+}
 
 // --------------------------------------------------------------------------------
 
@@ -1874,12 +1991,35 @@ public class RawcodeStatement extends Statement {
     public Object accept(Visitor visitor) {
         return visitor.visitRawcodeStatement(this);
     }
-}
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append("<" + "%=" + _rawcode + "%" + ">");
         return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.io.Writer;
+import java.io.IOException;
+
+public class EmptyStatement extends Statement {
+    public EmptyStatement() {
+        super(TokenType.EMPTYSTMT);
+    }
+
+    public Object execute(Map context, Writer writer) {
+        return null;
+    }
+    public Object accept(Visitor visitor) {
+        return visitor.visitEmptyStatement(this);
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        return super._inspect(level, sb);
     }
 }
 
@@ -1958,6 +2098,7 @@ public class Scanner {
     protected static byte[] _op_table3 = new byte[Byte.MAX_VALUE];
     static {
         keywords = new HashMap();
+        keywords.put("print",   new Integer(TokenType.PRINT));
         keywords.put("foreach", new Integer(TokenType.FOREACH));
         keywords.put("in",      new Integer(TokenType.IN));
         keywords.put("while",   new Integer(TokenType.WHILE));
@@ -1991,12 +2132,14 @@ public class Scanner {
         //
         _op_table3['('] = TokenType.L_PAREN;
         _op_table3[')'] = TokenType.R_PAREN;
+        _op_table3['{'] = TokenType.L_CURLY;
+        _op_table3['}'] = TokenType.R_CURLY;
         _op_table3[']'] = TokenType.R_BRACKET;
         _op_table3['?'] = TokenType.CONDITIONAL;
         _op_table3[':'] = TokenType.COLON;
         _op_table3[';'] = TokenType.SEMICOLON;
         _op_table3[','] = TokenType.COMMA;
-        _op_table3['#'] = TokenType.ELEMENT;
+        _op_table3['#'] = TokenType.ELEMDECL;
     }
 
     public int scan() throws LexicalException {
@@ -2324,7 +2467,6 @@ public class Parser {
 
     public Parser(Scanner scanner) {
         _scanner = scanner;
-        _scanner.scan();
     }
 
     public int token() {
@@ -2367,17 +2509,14 @@ public class Parser {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.io.Writer;
-import java.io.IOException;
 
 public class ExpressionParser extends Parser {
 
     public ExpressionParser(Scanner scanner) {
         super(scanner);
+        _scanner.scan();
     }
 
 
@@ -2751,11 +2890,567 @@ public class ExpressionParser extends Parser {
      */
     public Expression parse(String expr_code) throws SyntaxException {
         _scanner.reset(expr_code);
+        _scanner.scan();
         Expression expr = parseExpression();
         if (_scanner.getToken() != TokenType.EOF) {
             syntaxError("Expression is not ended.");
         }
         return expr;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+import java.util.ArrayList;
+
+public class StatementParser extends Parser {
+    private ExpressionParser _exprParser;
+
+    public StatementParser() {
+        this(new Scanner());
+    }
+    public StatementParser(Scanner scanner) {
+        super(scanner);
+        _exprParser = new ExpressionParser(scanner);
+    }
+
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseStatement() {
+        int t = token();
+        Statement stmt = null;
+        switch (t) {
+          //case TokenType.R_CURLY:
+          //  stmt = null;
+          //  break;
+          case TokenType.L_CURLY:
+            stmt = parseBlockStatement();
+            break;
+          case TokenType.PRINT:
+            stmt = parsePrintStatement();
+            break;
+          case TokenType.NAME:
+          case TokenType.L_PAREN:
+            stmt = parseExpressionStatement();
+            break;
+          case TokenType.IF:
+            stmt = parseIfStatement();
+            break;
+          case TokenType.FOREACH:
+          //case TokenType.FOR:
+            stmt = parseForeachStatement();
+            break;
+          case TokenType.WHILE:
+            stmt = parseWhileStatement();
+            break;
+          case TokenType.EXPAND:
+            stmt = parseExpandStatement();
+            break;
+          case TokenType.ELEMDECL:
+            stmt = parseElementStatement();
+            break;
+          case TokenType.RAWSTMT:
+            stmt = parseRawcodeStatement();
+            break;
+          case TokenType.SEMICOLON:
+            stmt = parseEmptyStatement();
+            break;
+          default:
+            syntaxError("statement expected but got '" + token() + "'.");
+        }
+        return stmt;
+    }
+
+
+    /*
+     * BNF:
+     *  stmt-list    ::=  statement | stmt-list statement
+     *               ::=  statement { statement }
+     *  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
+     */
+    public Statement parseBlockStatement() {
+        assert token() == TokenType.L_CURLY;
+        int start_linenum = linenum();
+        scan();
+        Statement[] stmts = parseStatementList();
+        if (token() != TokenType.R_CURLY)
+            syntaxError("block-statement(starts at line " + start_linenum + ") requires '}'.");
+        scan();
+        return new BlockStatement(stmts);
+    }
+
+    public Statement[] parseStatementList() {
+        List list = new ArrayList();
+        Statement stmt;
+        while (token() != TokenType.EOF) {
+            if (token() == TokenType.R_CURLY)
+                break;
+            stmt = parseStatement();
+            list.add(stmt);
+            //if (! (stmt instanceof EmptyStatement)) {
+            //    list.add(stmt);
+            //}
+        }
+        Statement[] stmts = new Statement[list.size()];
+        list.toArray(stmts);
+        return stmts;
+    }
+
+
+    /*
+     *  BNF:
+     *    print-stmt   ::=  'print' '(' arguments ')' ';'
+     */
+    public Statement parsePrintStatement() {
+        assert token() == TokenType.PRINT;
+        int t = scan();
+        if (t != TokenType.L_PAREN)
+            syntaxError("print-statement requires '('.");
+        t = scan();
+        Expression[] args = _exprParser.parseArguments();
+        if (token() != TokenType.R_PAREN)
+            syntaxError("print-statement requires ')'.");
+        t = scan();
+        if (t != TokenType.SEMICOLON)
+            syntaxError("print-statement requires ';'.");
+        scan();
+        return new PrintStatement(args);
+    }
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseExpressionStatement() {
+        //assert token() == TokenType.NAME || token() == TokenType.L_PAREN;
+        Expression expr = _exprParser.parseExpression();
+        if (token() != TokenType.SEMICOLON)
+            syntaxError("expression-statement requires ';'.");
+        scan();
+        return new ExpressionStatement(expr);
+    }
+
+
+    /*
+     *  BNF:
+     *    if-stmt     ::=  'if' '(' expression ')' statement
+     *                   | 'if' '(' expression ')' statement elseif-part
+     *                   | 'if' '(' expression ')' statement elseif-part 'else' statement
+     *                ::=  'if' '(' expression ')' statement
+     *                      { 'elseif' '(' expression ')' statement }
+     *                      [ 'else' statement ]
+     */
+    public Statement parseIfStatement() {
+        assert token() != TokenType.IF || token() != TokenType.ELSEIF;
+        String word = token() == TokenType.IF ? "if" : "elseif";
+        int t = scan();
+        if (t != TokenType.L_PAREN)
+            syntaxError(word + "-statement requires '('.");
+        scan();
+        Expression condition = _exprParser.parseExpression();
+        if (token() != TokenType.R_PAREN)
+            syntaxError(word + "-statement requires ')'.");
+        scan();
+        Statement thenBody = parseStatement();
+        Statement elseBody = null;
+        if (token() == TokenType.ELSEIF) {
+            elseBody = parseIfStatement();
+        } else if (token() == TokenType.ELSE) {
+            scan();
+            elseBody = parseStatement();
+        }
+        return new IfStatement(condition, thenBody, elseBody);
+    }
+
+
+    /*
+     *  BNF:
+     *    foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
+     */
+    public Statement parseForeachStatement() {
+        assert token() == TokenType.FOREACH;
+        int t = scan();
+        if (t != TokenType.L_PAREN)
+            syntaxError("foreach-statement requires '('.");
+        t = scan();
+        if (t != TokenType.NAME)
+            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(token(), value()) + "'.");
+        String varname = value();
+        VariableExpression loopvar = new VariableExpression(varname);
+        t = scan();
+        if (t != TokenType.IN && t != TokenType.ASSIGN)
+            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(token(), value()) + "'.");
+        scan();
+        Expression list = _exprParser.parseExpression();
+        if (token() != TokenType.R_PAREN)
+            syntaxError("foreach-statement requires ')'.");
+        scan();
+        Statement body = parseStatement();
+        return new ForeachStatement(loopvar, list, body);
+    }
+
+
+    /*
+     *  BNF:
+     *    while-stmt   ::=  'while' '(' expression ')' statement
+     */
+    public Statement parseWhileStatement() {
+        assert token() == TokenType.WHILE;
+        scan();
+        if (token() != TokenType.L_PAREN)
+            syntaxError("while-statement requires '('");
+        scan();
+        Expression condition = _exprParser.parseExpression();
+        if (token() != TokenType.R_PAREN)
+            syntaxError("while-statement requires ')'");
+        scan();
+        Statement body = parseStatement();
+        return new WhileStatement(condition, body);
+    }
+
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseExpandStatement() {
+        return null;
+    }
+
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseElementStatement() {
+        return null;
+    }
+
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseRawcodeStatement() {
+        assert token() == TokenType.RAWSTMT;
+        String rawcode = value();
+        scan();
+        return new RawcodeStatement(rawcode);
+    }
+
+
+    /*
+     *  BNF:
+     *
+     */
+    public Statement parseEmptyStatement() {
+        assert token() == TokenType.SEMICOLON;
+        scan();
+        return new EmptyStatement();
+    }
+
+
+    /*
+     *
+     */
+    public BlockStatement parse(String input) {
+        return parse(input, 1);
+    }
+    public BlockStatement parse(String input, int baselinenum) {
+        _scanner.reset(input, baselinenum);
+        _scanner.scan();
+        Statement[] stmts = parseStatementList();
+        if (token() != TokenType.EOF)
+            syntaxError("EOF expected but '" + TokenType.inspect(token(), value()) + "'.");
+        return new BlockStatement(stmts);
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.io.Writer;
+import java.io.PrintWriter;
+import java.io.IOException;
+
+public class Interpreter {
+    StatementParser _parser;
+    Statement _stmt = null;
+
+    public Interpreter() {
+        _parser = new StatementParser();
+    }
+
+    public Statement compile(String code) {
+        _stmt = _parser.parse(code);
+        return _stmt;
+    }
+
+    public Object execute(Map context) throws java.io.IOException  {
+        return execute(context, new PrintWriter(System.out));
+    }
+
+    public Object execute(Map context, Writer writer) throws java.io.IOException {
+        if (_stmt == null) return null;
+        return _stmt.execute(context, writer);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+
+public class StatementParserTest extends TestCase {
+
+    String input, expected;
+
+    public Parser _test(String input, String expected, String method) {
+        return _test(input, expected, method, null);
+    }
+
+    public Parser _test(String input, String expected, String method, Class klass) {
+        Scanner scanner = new Scanner(input);
+        StatementParser parser = new StatementParser(scanner);
+        Statement stmt = null;
+        Statement[] stmts = null;
+        if (method.equals("parsePrintStatement")) {
+            stmt = parser.parsePrintStatement();
+        } else if (method.equals("parseExpressionStatement")) {
+            stmt = parser.parseExpressionStatement();
+        } else if (method.equals("parseIfStatement")) {
+            stmt = parser.parseIfStatement();
+        } else if (method.equals("parseForeachStatement")) {
+            stmt = parser.parseForeachStatement();
+        } else if (method.equals("parseWhileStatement")) {
+            stmt = parser.parseWhileStatement();
+        } else if (method.equals("parseExpandStatement")) {
+            stmt = parser.parseExpandStatement();
+        } else if (method.equals("parseElementStatement")) {
+            stmt = parser.parseElementStatement();
+        } else if (method.equals("parseRawcodeStatement")) {
+            stmt = parser.parseRawcodeStatement();
+        } else if (method.equals("parseBlockStatement")) {
+            stmt = parser.parseBlockStatement();
+        } else if (method.equals("parseStatementList")) {
+            stmts = parser.parseStatementList();
+        } else {
+            fail("*** invalid method name ***");
+        }
+
+        if (klass != null) {
+            assertEquals(klass, stmt.getClass());
+        }
+        if (stmt != null) {
+            StringBuffer actual = stmt._inspect();
+            assertEquals(expected, actual.toString());
+        } else if (stmts != null) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < stmts.length; i++) {
+                stmts[i]._inspect(0, sb);
+            }
+            assertEquals(expected, sb.toString());
+        } else {
+            assert false;
+        }
+        return parser;
+    }
+
+
+    public void testParseBlockStatement1() {
+        input = "{ print(foo); print(bar); print(baz); }";
+        expected = ":block\n  :print\n    foo\n  :print\n    bar\n  :print\n    baz\n";
+        _test(input, expected, "parseBlockStatement", BlockStatement.class);
+    }
+
+    public void testParseBlockStatement2() {
+        input = "{ i=0; i+=1; ; }";
+        expected = ":block\n"
+                 + "  :expr\n"
+                 + "    =\n"
+                 + "      i\n"
+                 + "      0\n"
+                 + "  :expr\n"
+                 + "    +=\n"
+                 + "      i\n"
+                 + "      1\n"
+                 + "  :empty_stmt\n"
+                 ;
+        _test(input, expected, "parseBlockStatement", BlockStatement.class);
+    }
+
+
+    public void testParsePrintStatement1() { // print('foo');
+        input = "print('foo');";
+        expected = ":print\n  \"foo\"\n";
+        _test(input, expected, "parsePrintStatement", PrintStatement.class);
+    }
+    public void testParsePrintStatement2() { // print(a, 'foo'.+b, 100);
+        input = "print(a, 'foo'.+b, 100);";
+        expected = ":print\n  a\n  .+\n    \"foo\"\n    b\n  100\n";
+        _test(input, expected, "parsePrintStatement", PrintStatement.class);
+    }
+
+    public void testParseExpressionStatement1() { // x = 100;
+        input = "x = 100;";
+        expected = ":expr\n  =\n    x\n    100\n";
+        _test(input, expected, "parseExpressionStatement", ExpressionStatement.class);
+    }
+
+    public void testParseExpressionStatement2() { // x[i][j] = i > j ? 0 : 1;
+        input = "x[i][j] = i > j ? 0 : 1;";
+        expected = ":expr\n  =\n    []\n      []\n        x\n        i\n      j\n    ?:\n      >\n        i\n        j\n      0\n      1\n";
+        _test(input, expected, "parseExpressionStatement", ExpressionStatement.class);
+    }
+
+
+    public void testParseForeachStatement1() {
+        input = "foreach(item in list) { print(item); }";
+        expected = ":foreach\n"
+                 + "  item\n"
+                 + "  list\n"
+                 + "  :block\n"
+                 + "    :print\n"
+                 + "      item\n"
+                 ;
+        _test(input, expected, "parseForeachStatement", ForeachStatement.class);
+    }
+
+    public void testParseForeachStatement2() {
+        input = "foreach(item in list) print(item);";
+        expected = ":foreach\n"
+                 + "  item\n"
+                 + "  list\n"
+                 + "  :print\n"
+                 + "    item\n"
+                 ;
+        _test(input, expected, "parseForeachStatement", ForeachStatement.class);
+    }
+
+
+    public void testParseIfStatement1() {
+        input = "if (flag) print(flag);";
+        expected = ":if\n"
+                 + "  flag\n"
+                 + "  :print\n"
+                 + "    flag\n"
+                 ;
+        _test(input, expected, "parseIfStatement", IfStatement.class);
+    }
+
+    public void testParseIfStatement2() {
+        input = "if (flag) print(true); else print(false);";
+        expected = ":if\n"
+                 + "  flag\n"
+                 + "  :print\n"
+                 + "    true\n"
+                 + "  :print\n"
+                 + "    false\n"
+                 ;
+        _test(input, expected, "parseIfStatement", IfStatement.class);
+    }
+
+    public void testParseIfStatement3() {
+        input = "if (flag1) print(aaa); else if (flag2) print(bbb); elseif(flag3) print(ccc); else print(ddd);";
+        expected = ":if\n"
+                 + "  flag1\n"
+                 + "  :print\n"
+                 + "    aaa\n"
+                 + "  :if\n"
+                 + "    flag2\n"
+                 + "    :print\n"
+                 + "      bbb\n"
+                 + "    :if\n"
+                 + "      flag3\n"
+                 + "      :print\n"
+                 + "        ccc\n"
+                 + "      :print\n"
+                 + "        ddd\n"
+                 ;
+        _test(input, expected, "parseIfStatement", IfStatement.class);
+    }
+
+
+    public void testParseWhileStatement1() {
+        input = "while (i < max) i += 1;";
+        expected = ":while\n"
+                 + "  <\n"
+                 + "    i\n"
+                 + "    max\n"
+                 + "  :expr\n"
+                 + "    +=\n"
+                 + "      i\n"
+                 + "      1\n"
+                 ;
+        _test(input, expected, "parseWhileStatement", WhileStatement.class);
+    }
+
+
+    public void testParseStatementList1() {
+        input = "print(\"<table>\\n\");\n"
+              + "i = 0;\n"
+              + "foreach(item in list) {\n"
+              + "  i += 1;\n"
+              + "  color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';\n"
+              + "  print(\"<tr bgcolor=\\\"\", color, \"\\\">\\n\");\n"
+              + "  print(\"<td>\", item, \"</td>\n\");\n"
+              + "  print(\"</tr>\\n\");\n"
+              + "}\n"
+              + "print(\"</table>\\n\");\n"
+              ;
+        expected = ":print\n"
+                 + "  \"<table>\\n\"\n"
+                 + ":expr\n"
+                 + "  =\n"
+                 + "    i\n"
+                 + "    0\n"
+                 + ":foreach\n"
+                 + "  item\n"
+                 + "  list\n"
+                 + "  :block\n"
+                 + "    :expr\n"
+                 + "      +=\n"
+                 + "        i\n"
+                 + "        1\n"
+                 + "    :expr\n"
+                 + "      =\n"
+                 + "        color\n"
+                 + "        ?:\n"
+                 + "          ==\n"
+                 + "            %\n"
+                 + "              i\n"
+                 + "              2\n"
+                 + "            0\n"
+                 + "          \"#FFCCCC\"\n"
+                 + "          \"#CCCCFF\"\n"
+                 + "    :print\n"
+                 + "      \"<tr bgcolor=\\\"\"\n"
+                 + "      color\n"
+                 + "      \"\\\">\\n\"\n"
+                 + "    :print\n"
+                 + "      \"<td>\"\n"
+                 + "      item\n"
+                 + "      \"</td>\\n\"\n"
+                 + "    :print\n"
+                 + "      \"</tr>\\n\"\n"
+                 + ":print\n"
+                 + "  \"</table>\\n\"\n"
+                 ;
+        _test(input, expected, "parseStatementList");
+    }
+
+
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(StatementParserTest.class);
     }
 }
 
@@ -3048,6 +3743,13 @@ public class ExpressionParserTest extends TestCase {
         _test(input, expected, "parseExpression", AssignmentExpression.class);
     }
 
+
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(ExpressionParserTest.class);
+    }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -3188,7 +3890,7 @@ public class ScannerTest extends TestCase {
     public void testScanner25() {  // symbols
         String input = "[][::;?.,#";
         String expected = "L_BRACKET [\nR_BRACKET ]\nL_BRACKETCOLON [:\nCOLON :\n"
-                         + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nELEMENT #\n";
+                         + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nELEMDECL #\n";
         _test(input, expected);
     }
 
@@ -3231,6 +3933,11 @@ public class ScannerTest extends TestCase {
         }
     }
 
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(ScannerTest.class);
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -3862,6 +4569,138 @@ package __PACKAGE__;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+
+public class InterpreterTest extends TestCase {
+    String input;
+    String expected;
+    Map context = new HashMap();
+
+    public void _test(String input, Map context, String expected) {
+        Interpreter interpreter = new Interpreter();
+        interpreter.compile(input);
+        try {
+            java.io.StringWriter writer = new java.io.StringWriter();
+            interpreter.execute(context, writer);
+            String actual = writer.toString();
+            assertEquals(expected, actual);
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+        }
+        //StatementParser parser = new StatementParser();
+        //BlockStatement block = parser.parse(input);
+        //try {
+        //    java.io.StringWriter writer = new java.io.StringWriter();
+        //    block.execute(context, writer);
+        //    String actual = writer.toString();
+        //    assertEquals(expected, actual);
+        //}
+        //catch (java.io.IOException ex) {
+        //    ex.printStackTrace();
+        //}
+    }
+
+
+    public void testInterpreter1() {    // hello world
+        input = <<'END';
+            print("Hello ", user, "!\n");
+            END
+        expected = <<'END';
+            Hello World!
+            END
+        context.put("user", "World");
+        _test(input, context, expected);
+    }
+
+    public void testInterpreter2() {    // euclidean algorithm
+        input = <<'END';
+            // Euclidean algorithm
+            x = a;  y = b;
+            while (y > 0) {
+                if (x < y) {
+                    tmp = y - x;
+                    y = x;
+                    x = tmp;
+                } else {
+                    tmp = x - y;
+                    x = y;
+                    y = tmp;
+                }
+            }
+            print("GCD(", a, ",", b, ") == ", x, "\n");
+            print("(x,y) == (", x, ",", y, ")\n");
+            END
+        expected = <<'END';
+            GCD(589,775) == 31
+            (x,y) == (31,0)
+            END
+        context.put("a", new Integer(589));
+        context.put("b", new Integer(775));
+        _test(input, context, expected);
+    }
+
+    public void testInterpreter3() {   // bordered table
+        input = <<'END';
+            print("<table>\n");
+            i = 0;
+            foreach(item in list) {
+              i += 1;
+              color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+              print('  <tr bgcolor="', color, "\">\n");
+              print("    <td>", item[:name], "</td><td>", item[:mail], "</td>\n");
+              print("  </tr>\n");
+            }
+            print("</table>\n");
+            END
+        expected = <<'END';
+            <table>
+              <tr bgcolor="#CCCCFF">
+                <td>foo</td><td>foo@mail.com</td>
+              </tr>
+              <tr bgcolor="#FFCCCC">
+                <td>bar</td><td>bar@mail.org</td>
+              </tr>
+              <tr bgcolor="#CCCCFF">
+                <td>baz</td><td>baz@mail.net</td>
+              </tr>
+            </table>
+            END
+        //
+        List list = new ArrayList();
+        //
+        Map item1 = new HashMap();
+        item1.put("name", "foo");  item1.put("mail", "foo@mail.com");
+        list.add(item1);
+        //
+        Map item2 = new HashMap();
+        item2.put("name", "bar");  item2.put("mail", "bar@mail.org");
+        list.add(item2);
+        //
+        Map item3 = new HashMap();
+        item3.put("name", "baz");  item3.put("mail", "baz@mail.net");
+        list.add(item3);
+        //
+        context.put("list", list);
+        _test(input, context, expected);
+    }
+
+
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(InterpreterTest.class);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class KwartzTest extends TestCase {
     public static void main(String[] args) {
         TestSuite suite = new TestSuite();
@@ -3869,6 +4708,8 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(StatementTest.class));
         suite.addTest(new TestSuite(ScannerTest.class));
         suite.addTest(new TestSuite(ExpressionParserTest.class));
+        suite.addTest(new TestSuite(StatementParserTest.class));
+        suite.addTest(new TestSuite(InterpreterTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

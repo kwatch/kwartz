@@ -1,0 +1,15 @@
+.=title:	ChangeLog
+.?Revision:	$Rev$
+
+.: 2005-07-03 (rev.5)
+	.- [enhance] add StatementParser class
+	.- [enhance] add Interpreter class
+
+.: 2005-07-03 (rev.4)
+	.- [enhance] add ExpressionParser class
+
+.: 2005-07-01 (rev.3)
+	.- [enhance] add Parser class
+
+.: 2005-01-23 (rev.2)
+	.- new file: kwartz-java.rb, Howto.cook
