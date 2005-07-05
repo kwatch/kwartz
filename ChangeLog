@@ -1,6 +1,9 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-06 (rev.8)
+	.- [enhance] add DirectiveHandler class
+
 .: 2005-07-05 (rev.7)
 	.- [change] rename DefaultConverter.FetchData class to Tag class
 	.- [enhance] implement DefaultConverter#_convert()

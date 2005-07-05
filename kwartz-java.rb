@@ -1653,6 +1653,7 @@ abstract public class Statement extends Node {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+import java.util.List;
 import java.util.Map;
 import java.io.Writer;
 import java.io.IOException;
@@ -1662,6 +1663,11 @@ public class BlockStatement extends Statement {
     public BlockStatement(Statement[] statements) {
         super(TokenType.BLOCK);
         _statements = statements;
+    }
+    public BlockStatement(List statementList) {
+        super(TokenType.BLOCK);
+        _statements = new Statement[statementList.size()];
+        statementList.toArray(_statements);
     }
     public Statement[] getStatements() { return _statements; }
     public void setStatements(Statement[] statements) { _statements = statements; }
@@ -1866,6 +1872,11 @@ public class IfStatement extends Statement {
         _then_body = then_body;
         _else_body = else_body;
     }
+
+    public Expression getCondition() { return _condition; }
+    public Statement getThenStatement() { return _then_body; }
+    public Statement getElseStatement() { return _else_body; }
+    public void setElseStatement(Statement stmt) { _else_body = stmt; }
 
     public Object execute(Map context, Writer writer) throws IOException {
         Object val = _condition.evaluate(context);
@@ -3246,8 +3257,24 @@ public class Element {
 
 package __PACKAGE__;
 
+import java.util.List;
+
 public interface Converter {
     public Statement[] convert(String pdata);
+
+    public String getFilename();
+    public void setFilename(String filename);
+
+    public List getElementList();
+    public void addElement(Element element);
+
+    public Expression[] expandEmbeddedExpression(String pdata, int linenum);
+
+    //pubilc void setProperties(Properties prop);
+    //pubilc Properties getProperties(Properties prop);
+    //pubilc void setProperty(String key, String value);
+    //pubilc String getProperty(String key);
+
 }
 
 // --------------------------------------------------------------------------------
@@ -3343,8 +3370,9 @@ public class DefaultConverter implements Converter {
     private String _remained_text;
     private ExpressionParser _exprParser;
     private StatementParser  _stmtParser;
-    private List _elements = new ArrayList();
+    private List _elementList = new ArrayList();
     private Map _handlerTable = new HashMap();
+    private DirectiveHandler _handler = new DirectiveHandler(this);
 
     public DefaultConverter() {
         _stmtParser = new StatementParser();
@@ -3352,6 +3380,13 @@ public class DefaultConverter implements Converter {
         _registerHandlers(_handlerTable);
     }
 
+    public List getElementList() { return _elementList; }
+    public void addElement(Element element) {
+        _elementList.add(element);
+    }
+
+    public String getFilename() { return _filename; }
+    public void setFilename(String filename) { _filename = filename; }
 
     protected final Pattern FETCH_PATTERN =
         Pattern.compile("([ \t]*)<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n?)");
@@ -3408,10 +3443,6 @@ public class DefaultConverter implements Converter {
         // remained text
         _remained_linenum = linenum;
         _remained_text    = pdata.substring(index);
-        //data = new Tag();
-        //data.linenum     = linenum;
-        //data.before_text = pdata.substring(index);
-        //list.add(data);
 
         return list;
     }
@@ -3442,44 +3473,6 @@ public class DefaultConverter implements Converter {
     }
 
 
-//    protected Object fetch() {
-//        char ch;
-//        StringBuffer sb = new StringBuffer();
-//        while ((ch = read()) != '\0') {
-//            if (ch != '<') {
-//                sb.append(ch);
-//            } else {
-//                ch = read();
-//                if (ch == '\0') {      // eof
-//                    sb.append(ch);
-//                    break;
-//                }
-//                else if (ch == '/') {  // etag candidate
-//                    ch = read();
-//                    if (ch == '\0') {
-//                        sb.append(ch);
-//                        break;
-//                    }
-//                    if (! CharacterUtil.isAlphabet(ch)) {
-//                        sb.append('<');
-//                        sb.append('/');
-//                        sb.append(ch);
-//                        continue;
-//                    }
-//
-//                }
-//                else if (CharacterUtil.isAlphabet(ch)) { // stag or empty tag
-//
-//                }
-//                else { // not a tag
-//                    sb.append('<');
-//                    sb.append(ch);
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
 
     protected static Pattern newlinePattern = Pattern.compile("\\r?\\n");
 
@@ -3493,7 +3486,7 @@ public class DefaultConverter implements Converter {
         List datalist = fetchAll(pdata);
         Iterator it = datalist.iterator();
         List stmtlist = new ArrayList();
-        _convert(it, stmtlist, null, true);
+        _convert(it, stmtlist, null);
         //return new BlockStatement.new(stmts);
         Statement[] stmts = new Statement[stmtlist.size()];
         stmtlist.toArray(stmts);
@@ -3539,58 +3532,134 @@ public class DefaultConverter implements Converter {
     }
 
 
-    public interface DirectiveHandler {
+    public static interface DirectiveHandlerIF {
         public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList);
     }
 
     private void _registerHandlers(Map handlerTable) {
-        handlerTable.put("mark", new DirectiveHandler() {
+        // mark
+        handlerTable.put("mark", new DirectiveHandlerIF() {
             public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
-                DefaultConverter.this._handleDirectiveMark(stmtlist, stag, etag, bodyStmtList);
+                DefaultConverter.this._handler.handleMarkDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // value, Value, VALUE
+        handlerTable.put("value", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleValueDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("Value", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleValueDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("VALUE", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleValueDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // foreach, Foreach, FOREACH
+        handlerTable.put("foreach", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleForeachDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("Foreach", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleForeachDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("FOREACH", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleForeachDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // list, List, LIST
+        handlerTable.put("list", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleListDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("List", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleListDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("LIST", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleListDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // while, loop
+        handlerTable.put("while", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleWhileDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("loop", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleLoopDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // if, elseif, else
+        handlerTable.put("if", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleIfDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("elseif", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleElseifDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("else", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleElseDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // set
+        handlerTable.put("set", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleSetDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // dummy
+        handlerTable.put("dummy", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleDummyDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // replace, placeholder
+        handlerTable.put("replace", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handleReplaceDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("placeholder", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handlePlaceholderDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        // include, Include, INCLUDE
+        handlerTable.put("include", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handlePlaceholderDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("Include", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handlePlaceholderDirective(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+        handlerTable.put("INCLUDE", new DirectiveHandlerIF() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handler.handlePlaceholderDirective(stmtlist, stag, etag, bodyStmtList);
             }
         });
     }
 
-    private void _handleDirectiveMark(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
-        String marking = stag.directive_arg;
-        if (stag.attrs != null) {
-            for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
-                Object[] attr = (Object[])it.next();
-                String avalue = (String)attr[2];
-                Expression[] exprs = _expandEmbedExpr(avalue, stag.linenum);
-                Expression expr;
-                if (exprs.length == 0) {
-                    expr = new StringExpression("");
-                } else {
-                    expr = exprs[0];
-                    for (int i = 1; i < exprs.length; i++) {
-                        expr = new ConcatenationExpression(expr, exprs[i]);
-                    }
-                }
-                attr[2] = expr;    // avalue
-            }
-        }
-        _elements.add(new Element(marking, stag, etag, bodyStmtList));
-        stmtlist.add(new ExpandStatement(TokenType.ELEMENT, marking));
-    }
 
-    private void _handleDirectiveValue(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
-        if (etag == null) {
-            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
-            throw new ConvertionException(msg, _filename, stag.linenum);
-        }
-        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
-        if (stag.directive_name.equals("Value")) {
-            expr = new FunctionExpression("E", new Expression[] { expr });
-        } else if (stag.directive_name.equals("VALUE")) {
-            expr = new FunctionExpression("X", new Expression[] { expr });
-        }
-        stmtlist.add(bodyStmtList.get(0));                        // first statement
-        stmtlist.add(new PrintStatement(new Expression[] { expr }));
-        stmtlist.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
-    }
-
-    // TBI
     private static String ATTR_PATTERN = "(\\s*)([-:_\\w]+)=\"(.*?)\"";
     private static Pattern attrPattern = Pattern.compile(ATTR_PATTERN);
 
@@ -3693,9 +3762,16 @@ public class DefaultConverter implements Converter {
         tag.directive_arg  = directive_arg;
     }
 
-    private PrintStatement _newPrintStatement(String str) {
-        Expression[] args = { new StringExpression(str) };
-        return new PrintStatement(args);
+    private PrintStatement _createTagPrintStatement(Tag tag, boolean tagDelete) {
+        PrintStatement stmt;
+        if (tagDelete) {
+            String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
+            Expression[] args = { new StringExpression(s) };
+            stmt = new PrintStatement(args);
+        } else {
+            stmt = _buildPrintStatement(tag);
+        }
+        return stmt;
     }
 
     private PrintStatement _createPrintStatement(String str, int linenum) {
@@ -3705,6 +3781,10 @@ public class DefaultConverter implements Converter {
 
     public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
     public static final Pattern embedPattern  = Pattern.compile(EMBED_PATTERN);
+
+    public Expression[] expandEmbeddedExpression(String str, int linenum) {
+        return _expandEmbedExpr(str, linenum);
+    }
 
     private Expression[] _expandEmbedExpr(String str, int linenum) {
         List list = null;
@@ -3735,7 +3815,6 @@ public class DefaultConverter implements Converter {
         }
         return exprs;
     }
-
 
     private PrintStatement _buildPrintStatement(Tag tag) {
         StringBuffer sb = new StringBuffer();
@@ -3780,89 +3859,385 @@ public class DefaultConverter implements Converter {
     }
 
 
-    private Tag _convert(Iterator it, List stmtlist, Tag startTag, boolean flagTagPrint) {
-        int startLinenum = startTag == null ? 0 : startTag.linenum;
-        boolean flagTagDelete = false;
-
-        if (startTag != null) {
-            if (flagTagPrint) {
-                if (startTag.tagname.equals("span") && (startTag.attrs == null || startTag.attrs.size() == 0)) {
-                    flagTagDelete = true;
-                    String s = startTag.is_begline && startTag.is_endline ? "" : startTag.before_space + startTag.after_space;
-                    stmtlist.add(_newPrintStatement(s));
-                } else {
-                    stmtlist.add(_buildPrintStatement(startTag));
-                }
-            }
-        }
-
-        Tag tag = null;
+    private Tag _convert(Iterator it, List stmtList, Tag startTag) {
         while (it.hasNext()) {
-            tag = (Tag)it.next();
+            Tag tag = (Tag)it.next();
             if (tag.before_text.length() > 0) {
-                stmtlist.add(_createPrintStatement(tag.before_text, tag.linenum));
+                stmtList.add(_createPrintStatement(tag.before_text, tag.linenum));
             }
             assert tag.tagname != null;
             if (tag.is_etag) {                                          // end-tag
                 if (startTag != null && tag.tagname.equals(startTag.tagname)) {
-                    if (flagTagPrint) {
-                        if (flagTagDelete) {
-                            String s = startTag.is_begline && startTag.is_endline ? "" : tag.before_space + tag.after_space;
-                            stmtlist.add(_newPrintStatement(s));
-                        } else {
-                            stmtlist.add(_createPrintStatement(tag.tag_str, tag.linenum));
-                        }
-                    }
                     return tag;   // return Tag of end-tag
                 } else {
-                    stmtlist.add(_createPrintStatement(tag.tag_str, tag.linenum));
+                    stmtList.add(_createPrintStatement(tag.tag_str, tag.linenum));
                 }
             }
             else if (tag.is_empty || _isNoend(tag.tagname)) {          // empty-tag
                 _parseAttributes(tag);
                 if (tag.directive_name == null) {
-                    stmtlist.add(_buildPrintStatement(tag));
+                    stmtList.add(_createPrintStatement(tag.tag_str, tag.linenum));
                 } else {
                     List bodyStmtList = new ArrayList();
                     if (tag.directive_name.equals("mark")) {
                         // nothing
-                    } else if (tag.tagname.equals("span") && (tag.attrs == null || tag.attrs.size() == 0)) {
-                        String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
-                        bodyStmtList.add(_newPrintStatement(s));
                     } else {
-                        bodyStmtList.add(_buildPrintStatement(tag));
+                        boolean tagDelete = tag.tagname.equals("span") && (tag.attrs == null || tag.attrs.size() == 0);
+                        bodyStmtList.add(_createTagPrintStatement(tag, tagDelete));
                     }
                     Tag stag = tag;
                     Tag etag = null;
-                    _handleDirective(stmtlist, stag, etag, bodyStmtList);
+                    _handleDirective(stmtList, stag, etag, bodyStmtList);
                 }
             }
             else {                                                       // start-tag
                 _parseAttributes(tag);
-                if (tag.directive_name != null) {
-                    List bodyStmtList = new ArrayList();
-                    int stagLinenum = tag.linenum;
-                    Tag stag = tag;
-                    Tag etag = _convert(it, bodyStmtList, stag, !tag.directive_name.equals("mark"));
-                    _handleDirective(stmtlist, stag, etag, bodyStmtList);
-                } else if (tag.tagname.equals(startTag.tagname)) {
-                    _convert(it, stmtlist, tag, true);   // recursive call
+                boolean hasDirective = tag.directive_name != null;
+                List bodyStmtList;
+                if (hasDirective) {
+                    bodyStmtList = new ArrayList();
+                } else if (startTag != null && tag.tagname.equals(startTag.tagname)) {
+                    bodyStmtList = stmtList;
                 } else {
-                    stmtlist.add(_buildPrintStatement(tag));
+                    stmtList.add(_buildPrintStatement(tag));
+                    continue;
+                }
+                // handle stag
+                Tag stag = tag;
+                boolean tagSkip = hasDirective && tag.directive_name.equals("mark");
+                boolean tagDelete = false;
+                if (! tagSkip) {
+                    tagDelete = startTag.tagname.equals("span") && (startTag.attrs == null || startTag.attrs.size() == 0);
+                    bodyStmtList.add(_createTagPrintStatement(stag, tagDelete));
+                }
+                // handle content
+                Tag etag = _convert(it, bodyStmtList, stag);
+                // handle etag
+                if (! tagSkip) {
+                    bodyStmtList.add(_createTagPrintStatement(etag, tagDelete));
+                }
+                // handle directive
+                if (hasDirective) {
+                    _handleDirective(stmtList, stag, etag, bodyStmtList);
                 }
             }
         }  // end of while
-
+        //
         if (startTag != null)
             throw new ConvertionException("'<" + startTag.tagname + ">' is not closed by end-tag.", _filename, startTag.linenum);
         if (_remained_text != null)
-            stmtlist.add(_createPrintStatement(_remained_text, _remained_linenum));
+            stmtList.add(_createPrintStatement(_remained_text, _remained_linenum));
         return null;
     }
 
 }
 
 // --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+
+public class DirectiveHandler {
+    private DefaultConverter _converter;
+    private ExpressionParser _exprParser;
+    private StatementParser  _stmtParser;
+    private String _even = "'even'";
+    private String _odd  = "'odd'";
+
+    public DirectiveHandler(DefaultConverter converter) {
+        _converter  = converter;
+        _stmtParser = new StatementParser();
+        _exprParser = _stmtParser.getExpressionParser();
+    }
+
+    private Expression _parseExpression(String str, int linenum) {
+        _exprParser.reset(str, linenum);
+        Expression expr = _exprParser.parseExpression();
+        if (_exprParser.token() != TokenType.EOF) {
+            throw new ConvertionException("'" + str + "': invalid expression.", _converter.getFilename(), linenum);
+        }
+        return expr;
+    }
+
+    private Statement _parseExpressionStatement(String str) {
+        _stmtParser.reset(str, 1);
+        Statement stmt = _stmtParser.parseExpressionStatement();
+        assert _stmtParser.token() == TokenType.EOF;
+        return stmt;
+    }
+
+    public void handleMarkDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        assert stag.directive_name.equals("mark");
+        String marking = stag.directive_arg;
+        if (stag.attrs != null) {
+            for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
+                Object[] attr = (Object[])it.next();
+                String avalue = (String)attr[2];
+                Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
+                Expression expr;
+                if (exprs.length == 0) {
+                    expr = new StringExpression("");
+                } else {
+                    expr = exprs[0];
+                    for (int i = 1; i < exprs.length; i++) {
+                        expr = new ConcatenationExpression(expr, exprs[i]);
+                    }
+                }
+                attr[2] = expr;    // avalue
+            }
+        }
+        _converter.addElement(new Element(marking, stag, etag, bodyStmtList));
+        stmtList.add(new ExpandStatement(TokenType.ELEMENT, marking));
+    }
+
+    public void handleValueDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
+        if (stag.directive_name.equals("Value")) {
+            expr = new FunctionExpression("E", new Expression[] { expr });
+        } else if (stag.directive_name.equals("VALUE")) {
+            expr = new FunctionExpression("X", new Expression[] { expr });
+        }
+        PrintStatement stmt = new PrintStatement(new Expression[] { expr });
+        stmtList.add(bodyStmtList.get(0));                        // first statement
+        stmtList.add(stmt);
+        stmtList.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
+    }
+
+    public void handleForeachDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String varname = m.group(1);
+        String liststr = m.group(2);
+        VariableExpression varexpr = new VariableExpression(varname);
+        Expression listexpr = _parseExpression(liststr, stag.linenum);
+        String counter = !stag.directive_name.equals("foreach") ? varname + "_ctr" : null;
+        String toggle  =  stag.directive_name.equals("FOREACH") ? varname + "_tgl" : null;
+        //
+        if (counter != null) {
+            stmtList.add(_parseExpressionStatement(counter + " = 0;"));
+            bodyStmtList.add(0, _parseExpressionStatement(counter + " += 1;"));
+        }
+        if (toggle != null) {
+            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
+            bodyStmtList.add(1, _parseExpressionStatement(s));
+        }
+        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
+    }
+
+    public void handleListDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String varname = m.group(1);
+        String liststr = m.group(2);
+        VariableExpression varexpr = new VariableExpression(varname);
+        Expression listexpr = _parseExpression(liststr, stag.linenum);
+        String counter = !stag.directive_name.equals("list") ? varname + "_ctr" : null;
+        String toggle  =  stag.directive_name.equals("LIST") ? varname + "_tgl" : null;
+        //
+        Object firstStmt = bodyStmtList.remove(0);
+        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+        stmtList.add(firstStmt);
+        if (counter != null) {
+            stmtList.add(_parseExpressionStatement(counter + " = 0;"));
+            bodyStmtList.add(0, _parseExpressionStatement(counter + " += 1;"));
+        }
+        if (toggle != null) {
+            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
+            bodyStmtList.add(1, _parseExpressionStatement(s));
+        }
+        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
+        stmtList.add(lastStmt);
+    }
+
+    public void handleWhileDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
+    }
+
+    public void handleLoopDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Object firstStmt = bodyStmtList.remove(0);
+        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+        stmtList.add(firstStmt);
+        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
+        stmtList.add(lastStmt);
+    }
+
+    public void handleIfDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
+    }
+
+    public void handleElseifDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
+        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
+            stmt = ((IfStatement)stmt).getElseStatement();
+        }
+        if (stmt.getToken() != TokenType.IF) {
+            String msg = "elseif-directive must be at just after the if-statement or elseif-statement.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        ((IfStatement)stmt).setElseStatement(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
+    }
+
+    public void handleElseDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
+        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
+            stmt = ((IfStatement)stmt).getElseStatement();
+        }
+        if (stmt.getToken() != TokenType.IF) {
+            String msg = "else-directive must be at just after the if-statement or elseif-statement.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        ((IfStatement)stmt).setElseStatement(new BlockStatement(bodyStmtList));
+    }
+
+    public void handleSetDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new ExpressionStatement(expr));
+        stmtList.addAll(bodyStmtList);
+    }
+
+    public void handleDummyDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        // nothing
+    }
+
+    public void handleReplaceDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        _handleReplaceDirective(false, stmtList, stag, etag, bodyStmtList);
+    }
+
+    public void handlePlaceholderDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        _handleReplaceDirective(true,  stmtList, stag, etag, bodyStmtList);
+    }
+
+    private void _handleReplaceDirective(boolean inner, List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Pattern pat = Pattern.compile("\\A(\\w+)(?::(content|element))?\\z");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String name = m.group(1);
+        int type = m.group(2) != null && m.group(2).equals("content") ? TokenType.CONTENT : TokenType.ELEMENT;
+        if (inner) {
+            if (etag == null) {
+                String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+                throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+            }
+            Object firstStmt = bodyStmtList.remove(0);
+            Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+            stmtList.add(firstStmt);
+            stmtList.add(new ExpandStatement(type, name));
+            stmtList.add(lastStmt);
+        } else {
+            stmtList.add(new ExpandStatement(type, name));
+        }
+    }
+
+    public void handleIncludeDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        String basename = stag.directive_arg;
+        char firstChar = basename.charAt(0);
+        char lastChar  = basename.charAt(basename.length() - 1);
+        if (firstChar == '"' && lastChar == '"' || firstChar == '\'' && lastChar == '\'') {
+            basename = basename.substring(1, basename.length() - 1);
+        }
+
+        // TBI: pathlist
+        //    pathlist = @properties[:incdirs] || Kwartz::Config::INCDIRS || ['.']
+        //    filename = nil
+        //    pathlist.each do |path|
+        //       filename = path + '/' + basename
+        //       break if test(?f, filename)
+        //       filename = nil
+        //    end
+        String filename = null;
+        filename = basename;
+        if (filename == null) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': include file not found.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+
+        StringBuffer sb = new StringBuffer();
+        char[] buf = new char[512];
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filename);
+            while (reader.read(buf) >= 0) {
+                sb.append(buf);
+            }
+        } catch (FileNotFoundException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (UnsupportedEncodingException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (IOException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } finally {
+            if (reader != null)
+              try {
+                  reader.close();
+              } catch (IOException ignore) { }
+        }
+
+        Converter converter = null;
+        try {
+            converter = (Converter)_converter.getClass().newInstance();
+        } catch (IllegalAccessException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (InstantiationException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        }
+        converter.setFilename(filename);
+        // TBI
+        //converter.setPropertyies(_converter.getProperties());
+        Statement[] stmts = converter.convert(sb.toString());
+
+        if (stag.directive_name.equals("INCLUDE"))
+            stmtList.addAll(bodyStmtList);
+        for (int i = 0; i < stmts.length; i++)
+            stmtList.add(stmts[i]);
+        if (stag.directive_name.equals("Include"))
+            stmtList.addAll(bodyStmtList);
+        List elements = converter.getElementList();
+        for (Iterator it = elements.iterator(); it.hasNext(); ) {
+            Element element = (Element)it.next();
+            _converter.addElement(element);
+        }
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
 package __PACKAGE__;
 import junit.framework.TestCase;
 import java.util.*;
