@@ -1453,6 +1453,8 @@ public class StringExpression extends LiteralExpression {
         super(TokenType.STRING);
         _value = value;
     }
+    public String getValue() { return _value; }
+
     public Object evaluate(Map context) {
         return _value;
     }
@@ -2915,6 +2917,8 @@ public class StatementParser extends Parser {
         _exprParser = new ExpressionParser(scanner);
     }
 
+    public ExpressionParser getExpressionParser() { return _exprParser; }
+
 
     /*
      *  BNF:
@@ -3205,9 +3209,117 @@ public class Interpreter {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+import java.util.List;
+import java.util.Iterator;
+
+public class Element {
+    private String _marking;
+    private Tag    _stag;
+    private Tag    _etag;
+    private List   _cont;           // list of Statement
+
+    public Element(String marking, Tag stag, Tag etag, List cont) {
+        _marking = marking;
+        _stag = stag;
+        _etag = etag;
+        _cont = cont;
+    }
+
+    public StringBuffer _inspect() {
+        return _inspect(0, new StringBuffer());
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        for (int i = 0; i < level; i++) sb.append("  ");
+        sb.append("Element(");
+        sb.append(_marking);
+        sb.append(")\n");
+        for (Iterator it = _cont.iterator(); it.hasNext(); ) {
+            Statement stmt = (Statement)it.next();
+            stmt._inspect(level + 1, sb);
+        }
+        return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
 
 public interface Converter {
     public Statement[] convert(String pdata);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class ConvertionException extends BaseException {
+    private String _filename;
+    private int _linenum;
+
+    public ConvertionException(String message, String filename, int linenum) {
+        super(message);
+        _filename = filename;
+        _linenum = _linenum;
+    }
+
+    public String toString() {
+        return super.toString() + "(filename " + _filename + ", line " + _linenum + ")";
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+
+public class Tag {
+    public String tag_str;
+    public String before_text;
+    public String before_space;
+    public String tagname;
+    public String attr_str;
+    public String extra_space;
+    public String after_space;
+    public boolean is_etag;
+    public boolean is_empty;
+    public boolean is_begline;
+    public boolean is_endline;
+    public int start_pos;
+    public int end_pos;
+    public int linenum;
+
+    //
+    public String directive_name;
+    public String directive_arg;
+    public List attrs;
+    public List append_exprs;
+
+    public String _inspect() {
+        StringBuffer sb = new StringBuffer();
+        if (tag_str != null) {
+            sb.append("tag_str      = " + Utility.inspectString(tag_str)       + "\n");
+            sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
+            sb.append("before_space = " + Utility.inspectString(before_space)  + "\n");
+            sb.append("tagname      = " + Utility.inspectString(tagname)       + "\n");
+            sb.append("attr_str     = " + Utility.inspectString(attr_str)      + "\n");
+            sb.append("extra_space  = " + Utility.inspectString(extra_space)   + "\n");
+            sb.append("after_space  = " + Utility.inspectString(after_space)   + "\n");
+            sb.append("is_etag      = " + is_etag       + "\n");
+            sb.append("is_empty     = " + is_empty      + "\n");
+            sb.append("is_begline   = " + is_begline    + "\n");
+            sb.append("is_endline   = " + is_endline    + "\n");
+            sb.append("start_pos    = " + start_pos     + "\n");
+            sb.append("end_pos      = " + end_pos       + "\n");
+            sb.append("linenum      = " + linenum       + "\n");
+        } else {
+            sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
+            sb.append("linenum      = " + linenum       + "\n");
+        }
+        return sb.toString();
+    }
 }
 
 // --------------------------------------------------------------------------------
@@ -3218,58 +3330,26 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class DefaultConverter implements Converter {
 
     private String _pdata;
     private String _filename;
+    private Map _properties = new HashMap();
+    private int    _remained_linenum;
+    private String _remained_text;
+    private ExpressionParser _exprParser;
+    private StatementParser  _stmtParser;
+    private List _elements = new ArrayList();
+    private Map _handlerTable = new HashMap();
 
     public DefaultConverter() {
-    }
-
-
-    protected static class FetchData {
-        public String tag_str;
-        public String before_text;
-        public String before_space;
-        //public String slash_etag;
-        public String tagname;
-        public String attr_str;
-        public String extra_space;
-        //public String slash_empty;
-        public String after_space;
-        public boolean is_etag;
-        public boolean is_empty;
-        public boolean is_begline;
-        public boolean is_endline;
-        public int start_pos;
-        public int end_pos;
-        public int linenum;
-
-        public String _inspect() {
-            StringBuffer sb = new StringBuffer();
-            if (tag_str != null) {
-                sb.append("tag_str      = " + Utility.inspectString(tag_str)       + "\n");
-                sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
-                sb.append("before_space = " + Utility.inspectString(before_space)  + "\n");
-                sb.append("tagname      = " + Utility.inspectString(tagname)       + "\n");
-                sb.append("attr_str     = " + Utility.inspectString(attr_str)      + "\n");
-                sb.append("extra_space  = " + Utility.inspectString(extra_space)   + "\n");
-                sb.append("after_space  = " + Utility.inspectString(after_space)   + "\n");
-                sb.append("is_etag      = " + is_etag       + "\n");
-                sb.append("is_empty     = " + is_empty      + "\n");
-                sb.append("is_begline   = " + is_begline    + "\n");
-                sb.append("is_endline   = " + is_endline    + "\n");
-                sb.append("start_pos    = " + start_pos     + "\n");
-                sb.append("end_pos      = " + end_pos       + "\n");
-                sb.append("linenum      = " + linenum       + "\n");
-            } else {
-                sb.append("before_text  = " + Utility.inspectString(before_text)   + "\n");
-                sb.append("linenum      = " + linenum       + "\n");
-            }
-            return sb.toString();
-        }
+        _stmtParser = new StatementParser();
+        _exprParser = _stmtParser.getExpressionParser();
+        _registerHandlers(_handlerTable);
     }
 
 
@@ -3283,9 +3363,9 @@ public class DefaultConverter implements Converter {
         char lastchar = '\0';
         Matcher m = FETCH_PATTERN.matcher(pdata);
         List list = new ArrayList();
-        FetchData data;
+        Tag data;
         while (m.find()) {
-            data = new FetchData();
+            data = new Tag();
             data.tag_str      = m.group(0);
             data.before_space = m.group(1);
             data.is_etag      = "/".equals(m.group(2));
@@ -3326,10 +3406,12 @@ public class DefaultConverter implements Converter {
         }
 
         // remained text
-        data = new FetchData();
-        data.linenum     = linenum;
-        data.before_text = pdata.substring(index);
-        list.add(data);
+        _remained_linenum = linenum;
+        _remained_text    = pdata.substring(index);
+        //data = new Tag();
+        //data.linenum     = linenum;
+        //data.before_text = pdata.substring(index);
+        //list.add(data);
 
         return list;
     }
@@ -3349,7 +3431,7 @@ public class DefaultConverter implements Converter {
             DefaultConverter converter = new DefaultConverter();
             List list = converter.fetchAll(sb.toString());
             for (Iterator it = list.iterator(); it.hasNext(); ) {
-                FetchData data = (FetchData)it.next();
+                Tag data = (Tag)it.next();
                 System.out.println(data._inspect());
             }
         } catch (java.io.UnsupportedEncodingException ex) {
@@ -3398,12 +3480,383 @@ public class DefaultConverter implements Converter {
 //        return null;
 //    }
 
+
+    protected static Pattern newlinePattern = Pattern.compile("\\r?\\n");
+
     public Statement[] convert(String pdata) {
-        List list = fetchAll(pdata);
-        for (Iterator it = list.iterator(); it.hasNext(); ) {
-            FetchData data = (FetchData)it.next();
-            
+        if (! _properties.containsKey("newline")) {
+            Matcher m = newlinePattern.matcher(pdata);
+            if (m.find()) {
+                _properties.put("newline", m.group(0));
+            }
         }
+        List datalist = fetchAll(pdata);
+        Iterator it = datalist.iterator();
+        List stmtlist = new ArrayList();
+        _convert(it, stmtlist, null, true);
+        //return new BlockStatement.new(stmts);
+        Statement[] stmts = new Statement[stmtlist.size()];
+        stmtlist.toArray(stmts);
+        return stmts;
+    }
+
+
+    private Map _noendTags = null;
+    private boolean _isNoend(String tagname) {
+        if (_noendTags == null) {
+            _noendTags = new HashMap();
+            _noendTags.put("input", Boolean.TRUE);
+            _noendTags.put("br",    Boolean.TRUE);
+            _noendTags.put("img",   Boolean.TRUE);
+            _noendTags.put("meta",  Boolean.TRUE);
+            _noendTags.put("hr",    Boolean.TRUE);
+        }
+        return _noendTags.containsKey(tagname);
+    }
+
+
+    private Expression _parseExpression(String str, int linenum) {
+        _exprParser.reset(str, linenum);
+        Expression expr = _exprParser.parseExpression();
+        if (_exprParser.token() != TokenType.EOF) {
+            throw new ConvertionException("'" + str + "': invalid expression.", _filename, linenum);
+        }
+        return expr;
+    }
+
+    private Statement _parseExpressionStatement(String str) {
+        _stmtParser.reset(str, 1);
+        Statement stmt = _stmtParser.parseExpressionStatement();
+        assert _stmtParser.token() == TokenType.EOF;
+        return stmt;
+    }
+
+
+    // TBI
+    private void _handleDirective(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+        String directiveName = stag.directive_name;
+        String directiveArg  = stag.directive_arg;
+    }
+
+
+    public interface DirectiveHandler {
+        public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList);
+    }
+
+    private void _registerHandlers(Map handlerTable) {
+        handlerTable.put("mark", new DirectiveHandler() {
+            public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+                DefaultConverter.this._handleDirectiveMark(stmtlist, stag, etag, bodyStmtList);
+            }
+        });
+    }
+
+    private void _handleDirectiveMark(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+        String marking = stag.directive_arg;
+        if (stag.attrs != null) {
+            for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
+                Object[] attr = (Object[])it.next();
+                String avalue = (String)attr[2];
+                Expression[] exprs = _expandEmbedExpr(avalue, stag.linenum);
+                Expression expr;
+                if (exprs.length == 0) {
+                    expr = new StringExpression("");
+                } else {
+                    expr = exprs[0];
+                    for (int i = 1; i < exprs.length; i++) {
+                        expr = new ConcatenationExpression(expr, exprs[i]);
+                    }
+                }
+                attr[2] = expr;    // avalue
+            }
+        }
+        _elements.add(new Element(marking, stag, etag, bodyStmtList));
+        stmtlist.add(new ExpandStatement(TokenType.ELEMENT, marking));
+    }
+
+    private void _handleDirectiveValue(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _filename, stag.linenum);
+        }
+        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
+        if (stag.directive_name.equals("Value")) {
+            expr = new FunctionExpression("E", new Expression[] { expr });
+        } else if (stag.directive_name.equals("VALUE")) {
+            expr = new FunctionExpression("X", new Expression[] { expr });
+        }
+        stmtlist.add(bodyStmtList.get(0));                        // first statement
+        stmtlist.add(new PrintStatement(new Expression[] { expr }));
+        stmtlist.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
+    }
+
+    // TBI
+    private static String ATTR_PATTERN = "(\\s*)([-:_\\w]+)=\"(.*?)\"";
+    private static Pattern attrPattern = Pattern.compile(ATTR_PATTERN);
+
+    private void _parseAttributes(Tag tag) {
+        Matcher m = attrPattern.matcher(tag.attr_str);
+        Object[] id_tuple = null;
+        Object[] kd_tuple = null;
+        while (m.find()) {
+            String aspace  = m.group(1);
+            String aname   = m.group(2);
+            String avalue  = m.group(3);
+            if (tag.attrs == null) tag.attrs = new ArrayList();
+            Object[] tuple = { aspace, aname, avalue };
+            tag.attrs.add(tuple);
+            if (aname.equals("id")) id_tuple = tuple;
+            else if (aname.equals("kw:d")) kd_tuple = tuple;
+        }
+        if (id_tuple != null) {
+            String id_value = (String)id_tuple[2];
+            _parseIdAttribute(id_value, tag);   // set tag.directive_name and tag.directive_arg
+            if (! Pattern.matches("\\A[-_\\w]+\\z", id_value)) {
+                tag.attrs.remove(id_tuple);
+            }
+        }
+        if (kd_tuple != null) {
+            String kd_value = (String)kd_tuple[2];
+            _parseKdAttribute(kd_value, tag);   // set tag.directive_name and tag.directive_arg
+            tag.attrs.remove(kd_tuple);
+        }
+    }
+
+    private void _parseIdAttribute(String avalue, Tag tag) {
+        if (! Pattern.matches("\\A[-_\\w]+\\z", avalue)) {
+            _parseKdAttribute(avalue, tag);
+        } else if (avalue.indexOf('-') < 0) {
+            tag.directive_name = "mark";
+            tag.directive_arg  = avalue;
+        }
+    }
+
+    private void _parseKdAttribute(String kdstr, Tag tag) {
+        String directive_name = null;
+        String directive_arg  = null;
+        String[] directives = kdstr.split(";");
+        Pattern pat = Pattern.compile("\\A\\s*(\\w+):(.*)\\z");
+        for (int i = 0; i < directives.length; i++) {
+            Matcher m = pat.matcher(directives[i]);
+            if (! m.find())
+                throw new ConvertionException("'" + directives[i] + "': invalid directive.", _filename, tag.linenum);
+            String dname = m.group(1);   // directive name
+            String darg  = m.group(2);   // directive arg
+            if (dname.equals("attr") || dname.equals("Attr") || dname.equals("ATTR")) {
+                Matcher m2 = Pattern.compile("\\A([-_\\w]+(?::[-_\\w]+)?)[:=](.*)\\z").matcher(darg);
+                if (! m2.find())
+                    throw new ConvertionException("'" + directives[i] + "': invalid attr directive.", _filename, tag.linenum);
+                String aname  = m2.group(1);
+                String avalue = m2.group(2);
+                String s;
+                if      (dname.equals("attr"))   s = avalue;
+                else if (dname.equals("Attr"))   s = "X(" + avalue + ")";
+                else                             s = "E(" + avalue + ")";
+                Expression expr = _parseExpression(s, tag.linenum);
+                int j;
+                Object[] attr = null;
+                for (j = 0; j < tag.attrs.size(); j++) {
+                    Object[] tuple = (Object[])tag.attrs.get(j);
+                    if (aname.equals(tuple[1])) {
+                        attr = tuple;
+                        break;
+                    }
+                }
+                if (attr == null) {
+                    attr = new Object[] { " ", aname, expr };
+                    tag.attrs.add(attr);
+                } else {
+                    attr[2] = expr;
+                }
+            }
+            else if (dname.equals("append") || dname.equals("Append") || dname.equals("APPEND")) {
+                String s;
+                if      (dname.equals("append")) s = darg;
+                else if (dname.equals("Append")) s = "E(" + darg + ")";
+                else                             s = "X(" + darg + ")";
+                Expression expr = _parseExpression(s, tag.linenum);
+                if (tag.append_exprs == null) tag.append_exprs = new ArrayList();
+                tag.append_exprs.add(expr);
+            }
+            else {
+                if (! _handlerTable.containsKey(dname))
+                    throw new ConvertionException("'" + dname + "': invalid directive name.", _filename, tag.linenum);
+                if (directive_name != null) {
+                    String msg = "directive '" + directive_name + "' and '" + dname + "': cannot specify two or more directives in an element.";
+                    throw new ConvertionException(msg, _filename, tag.linenum);
+                }
+                directive_name = dname;
+                directive_arg  = darg;
+            }
+        }
+        tag.directive_name = directive_name;
+        tag.directive_arg  = directive_arg;
+    }
+
+    private PrintStatement _newPrintStatement(String str) {
+        Expression[] args = { new StringExpression(str) };
+        return new PrintStatement(args);
+    }
+
+    private PrintStatement _createPrintStatement(String str, int linenum) {
+        Expression[] args = _expandEmbedExpr(str, linenum);
+        return new PrintStatement(args);
+    }
+
+    public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
+    public static final Pattern embedPattern  = Pattern.compile(EMBED_PATTERN);
+
+    private Expression[] _expandEmbedExpr(String str, int linenum) {
+        List list = null;
+        int index = 0;
+        Matcher m = embedPattern.matcher(str);
+        while (m.find()) {
+            if (list == null) list = new ArrayList();
+            String front = str.substring(index, m.start());
+            if (front != null && front.length() > 0) {
+                list.add(new StringExpression(front));
+                for (int i = 0; i < front.length(); i++) {
+                    if (str.charAt(i) == '\n') linenum++;
+                }
+            }
+            if (m.group(1).length() > 1) {
+                list.add(_parseExpression(m.group(1), linenum));
+            }
+            index = m.end();
+        }
+        Expression[] exprs;
+        if (list != null) {
+            list.add(new StringExpression(str.substring(index)));
+            exprs = new Expression[list.size()];
+            list.toArray(exprs);
+        } else {
+            exprs = new Expression[1];
+            exprs[0] = new StringExpression(str);
+        }
+        return exprs;
+    }
+
+
+    private PrintStatement _buildPrintStatement(Tag tag) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(tag.before_space);
+        sb.append(tag.is_etag ? "</" : "<");
+        sb.append(tag.tagname);
+        List list = new ArrayList();
+        if (tag.attrs != null) {
+            for (Iterator it = tag.attrs.iterator(); it.hasNext(); ) {
+                Object[] a = (Object[])it.next();
+                String aname  = (String)a[0];
+                Object avalue = a[1];
+                String aspace = (String)a[2];
+                sb.append(aspace);
+                sb.append(aname);
+                sb.append("=\"");
+                if (avalue instanceof Expression) {
+                    list.add(new StringExpression(sb.toString()));
+                    sb.delete(0, sb.length());  // clear
+                    list.add(avalue);
+                } else {
+                    assert avalue instanceof String;
+                    sb.append(avalue);
+                }
+                sb.append("\"");
+            }
+        }
+        //
+        if (tag.append_exprs != null) {
+            list.add(new StringExpression(sb.toString()));
+            list.addAll(tag.append_exprs);
+            sb.delete(0, sb.length());  // clear
+        }
+        sb.append(tag.extra_space);
+        sb.append(tag.is_empty ? "/>" : ">");
+        sb.append(tag.after_space);
+        list.add(new StringExpression(sb.toString()));
+        //
+        Expression[] args = new Expression[list.size()];
+        list.toArray(args);
+        return new PrintStatement(args);
+    }
+
+
+    private Tag _convert(Iterator it, List stmtlist, Tag startTag, boolean flagTagPrint) {
+        int startLinenum = startTag == null ? 0 : startTag.linenum;
+        boolean flagTagDelete = false;
+
+        if (startTag != null) {
+            if (flagTagPrint) {
+                if (startTag.tagname.equals("span") && (startTag.attrs == null || startTag.attrs.size() == 0)) {
+                    flagTagDelete = true;
+                    String s = startTag.is_begline && startTag.is_endline ? "" : startTag.before_space + startTag.after_space;
+                    stmtlist.add(_newPrintStatement(s));
+                } else {
+                    stmtlist.add(_buildPrintStatement(startTag));
+                }
+            }
+        }
+
+        Tag tag = null;
+        while (it.hasNext()) {
+            tag = (Tag)it.next();
+            if (tag.before_text.length() > 0) {
+                stmtlist.add(_createPrintStatement(tag.before_text, tag.linenum));
+            }
+            assert tag.tagname != null;
+            if (tag.is_etag) {                                          // end-tag
+                if (startTag != null && tag.tagname.equals(startTag.tagname)) {
+                    if (flagTagPrint) {
+                        if (flagTagDelete) {
+                            String s = startTag.is_begline && startTag.is_endline ? "" : tag.before_space + tag.after_space;
+                            stmtlist.add(_newPrintStatement(s));
+                        } else {
+                            stmtlist.add(_createPrintStatement(tag.tag_str, tag.linenum));
+                        }
+                    }
+                    return tag;   // return Tag of end-tag
+                } else {
+                    stmtlist.add(_createPrintStatement(tag.tag_str, tag.linenum));
+                }
+            }
+            else if (tag.is_empty || _isNoend(tag.tagname)) {          // empty-tag
+                _parseAttributes(tag);
+                if (tag.directive_name == null) {
+                    stmtlist.add(_buildPrintStatement(tag));
+                } else {
+                    List bodyStmtList = new ArrayList();
+                    if (tag.directive_name.equals("mark")) {
+                        // nothing
+                    } else if (tag.tagname.equals("span") && (tag.attrs == null || tag.attrs.size() == 0)) {
+                        String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
+                        bodyStmtList.add(_newPrintStatement(s));
+                    } else {
+                        bodyStmtList.add(_buildPrintStatement(tag));
+                    }
+                    Tag stag = tag;
+                    Tag etag = null;
+                    _handleDirective(stmtlist, stag, etag, bodyStmtList);
+                }
+            }
+            else {                                                       // start-tag
+                _parseAttributes(tag);
+                if (tag.directive_name != null) {
+                    List bodyStmtList = new ArrayList();
+                    int stagLinenum = tag.linenum;
+                    Tag stag = tag;
+                    Tag etag = _convert(it, bodyStmtList, stag, !tag.directive_name.equals("mark"));
+                    _handleDirective(stmtlist, stag, etag, bodyStmtList);
+                } else if (tag.tagname.equals(startTag.tagname)) {
+                    _convert(it, stmtlist, tag, true);   // recursive call
+                } else {
+                    stmtlist.add(_buildPrintStatement(tag));
+                }
+            }
+        }  // end of while
+
+        if (startTag != null)
+            throw new ConvertionException("'<" + startTag.tagname + ">' is not closed by end-tag.", _filename, startTag.linenum);
+        if (_remained_text != null)
+            stmtlist.add(_createPrintStatement(_remained_text, _remained_linenum));
         return null;
     }
 
@@ -3421,8 +3874,8 @@ public class ConverterTest extends TestCase {
         List list = converter.fetchAll(input);
         StringBuffer actual = new StringBuffer();
         for (Iterator it = list.iterator(); it.hasNext(); ) {
-            DefaultConverter.FetchData data = (DefaultConverter.FetchData)it.next();
-            actual.append(data._inspect().toString());
+            DefaultConverter.Tag tag = (DefaultConverter.Tag)it.next();
+            actual.append(tag._inspect().toString());
         }
         assertEquals(expected, actual.toString());
     }
