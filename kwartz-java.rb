@@ -1378,6 +1378,9 @@ public class FunctionExpression extends Expression {
         _arguments = arguments;
     }
 
+    public String getFunctionName() { return _funcname; }
+    public Expression[] getArguments()   { return _arguments; }
+
     public Object evaluate(Map context) {
         Function func = Function.getInstance(_funcname);
         if (func == null) {
@@ -3388,15 +3391,15 @@ public class DefaultConverter implements Converter {
     public String getFilename() { return _filename; }
     public void setFilename(String filename) { _filename = filename; }
 
-    protected final Pattern FETCH_PATTERN =
-        Pattern.compile("([ \t]*)<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n?)");
+    protected static final String TAG_PATTERN = "([ \t]*)<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n?)";
 
     public List fetchAll(String pdata) {
+        final Pattern tagPattern = Pattern.compile(TAG_PATTERN);
         _pdata = pdata;
         int index = 0;
         int linenum = 1;
         char lastchar = '\0';
-        Matcher m = FETCH_PATTERN.matcher(pdata);
+        Matcher m = tagPattern.matcher(pdata);
         List list = new ArrayList();
         Tag data;
         while (m.find()) {
@@ -3404,12 +3407,10 @@ public class DefaultConverter implements Converter {
             data.tag_str      = m.group(0);
             data.before_space = m.group(1);
             data.is_etag      = "/".equals(m.group(2));
-            //data.slash_etag   = m.group(2);
             data.tagname      = m.group(3);
             data.attr_str     = m.group(4);
             data.extra_space  = m.group(5);
             data.is_empty     = "/".equals(m.group(6));
-            //data.slash_empty = m.group(6);
             data.after_space  = m.group(7);
             data.start_pos    = m.start();
             data.end_pos      = m.end();
@@ -3473,23 +3474,21 @@ public class DefaultConverter implements Converter {
     }
 
 
-
-    protected static Pattern newlinePattern = Pattern.compile("\\r?\\n");
-
     public Statement[] convert(String pdata) {
+        final Pattern newlinePattern = Pattern.compile("\\r?\\n");
         if (! _properties.containsKey("newline")) {
             Matcher m = newlinePattern.matcher(pdata);
-            if (m.find()) {
-                _properties.put("newline", m.group(0));
-            }
+            if (m.find())  _properties.put("newline", m.group(0));
         }
         List datalist = fetchAll(pdata);
         Iterator it = datalist.iterator();
-        List stmtlist = new ArrayList();
-        _convert(it, stmtlist, null);
+        List stmtList = new ArrayList();
+        _convert(it, stmtList, null);
+        if (_remained_text != null && _remained_text.length() > 0)
+            stmtList.add(_createPrintStatement(_remained_text, _remained_linenum));
         //return new BlockStatement.new(stmts);
-        Statement[] stmts = new Statement[stmtlist.size()];
-        stmtlist.toArray(stmts);
+        Statement[] stmts = new Statement[stmtList.size()];
+        stmtList.toArray(stmts);
         return stmts;
     }
 
@@ -3525,14 +3524,17 @@ public class DefaultConverter implements Converter {
     }
 
 
-    // TBI
-    private void _handleDirective(List stmtlist, Tag stag, Tag etag, List bodyStmtList) {
-        String directiveName = stag.directive_name;
-        String directiveArg  = stag.directive_arg;
+    private void _handleDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        DirectiveHandlerIF handler = (DirectiveHandlerIF)_handlerTable.get(stag.directive_name);
+        if (handler == null) {
+            String msg = "'" + stag.directive_name + "': invalid directive name.";
+            throw new ConvertionException(msg, _filename, stag.linenum);
+        }
+        handler.handle(stmtList, stag, etag, bodyStmtList);
     }
 
 
-    public static interface DirectiveHandlerIF {
+    private interface DirectiveHandlerIF {
         public void handle(List stmtlist, Tag stag, Tag etag, List bodyStmtList);
     }
 
@@ -3660,10 +3662,10 @@ public class DefaultConverter implements Converter {
     }
 
 
-    private static String ATTR_PATTERN = "(\\s*)([-:_\\w]+)=\"(.*?)\"";
-    private static Pattern attrPattern = Pattern.compile(ATTR_PATTERN);
+    private static final String ATTR_PATTERN = "(\\s*)([-:_\\w]+)=\"(.*?)\"";
 
     private void _parseAttributes(Tag tag) {
+        final Pattern attrPattern = Pattern.compile(ATTR_PATTERN);
         Matcher m = attrPattern.matcher(tag.attr_str);
         Object[] id_tuple = null;
         Object[] kd_tuple = null;
@@ -3692,9 +3694,10 @@ public class DefaultConverter implements Converter {
     }
 
     private void _parseIdAttribute(String avalue, Tag tag) {
-        if (! Pattern.matches("\\A[-_\\w]+\\z", avalue)) {
+        final Pattern pat = Pattern.compile("\\A[-_\\w]+\\z");
+        if (! pat.matcher(avalue).find()) {
             _parseKdAttribute(avalue, tag);
-        } else if (avalue.indexOf('-') < 0) {
+        } else if (avalue.indexOf('-') < 0) {  // is it need?
             tag.directive_name = "mark";
             tag.directive_arg  = avalue;
         }
@@ -3704,7 +3707,7 @@ public class DefaultConverter implements Converter {
         String directive_name = null;
         String directive_arg  = null;
         String[] directives = kdstr.split(";");
-        Pattern pat = Pattern.compile("\\A\\s*(\\w+):(.*)\\z");
+        final Pattern pat = Pattern.compile("\\A\\s*(\\w+):(.*)\\z");
         for (int i = 0; i < directives.length; i++) {
             Matcher m = pat.matcher(directives[i]);
             if (! m.find())
@@ -3712,30 +3715,36 @@ public class DefaultConverter implements Converter {
             String dname = m.group(1);   // directive name
             String darg  = m.group(2);   // directive arg
             if (dname.equals("attr") || dname.equals("Attr") || dname.equals("ATTR")) {
-                Matcher m2 = Pattern.compile("\\A([-_\\w]+(?::[-_\\w]+)?)[:=](.*)\\z").matcher(darg);
+                final Pattern p2 = Pattern.compile("\\A([-_\\w]+(?::[-_\\w]+)?)[:=](.*)\\z");
+                Matcher m2 = p2.matcher(darg);
                 if (! m2.find())
                     throw new ConvertionException("'" + directives[i] + "': invalid attr directive.", _filename, tag.linenum);
                 String aname  = m2.group(1);
                 String avalue = m2.group(2);
                 String s;
                 if      (dname.equals("attr"))   s = avalue;
-                else if (dname.equals("Attr"))   s = "X(" + avalue + ")";
-                else                             s = "E(" + avalue + ")";
+                else if (dname.equals("Attr"))   s = "E(" + avalue + ")";
+                else                             s = "X(" + avalue + ")";
                 Expression expr = _parseExpression(s, tag.linenum);
-                int j;
                 Object[] attr = null;
-                for (j = 0; j < tag.attrs.size(); j++) {
-                    Object[] tuple = (Object[])tag.attrs.get(j);
-                    if (aname.equals(tuple[1])) {
-                        attr = tuple;
-                        break;
-                    }
-                }
-                if (attr == null) {
+                if (tag.attrs == null) {
+                    tag.attrs = new ArrayList();
                     attr = new Object[] { " ", aname, expr };
                     tag.attrs.add(attr);
                 } else {
-                    attr[2] = expr;
+                    for (int j = 0; j < tag.attrs.size(); j++) {
+                        Object[] tuple = (Object[])tag.attrs.get(j);
+                        if (aname.equals(tuple[1])) {
+                            attr = tuple;
+                            break;
+                        }
+                    }
+                    if (attr == null) {
+                        attr = new Object[] { " ", aname, expr };
+                        tag.attrs.add(attr);
+                    } else {
+                        attr[2] = expr;
+                    }
                 }
             }
             else if (dname.equals("append") || dname.equals("Append") || dname.equals("APPEND")) {
@@ -3779,14 +3788,15 @@ public class DefaultConverter implements Converter {
         return new PrintStatement(args);
     }
 
-    public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
-    public static final Pattern embedPattern  = Pattern.compile(EMBED_PATTERN);
 
     public Expression[] expandEmbeddedExpression(String str, int linenum) {
         return _expandEmbedExpr(str, linenum);
     }
 
+    public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
+
     private Expression[] _expandEmbedExpr(String str, int linenum) {
+        final Pattern embedPattern = Pattern.compile(EMBED_PATTERN);
         List list = null;
         int index = 0;
         Matcher m = embedPattern.matcher(str);
@@ -3806,7 +3816,8 @@ public class DefaultConverter implements Converter {
         }
         Expression[] exprs;
         if (list != null) {
-            list.add(new StringExpression(str.substring(index)));
+            String s = str.substring(index);
+            if (s != null && s.length() > 0) list.add(new StringExpression(s));
             exprs = new Expression[list.size()];
             list.toArray(exprs);
         } else {
@@ -3825,9 +3836,9 @@ public class DefaultConverter implements Converter {
         if (tag.attrs != null) {
             for (Iterator it = tag.attrs.iterator(); it.hasNext(); ) {
                 Object[] a = (Object[])it.next();
-                String aname  = (String)a[0];
-                Object avalue = a[1];
-                String aspace = (String)a[2];
+                String aspace = (String)a[0];
+                String aname  = (String)a[1];
+                Object avalue = a[2];
                 sb.append(aspace);
                 sb.append(aname);
                 sb.append("=\"");
@@ -3837,7 +3848,21 @@ public class DefaultConverter implements Converter {
                     list.add(avalue);
                 } else {
                     assert avalue instanceof String;
-                    sb.append(avalue);
+                    String str = (String)avalue;
+                    if (str.indexOf('@') < 0) {         // ATTR_PATTERN
+                        sb.append(str);
+                    } else {
+                        Expression[] exprs = _expandEmbedExpr(str, tag.linenum);
+                        for (int i = 0; i < exprs.length; i++) {
+                            if (exprs[i].getToken() == TokenType.STRING) {
+                                sb.append(((StringExpression)exprs[i]).getValue());
+                            } else {
+                                list.add(new StringExpression(sb.toString()));
+                                sb.delete(0, sb.length());  // clear
+                                list.add(exprs[i]);
+                            }
+                        }
+                    }
                 }
                 sb.append("\"");
             }
@@ -3876,7 +3901,7 @@ public class DefaultConverter implements Converter {
             else if (tag.is_empty || _isNoend(tag.tagname)) {          // empty-tag
                 _parseAttributes(tag);
                 if (tag.directive_name == null) {
-                    stmtList.add(_createPrintStatement(tag.tag_str, tag.linenum));
+                    stmtList.add(_buildPrintStatement(tag));
                 } else {
                     List bodyStmtList = new ArrayList();
                     if (tag.directive_name.equals("mark")) {
@@ -3907,7 +3932,7 @@ public class DefaultConverter implements Converter {
                 boolean tagSkip = hasDirective && tag.directive_name.equals("mark");
                 boolean tagDelete = false;
                 if (! tagSkip) {
-                    tagDelete = startTag.tagname.equals("span") && (startTag.attrs == null || startTag.attrs.size() == 0);
+                    tagDelete = stag.tagname.equals("span") && (stag.attrs == null || stag.attrs.size() == 0);
                     bodyStmtList.add(_createTagPrintStatement(stag, tagDelete));
                 }
                 // handle content
@@ -3925,8 +3950,6 @@ public class DefaultConverter implements Converter {
         //
         if (startTag != null)
             throw new ConvertionException("'<" + startTag.tagname + ">' is not closed by end-tag.", _filename, startTag.linenum);
-        if (_remained_text != null)
-            stmtList.add(_createPrintStatement(_remained_text, _remained_linenum));
         return null;
     }
 
@@ -4249,8 +4272,9 @@ public class ConverterTest extends TestCase {
         List list = converter.fetchAll(input);
         StringBuffer actual = new StringBuffer();
         for (Iterator it = list.iterator(); it.hasNext(); ) {
-            DefaultConverter.Tag tag = (DefaultConverter.Tag)it.next();
+            Tag tag = (Tag)it.next();
             actual.append(tag._inspect().toString());
+            actual.append("\n");
         }
         assertEquals(expected, actual.toString());
     }
@@ -4267,10 +4291,10 @@ END
 tag_str      = "<html lang=\"ja\">\n"
 before_text  = ""
 before_space = ""
-after_space  = "\n"
 tagname      = "html"
 attr_str     = " lang=\"ja\""
 extra_space  = ""
+after_space  = "\n"
 is_etag      = false
 is_empty     = false
 is_begline   = true
@@ -4282,10 +4306,10 @@ linenum      = 1
 tag_str      = "  <body>\n"
 before_text  = ""
 before_space = "  "
-after_space  = "\n"
 tagname      = "body"
 attr_str     = ""
 extra_space  = ""
+after_space  = "\n"
 is_etag      = false
 is_empty     = false
 is_begline   = true
@@ -4297,10 +4321,10 @@ linenum      = 2
 tag_str      = "    <h1 style=\"color: #fffff\">"
 before_text  = ""
 before_space = "    "
-after_space  = ""
 tagname      = "h1"
 attr_str     = " style=\"color: #fffff\""
 extra_space  = ""
+after_space  = ""
 is_etag      = false
 is_empty     = false
 is_begline   = true
@@ -4312,10 +4336,10 @@ linenum      = 3
 tag_str      = "</h1>\n"
 before_text  = "title"
 before_space = ""
-after_space  = "\n"
 tagname      = "h1"
 attr_str     = ""
 extra_space  = ""
+after_space  = "\n"
 is_etag      = true
 is_empty     = false
 is_begline   = false
@@ -4327,10 +4351,10 @@ linenum      = 3
 tag_str      = "  </body>\n"
 before_text  = ""
 before_space = "  "
-after_space  = "\n"
 tagname      = "body"
 attr_str     = ""
 extra_space  = ""
+after_space  = "\n"
 is_etag      = true
 is_empty     = false
 is_begline   = true
@@ -4342,10 +4366,10 @@ linenum      = 4
 tag_str      = "</html>\n"
 before_text  = ""
 before_space = ""
-after_space  = "\n"
 tagname      = "html"
 attr_str     = ""
 extra_space  = ""
+after_space  = "\n"
 is_etag      = true
 is_empty     = false
 is_begline   = true
@@ -4358,7 +4382,1321 @@ END
         _testFetchAll(input, expected);
     }
 
-    // -----
+
+
+    // --------------------
+
+    Class     _klass;
+    String    _method;
+    Class[]   _argtypes;
+    Object    _receiver;
+    Object[]  _args;
+    Object    _result;
+    String    _input;
+    String    _expected;
+    String    _actual;
+
+    public void _test() throws Exception {
+        java.lang.reflect.Method m = _klass.getDeclaredMethod(_method, _argtypes);
+        m.setAccessible(true);
+        if (_receiver == null) _receiver = _klass.newInstance();
+        _result = m.invoke(_receiver, _args);
+        if (_result instanceof Expression) {
+            _actual = ((Expression)_result)._inspect().toString();
+        }
+        if (_expected != null) assertEquals(_expected, _actual);
+    }
+
+
+    public void testConverter01() throws Exception {
+        _input    = "x+y*z";
+        _expected = <<'END';
+            +
+              x
+              *
+                y
+                z
+            END
+        _klass    = DefaultConverter.class;
+        _method   = "_parseExpression";
+        _argtypes = new Class[] {String.class, int.class};
+        _args     = new Object[] {_input, new Integer(0)};
+        _test();
+    }
+
+    public void testConverter02() throws Exception {
+        _input    = "x+y*z 100";
+        _expected = "";
+        _klass    = DefaultConverter.class;
+        _method   = "_parseExpression";
+        _argtypes = new Class[] {String.class, int.class};
+        _args     = new Object[] {_input, new Integer(0)};
+        try {
+            _test();
+            fail("ConversionException expected but nothing happened.");
+        } catch (java.lang.reflect.InvocationTargetException ex) {
+            if (! (ex.getCause() instanceof ConvertionException)) {
+                fail("ConversionException expected but got " + ex.toString());
+                throw ex;
+            }
+        }
+    }
+
+    public void testConvert03() throws Exception {  // expandEmbeddedExpression()
+        _input    = <<'END';
+             <span id="@{user.id}@">Hello @{user[:name]}@!</span>
+             END
+        Converter converter = new DefaultConverter();
+        Expression[] exprs = converter.expandEmbeddedExpression(_input, 1);
+        assertEquals(5, exprs.length);
+        assertEquals(StringExpression.class, exprs[0].getClass());
+        assertEquals("<span id=\"", ((StringExpression)exprs[0]).getValue());
+        assertEquals(PropertyExpression.class, exprs[1].getClass());
+        assertEquals(StringExpression.class, exprs[2].getClass());
+        assertEquals("\">Hello ", ((StringExpression)exprs[2]).getValue());
+        assertEquals(IndexExpression.class, exprs[3].getClass());
+        assertEquals(StringExpression.class, exprs[4].getClass());
+        assertEquals("!</span>\n", ((StringExpression)exprs[4]).getValue());
+        //
+        _input    = "foo@{var}@";
+        exprs = converter.expandEmbeddedExpression(_input, 1);
+        assertEquals(2, exprs.length);
+        //
+        _input    = "@{var}@foo";
+        exprs = converter.expandEmbeddedExpression(_input, 1);
+        assertEquals(2, exprs.length);
+        //
+        _input    = <<'END';
+             <body>
+              <span id="@{user.id}@">Hello @{user[:name].+}@!</span>
+             </body>
+             END
+        try {
+            exprs = converter.expandEmbeddedExpression(_input, 1);
+            fail("SyntaxException expected but not happened.");
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+
+
+    public void testAttribute01() throws Exception {  // _parseKdAttribute()
+        String pdata = <<'END';
+            <div id="foo" class="klass" kw:d="value:val">
+            text
+            </div>
+            END
+        DefaultConverter converter = new DefaultConverter();
+        List taglist = converter.fetchAll(pdata);
+        Tag tag = (Tag)taglist.get(0);
+        //
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseKdAttribute";
+        _argtypes = new Class[] {String.class, Tag.class};
+        //
+        _input    = "mark:bar";                   // valid directive
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals("mark", tag.directive_name);
+        assertEquals("bar",  tag.directive_arg);
+        //
+        _input    = "Mark:bar";                   // invalid directive
+        _args     = new Object[] {_input, tag};
+        try {
+            _test();
+            fail("ConversionException expected but nothing happened.");
+        } catch (java.lang.reflect.InvocationTargetException ex) {
+            if (! (ex.getCause() instanceof ConvertionException)) {
+                fail("ConversionException expected but got " + ex.toString());
+                throw ex;
+            }
+        }
+        //
+        Object[] tuples = {
+            new String[] { "  mark",        "bar" },
+            new String[] { "value",       "var+1" },
+            new String[] { "Value",       "var+2" },
+            new String[] { "VALUE",       "var+3" },
+            new String[] { "foreach",     "item=list" },
+            new String[] { "Foreach",     "item=list" },
+            new String[] { "FOREACH",     "item=list" },
+            new String[] { "list",        "item=list" },
+            new String[] { "List",        "item=list" },
+            new String[] { "LIST",        "item=list" },
+            new String[] { "while",       "i>0" },
+            new String[] { "list",        "i<0" },
+            new String[] { "set",         "var=value" },
+            new String[] { "if",          "error!=null" },
+            new String[] { "elseif",      "warning!=null" },
+            new String[] { "else",        "" },
+            new String[] { "dummy",       "d1" },
+            new String[] { "replace",     "elem1" },
+            new String[] { "placeholder", "elem2" },
+            new String[] { "include",     "'filename'" },
+        };
+        for (int i = 0; i < tuples.length; i++) {
+            String[] tuple = (String[])tuples[i];
+            String dname = tuple[0];
+            String darg  = tuple[1];
+            _input    = dname + ":" + darg;
+            _args     = new Object[] {_input, tag};
+            _test();
+            assertEquals(dname.trim(), tag.directive_name);
+            assertEquals(darg,  tag.directive_arg);
+        }
+    }
+
+
+    public void testAttribute02() throws Exception {  // _parseKdAttribute()
+        String pdata = <<'END';
+            <div id="foo" class="klass" kw:d="value:val">
+            END
+        DefaultConverter converter = new DefaultConverter();
+        List taglist = converter.fetchAll(pdata);
+        Tag tag = (Tag)taglist.get(0);
+        //
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseKdAttribute";
+        _argtypes = new Class[] {String.class, Tag.class};
+        //
+        _input    = "attr:class:klass";
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals(null, tag.directive_name);
+        assertEquals(null, tag.directive_arg);
+        assertTrue(tag.attrs != null);
+        assertEquals(1, tag.attrs.size());
+        Object[] attr = (Object[])tag.attrs.get(0);
+        assertEquals("class", attr[1]);
+        assertEquals(VariableExpression.class, attr[2].getClass());
+        //
+        _input    = "Attr:class:klass";
+        _args     = new Object[] {_input, tag};
+        _test();
+        attr = (Object[])tag.attrs.get(0);
+        assertEquals(FunctionExpression.class, attr[2].getClass());
+        assertEquals("E", ((FunctionExpression)attr[2]).getFunctionName());
+        //
+        _input    = "ATTR:class:klass";
+        _args     = new Object[] {_input, tag};
+        _test();
+        attr = (Object[])tag.attrs.get(0);
+        assertEquals(FunctionExpression.class, attr[2].getClass());
+        assertEquals("X", ((FunctionExpression)attr[2]).getFunctionName());
+        //
+        _input    = "append:' checked'";
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals(null, tag.directive_name);
+        assertEquals(null, tag.directive_arg);
+        assertTrue(tag.append_exprs != null);
+        assertEquals(1, tag.append_exprs.size());
+        Object expr = tag.append_exprs.get(0);
+        assertEquals(StringExpression.class, expr.getClass());
+        //
+        _input    = "Append:' selected'";
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals(2, tag.append_exprs.size());
+        expr = tag.append_exprs.get(1);
+        assertEquals(FunctionExpression.class, expr.getClass());
+        assertEquals("E", ((FunctionExpression)expr).getFunctionName());
+        //
+        _input    = "APPEND:' DELETED'";
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals(3, tag.append_exprs.size());
+        expr = tag.append_exprs.get(2);
+        assertEquals(FunctionExpression.class, expr.getClass());
+        assertEquals("X", ((FunctionExpression)expr).getFunctionName());
+        //
+    }
+
+    public void testAttribute03() throws Exception {  // _parseKdAttribute()
+        String pdata = <<'END';
+            <div id="foo" class="klass" kw:d="value:val">
+            END
+        DefaultConverter converter = new DefaultConverter();
+        List taglist = converter.fetchAll(pdata);
+        Tag tag = (Tag)taglist.get(0);
+        //
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseKdAttribute";
+        _argtypes = new Class[] {String.class, Tag.class};
+        //
+        _input    = "attr:class:klass; append:' checked'; mark:foo[:key]";
+        _args     = new Object[] {_input, tag};
+        _test();
+        assertEquals("mark", tag.directive_name);
+        assertEquals("foo[:key]", tag.directive_arg);
+        assertTrue(tag.attrs != null);
+        assertEquals(1, tag.attrs.size());
+        Object[] attr = (Object[])tag.attrs.get(0);
+        assertEquals("class", attr[1]);
+        assertEquals(VariableExpression.class, attr[2].getClass());
+        assertTrue(tag.append_exprs != null);
+        assertEquals(1, tag.append_exprs.size());
+        Object expr = tag.append_exprs.get(0);
+        assertEquals(StringExpression.class, expr.getClass());
+    }
+
+    public void testAttribute04() throws Exception { // _parseAttributes() {
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseAttributes";
+        _argtypes = new Class[] {Tag.class};
+        //
+        Tag tag = new Tag();
+        tag.attr_str = " class=\"even\" bgcolor=\"#FFCCCC\" xml:ns=\"foo\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertTrue(tag.attrs != null);
+        assertEquals(3, tag.attrs.size());
+        Object[] attr = (Object[])tag.attrs.get(0);
+        assertEquals("class", attr[1]);
+        assertEquals("even",  attr[2]);
+        attr = (Object[])tag.attrs.get(1);
+        assertEquals("bgcolor", attr[1]);
+        assertEquals("#FFCCCC",  attr[2]);
+        attr = (Object[])tag.attrs.get(2);
+        assertEquals("xml:ns", attr[1]);
+        assertEquals("foo",  attr[2]);
+    }
+
+    public void testAttribute05() throws Exception { // _parseAttributes() {
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseAttributes";
+        _argtypes = new Class[] {Tag.class};
+        //
+        Tag tag = new Tag();
+        tag.attr_str = " class=\"even\" bgcolor=\"#FFCCCC\" id=\"foo\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("mark", tag.directive_name);
+        assertEquals("foo", tag.directive_arg);
+        assertEquals(3, tag.attrs.size());
+        Object[] attr = (Object[])tag.attrs.get(2);
+        assertEquals("id", attr[1]);
+        assertEquals("foo",  attr[2]);
+        //
+        tag = new Tag();
+        tag.attr_str = " class=\"even\"  bgcolor=\"#FFCCCC\" id=\"mark:foo\" ";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("mark", tag.directive_name);
+        assertEquals("foo", tag.directive_arg);
+        assertEquals(2, tag.attrs.size());
+        attr = (Object[])tag.attrs.get(0);
+        assertEquals("class", attr[1]);
+        attr = (Object[])tag.attrs.get(1);
+        assertEquals("bgcolor", attr[1]);
+        //
+        tag = new Tag();
+        tag.attr_str = " class=\"even\" id=\"foo\" id=\"value:var\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("value", tag.directive_name);
+        assertEquals("var", tag.directive_arg);
+        assertEquals(2, tag.attrs.size());
+        attr = (Object[])tag.attrs.get(1);
+        assertEquals("id", attr[1]);
+        assertEquals("foo",  attr[2]);
+    }
+
+
+    public void testAttribute06() throws Exception { // _parseAttributes() {
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseAttributes";
+        _argtypes = new Class[] {Tag.class};
+        //
+        Tag tag = new Tag();
+        tag.attr_str = " class=\"even\" bgcolor=\"#FFCCCC\" kw:d=\"mark:foo\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("mark", tag.directive_name);
+        assertEquals("foo", tag.directive_arg);
+        assertEquals(2, tag.attrs.size());
+        //
+        tag = new Tag();
+        tag.attr_str = " id=\"foo\" bgcolor=\"#FFCCCC\" kw:d=\"value:var\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("value", tag.directive_name);
+        assertEquals("var", tag.directive_arg);
+        assertEquals(2, tag.attrs.size());
+        //
+    }
+
+    public void testAttribute07() throws Exception { // _parseAttributes() {
+        _expected = null;
+        _klass    = DefaultConverter.class;
+        _method   = "_parseAttributes";
+        _argtypes = new Class[] {Tag.class};
+        //
+        Tag tag = new Tag();
+        tag.attr_str = "id=\"foo\" bgcolor=\"#FFCCCC\""
+                     + " kw:d=\"mark:bar;attr:id:xid;attr:class:klass;append:flag?' checked':''\"";
+        _args     = new Object[] {tag};
+        _test();
+        //
+        assertEquals("mark", tag.directive_name);
+        assertEquals("bar", tag.directive_arg);
+        assertEquals(3, tag.attrs.size());
+        Object[] attr = (Object[])tag.attrs.get(0);
+        assertEquals("id", attr[1]);
+        assertEquals(VariableExpression.class, attr[2].getClass());
+        attr = (Object[])tag.attrs.get(1);
+        assertEquals("bgcolor", attr[1]);
+        assertEquals(String.class, attr[2].getClass());
+        attr = (Object[])tag.attrs.get(2);
+        assertEquals("class", attr[1]);
+        assertEquals(VariableExpression.class, attr[2].getClass());
+        assertTrue(tag.append_exprs != null);
+        assertEquals(ConditionalExpression.class, tag.append_exprs.get(0).getClass());
+    }
+
+
+    private void _testConverter() {
+        _testConverter(false);
+    }
+    private void _testConverter(boolean flag_print) {
+        Converter converter = new DefaultConverter();
+        Statement[] stmts = converter.convert(_input);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < stmts.length; i++) {
+            sb.append(stmts[i]._inspect().toString());
+        }
+        String actual = sb.toString();
+        if (flag_print) {
+            System.out.println("*** actual=|" + actual + "|\n");
+        } else {
+            assertEquals(_expected, actual);
+        }
+    }
+    
+    public void testConverter21() {  // normal text
+        _input = <<'END';
+            <span>Hello World</span>
+            END
+        _expected = <<'END';
+            :print
+              "<span>"
+            :print
+              "Hello World"
+            :print
+              "</span>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testConverter22() {  // Helo @{user}@
+        _input = <<'END';
+             <span>Hello @{user}@</span>
+            END
+        _expected = <<'END';
+            :print
+              " <span>"
+            :print
+              "Hello "
+              user
+            :print
+              "</span>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testConverter23() {  // color="@{color}@"
+        _input = <<'END';
+             <span color="@{color}@">Hello World</span>
+            END
+        _expected = <<'END';
+            :print
+              " <span color=\""
+              color
+              "\">"
+            :print
+              "Hello World"
+            :print
+              "</span>\n"
+            END
+        _testConverter(false);
+    }
+
+
+    public void testConverter24() {  // keep spaces
+        _input = <<'END';
+             <div  align="center"   bgcolor="#FFFFFF" >
+                <span style="color:red">CAUTION!</span>
+                <br  />
+             </div>
+            END
+        _expected = <<'END';
+            :print
+              " <div  align=\"center\"   bgcolor=\"#FFFFFF\" >\n"
+            :print
+              "    <span style=\"color:red\">"
+            :print
+              "CAUTION!"
+            :print
+              "</span>\n"
+            :print
+              "    <br  />\n"
+            :print
+              " </div>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective11() {   // id="foo"
+        _input = <<'END';
+            <div>
+             <span id="foo">bar</span>
+            </div>
+            END
+        _expected = <<'END';
+            :print
+              "<div>\n"
+            @element(foo)
+            :print
+              "</div>\n"
+            END
+        _testConverter();
+    }
+
+    public void testDirective12() {   // id="mark:foo"
+        _input = <<'END';
+            <div>
+             <span id="mark:foo">bar</span>
+            </div>
+            END
+        _expected = <<'END';
+            :print
+              "<div>\n"
+            @element(foo)
+            :print
+              "</div>\n"
+            END
+        _testConverter();
+    }
+
+    public void testDirective13() {    // kw:d="mark:foo"
+        _input = <<'END';
+            <div>
+              <span id="mark:bar" class="klass" kw:d="mark:foo">bar</span>
+            </div>
+            END
+        _expected = <<'END';
+            :print
+              "<div>\n"
+            @element(foo)
+            :print
+              "</div>\n"
+            END
+        _testConverter();
+    }
+
+    public void testDirective21() {    // id="value:var"
+        _input = <<'END';
+            <li id="value:user.name">foo</li>
+            END
+        _expected = <<'END';
+            :print
+              "<li>"
+            :print
+              .
+                user
+                name
+            :print
+              "</li>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective22() {    // id="Value:var"
+        _input = <<'END';
+            <li id="Value:user.name">foo</li>
+            END
+        _expected = <<'END';
+            :print
+              "<li>"
+            :print
+              E()
+                .
+                  user
+                  name
+            :print
+              "</li>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective23() {    // id="Value:var"
+        _input = <<'END';
+            <li id="VALUE:user.name">foo</li>
+            END
+        _expected = <<'END';
+            :print
+              "<li>"
+            :print
+              X()
+                .
+                  user
+                  name
+            :print
+              "</li>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective31() {    // id="foreach:item=list"
+        _input = <<'END';
+            <ul id="foreach:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :foreach
+              item
+              list
+              :block
+                :print
+                  "<ul>\n"
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective32() {    // id="Foreach:item=list"
+        _input = <<'END';
+            <ul id="Foreach:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :expr
+              =
+                item_ctr
+                0
+            :foreach
+              item
+              list
+              :block
+                :expr
+                  +=
+                    item_ctr
+                    1
+                :print
+                  "<ul>\n"
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective33() {    // id="FOREACH:item=list"
+        _input = <<'END';
+            <ul id="FOREACH:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :expr
+              =
+                item_ctr
+                0
+            :foreach
+              item
+              list
+              :block
+                :expr
+                  +=
+                    item_ctr
+                    1
+                :expr
+                  =
+                    item_tgl
+                    ?:
+                      ==
+                        %
+                          item_ctr
+                          2
+                        0
+                      "even"
+                      "odd"
+                :print
+                  "<ul>\n"
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+
+    public void testDirective34() {    // id="list:item=list"
+        _input = <<'END';
+            <ul id="list:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :print
+              "<ul>\n"
+            :foreach
+              item
+              list
+              :block
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+            :print
+              "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective35() {    // id="List:item=list"
+        _input = <<'END';
+            <ul id="List:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :print
+              "<ul>\n"
+            :expr
+              =
+                item_ctr
+                0
+            :foreach
+              item
+              list
+              :block
+                :expr
+                  +=
+                    item_ctr
+                    1
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+            :print
+              "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective36() {    // id="LIST:item=list"
+        _input = <<'END';
+            <ul id="LIST:item=list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :print
+              "<ul>\n"
+            :expr
+              =
+                item_ctr
+                0
+            :foreach
+              item
+              list
+              :block
+                :expr
+                  +=
+                    item_ctr
+                    1
+                :expr
+                  =
+                    item_tgl
+                    ?:
+                      ==
+                        %
+                          item_ctr
+                          2
+                        0
+                      "even"
+                      "odd"
+                :print
+                  "  <li>"
+                :print
+                  item
+                :print
+                  "</li>\n"
+            :print
+              "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective41() {  // while:row=sth.fetch()
+        _input = <<'END';
+            <ul id="while:row=sth.fetch()">
+              <li>@{row[0]}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :while
+              =
+                row
+                .()
+                  sth
+                  fetch()
+              :block
+                :print
+                  "<ul>\n"
+                :print
+                  "  <li>"
+                :print
+                  []
+                    row
+                    0
+                :print
+                  "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective42() {  // loop:row=sth.fetch()
+        _input = <<'END';
+            <ul id="loop:row=sth.fetch()">
+              <li>@{row[0]}@</li>
+            </ul>
+            END
+        _expected = <<'END';
+            :print
+              "<ul>\n"
+            :while
+              =
+                row
+                .()
+                  sth
+                  fetch()
+              :block
+                :print
+                  "  <li>"
+                :print
+                  []
+                    row
+                    0
+                :print
+                  "</li>\n"
+            :print
+              "</ul>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective51() {  // if:error!=null
+        _input = <<'END';
+            <font color="red" id="if:error!=null">
+              ERROR!
+            </font>
+            END
+        _expected = <<'END';
+            :if
+              !=
+                error
+                null
+              :block
+                :print
+                  "<font color=\"red\">\n"
+                :print
+                  "  ERROR!\n"
+                :print
+                  "</font>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective52() {  // elseif:warning!=null
+        _input = <<'END';
+            <font color="red" id="if:error!=empty">
+              ERROR!
+            </font>
+            <font color="blue" id="elseif:warning!=null">
+              WARNING
+            </font>
+            END
+        _expected = <<'END';
+            :if
+              notempty
+                error
+              :block
+                :print
+                  "<font color=\"red\">\n"
+                :print
+                  "  ERROR!\n"
+                :print
+                  "</font>\n"
+              :if
+                !=
+                  warning
+                  null
+                :block
+                  :print
+                    "<font color=\"blue\">\n"
+                  :print
+                    "  WARNING\n"
+                  :print
+                    "</font>\n"
+            END
+        _testConverter();
+    }
+
+    public void testDirective53() {  // else:
+        _input = <<'END';
+            <font color="red" id="if:error!=empty">
+              ERROR!
+            </font>
+            <font color="blue" id="elseif:warning!=null">
+              WARNING
+            </font>
+            <font color="black" id="else:">
+              Welcome
+            </font>
+            END
+        _expected = <<'END';
+            :if
+              notempty
+                error
+              :block
+                :print
+                  "<font color=\"red\">\n"
+                :print
+                  "  ERROR!\n"
+                :print
+                  "</font>\n"
+              :if
+                !=
+                  warning
+                  null
+                :block
+                  :print
+                    "<font color=\"blue\">\n"
+                  :print
+                    "  WARNING\n"
+                  :print
+                    "</font>\n"
+                :block
+                  :print
+                    "<font color=\"black\">\n"
+                  :print
+                    "  Welcome\n"
+                  :print
+                    "</font>\n"
+            END
+        _testConverter();
+    }
+
+    public void testDirective54() {  // several elseif:
+        _input = <<'END';
+            <div>
+              <font color="red" id="if:error!=empty">ERROR!</font>
+              <font color="blue" id="elseif:warning!=empty">WARNING</font>
+              <font color="green" id="elseif:notify!=empty">NOTIFICATION</font>
+              <font color="black" id="else:">Welcome</font>
+            </div>
+            END
+        _expected = <<'END';
+            :print
+              "<div>\n"
+            :if
+              notempty
+                error
+              :block
+                :print
+                  "  <font color=\"red\">"
+                :print
+                  "ERROR!"
+                :print
+                  "</font>\n"
+              :if
+                notempty
+                  warning
+                :block
+                  :print
+                    "  <font color=\"blue\">"
+                  :print
+                    "WARNING"
+                  :print
+                    "</font>\n"
+                :if
+                  notempty
+                    notify
+                  :block
+                    :print
+                      "  <font color=\"green\">"
+                    :print
+                      "NOTIFICATION"
+                    :print
+                      "</font>\n"
+                  :block
+                    :print
+                      "  <font color=\"black\">"
+                    :print
+                      "Welcome"
+                    :print
+                      "</font>\n"
+            :print
+              "</div>\n"
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective55() {  // invalid if-else
+        _input = <<'END';
+            <div>
+              <font color="red" id="if:error!=empty">
+                ERROR!
+              </font>
+              
+              <font color="blue" id="elseif:warning!=empty">
+                WARNING
+              </font>
+            </div>
+            END
+        _expected = "";
+        try {
+          _testConverter(false);
+          fail("ConvertionException expected but nothing happened.");
+        } catch (ConvertionException ex) {
+            // OK
+        }
+    }
+
+
+    public void testDirective61() {  // replace:elem1
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="replace:title">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            @element(title)
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective62() {  // replace:elem1:element
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="replace:title:element">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            @element(title)
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective63() {  // replace:elem1:content
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="replace:title:content">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            @content(title)
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective64() {  // placeholder:elem1
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="placeholder:title">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            :print
+              "<div>"
+            @element(title)
+            :print
+              "</div>\n"
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective65() {  // placeholder:elem1:element
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="placeholder:title:element">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            :print
+              "<div>"
+            @element(title)
+            :print
+              "</div>\n"
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective66() {  // placeholder:elem1:content
+        _input = <<'END';
+            <h1 id="mark:title">...title...</h1>
+            text
+            <div id="placeholder:title:content">foo</div>
+            END
+        _expected = <<'END';
+            @element(title)
+            :print
+              "text\n"
+            :print
+              "<div>"
+            @content(title)
+            :print
+              "</div>\n"
+            END
+        _testConverter(false);
+    }
+
+
+    public void testDirective71() {  // set:var=value
+        _input = <<'END';
+            <tr bgcolor="@{color}@" id="set:color=i%2==0?'#FFCCCC':'#CCCCFF'">
+              <td>item=@{item}@</td>
+            </tr>
+            END
+        _expected = <<'END';
+            :expr
+              =
+                color
+                ?:
+                  ==
+                    %
+                      i
+                      2
+                    0
+                  "#FFCCCC"
+                  "#CCCCFF"
+            :print
+              "<tr bgcolor=\""
+              color
+              "\">\n"
+            :print
+              "  <td>"
+            :print
+              "item="
+              item
+            :print
+              "</td>\n"
+            :print
+              "</tr>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective72() {  // dummy:d1
+        _input = <<'END';
+            <tr>
+              <td>foo</td>
+            </tr>
+            <tr id="dummy:d1">
+              <td>foo</td>
+            </tr>
+            END
+        _expected = <<'END';
+            :print
+              "<tr>\n"
+            :print
+              "  <td>"
+            :print
+              "foo"
+            :print
+              "</td>\n"
+            :print
+              "</tr>\n"
+            END
+        _testConverter();
+    }
+
+
+    public void testDirective73() {  // include:'filename'
+        //_input = <<'END';
+        //    END
+        //_expected = <<'END';
+        //    END
+        //_testConverter();
+    }
+
+    public void testDirective81() {  // attr:bgcolor:color
+        _input = <<'END';
+            <div  bgcolor="red"   style="color:red"
+                 id="attr:bgcolor=color;attr:ns:class:item[:klass];value:val" title="">foo</div>
+            END
+        _expected = <<'END';
+            :print
+              "<div  bgcolor=\""
+              color
+              "\"   style=\"color:red\" title=\"\" ns:class=\""
+              [:]
+                item
+                "klass"
+              "\">"
+            :print
+              val
+            :print
+              "</div>\n"
+            END
+        _testConverter();
+        //
+    }
+
+    public void testDirective82() {  // Attr: and ATTR:
+        _input = <<'END';
+            <div  bgcolor="red"   style="color:red"
+                 id="Attr:bgcolor=color;ATTR:ns:class:item[:klass];value:val" title="">foo</div>
+            END
+        _expected = <<'END';
+            :print
+              "<div  bgcolor=\""
+              E()
+                color
+              "\"   style=\"color:red\" title=\"\" ns:class=\""
+              X()
+                [:]
+                  item
+                  "klass"
+              "\">"
+            :print
+              val
+            :print
+              "</div>\n"
+            END
+        _testConverter();
+        //
+    }
+
+
+    public void testDirective83() {  // attr directive with empty tag
+        _input = <<'END';
+            <div  bgcolor="red"   style="color:red"
+                 id="Attr:bgcolor=color;ATTR:ns:class:item[:klass]" title="" />
+            END
+        _expected = <<'END';
+            :print
+              "<div  bgcolor=\""
+              E()
+                color
+              "\"   style=\"color:red\" title=\"\" ns:class=\""
+              X()
+                [:]
+                  item
+                  "klass"
+              "\" />\n"
+            END
+        _testConverter();
+        //
+    }
+
+
+    public void testDirective84() {  // append, Append, APPEND
+        _input = <<'END';
+            <input type="checkbox" id="foo" kw:d="append:flag?' checked':'';Append:flag?' selected':'';APPEND:flag?' disabled':''" />
+            END
+        _expected = <<'END';
+            :print
+              "<input type=\"checkbox\" id=\"foo\""
+              ?:
+                flag
+                " checked"
+                ""
+              E()
+                ?:
+                  flag
+                  " selected"
+                  ""
+              X()
+                ?:
+                  flag
+                  " disabled"
+                  ""
+              " />\n"
+            END
+        _testConverter();
+        //
+    }
+
+
+
+    // --------------------
 
     public static void main(String[] args) {
        junit.textui.TestRunner.run(ConverterTest.class);
@@ -5872,6 +7210,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(ExpressionParserTest.class));
         suite.addTest(new TestSuite(StatementParserTest.class));
         suite.addTest(new TestSuite(InterpreterTest.class));
+        suite.addTest(new TestSuite(ConverterTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

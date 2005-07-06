@@ -1,6 +1,9 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-06 (rev.9)
+	.- [enhance] add ConverterTest class
+
 .: 2005-07-06 (rev.8)
 	.- [enhance] add DirectiveHandler class
 
