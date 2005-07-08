@@ -1785,6 +1785,9 @@ public class ForeachStatement extends Statement {
         _body    = body;
     }
 
+    public Statement getBodyStatement() { return _body; }
+    public void setBodyStatement(Statement stmt) { _body = stmt; }
+
     public Object execute(Map context, Writer writer) throws IOException {
         Object listval = _list.evaluate(context);
         Object[] array = null;
@@ -1835,6 +1838,9 @@ public class WhileStatement extends Statement {
         _body = body;
     }
 
+    public Statement getBodyStatement() { return _body; }
+    public void setBodyStatement(Statement stmt) { _body = stmt; }
+
     public Object execute(Map context, Writer writer) throws IOException {
         int i = 0;
         while (BooleanExpression.isTrue(_condition.evaluate(context))) {
@@ -1878,6 +1884,7 @@ public class IfStatement extends Statement {
 
     public Expression getCondition() { return _condition; }
     public Statement getThenStatement() { return _then_body; }
+    public void setThenStatement(Statement stmt) { _then_body = stmt; }
     public Statement getElseStatement() { return _else_body; }
     public void setElseStatement(Statement stmt) { _else_body = stmt; }
 
@@ -2534,6 +2541,9 @@ public class ExpressionParser extends Parser {
         _scanner.scan();
     }
 
+    public String getFilename() { return _scanner.getFilename(); }
+    public void setFilename(String filename) { _scanner.setFilename(filename); }
+
 
     /*
      * BNF:
@@ -2933,6 +2943,10 @@ public class StatementParser extends Parser {
 
     public ExpressionParser getExpressionParser() { return _exprParser; }
 
+    public String getFilename() { return _exprParser.getFilename(); }
+    public void setFilename(String filename) { _exprParser.setFilename(filename); }
+
+
 
     /*
      *  BNF:
@@ -3231,6 +3245,7 @@ public class Element {
     private Tag    _stag;
     private Tag    _etag;
     private List   _cont;           // list of Statement
+    private BlockStatement _plogic;
 
     public Element(String marking, Tag stag, Tag etag, List cont) {
         _marking = marking;
@@ -3238,6 +3253,20 @@ public class Element {
         _etag = etag;
         _cont = cont;
     }
+
+    public Tag getStag() { return _stag; }
+    public Tag getEtag() { return _etag; }
+    public List getCont() { return _cont; }
+
+    public BlockStatement getPresentationLogic() { return _plogic; }
+    public void setPresentationLogic(BlockStatement plogic) { _plogic = plogic; }
+
+    public Statement[] getContentStatements() {
+        Statement[] stmts = new Statement[_cont.size()];
+        _cont.toArray(stmts);
+        return stmts;
+    }
+
 
     public StringBuffer _inspect() {
         return _inspect(0, new StringBuffer());
@@ -3253,6 +3282,206 @@ public class Element {
             stmt._inspect(level + 1, sb);
         }
         return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+//
+//package __PACKAGE__;
+//
+//public interface Expander {
+//
+//    public Statemetn expand(Statement stmt, Element elem) {
+//        return stmt.expandWith(this);
+//    }
+//
+//    public Statement expand(BlockStatement blockStmt, Element elem) {
+//        Statement[] stmts = blockStmt.getStatements();
+//        for (int i = 0; i < stmts.length; i++) {
+//            Statement st = expand(st, elem);
+//            if (st != null) stmts[i] = st;
+//        }
+//        return null;
+//    }
+//
+//    public Statement expand(PrintStatement stmt, Element elem) {
+//        return null;
+//    }
+//
+//    public Statement expand(ExpressionStatement stmt, Element elem) {
+//        return null;
+//    }
+//
+//    public Statement expand(ForeachStatement stmt, Element elem) {
+//        Statement st = expand(stmt.getBodyStatement(), elem);
+//        if (st != null) stmt.setBodyStatement(st);
+//        return null;
+//    }
+//
+//    public Statement expand(WhileStatement stmt, Element elem) {
+//        Statement st = expand(stmt.getBodyStatement(), elem);
+//        if (st != null) stmt.setBodyStatement(st);
+//        return null;
+//    }
+//
+//    public Statement expand(IfStatement stmt, Element elem) {
+//        Statement st = expand(stmt.getThenStatement(), elem);
+//        if (st != null) stmt.setThenStatement(st);
+//        st = expand(stmt.getThenStatement(), elem);
+//        if (st != null) stmt.setElseStatement(st);
+//        return null;
+//    }
+//
+//    public Statement expand(ElementStatement stmt, Element elem) {
+//        assert false;
+//        return null;
+//    }
+//    public Statement expand(ExpandStatement stmt, Element elem) {
+//        ExpandStatement expandStmt;
+//        Statement st;
+//        Statement[] stmts;
+//        int type = ((ExpandStatement)stmt).getType();
+//        if (type  == TokenType.STAG) {
+//            st = _helper.buildPrintStatement(elem.getStag());
+//        }
+//        else if (type == TokenType.ETAG) {
+//            st = _helper.buildPrintStatement(elem.getEtag());
+//        }
+//        else if (type == TokenType.CONT) {
+//            stmts = elem.getContentStatements();
+//            st = new BlockStatement(stmts);
+//            expand(st, null);
+//        }
+//        else if (type == TokenType.CONTENT) {
+//            String name = ((ExpandStatement)stmt).getName();
+//            Element elem2 = (Element)_elementTable.get(name);
+//            if (elem2 == null) {
+//                throw new ExpantionException("'@content('" + name + ")': element not found.");
+//            }
+//            stmts = elem2.getContentStatements();
+//            st = new BlockStatement(stmts);
+//            expand(st, null);
+//        }
+//        else if (type == TokenType.ELEMENT) {
+//            String name = ((ExpandStatement)stmt).getName();
+//            Element elem2 = (Element)_elementTable.get(name);
+//            if (elem2 == null) {
+//                throw new ExpantionException("'@element('" + name + ")': element not found.");
+//            }
+//            st = elem.getPresentationLogic(); //block statment
+//            expand(st, elem2);
+//        }
+//        else {
+//            assert false;
+//        }
+//        return st;
+//    }
+//    public Statement expand(RawcodeStatement stmt, Element elem) {
+//        return null;
+//    }
+//}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.Map;
+
+public class Expander {
+
+    private Map _elementTable;
+    private TagHelper _helper = new TagHelper();
+
+    public Expander(Map elementTable) {
+        _elementTable = elementTable;
+    }
+
+    public Statement expand(Statement stmt, Element elem) {
+        Statement st;
+        Statement[] stmts;
+
+        switch (stmt.getToken()) {
+          case TokenType.PRINT:
+          case TokenType.EXPR:
+          case TokenType.RAWSTMT:
+            return null;
+
+          case TokenType.BLOCK:
+            stmts = ((BlockStatement)stmt).getStatements();
+            for (int i = 0; i < stmts.length; i++) {
+                st = expand(stmts[i], elem);
+                if (st != null) stmts[i] = st;
+            }
+            return null;
+
+          case TokenType.FOREACH:
+            st = expand(((ForeachStatement)stmt).getBodyStatement(), elem);
+            if (st != null) ((ForeachStatement)stmt).setBodyStatement(st);
+            return null;
+
+          case TokenType.WHILE:
+            st = expand(((WhileStatement)stmt).getBodyStatement(), elem);
+            if (st != null) ((WhileStatement)stmt).setBodyStatement(st);
+            return null;
+
+          case TokenType.IF:
+            IfStatement ifStmt = (IfStatement)stmt;
+            st = expand(ifStmt.getThenStatement(), elem);
+            if (st != null) ifStmt.setThenStatement(st);
+            st = expand(ifStmt.getElseStatement(), elem);
+            if (st != null) ifStmt.setElseStatement(st);
+            return null;
+
+          case TokenType.EXPAND:
+            ExpandStatement expandStmt;
+            int type = ((ExpandStatement)stmt).getType();
+            if (type  == TokenType.STAG) {
+                st = _helper.buildPrintStatement(elem.getStag());
+            }
+            else if (type == TokenType.ETAG) {
+                st = _helper.buildPrintStatement(elem.getEtag());
+            }
+            else if (type == TokenType.CONT) {
+                stmts = elem.getContentStatements();
+                st = new BlockStatement(stmts);
+                expand(st, null);
+            }
+            else if (type == TokenType.CONTENT) {
+                String name = ((ExpandStatement)stmt).getName();
+                Element elem2 = (Element)_elementTable.get(name);
+                if (elem2 == null) {
+                    throw new ExpantionException("'@content('" + name + ")': element not found.");
+                }
+                stmts = elem2.getContentStatements();
+                st = new BlockStatement(stmts);
+                expand(st, null);
+            }
+            else if (type == TokenType.ELEMENT) {
+                String name = ((ExpandStatement)stmt).getName();
+                Element elem2 = (Element)_elementTable.get(name);
+                if (elem2 == null) {
+                    throw new ExpantionException("'@element('" + name + ")': element not found.");
+                }
+                st = elem.getPresentationLogic(); //block statment
+                expand(st, elem2);
+            }
+            else {
+                assert false;
+                st = null;
+            }
+            return st;
+        }
+        return null;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class ExpantionException extends BaseException {
+    public ExpantionException(String message) {
+        super(message);
     }
 }
 
@@ -3273,10 +3502,10 @@ public interface Converter {
 
     public Expression[] expandEmbeddedExpression(String pdata, int linenum);
 
-    //pubilc void setProperties(Properties prop);
-    //pubilc Properties getProperties(Properties prop);
-    //pubilc void setProperty(String key, String value);
-    //pubilc String getProperty(String key);
+    //public void setProperties(Properties prop);
+    //public Properties getProperties(Properties prop);
+    //public void setProperty(String key, String value);
+    //public String getProperty(String key);
 
 }
 
@@ -3371,15 +3600,13 @@ public class DefaultConverter implements Converter {
     private Map _properties = new HashMap();
     private int    _remained_linenum;
     private String _remained_text;
-    private ExpressionParser _exprParser;
-    private StatementParser  _stmtParser;
     private List _elementList = new ArrayList();
     private Map _handlerTable = new HashMap();
     private DirectiveHandler _handler = new DirectiveHandler(this);
+    private TagHelper _helper;
 
     public DefaultConverter() {
-        _stmtParser = new StatementParser();
-        _exprParser = _stmtParser.getExpressionParser();
+        _helper = new TagHelper();
         _registerHandlers(_handlerTable);
     }
 
@@ -3389,7 +3616,7 @@ public class DefaultConverter implements Converter {
     }
 
     public String getFilename() { return _filename; }
-    public void setFilename(String filename) { _filename = filename; }
+    public void setFilename(String filename) { _filename = filename; _helper.setFilename(filename); }
 
     protected static final String TAG_PATTERN = "([ \t]*)<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n?)";
 
@@ -3448,6 +3675,7 @@ public class DefaultConverter implements Converter {
         return list;
     }
 
+
     public static void main(String[] args) {
         try {
             java.io.Writer writer = new java.io.OutputStreamWriter(System.out);
@@ -3485,7 +3713,7 @@ public class DefaultConverter implements Converter {
         List stmtList = new ArrayList();
         _convert(it, stmtList, null);
         if (_remained_text != null && _remained_text.length() > 0)
-            stmtList.add(_createPrintStatement(_remained_text, _remained_linenum));
+            stmtList.add(_helper.createPrintStatement(_remained_text, _remained_linenum));
         //return new BlockStatement.new(stmts);
         Statement[] stmts = new Statement[stmtList.size()];
         stmtList.toArray(stmts);
@@ -3508,19 +3736,7 @@ public class DefaultConverter implements Converter {
 
 
     private Expression _parseExpression(String str, int linenum) {
-        _exprParser.reset(str, linenum);
-        Expression expr = _exprParser.parseExpression();
-        if (_exprParser.token() != TokenType.EOF) {
-            throw new ConvertionException("'" + str + "': invalid expression.", _filename, linenum);
-        }
-        return expr;
-    }
-
-    private Statement _parseExpressionStatement(String str) {
-        _stmtParser.reset(str, 1);
-        Statement stmt = _stmtParser.parseExpressionStatement();
-        assert _stmtParser.token() == TokenType.EOF;
-        return stmt;
+        return _helper.parseExpression(str, linenum);
     }
 
 
@@ -3725,7 +3941,7 @@ public class DefaultConverter implements Converter {
                 if      (dname.equals("attr"))   s = avalue;
                 else if (dname.equals("Attr"))   s = "E(" + avalue + ")";
                 else                             s = "X(" + avalue + ")";
-                Expression expr = _parseExpression(s, tag.linenum);
+                Expression expr = _helper.parseExpression(s, tag.linenum);
                 Object[] attr = null;
                 if (tag.attrs == null) {
                     tag.attrs = new ArrayList();
@@ -3752,7 +3968,7 @@ public class DefaultConverter implements Converter {
                 if      (dname.equals("append")) s = darg;
                 else if (dname.equals("Append")) s = "E(" + darg + ")";
                 else                             s = "X(" + darg + ")";
-                Expression expr = _parseExpression(s, tag.linenum);
+                Expression expr = _helper.parseExpression(s, tag.linenum);
                 if (tag.append_exprs == null) tag.append_exprs = new ArrayList();
                 tag.append_exprs.add(expr);
             }
@@ -3771,31 +3987,162 @@ public class DefaultConverter implements Converter {
         tag.directive_arg  = directive_arg;
     }
 
-    private PrintStatement _createTagPrintStatement(Tag tag, boolean tagDelete) {
+
+    public Expression[] expandEmbeddedExpression(String str, int linenum) {
+        return _helper.expandEmbeddedExpression(str, linenum);
+    }
+
+
+    private Tag _convert(Iterator it, List stmtList, Tag startTag) {
+        while (it.hasNext()) {
+            Tag tag = (Tag)it.next();
+            if (tag.before_text.length() > 0) {
+                stmtList.add(_helper.createPrintStatement(tag.before_text, tag.linenum));
+            }
+            assert tag.tagname != null;
+            if (tag.is_etag) {                                          // end-tag
+                if (startTag != null && tag.tagname.equals(startTag.tagname)) {
+                    return tag;   // return Tag of end-tag
+                } else {
+                    stmtList.add(_helper.createPrintStatement(tag.tag_str, tag.linenum));
+                }
+            }
+            else if (tag.is_empty || _isNoend(tag.tagname)) {          // empty-tag
+                _parseAttributes(tag);
+                if (tag.directive_name == null) {
+                    stmtList.add(_helper.buildPrintStatement(tag));
+                } else {
+                    List bodyStmtList = new ArrayList();
+                    if (tag.directive_name.equals("mark")) {
+                        // nothing
+                    } else {
+                        boolean tagDelete = tag.tagname.equals("span") && (tag.attrs == null || tag.attrs.size() == 0);
+                        bodyStmtList.add(_helper.createTagPrintStatement(tag, tagDelete));
+                    }
+                    Tag stag = tag;
+                    Tag etag = null;
+                    _handleDirective(stmtList, stag, etag, bodyStmtList);
+                }
+            }
+            else {                                                       // start-tag
+                _parseAttributes(tag);
+                boolean hasDirective = tag.directive_name != null;
+                List bodyStmtList;
+                if (hasDirective) {
+                    bodyStmtList = new ArrayList();
+                } else if (startTag != null && tag.tagname.equals(startTag.tagname)) {
+                    bodyStmtList = stmtList;
+                } else {
+                    stmtList.add(_helper.buildPrintStatement(tag));
+                    continue;
+                }
+                // handle stag
+                Tag stag = tag;
+                boolean tagSkip = hasDirective && tag.directive_name.equals("mark");
+                boolean tagDelete = false;
+                if (! tagSkip) {
+                    tagDelete = stag.tagname.equals("span") && (stag.attrs == null || stag.attrs.size() == 0);
+                    bodyStmtList.add(_helper.createTagPrintStatement(stag, tagDelete));
+                }
+                // handle content
+                Tag etag = _convert(it, bodyStmtList, stag);
+                // handle etag
+                if (! tagSkip) {
+                    bodyStmtList.add(_helper.createTagPrintStatement(etag, tagDelete));
+                }
+                // handle directive
+                if (hasDirective) {
+                    _handleDirective(stmtList, stag, etag, bodyStmtList);
+                }
+            }
+        }  // end of while
+        //
+        if (startTag != null)
+            throw new ConvertionException("'<" + startTag.tagname + ">' is not closed by end-tag.", _filename, startTag.linenum);
+        return null;
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+public class TagHelper {
+    private ExpressionParser _exprParser;
+    private StatementParser  _stmtParser;
+
+
+    public TagHelper() {
+        _stmtParser = new StatementParser();
+        _exprParser = _stmtParser.getExpressionParser();
+    }
+
+
+    public String getFilename() {
+        return _stmtParser.getFilename();
+        //return _exprParser.getFilename();
+    }
+
+
+    public void setFilename(String filename) {
+        _stmtParser.setFilename(filename);
+        //_exprParser.setFilename(filename);
+    }
+
+
+    public Expression parseExpression(String str, int linenum) {
+        _exprParser.reset(str, linenum);
+        Expression expr = _exprParser.parseExpression();
+        if (_exprParser.token() != TokenType.EOF) {
+            String msg = "'" + str + "': invalid expression.";
+            throw new ConvertionException(msg, _exprParser.getFilename(), linenum);
+        }
+        return expr;
+    }
+
+
+    public Statement parseExpressionStatement(String str, int linenum) {
+        _stmtParser.reset(str, linenum);
+        Statement stmt = _stmtParser.parseExpressionStatement();
+        //assert _stmtParser.token() == TokenType.EOF;
+        if (_stmtParser.token() != TokenType.EOF) {
+            String msg = "'" + str + "': invalid expression statement.";
+            throw new ConvertionException(msg, _stmtParser.getFilename(), linenum);
+        }
+        return stmt;
+    }
+
+
+    public PrintStatement createTagPrintStatement(Tag tag, boolean tagDelete) {
         PrintStatement stmt;
         if (tagDelete) {
             String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
             Expression[] args = { new StringExpression(s) };
             stmt = new PrintStatement(args);
         } else {
-            stmt = _buildPrintStatement(tag);
+            stmt = buildPrintStatement(tag);
         }
         return stmt;
     }
 
-    private PrintStatement _createPrintStatement(String str, int linenum) {
-        Expression[] args = _expandEmbedExpr(str, linenum);
+
+
+    public PrintStatement createPrintStatement(String str, int linenum) {
+        Expression[] args = expandEmbeddedExpression(str, linenum);
         return new PrintStatement(args);
     }
 
 
-    public Expression[] expandEmbeddedExpression(String str, int linenum) {
-        return _expandEmbedExpr(str, linenum);
-    }
-
     public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
 
-    private Expression[] _expandEmbedExpr(String str, int linenum) {
+    public Expression[] expandEmbeddedExpression(String str, int linenum) {
         final Pattern embedPattern = Pattern.compile(EMBED_PATTERN);
         List list = null;
         int index = 0;
@@ -3810,7 +4157,7 @@ public class DefaultConverter implements Converter {
                 }
             }
             if (m.group(1).length() > 1) {
-                list.add(_parseExpression(m.group(1), linenum));
+                list.add(parseExpression(m.group(1), linenum));
             }
             index = m.end();
         }
@@ -3827,7 +4174,8 @@ public class DefaultConverter implements Converter {
         return exprs;
     }
 
-    private PrintStatement _buildPrintStatement(Tag tag) {
+
+    public PrintStatement buildPrintStatement(Tag tag) {
         StringBuffer sb = new StringBuffer();
         sb.append(tag.before_space);
         sb.append(tag.is_etag ? "</" : "<");
@@ -3852,7 +4200,7 @@ public class DefaultConverter implements Converter {
                     if (str.indexOf('@') < 0) {         // ATTR_PATTERN
                         sb.append(str);
                     } else {
-                        Expression[] exprs = _expandEmbedExpr(str, tag.linenum);
+                        Expression[] exprs = expandEmbeddedExpression(str, tag.linenum);
                         for (int i = 0; i < exprs.length; i++) {
                             if (exprs[i].getToken() == TokenType.STRING) {
                                 sb.append(((StringExpression)exprs[i]).getValue());
@@ -3883,76 +4231,6 @@ public class DefaultConverter implements Converter {
         return new PrintStatement(args);
     }
 
-
-    private Tag _convert(Iterator it, List stmtList, Tag startTag) {
-        while (it.hasNext()) {
-            Tag tag = (Tag)it.next();
-            if (tag.before_text.length() > 0) {
-                stmtList.add(_createPrintStatement(tag.before_text, tag.linenum));
-            }
-            assert tag.tagname != null;
-            if (tag.is_etag) {                                          // end-tag
-                if (startTag != null && tag.tagname.equals(startTag.tagname)) {
-                    return tag;   // return Tag of end-tag
-                } else {
-                    stmtList.add(_createPrintStatement(tag.tag_str, tag.linenum));
-                }
-            }
-            else if (tag.is_empty || _isNoend(tag.tagname)) {          // empty-tag
-                _parseAttributes(tag);
-                if (tag.directive_name == null) {
-                    stmtList.add(_buildPrintStatement(tag));
-                } else {
-                    List bodyStmtList = new ArrayList();
-                    if (tag.directive_name.equals("mark")) {
-                        // nothing
-                    } else {
-                        boolean tagDelete = tag.tagname.equals("span") && (tag.attrs == null || tag.attrs.size() == 0);
-                        bodyStmtList.add(_createTagPrintStatement(tag, tagDelete));
-                    }
-                    Tag stag = tag;
-                    Tag etag = null;
-                    _handleDirective(stmtList, stag, etag, bodyStmtList);
-                }
-            }
-            else {                                                       // start-tag
-                _parseAttributes(tag);
-                boolean hasDirective = tag.directive_name != null;
-                List bodyStmtList;
-                if (hasDirective) {
-                    bodyStmtList = new ArrayList();
-                } else if (startTag != null && tag.tagname.equals(startTag.tagname)) {
-                    bodyStmtList = stmtList;
-                } else {
-                    stmtList.add(_buildPrintStatement(tag));
-                    continue;
-                }
-                // handle stag
-                Tag stag = tag;
-                boolean tagSkip = hasDirective && tag.directive_name.equals("mark");
-                boolean tagDelete = false;
-                if (! tagSkip) {
-                    tagDelete = stag.tagname.equals("span") && (stag.attrs == null || stag.attrs.size() == 0);
-                    bodyStmtList.add(_createTagPrintStatement(stag, tagDelete));
-                }
-                // handle content
-                Tag etag = _convert(it, bodyStmtList, stag);
-                // handle etag
-                if (! tagSkip) {
-                    bodyStmtList.add(_createTagPrintStatement(etag, tagDelete));
-                }
-                // handle directive
-                if (hasDirective) {
-                    _handleDirective(stmtList, stag, etag, bodyStmtList);
-                }
-            }
-        }  // end of while
-        //
-        if (startTag != null)
-            throw new ConvertionException("'<" + startTag.tagname + ">' is not closed by end-tag.", _filename, startTag.linenum);
-        return null;
-    }
-
 }
 
 // --------------------------------------------------------------------------------
@@ -3971,32 +4249,16 @@ import java.io.IOException;
 
 public class DirectiveHandler {
     private DefaultConverter _converter;
-    private ExpressionParser _exprParser;
-    private StatementParser  _stmtParser;
     private String _even = "'even'";
     private String _odd  = "'odd'";
+    private TagHelper _helper;
+
 
     public DirectiveHandler(DefaultConverter converter) {
-        _converter  = converter;
-        _stmtParser = new StatementParser();
-        _exprParser = _stmtParser.getExpressionParser();
+        _converter = converter;
+        _helper    = new TagHelper();
     }
 
-    private Expression _parseExpression(String str, int linenum) {
-        _exprParser.reset(str, linenum);
-        Expression expr = _exprParser.parseExpression();
-        if (_exprParser.token() != TokenType.EOF) {
-            throw new ConvertionException("'" + str + "': invalid expression.", _converter.getFilename(), linenum);
-        }
-        return expr;
-    }
-
-    private Statement _parseExpressionStatement(String str) {
-        _stmtParser.reset(str, 1);
-        Statement stmt = _stmtParser.parseExpressionStatement();
-        assert _stmtParser.token() == TokenType.EOF;
-        return stmt;
-    }
 
     public void handleMarkDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         assert stag.directive_name.equals("mark");
@@ -4005,7 +4267,8 @@ public class DirectiveHandler {
             for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
                 Object[] attr = (Object[])it.next();
                 String avalue = (String)attr[2];
-                Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
+                Expression[] exprs = _helper.expandEmbeddedExpression(avalue, stag.linenum);
+                //Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
                 Expression expr;
                 if (exprs.length == 0) {
                     expr = new StringExpression("");
@@ -4022,12 +4285,13 @@ public class DirectiveHandler {
         stmtList.add(new ExpandStatement(TokenType.ELEMENT, marking));
     }
 
+
     public void handleValueDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         if (etag == null) {
             String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
             throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
         }
-        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
         if (stag.directive_name.equals("Value")) {
             expr = new FunctionExpression("E", new Expression[] { expr });
         } else if (stag.directive_name.equals("VALUE")) {
@@ -4039,6 +4303,7 @@ public class DirectiveHandler {
         stmtList.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
     }
 
+
     public void handleForeachDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
         Matcher m = pat.matcher(stag.directive_arg);
@@ -4049,20 +4314,21 @@ public class DirectiveHandler {
         String varname = m.group(1);
         String liststr = m.group(2);
         VariableExpression varexpr = new VariableExpression(varname);
-        Expression listexpr = _parseExpression(liststr, stag.linenum);
+        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
         String counter = !stag.directive_name.equals("foreach") ? varname + "_ctr" : null;
         String toggle  =  stag.directive_name.equals("FOREACH") ? varname + "_tgl" : null;
         //
         if (counter != null) {
-            stmtList.add(_parseExpressionStatement(counter + " = 0;"));
-            bodyStmtList.add(0, _parseExpressionStatement(counter + " += 1;"));
+            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
+            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
         }
         if (toggle != null) {
             String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
-            bodyStmtList.add(1, _parseExpressionStatement(s));
+            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
         }
         stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
     }
+
 
     public void handleListDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         if (etag == null) {
@@ -4078,7 +4344,7 @@ public class DirectiveHandler {
         String varname = m.group(1);
         String liststr = m.group(2);
         VariableExpression varexpr = new VariableExpression(varname);
-        Expression listexpr = _parseExpression(liststr, stag.linenum);
+        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
         String counter = !stag.directive_name.equals("list") ? varname + "_ctr" : null;
         String toggle  =  stag.directive_name.equals("LIST") ? varname + "_tgl" : null;
         //
@@ -4086,24 +4352,26 @@ public class DirectiveHandler {
         Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
         stmtList.add(firstStmt);
         if (counter != null) {
-            stmtList.add(_parseExpressionStatement(counter + " = 0;"));
-            bodyStmtList.add(0, _parseExpressionStatement(counter + " += 1;"));
+            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
+            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
         }
         if (toggle != null) {
             String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
-            bodyStmtList.add(1, _parseExpressionStatement(s));
+            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
         }
         stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
         stmtList.add(lastStmt);
     }
 
+
     public void handleWhileDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
         stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
     }
 
+
     public void handleLoopDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
         if (etag == null) {
             String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
             throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
@@ -4115,13 +4383,15 @@ public class DirectiveHandler {
         stmtList.add(lastStmt);
     }
 
+
     public void handleIfDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
         stmtList.add(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
     }
 
+
     public void handleElseifDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
         Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
         while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
             stmt = ((IfStatement)stmt).getElseStatement();
@@ -4132,6 +4402,7 @@ public class DirectiveHandler {
         }
         ((IfStatement)stmt).setElseStatement(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
     }
+
 
     public void handleElseDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
@@ -4145,23 +4416,28 @@ public class DirectiveHandler {
         ((IfStatement)stmt).setElseStatement(new BlockStatement(bodyStmtList));
     }
 
+
     public void handleSetDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression expr = _parseExpression(stag.directive_arg, stag.linenum);
+        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
         stmtList.add(new ExpressionStatement(expr));
         stmtList.addAll(bodyStmtList);
     }
+
 
     public void handleDummyDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         // nothing
     }
 
+
     public void handleReplaceDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         _handleReplaceDirective(false, stmtList, stag, etag, bodyStmtList);
     }
 
+
     public void handlePlaceholderDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         _handleReplaceDirective(true,  stmtList, stag, etag, bodyStmtList);
     }
+
 
     private void _handleReplaceDirective(boolean inner, List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         Pattern pat = Pattern.compile("\\A(\\w+)(?::(content|element))?\\z");
@@ -4186,6 +4462,7 @@ public class DirectiveHandler {
             stmtList.add(new ExpandStatement(type, name));
         }
     }
+
 
     public void handleIncludeDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
         String basename = stag.directive_arg;
@@ -4254,6 +4531,82 @@ public class DirectiveHandler {
         for (Iterator it = elements.iterator(); it.hasNext(); ) {
             Element element = (Element)it.next();
             _converter.addElement(element);
+        }
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class TagHelperTest extends TestCase {
+
+    private String _input;
+    private String _expected;
+    private String _actual;
+    private TagHelper _helper = new TagHelper();
+
+    public void testConverter01() throws Exception {   // _parseExpression()
+        _input    = "x+y*z";
+        _expected = <<'END';
+            +
+              x
+              *
+                y
+                z
+            END
+        Expression expr = _helper.parseExpression(_input, 1);
+        _actual = expr._inspect().toString();
+        assertEquals(_expected, _actual);
+    }
+
+    public void testConverter02() throws Exception {  // _parseExpression()
+        _input    = "x+y*z 100";
+        _expected = "";
+        try {
+            Expression expr = _helper.parseExpression(_input, 1);
+            fail("ConversionException expected but nothing happened.");
+        } catch (ConvertionException ex) {
+            // OK
+        }
+    }
+
+    public void testConvert03() throws Exception {  // expandEmbeddedExpression()
+        _input    = <<'END';
+             <span id="@{user.id}@">Hello @{user[:name]}@!</span>
+             END
+        Expression[] exprs = _helper.expandEmbeddedExpression(_input, 1);
+        assertEquals(5, exprs.length);
+        assertEquals(StringExpression.class, exprs[0].getClass());
+        assertEquals("<span id=\"", ((StringExpression)exprs[0]).getValue());
+        assertEquals(PropertyExpression.class, exprs[1].getClass());
+        assertEquals(StringExpression.class, exprs[2].getClass());
+        assertEquals("\">Hello ", ((StringExpression)exprs[2]).getValue());
+        assertEquals(IndexExpression.class, exprs[3].getClass());
+        assertEquals(StringExpression.class, exprs[4].getClass());
+        assertEquals("!</span>\n", ((StringExpression)exprs[4]).getValue());
+        //
+        _input    = "foo@{var}@";
+        exprs = _helper.expandEmbeddedExpression(_input, 1);
+        assertEquals(2, exprs.length);
+        //
+        _input    = "@{var}@foo";
+        exprs = _helper.expandEmbeddedExpression(_input, 1);
+        assertEquals(2, exprs.length);
+        //
+        _input    = <<'END';
+             <body>
+              <span id="@{user.id}@">Hello @{user[:name].+}@!</span>
+             </body>
+             END
+        try {
+            exprs = _helper.expandEmbeddedExpression(_input, 1);
+            fail("SyntaxException expected but not happened.");
+        } catch (SyntaxException ex) {
+            // OK
         }
     }
 
@@ -4405,78 +4758,6 @@ END
             _actual = ((Expression)_result)._inspect().toString();
         }
         if (_expected != null) assertEquals(_expected, _actual);
-    }
-
-
-    public void testConverter01() throws Exception {
-        _input    = "x+y*z";
-        _expected = <<'END';
-            +
-              x
-              *
-                y
-                z
-            END
-        _klass    = DefaultConverter.class;
-        _method   = "_parseExpression";
-        _argtypes = new Class[] {String.class, int.class};
-        _args     = new Object[] {_input, new Integer(0)};
-        _test();
-    }
-
-    public void testConverter02() throws Exception {
-        _input    = "x+y*z 100";
-        _expected = "";
-        _klass    = DefaultConverter.class;
-        _method   = "_parseExpression";
-        _argtypes = new Class[] {String.class, int.class};
-        _args     = new Object[] {_input, new Integer(0)};
-        try {
-            _test();
-            fail("ConversionException expected but nothing happened.");
-        } catch (java.lang.reflect.InvocationTargetException ex) {
-            if (! (ex.getCause() instanceof ConvertionException)) {
-                fail("ConversionException expected but got " + ex.toString());
-                throw ex;
-            }
-        }
-    }
-
-    public void testConvert03() throws Exception {  // expandEmbeddedExpression()
-        _input    = <<'END';
-             <span id="@{user.id}@">Hello @{user[:name]}@!</span>
-             END
-        Converter converter = new DefaultConverter();
-        Expression[] exprs = converter.expandEmbeddedExpression(_input, 1);
-        assertEquals(5, exprs.length);
-        assertEquals(StringExpression.class, exprs[0].getClass());
-        assertEquals("<span id=\"", ((StringExpression)exprs[0]).getValue());
-        assertEquals(PropertyExpression.class, exprs[1].getClass());
-        assertEquals(StringExpression.class, exprs[2].getClass());
-        assertEquals("\">Hello ", ((StringExpression)exprs[2]).getValue());
-        assertEquals(IndexExpression.class, exprs[3].getClass());
-        assertEquals(StringExpression.class, exprs[4].getClass());
-        assertEquals("!</span>\n", ((StringExpression)exprs[4]).getValue());
-        //
-        _input    = "foo@{var}@";
-        exprs = converter.expandEmbeddedExpression(_input, 1);
-        assertEquals(2, exprs.length);
-        //
-        _input    = "@{var}@foo";
-        exprs = converter.expandEmbeddedExpression(_input, 1);
-        assertEquals(2, exprs.length);
-        //
-        _input    = <<'END';
-             <body>
-              <span id="@{user.id}@">Hello @{user[:name].+}@!</span>
-             </body>
-             END
-        try {
-            exprs = converter.expandEmbeddedExpression(_input, 1);
-            fail("SyntaxException expected but not happened.");
-        } catch (SyntaxException ex) {
-            // OK
-        }
     }
 
 
@@ -4784,7 +5065,7 @@ END
             assertEquals(_expected, actual);
         }
     }
-    
+
     public void testConverter21() {  // normal text
         _input = <<'END';
             <span>Hello World</span>
@@ -5403,7 +5684,7 @@ END
               <font color="red" id="if:error!=empty">
                 ERROR!
               </font>
-              
+
               <font color="blue" id="elseif:warning!=empty">
                 WARNING
               </font>

@@ -1,6 +1,10 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-08 (rev.10)
+	.- [enhance] add TagHelper class
+	.- [enhance] add Expander class
+
 .: 2005-07-06 (rev.9)
 	.- [enhance] add ConverterTest class
 
