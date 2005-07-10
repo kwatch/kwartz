@@ -17,7 +17,7 @@ junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
 desc	"create *.java and compile them"
 recipe  :compile			do |r|
 	cmd "ruby #{source}"
-	cmd "jikes #{src_path}/*.java"
+	cmd "jikes -g #{src_path}/*.java"
 	end
 
 

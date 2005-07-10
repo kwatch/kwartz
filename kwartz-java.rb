@@ -199,7 +199,8 @@ RAWEXPR		<%= %>
 RAWSTMT		<% %>
 
 // element
-ELEMDECL	#
+SHARP		#
+ENTRY		#
 VALUE		value:
 ATTR		attr:
 APPEND		append:
@@ -1922,7 +1923,7 @@ import java.io.IOException;
 public class ElementStatement extends Statement {
     private Statement _plogic;
     public ElementStatement(Statement plogic) {
-        super(TokenType.ELEMDECL);
+        super(TokenType.ENTRY);
         _plogic = plogic;
     }
     public Object execute(Map context, Writer writer) {
@@ -2080,6 +2081,7 @@ public class Scanner {
     public void setFilename(String filename) { _filename = filename; }
     public int getToken()   { return _token; }
     public String getValue()   { return _value.toString(); }
+    //public String getCode() { return _code; }
 
     private void _clearValue() {
         _value.delete(0, _value.length());
@@ -2161,7 +2163,7 @@ public class Scanner {
         _op_table3[':'] = TokenType.COLON;
         _op_table3[';'] = TokenType.SEMICOLON;
         _op_table3[','] = TokenType.COMMA;
-        _op_table3['#'] = TokenType.ELEMDECL;
+        _op_table3['#'] = TokenType.SHARP;
     }
 
     public int scan() throws LexicalException {
@@ -2365,7 +2367,7 @@ public class Scanner {
         // @
         if (ch == '@') {
             _clearValue();
-            while ((ch = read()) != '\0' || CharacterUtil.isWordLetter(ch)) {
+            while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
                 _value.append(ch);
             }
             return _token = TokenType.EXPAND;
@@ -2487,9 +2489,14 @@ package __PACKAGE__;
 public class Parser {
     protected Scanner _scanner;
 
+    public Parser() {
+        this(new Scanner());
+    }
     public Parser(Scanner scanner) {
         _scanner = scanner;
     }
+
+    public Scanner getScanner() { return _scanner; }
 
     public int token() {
         return _scanner.getToken();
@@ -2536,9 +2543,15 @@ import java.util.ArrayList;
 
 public class ExpressionParser extends Parser {
 
+    public ExpressionParser() {
+        this(new Scanner(), true);
+    }
     public ExpressionParser(Scanner scanner) {
+        this(scanner, true);
+    }
+    public ExpressionParser(Scanner scanner, boolean flagInit) {
         super(scanner);
-        _scanner.scan();
+        if (flagInit) _scanner.scan();
     }
 
     public String getFilename() { return _scanner.getFilename(); }
@@ -2774,7 +2787,10 @@ public class ExpressionParser extends Parser {
         while ((t = token()) == TokenType.ADD || t == TokenType.SUB || t == TokenType.CONCAT) {
             scan();
             Expression expr2 = parseTerm();
-            expr = new ArithmeticExpression(t, expr, expr2);
+            if (t == TokenType.CONCAT)
+                expr = new ConcatenationExpression(t, expr, expr2);
+            else
+                expr = new ArithmeticExpression(t, expr, expr2);
         }
         return expr;
     }
@@ -2929,16 +2945,23 @@ public class ExpressionParser extends Parser {
 package __PACKAGE__;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class StatementParser extends Parser {
     private ExpressionParser _exprParser;
 
     public StatementParser() {
-        this(new Scanner());
+        this(new Scanner(), true);
     }
     public StatementParser(Scanner scanner) {
+        this(scanner, true);
+    }
+    public StatementParser(Scanner scanner, boolean flagInit) {
         super(scanner);
-        _exprParser = new ExpressionParser(scanner);
+        _exprParser = new ExpressionParser(scanner, false);
+        if (flagInit) _scanner.scan();
     }
 
     public ExpressionParser getExpressionParser() { return _exprParser; }
@@ -2982,7 +3005,7 @@ public class StatementParser extends Parser {
           case TokenType.EXPAND:
             stmt = parseExpandStatement();
             break;
-          case TokenType.ELEMDECL:
+          case TokenType.SHARP:
             stmt = parseElementStatement();
             break;
           case TokenType.RAWSTMT:
@@ -3150,7 +3173,39 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseExpandStatement() {
-        return null;
+        assert token() == TokenType.EXPAND;
+        String marking = null;
+        String typeStr = value();
+        Integer typeObj = (Integer)_expandTypes.get(typeStr);
+        if (typeObj == null)
+            syntaxError("'@" + typeStr + "': invalid expand statement.");
+        int type = typeObj.intValue();
+        if (type == TokenType.CONTENT || type == TokenType.ELEMENT) {
+            scan();
+            if (token() != TokenType.L_PAREN)
+                syntaxError("`@" + typeStr + "' requires '('.");
+            scan();
+            if (token() != TokenType.NAME)
+                syntaxError("`@" + typeStr + "()' requires a marking name.");
+            marking = value();
+            scan();
+            if (token() != TokenType.R_PAREN)
+                syntaxError("`@" + typeStr + "' requires ')'.");
+        }
+        scan();
+        if (token() != TokenType.SEMICOLON)
+            syntaxError("`@" + typeStr + "()' requires ';'.");
+        scan();
+        return new ExpandStatement(type, marking);
+    }
+
+    private static final Map _expandTypes = new HashMap();
+    static {
+        _expandTypes.put("stag",    new Integer(TokenType.STAG));
+        _expandTypes.put("cont",    new Integer(TokenType.CONT));
+        _expandTypes.put("etag",    new Integer(TokenType.ETAG));
+        _expandTypes.put("content", new Integer(TokenType.CONTENT));
+        _expandTypes.put("element", new Integer(TokenType.ELEMENT));
     }
 
 
@@ -3238,17 +3293,21 @@ public class Interpreter {
 
 package __PACKAGE__;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Element {
-    private String _marking;
+    private String _name;
     private Tag    _stag;
     private Tag    _etag;
     private List   _cont;           // list of Statement
+    private PresentationDeclaration _decl;
     private BlockStatement _plogic;
 
-    public Element(String marking, Tag stag, Tag etag, List cont) {
-        _marking = marking;
+    public Element(String name, Tag stag, Tag etag, List cont) {
+        _name = name;
         _stag = stag;
         _etag = etag;
         _cont = cont;
@@ -3257,9 +3316,98 @@ public class Element {
     public Tag getStag() { return _stag; }
     public Tag getEtag() { return _etag; }
     public List getCont() { return _cont; }
+    public String getName() { return _name; }
 
-    public BlockStatement getPresentationLogic() { return _plogic; }
-    public void setPresentationLogic(BlockStatement plogic) { _plogic = plogic; }
+    public static Map createElementTable(List elementList) {
+        return addElementList(new HashMap(), elementList);
+    }
+
+    public static Map addElementList(Map elementTable, List elementList) {
+        for (Iterator it = elementList.iterator(); it.hasNext(); ) {
+            Element elem = (Element)it.next();
+            elementTable.put(elem.getName(), elem);
+        }
+        return elementTable;
+    }
+
+    public static void mergeDeclarationList(Map elementTable, List declList) {
+        // merge declarations
+        if (elementTable == null) return;
+        if (declList == null) return;
+        for (Iterator it = declList.iterator(); it.hasNext(); ) {
+            PresentationDeclaration decl = (PresentationDeclaration)it.next();
+            for (int i = 0; i < decl.names.length; i++) {
+                String name = decl.names[i];
+                Element elem = (Element)elementTable.get(name);
+                if (elem != null)  elem.setDeclaration(decl);
+            }
+        }
+    }
+
+
+
+    public PresentationDeclaration getDeclaration() {
+        return _decl;
+    }
+
+    public void setDeclaration(PresentationDeclaration decl) {
+        _decl = decl;
+        if (decl.value != null) {
+            Expression[] args = { decl.value };
+            PrintStatement stmt = new PrintStatement(args);
+            _cont = new ArrayList();
+            _cont.add(stmt);
+        }
+        if (decl.tagname != null) {
+            // TBI
+            if (decl.tagname.getToken() == TokenType.STRING) {
+                String tagname = ((StringExpression)decl.tagname).getValue();
+                _stag.tagname = tagname;
+                _etag.tagname = tagname;
+            }
+        }
+        if (decl.remove != null) {
+            if (_stag.attrs != null) {
+                for (int i = _stag.attrs.size() - 1; i >= 0; i--) {
+                    Object[] attr = (Object[])_stag.attrs.get(i);
+                    Object aname = attr[1];
+                    if (decl.remove.contains(aname))
+                       _stag.attrs.remove(i);
+                }
+            }
+        }
+        if (decl.attrs != null) {
+            if (_stag.attrs == null) _stag.attrs = new ArrayList();
+            for (int i = decl.attrs.size() -1; i >= 0; i--) {
+                Object[] attr = (Object[])_stag.attrs.get(i);
+                Object aname = attr[1];
+                Object expr = decl.attrs.get(aname);
+                if (expr != null)  attr[2] = expr;
+            }
+        }
+        if (decl.append != null) {
+            if (_stag.append_exprs == null)
+                _stag.append_exprs = decl.append;
+            else
+                _stag.append_exprs.addAll(decl.append);
+        }
+        if (decl.plogic != null) {
+            _plogic = decl.plogic;
+        }
+    }
+
+    public BlockStatement getPresentationLogic() {
+        if (_plogic == null) {
+            Statement[] stmts = {
+                new ExpandStatement(TokenType.STAG),
+                new ExpandStatement(TokenType.CONT),
+                new ExpandStatement(TokenType.ETAG),
+            };
+            _plogic = new BlockStatement(stmts);
+        }
+        return _plogic;
+    }
+
 
     public Statement[] getContentStatements() {
         Statement[] stmts = new Statement[_cont.size()];
@@ -3275,7 +3423,7 @@ public class Element {
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         sb.append("Element(");
-        sb.append(_marking);
+        sb.append(_name);
         sb.append(")\n");
         for (Iterator it = _cont.iterator(); it.hasNext(); ) {
             Statement stmt = (Statement)it.next();
@@ -3362,7 +3510,7 @@ public class Element {
 //            st = new BlockStatement(stmts);
 //            expand(st, null);
 //        }
-//        else if (type == TokenType.ELEMENT) {
+//        else if (type == TokenType.SHARP) {
 //            String name = ((ExpandStatement)stmt).getName();
 //            Element elem2 = (Element)_elementTable.get(name);
 //            if (elem2 == null) {
@@ -3443,8 +3591,9 @@ public class Expander {
             }
             else if (type == TokenType.CONT) {
                 stmts = elem.getContentStatements();
-                st = new BlockStatement(stmts);
-                expand(st, null);
+                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+                Statement st2 = expand(st, null);
+                if (st2 != null) st = st2;
             }
             else if (type == TokenType.CONTENT) {
                 String name = ((ExpandStatement)stmt).getName();
@@ -3453,8 +3602,9 @@ public class Expander {
                     throw new ExpantionException("'@content('" + name + ")': element not found.");
                 }
                 stmts = elem2.getContentStatements();
-                st = new BlockStatement(stmts);
-                expand(st, null);
+                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+                Statement st2 = expand(st, null);
+                if (st2 != null) st = st2;
             }
             else if (type == TokenType.ELEMENT) {
                 String name = ((ExpandStatement)stmt).getName();
@@ -3462,7 +3612,7 @@ public class Expander {
                 if (elem2 == null) {
                     throw new ExpantionException("'@element('" + name + ")': element not found.");
                 }
-                st = elem.getPresentationLogic(); //block statment
+                st = elem2.getPresentationLogic(); //block statment
                 expand(st, elem2);
             }
             else {
@@ -3473,6 +3623,7 @@ public class Expander {
         }
         return null;
     }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -4533,6 +4684,937 @@ public class DirectiveHandler {
             _converter.addElement(element);
         }
     }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+
+public class PresentationDeclaration {
+    public String[]       names;
+    public Expression     tagname;
+    public List           remove;
+    public Map            attrs;
+    public List           append;
+    public Expression     value;
+    public BlockStatement plogic;
+
+    public PresentationDeclaration() {
+        this(null);
+    }
+
+    public PresentationDeclaration(String[] names) {
+        this.names = names;
+        remove = new ArrayList();
+        attrs  = new HashMap();
+        append = new ArrayList();
+        //Statement[] stmts = {
+        //    new ExpandStatement(TokenType.STAG),
+        //    new ExpandStatement(TokenType.CONT),
+        //    new ExpandStatement(TokenType.ETAG),
+        //};
+        //plogic = new BlockStatement(stmts);
+    }
+
+    public StringBuffer _inspect() {
+        return _inspect(0, new StringBuffer());
+    }
+
+    public StringBuffer _inspect(int level, StringBuffer sb) {
+        if (names != null) {
+            for (int i = 0; i < names.length; i++) {
+                if (i > 0) sb.append(", ");
+                sb.append("#" + names[i]);
+            }
+            sb.append(" ");
+        }
+        sb.append("{\n");
+        if (tagname != null) {
+            sb.append("  tagname:\n");
+            tagname._inspect(2, sb);
+        }
+        if (remove != null && remove.size() > 0) {
+            sb.append("  remove:\n");
+            for (int i = 0; i < remove.size(); i++) {
+                String aname = (String)remove.get(i);
+                sb.append("    " + Utility.inspectString(aname) + "\n");
+            }
+        }
+        if (attrs != null && attrs.size() > 0) {
+            sb.append("  attrs:\n");
+            for (Iterator it = attrs.keySet().iterator(); it.hasNext(); ) {
+                String aname = (String)it.next();
+                Expression expr = (Expression)attrs.get(aname);
+                sb.append("    " + Utility.inspectString(aname) + "\n");
+                expr._inspect(2, sb);
+            }
+        }
+        if (append != null && append.size() > 0) {
+            sb.append("  append:\n");
+            for (int i = 0; i < append.size(); i++) {
+                Expression expr = (Expression)append.get(i);
+                expr._inspect(2, sb);
+            }
+        }
+        if (value != null) {
+            sb.append("  value:\n");
+            value._inspect(2, sb);
+        }
+        if (plogic != null) {
+            sb.append("  plogic:\n");
+            plogic._inspect(2, sb);
+        }
+        sb.append("}\n");
+        return sb;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
+public class DeclarationParser extends Parser {
+
+    private ExpressionParser _exprParser;
+    private StatementParser  _stmtParser;
+
+    public DeclarationParser() {
+        this(new Scanner(), true);
+    }
+
+    public DeclarationParser(Scanner scanner) {
+        this(scanner, true);
+    }
+    public DeclarationParser(Scanner scanner, boolean flagInit) {
+        super(scanner);
+        _stmtParser = new StatementParser(scanner, false);
+        _exprParser = _stmtParser.getExpressionParser();
+        if (flagInit) _scanner.scan();
+    }
+
+    public StatementParser getStatementParser()   { return _stmtParser; }
+    public ExpressionParser getExpressionParser() { return _exprParser; }
+
+    public String getFilename() { return _stmtParser.getFilename(); }
+    public void setFilename(String filename) { _stmtParser.setFilename(filename); }
+
+    public List parse(String input) {
+        _scanner.reset(input, 1);
+        scan();
+        List decls = parsePresentationDeclarations();
+        if (token() != TokenType.EOF) {
+            syntaxError("'" + TokenType.inspect(token(), value()) + "': unexpected token.");
+        }
+        return decls;
+    }
+
+    public List parsePresentationDeclarations() {
+        List decls = new ArrayList();
+        while (token() == TokenType.SHARP) {
+            PresentationDeclaration decl = parsePresentationDeclaration();
+            decls.add(decl);
+        }
+        return decls;
+    }
+
+    public PresentationDeclaration parsePresentationDeclaration() {
+        assert token() == TokenType.SHARP;
+        String name;
+        List nameList = new ArrayList();
+        int i = 0;
+        while (true) {
+            i += 1;
+            if (token() != TokenType.SHARP)
+                syntaxError("'#' required.");
+            scan();
+            if (token() != TokenType.NAME)
+                syntaxError("'#': marking name required.");
+            name = value();
+            nameList.add(name);
+            scan();
+            if (token() != TokenType.COMMA) break;
+            scan();
+        }
+        if (token() != TokenType.L_CURLY)
+            syntaxError("presentation declaration '#" + name + "' requires '{'.");
+        scan();
+        PresentationDeclaration decl = parseDeclarationParts();
+        String[] names = new String[nameList.size()];
+        nameList.toArray(names);
+        decl.names = names;
+        if (token() != TokenType.R_CURLY)
+            syntaxError("presentation declaration '#" + name + "' is not closed by '}'.");
+        scan();
+        return decl;
+    }
+
+    public static final Object PART_TAGNAME = "tagname";
+    public static final Object PART_REMOVE  = "remove";
+    public static final Object PART_ATTRS   = "attrs";
+    public static final Object PART_APPEND  = "append";
+    public static final Object PART_VALUE   = "value";
+    public static final Object PART_PLOGIC  = "plogic";
+
+    public static final Map _parts = new HashMap();
+    static {
+        _parts.put("tagname", PART_TAGNAME);
+        _parts.put("remove",  PART_REMOVE);
+        _parts.put("attrs",   PART_ATTRS);
+        _parts.put("append",  PART_APPEND);
+        _parts.put("value",   PART_VALUE);
+        _parts.put("plogic",  PART_PLOGIC);
+    }
+
+    public PresentationDeclaration parseDeclarationParts() {
+        PresentationDeclaration decl = new PresentationDeclaration();
+        while (token() == TokenType.NAME) {
+            Object part = _parts.get(value());
+            if (part == null)
+                syntaxError("part name required but got '" + value() + "'.");
+            scan();
+            if (token() != TokenType.COLON)
+                syntaxError("'" + part + "' part requires ':'.");
+            scan();
+            if (false) /* nothing */ ;
+            else if (part == PART_TAGNAME) parseTagnamePart(decl);
+            else if (part == PART_REMOVE)  parseRemovePart(decl);
+            else if (part == PART_ATTRS)   parseAttrsPart(decl);
+            else if (part == PART_APPEND)  parseAppendPart(decl);
+            else if (part == PART_VALUE)   parseValuePart(decl);
+            else if (part == PART_PLOGIC)  parsePlogicPart(decl);
+            else
+              assert false;
+        }
+        return decl;
+    }
+
+    private void parseTagnamePart(PresentationDeclaration decl) {
+        Expression expr = _exprParser.parseExpression();
+        if (token() != TokenType.SEMICOLON)
+          syntaxError("tagname part requires ';'.");
+        scan();
+        decl.tagname = expr;
+    }
+
+    private void parseRemovePart(PresentationDeclaration decl) {
+        while (true) {
+            Expression expr = _exprParser.parseExpression();
+            if (expr.getToken() != TokenType.STRING)
+              syntaxError("remove part requires attribute name.");
+            String aname = ((StringExpression)expr).getValue();
+            decl.remove.add(aname);
+            if (token() != TokenType.COMMA) break;
+            scan();
+        }
+        if (token() != TokenType.SEMICOLON)
+          syntaxError("remove part requires ';'.");
+        scan();
+    }
+
+    private void parseAttrsPart(PresentationDeclaration decl) {
+        while (true) {
+            Expression expr = _exprParser.parseExpression();
+            if (expr.getToken() != TokenType.STRING)
+              syntaxError("attrs part requires attribute name.");
+            String aname = ((StringExpression)expr).getValue();
+            expr = _exprParser.parseExpression();
+            decl.attrs.put(aname, expr);
+            if (token() != TokenType.COMMA) break;
+            scan();
+        }
+        if (token() != TokenType.SEMICOLON)
+          syntaxError("attrs part requires ';'.");
+        scan();
+    }
+
+    private void parseAppendPart(PresentationDeclaration decl) {
+        while (true) {
+            Expression expr = _exprParser.parseExpression();
+            decl.append.add(expr);
+            if (token() != TokenType.COMMA) break;
+            scan();
+        }
+        if (token() != TokenType.SEMICOLON)
+          syntaxError("append part requires ';'.");
+        scan();
+    }
+
+    private void parseValuePart(PresentationDeclaration decl) {
+        Expression expr = _exprParser.parseExpression();
+        decl.value = expr;
+        if (token() != TokenType.SEMICOLON)
+          syntaxError("value part requires ';'.");
+        scan();
+    }
+
+    private void parsePlogicPart(PresentationDeclaration decl) {
+        if (token() != TokenType.L_CURLY)
+          syntaxError("plogic part requires '{'.");
+        BlockStatement stmt = (BlockStatement)_stmtParser.parseBlockStatement();
+        decl.plogic = stmt;
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public interface Compiler {
+    public void compile();
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.StringWriter;
+import java.io.IOException;
+
+public class DefaultCompiler implements Compiler {
+    private ExpressionParser  _exprParser;
+    private StatementParser   _stmtParser;
+    private DeclarationParser _declParser;
+    private Converter         _converter = new DefaultConverter();
+    private List              _stmtList  = new ArrayList();
+    private List              _declList  = new ArrayList();
+    private Map               _elemTable = new HashMap();
+    private BlockStatement    _pdataBlock;
+
+    public DefaultCompiler() {
+        _declParser = new DeclarationParser();
+        _stmtParser = _declParser.getStatementParser();
+        _exprParser = _stmtParser.getExpressionParser();
+    }
+
+
+    public BlockStatement compileString(String pdata, String plogic) {
+
+        // parse pdata
+        Statement[] stmts = _converter.convert(pdata);
+
+        // create element table
+        List elemList = _converter.getElementList();
+        Map elementTable = Element.createElementTable(elemList);
+
+        // parse plogic
+        List declList = _declParser.parse(plogic);
+
+        // merge declarations
+        Element.mergeDeclarationList(elementTable, declList);
+
+        // create block statement
+        BlockStatement blockStmt = new BlockStatement(stmts);
+
+        // expand
+        Expander expander = new Expander(elementTable);
+        expander.expand(blockStmt, null);
+
+        return blockStmt;
+    }
+
+    public void compile() {
+    }
+
+
+    public void addPresentationLogic(String plogic) {
+        addPresentationLogic(plogic, null);
+    }
+
+    public void addPresentationLogic(String plogic, String filename) {
+        _declParser.setFilename(filename);
+        List declList = _declParser.parse(plogic);
+        _declList.addAll(declList);
+    }
+
+    public void addPresentationData(String pdata) {
+        addPresentationData(pdata, null);
+    }
+
+    public void addPresentationData(String pdata, String filename) {
+        _converter.setFilename(filename);
+        Statement[] stmts = _converter.convert(pdata);
+        for (int i = 0; i < stmts.length; i++) {
+            _stmtList.add(stmts[i]);
+        }
+        List elemList = _converter.getElementList();
+        Element.addElementList(_elemTable, elemList);
+    }
+
+    public BlockStatement getBlockStatement() {
+        // merge element table and declaration list
+        Element.mergeDeclarationList(_elemTable, _declList);
+        // create block statement
+        BlockStatement blockStmt = new BlockStatement(_stmtList);
+        // expand @stag, @cont, and @etag
+        Expander expander = new Expander(_elemTable);
+        expander.expand(blockStmt, null);
+        //
+        return blockStmt;
+    }
+
+
+    public String readFile(String filename) throws IOException {
+        return readFile(filename, "UTF8");
+    }
+
+    private String readFile(String filename, String charset) throws IOException {
+        InputStream stream = null;
+        Reader reader = null;
+        try {
+            stream = new FileInputStream(filename);
+            reader = new InputStreamReader(stream, charset);
+            char[] cbuf = new char[512];
+            StringBuffer sb = new StringBuffer();
+            if (reader.read(cbuf, 0, cbuf.length) >= 0) {
+                sb.append(cbuf);
+            }
+            return sb.toString();
+        } finally {
+            if (reader != null) reader.close();
+            if (stream != null) stream.close();
+        }
+    }
+}
+
+// --------------------------------------------------------------------------------
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+import java.io.*;
+
+public class CompilerTest extends TestCase {
+    String _plogic;
+    String _pdata;
+    String _expected;
+    Map    _context = new HashMap();
+
+    private void _test() throws Exception {
+        _test(false);
+    }
+
+    private void _test(boolean flagPrint) throws Exception {
+        DefaultCompiler compiler = new DefaultCompiler();
+        //compiler.addPresentationLogic(_plogic);
+        //compiler.addPresentationData(_pdata);
+        //BlockStatement stmt = compiler.getBlockStatement();
+        BlockStatement stmt = compiler.compileString(_pdata, _plogic);
+        Writer writer = new StringWriter();
+        stmt.execute(_context, writer);
+        String actual = writer.toString();
+        writer.close();
+        if (flagPrint)
+            System.out.println(actual);
+        else
+            assertEquals(_expected, actual);
+    }
+
+    public void testCompile01() throws Exception {
+        _pdata = <<'END';
+            Hello <strong id="mark:user">World</strong>!
+            END
+        _plogic = <<'END';
+            #user {
+              value: user;
+            }
+            END
+        _expected = <<'END';
+            Hello <strong>Kwartz</strong>!
+            END
+        _context.put("user", "Kwartz");
+        _test();
+    }
+
+    public void testCompile02() throws Exception {
+        _pdata = <<'END';
+            <ul id="mark:list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _plogic = <<'END';
+            #list {
+                plogic: {
+                    foreach (item in list) {
+                        @stag;  // start tag
+                        @cont;  // content
+                        @etag;  // end tag
+                    }
+                }
+            }
+            END
+        _expected = <<'END';
+            <ul>
+              <li>foo</li>
+            </ul>
+            <ul>
+              <li>bar</li>
+            </ul>
+            <ul>
+              <li>baz</li>
+            </ul>
+            END
+        List list = java.util.Arrays.asList(new Object[] { "foo", "bar", "baz", });
+        _context.put("list", list);
+        _test();
+    }
+
+
+    public void testCompile03() throws Exception {
+        _pdata = <<'END';
+            <table id="table">
+              <tr class="odd" style="color:red" id="mark:list">
+                <td id="mark:name" style="font-weight:bold">foo</td>
+                <td><a href="..." id="mark:mail">foo@mail.org</a></td>
+              </tr>
+              <tr class="even" id="mark:dummy">
+                <td>bar</td>
+                <td>bar@mail.net</td>
+              </tr>
+            </table>
+            END
+        _plogic = <<'END';
+            #table {
+                tagname:  "html:table";
+                append:   flag ? ' align="center"' : '';
+            }
+            #list {
+                attrs:  "class" klass;
+                remove: "style", "width";
+                plogic: {
+                    i = 0;
+                    foreach (item in list) {
+                        i += 1;
+                        klass = i % 2 == 0 ? 'even' : 'odd';
+                        @stag;
+                        @cont;
+                        @etag;
+                    }
+                }
+            }
+            #name {
+              value: item.name;
+            }
+            #mail {
+              value:  item.email;
+              attrs:  "href" "mailto:" .+ item.email;
+            }
+            #dummy {
+              plogic: { }
+            }
+            END
+        _expected = <<'END';
+            <html:table id="table" align="center">
+              <tr class="odd">
+                <td style="font-weight:bold">Foo</td>
+                <td><a href="mailto:foo@foo.org">foo@foo.org</a></td>
+              </tr>
+              <tr class="even">
+                <td style="font-weight:bold">Bar</td>
+                <td><a href="mailto:bar@bar.org">bar@bar.org</a></td>
+              </tr>
+              <tr class="odd">
+                <td style="font-weight:bold">Baz</td>
+                <td><a href="mailto:baz@baz.org">baz@baz.org</a></td>
+              </tr>
+            </html:table>
+            END
+        List list = java.util.Arrays.asList(new Object[] {
+            new CompilerTest.User("Foo", "foo@foo.org"),
+            new CompilerTest.User("Bar", "bar@bar.org"),
+            new CompilerTest.User("Baz", "baz@baz.org"),
+        });
+        _context.put("list", list);
+        _context.put("flag", Boolean.TRUE);
+        _test();
+    }
+
+    public static class User {
+        private String name;
+        private String email;
+        public User(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+        public String getName() { return name; }
+        public String getEmail() { return email; }
+    }
+
+
+/*
+    public void testCompileXX() throws Exception {
+        _plogic = <<'END';
+            END
+        _pdata = <<'END';
+            END
+        _expected = <<'END';
+            END
+        List list = java.util.Arrays.asList(new Object[] { "foo", "bar", "baz", });
+        _context.put("list", list);
+        _test();
+    }
+*/
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class CommandOptionException extends BaseException {
+    public CommandOptionException(String message) {
+        super(message);
+    }
+}
+
+// --------------------------------------------------------------------------------
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class Main implements Runnable {
+    private String[]  _args;
+    private List      _plogicFilenameList = new ArrayList();
+    private String    _action = "compile";
+
+    public Main(String[] args) {
+        _args = args;
+    }
+
+    public void run() {
+        int i = 0;
+        for (i = 0; i < _args.length && _args[i].charAt(0) == '-'; i++) {
+            String optstr = _args[i];
+            if (optstr.equals("-p")) {  // presentation logic filenames
+                i++;
+                if (i >= _args.length)
+                    throw new CommandOptionException("-p: presentation logic filename required.");
+                String[] filenames = _args[i].split(",");
+                for (int j = 0; j < filenames.length; j++) {
+                    _plogicFilenameList.add(filenames[i]);
+                }
+            }
+            else if (optstr.equals("-a")) {
+                i++;
+                if (i >= _args.length)
+                    throw new CommandOptionException("-a: action name required.");
+                _action = _args[i];
+            }
+            else {
+                throw new CommandOptionException(optstr + ": invalid command-line option.");
+            }
+        }
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class ExpanderTest extends TestCase {
+    String _pdata;
+    String _plogic;
+    String _expected;
+
+    private void _test() {
+        _test(false);
+    }
+
+    private void _test(boolean flagPrint) {
+        // parse plogic
+        DeclarationParser declParser = new DeclarationParser();
+        List declList = declParser.parse(_plogic);
+
+        // parse pdata
+        Converter converter = new DefaultConverter();
+        Statement[] stmts = converter.convert(_pdata);
+
+        // create block statement
+        BlockStatement blockStmt = new BlockStatement(stmts);
+
+        // create element table
+        List elemList = converter.getElementList();
+        Map elementTable = Element.createElementTable(elemList);
+
+        // merge declarations
+        Element.mergeDeclarationList(elementTable, declList);
+
+        // expand
+        Expander expander = new Expander(elementTable);
+        expander.expand(blockStmt, null);
+
+        // assert
+        String actual = blockStmt._inspect().toString();
+        if (flagPrint) {
+            System.out.println(actual);
+        } else {
+            assertEquals(_expected, actual);
+        }
+    }
+
+    public void testExpand01() {
+        _pdata = <<'END';
+            Hello <strong id="mark:user">World</strong>!
+            END
+        _plogic = <<'END';
+            #user {
+              value: user;
+            }
+            END
+        _expected = <<'END';
+            :block
+              :print
+                "Hello"
+              :block
+                :print
+                  " <strong"
+                  ">"
+                :print
+                  user
+                :print
+                  "</strong>"
+              :print
+                "!\n"
+            END
+        _test();
+    }
+
+
+    public void testExpand02() {
+        _pdata = <<'END';
+            <ul id="mark:list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _plogic = <<'END';
+            #list {
+                plogic: {
+                    foreach (item in list) {
+                        @stag;  // start tag
+                        @cont;  // content
+                        @etag;  // end tag
+                    }
+                }
+            }
+            END
+        _expected = <<'END';
+            :block
+              :block
+                :foreach
+                  item
+                  list
+                  :block
+                    :print
+                      "<ul"
+                      ">\n"
+                    :block
+                      :print
+                        "  <li>"
+                      :print
+                        item
+                      :print
+                        "</li>\n"
+                    :print
+                      "</ul>\n"
+            END
+        _test();
+
+        _plogic = <<'END';
+            #list {
+                plogic: {
+                    @stag;  // start tag
+                    foreach (item in list) {
+                        @cont;  // content
+                    }
+                    @etag;  // end tag
+                }
+            }
+            END
+        _expected = <<'END';
+            :block
+              :block
+                :print
+                  "<ul"
+                  ">\n"
+                :foreach
+                  item
+                  list
+                  :block
+                    :block
+                      :print
+                        "  <li>"
+                      :print
+                        item
+                      :print
+                        "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _test();
+    }
+
+
+    public void testExpand03() {
+        _pdata = <<'END';
+            <table id="table">
+              <tr class="odd" style="color:red" id="mark:list">
+                <td id="mark:name" style="font-weight:bold">foo</td>
+                <td><a href="..." id="mark:mail">foo@mail.org</a></td>
+              </tr>
+              <tr class="even" id="mark:dummy">
+                <td>bar</td>
+                <td>bar@mail.net</td>
+              </tr>
+            </table>
+            END
+        _plogic = <<'END';
+            #table {
+                tagname:  "html:table";
+                append:   flag ? ' align="center"' : '';
+            }
+            #list {
+                attrs:  "class" klass;
+                remove: "style", "width";
+                plogic: {
+                    i = 0;
+                    foreach (item in list) {
+                        i += 1;
+                        klass = i % 2 == 0 ? 'even' : 'odd';
+                        @stag;
+                        @cont;
+                        @etag;
+                    }
+                }
+            }
+            #name {
+              value: item.name;
+            }
+            #mail {
+              value:  item.email;
+              attrs:  "href" "mailto:" .+ item.email;
+            }
+            #dummy {
+              plogic: { }
+            }
+            END
+        _expected = <<'END';
+            :block
+              :block
+                :print
+                  "<html:table id=\""
+                  "table"
+                  "\""
+                  ?:
+                    flag
+                    " align=\"center\""
+                    ""
+                  ">\n"
+                :block
+                  :block
+                    :expr
+                      =
+                        i
+                        0
+                    :foreach
+                      item
+                      list
+                      :block
+                        :expr
+                          +=
+                            i
+                            1
+                        :expr
+                          =
+                            klass
+                            ?:
+                              ==
+                                %
+                                  i
+                                  2
+                                0
+                              "even"
+                              "odd"
+                        :print
+                          "  <tr class=\""
+                          klass
+                          "\""
+                          ">\n"
+                        :block
+                          :block
+                            :print
+                              "    <td style=\""
+                              "font-weight:bold"
+                              "\""
+                              ">"
+                            :print
+                              .
+                                item
+                                name
+                            :print
+                              "</td>\n"
+                          :print
+                            "    <td>"
+                          :block
+                            :print
+                              "<a href=\""
+                              .+
+                                "mailto:"
+                                .
+                                  item
+                                  email
+                              "\""
+                              ">"
+                            :print
+                              .
+                                item
+                                email
+                            :print
+                              "</a>"
+                          :print
+                            "</td>\n"
+                        :print
+                          "  </tr>\n"
+                  :block
+                :print
+                  "</html:table>\n"
+            END
+        _test();
+    }
+
+
+/*
+    public void testExpandXX() {
+        _pdata = <<'END';
+            END
+        _plogic = <<'END';
+            END
+        _expected = <<'END';
+            END
+        _test();
+    }
+*/
 
 }
 
@@ -6026,6 +7108,10 @@ public class StatementParserTest extends TestCase {
             fail("*** invalid method name ***");
         }
 
+        //Scanner scanner = parser.getScanner();
+        if (scanner.getToken() != TokenType.EOF)
+            fail("TokenType.EOF expected but got " + TokenType.inspect(scanner.getToken(), scanner.getValue()));
+
         if (klass != null) {
             assertEquals(klass, stmt.getClass());
         }
@@ -6174,6 +7260,37 @@ public class StatementParserTest extends TestCase {
     }
 
 
+    public void testParseExpandStatement1() {
+        input = "@stag;";
+        expected = "@stag\n";
+        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+        input = "@cont;";
+        expected = "@cont\n";
+        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+        input = "@etag;";
+        expected = "@etag\n";
+        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+        input = "@content(foo);";
+        expected = "@content(foo)\n";
+        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+        input = "@element(foo);";
+        expected = "@element(foo)\n";
+        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+    }
+
+
+    public void testParseExpandStatement2() {
+        input = "@foo;";
+        expected = "";
+        try {
+            _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+            fail("SyntaxException expected but not happened.");
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+
+
     public void testParseStatementList1() {
         input = "print(\"<table>\\n\");\n"
               + "i = 0;\n"
@@ -6233,6 +7350,148 @@ public class StatementParserTest extends TestCase {
     public static void main(String[] args) {
        junit.textui.TestRunner.run(StatementParserTest.class);
     }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class DeclarationParserTest extends TestCase {
+    private String _input;
+    private String _expected;
+
+    private void _test() {
+        DeclarationParser parser = new DeclarationParser();
+        List decls = parser.parse(_input);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < decls.size(); i++) {
+            PresentationDeclaration decl = (PresentationDeclaration)decls.get(i);
+            decl._inspect(0, sb);
+        }
+        String actual = sb.toString();
+        assertEquals(_expected, actual);
+    }
+
+    public void testValuePart1() {
+        _input = <<'END';
+        #foo {
+            value: expr;
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          value:
+            expr
+        }
+        END
+        _test();
+    }
+
+    public void testAttrsPart1() {
+        _input = <<'END';
+        #foo {
+           attrs: "id" xid, "href" "mailto:" .+ email;
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          attrs:
+            "href"
+            .+
+              "mailto:"
+              email
+            "id"
+            xid
+        }
+        END
+        _test();
+    }
+
+    public void testRemovePart1() {
+        _input = <<'END';
+        #foo {
+            remove: "checked", "id", "c:flag";
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          remove:
+            "checked"
+            "id"
+            "c:flag"
+        }
+        END
+        _test();
+    }
+
+    public void testAppendPart1() {
+        _input = <<'END';
+        #foo {
+            append: flag1 ? ' checked="checked"' : '', flag2 ? ' selected="selected"' : '';
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          append:
+            ?:
+              flag1
+              " checked=\"checked\""
+              ""
+            ?:
+              flag2
+              " selected=\"selected\""
+              ""
+        }
+        END
+        _test();
+    }
+
+    public void testTagnamePart1() {
+        _input = <<'END';
+        #foo {
+            tagname  :  "html:html";
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          tagname:
+            "html:html"
+        }
+        END
+        _test();
+    }
+
+    public void testPlogicPart1() {
+        _input = <<'END';
+        #foo {
+            plogic : {
+                foreach (item in list) {
+                    @stag;
+                    @cont;
+                    @etag;
+                }
+            }
+        }
+        END
+        _expected = <<'END';
+        #foo {
+          plogic:
+            :block
+              :foreach
+                item
+                list
+                :block
+                  @stag
+                  @cont
+                  @etag
+        }
+        END
+        _test();
+    }
+
+
 }
 
 // --------------------------------------------------------------------------------
@@ -6442,8 +7701,8 @@ public class ExpressionParserTest extends TestCase {
     }
 
     public void testParseArithmetic1() {  // arithmetic
-        input = "-a + b - c .+ d";
-        expected =".+\n  -\n    +\n      -.\n        a\n      b\n    c\n  d\n";
+        input = "-a + b .+ c - d";
+        expected ="-\n  .+\n    +\n      -.\n        a\n      b\n    c\n  d\n";
         _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
     }
 
@@ -6451,6 +7710,18 @@ public class ExpressionParserTest extends TestCase {
         input = "-a*b + -c/d";
         expected = "+\n  *\n    -.\n      a\n    b\n  /\n    -.\n      c\n    d\n";
         _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
+    }
+
+    public void testParseConcatenation1() {  // arithmetic
+        input = "'dir/' .+ base .+ '.txt'";
+        expected = <<'END';
+            .+
+              .+
+                "dir/"
+                base
+              ".txt"
+            END
+        _test(input, expected, "parseArithmetic", ConcatenationExpression.class);
     }
 
 
@@ -6671,7 +7942,7 @@ public class ScannerTest extends TestCase {
     public void testScanner25() {  // symbols
         String input = "[][::;?.,#";
         String expected = "L_BRACKET [\nR_BRACKET ]\nL_BRACKETCOLON [:\nCOLON :\n"
-                         + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nELEMDECL #\n";
+                         + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nSHARP #\n";
         _test(input, expected);
     }
 
@@ -7492,6 +8763,10 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(StatementParserTest.class));
         suite.addTest(new TestSuite(InterpreterTest.class));
         suite.addTest(new TestSuite(ConverterTest.class));
+        suite.addTest(new TestSuite(TagHelperTest.class));
+        suite.addTest(new TestSuite(DeclarationParserTest.class));
+        suite.addTest(new TestSuite(ExpanderTest.class));
+        suite.addTest(new TestSuite(CompilerTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

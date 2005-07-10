@@ -1,6 +1,12 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-09 (rev.11)
+	.- [enhance] add DefaultCompiler class
+	.- [enhance] add PresentationDeclaration class
+	.- [enhance] add DeclarationParser class
+	.- [enhance] add Element.createElementTable(), Element.addElementList(), Element.mergeDeclarationList()
+
 .: 2005-07-08 (rev.10)
 	.- [enhance] add TagHelper class
 	.- [enhance] add Expander class

@@ -1,2 +1,6 @@
 .- [_] new package kwartz.expression.*
 .- [_] new package kwartz.statement.*
+.- [_] optimization: concatenate continuous strings
+.- [_] optimization: expand block statement
+.- [_] add filename and linenumber on Node
+.- [_] delete span tag
