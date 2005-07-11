@@ -1,0 +1,47 @@
+* project
+  - name          = pagelayout
+  - default       = execute
+
+  * property
+    - file        = build.properties
+  * property
+    - name        = rootdir
+    - value       = ../../src/java
+  * property
+    - name        = mainclass
+    - value       = PageLayout
+
+  # compile
+  * target
+    - name        = compile
+    * javac
+      - classpath = ${rootdir}
+      - srcdir    = .
+      - source    = 1.4
+
+  # execute
+  * target
+    - name        = execute
+    - depends     = compile
+    * java
+      - classname = ${mainclass}
+      - output    = result1.html
+      - classpath = .:${rootdir}
+    * java
+      - classname = ${mainclass}
+      - output    = result2.html
+      - classpath = .:${rootdir}
+      * arg
+        - value   = AAPL
+
+
+  # clean
+  * target
+    - name         = clean
+    * delete
+      * fileset
+        - dir      =.
+        * include
+          - name   = *.class
+        * include
+          - name   = result*.html

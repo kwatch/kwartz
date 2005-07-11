@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="calendar" default="execute">
+
+  <property file="build.properties"/>
+  <property name="rootdir" value="../../src/java"/>
+  <property name="mainclass" value="CalendarExample"/>
+
+  <!-- compile -->
+  <target name="compile">
+    <javac classpath="${rootdir}" srcdir="." source="1.4"/>
+  </target>
+
+  <!-- execute -->
+  <target name="execute" depends="compile">
+    <java classname="${mainclass}" output="result.html" classpath=".:${rootdir}"/>
+  </target>
+
+  <!-- clean -->
+  <target name="clean">
+    <delete>
+      <fileset dir="." includes="result.html,*.class"/>
+    </delete>
+  </target>
+
+</project>

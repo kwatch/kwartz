@@ -1,0 +1,60 @@
+<html id="mark:document">
+  <head>
+    <title>Calendar Month Template</title>
+    <style type="text/css">
+      <!--
+        .holiday   {color:#FF0000;}
+	td         {text-align:center;}
+        -->
+    </style>
+  </head>
+  <body>
+    <span id="mark:calendar_month">
+            <!-- calendar-month -->
+            <table cellpadding="2" summary="calendar of @{month}@, @{year}@">
+              <caption>
+                <i id="value:month">Jan</i>&nbsp;<i id="value:year">20XX</i>
+              </caption>
+              <thead>
+                <tr bgcolor="#CCCCCC">
+                  <th><span class="holiday">S</span></th>
+                  <th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="mark:week">
+                  <td><span id="mark:day" class="holiday">&nbsp;</span></td>
+                  <td id="dummy:d1">&nbsp;</td>
+                  <td id="dummy:d2">1</td>
+                  <td id="dummy:d3">2</td>
+                  <td id="dummy:d4">3</td>
+                  <td id="dummy:d5">4</td>
+                  <td id="dummy:d6">5</td>
+                </tr>
+                <tr id="dummy:d7">
+                  <td><span class="holiday">6</span></td>
+                  <td>7</td><td>8</td><td>9</td>
+                  <td>10</td><td>11</td><td>12</td>
+                </tr>
+                <tr id="dummy:d8">
+                  <td><span class="holiday">13</span></td>
+                  <td>14</td><td>15</td><td>16</td>
+                  <td>17</td><td>18</td><td>19</td>
+                </tr>
+                <tr id="dummy:d9">
+                  <td><span class="holiday">20</span></td>
+                  <td>21</td><td>22</td><td>23</td>
+                  <td>24</td><td>25</td><td>26</td>
+                </tr>
+                <tr id="dummy:d10">
+                  <td><span class="holiday">27</span></td>
+                  <td>28</td><td>29</td><td>30</td>
+                  <td>31</td><td>&nbsp;</td><td>&nbsp;</td>
+                </tr>
+              </tbody>
+            </table>
+            &nbsp;
+            <!-- /calendar-month -->
+    </span>
+  </body>
+</html>

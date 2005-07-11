@@ -1,0 +1,56 @@
+<html>
+ <head>
+  <style type="text/css">
+   <!--
+     .label {
+        /* font-weight:bold; */
+        background-color:#CCFFCC;
+        text-align:right;
+     }
+     .error {
+        color: #FF0000;
+     }
+    -->
+  </style>
+ </head>
+ <body>
+  <form action="register.rbx" method="POST" id="mark:form">
+
+   <p id="if:error_list!=null" class="error">
+    <span id="foreach:error=error_list">
+     <span id="value:error">Name is empty.</span><br>
+    </span>
+   </p>
+   <p id="else:">
+    Enter your personal information:
+   </p>
+
+   <table border="0" cellspacing="1" cellpadding="5">
+
+    <tr>
+     <td class="label">Name:</td>
+     <td>
+      <input type="text" name="username" size="20" id="username">
+     </td>
+    </tr>
+
+    <tr>
+     <td class="label">Gender:</td>
+     <td>
+      <input type="radio" name="gender" value="M" id="mark:gender_m">Man
+      &nbsp;
+      <input type="radio" name="gender" value="W" id="mark:gender_w">Woman
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" align="center">
+      <input type="submit" value=" Register ">
+      <input type="reset"  value="reset">
+     </td>
+    </tr>
+
+   </table>
+  </form>
+ </body>
+</html>

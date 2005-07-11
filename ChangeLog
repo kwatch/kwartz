@@ -1,6 +1,14 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-12 (rev.12)
+	.- [enhance] add examples
+	.- [enhance] add Context class
+	.- [enhance] add Template class
+	.- [change] rename Compiler class to KwartzCompiler
+	.- [bugfix] several bugs are fixed around evaluate()
+	.- [bugfix] several bugs are fixed in Element#setDeclaration()
+
 .: 2005-07-09 (rev.11)
 	.- [enhance] add DefaultCompiler class
 	.- [enhance] add PresentationDeclaration class

@@ -1,0 +1,20 @@
+#breadcrumbs {
+        plogic: {
+            @stag;
+            foreach (crumb in breadcrumbs) {
+                @element(crumb);          // print <a>...</a>
+                @element(separator);      // print '&gt;'
+            }
+            @element(title);
+            @etag;
+        }
+}
+
+#crumb {
+        value: crumb[:name];
+        attrs: "href" crumb[:path];
+}
+
+#title {
+        value: title;
+}

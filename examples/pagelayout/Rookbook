@@ -1,0 +1,29 @@
+
+classpath = ".#{File::PATH_SEPARATOR}../../src/java"
+compiler = "jikes -cp #{classpath}"
+
+all = ["result1.html", "result2.html", "build.xml"]
+files = %w[menu.html menu.plogic page.plogic]
+
+recipe  :all			, all
+
+grecipe "result*.html"	, "PageLayout.class", "page{1}.html", files	do |r|
+	cmd "java -cp #{classpath} PageLayout page{1} > #{r.product}"
+	end
+
+grecipe  "*.class"	, "{1}.java"					do |r|
+	cmd "#{compiler} {1}.java"
+	end
+
+recipe  "build.xml"	, "build.kwaff"					do |r|
+	cmd "kwaff #{r.ingred} > #{r.product}"
+	end
+
+recipe	:clear								do |r|
+	list = Dir.glob("*.class")
+	list.concat all
+	remove_rf list unless list.empty?
+	end
+
+recipe  :default		, :all
+

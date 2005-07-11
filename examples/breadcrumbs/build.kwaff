@@ -1,0 +1,37 @@
+* project
+  - name          = breadcrumbs
+  - default       = execute
+
+  * property
+    - file        = build.properties
+  * property
+    - name        = rootdir
+    - value       = ../../src/java
+  * property
+    - name        = mainclass
+    - value       = Breadcrumbs
+
+  # compile
+  * target
+    - name        = compile
+    * javac
+      - classpath = ${rootdir}
+      - srcdir    = .
+      - source    = 1.4
+
+  # execute
+  * target
+    - name        = execute
+    - depends     = compile
+    * java
+      - classname = ${mainclass}
+      - output    = result.html
+      - classpath = .:${rootdir}
+
+  # clean
+  * target
+    - name         = clean
+    * delete
+      * fileset
+        - dir      = .
+        - includes = result.html,*.class

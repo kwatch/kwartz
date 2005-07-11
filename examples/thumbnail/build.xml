@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<project name="thumbnail" default="execute">
+
+  <property file="build.properties"/>
+  <property name="rootdir" value="../../src/java"/>
+  <property name="mainclass" value="Thumbnail"/>
+
+  <!-- compile -->
+  <target name="compile">
+    <javac classpath="${rootdir}" srcdir="." source="1.4"/>
+  </target>
+
+  <!-- execute -->
+  <target name="execute" depends="compile">
+    <java classname="${mainclass}" classpath=".:${rootdir}"/>
+  </target>
+
+  <!-- clean -->
+  <target name="clean">
+    <delete file="${mainclass}.class"/>
+    <delete>
+      <fileset dir=".">
+        <include name="result*.html"/>
+      </fileset>
+    </delete>
+  </target>
+
+</project>

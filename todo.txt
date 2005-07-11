@@ -4,3 +4,8 @@
 .- [_] optimization: expand block statement
 .- [_] add filename and linenumber on Node
 .- [_] delete span tag
+.- [_] new class TagAttribute(space, attrname, attrexpr)
+.- [_] properties support
+.- [_] new class Executor
+.- [_] template caching
+.- [_] reflection data caching

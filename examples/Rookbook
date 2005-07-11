@@ -1,0 +1,20 @@
+list = %w[border1 border2 border3 breadcrumbs calendar form1 thumbnail pagelayout ]
+
+recipe  :all								do |r|
+	list.each { |dir|
+	    chdir dir do rook :all end
+	}
+	end
+
+recipe :clear								do |r|
+	list.each { |dir|
+	    chdir dir do rook :clear end
+	}
+	end
+
+
+recipe "build.xml"							do |r|
+	list.each { |dir|
+	    chdir dir do rook "build.xml" end
+	}
+	end

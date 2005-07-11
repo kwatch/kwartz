@@ -388,6 +388,12 @@ public class MiscException extends BaseException {
 
 package __PACKAGE__;
 
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
 public class Utility {
     public static String capitalize(String str) {
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
@@ -437,6 +443,35 @@ public class Utility {
         }
         return sb.toString();
     }
+
+
+    public static String readFile(String filename) throws IOException {
+        String charset = System.getProperty("file.encoding");
+        return Utility.readFile(filename, charset);
+    }
+
+    public static String readFile(String filename, String charset) throws IOException {
+        if (charset == null) {
+            charset = System.getProperty("file.encoding");
+        }
+        InputStream stream = null;
+        Reader reader = null;
+        try {
+            stream = new FileInputStream(filename);
+            reader = new InputStreamReader(stream, charset);
+            char[] cbuf = new char[512];
+            StringBuffer sb = new StringBuffer();
+            int len;
+            while ((len = reader.read(cbuf, 0, cbuf.length)) >= 0) {
+                sb.append(cbuf, 0, len);
+            }
+            return sb.toString();
+        } finally {
+            if (reader != null) reader.close();
+            if (stream != null) stream.close();
+        }
+    }
+
 }
 
 // ================================================================================
@@ -644,13 +679,15 @@ public class ArithmeticExpression extends BinaryExpression {
 
     public Object evaluate(Map context) {
         Object lvalue = _left.evaluate(context);
-        if (! (lvalue instanceof Integer || lvalue instanceof Float) ) {
-            throw new EvaluationException("required integer or float.");
-        }
+        if (lvalue == null)
+            throw new EvaluationException("lvalue of '" + TokenType.inspect(_token) + "' is null.");
+        if (! (lvalue instanceof Integer || lvalue instanceof Float) )
+            throw new EvaluationException("required integer or float but got " + lvalue.getClass().getName() + ".");
         Object rvalue = _right.evaluate(context);
-        if (! (rvalue instanceof Integer || rvalue instanceof Float) ) {
-            throw new EvaluationException("required integer or float.");
-        }
+        if (rvalue == null)
+            throw new EvaluationException("rvalue of '" + TokenType.inspect(_token) + "' is null.");
+        if (! (rvalue instanceof Integer || rvalue instanceof Float) )
+            throw new EvaluationException("required integer or float but got " + rvalue.getClass().getName() + ".");
         Number lval = (Number)lvalue;
         Number rval = (Number)rvalue;
         boolean is_int = (lvalue instanceof Integer && rvalue instanceof Integer);
@@ -796,7 +833,11 @@ public class RelationalExpression extends BinaryExpression {
 
     public Object evaluate(Map context) {
         Object lvalue = _left.evaluate(context);
+        //if (lvalue == null)
+        //    throw new EvaluationException("lvalue of '" + TokenType.inspect(_token) + "' is null.");
         Object rvalue = _right.evaluate(context);
+        //if (rvalue == null)
+        //    throw new EvaluationException("rvalue of '" + TokenType.inspect(_token) + "' is null.");
         boolean is_number = false;
         if (lvalue instanceof Integer && rvalue instanceof Integer) {
             int lval = ((Number)lvalue).intValue();
@@ -823,6 +864,32 @@ public class RelationalExpression extends BinaryExpression {
               case TokenType.GE:  return lval >= rval ? Boolean.TRUE : Boolean.FALSE;
               case TokenType.EQ:  return lval == rval ? Boolean.TRUE : Boolean.FALSE;
               case TokenType.NE:  return lval != rval ? Boolean.TRUE : Boolean.FALSE;
+              default:
+                assert false;
+            }
+        }
+        else if (lvalue == null || rvalue == null) {
+            switch (_token) {
+              case TokenType.EQ:
+                return (lvalue == null && rvalue == null) ? Boolean.TRUE : Boolean.FALSE;
+              case TokenType.NE:
+                return (lvalue == null && rvalue == null) ? Boolean.FALSE : Boolean.TRUE;
+              case TokenType.LT:
+              case TokenType.GT:
+              case TokenType.LE:
+              case TokenType.GE:
+                String msg = (lvalue == null ? "lvalue" : "rvalue") + TokenType.inspect(_token) + " is null.";
+                throw new EvaluationException(msg);
+              default:
+                assert false;
+            }
+        }
+        else if ( (_token == TokenType.EQ || _token == TokenType.NE) && (lvalue == null || rvalue == null) ) {
+            switch (_token) {
+              case TokenType.EQ:
+                return (lvalue == null && rvalue == null) ? Boolean.TRUE : Boolean.FALSE;
+              case TokenType.NE:
+                return (lvalue == null && rvalue == null) ? Boolean.FALSE : Boolean.TRUE;
               default:
                 assert false;
             }
@@ -939,6 +1006,8 @@ public class PropertyExpression extends Expression {
 
     public Object evaluate(Map context) {
         Object value = _object.evaluate(context);
+        if (value == null)
+            throw new EvaluationException("object of property `" + _name + "' is null.");
         try {
             java.lang.reflect.Method method =
                 value.getClass().getMethod(_getter, _getter_argtypes_);
@@ -1419,6 +1488,8 @@ public class VariableExpression extends Expression {
     public Object evaluate(Map context) {
         //Object val = context.get(_name);
         //return val != null ? val : NullExpression.instance();
+        if (! context.containsKey(_name))
+            throw new EvaluationException("variable `" + _name + "' is not initalized.");
         return context.get(_name);
     }
 
@@ -3378,12 +3449,29 @@ public class Element {
         }
         if (decl.attrs != null) {
             if (_stag.attrs == null) _stag.attrs = new ArrayList();
-            for (int i = decl.attrs.size() -1; i >= 0; i--) {
-                Object[] attr = (Object[])_stag.attrs.get(i);
-                Object aname = attr[1];
-                Object expr = decl.attrs.get(aname);
-                if (expr != null)  attr[2] = expr;
+            for (Iterator it = decl.attrs.keySet().iterator(); it.hasNext(); ) {
+                String aname = (String)it.next();
+                Object expr  = decl.attrs.get(aname);
+                int i;
+                int len = _stag.attrs.size();
+                for (i = 0; i < len; i++) {
+                    Object[] attr = (Object[])_stag.attrs.get(i);
+                    if (aname.equals(attr[1])) {  // attr[1] is attribute name
+                        attr[2] = expr;           // attr[2] is attribute value
+                        break;
+                    }
+                }
+                if (i >= len) {
+                    Object[] attr = { " ", aname, expr, };
+                    _stag.attrs.add(attr);
+                }
             }
+            //for (int i = _stag.attrs.size() -1; i >= 0; i--) {
+            //    Object[] attr = (Object[])_stag.attrs.get(i);
+            //    Object aname = attr[1];
+            //    Object expr = decl.attrs.get(aname);
+            //    if (expr != null)  attr[2] = expr;
+            //}
         }
         if (decl.append != null) {
             if (_stag.append_exprs == null)
@@ -3576,8 +3664,10 @@ public class Expander {
             IfStatement ifStmt = (IfStatement)stmt;
             st = expand(ifStmt.getThenStatement(), elem);
             if (st != null) ifStmt.setThenStatement(st);
-            st = expand(ifStmt.getElseStatement(), elem);
-            if (st != null) ifStmt.setElseStatement(st);
+            if (ifStmt.getElseStatement() != null) {
+                st = expand(ifStmt.getElseStatement(), elem);
+                if (st != null) ifStmt.setElseStatement(st);
+            }
             return null;
 
           case TokenType.EXPAND:
@@ -3587,7 +3677,10 @@ public class Expander {
                 st = _helper.buildPrintStatement(elem.getStag());
             }
             else if (type == TokenType.ETAG) {
-                st = _helper.buildPrintStatement(elem.getEtag());
+                if (elem.getEtag() == null)
+                    st = new PrintStatement(new Expression[] {});
+                else
+                    st = _helper.buildPrintStatement(elem.getEtag());
             }
             else if (type == TokenType.CONT) {
                 stmts = elem.getContentStatements();
@@ -4855,7 +4948,8 @@ public class DeclarationParser extends Parser {
         nameList.toArray(names);
         decl.names = names;
         if (token() != TokenType.R_CURLY)
-            syntaxError("presentation declaration '#" + name + "' is not closed by '}'.");
+            syntaxError("presentation declaration '#" + name + "' is not closed by '}'."
+                        + "(token=" + TokenType.inspect(token(),value()) + ")");
         scan();
         return decl;
     }
@@ -4972,8 +5066,99 @@ public class DeclarationParser extends Parser {
 
 package __PACKAGE__;
 
-public interface Compiler {
-    public void compile();
+import java.util.Map;
+import java.io.Writer;
+import java.io.StringWriter;
+import java.io.IOException;
+
+public class Template {
+
+    private BlockStatement _blockStmt;
+
+    public Template(BlockStatement blockStmt) {
+        _blockStmt = blockStmt;
+    }
+
+    public BlockStatement getBlockStatement() { return _blockStmt; }
+
+    public String execute(Map context) throws IOException {
+        StringWriter writer = null;
+        try {
+            writer = new StringWriter();
+            _blockStmt.execute(context, writer);
+            String s = writer.toString();
+            return s;
+        } finally {
+            if (writer != null) writer.close();
+        }
+    }
+
+    public void execute(Map context, Writer writer) throws IOException {
+        _blockStmt.execute(context, writer);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+//public interface Compiler {
+//    public Template compileString(String pdata, String plogic);
+//    public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename);
+//    public Template compileFile(String pdataFilename, String plogicFilename) throws IOException;
+//    public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException;
+//    public void addPresentationLogic(String plogic);
+//    public void addPresentationLogic(String plogic, String filename);
+//    public void addPresentationData(String pdata);
+//    public void addPresentationData(String pdata, String filename);
+//    public Template getTemplate();
+//
+//}
+
+import java.io.IOException;
+
+abstract public class KwartzCompiler {
+
+    abstract public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename);
+    public Template compileString(String pdata, String plogic) {
+        return compileString(pdata, plogic, null, null);
+    }
+
+    abstract public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException;
+    public Template compileFile(String pdataFilename, String plogicFilename) throws IOException {
+        String charset = System.getProperty("file.encoding");
+        return compileFile(pdataFilename, plogicFilename, charset);
+    }
+
+    abstract public void addPresentationLogic(String plogic, String filename);
+    public void addPresentationLogic(String plogic) {
+        addPresentationLogic(plogic, null);
+    }
+    public void addPresentationLogicFile(String filename, String charset) throws IOException {
+        String plogic = Utility.readFile(filename, charset);
+        addPresentationLogic(plogic, filename);
+    }
+
+    abstract public void addPresentationData(String pdata, String filename);
+    public void addPresentationData(String pdata) {
+        addPresentationData(pdata, null);
+    }
+    public void addPresentationDataFile(String filename, String charset) throws IOException {
+        String pdata = Utility.readFile(filename, charset);
+        addPresentationData(pdata, null);
+    }
+
+    abstract public void addElementDefinition(String elemdef, String filename);
+    public void addElementDefinition(String elemdef) {
+        addElementDefinition(elemdef, null);
+    }
+    public void addElementDefinitionFile(String filename, String charset) throws IOException {
+        String elemdef = Utility.readFile(filename, charset);
+        addElementDefinition(elemdef, filename);
+    }
+
+    abstract public Template getTemplate();
+
 }
 
 // --------------------------------------------------------------------------------
@@ -4991,7 +5176,7 @@ import java.io.FileInputStream;
 import java.io.StringWriter;
 import java.io.IOException;
 
-public class DefaultCompiler implements Compiler {
+public class DefaultCompiler extends KwartzCompiler {
     private ExpressionParser  _exprParser;
     private StatementParser   _stmtParser;
     private DeclarationParser _declParser;
@@ -5008,9 +5193,10 @@ public class DefaultCompiler implements Compiler {
     }
 
 
-    public BlockStatement compileString(String pdata, String plogic) {
+    public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename) {
 
-        // parse pdata
+        // convert pdata
+        _converter.setFilename(pdataFilename);
         Statement[] stmts = _converter.convert(pdata);
 
         // create element table
@@ -5018,6 +5204,7 @@ public class DefaultCompiler implements Compiler {
         Map elementTable = Element.createElementTable(elemList);
 
         // parse plogic
+        _declParser.setFilename(plogicFilename);
         List declList = _declParser.parse(plogic);
 
         // merge declarations
@@ -5030,16 +5217,23 @@ public class DefaultCompiler implements Compiler {
         Expander expander = new Expander(elementTable);
         expander.expand(blockStmt, null);
 
-        return blockStmt;
-    }
-
-    public void compile() {
+        // return template
+        return new Template(blockStmt);
     }
 
 
-    public void addPresentationLogic(String plogic) {
-        addPresentationLogic(plogic, null);
+    public Template compileFile(String pdataFilename, String plogicFilename) throws IOException {
+        String charset = System.getProperty("file.encoding");
+        return compileFile(pdataFilename, plogicFilename, charset);
     }
+
+    public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException {
+        // read files
+        String pdata  = Utility.readFile(pdataFilename, charset);
+        String plogic = Utility.readFile(plogicFilename, charset);
+        return compileString(pdata, plogic, pdataFilename, plogicFilename);
+    }
+
 
     public void addPresentationLogic(String plogic, String filename) {
         _declParser.setFilename(filename);
@@ -5047,21 +5241,27 @@ public class DefaultCompiler implements Compiler {
         _declList.addAll(declList);
     }
 
-    public void addPresentationData(String pdata) {
-        addPresentationData(pdata, null);
+    public void addPresentationData(String pdata, String filename) {
+        _addPresentationData(pdata, filename, true);
     }
 
-    public void addPresentationData(String pdata, String filename) {
+    public void addElementDefinition(String pdata, String filename) {
+        _addPresentationData(pdata, filename, false);
+    }
+
+    private void _addPresentationData(String pdata, String filename, boolean addStatement) {
         _converter.setFilename(filename);
         Statement[] stmts = _converter.convert(pdata);
-        for (int i = 0; i < stmts.length; i++) {
-            _stmtList.add(stmts[i]);
-        }
+        if (addStatement)
+            for (int i = 0; i < stmts.length; i++)
+                _stmtList.add(stmts[i]);
         List elemList = _converter.getElementList();
         Element.addElementList(_elemTable, elemList);
     }
 
-    public BlockStatement getBlockStatement() {
+
+
+    public Template getTemplate() {
         // merge element table and declaration list
         Element.mergeDeclarationList(_elemTable, _declList);
         // create block statement
@@ -5069,30 +5269,26 @@ public class DefaultCompiler implements Compiler {
         // expand @stag, @cont, and @etag
         Expander expander = new Expander(_elemTable);
         expander.expand(blockStmt, null);
-        //
-        return blockStmt;
+        // return template
+        return new Template(blockStmt);
     }
 
+}
 
-    public String readFile(String filename) throws IOException {
-        return readFile(filename, "UTF8");
-    }
+// --------------------------------------------------------------------------------
 
-    private String readFile(String filename, String charset) throws IOException {
-        InputStream stream = null;
-        Reader reader = null;
-        try {
-            stream = new FileInputStream(filename);
-            reader = new InputStreamReader(stream, charset);
-            char[] cbuf = new char[512];
-            StringBuffer sb = new StringBuffer();
-            if (reader.read(cbuf, 0, cbuf.length) >= 0) {
-                sb.append(cbuf);
-            }
-            return sb.toString();
-        } finally {
-            if (reader != null) reader.close();
-            if (stream != null) stream.close();
+package __PACKAGE__;
+
+import java.util.Map;
+import java.util.HashMap;
+
+public class Context extends HashMap {
+    public void putAll(Object[][] tupleList) {
+        for (int i = 0; i < tupleList.length; i++) {
+            Object[] tuple = tupleList[i];
+            Object key   = tuple[0];
+            Object value = tuple[1];
+            this.put(key, value);
         }
     }
 }
@@ -5114,13 +5310,13 @@ public class CompilerTest extends TestCase {
     }
 
     private void _test(boolean flagPrint) throws Exception {
-        DefaultCompiler compiler = new DefaultCompiler();
+        KwartzCompiler compiler = new DefaultCompiler();
         //compiler.addPresentationLogic(_plogic);
         //compiler.addPresentationData(_pdata);
         //BlockStatement stmt = compiler.getBlockStatement();
-        BlockStatement stmt = compiler.compileString(_pdata, _plogic);
+        Template template = compiler.compileString(_pdata, _plogic);
         Writer writer = new StringWriter();
-        stmt.execute(_context, writer);
+        template.execute(_context, writer);
         String actual = writer.toString();
         writer.close();
         if (flagPrint)
@@ -5603,6 +5799,33 @@ public class ExpanderTest extends TestCase {
         _test();
     }
 
+
+    public void testExpand04() {  // add attributes
+        _pdata = <<'END';
+            <img title="example image" src="dummy.png" id="mark:image">
+            END
+        _plogic = <<'END';
+            #image {
+                attrs:  "src"  image_url, "class" klass;
+            }
+            END
+        _expected = <<'END';
+            :block
+              :block
+                :print
+                  "<img title=\""
+                  "example image"
+                  "\" src=\""
+                  image_url
+                  "\" class=\""
+                  klass
+                  "\""
+                  ">\n"
+                :block
+                :print
+            END
+        _test();
+    }
 
 /*
     public void testExpandXX() {
@@ -7363,6 +7586,10 @@ public class DeclarationParserTest extends TestCase {
     private String _expected;
 
     private void _test() {
+        _test(false);
+    }
+
+    private void _test(boolean flagPrint) {
         DeclarationParser parser = new DeclarationParser();
         List decls = parser.parse(_input);
         StringBuffer sb = new StringBuffer();
@@ -7371,7 +7598,10 @@ public class DeclarationParserTest extends TestCase {
             decl._inspect(0, sb);
         }
         String actual = sb.toString();
-        assertEquals(_expected, actual);
+        if (flagPrint)
+            System.out.println(actual);
+        else
+            assertEquals(_expected, actual);
     }
 
     public void testValuePart1() {
@@ -7491,6 +7721,105 @@ public class DeclarationParserTest extends TestCase {
         _test();
     }
 
+
+    public void testParseDeclaration1() {
+        _input = <<'END';
+            #user_list {
+                    attrs:   "bgcolor" color;   // set bgcolor attribute value
+                    remove:  "id";              // remove id attribute
+                    plogic:  {
+                        i = 0;
+                        foreach (user in user_list) {
+                            i += 1;
+                            color = i%2==0 ? '#CCCCFF' : '#FFCCCC';
+                            @stag;              // start tag
+                            @cont;              // content
+                            @etag;              // end tag
+                        }
+                    }
+            }
+
+            #name {
+                    value:   user['name'];      // replace content by expression value
+                    remove:  "id";              // remove id attribute
+            }
+
+            #email {
+                    value:   user['email'];     // replace content by expression value
+                    remove:  "id";              // remove id attribute
+                    attrs:   "href" 'mailto:' .+ user['email'];    // set href attribute value
+            }
+
+            #dummy {
+                    plogic: { }                 // remove an element
+            }
+            END
+        _expected = <<'END';
+            #user_list {
+              remove:
+                "id"
+              attrs:
+                "bgcolor"
+                color
+              plogic:
+                :block
+                  :expr
+                    =
+                      i
+                      0
+                  :foreach
+                    user
+                    user_list
+                    :block
+                      :expr
+                        +=
+                          i
+                          1
+                      :expr
+                        =
+                          color
+                          ?:
+                            ==
+                              %
+                                i
+                                2
+                              0
+                            "#CCCCFF"
+                            "#FFCCCC"
+                      @stag
+                      @cont
+                      @etag
+            }
+            #name {
+              remove:
+                "id"
+              value:
+                []
+                  user
+                  "name"
+            }
+            #email {
+              remove:
+                "id"
+              attrs:
+                "href"
+                .+
+                  "mailto:"
+                  []
+                    user
+                    "email"
+              value:
+                []
+                  user
+                  "email"
+            }
+            #dummy {
+              plogic:
+                :block
+            }
+            END
+        _test();
+    }
 
 }
 

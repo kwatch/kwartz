@@ -1,0 +1,14 @@
+#menulist {
+        plogic:  {
+            foreach (menu in menulist) {
+                @stag;
+                @cont;
+                @etag;
+            }
+        }
+}
+
+#menu {
+        value:  menu[:label];
+        attrs:  "href" menu[:url];
+}
