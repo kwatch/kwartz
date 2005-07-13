@@ -1,0 +1,17 @@
+#list {
+    plogic: {
+        i = 0;
+        foreach (item in list) {
+            i += 1;
+            color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+            @stag;
+            @cont;
+            @etag;
+        }
+    }
+}
+
+#item {
+    value:  item;
+    attrs:  "bgcolor" color;
+}

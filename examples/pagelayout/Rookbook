@@ -7,8 +7,11 @@ files = %w[menu.html menu.plogic page.plogic]
 
 recipe  :all			, all
 
-grecipe "result*.html"	, "PageLayout.class", "page{1}.html", files	do |r|
-	cmd "java -cp #{classpath} PageLayout page{1} > #{r.product}"
+recipe "result1.html"	, "PageLayout.class", "page1.html", files	do |r|
+	cmd "java -cp #{classpath} PageLayout  > #{r.product}"
+	end
+recipe "result2.html"	, "PageLayout.class", "page2.html", files	do |r|
+	cmd "java -cp #{classpath} PageLayout AAPL > #{r.product}"
 	end
 
 grecipe  "*.class"	, "{1}.java"					do |r|

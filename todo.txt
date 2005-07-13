@@ -1,11 +1,14 @@
 .- [_] new package kwartz.expression.*
 .- [_] new package kwartz.statement.*
-.- [_] optimization: concatenate continuous strings
-.- [_] optimization: expand block statement
+.- [v] optimization: concatenate continuous strings - 2005-07-14
+.- [v] optimization: expand block statement - 2005-07-14
 .- [_] add filename and linenumber on Node
 .- [_] delete span tag
-.- [_] new class TagAttribute(space, attrname, attrexpr)
+.- [_] new class Tag.Attr(space, attrname, attrexpr)
 .- [_] properties support
 .- [_] new class Executor
-.- [_] template caching
+.- [v] template caching - 2005-07-13
 .- [_] reflection data caching
+.- [_] StatementVisitor, ExpressionVisitor, NodeVisitor
+.- [_] template search path
+.- [_] divide RelationalExpression into EqualRelationalExpression and ComparableRelationalExpression

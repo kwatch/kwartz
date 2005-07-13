@@ -1,0 +1,13 @@
+#list {
+    plogic: {
+        foreach (item in list) {
+            @stag;
+            @cont;
+            @etag;
+        }
+    }
+}
+
+#item {
+    value:  item;
+}

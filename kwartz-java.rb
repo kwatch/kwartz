@@ -123,7 +123,7 @@ CONCAT_TO	.+=
 // literal
 STRING		<<string>>
 INTEGER		<<integer>>
-FLOAT		<<float>>
+DOUBLE		<<double>>
 VARIABLE	<<variable>>
 TRUE		true
 FALSE		false
@@ -274,7 +274,7 @@ public class TokenType {
             return inspectString(value);
           case TokenType.INTEGER:
             return value;
-          case TokenType.FLOAT:
+          case TokenType.DOUBLE:
             return value;
           case TokenType.VARIABLE:
             return value;
@@ -533,7 +533,7 @@ public class Visitor {
     public Object visitLiteralExpression(LiteralExpression expr)             { return visitExpression(expr); }
     public Object visitStringExpression(StringExpression expr)               { return visitExpression(expr); }
     public Object visitIntegerExpression(IntegerExpression expr)             { return visitExpression(expr); }
-    public Object visitFloatExpression(FloatExpression expr)                 { return visitExpression(expr); }
+    public Object visitDoubleExpression(DoubleExpression expr)                 { return visitExpression(expr); }
     public Object visitVariableExpression(VariableExpression expr)           { return visitExpression(expr); }
     public Object visitBooleanExpression(BooleanExpression expr)             { return visitExpression(expr); }
     public Object visitNullExpression(NullExpression expr)                   { return visitExpression(expr); }
@@ -634,7 +634,7 @@ public class UnaryExpression extends Expression {
         Object val = _factor.evaluate(context);
         switch (_token) {
           case TokenType.PLUS:
-            if (val instanceof Integer || val instanceof Float) {
+            if (val instanceof Integer || val instanceof Double) {
                 return val;
             } else {
                 throw new EvaluationException("unary plus operator should be used with number.");
@@ -642,8 +642,8 @@ public class UnaryExpression extends Expression {
           case TokenType.MINUS:
             if (val instanceof Integer) {
                 return new Integer(((Integer)val).intValue() * -1);
-            } else if (val instanceof Float) {
-                return new Float(((Float)val).floatValue() * -1);
+            } else if (val instanceof Double) {
+                return new Double(((Double)val).doubleValue() * -1);
             } else {
                 throw new EvaluationException("unary plus operator should be used with number.");
             }
@@ -681,13 +681,13 @@ public class ArithmeticExpression extends BinaryExpression {
         Object lvalue = _left.evaluate(context);
         if (lvalue == null)
             throw new EvaluationException("lvalue of '" + TokenType.inspect(_token) + "' is null.");
-        if (! (lvalue instanceof Integer || lvalue instanceof Float) )
-            throw new EvaluationException("required integer or float but got " + lvalue.getClass().getName() + ".");
+        if (! (lvalue instanceof Integer || lvalue instanceof Double) )
+            throw new EvaluationException("required integer or double but got " + lvalue.getClass().getName() + ".");
         Object rvalue = _right.evaluate(context);
         if (rvalue == null)
             throw new EvaluationException("rvalue of '" + TokenType.inspect(_token) + "' is null.");
-        if (! (rvalue instanceof Integer || rvalue instanceof Float) )
-            throw new EvaluationException("required integer or float but got " + rvalue.getClass().getName() + ".");
+        if (! (rvalue instanceof Integer || rvalue instanceof Double) )
+            throw new EvaluationException("required integer or double but got " + rvalue.getClass().getName() + ".");
         Number lval = (Number)lvalue;
         Number rval = (Number)rvalue;
         boolean is_int = (lvalue instanceof Integer && rvalue instanceof Integer);
@@ -706,9 +706,9 @@ public class ArithmeticExpression extends BinaryExpression {
             }
             return new Integer(v);
         } else {
-            float l = lval.floatValue();
-            float r = rval.floatValue();
-            float v = 0;
+            double l = lval.doubleValue();
+            double r = rval.doubleValue();
+            double v = 0;
             switch (_token) {
               case TokenType.ADD:  v = l + r;  break;
               case TokenType.SUB:  v = l - r;  break;
@@ -718,7 +718,7 @@ public class ArithmeticExpression extends BinaryExpression {
               default:
                 assert false;
             }
-            return new Float(v);
+            return new Double(v);
         }
         //return null;
     }
@@ -853,10 +853,10 @@ public class RelationalExpression extends BinaryExpression {
                 assert false;
             }
         }
-        else if (   (lvalue instanceof Integer || lvalue instanceof Float)
-                 && (rvalue instanceof Integer || rvalue instanceof Float)) {
-            float lval = ((Number)lvalue).floatValue();
-            float rval = ((Number)rvalue).floatValue();
+        else if (   (lvalue instanceof Integer || lvalue instanceof Double)
+                 && (rvalue instanceof Integer || rvalue instanceof Double)) {
+            double lval = ((Number)lvalue).doubleValue();
+            double rval = ((Number)rvalue).doubleValue();
             switch (_token) {
               case TokenType.LT:  return lval < rval  ? Boolean.TRUE : Boolean.FALSE;
               case TokenType.GT:  return lval > rval  ? Boolean.TRUE : Boolean.FALSE;
@@ -894,8 +894,8 @@ public class RelationalExpression extends BinaryExpression {
                 assert false;
             }
         }
-        else if (   (lvalue instanceof String || lvalue instanceof Integer || lvalue instanceof Float)
-                 && (rvalue instanceof String || rvalue instanceof Integer || rvalue instanceof Float)) {
+        else if (   (lvalue instanceof String || lvalue instanceof Integer || lvalue instanceof Double)
+                 && (rvalue instanceof String || rvalue instanceof Integer || rvalue instanceof Double)) {
             String lval = lvalue.toString();
             String rval = rvalue.toString();
             switch (_token) {
@@ -911,10 +911,10 @@ public class RelationalExpression extends BinaryExpression {
         }
         else {
             // error
-            if (! (lvalue instanceof String || lvalue instanceof Integer || lvalue instanceof Float)) {
+            if (! (lvalue instanceof String || lvalue instanceof Integer || lvalue instanceof Double)) {
                 throw new EvaluationException("cannot compare a '" + lvalue.getClass().getName() + "' object.");
             }
-            if (! (rvalue instanceof String || rvalue instanceof Integer || rvalue instanceof Float)) {
+            if (! (rvalue instanceof String || rvalue instanceof Integer || rvalue instanceof Double)) {
                 throw new EvaluationException("cannot compare a '" + rvalue.getClass().getName() + "' object.");
             }
             assert false;
@@ -984,8 +984,8 @@ public class IndexExpression extends BinaryExpression {
 package __PACKAGE__;
 import java.util.Map;
 import java.util.List;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.Method;
+//import java.lang.reflect.InvocationTargetException;
 
 public class PropertyExpression extends Expression {
     private Expression _object;
@@ -1050,8 +1050,8 @@ public class PropertyExpression extends Expression {
 package __PACKAGE__;
 import java.util.Map;
 import java.util.List;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.Method;
+//import java.lang.reflect.InvocationTargetException;
 
 public class MethodExpression extends Expression {
     private Expression _object;
@@ -1588,17 +1588,17 @@ public class IntegerExpression extends LiteralExpression {
 package __PACKAGE__;
 import java.util.Map;
 
-public class FloatExpression extends LiteralExpression {
-    private float _value;
-    public FloatExpression(float value) {
-        super(TokenType.FLOAT);
+public class DoubleExpression extends LiteralExpression {
+    private double _value;
+    public DoubleExpression(double value) {
+        super(TokenType.DOUBLE);
         _value = value;
     }
     public Object evaluate(Map context) {
-        return new Float(_value);
+        return new Double(_value);
     }
     public Object accept(Visitor visitor) {
-        return visitor.visitFloatExpression(this);
+        return visitor.visitDoubleExpression(this);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1771,6 +1771,8 @@ public class BlockStatement extends Statement {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+
+import java.util.List;
 import java.util.Map;
 import java.io.Writer;
 import java.io.IOException;
@@ -1781,6 +1783,14 @@ public class PrintStatement extends Statement {
         super(TokenType.PRINT);
         _arguments = arguments;
     }
+    public PrintStatement(List argList) {
+        super(TokenType.PRINT);
+        Expression[] arguments = new Expression[argList.size()];
+        argList.toArray(arguments);
+        _arguments = arguments;
+    }
+
+    public Expression[] getArguments() { return _arguments; }
 
     public Object execute(Map context, Writer writer) throws IOException {
         Expression expr;
@@ -1987,9 +1997,9 @@ public class IfStatement extends Statement {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+
 import java.util.Map;
 import java.io.Writer;
-import java.io.IOException;
 
 public class ElementStatement extends Statement {
     private Statement _plogic;
@@ -2014,9 +2024,9 @@ public class ElementStatement extends Statement {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+
 import java.util.Map;
 import java.io.Writer;
-import java.io.IOException;
 
 public class ExpandStatement extends Statement {
     private int _type;
@@ -2066,7 +2076,6 @@ public class ExpandStatement extends Statement {
 package __PACKAGE__;
 import java.util.Map;
 import java.io.Writer;
-import java.io.IOException;
 
 public class RawcodeStatement extends Statement {
     private String _rawcode;
@@ -2098,7 +2107,6 @@ public class RawcodeStatement extends Statement {
 package __PACKAGE__;
 import java.util.Map;
 import java.io.Writer;
-import java.io.IOException;
 
 public class EmptyStatement extends Statement {
     public EmptyStatement() {
@@ -2264,7 +2272,7 @@ public class Scanner {
             return _token;
         }
 
-        // integer, float
+        // integer, double
         if (CharacterUtil.isDigit(ch)) {
             _clearValue();
             _value.append(ch);
@@ -2284,11 +2292,11 @@ public class Scanner {
                 if (ch != '.') {
                     break;
                 } else if (_token == TokenType.INTEGER) {
-                    _token = TokenType.FLOAT;
+                    _token = TokenType.DOUBLE;
                     _value.append('.');
                     continue;
                 } else {
-                    msg = "'" + _value.toString() + "': invalid float.";
+                    msg = "'" + _value.toString() + "': invalid double.";
                     throw new LexicalException(msg, getFilename(), _linenum, _column);
                 }
             }
@@ -2704,10 +2712,10 @@ public class ExpressionParser extends Parser {
             val = value();
             scan();
             return new IntegerExpression(Integer.parseInt(val));
-          case TokenType.FLOAT:
+          case TokenType.DOUBLE:
             val = value();
             scan();
-            return new FloatExpression(Float.parseFloat(val));
+            return new DoubleExpression(Double.parseDouble(val));
           case TokenType.STRING:
             val = value();
             scan();
@@ -2743,7 +2751,7 @@ public class ExpressionParser extends Parser {
         Expression expr;
         switch (t) {
           case TokenType.INTEGER:
-          case TokenType.FLOAT:
+          case TokenType.DOUBLE:
           case TokenType.STRING:
           case TokenType.TRUE:
           case TokenType.FALSE:
@@ -3018,7 +3026,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class StatementParser extends Parser {
     private ExpressionParser _exprParser;
@@ -3335,7 +3342,6 @@ package __PACKAGE__;
 import java.util.Map;
 import java.io.Writer;
 import java.io.PrintWriter;
-import java.io.IOException;
 
 public class Interpreter {
     StatementParser _parser;
@@ -3621,6 +3627,116 @@ public class Element {
 
 package __PACKAGE__;
 
+import java.util.List;
+import java.util.ArrayList;
+
+public class Optimizer extends Visitor {   // statement visitor
+
+    private void _concatArgs(Expression[] args, List argList, StringBuffer sb) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].getToken() == TokenType.STRING) {
+                String s = ((StringExpression)args[i]).getValue();
+                sb.append(s);
+            } else {
+                if (sb.length() > 0) {
+                    argList.add(new StringExpression(sb.toString()));
+                    sb.delete(0, sb.length());
+                }
+                argList.add(args[i]);
+            }
+        }
+    }
+
+    private void _addPrintStatement(List stmtList, List argList, StringBuffer sb) {
+        if (sb.length() > 0) {
+            argList.add(new StringExpression(sb.toString()));
+            sb.delete(0, sb.length());
+        }
+        if (argList.size() > 0) {
+            stmtList.add(new PrintStatement(argList));
+            argList.clear();
+        }
+    }
+
+    private void _concatBlock(Statement[] stmts, List stmtList, List argList, StringBuffer sb) {
+        for (int i = 0; i < stmts.length; i++) {
+            int token = stmts[i].getToken();
+            if (token == TokenType.PRINT) {
+                Expression[] args = ((PrintStatement)stmts[i]).getArguments();
+                _concatArgs(args, argList, sb);
+            } else if (token == TokenType.BLOCK) {
+                Statement[] stmts2 = ((BlockStatement)stmts[i]).getStatements();
+                _concatBlock(stmts2, stmtList, argList, sb);
+            } else {
+                _addPrintStatement(stmtList, argList, sb);
+                //Statement st = (Statement)stmts[i].accept(this);
+                //stmtList.add(st);
+                stmtList.add(stmts[i].accept(this));
+            }
+        }
+    }
+
+    public void optimize(BlockStatement blockStmt) {
+        visitBlockStatement(blockStmt);
+    }
+
+    public Object visitBlockStatement(BlockStatement blockStmt) {
+        Statement[] stmts = blockStmt.getStatements();
+        List stmtList = new ArrayList();
+        List argList = new ArrayList();
+        StringBuffer sb = new StringBuffer();
+        _concatBlock(stmts, stmtList, argList, sb);
+        _addPrintStatement(stmtList, argList, sb);
+        Statement[] newStmts = new Statement[stmtList.size()];
+        stmtList.toArray(newStmts);
+        blockStmt.setStatements(newStmts);
+        return null;
+    }
+
+    public Object visitPrintStatement(PrintStatement stmt) {
+        assert false;
+        return null;
+    }
+    public Object visitExpressionStatement(ExpressionStatement stmt) {
+        return stmt;
+    }
+    public Object visitForeachStatement(ForeachStatement stmt) {
+        stmt.getBodyStatement().accept(this);
+        return stmt;
+    }
+    public Object visitWhileStatement(WhileStatement stmt) {
+        stmt.getBodyStatement().accept(this);
+        return stmt;
+    }
+    public Object visitIfStatement(IfStatement stmt) {
+        stmt.getThenStatement().accept(this);
+        Statement st = stmt.getElseStatement();
+        if (st != null) st.accept(this);
+        return stmt;
+    }
+    public Object visitElementStatement(ElementStatement stmt) {
+        assert false;
+        return null;
+    }
+    public Object visitExpandStatement(ExpandStatement stmt) {
+        assert false;
+        return null;
+    }
+    public Object visitRawcodeStatement(RawcodeStatement stmt) {
+        return stmt;
+    }
+    public Object visitEmptyStatement(EmptyStatement stmt) {
+        return stmt;
+    }
+
+}
+
+
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
 import java.util.Map;
 
 public class Expander {
@@ -3764,7 +3880,7 @@ public class ConvertionException extends BaseException {
     public ConvertionException(String message, String filename, int linenum) {
         super(message);
         _filename = filename;
-        _linenum = _linenum;
+        _linenum  = linenum;
     }
 
     public String toString() {
@@ -4482,7 +4598,6 @@ public class TagHelper {
 package __PACKAGE__;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -5066,6 +5181,8 @@ public class DeclarationParser extends Parser {
 
 package __PACKAGE__;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.io.Writer;
 import java.io.StringWriter;
@@ -5074,6 +5191,9 @@ import java.io.IOException;
 public class Template {
 
     private BlockStatement _blockStmt;
+    private List _pdataFilenameList = null;
+    private List _plogicFilenameList = null;
+    private List _elemdefFilenameList = null;
 
     public Template(BlockStatement blockStmt) {
         _blockStmt = blockStmt;
@@ -5095,6 +5215,24 @@ public class Template {
 
     public void execute(Map context, Writer writer) throws IOException {
         _blockStmt.execute(context, writer);
+    }
+
+    public void addPresentationDataFilename(String filename) {
+        if (_pdataFilenameList == null)
+            _pdataFilenameList = new ArrayList();
+        _pdataFilenameList.add(filename);
+    }
+
+    public void addPresentationLogicFilename(String filename) {
+        if (_plogicFilenameList == null)
+            _plogicFilenameList = new ArrayList();
+        _plogicFilenameList.add(filename);
+    }
+
+    public void addElementDefinitionFilename(String filename) {
+        if (_elemdefFilenameList == null)
+            _elemdefFilenameList = new ArrayList();
+        _elemdefFilenameList.add(filename);
     }
 }
 
@@ -5168,12 +5306,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.StringWriter;
 import java.io.IOException;
 
 public class DefaultCompiler extends KwartzCompiler {
@@ -5280,6 +5412,39 @@ public class DefaultCompiler extends KwartzCompiler {
 package __PACKAGE__;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.io.IOException;
+
+public class Kwartz {
+
+    public static Map __cache = new HashMap();
+
+    public static Template getTemplate(Object key, String pdataFilename, String plogicFilename) throws IOException {
+        String charset = System.getProperty("file.encoding");
+        return getTemplate(key, pdataFilename, plogicFilename, charset);
+    }
+    public static Template getTemplate(Object key, String pdataFilename, String plogicFilename, String charset) throws IOException {
+        Template template = (Template)__cache.get(key);
+        if (template == null) {
+            synchronized(__cache) {
+                if (template == null) {
+                    KwartzCompiler compiler = new DefaultCompiler();
+                    template = compiler.compileFile(pdataFilename, plogicFilename, charset);
+                    Optimizer optimizer = new Optimizer();
+                    optimizer.optimize(template.getBlockStatement());
+                    __cache.put(key, template);
+                }
+            }
+        }
+        return template;
+    }
+}
+
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
 import java.util.HashMap;
 
 public class Context extends HashMap {
@@ -5521,6 +5686,415 @@ public class Main implements Runnable {
             }
         }
     }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class OptimizerTest extends TestCase {
+
+    String _pdata;
+    String _plogic;
+    String _compiled;
+    String _optimized;
+
+    private void _test() {
+        _test(false);
+    }
+
+    private void _test(boolean flagPrint) {
+        // parse plogic
+        DeclarationParser declParser = new DeclarationParser();
+        List declList = declParser.parse(_plogic);
+
+        // parse pdata
+        Converter converter = new DefaultConverter();
+        Statement[] stmts = converter.convert(_pdata);
+
+        // create block statement
+        BlockStatement blockStmt = new BlockStatement(stmts);
+
+        // create element table
+        List elemList = converter.getElementList();
+        Map elementTable = Element.createElementTable(elemList);
+
+        // merge declarations
+        Element.mergeDeclarationList(elementTable, declList);
+
+        // expand
+        Expander expander = new Expander(elementTable);
+        expander.expand(blockStmt, null);
+        //if (flagPrint) System.out.println(blockStmt._inspect().toString());
+
+        // optimize
+        Optimizer optimizer = new Optimizer();
+        optimizer.optimize(blockStmt);
+
+        // assert
+        String actual = blockStmt._inspect().toString();
+        if (flagPrint) {
+            System.out.println(actual);
+        } else {
+            assertEquals(_optimized, actual);
+        }
+    }
+
+
+    public void testOptimizer01() {
+        _pdata = <<'END';
+            Hello <strong id="mark:user">World</strong>!
+            END
+        _plogic = <<'END';
+            #user {
+              value: user;
+            }
+            END
+        _compiled = <<'END';
+            :block
+              :print
+                "Hello"
+              :block
+                :print
+                  " <strong"
+                  ">"
+                :print
+                  user
+                :print
+                  "</strong>"
+              :print
+                "!\n"
+            END
+        _optimized = <<'END';
+            :block
+              :print
+                "Hello <strong>"
+                user
+                "</strong>!\n"
+            END
+        _test();
+    }
+
+
+    public void testOptimizer02() {
+        _pdata = <<'END';
+            <ul id="mark:list">
+              <li>@{item}@</li>
+            </ul>
+            END
+        _plogic = <<'END';
+            #list {
+                plogic: {
+                    foreach (item in list) {
+                        @stag;  // start tag
+                        @cont;  // content
+                        @etag;  // end tag
+                    }
+                }
+            }
+            END
+        _compiled = <<'END';
+            :block
+              :block
+                :foreach
+                  item
+                  list
+                  :block
+                    :print
+                      "<ul"
+                      ">\n"
+                    :block
+                      :print
+                        "  <li>"
+                      :print
+                        item
+                      :print
+                        "</li>\n"
+                    :print
+                      "</ul>\n"
+            END
+        _optimized = <<'END';
+            :block
+              :foreach
+                item
+                list
+                :block
+                  :print
+                    "<ul>\n  <li>"
+                    item
+                    "</li>\n</ul>\n"
+            END
+        _test();
+
+        _plogic = <<'END';
+            #list {
+                plogic: {
+                    @stag;  // start tag
+                    foreach (item in list) {
+                        @cont;  // content
+                    }
+                    @etag;  // end tag
+                }
+            }
+            END
+        _compiled = <<'END';
+            :block
+              :block
+                :print
+                  "<ul"
+                  ">\n"
+                :foreach
+                  item
+                  list
+                  :block
+                    :block
+                      :print
+                        "  <li>"
+                      :print
+                        item
+                      :print
+                        "</li>\n"
+                :print
+                  "</ul>\n"
+            END
+        _optimized = <<'END';
+            :block
+              :print
+                "<ul>\n"
+              :foreach
+                item
+                list
+                :block
+                  :print
+                    "  <li>"
+                    item
+                    "</li>\n"
+              :print
+                "</ul>\n"
+            END
+        _test();
+    }
+
+    public void testOptimizer03() {
+        _pdata = <<'END';
+            <table id="table">
+              <tr class="odd" style="color:red" id="mark:list">
+                <td id="mark:name" style="font-weight:bold">foo</td>
+                <td><a href="..." id="mark:mail">foo@mail.org</a></td>
+              </tr>
+              <tr class="even" id="mark:dummy">
+                <td>bar</td>
+                <td>bar@mail.net</td>
+              </tr>
+            </table>
+            END
+        _plogic = <<'END';
+            #table {
+                tagname:  "html:table";
+                append:   flag ? ' align="center"' : '';
+            }
+            #list {
+                attrs:  "class" klass;
+                remove: "style", "width";
+                plogic: {
+                    i = 0;
+                    foreach (item in list) {
+                        i += 1;
+                        klass = i % 2 == 0 ? 'even' : 'odd';
+                        @stag;
+                        @cont;
+                        @etag;
+                    }
+                }
+            }
+            #name {
+              value: item.name;
+            }
+            #mail {
+              value:  item.email;
+              attrs:  "href" "mailto:" .+ item.email;
+            }
+            #dummy {
+              plogic: { }
+            }
+            END
+        _compiled = <<'END';
+            :block
+              :block
+                :print
+                  "<html:table id=\""
+                  "table"
+                  "\""
+                  ?:
+                    flag
+                    " align=\"center\""
+                    ""
+                  ">\n"
+                :block
+                  :block
+                    :expr
+                      =
+                        i
+                        0
+                    :foreach
+                      item
+                      list
+                      :block
+                        :expr
+                          +=
+                            i
+                            1
+                        :expr
+                          =
+                            klass
+                            ?:
+                              ==
+                                %
+                                  i
+                                  2
+                                0
+                              "even"
+                              "odd"
+                        :print
+                          "  <tr class=\""
+                          klass
+                          "\""
+                          ">\n"
+                        :block
+                          :block
+                            :print
+                              "    <td style=\""
+                              "font-weight:bold"
+                              "\""
+                              ">"
+                            :print
+                              .
+                                item
+                                name
+                            :print
+                              "</td>\n"
+                          :print
+                            "    <td>"
+                          :block
+                            :print
+                              "<a href=\""
+                              .+
+                                "mailto:"
+                                .
+                                  item
+                                  email
+                              "\""
+                              ">"
+                            :print
+                              .
+                                item
+                                email
+                            :print
+                              "</a>"
+                          :print
+                            "</td>\n"
+                        :print
+                          "  </tr>\n"
+                  :block
+                :print
+                  "</html:table>\n"
+            END
+        _optimized = <<'END';
+            :block
+              :print
+                "<html:table id=\"table\""
+                ?:
+                  flag
+                  " align=\"center\""
+                  ""
+                ">\n"
+              :expr
+                =
+                  i
+                  0
+              :foreach
+                item
+                list
+                :block
+                  :expr
+                    +=
+                      i
+                      1
+                  :expr
+                    =
+                      klass
+                      ?:
+                        ==
+                          %
+                            i
+                            2
+                          0
+                        "even"
+                        "odd"
+                  :print
+                    "  <tr class=\""
+                    klass
+                    "\">\n    <td style=\"font-weight:bold\">"
+                    .
+                      item
+                      name
+                    "</td>\n    <td><a href=\""
+                    .+
+                      "mailto:"
+                      .
+                        item
+                        email
+                    "\">"
+                    .
+                      item
+                      email
+                    "</a></td>\n  </tr>\n"
+              :print
+                "</html:table>\n"
+            END
+        _test();
+    }
+
+
+    public void testOptimizer04() {  // add attributes
+        _pdata = <<'END';
+            <img title="example image" src="dummy.png" id="mark:image">
+            END
+        _plogic = <<'END';
+            #image {
+                attrs:  "src"  image_url, "class" klass;
+            }
+            END
+        _compiled = <<'END';
+            :block
+              :block
+                :print
+                  "<img title=\""
+                  "example image"
+                  "\" src=\""
+                  image_url
+                  "\" class=\""
+                  klass
+                  "\""
+                  ">\n"
+                :block
+                :print
+            END
+        _optimized = <<'END';
+            :block
+              :print
+                "<img title=\"example image\" src=\""
+                image_url
+                "\" class=\""
+                klass
+                "\">\n"
+            END
+        _test();
+    }
+
+
 }
 
 // --------------------------------------------------------------------------------
@@ -7883,10 +8457,10 @@ public class ExpressionParserTest extends TestCase {
         expected = "100\n";
         _test(input, expected, "parseLiteral", IntegerExpression.class);
     }
-    public void testParseLiteral2() {  // float
+    public void testParseLiteral2() {  // double
         input = "3.14";
         expected = "3.14\n";
-        _test(input, expected, "parseLiteral", FloatExpression.class);
+        _test(input, expected, "parseLiteral", DoubleExpression.class);
     }
     public void testParseLiteral3() {  // 'string'
         input = "'foo'";
@@ -8185,9 +8759,9 @@ public class ScannerTest extends TestCase {
         _test(input, expected);
     }
 
-    public void testScanner12() {  // integer, float
+    public void testScanner12() {  // integer, double
         String input = "100 3.14";
-        String expected = "INTEGER 100\nFLOAT 3.14\n";
+        String expected = "INTEGER 100\nDOUBLE 3.14\n";
         _test(input, expected);
         input = "100abc";
         expected = null;
@@ -8363,9 +8937,9 @@ public class ExpressionTest extends TestCase {
         _testExpr(new Integer(123));
     }
 
-    public void testFloatExpression1() {
-        _expr = new FloatExpression(3.14159f);
-        _testExpr(new Float(3.14159));
+    public void testDoubleExpression1() {
+        _expr = new DoubleExpression(3.14159);
+        _testExpr(new Double(3.14159));
     }
 
     public void testTrueExpression1() {
@@ -8413,21 +8987,21 @@ public class ExpressionTest extends TestCase {
         _testExpr(new Integer(4));
     }
 
-    Expression _f1 = new FloatExpression(3.5f);
-    Expression _f2 = new FloatExpression(2.2f);
+    Expression _f1 = new DoubleExpression(3.5);
+    Expression _f2 = new DoubleExpression(2.2);
     public void testArithmeticExpression2() {
-        float f1 = 3.5f;
-        float f2 = 2.2f;
+        double f1 = 3.5;
+        double f2 = 2.2;
         _expr = new ArithmeticExpression(TokenType.ADD, _f1, _f2);
-        _testExpr(new Float(f1+f2));
+        _testExpr(new Double(f1+f2));
         _expr = new ArithmeticExpression(TokenType.SUB, _f1, _f2);
-        _testExpr(new Float(f1-f2));
+        _testExpr(new Double(f1-f2));
         _expr = new ArithmeticExpression(TokenType.MUL, _f1, _f2);
-        _testExpr(new Float(f1*f2));
+        _testExpr(new Double(f1*f2));
         _expr = new ArithmeticExpression(TokenType.DIV, _f1, _f2);
-        _testExpr(new Float(f1/f2));
+        _testExpr(new Double(f1/f2));
         _expr = new ArithmeticExpression(TokenType.MOD, _f1, _f2);
-        _testExpr(new Float(f1%f2));
+        _testExpr(new Double(f1%f2));
     }
 
     Expression _s1 = new StringExpression("Foo");
@@ -8448,8 +9022,8 @@ public class ExpressionTest extends TestCase {
         _testExpr(new Integer(10));
         _expr = new AssignmentExpression(TokenType.ASSIGN,
                                          new VariableExpression("var1"),
-                                         new FloatExpression(0.5f));
-        _testExpr(new Float(0.5f));
+                                         new DoubleExpression(0.5f));
+        _testExpr(new Double(0.5f));
     }
 
     public void testAssignmentExpression2() {
@@ -8773,7 +9347,7 @@ public class StatementTest extends TestCase {
         Expression[] arglist = {
             new IntegerExpression(123),
             new StringExpression("foo"),
-            new FloatExpression(0.4f),
+            new DoubleExpression(0.4),
             new BooleanExpression(true),
             new BooleanExpression(false),
             new NullExpression(),
@@ -8801,7 +9375,12 @@ public class StatementTest extends TestCase {
         _context.put("x", new String("foo"));
         //_context.put("y", new Integer(123));
         Statement stmt = new PrintStatement(arglist);
-        _testPrint("foo", stmt);
+        try {
+            _testPrint("foo", stmt);
+            fail("EvaluationException expected but not happened.");
+        } catch (EvaluationException ex) {
+            // OK
+        }
     }
 
     public void testPrintStatement4() {  // expression
@@ -9096,6 +9675,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(DeclarationParserTest.class));
         suite.addTest(new TestSuite(ExpanderTest.class));
         suite.addTest(new TestSuite(CompilerTest.class));
+        suite.addTest(new TestSuite(OptimizerTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }
