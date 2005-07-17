@@ -1,7 +1,7 @@
             <!-- calendar-month -->
             <table cellpadding="2" summary="calendar of <?php echo $month; ?>, <?php echo $year; ?>">
               <caption>
-                <i><?php echo $month; ?></i>&nbsp;<i><?php echo $year; ?></i>
+                <em><?php echo $month; ?></em>&nbsp;<em><?php echo $year; ?></em>
               </caption>
               <thead>
                 <tr bgcolor="#CCCCCC">

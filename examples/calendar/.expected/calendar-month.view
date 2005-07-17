@@ -1,7 +1,7 @@
             <!-- calendar-month -->
             <table cellpadding="2" summary="calendar of <%= month %>, <%= year %>">
               <caption>
-                <i><%= month %></i>&nbsp;<i><%= year %></i>
+                <em><%= month %></em>&nbsp;<em><%= year %></em>
               </caption>
               <thead>
                 <tr bgcolor="#CCCCCC">

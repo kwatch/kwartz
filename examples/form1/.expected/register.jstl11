@@ -39,7 +39,7 @@
      <td>
       <input type="radio" name="gender" value="M"<c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/> />Man
       &nbsp;
-      <input type="radio" name="gender" value="W"<c:out value="${gender eq 'M' ? ' checked="checked"' : ''}" escapeXml="false"/> />Woman
+      <input type="radio" name="gender" value="W"<c:out value="${gender eq 'W' ? ' checked="checked"' : ''}" escapeXml="false"/> />Woman
      </td>
     </tr>
 

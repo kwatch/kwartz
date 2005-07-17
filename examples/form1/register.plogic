@@ -9,5 +9,5 @@
 
 #gender_w {
     //append: gender == 'W' ? ' checked="checked"' : '';
-    append: C(gender=='M');
+    append: C(gender=='W');
 }

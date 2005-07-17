@@ -6,7 +6,7 @@
       <!--
         .title     {font-size:x-large; font-weight:bold;}
         .holiday   {color:#FF0000;}
-	td         {text-align:center;}
+        td         {text-align:center;}
         -->
     </style>
   </head>
@@ -16,7 +16,7 @@
       <a href="<?php echo $prev_link; ?>">&lt;&lt;</a>
       &nbsp;
       <span class="title">
-	Calendar&nbsp; <?php echo $year; ?>
+        Calendar&nbsp; <?php echo $year; ?>
       </span>
       &nbsp;
       <a href="<?php echo $next_link; ?>">&gt;&gt;</a>

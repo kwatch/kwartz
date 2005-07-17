@@ -40,7 +40,7 @@
       <input type="radio" name="gender" value="M" />#end
 Man
       &nbsp;
-#if($gender == "M")
+#if($gender == "W")
       <input type="radio" name="gender" value="W" checked="checked" />#else
       <input type="radio" name="gender" value="W" />#end
 Woman

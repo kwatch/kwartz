@@ -56,6 +56,7 @@ grecipe	'kwartz-ruby_*.{tar.bz2|tar.gz|}'    , text_files, doc_files	do |r|
 	mkdir_p archive_dir
 	mkdir_p "#{archive_dir}/man"
 	store 'lib/**/*', 'bin/*', 'test/**/*', 'man/**/*', text_files, archive_dir
+	remove "#{archive_dir}/lib/kwartz/phony.rb"
 	chdir 'examples' do cmd 'make -s clean' end
 	store 'examples/**/*', archive_dir
 	#remove_rf "#{archive_dir}/*/.expected"

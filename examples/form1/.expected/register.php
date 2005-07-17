@@ -37,7 +37,7 @@
      <td>
       <input type="radio" name="gender" value="M"<?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?> />Man
       &nbsp;
-      <input type="radio" name="gender" value="W"<?php echo $gender == "M" ? " checked=\"checked\"" : ""; ?> />Woman
+      <input type="radio" name="gender" value="W"<?php echo $gender == "W" ? " checked=\"checked\"" : ""; ?> />Woman
      </td>
     </tr>
 

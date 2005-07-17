@@ -41,7 +41,7 @@
       <input type="radio" name="gender" value="M" /></c:otherwise></c:choose>
 Man
       &nbsp;
-<c:choose><c:when test="${gender eq 'M'}">
+<c:choose><c:when test="${gender eq 'W'}">
       <input type="radio" name="gender" value="W" checked="checked" /></c:when><c:otherwise>
       <input type="radio" name="gender" value="W" /></c:otherwise></c:choose>
 Woman
