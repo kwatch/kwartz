@@ -1,20 +1,23 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html">
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta http-equiv="Content-Type" content="text/xhtml" />
   <title>Kwartz Examples</title>
-  <meta name="generator" content="kwaser">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <link rel="stylesheet" href="docstyle.css" type="text/css">
+  <meta name="generator" content="kwaser" />
+  <link rel="stylesheet" href="docstyle.css" type="text/css" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
  </head>
  <body>
 
-  <blockquote>
-   <div class="mainbody">
+  <div id="mainbody">
 
-    <div align="left"><h1>Kwartz Examples</h1></div>
-    <div align="left">
-      last update: $Date$<br>
+   <!-- BeginEditable "doc_content" -->
+   <div id="doc_content">
+    <h1 id="doc_title">Kwartz Examples</h1>
+    <div id="doc_author">
+      last update: $Date$<br />
     </div>
 
 <p>This document shows you examples of Kwartz, especially in Ruby.
@@ -40,9 +43,8 @@
   </li>
 </ul>
 <a name="border1"></a>
-<h2 class="section1">Bordered Table 1</h2>
-<div class="program_caption">
-<a href="border1/border1.html">border1.html</a> (presentation data):</div>
+<h2 class="section">Bordered Table 1</h2>
+<div class="program_caption"><a href="border1/border1.html">border1.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -65,8 +67,7 @@
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border1/border1.plogic">border1.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="border1/border1.plogic">border1.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {
         attrs:   "bgcolor" color;   // set bgcolor attribute value
         remove:  "id";              // remove id attribute
@@ -97,8 +98,7 @@
         plogic: { }                 // remove an element
 }
 </pre>
-<div class="program_caption">
-<a href="border1/border1.rb">border1.rb</a> (main program):</div>
+<div class="program_caption"><a href="border1/border1.rb">border1.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -117,16 +117,14 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border1.plogic border1.html &gt; border1.view
 
 ### execution
 % ruby border1.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="border1/border1.view">border1.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="border1/border1.view">border1.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -150,8 +148,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border1/result.html">result.html</a></div>
+<div class="program_caption"><a href="border1/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -182,13 +179,12 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="border2"></a>
-<h2 class="section1">Bordered Table 2</h2>
-<div class="program_caption">
-<a href="border2/border2.html">border2.html</a> (presentation data):</div>
+<h2 class="section">Bordered Table 2</h2>
+<div class="program_caption"><a href="border2/border2.html">border2.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -211,8 +207,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border2/border2.plogic">border2.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="border2/border2.plogic">border2.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {                        // id attribute is removed automatically
         attrs:   "bgcolor" color;   // set bgcolor attribute value
         plogic:  {
@@ -229,8 +224,7 @@ Compile and execution:</div>
         }
 }
 </pre>
-<div class="program_caption">
-<a href="border2/border2.rb">border2.rb</a> (main program):</div>
+<div class="program_caption"><a href="border2/border2.rb">border2.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -249,16 +243,14 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border2.plogic border2.html &gt; border2.view
 
 ### execution
 % ruby border2.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="border2/border2.view">border2.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="border2/border2.view">border2.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -284,8 +276,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border2/result.html">result.html</a></div>
+<div class="program_caption"><a href="border2/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -316,13 +307,12 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="bordered3"></a>
-<h2 class="section1">Bordered Table 3</h2>
-<div class="program_caption">
-<a href="border3/border3.html">border3.html</a> (presentation data):</div>
+<h2 class="section">Bordered Table 3</h2>
+<div class="program_caption"><a href="border3/border3.html">border3.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -345,8 +335,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border3/border3.plogic">border3.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="border3/border3.plogic">border3.plogic</a> (presentation logic):</div>
 <pre class="program">#user_list {
         plogic:   {
             @stag;                  // start tag
@@ -365,8 +354,7 @@ Compile and execution:</div>
         }
 }
 </pre>
-<div class="program_caption">
-<a href="border3/border3.rb">border3.rb</a> (main program):</div>
+<div class="program_caption"><a href="border3/border3.rb">border3.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set user list
@@ -385,16 +373,14 @@ trim_mode = 1
 erb = ERB.new(str, $SAFE, trim_mode)
 print erb.result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p border3.plogic border3.html &gt; border3.view
 
 ### execution
 % ruby border3.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="border3/border3.view">border3.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="border3/border3.view">border3.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -426,8 +412,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="border3/result.html">result.html</a></div>
+<div class="program_caption"><a href="border3/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -458,13 +443,12 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="form1"></a>
-<h2 class="section1">HTML Form</h2>
-<div class="program_caption">
-<a href="form1/register.html">register.html</a> (presentation data):</div>
+<h2 class="section">HTML Form</h2>
+<div class="program_caption"><a href="form1/register.html">register.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
  &lt;head&gt;
   &lt;style type="text/css"&gt;
@@ -519,8 +503,7 @@ Compile and execution:</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="form1/register.plogic">register.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="form1/register.plogic">register.plogic</a> (presentation logic):</div>
 <pre class="program">#name {
     attrs: "value" name;
 }
@@ -532,11 +515,10 @@ Compile and execution:</div>
 
 #gender_w {
     //append: gender == 'W' ? ' checked="checked"' : '';
-    append: C(gender=='M');
+    append: C(gender=='W');
 }
 </pre>
-<div class="program_caption">
-<a href="form1/finish.html">finish.html</a> (presentation data):</div>
+<div class="program_caption"><a href="form1/finish.html">finish.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
  &lt;body&gt;
   Registration has finished with the following data:&lt;br&gt;
@@ -549,8 +531,7 @@ Compile and execution:</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="form1/register.rbx">register.rbx</a> (main program):</div>
+<div class="program_caption"><a href="form1/register.rbx">register.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## get parameters
@@ -588,8 +569,7 @@ trim_mode = 1
 print cgi.header
 print ERB.new(str, $SAFE, trim_mode).result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -e -p register.plogic register.html &gt; register.view
 % kwartz -l eruby -e                    finish.html   &gt; finish.view
@@ -597,8 +577,7 @@ Compile and execution:</div>
 ### execution
 % ruby form1.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="form1/register.view">register.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="form1/register.view">register.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
  &lt;head&gt;
   &lt;style type="text/css"&gt;
@@ -638,7 +617,7 @@ Compile and execution:</div>
      &lt;td&gt;
       &lt;input type="radio" name="gender" value="M"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Man
       &amp;nbsp;
-      &lt;input type="radio" name="gender" value="W"&lt;%= gender == "M" ? " checked=\"checked\"" : "" %&gt; /&gt;Woman
+      &lt;input type="radio" name="gender" value="W"&lt;%= gender == "W" ? " checked=\"checked\"" : "" %&gt; /&gt;Woman
      &lt;/td&gt;
     &lt;/tr&gt;
 
@@ -654,8 +633,7 @@ Compile and execution:</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="form1/finish.view">finish.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="form1/finish.view">finish.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
  &lt;body&gt;
   Registration has finished with the following data:&lt;br&gt;
@@ -671,13 +649,12 @@ Compile and execution:</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="breadcrumbs"></a>
-<h2 class="section1">Breadcrumbs</h2>
-<div class="program_caption">
-<a href="breadcrumbs/breadcrumbs.html">breadcrumbs.html</a> (presentation data):</div>
+<h2 class="section">Breadcrumbs</h2>
+<div class="program_caption"><a href="breadcrumbs/breadcrumbs.html">breadcrumbs.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -693,8 +670,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="breadcrumbs/breadcrumbs.plogic">breadcrumbs.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="breadcrumbs/breadcrumbs.plogic">breadcrumbs.plogic</a> (presentation logic):</div>
 <pre class="program">#breadcrumbs {
         plogic: {
             @stag;
@@ -716,8 +692,7 @@ Compile and execution:</div>
         value: title;
 }
 </pre>
-<div class="program_caption">
-<a href="breadcrumbs/breadcrumbs.rb">breadcrumbs.rb</a> (main program):</div>
+<div class="program_caption"><a href="breadcrumbs/breadcrumbs.rb">breadcrumbs.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set breadcrumbs
@@ -738,16 +713,14 @@ str = File.open(filename) { |f| f.read }  ## or File.read(filename)
 trim_mode = 2
 ERB.new(str, $SAFE, trim_mode).run(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p breadcrumbs.plogic breadcrumbs.html &gt; breadcrumbs.view
 
 ### execution
 % ruby breadcrumbs.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="breadcrumbs/breadcrumbs.view">breadcrumbs.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="breadcrumbs/breadcrumbs.view">breadcrumbs.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -762,8 +735,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="breadcrumbs/result.html">result.html</a></div>
+<div class="program_caption"><a href="breadcrumbs/result.html">result.html</a></div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
 
@@ -782,20 +754,19 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="calendar"></a>
-<h2 class="section1">Calendar</h2>
-<div class="program_caption">
-<a href="calendar/calendar-month.html">calendar-month.html</a> (presentation data):</div>
+<h2 class="section">Calendar</h2>
+<div class="program_caption"><a href="calendar/calendar-month.html">calendar-month.html</a> (presentation data):</div>
 <pre class="program">&lt;html <strong>id="mark:document"</strong>&gt;
   &lt;head&gt;
     &lt;title&gt;Calendar Month Template&lt;/title&gt;
     &lt;style type="text/css"&gt;
       &lt;!--
         .holiday   {color:#FF0000;}
-	td         {text-align:center;}
+        td         {text-align:center;}
         --&gt;
     &lt;/style&gt;
   &lt;/head&gt;
@@ -804,7 +775,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of <strong>@{month}@, @{year}@</strong>"&gt;
               &lt;caption&gt;
-                &lt;i <strong>id="value:month"</strong>&gt;Jan&lt;/i&gt;&amp;nbsp;&lt;i <strong>id="value:year"</strong>&gt;20XX&lt;/i&gt;
+                &lt;em <strong>id="value:month"</strong>&gt;Jan&lt;/em&gt;&amp;nbsp;&lt;em <strong>id="value:year"</strong>&gt;20XX&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -850,8 +821,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar-month.plogic">calendar-month.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="calendar/calendar-month.plogic">calendar-month.plogic</a> (presentation logic):</div>
 <pre class="program">#document {
         // replace document element by calendar_month element
         plogic:   {
@@ -909,8 +879,7 @@ Compile and execution:</div>
         }
 }
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar-page.html">calendar-page.html</a> (presentation data):</div>
+<div class="program_caption"><a href="calendar/calendar-page.html">calendar-page.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -919,7 +888,7 @@ Compile and execution:</div>
       &lt;!--
         .title     {font-size:x-large; font-weight:bold;}
         .holiday   {color:#FF0000;}
-	td         {text-align:center;}
+        td         {text-align:center;}
         --&gt;
     &lt;/style&gt;
   &lt;/head&gt;
@@ -929,7 +898,7 @@ Compile and execution:</div>
       &lt;a href="<strong>@{prev_link}@</strong>"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
       &amp;nbsp;
       &lt;span class="title"&gt;
-	Calendar&amp;nbsp; &lt;span <strong>id="value:year"</strong>&gt;2004&lt;/span&gt;
+        Calendar&amp;nbsp; &lt;span <strong>id="value:year"</strong>&gt;2004&lt;/span&gt;
       &lt;/span&gt;
       &amp;nbsp;
       &lt;a href="<strong>@{next_link}@</strong>"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
@@ -949,38 +918,36 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar-page.plogic">calendar-page.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="calendar/calendar-page.plogic">calendar-page.plogic</a> (presentation logic):</div>
 <pre class="program">#calendar_list {
-	plogic: {
-	    calendar_ctr = 0;
-	    foreach (calendar in calendar_list) {
-	        calendar_ctr += 1;
-	        if (calendar_ctr % column == 1) {
-		    @stag;
-		}
-	        @cont;
-	        if (calendar_ctr % column == 0) {
-		    @etag;
-		}
-	    }
-	    if (calendar_ctr % column != 0) {
-		calendar = '';
-		while (calendar_ctr % column != 0) {
-		    @cont;
-		    calendar_ctr += 1;
-		}
-		@etag;
-	    }
-	}
+        plogic: {
+            calendar_ctr = 0;
+            foreach (calendar in calendar_list) {
+                calendar_ctr += 1;
+                if (calendar_ctr % column == 1) {
+                    @stag;
+                }
+                @cont;
+                if (calendar_ctr % column == 0) {
+                    @etag;
+                }
+            }
+            if (calendar_ctr % column != 0) {
+                calendar = '';
+                while (calendar_ctr % column != 0) {
+                    @cont;
+                    calendar_ctr += 1;
+                }
+                @etag;
+            }
+        }
 }
 
 #calendar {
-	value:  calendar;
+        value:  calendar;
 }
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar.rbx">calendar.rbx</a> (main program):</div>
+<div class="program_caption"><a href="calendar/calendar.rbx">calendar.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 require 'cgi'
@@ -1030,8 +997,7 @@ column = 4
 print cgi.header if cgi
 print erb_cal_page.result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p calendar-month.plogic calendar-month.html &gt; calendar-month.view
 % kwartz -l eruby -p calendar-page.plogic  calendar-page.html  &gt; calendar-page.view
@@ -1039,12 +1005,11 @@ Compile and execution:</div>
 ### execution
 % ruby calendar.rbx &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar-month.view">calendar-month.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="calendar/calendar-month.view">calendar-month.view</a> (output script for Ruby):</div>
 <pre class="program">            &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of &lt;%= month %&gt;, &lt;%= year %&gt;"&gt;
               &lt;caption&gt;
-                &lt;i&gt;&lt;%= month %&gt;&lt;/i&gt;&amp;nbsp;&lt;i&gt;&lt;%= year %&gt;&lt;/i&gt;
+                &lt;em&gt;&lt;%= month %&gt;&lt;/em&gt;&amp;nbsp;&lt;em&gt;&lt;%= year %&gt;&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1097,8 +1062,7 @@ Compile and execution:</div>
             &amp;nbsp;
             &lt;!-- /calendar-month --&gt;
 </pre>
-<div class="program_caption">
-<a href="calendar/calendar-page.view">calendar-page.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="calendar/calendar-page.view">calendar-page.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -1107,7 +1071,7 @@ Compile and execution:</div>
       &lt;!--
         .title     {font-size:x-large; font-weight:bold;}
         .holiday   {color:#FF0000;}
-	td         {text-align:center;}
+        td         {text-align:center;}
         --&gt;
     &lt;/style&gt;
   &lt;/head&gt;
@@ -1117,7 +1081,7 @@ Compile and execution:</div>
       &lt;a href="&lt;%= prev_link %&gt;"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
       &amp;nbsp;
       &lt;span class="title"&gt;
-	Calendar&amp;nbsp; &lt;%= year %&gt;
+        Calendar&amp;nbsp; &lt;%= year %&gt;
       &lt;/span&gt;
       &amp;nbsp;
       &lt;a href="&lt;%= next_link %&gt;"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
@@ -1153,8 +1117,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="calendar/result.html">result.html</a></div>
+<div class="program_caption"><a href="calendar/result.html">result.html</a></div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -1163,7 +1126,7 @@ Compile and execution:</div>
       &lt;!--
         .title     {font-size:x-large; font-weight:bold;}
         .holiday   {color:#FF0000;}
-	td         {text-align:center;}
+        td         {text-align:center;}
         --&gt;
     &lt;/style&gt;
   &lt;/head&gt;
@@ -1173,7 +1136,7 @@ Compile and execution:</div>
       &lt;a href="calendar.rbx?year=2004"&gt;&amp;lt;&amp;lt;&lt;/a&gt;
       &amp;nbsp;
       &lt;span class="title"&gt;
-	Calendar&amp;nbsp; 2005      &lt;/span&gt;
+        Calendar&amp;nbsp; 2005      &lt;/span&gt;
       &amp;nbsp;
       &lt;a href="calendar.rbx?year=2006"&gt;&amp;gt;&amp;gt;&lt;/a&gt;
     &lt;/div&gt;
@@ -1186,7 +1149,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of January, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;January&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;January&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1257,7 +1220,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of February, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;February&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;February&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1319,7 +1282,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of March, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;March&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;March&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1381,7 +1344,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of April, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;April&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;April&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1446,7 +1409,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of May, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;May&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;May&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1508,7 +1471,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of June, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;June&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;June&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1570,7 +1533,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of July, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;July&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;July&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1641,7 +1604,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of August, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;August&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;August&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1705,7 +1668,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of September, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;September&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;September&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1767,7 +1730,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of October, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;October&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;October&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1838,7 +1801,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of November, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;November&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;November&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1900,7 +1863,7 @@ Compile and execution:</div>
             &lt;!-- calendar-month --&gt;
             &lt;table cellpadding="2" summary="calendar of December, 2005"&gt;
               &lt;caption&gt;
-                &lt;i&gt;December&lt;/i&gt;&amp;nbsp;&lt;i&gt;2005&lt;/i&gt;
+                &lt;em&gt;December&lt;/em&gt;&amp;nbsp;&lt;em&gt;2005&lt;/em&gt;
               &lt;/caption&gt;
               &lt;thead&gt;
                 &lt;tr bgcolor="#CCCCCC"&gt;
@@ -1966,13 +1929,12 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="thumbnail"></a>
-<h2 class="section1">Thumbnail</h2>
-<div class="program_caption">
-<a href="thumbnail/thumbnail.html">thumbnail.html</a> (presentation data):</div>
+<h2 class="section">Thumbnail</h2>
+<div class="program_caption"><a href="thumbnail/thumbnail.html">thumbnail.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -2024,8 +1986,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="thumbnail/thumbnail.plogic">thumbnail.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="thumbnail/thumbnail.plogic">thumbnail.plogic</a> (presentation logic):</div>
 <pre class="program">#navi {
     plogic: {
         if (page &gt; 0) {      // remove element when page is 0
@@ -2157,8 +2118,7 @@ Compile and execution:</div>
     }
 }
 </pre>
-<div class="program_caption">
-<a href="thumbnail/thumbnail.rbx">thumbnail.rbx</a> (main program):</div>
+<div class="program_caption"><a href="thumbnail/thumbnail.rbx">thumbnail.rbx</a> (main program):</div>
 <pre class="program">#!/usr/bin/ruby
 
 ## set url format of images
@@ -2217,16 +2177,14 @@ trim_mode = 2
 print cgi.header if cgi
 ERB.new(str, $SAFE, trim_mode).run(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
 % kwartz -l eruby -p thumbnail.plogic thumbnail.html &gt; thumbnail.view
 
 ### execution
 % ruby thumbnail.rb &gt; result.html
 </pre>
-<div class="program_caption">
-<a href="thumbnail/thumbnail.view">thumbnail.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="thumbnail/thumbnail.view">thumbnail.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -2327,8 +2285,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="thumbnail/result.html">result.html</a></div>
+<div class="program_caption"><a href="thumbnail/result.html">result.html</a></div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -2398,13 +2355,12 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="pagelayout"></a>
-<h2 class="section1">Page Layout</h2>
-<div class="program_caption">
-<a href="pagelayout/layout.html">layout.html</a> (presentation data):</div>
+<h2 class="section">Page Layout</h2>
+<div class="program_caption"><a href="pagelayout/layout.html">layout.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -2452,8 +2408,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/menu.html">menu.html</a> (presentation data):</div>
+<div class="program_caption"><a href="pagelayout/menu.html">menu.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     
@@ -2468,8 +2423,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/menu.plogic">menu.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="pagelayout/menu.plogic">menu.plogic</a> (presentation logic):</div>
 <pre class="program">#menulist {
         plogic:  {
             foreach (menu in menulist) {
@@ -2485,8 +2439,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
         attrs:  "href" menu[:url];
 }
 </pre>
-<div class="program_caption">
-<a href="pagelayout/page1.html">page1.html</a> (presentation data):</div>
+<div class="program_caption"><a href="pagelayout/page1.html">page1.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;body&gt;
@@ -2526,8 +2479,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/page2.html">page2.html</a> (presentation data):</div>
+<div class="program_caption"><a href="pagelayout/page2.html">page2.html</a> (presentation data):</div>
 <pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html&gt;
   &lt;body&gt;
@@ -2557,8 +2509,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/page.plogic">page.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="pagelayout/page.plogic">page.plogic</a> (presentation logic):</div>
 <pre class="program">#stocks {
         plogic:  {
             foreach (stock in stocks) {
@@ -2587,7 +2538,7 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
             rate = stock[:rate];
             style = '';
             if (rate &lt; 0) {
-                //rate = - rate;
+                rate = - rate;
                 style = ' style="color:red"';
             }
             @stag;
@@ -2595,10 +2546,8 @@ Last &amp;gt;&amp;gt;|&lt;% end %&gt;
             @etag;
         }
 }
-
 </pre>
-<div class="program_caption">
-<a href="pagelayout/main.rb">main.rb</a> (main program):</div>
+<div class="program_caption"><a href="pagelayout/main.rb">main.rb</a> (main program):</div>
 <pre class="program">#!/usr/bin/env ruby
 
 ## menu
@@ -2648,18 +2597,16 @@ erb = ERB.new(str, $SAFE, trim_mode)
 print cgi.header if cgi
 print erb.result(binding())
 </pre>
-<div class="terminal_caption">
-Compile and execution:</div>
+<div class="terminal_caption">Compile and execution:</div>
 <pre class="terminal">### compile
-% kwartz -p menu.plogic,page.plogic <strong>-i menu.html,page1.html</strong> layout.html &gt; page1.view
-% kwartz -p menu.plogic,page.plogic <strong>-i menu.html,page2.html</strong> layout.html &gt; page2.view
+% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page1.html</b> layout.html &gt; page1.view
+% kwartz -p menu.plogic,page.plogic <b>-i menu.html,page2.html</b> layout.html &gt; page2.view
 
 ### execution
 % ruby main.rb &gt; result1.html
 % ruby main.rb AAPL &gt; result2.html
 </pre>
-<div class="program_caption">
-<a href="pagelayout/page1.view">page1.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="pagelayout/page1.view">page1.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -2703,6 +2650,7 @@ Compile and execution:</div>
 &lt;%   rate = stock[:rate] %&gt;
 &lt;%   style = "" %&gt;
 &lt;%   if rate &lt; 0 then %&gt;
+&lt;%     rate = -rate %&gt;
 &lt;%     style = " style=\"color:red\"" %&gt;
 &lt;%   end %&gt;
             &lt;td align="right"&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
@@ -2726,8 +2674,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/page2.view">page2.view</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="pagelayout/page2.view">page2.view</a> (output script for Ruby):</div>
 <pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -2772,6 +2719,7 @@ Compile and execution:</div>
 &lt;% rate = stock[:rate] %&gt;
 &lt;% style = "" %&gt;
 &lt;% if rate &lt; 0 then %&gt;
+&lt;%   rate = -rate %&gt;
 &lt;%   style = " style=\"color:red\"" %&gt;
 &lt;% end %&gt;
             &lt;td&lt;%= style %&gt;&gt;&lt;%= rate %&gt;%&lt;/td&gt;
@@ -2794,8 +2742,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/result1.html">result1.html</a></div>
+<div class="program_caption"><a href="pagelayout/result1.html">result1.html</a></div>
 <pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -2842,7 +2789,7 @@ Compile and execution:</div>
             &lt;td&gt;AAPL&lt;/td&gt;
             &lt;td&gt;Apple Computer, Inc.&lt;/td&gt;
             &lt;td align="right"&gt;36.49&lt;/td&gt;
-            &lt;td align="right" style="color:red"&gt;-0.32%&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;0.32%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;MSFT&lt;/td&gt;
@@ -2854,7 +2801,7 @@ Compile and execution:</div>
             &lt;td&gt;ORCL&lt;/td&gt;
             &lt;td&gt;Oracle Corporation&lt;/td&gt;
             &lt;td align="right"&gt;12.59&lt;/td&gt;
-            &lt;td align="right" style="color:red"&gt;-2.02%&lt;/td&gt;
+            &lt;td align="right" style="color:red"&gt;2.02%&lt;/td&gt;
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;SUNW&lt;/td&gt;
@@ -2886,8 +2833,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="pagelayout/result2.html">result2.html</a></div>
+<div class="program_caption"><a href="pagelayout/result2.html">result2.html</a></div>
 <pre class="program">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="en"&gt;
   &lt;head&gt;
@@ -2936,7 +2882,7 @@ Compile and execution:</div>
           &lt;/tr&gt;
           &lt;tr&gt;
             &lt;th&gt;Change:&lt;/th&gt;
-            &lt;td style="color:red"&gt;-0.32%&lt;/td&gt;
+            &lt;td style="color:red"&gt;0.32%&lt;/td&gt;
           &lt;/tr&gt;
         &lt;/tbody&gt;
       &lt;/table&gt;
@@ -2956,13 +2902,12 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<br>
+
 
 
 <a name="rails1"></a>
-<h2 class="section1">Rails</h2>
-<div class="program_caption">
-<a href="rails1/recipes.html">recipes.html</a> (presentation data):</div>
+<h2 class="section">Rails</h2>
+<div class="program_caption"><a href="rails1/recipes.html">recipes.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;Recipes: &lt;span <strong>id="mark:action_name"</strong>&gt;action&lt;/span&gt;&lt;/title&gt;
@@ -2975,8 +2920,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="rails1/recipes.plogic">recipes.plogic</a> (presentation logic):</div>
 <pre class="program">#stylesheet_link {
         // replace element with print statement
         plogic: {
@@ -2992,8 +2936,7 @@ Compile and execution:</div>
         value:  X(content_for_layout);
 }
 </pre>
-<div class="program_caption">
-<a href="rails1/list.html">list.html</a> (presentation data):</div>
+<div class="program_caption"><a href="rails1/list.html">list.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="mark:content"</strong>&gt;
@@ -3030,8 +2973,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/list.plogic">list.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="rails1/list.plogic">list.plogic</a> (presentation logic):</div>
 <pre class="program">#recipes {
         attrs:  "bgcolor"  X(color);
         plogic: {
@@ -3063,8 +3005,7 @@ Compile and execution:</div>
         attrs:  "href" X(&lt;%= url_for(:action=&gt;'new') %&gt;);
 }
 </pre>
-<div class="program_caption">
-<a href="rails1/show.html">show.html</a> (presentation data):</div>
+<div class="program_caption"><a href="rails1/show.html">show.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="mark:content"</strong>&gt;
@@ -3104,8 +3045,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/show.plogic">show.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="rails1/show.plogic">show.plogic</a> (presentation logic):</div>
 <pre class="program">#recipe_instructions {
         value:  X(str_linebreak(escape_xml(recipe.instructions)));
 }
@@ -3130,8 +3070,7 @@ Compile and execution:</div>
 //   value:  recipe.date;
 // }
 </pre>
-<div class="program_caption">
-<a href="rails1/new.html">new.html</a> (presentation data):</div>
+<div class="program_caption"><a href="rails1/new.html">new.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="mark:content"</strong>&gt;
@@ -3183,8 +3122,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/new.plogic">new.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="rails1/new.plogic">new.plogic</a> (presentation logic):</div>
 <pre class="program">#new_form {
         attrs:  "action"  X(&lt;%= url_for(:action=&gt;'create') %&gt;);
 }
@@ -3202,8 +3140,7 @@ Compile and execution:</div>
 }
 
 </pre>
-<div class="program_caption">
-<a href="rails1/edit.html">edit.html</a> (presentation data):</div>
+<div class="program_caption"><a href="rails1/edit.html">edit.html</a> (presentation data):</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
     &lt;div <strong>id="mark:content"</strong>&gt;
@@ -3260,8 +3197,7 @@ Compile and execution:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):</div>
+<div class="program_caption"><a href="rails1/edit.plogic">edit.plogic</a> (presentation logic):</div>
 <pre class="program">#edit_form {
         attrs:  "action" X(&lt;%= url_for(:action=&gt;'update') %&gt;);
 }
@@ -3299,17 +3235,15 @@ Compile and execution:</div>
         attrs:  "href" X(&lt;%= url_for(:action=&gt;'show', :id=&gt;@recipe.id) %&gt;);
 }
 </pre>
-<div class="terminal_caption">
-Compile:</div>
+<div class="terminal_caption">Compile:</div>
 <pre class="terminal">### compile
 % kwartz -Rails -e -p recipes.plogic recipes.html &gt; recipes.rhtml
-% kwartz -Rails -e -p list.plogic <strong>--extract=content</strong> list.html &gt; list.rhtml
-% kwartz -Rails -e -p show.plogic <strong>--extract=content</strong> show.html &gt; show.rhtml
-% kwartz -Rails -e -p new.plogic  <strong>--extract=content</strong> new.html  &gt; new.rhtml
-% kwartz -Rails -e -p edit.plogic <strong>--extract=content</strong> edit.html &gt; edit.rhtml
+% kwartz -Rails -e -p list.plogic <b>--extract=content</b> list.html &gt; list.rhtml
+% kwartz -Rails -e -p show.plogic <b>--extract=content</b> show.html &gt; show.rhtml
+% kwartz -Rails -e -p new.plogic  <b>--extract=content</b> new.html  &gt; new.rhtml
+% kwartz -Rails -e -p edit.plogic <b>--extract=content</b> edit.html &gt; edit.rhtml
 </pre>
-<div class="program_caption">
-<a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="rails1/recipes.rhtml">recipes.rhtml</a> (output script for Ruby):</div>
 <pre class="program">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;Recipes: &lt;%=h(@controller.action_name)%&gt;&lt;/title&gt;
@@ -3319,8 +3253,7 @@ Compile:</div>
 &lt;%= @content_for_layout %&gt;  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="rails1/list.rhtml">list.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Online Cookbook - All Recipes&lt;/h1&gt;
@@ -3353,8 +3286,7 @@ Compile:</div>
 
     &lt;/div&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="rails1/show.rhtml">show.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Show Recipe&lt;/h1&gt;
@@ -3390,8 +3322,7 @@ Compile:</div>
       
     &lt;/div&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="rails1/new.rhtml">new.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;New Recipe&lt;/h1&gt;
@@ -3439,8 +3370,7 @@ Compile:</div>
 
     &lt;/div&gt;
 </pre>
-<div class="program_caption">
-<a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):</div>
+<div class="program_caption"><a href="rails1/edit.rhtml">edit.rhtml</a> (output script for Ruby):</div>
 <pre class="program">    &lt;div&gt;
 
       &lt;h1&gt;Edit Recipe&lt;/h1&gt;
@@ -3491,12 +3421,13 @@ Compile:</div>
 
     &lt;/div&gt;
 </pre>
-<br>
+
 
 
 
    </div>
-  </blockquote>
+   <!-- EndEditable "doc_content" -->
+  </div>
 
  </body>
 </html>

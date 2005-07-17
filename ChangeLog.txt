@@ -1,6 +1,10 @@
 $Release$
 $Id$
 
+: release 2.0.4 (2005-07-17) (rev.99)
+	* [change] re-packaged because 2.0.3 pacakge have tiny mistakes.
+	* [change] minor changes on some examples
+
 : release 2.0.3 (2005-07-04) (rev.97)
 	* [change] 'loop' directive is re-renamed to 'list'
 		- http://www.kuwata-lab.com/kwartz/reference.en.02.html#kd-list

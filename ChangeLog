@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2005-07-17 rev.99
+	.- release 2.0.4
+
 .: 2005-07-17 rev.98
 	.- [change] some examples are changed
 
