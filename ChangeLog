@@ -1,6 +1,9 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-18 (rev.16)
+	.- [enhance] add examples/*/*.java
+
 .: 2005-07-18 (rev.15)
 	.- [change] constant TokenType.{STAG,CONT,ETAG,ELEMENT,CONTENT} is moved to class ExpandStatement
 	.- [change] Parser#token(), value(),... is renamed to getToken(), getValue(),...
