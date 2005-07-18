@@ -96,6 +96,42 @@ while line = DATA.gets()
 end
 
 
+
+
+###
+###
+###
+
+properties = <<'END'
+##
+## $Release$
+##
+## $Copyright$
+##
+
+kwartz.escape            = false
+kwartz.newline           = \n
+kwartz.indent            = '  '
+kwartz.localvar_prefix   = _
+kwartz.globalvar_prefix  = _
+kwartz.lang              =
+kwartz.odd               = 'odd'
+kwartz.even              = 'even'
+kwartz.dattr             = kw:d
+kwartz.noend             = input, br, meta, img, hr
+kwartz.defun.class       =
+kwartz.defun.function    =
+kwartz.charset           =
+#kwartz.embed_pattern     =
+kwartz.incdir            = .
+END
+
+path = SRC_ROOT + '/' + PACKAGE.gsub(/\./, '/')
+filename = "#{path}/kwartz.properties"
+File.open(filename, 'w') { |f| f.write(properties) }
+
+
+
 ###
 ### generate TokenType.java
 ###
@@ -188,11 +224,11 @@ COMMA		,
 
 // expand
 EXPAND		@
-STAG		@stag
-ETAG		@etag
-CONT		@cont
-ELEMENT		@element
-CONTENT		@content
+//STAG		@stag
+//ETAG		@etag
+//CONT		@cont
+//ELEMENT		@element
+//CONTENT		@content
 
 // raw expression and raw statement
 RAWEXPR		<%= %>
@@ -451,6 +487,8 @@ public class Utility {
     }
 
     public static String readFile(String filename, String charset) throws IOException {
+        if (filename == null)
+            return null;
         if (charset == null) {
             charset = System.getProperty("file.encoding");
         }
@@ -705,6 +743,7 @@ abstract public class Expression extends Node {
         return visitor.visitExpression(this);
     }
     public Object accept(ExpressionVisitor visitor) {
+        if (1 == 1) throw new BaseException("*** debug ***");
         return visitor.visitExpression(this);
     }
 }
@@ -1477,21 +1516,21 @@ import java.util.Map;
 import java.util.HashMap;
 
 abstract public class Function {
-    protected String _name;
+    //protected String _name;
 
-    public Function(String funcname) {
-        _name = funcname;
-    }
+    //public Function(String funcname) {
+    //    _name = funcname;
+    //}
 
-    public String getName() { return _name; }
-    public void setName(String name) { _name = name; }
+    //public String getName() { return _name; }
+    //public void setName(String name) { _name = name; }
 
     abstract public Object call(Map context, Expression[] arguments);
 
     static Map _instances = new HashMap();
-    public static void register(Function function) {
-        register(function.getName(), function);
-    }
+    //public static void register(Function function) {
+    //    register(function.getName(), function);
+    //}
     public static void register(String funcname, Function function) {
         _instances.put(funcname, function);
     }
@@ -1510,16 +1549,16 @@ abstract public class Function {
 package __PACKAGE__;
 import java.util.Map;
 
-public class SanitizeFunction extends Function {
-    public SanitizeFunction() {
-        super("E");	// 'E' means 'escape'
-    }
+public class HtmlEscapeFunction extends Function {
+    //public HtmlEscapeFunction() {
+    //    super("E");	// 'E' means 'escape'
+    //}
 
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
         Expression expr = arguments[0];
         Object val = expr.evaluate(context);
-        String s = (String)val;
+        String s = val.toString();
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
@@ -1527,9 +1566,10 @@ public class SanitizeFunction extends Function {
         return s;
     }
 
-    static {
-        Function.register(new SanitizeFunction());
-    }
+    //static {
+    //    Function.register("E", new HtmlEscapeFunction());
+    //    Function.register("str_escape", new HtmlEscapeFunction());
+    //}
 }
 
 // --------------------------------------------------------------------------------
@@ -1538,9 +1578,9 @@ package __PACKAGE__;
 import java.util.Map;
 
 public class AsIsFunction extends Function {
-    public AsIsFunction() {
-        super("X");
-    }
+    //public AsIsFunction() {
+    //    super("X");
+    //}
 
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
@@ -1548,9 +1588,9 @@ public class AsIsFunction extends Function {
         return expr.evaluate(context);
     }
 
-    static {
-        Function.register(new AsIsFunction());
-    }
+    //static {
+    //    Function.register("X", new AsIsFunction());
+    //}
 }
 
 // --------------------------------------------------------------------------------
@@ -1560,9 +1600,9 @@ import java.util.Map;
 import java.util.List;
 
 public class ListLengthFunction extends Function {
-    public ListLengthFunction() {
-        super("list_length");
-    }
+    //public ListLengthFunction() {
+    //    super("list_length");
+    //}
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
         Expression expr = arguments[0];
@@ -1576,6 +1616,10 @@ public class ListLengthFunction extends Function {
         }
         throw new EvaluationException("list_length(): argument is not a List nor an Array.");
     }
+
+    //static {
+    //    Function.register("list_length", new ListLengthFunction());
+    //}
 }
 
 // ================================================================================
@@ -1614,6 +1658,10 @@ public class FunctionExpression extends Expression {
             }
         }
         return sb;
+    }
+
+    public Object accept(ExpressionVisitor visitor) {
+        return visitor.visitFunctionExpression(this);
     }
 }
 
@@ -2207,6 +2255,13 @@ import java.util.Map;
 import java.io.Writer;
 
 public class ExpandStatement extends Statement {
+
+    public static final int STAG    = 1;
+    public static final int CONT    = 2;
+    public static final int ETAG    = 3;
+    public static final int ELEMENT = 4;
+    public static final int CONTENT = 5;
+
     private int _type;
     private String _name;
     public ExpandStatement(int type, String name) {
@@ -2235,15 +2290,15 @@ public class ExpandStatement extends Statement {
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
         switch (_type) {
-          case TokenType.STAG:
+          case ExpandStatement.STAG:
             sb.append("@stag"); break;
-          case TokenType.ETAG:
+          case ExpandStatement.ETAG:
             sb.append("@etag"); break;
-          case TokenType.CONT:
+          case ExpandStatement.CONT:
             sb.append("@cont"); break;
-          case TokenType.ELEMENT:
+          case ExpandStatement.ELEMENT:
             sb.append("@element(" + _name + ")");  break;
-          case TokenType.CONTENT:
+          case ExpandStatement.CONTENT:
             sb.append("@content(" + _name + ")");  break;
           default:
             assert false;
@@ -2320,6 +2375,7 @@ public class EmptyStatement extends Statement {
 package __PACKAGE__;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class Scanner {
     private String _code;
@@ -2328,21 +2384,36 @@ public class Scanner {
     private int    _linenum;
     private String _filename;
     private char   _ch;
+    private Properties _props;
 
     private int    _token;
     private StringBuffer _value = new StringBuffer();
 
-    public Scanner(String code, String filename) {
-        reset(code);
-        _filename = filename;
 
+    public Scanner() {
+        this("", null, new Properties(Configuration.defaults));
+    }
+    public Scanner(Properties props) {
+        this("", null, props);
     }
     public Scanner(String code) {
-        this(code, null);
+        this(code, null, new Properties(Configuration.defaults));
     }
-    public Scanner() {
-        this("", null);
+    public Scanner(String code, Properties props) {
+        this(code, null, props);
     }
+    public Scanner(String code, String filename) {
+        this(code, filename, new Properties(Configuration.defaults));
+    }
+    public Scanner(String code, String filename, Properties props) {
+        _props = props;
+        reset(code);
+        _filename = filename;
+    }
+
+    public Properties getProperties() { return _props; }
+    public String getProperty(String key) { return _props.getProperty(key); }
+    //public String setProperty(String key, String value) { _props.setProperty(key, value); }
 
     public int getLinenum() { return _linenum; }
     public int getColumn()  { return _column; }
@@ -2755,35 +2826,56 @@ public class SemanticException extends ParseException {
 
 package __PACKAGE__;
 
-public class Parser {
+import java.util.Properties;
+
+abstract public class Parser {
     protected Scanner _scanner;
+    protected Properties _props;
 
     public Parser() {
         this(new Scanner());
     }
+
+    public Parser(Properties props) {
+        this(new Scanner(props), props);
+    }
+
     public Parser(Scanner scanner) {
+        this(scanner, scanner.getProperties());
+    }
+
+    public Parser(Scanner scanner, Properties props) {
         _scanner = scanner;
+        _props   = props;
     }
 
     public Scanner getScanner() { return _scanner; }
 
-    public int token() {
+    public Properties getProperties() { return _props; }
+    public String getProperty(String key) { return _props.getProperty(key); }
+    //public String setProperty(String key, String value) { _props.setProperty(key, value); }
+
+    public int getToken() {
         return _scanner.getToken();
     }
-    public String value() {
+    public String getValue() {
         return _scanner.getValue();
     }
-    public int linenum() {
+    public int getLinenum() {
         return _scanner.getLinenum();
     }
-    public int column() {
+    public int getColumn() {
         return _scanner.getColumn();
-    }
-    public String filename() {
-        return _scanner.getFilename();
     }
     public int scan() {
         return _scanner.scan();
+    }
+
+    public String getFilename() {
+        return _scanner.getFilename();
+    }
+    public void setFilename(String filename) {
+        _scanner.setFilename(filename);
     }
 
     public void reset(String input, int linenum) {
@@ -2796,11 +2888,11 @@ public class Parser {
 
 
     public void syntaxError(String msg) {
-        throw new SyntaxException(msg, filename(), linenum(), column());
+        throw new SyntaxException(msg, getFilename(), getLinenum(), getColumn());
     }
 
     public void semanticError(String msg) {
-        throw new SemanticException(msg, filename(), linenum(), column());
+        throw new SemanticException(msg, getFilename(), getLinenum(), getColumn());
     }
 }
 
@@ -2809,22 +2901,26 @@ public class Parser {
 package __PACKAGE__;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class ExpressionParser extends Parser {
 
     public ExpressionParser() {
-        this(new Scanner(), true);
+        this(new Scanner());
+    }
+    public ExpressionParser(Properties props) {
+        this(new Scanner(props));
     }
     public ExpressionParser(Scanner scanner) {
-        this(scanner, true);
+        this(scanner, scanner.getProperties());
     }
-    public ExpressionParser(Scanner scanner, boolean flagInit) {
-        super(scanner);
+    public ExpressionParser(Scanner scanner, Properties props) {
+        this(scanner, props, true);
+    }
+    public ExpressionParser(Scanner scanner, Properties props, boolean flagInit) {
+        super(scanner, props);
         if (flagInit) _scanner.scan();
     }
-
-    public String getFilename() { return _scanner.getFilename(); }
-    public void setFilename(String filename) { _scanner.setFilename(filename); }
 
 
     /*
@@ -2833,14 +2929,14 @@ public class ExpressionParser extends Parser {
      *               ::=  [ expression { ',' expression } ]
      */
     public Expression[] parseArguments() {
-        if (token() == TokenType.R_PAREN) {
+        if (getToken() == TokenType.R_PAREN) {
             Expression[] args = {};
             return args;
         }
         List list = new ArrayList();
         Expression expr = parseExpression();
         list.add(expr);
-        while (token() == TokenType.COMMA) {
+        while (getToken() == TokenType.COMMA) {
             scan();
             expr = parseExpression();
             list.add(expr);
@@ -2856,14 +2952,14 @@ public class ExpressionParser extends Parser {
      *  item         ::=  variable | function '(' arguments ')' | '(' expression ')'
      */
     public Expression parseItem() {
-        int t = token();
+        int t = getToken();
         if (t == TokenType.NAME) {
-            String name = value();
+            String name = getValue();
             t = scan();
             if (t != TokenType.L_PAREN) return new VariableExpression(name);
             scan();
             Expression[] args = parseArguments();
-            if (token() != TokenType.R_PAREN) syntaxError("missing ')' of function '" + name + "().");
+            if (getToken() != TokenType.R_PAREN) syntaxError("missing ')' of function '" + name + "().");
             scan();
             String s = null;
             if      (name.equals("C")) s = " checked=\"checked\"";
@@ -2881,7 +2977,7 @@ public class ExpressionParser extends Parser {
         else if (t == TokenType.L_PAREN) {
             scan();
             Expression expr = parseExpression();
-            if (token() != TokenType.R_PAREN)
+            if (getToken() != TokenType.R_PAREN)
                 syntaxError("')' expected ('(' is not closed by ')').");
             scan();
             return expr;
@@ -2895,19 +2991,19 @@ public class ExpressionParser extends Parser {
      *    literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty' | rawcode-expr
      */
     public Expression parseLiteral() {
-        int t = token();
+        int t = getToken();
         String val;
         switch (t) {
           case TokenType.INTEGER:
-            val = value();
+            val = getValue();
             scan();
             return new IntegerExpression(Integer.parseInt(val));
           case TokenType.DOUBLE:
-            val = value();
+            val = getValue();
             scan();
             return new DoubleExpression(Double.parseDouble(val));
           case TokenType.STRING:
-            val = value();
+            val = getValue();
             scan();
             return new StringExpression(val);
           case TokenType.TRUE:
@@ -2921,7 +3017,7 @@ public class ExpressionParser extends Parser {
             syntaxError("'empty' is allowed only in right-side of '==' or '!='.");
             return null;
           case TokenType.RAWEXPR:
-            val = value();
+            val = getValue();
             scan();
             return new RawcodeExpression(val);
           default:
@@ -2937,7 +3033,7 @@ public class ExpressionParser extends Parser {
      *                  |  factor '.' property | factor '.' method '(' [ arguments ] ')'
      */
     public Expression parseFactor() {
-        int t = token();
+        int t = getToken();
         Expression expr;
         switch (t) {
           case TokenType.INTEGER:
@@ -2955,36 +3051,36 @@ public class ExpressionParser extends Parser {
           case TokenType.L_PAREN:
             expr = parseItem();
             while (true) {
-                t = token();
+                t = getToken();
                 if (t == TokenType.L_BRACKET) {
                     scan();
                     Expression expr2 = parseExpression();
-                    if (token() != TokenType.R_BRACKET)
+                    if (getToken() != TokenType.R_BRACKET)
                         syntaxError("']' expected ('[' is not closed by ']').");
                     scan();
                     expr = new IndexExpression(TokenType.ARRAY, expr, expr2);
                 }
                 else if (t == TokenType.L_BRACKETCOLON) {
                     scan();
-                    if (token() != TokenType.NAME)
+                    if (getToken() != TokenType.NAME)
                         syntaxError("'[:' requires a word following.");
-                    String word = value();
+                    String word = getValue();
                     scan();
-                    if (token() != TokenType.R_BRACKET)
+                    if (getToken() != TokenType.R_BRACKET)
                         syntaxError("'[:' is not closed by ']'.");
                     scan();
                     expr = new IndexExpression(TokenType.HASH, expr, new StringExpression(word));
                 }
                 else if (t == TokenType.PERIOD) {
                     scan();
-                    if (token() != TokenType.NAME)
+                    if (getToken() != TokenType.NAME)
                         syntaxError("'.' requires a property or method name following.");
-                    String name = value();
+                    String name = getValue();
                     scan();
-                    if (token() == TokenType.L_PAREN) {
+                    if (getToken() == TokenType.L_PAREN) {
                         scan();
                         Expression[] args = parseArguments();
-                        if (token() != TokenType.R_PAREN)
+                        if (getToken() != TokenType.R_PAREN)
                             syntaxError("method '" + name + "(' is not closed by ')'.");
                         scan();
                         expr = new MethodExpression(expr, name, args);
@@ -3011,7 +3107,7 @@ public class ExpressionParser extends Parser {
      *               ::=  [ '+' | '-' | '!' ] factor
      */
     public Expression parseUnary() {
-        int t = token();
+        int t = getToken();
         int unary_t = 0;
         Expression expr;
         if      (t == TokenType.ADD) unary_t = TokenType.PLUS;
@@ -3036,7 +3132,7 @@ public class ExpressionParser extends Parser {
     public Expression parseTerm() {
         Expression expr = parseUnary();
         int t;
-        while ((t = token()) == TokenType.MUL || t == TokenType.DIV || t == TokenType.MOD) {
+        while ((t = getToken()) == TokenType.MUL || t == TokenType.DIV || t == TokenType.MOD) {
             scan();
             Expression expr2 = parseFactor();
             expr = new ArithmeticExpression(t, expr, expr2);
@@ -3053,7 +3149,7 @@ public class ExpressionParser extends Parser {
     public Expression parseArithmetic() {
         Expression expr = parseTerm();
         int t;
-        while ((t = token()) == TokenType.ADD || t == TokenType.SUB || t == TokenType.CONCAT) {
+        while ((t = getToken()) == TokenType.ADD || t == TokenType.SUB || t == TokenType.CONCAT) {
             scan();
             Expression expr2 = parseTerm();
             if (t == TokenType.CONCAT)
@@ -3074,11 +3170,11 @@ public class ExpressionParser extends Parser {
     public Expression parseRelational() {
         Expression expr = parseArithmetic();
         int t;
-        while ((t = token()) == TokenType.EQ || t == TokenType.NE
+        while ((t = getToken()) == TokenType.EQ || t == TokenType.NE
                || t == TokenType.GT || t == TokenType.GE
                || t == TokenType.LT || t == TokenType.LE) {
             scan();
-            if (token() == TokenType.EMPTY || (token() == TokenType.NAME && value().equals("empty"))) {
+            if (getToken() == TokenType.EMPTY || (getToken() == TokenType.NAME && getValue().equals("empty"))) {
                 if (t == TokenType.EQ) {
                     scan();
                     expr = new EmptyExpression(TokenType.EMPTY, expr);
@@ -3106,7 +3202,7 @@ public class ExpressionParser extends Parser {
     public Expression parseLogicalAnd() {
         Expression expr = parseRelational();
         int t;
-        while ((t = token()) == TokenType.AND) {
+        while ((t = getToken()) == TokenType.AND) {
             scan();
             Expression expr2 = parseRelational();
             expr = new LogicalAndExpression(expr, expr2);
@@ -3123,7 +3219,7 @@ public class ExpressionParser extends Parser {
     public Expression parseLogicalOr() {
         Expression expr = parseLogicalAnd();
         int t;
-        while ((t = token()) == TokenType.OR) {
+        while ((t = getToken()) == TokenType.OR) {
             scan();
             Expression expr2 = parseLogicalAnd();
             expr = new LogicalOrExpression(expr, expr2);
@@ -3140,10 +3236,10 @@ public class ExpressionParser extends Parser {
     public Expression parseConditional() {
         Expression expr = parseLogicalOr();
         int t;
-        if ((t = token()) == TokenType.CONDITIONAL) {
+        if ((t = getToken()) == TokenType.CONDITIONAL) {
             scan();
             Expression expr2 = parseExpression();
-            if (token() != TokenType.COLON)
+            if (getToken() != TokenType.COLON)
                 syntaxError("':' expected ('?' requires ':').");
             scan();
             Expression expr3 = parseConditional();
@@ -3160,7 +3256,7 @@ public class ExpressionParser extends Parser {
      */
     public Expression parseAssignment() {
         Expression expr = parseConditional();
-        int op = token();
+        int op = getToken();
         if (    op == TokenType.ASSIGN || op == TokenType.ADD_TO ||  op == TokenType.SUB_TO
             ||  op == TokenType.MUL_TO || op == TokenType.DIV_TO ||  op == TokenType.MOD_TO
             ||  op == TokenType.CONCAT_TO) {
@@ -3198,7 +3294,7 @@ public class ExpressionParser extends Parser {
     /*
      *
      */
-    public Expression parse(String expr_code) throws SyntaxException {
+    public Expression parse(String expr_code) {
         _scanner.reset(expr_code);
         _scanner.scan();
         Expression expr = parseExpression();
@@ -3216,26 +3312,30 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class StatementParser extends Parser {
     private ExpressionParser _exprParser;
 
     public StatementParser() {
-        this(new Scanner(), true);
+        this(new Scanner());
+    }
+    public StatementParser(Properties props) {
+        this(new Scanner(props));
     }
     public StatementParser(Scanner scanner) {
-        this(scanner, true);
+        this(scanner, scanner.getProperties());
     }
-    public StatementParser(Scanner scanner, boolean flagInit) {
-        super(scanner);
-        _exprParser = new ExpressionParser(scanner, false);
+    public StatementParser(Scanner scanner, Properties props) {
+        this(scanner, props, true);
+    }
+    public StatementParser(Scanner scanner, Properties props, boolean flagInit) {
+        super(scanner, props);
+        _exprParser = new ExpressionParser(scanner, props, false);
         if (flagInit) _scanner.scan();
     }
 
     public ExpressionParser getExpressionParser() { return _exprParser; }
-
-    public String getFilename() { return _exprParser.getFilename(); }
-    public void setFilename(String filename) { _exprParser.setFilename(filename); }
 
 
 
@@ -3244,7 +3344,7 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseStatement() {
-        int t = token();
+        int t = getToken();
         Statement stmt = null;
         switch (t) {
           //case TokenType.R_CURLY:
@@ -3283,7 +3383,7 @@ public class StatementParser extends Parser {
             stmt = parseEmptyStatement();
             break;
           default:
-            syntaxError("statement expected but got '" + token() + "'.");
+            syntaxError("statement expected but got '" + getToken() + "'.");
         }
         return stmt;
     }
@@ -3296,11 +3396,11 @@ public class StatementParser extends Parser {
      *  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
      */
     public Statement parseBlockStatement() {
-        assert token() == TokenType.L_CURLY;
-        int start_linenum = linenum();
+        assert getToken() == TokenType.L_CURLY;
+        int start_linenum = getLinenum();
         scan();
         Statement[] stmts = parseStatementList();
-        if (token() != TokenType.R_CURLY)
+        if (getToken() != TokenType.R_CURLY)
             syntaxError("block-statement(starts at line " + start_linenum + ") requires '}'.");
         scan();
         return new BlockStatement(stmts);
@@ -3309,8 +3409,8 @@ public class StatementParser extends Parser {
     public Statement[] parseStatementList() {
         List list = new ArrayList();
         Statement stmt;
-        while (token() != TokenType.EOF) {
-            if (token() == TokenType.R_CURLY)
+        while (getToken() != TokenType.EOF) {
+            if (getToken() == TokenType.R_CURLY)
                 break;
             stmt = parseStatement();
             list.add(stmt);
@@ -3329,13 +3429,13 @@ public class StatementParser extends Parser {
      *    print-stmt   ::=  'print' '(' arguments ')' ';'
      */
     public Statement parsePrintStatement() {
-        assert token() == TokenType.PRINT;
+        assert getToken() == TokenType.PRINT;
         int t = scan();
         if (t != TokenType.L_PAREN)
             syntaxError("print-statement requires '('.");
         t = scan();
         Expression[] args = _exprParser.parseArguments();
-        if (token() != TokenType.R_PAREN)
+        if (getToken() != TokenType.R_PAREN)
             syntaxError("print-statement requires ')'.");
         t = scan();
         if (t != TokenType.SEMICOLON)
@@ -3349,9 +3449,9 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseExpressionStatement() {
-        //assert token() == TokenType.NAME || token() == TokenType.L_PAREN;
+        //assert getToken() == TokenType.NAME || getToken() == TokenType.L_PAREN;
         Expression expr = _exprParser.parseExpression();
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
             syntaxError("expression-statement requires ';'.");
         scan();
         return new ExpressionStatement(expr);
@@ -3368,21 +3468,21 @@ public class StatementParser extends Parser {
      *                      [ 'else' statement ]
      */
     public Statement parseIfStatement() {
-        assert token() != TokenType.IF || token() != TokenType.ELSEIF;
-        String word = token() == TokenType.IF ? "if" : "elseif";
+        assert getToken() != TokenType.IF || getToken() != TokenType.ELSEIF;
+        String word = getToken() == TokenType.IF ? "if" : "elseif";
         int t = scan();
         if (t != TokenType.L_PAREN)
             syntaxError(word + "-statement requires '('.");
         scan();
         Expression condition = _exprParser.parseExpression();
-        if (token() != TokenType.R_PAREN)
+        if (getToken() != TokenType.R_PAREN)
             syntaxError(word + "-statement requires ')'.");
         scan();
         Statement thenBody = parseStatement();
         Statement elseBody = null;
-        if (token() == TokenType.ELSEIF) {
+        if (getToken() == TokenType.ELSEIF) {
             elseBody = parseIfStatement();
-        } else if (token() == TokenType.ELSE) {
+        } else if (getToken() == TokenType.ELSE) {
             scan();
             elseBody = parseStatement();
         }
@@ -3395,21 +3495,21 @@ public class StatementParser extends Parser {
      *    foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
      */
     public Statement parseForeachStatement() {
-        assert token() == TokenType.FOREACH;
+        assert getToken() == TokenType.FOREACH;
         int t = scan();
         if (t != TokenType.L_PAREN)
             syntaxError("foreach-statement requires '('.");
         t = scan();
         if (t != TokenType.NAME)
-            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(token(), value()) + "'.");
-        String varname = value();
+            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(getToken(), getValue()) + "'.");
+        String varname = getValue();
         VariableExpression loopvar = new VariableExpression(varname);
         t = scan();
         if (t != TokenType.IN && t != TokenType.ASSIGN)
-            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(token(), value()) + "'.");
+            syntaxError("foreach-statement requires loop-variable but got '" + TokenType.inspect(getToken(), getValue()) + "'.");
         scan();
         Expression list = _exprParser.parseExpression();
-        if (token() != TokenType.R_PAREN)
+        if (getToken() != TokenType.R_PAREN)
             syntaxError("foreach-statement requires ')'.");
         scan();
         Statement body = parseStatement();
@@ -3422,13 +3522,13 @@ public class StatementParser extends Parser {
      *    while-stmt   ::=  'while' '(' expression ')' statement
      */
     public Statement parseWhileStatement() {
-        assert token() == TokenType.WHILE;
+        assert getToken() == TokenType.WHILE;
         scan();
-        if (token() != TokenType.L_PAREN)
+        if (getToken() != TokenType.L_PAREN)
             syntaxError("while-statement requires '('");
         scan();
         Expression condition = _exprParser.parseExpression();
-        if (token() != TokenType.R_PAREN)
+        if (getToken() != TokenType.R_PAREN)
             syntaxError("while-statement requires ')'");
         scan();
         Statement body = parseStatement();
@@ -3441,27 +3541,27 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseExpandStatement() {
-        assert token() == TokenType.EXPAND;
+        assert getToken() == TokenType.EXPAND;
         String marking = null;
-        String typeStr = value();
+        String typeStr = getValue();
         Integer typeObj = (Integer)_expandTypes.get(typeStr);
         if (typeObj == null)
             syntaxError("'@" + typeStr + "': invalid expand statement.");
         int type = typeObj.intValue();
-        if (type == TokenType.CONTENT || type == TokenType.ELEMENT) {
+        if (type == ExpandStatement.CONTENT || type == ExpandStatement.ELEMENT) {
             scan();
-            if (token() != TokenType.L_PAREN)
+            if (getToken() != TokenType.L_PAREN)
                 syntaxError("`@" + typeStr + "' requires '('.");
             scan();
-            if (token() != TokenType.NAME)
+            if (getToken() != TokenType.NAME)
                 syntaxError("`@" + typeStr + "()' requires a marking name.");
-            marking = value();
+            marking = getValue();
             scan();
-            if (token() != TokenType.R_PAREN)
+            if (getToken() != TokenType.R_PAREN)
                 syntaxError("`@" + typeStr + "' requires ')'.");
         }
         scan();
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
             syntaxError("`@" + typeStr + "()' requires ';'.");
         scan();
         return new ExpandStatement(type, marking);
@@ -3469,11 +3569,11 @@ public class StatementParser extends Parser {
 
     private static final Map _expandTypes = new HashMap();
     static {
-        _expandTypes.put("stag",    new Integer(TokenType.STAG));
-        _expandTypes.put("cont",    new Integer(TokenType.CONT));
-        _expandTypes.put("etag",    new Integer(TokenType.ETAG));
-        _expandTypes.put("content", new Integer(TokenType.CONTENT));
-        _expandTypes.put("element", new Integer(TokenType.ELEMENT));
+        _expandTypes.put("stag",    new Integer(ExpandStatement.STAG));
+        _expandTypes.put("cont",    new Integer(ExpandStatement.CONT));
+        _expandTypes.put("etag",    new Integer(ExpandStatement.ETAG));
+        _expandTypes.put("content", new Integer(ExpandStatement.CONTENT));
+        _expandTypes.put("element", new Integer(ExpandStatement.ELEMENT));
     }
 
 
@@ -3491,8 +3591,8 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseRawcodeStatement() {
-        assert token() == TokenType.RAWSTMT;
-        String rawcode = value();
+        assert getToken() == TokenType.RAWSTMT;
+        String rawcode = getValue();
         scan();
         return new RawcodeStatement(rawcode);
     }
@@ -3503,7 +3603,7 @@ public class StatementParser extends Parser {
      *
      */
     public Statement parseEmptyStatement() {
-        assert token() == TokenType.SEMICOLON;
+        assert getToken() == TokenType.SEMICOLON;
         scan();
         return new EmptyStatement();
     }
@@ -3519,8 +3619,8 @@ public class StatementParser extends Parser {
         _scanner.reset(input, baselinenum);
         _scanner.scan();
         Statement[] stmts = parseStatementList();
-        if (token() != TokenType.EOF)
-            syntaxError("EOF expected but '" + TokenType.inspect(token(), value()) + "'.");
+        if (getToken() != TokenType.EOF)
+            syntaxError("EOF expected but '" + TokenType.inspect(getToken(), getValue()) + "'.");
         return new BlockStatement(stmts);
     }
 
@@ -3530,15 +3630,23 @@ public class StatementParser extends Parser {
 
 package __PACKAGE__;
 import java.util.Map;
+import java.util.Properties;
 import java.io.Writer;
 import java.io.PrintWriter;
 
 public class Interpreter {
-    StatementParser _parser;
-    Statement _stmt = null;
+    private StatementParser _parser;
+    private Statement _stmt = null;
+    private Properties _props;
 
     public Interpreter() {
         _parser = new StatementParser();
+        _props = _parser.getProperties();
+    }
+
+    public Interpreter(Properties props) {
+        _props = props;
+        _parser = new StatementParser(_props);
     }
 
     public Statement compile(String code) {
@@ -3683,9 +3791,9 @@ public class Element {
     public BlockStatement getPresentationLogic() {
         if (_plogic == null) {
             Statement[] stmts = {
-                new ExpandStatement(TokenType.STAG),
-                new ExpandStatement(TokenType.CONT),
-                new ExpandStatement(TokenType.ETAG),
+                new ExpandStatement(ExpandStatement.STAG),
+                new ExpandStatement(ExpandStatement.CONT),
+                new ExpandStatement(ExpandStatement.ETAG),
             };
             _plogic = new BlockStatement(stmts);
         }
@@ -3723,8 +3831,18 @@ package __PACKAGE__;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Optimizer implements StatementVisitor {   // statement visitor
+
+    private Properties _props;
+
+    public Optimizer() {
+        this(new Properties(Configuration.defaults));
+    }
+    public Optimizer(Properties props) {
+        _props = props;
+    }
 
     private void _concatArgs(Expression[] args, List argList, StringBuffer sb) {
         for (int i = 0; i < args.length; i++) {
@@ -3854,21 +3972,78 @@ public interface Expander {
 package __PACKAGE__;
 
 import java.util.Map;
+import java.util.Properties;
 
 public class DefaultExpander implements  Expander {
 
+    public static class LiteralVisitor implements ExpressionVisitor {
+        public Object visitExpression(Expression expr) { return expr.accept(this); }
+        //
+        public Object visitUnaryExpression(UnaryExpression expr)                 { return Boolean.FALSE; }
+        public Object visitBinaryExpression(BinaryExpression expr)               { return Boolean.FALSE; }
+        public Object visitArithmeticExpression(ArithmeticExpression expr)       { return Boolean.FALSE; }
+        public Object visitConcatenationExpression(ConcatenationExpression expr) { return Boolean.FALSE; }
+        public Object visitRelationalExpression(RelationalExpression expr)       { return Boolean.FALSE; }
+        public Object visitAssignmentExpression(AssignmentExpression expr)       { return Boolean.FALSE; }
+        public Object visitIndexExpression(IndexExpression expr)                 { return Boolean.FALSE; }
+        public Object visitPropertyExpression(PropertyExpression expr)           { return Boolean.FALSE; }
+        public Object visitMethodExpression(MethodExpression expr)               { return Boolean.FALSE; }
+        public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return Boolean.FALSE; }
+        public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return Boolean.FALSE; }
+        public Object visitConditionalExpression(ConditionalExpression expr) {
+            Object left  = expr.getLeft().accept(this);
+            Object right = expr.getRight().accept(this);
+            return left == Boolean.TRUE && right == Boolean.TRUE ? Boolean.TRUE : Boolean.FALSE;
+        }
+        public Object visitEmptyExpression(EmptyExpression expr)                 { return Boolean.FALSE; }
+        public Object visitFunctionExpression(FunctionExpression expr)           { return Boolean.FALSE; }
+        //
+        public Object visitLiteralExpression(LiteralExpression expr)             { return Boolean.TRUE; }
+        public Object visitStringExpression(StringExpression expr)               { return Boolean.TRUE; }
+        public Object visitIntegerExpression(IntegerExpression expr)             { return Boolean.TRUE; }
+        public Object visitDoubleExpression(DoubleExpression expr)               { return Boolean.TRUE; }
+        public Object visitVariableExpression(VariableExpression expr)           { return Boolean.FALSE; }
+        public Object visitBooleanExpression(BooleanExpression expr)             { return Boolean.TRUE; }
+        public Object visitNullExpression(NullExpression expr)                   { return Boolean.TRUE; }
+        public Object visitRawcodeExpression(RawcodeExpression expr)             { return Boolean.TRUE; }
+    }
+
+
     private Map _elementTable;
     private TagHelper _helper = new TagHelper();
+    private Properties _props;
+    private boolean _flagEscape;
+    private LiteralVisitor _literalVisitor = new LiteralVisitor();
 
     public DefaultExpander(Map elementTable) {
-        _elementTable = elementTable;
+        this(elementTable, new Properties(Configuration.defaults));
     }
+    public DefaultExpander(Map elementTable, Properties props) {
+        _elementTable = elementTable;
+        _props = props;
+        String prop = _props.getProperty("kwartz.escape");
+        _flagEscape = prop == null || (!prop.equals("false") && !prop.equals("no"));
+    }
+
 
     public Statement expand(Statement stmt, Element elem) {
         return stmt == null ? null : stmt.accept(this, elem);
     }
 
     public Statement expand(PrintStatement stmt, Element elem) {
+        if (_flagEscape) {
+            Expression[] args = stmt.getArguments();
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].accept(_literalVisitor) == Boolean.TRUE)
+                    continue;
+                if (args[i].getToken() == TokenType.FUNCTION) {
+                    String fname = ((FunctionExpression)args[i]).getFunctionName();
+                    if (fname.equals("E") || fname.equals("X"))
+                        continue;
+                }
+                args[i] = new FunctionExpression("E", new Expression[] { args[i] });
+            }
+        }
         return null;
     }
 
@@ -3917,23 +4092,25 @@ public class DefaultExpander implements  Expander {
         Statement st;
         Statement[] stmts;
         int type = stmt.getType();
-        if (type  == TokenType.STAG) {
+        if (type  == ExpandStatement.STAG) {
             st = _helper.buildPrintStatement(elem.getStag());
+            expand((PrintStatement)st, null);
         }
-        else if (type == TokenType.ETAG) {
+        else if (type == ExpandStatement.ETAG) {
             if (elem.getEtag() == null)
                 st = new PrintStatement(new Expression[] {});
             else
                 st = _helper.buildPrintStatement(elem.getEtag());
+            expand((PrintStatement)st, null);
         }
-        else if (type == TokenType.CONT) {
+        else if (type == ExpandStatement.CONT) {
             stmts = elem.getContentStatements();
             st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
             //st = new BlockStatement(stmts);
             Statement st2 = expand(st, null);
             if (st2 != null) st = st2;
         }
-        else if (type == TokenType.CONTENT) {
+        else if (type == ExpandStatement.CONTENT) {
             String name = stmt.getName();
             Element elem2 = (Element)_elementTable.get(name);
             if (elem2 == null) {
@@ -3945,7 +4122,7 @@ public class DefaultExpander implements  Expander {
             Statement st2 = expand(st, null);
             if (st2 != null) st = st2;
         }
-        else if (type == TokenType.ELEMENT) {
+        else if (type == ExpandStatement.ELEMENT) {
             String name = stmt.getName();
             Element elem2 = (Element)_elementTable.get(name);
             if (elem2 == null) {
@@ -4026,22 +4203,22 @@ public class DefaultExpander implements  Expander {
 //          case TokenType.EXPAND:
 //            ExpandStatement expandStmt;
 //            int type = ((ExpandStatement)stmt).getType();
-//            if (type  == TokenType.STAG) {
+//            if (type  == ExpandStatement.STAG) {
 //                st = _helper.buildPrintStatement(elem.getStag());
 //            }
-//            else if (type == TokenType.ETAG) {
+//            else if (type == ExpandStatement.ETAG) {
 //                if (elem.getEtag() == null)
 //                    st = new PrintStatement(new Expression[] {});
 //                else
 //                    st = _helper.buildPrintStatement(elem.getEtag());
 //            }
-//            else if (type == TokenType.CONT) {
+//            else if (type == ExpandStatement.CONT) {
 //                stmts = elem.getContentStatements();
 //                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
 //                Statement st2 = expand(st, null);
 //                if (st2 != null) st = st2;
 //            }
-//            else if (type == TokenType.CONTENT) {
+//            else if (type == ExpandStatement.CONTENT) {
 //                String name = ((ExpandStatement)stmt).getName();
 //                Element elem2 = (Element)_elementTable.get(name);
 //                if (elem2 == null) {
@@ -4052,7 +4229,7 @@ public class DefaultExpander implements  Expander {
 //                Statement st2 = expand(st, null);
 //                if (st2 != null) st = st2;
 //            }
-//            else if (type == TokenType.ELEMENT) {
+//            else if (type == ExpandStatement.ELEMENT) {
 //                String name = ((ExpandStatement)stmt).getName();
 //                Element elem2 = (Element)_elementTable.get(name);
 //                if (elem2 == null) {
@@ -4080,50 +4257,6 @@ public class ExpantionException extends BaseException {
     public ExpantionException(String message) {
         super(message);
     }
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-
-import java.util.List;
-
-public interface Converter {
-    public Statement[] convert(String pdata);
-
-    public String getFilename();
-    public void setFilename(String filename);
-
-    public List getElementList();
-    public void addElement(Element element);
-
-    public Expression[] expandEmbeddedExpression(String pdata, int linenum);
-
-    //public void setProperties(Properties prop);
-    //public Properties getProperties(Properties prop);
-    //public void setProperty(String key, String value);
-    //public String getProperty(String key);
-
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-
-public class ConvertionException extends BaseException {
-    private String _filename;
-    private int _linenum;
-
-    public ConvertionException(String message, String filename, int linenum) {
-        super(message);
-        _filename = filename;
-        _linenum  = linenum;
-    }
-
-    public String toString() {
-        return super.toString() + "(filename " + _filename + ", line " + _linenum + ")";
-    }
-
 }
 
 // --------------------------------------------------------------------------------
@@ -4182,6 +4315,530 @@ public class Tag {
 
 package __PACKAGE__;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.Properties;
+
+public class TagHelper {
+    private StatementParser  _stmtParser;
+    private ExpressionParser _exprParser;
+    private Properties _props;
+
+
+    public TagHelper() {
+        this(new Properties(Configuration.defaults));
+    }
+
+    public TagHelper(Properties props) {
+        _props = props;
+        _stmtParser = new StatementParser();
+        _exprParser = _stmtParser.getExpressionParser();
+    }
+
+
+    public String getFilename() {
+        return _stmtParser.getFilename();
+        //return _exprParser.getFilename();
+    }
+
+
+    public void setFilename(String filename) {
+        _stmtParser.setFilename(filename);
+        //_exprParser.setFilename(filename);
+    }
+
+
+    public Expression parseExpression(String str, int linenum) {
+        _exprParser.reset(str, linenum);
+        Expression expr = _exprParser.parseExpression();
+        if (_exprParser.getToken() != TokenType.EOF) {
+            String msg = "'" + str + "': invalid expression.";
+            throw new ConvertionException(msg, _exprParser.getFilename(), linenum);
+        }
+        return expr;
+    }
+
+
+    public Statement parseExpressionStatement(String str, int linenum) {
+        _stmtParser.reset(str, linenum);
+        Statement stmt = _stmtParser.parseExpressionStatement();
+        //assert _stmtParser.getToken() == TokenType.EOF;
+        if (_stmtParser.getToken() != TokenType.EOF) {
+            String msg = "'" + str + "': invalid expression statement.";
+            throw new ConvertionException(msg, _stmtParser.getFilename(), linenum);
+        }
+        return stmt;
+    }
+
+
+    public PrintStatement createTagPrintStatement(Tag tag, boolean tagDelete) {
+        PrintStatement stmt;
+        if (tagDelete) {
+            String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
+            Expression[] args = { new StringExpression(s) };
+            stmt = new PrintStatement(args);
+        } else {
+            stmt = buildPrintStatement(tag);
+        }
+        return stmt;
+    }
+
+
+
+    public PrintStatement createPrintStatement(String str, int linenum) {
+        Expression[] args = expandEmbeddedExpression(str, linenum);
+        return new PrintStatement(args);
+    }
+
+
+    public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
+
+    public Expression[] expandEmbeddedExpression(String str, int linenum) {
+        final Pattern embedPattern = Pattern.compile(EMBED_PATTERN);
+        List list = null;
+        int index = 0;
+        Matcher m = embedPattern.matcher(str);
+        while (m.find()) {
+            if (list == null) list = new ArrayList();
+            String front = str.substring(index, m.start());
+            if (front != null && front.length() > 0) {
+                list.add(new StringExpression(front));
+                for (int i = 0; i < front.length(); i++) {
+                    if (str.charAt(i) == '\n') linenum++;
+                }
+            }
+            if (m.group(1).length() > 1) {
+                list.add(parseExpression(m.group(1), linenum));
+            }
+            index = m.end();
+        }
+        Expression[] exprs;
+        if (list != null) {
+            String s = str.substring(index);
+            if (s != null && s.length() > 0) list.add(new StringExpression(s));
+            exprs = new Expression[list.size()];
+            list.toArray(exprs);
+        } else {
+            exprs = new Expression[1];
+            exprs[0] = new StringExpression(str);
+        }
+        return exprs;
+    }
+
+
+    public PrintStatement buildPrintStatement(Tag tag) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(tag.before_space);
+        sb.append(tag.is_etag ? "</" : "<");
+        sb.append(tag.tagname);
+        List list = new ArrayList();
+        if (tag.attrs != null) {
+            for (Iterator it = tag.attrs.iterator(); it.hasNext(); ) {
+                Object[] a = (Object[])it.next();
+                String aspace = (String)a[0];
+                String aname  = (String)a[1];
+                Object avalue = a[2];
+                sb.append(aspace);
+                sb.append(aname);
+                sb.append("=\"");
+                if (avalue instanceof Expression) {
+                    list.add(new StringExpression(sb.toString()));
+                    sb.delete(0, sb.length());  // clear
+                    list.add(avalue);
+                } else {
+                    assert avalue instanceof String;
+                    String str = (String)avalue;
+                    if (str.indexOf('@') < 0) {         // ATTR_PATTERN
+                        sb.append(str);
+                    } else {
+                        Expression[] exprs = expandEmbeddedExpression(str, tag.linenum);
+                        for (int i = 0; i < exprs.length; i++) {
+                            if (exprs[i].getToken() == TokenType.STRING) {
+                                sb.append(((StringExpression)exprs[i]).getValue());
+                            } else {
+                                list.add(new StringExpression(sb.toString()));
+                                sb.delete(0, sb.length());  // clear
+                                list.add(exprs[i]);
+                            }
+                        }
+                    }
+                }
+                sb.append("\"");
+            }
+        }
+        //
+        if (tag.append_exprs != null) {
+            list.add(new StringExpression(sb.toString()));
+            list.addAll(tag.append_exprs);
+            sb.delete(0, sb.length());  // clear
+        }
+        sb.append(tag.extra_space);
+        sb.append(tag.is_empty ? "/>" : ">");
+        sb.append(tag.after_space);
+        list.add(new StringExpression(sb.toString()));
+        //
+        Expression[] args = new Expression[list.size()];
+        list.toArray(args);
+        return new PrintStatement(args);
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.Properties;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+
+public class DirectiveHandler {
+    private DefaultConverter _converter;
+    private TagHelper _helper;
+    private Properties _props;
+    private String _even;
+    private String _odd;
+
+    public DirectiveHandler(DefaultConverter converter, Properties props) {
+        _converter  = converter;
+        _helper     = new TagHelper();
+        _props      = props;
+        _even       = _props.getProperty("kwartz.even");
+        _odd        = _props.getProperty("kwartz.odd");
+    }
+
+    public void handleMarkDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        assert stag.directive_name.equals("mark");
+        String marking = stag.directive_arg;
+        if (stag.attrs != null) {
+            for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
+                Object[] attr = (Object[])it.next();
+                String avalue = (String)attr[2];
+                Expression[] exprs = _helper.expandEmbeddedExpression(avalue, stag.linenum);
+                //Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
+                Expression expr;
+                if (exprs.length == 0) {
+                    expr = new StringExpression("");
+                } else {
+                    expr = exprs[0];
+                    for (int i = 1; i < exprs.length; i++) {
+                        expr = new ConcatenationExpression(expr, exprs[i]);
+                    }
+                }
+                attr[2] = expr;    // avalue
+            }
+        }
+        _converter.addElement(new Element(marking, stag, etag, bodyStmtList));
+        stmtList.add(new ExpandStatement(ExpandStatement.ELEMENT, marking));
+    }
+
+
+    public void handleValueDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        if (stag.directive_name.equals("Value")) {
+            expr = new FunctionExpression("E", new Expression[] { expr });
+        } else if (stag.directive_name.equals("VALUE")) {
+            expr = new FunctionExpression("X", new Expression[] { expr });
+        }
+        PrintStatement stmt = new PrintStatement(new Expression[] { expr });
+        stmtList.add(bodyStmtList.get(0));                        // first statement
+        stmtList.add(stmt);
+        stmtList.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
+    }
+
+
+    public void handleForeachDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String varname = m.group(1);
+        String liststr = m.group(2);
+        VariableExpression varexpr = new VariableExpression(varname);
+        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
+        String counter = !stag.directive_name.equals("foreach") ? varname + "_ctr" : null;
+        String toggle  =  stag.directive_name.equals("FOREACH") ? varname + "_tgl" : null;
+        //
+        if (counter != null) {
+            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
+            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
+        }
+        if (toggle != null) {
+            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
+            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
+        }
+        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
+    }
+
+
+    public void handleListDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String varname = m.group(1);
+        String liststr = m.group(2);
+        VariableExpression varexpr = new VariableExpression(varname);
+        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
+        String counter = !stag.directive_name.equals("list") ? varname + "_ctr" : null;
+        String toggle  =  stag.directive_name.equals("LIST") ? varname + "_tgl" : null;
+        //
+        Object firstStmt = bodyStmtList.remove(0);
+        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+        stmtList.add(firstStmt);
+        if (counter != null) {
+            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
+            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
+        }
+        if (toggle != null) {
+            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
+            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
+        }
+        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
+        stmtList.add(lastStmt);
+    }
+
+
+    public void handleWhileDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
+    }
+
+
+    public void handleLoopDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        if (etag == null) {
+            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        Object firstStmt = bodyStmtList.remove(0);
+        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+        stmtList.add(firstStmt);
+        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
+        stmtList.add(lastStmt);
+    }
+
+
+    public void handleIfDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
+    }
+
+
+    public void handleElseifDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
+        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
+            stmt = ((IfStatement)stmt).getElseStatement();
+        }
+        if (stmt.getToken() != TokenType.IF) {
+            String msg = "elseif-directive must be at just after the if-statement or elseif-statement.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        ((IfStatement)stmt).setElseStatement(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
+    }
+
+
+    public void handleElseDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
+        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
+            stmt = ((IfStatement)stmt).getElseStatement();
+        }
+        if (stmt.getToken() != TokenType.IF) {
+            String msg = "else-directive must be at just after the if-statement or elseif-statement.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        ((IfStatement)stmt).setElseStatement(new BlockStatement(bodyStmtList));
+    }
+
+
+    public void handleSetDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
+        stmtList.add(new ExpressionStatement(expr));
+        stmtList.addAll(bodyStmtList);
+    }
+
+
+    public void handleDummyDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        // nothing
+    }
+
+
+    public void handleReplaceDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        _handleReplaceDirective(false, stmtList, stag, etag, bodyStmtList);
+    }
+
+
+    public void handlePlaceholderDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        _handleReplaceDirective(true,  stmtList, stag, etag, bodyStmtList);
+    }
+
+
+    private void _handleReplaceDirective(boolean inner, List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        Pattern pat = Pattern.compile("\\A(\\w+)(?::(content|element))?\\z");
+        Matcher m = pat.matcher(stag.directive_arg);
+        if (! m.find()) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+        String name = m.group(1);
+        int type = m.group(2) != null && m.group(2).equals("content") ? ExpandStatement.CONTENT : ExpandStatement.ELEMENT;
+        if (inner) {
+            if (etag == null) {
+                String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
+                throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+            }
+            Object firstStmt = bodyStmtList.remove(0);
+            Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
+            stmtList.add(firstStmt);
+            stmtList.add(new ExpandStatement(type, name));
+            stmtList.add(lastStmt);
+        } else {
+            stmtList.add(new ExpandStatement(type, name));
+        }
+    }
+
+
+    public void handleIncludeDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
+        String basename = stag.directive_arg;
+        char firstChar = basename.charAt(0);
+        char lastChar  = basename.charAt(basename.length() - 1);
+        if (firstChar == '"' && lastChar == '"' || firstChar == '\'' && lastChar == '\'') {
+            basename = basename.substring(1, basename.length() - 1);
+        }
+
+        // TBI: pathlist
+        //    pathlist = @properties[:incdirs] || Kwartz::Config::INCDIRS || ['.']
+        //    filename = nil
+        //    pathlist.each do |path|
+        //       filename = path + '/' + basename
+        //       break if test(?f, filename)
+        //       filename = nil
+        //    end
+        String filename = null;
+        filename = basename;
+        if (filename == null) {
+            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': include file not found.";
+            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
+        }
+
+        StringBuffer sb = new StringBuffer();
+        char[] buf = new char[512];
+        FileReader reader = null;
+        try {
+            reader = new FileReader(filename);
+            while (reader.read(buf) >= 0) {
+                sb.append(buf);
+            }
+        } catch (FileNotFoundException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (UnsupportedEncodingException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (IOException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } finally {
+            if (reader != null)
+              try {
+                  reader.close();
+              } catch (IOException ignore) { }
+        }
+
+        Converter converter = null;
+        try {
+            converter = (Converter)_converter.getClass().newInstance();
+        } catch (IllegalAccessException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        } catch (InstantiationException ex) {
+            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
+        }
+        converter.setFilename(filename);
+        // TBI
+        //converter.setPropertyies(_converter.getProperties());
+        Statement[] stmts = converter.convert(sb.toString());
+
+        if (stag.directive_name.equals("INCLUDE"))
+            stmtList.addAll(bodyStmtList);
+        for (int i = 0; i < stmts.length; i++)
+            stmtList.add(stmts[i]);
+        if (stag.directive_name.equals("Include"))
+            stmtList.addAll(bodyStmtList);
+        List elements = converter.getElementList();
+        for (Iterator it = elements.iterator(); it.hasNext(); ) {
+            Element element = (Element)it.next();
+            _converter.addElement(element);
+        }
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.Properties;
+
+public class ConvertionException extends BaseException {
+    private String _filename;
+    private int _linenum;
+
+    public ConvertionException(String message, String filename, int linenum) {
+        super(message);
+        _filename = filename;
+        _linenum  = linenum;
+    }
+
+    public String toString() {
+        return super.toString() + "(filename " + _filename + ", line " + _linenum + ")";
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+import java.util.List;
+
+public interface Converter {
+    public Statement[] convert(String pdata);
+
+    public String getFilename();
+    public void setFilename(String filename);
+
+    public List getElementList();
+    public void addElement(Element element);
+
+    public Expression[] expandEmbeddedExpression(String pdata, int linenum);
+
+    //public void setProperty(String key, String value);
+    //public String getProperty(String key);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.List;
@@ -4189,6 +4846,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
 public class DefaultConverter implements Converter {
 
@@ -4199,13 +4857,42 @@ public class DefaultConverter implements Converter {
     private String _remained_text;
     private List _elementList = new ArrayList();
     private Map _handlerTable = new HashMap();
-    private DirectiveHandler _handler = new DirectiveHandler(this);
+    private DirectiveHandler _handler;
     private TagHelper _helper;
+    private Properties _props;
+    private Map _noendTags = null;
+
 
     public DefaultConverter() {
-        _helper = new TagHelper();
-        _registerHandlers(_handlerTable);
+        this(new Properties(Configuration.defaults));
     }
+
+    public DefaultConverter(Properties props) {
+        _props = props;
+        _helper = new TagHelper(_props);
+        _handler = new DirectiveHandler(this, _props);
+        _registerHandlers(_handlerTable);
+        //
+        _noendTags = new HashMap();
+        String noend = _props.getProperty("kwartz.noend");
+        if (noend != null) {
+            String[] tagnames = noend.split(",");
+            for (int i = 0; i < tagnames.length; i++) {
+                String tagname = tagnames[i].trim();
+                if (tagname.length() > 0)
+                  _noendTags.put(tagname, Boolean.TRUE);
+            }
+        }
+    }
+
+    //public String getProperty(String key) { _props.getProperty(key); }
+    //public void setProperty(String key, String value) { _props.setProperty(key, value); }
+
+
+    private boolean _isNoend(String tagname) {
+        return _noendTags.containsKey(tagname);
+    }
+
 
     public List getElementList() { return _elementList; }
     public void addElement(Element element) {
@@ -4315,20 +5002,6 @@ public class DefaultConverter implements Converter {
         Statement[] stmts = new Statement[stmtList.size()];
         stmtList.toArray(stmts);
         return stmts;
-    }
-
-
-    private Map _noendTags = null;
-    private boolean _isNoend(String tagname) {
-        if (_noendTags == null) {
-            _noendTags = new HashMap();
-            _noendTags.put("input", Boolean.TRUE);
-            _noendTags.put("br",    Boolean.TRUE);
-            _noendTags.put("img",   Boolean.TRUE);
-            _noendTags.put("meta",  Boolean.TRUE);
-            _noendTags.put("hr",    Boolean.TRUE);
-        }
-        return _noendTags.containsKey(tagname);
     }
 
 
@@ -4667,477 +5340,6 @@ package __PACKAGE__;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-public class TagHelper {
-    private ExpressionParser _exprParser;
-    private StatementParser  _stmtParser;
-
-
-    public TagHelper() {
-        _stmtParser = new StatementParser();
-        _exprParser = _stmtParser.getExpressionParser();
-    }
-
-
-    public String getFilename() {
-        return _stmtParser.getFilename();
-        //return _exprParser.getFilename();
-    }
-
-
-    public void setFilename(String filename) {
-        _stmtParser.setFilename(filename);
-        //_exprParser.setFilename(filename);
-    }
-
-
-    public Expression parseExpression(String str, int linenum) {
-        _exprParser.reset(str, linenum);
-        Expression expr = _exprParser.parseExpression();
-        if (_exprParser.token() != TokenType.EOF) {
-            String msg = "'" + str + "': invalid expression.";
-            throw new ConvertionException(msg, _exprParser.getFilename(), linenum);
-        }
-        return expr;
-    }
-
-
-    public Statement parseExpressionStatement(String str, int linenum) {
-        _stmtParser.reset(str, linenum);
-        Statement stmt = _stmtParser.parseExpressionStatement();
-        //assert _stmtParser.token() == TokenType.EOF;
-        if (_stmtParser.token() != TokenType.EOF) {
-            String msg = "'" + str + "': invalid expression statement.";
-            throw new ConvertionException(msg, _stmtParser.getFilename(), linenum);
-        }
-        return stmt;
-    }
-
-
-    public PrintStatement createTagPrintStatement(Tag tag, boolean tagDelete) {
-        PrintStatement stmt;
-        if (tagDelete) {
-            String s = tag.is_begline && tag.is_endline ? "" : tag.before_space + tag.after_space;
-            Expression[] args = { new StringExpression(s) };
-            stmt = new PrintStatement(args);
-        } else {
-            stmt = buildPrintStatement(tag);
-        }
-        return stmt;
-    }
-
-
-
-    public PrintStatement createPrintStatement(String str, int linenum) {
-        Expression[] args = expandEmbeddedExpression(str, linenum);
-        return new PrintStatement(args);
-    }
-
-
-    public static final String EMBED_PATTERN = "@\\{(.*?)\\}@";
-
-    public Expression[] expandEmbeddedExpression(String str, int linenum) {
-        final Pattern embedPattern = Pattern.compile(EMBED_PATTERN);
-        List list = null;
-        int index = 0;
-        Matcher m = embedPattern.matcher(str);
-        while (m.find()) {
-            if (list == null) list = new ArrayList();
-            String front = str.substring(index, m.start());
-            if (front != null && front.length() > 0) {
-                list.add(new StringExpression(front));
-                for (int i = 0; i < front.length(); i++) {
-                    if (str.charAt(i) == '\n') linenum++;
-                }
-            }
-            if (m.group(1).length() > 1) {
-                list.add(parseExpression(m.group(1), linenum));
-            }
-            index = m.end();
-        }
-        Expression[] exprs;
-        if (list != null) {
-            String s = str.substring(index);
-            if (s != null && s.length() > 0) list.add(new StringExpression(s));
-            exprs = new Expression[list.size()];
-            list.toArray(exprs);
-        } else {
-            exprs = new Expression[1];
-            exprs[0] = new StringExpression(str);
-        }
-        return exprs;
-    }
-
-
-    public PrintStatement buildPrintStatement(Tag tag) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(tag.before_space);
-        sb.append(tag.is_etag ? "</" : "<");
-        sb.append(tag.tagname);
-        List list = new ArrayList();
-        if (tag.attrs != null) {
-            for (Iterator it = tag.attrs.iterator(); it.hasNext(); ) {
-                Object[] a = (Object[])it.next();
-                String aspace = (String)a[0];
-                String aname  = (String)a[1];
-                Object avalue = a[2];
-                sb.append(aspace);
-                sb.append(aname);
-                sb.append("=\"");
-                if (avalue instanceof Expression) {
-                    list.add(new StringExpression(sb.toString()));
-                    sb.delete(0, sb.length());  // clear
-                    list.add(avalue);
-                } else {
-                    assert avalue instanceof String;
-                    String str = (String)avalue;
-                    if (str.indexOf('@') < 0) {         // ATTR_PATTERN
-                        sb.append(str);
-                    } else {
-                        Expression[] exprs = expandEmbeddedExpression(str, tag.linenum);
-                        for (int i = 0; i < exprs.length; i++) {
-                            if (exprs[i].getToken() == TokenType.STRING) {
-                                sb.append(((StringExpression)exprs[i]).getValue());
-                            } else {
-                                list.add(new StringExpression(sb.toString()));
-                                sb.delete(0, sb.length());  // clear
-                                list.add(exprs[i]);
-                            }
-                        }
-                    }
-                }
-                sb.append("\"");
-            }
-        }
-        //
-        if (tag.append_exprs != null) {
-            list.add(new StringExpression(sb.toString()));
-            list.addAll(tag.append_exprs);
-            sb.delete(0, sb.length());  // clear
-        }
-        sb.append(tag.extra_space);
-        sb.append(tag.is_empty ? "/>" : ">");
-        sb.append(tag.after_space);
-        list.add(new StringExpression(sb.toString()));
-        //
-        Expression[] args = new Expression[list.size()];
-        list.toArray(args);
-        return new PrintStatement(args);
-    }
-
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-
-import java.util.List;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
-
-public class DirectiveHandler {
-    private DefaultConverter _converter;
-    private String _even = "'even'";
-    private String _odd  = "'odd'";
-    private TagHelper _helper;
-
-
-    public DirectiveHandler(DefaultConverter converter) {
-        _converter = converter;
-        _helper    = new TagHelper();
-    }
-
-
-    public void handleMarkDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        assert stag.directive_name.equals("mark");
-        String marking = stag.directive_arg;
-        if (stag.attrs != null) {
-            for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
-                Object[] attr = (Object[])it.next();
-                String avalue = (String)attr[2];
-                Expression[] exprs = _helper.expandEmbeddedExpression(avalue, stag.linenum);
-                //Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
-                Expression expr;
-                if (exprs.length == 0) {
-                    expr = new StringExpression("");
-                } else {
-                    expr = exprs[0];
-                    for (int i = 1; i < exprs.length; i++) {
-                        expr = new ConcatenationExpression(expr, exprs[i]);
-                    }
-                }
-                attr[2] = expr;    // avalue
-            }
-        }
-        _converter.addElement(new Element(marking, stag, etag, bodyStmtList));
-        stmtList.add(new ExpandStatement(TokenType.ELEMENT, marking));
-    }
-
-
-    public void handleValueDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        if (etag == null) {
-            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        if (stag.directive_name.equals("Value")) {
-            expr = new FunctionExpression("E", new Expression[] { expr });
-        } else if (stag.directive_name.equals("VALUE")) {
-            expr = new FunctionExpression("X", new Expression[] { expr });
-        }
-        PrintStatement stmt = new PrintStatement(new Expression[] { expr });
-        stmtList.add(bodyStmtList.get(0));                        // first statement
-        stmtList.add(stmt);
-        stmtList.add(bodyStmtList.get(bodyStmtList.size() - 1));  // last statement
-    }
-
-
-    public void handleForeachDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
-        Matcher m = pat.matcher(stag.directive_arg);
-        if (! m.find()) {
-            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        String varname = m.group(1);
-        String liststr = m.group(2);
-        VariableExpression varexpr = new VariableExpression(varname);
-        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
-        String counter = !stag.directive_name.equals("foreach") ? varname + "_ctr" : null;
-        String toggle  =  stag.directive_name.equals("FOREACH") ? varname + "_tgl" : null;
-        //
-        if (counter != null) {
-            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
-            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
-        }
-        if (toggle != null) {
-            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
-            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
-        }
-        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
-    }
-
-
-    public void handleListDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        if (etag == null) {
-            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        Pattern pat = Pattern.compile("\\A(\\w+)\\s*[:=]\\s*(.*)");
-        Matcher m = pat.matcher(stag.directive_arg);
-        if (! m.find()) {
-            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive argument.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        String varname = m.group(1);
-        String liststr = m.group(2);
-        VariableExpression varexpr = new VariableExpression(varname);
-        Expression listexpr = _helper.parseExpression(liststr, stag.linenum);
-        String counter = !stag.directive_name.equals("list") ? varname + "_ctr" : null;
-        String toggle  =  stag.directive_name.equals("LIST") ? varname + "_tgl" : null;
-        //
-        Object firstStmt = bodyStmtList.remove(0);
-        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
-        stmtList.add(firstStmt);
-        if (counter != null) {
-            stmtList.add(_helper.parseExpressionStatement(counter + " = 0;", -1));
-            bodyStmtList.add(0, _helper.parseExpressionStatement(counter + " += 1;", -1));
-        }
-        if (toggle != null) {
-            String s = toggle + " = " + counter + " % 2 == 0 ? " + _even + " : " + _odd + ";";
-            bodyStmtList.add(1, _helper.parseExpressionStatement(s, -1));
-        }
-        stmtList.add(new ForeachStatement(varexpr, listexpr, new BlockStatement(bodyStmtList)));
-        stmtList.add(lastStmt);
-    }
-
-
-    public void handleWhileDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
-    }
-
-
-    public void handleLoopDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        if (etag == null) {
-            String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        Object firstStmt = bodyStmtList.remove(0);
-        Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
-        stmtList.add(firstStmt);
-        stmtList.add(new WhileStatement(condition, new BlockStatement(bodyStmtList)));
-        stmtList.add(lastStmt);
-    }
-
-
-    public void handleIfDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        stmtList.add(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
-    }
-
-
-    public void handleElseifDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression condition = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
-        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
-            stmt = ((IfStatement)stmt).getElseStatement();
-        }
-        if (stmt.getToken() != TokenType.IF) {
-            String msg = "elseif-directive must be at just after the if-statement or elseif-statement.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        ((IfStatement)stmt).setElseStatement(new IfStatement(condition, new BlockStatement(bodyStmtList), null));
-    }
-
-
-    public void handleElseDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Statement stmt = (Statement)stmtList.get(stmtList.size() - 1);
-        while (stmt.getToken() == TokenType.IF && ((IfStatement)stmt).getElseStatement() != null) {
-            stmt = ((IfStatement)stmt).getElseStatement();
-        }
-        if (stmt.getToken() != TokenType.IF) {
-            String msg = "else-directive must be at just after the if-statement or elseif-statement.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        ((IfStatement)stmt).setElseStatement(new BlockStatement(bodyStmtList));
-    }
-
-
-    public void handleSetDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Expression expr = _helper.parseExpression(stag.directive_arg, stag.linenum);
-        stmtList.add(new ExpressionStatement(expr));
-        stmtList.addAll(bodyStmtList);
-    }
-
-
-    public void handleDummyDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        // nothing
-    }
-
-
-    public void handleReplaceDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        _handleReplaceDirective(false, stmtList, stag, etag, bodyStmtList);
-    }
-
-
-    public void handlePlaceholderDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        _handleReplaceDirective(true,  stmtList, stag, etag, bodyStmtList);
-    }
-
-
-    private void _handleReplaceDirective(boolean inner, List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        Pattern pat = Pattern.compile("\\A(\\w+)(?::(content|element))?\\z");
-        Matcher m = pat.matcher(stag.directive_arg);
-        if (! m.find()) {
-            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': invalid directive.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-        String name = m.group(1);
-        int type = m.group(2) != null && m.group(2).equals("content") ? TokenType.CONTENT : TokenType.ELEMENT;
-        if (inner) {
-            if (etag == null) {
-                String msg = "directive '" + stag.directive_name + "' cannot use with empty tag.";
-                throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-            }
-            Object firstStmt = bodyStmtList.remove(0);
-            Object lastStmt  = bodyStmtList.remove(bodyStmtList.size() - 1);
-            stmtList.add(firstStmt);
-            stmtList.add(new ExpandStatement(type, name));
-            stmtList.add(lastStmt);
-        } else {
-            stmtList.add(new ExpandStatement(type, name));
-        }
-    }
-
-
-    public void handleIncludeDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {
-        String basename = stag.directive_arg;
-        char firstChar = basename.charAt(0);
-        char lastChar  = basename.charAt(basename.length() - 1);
-        if (firstChar == '"' && lastChar == '"' || firstChar == '\'' && lastChar == '\'') {
-            basename = basename.substring(1, basename.length() - 1);
-        }
-
-        // TBI: pathlist
-        //    pathlist = @properties[:incdirs] || Kwartz::Config::INCDIRS || ['.']
-        //    filename = nil
-        //    pathlist.each do |path|
-        //       filename = path + '/' + basename
-        //       break if test(?f, filename)
-        //       filename = nil
-        //    end
-        String filename = null;
-        filename = basename;
-        if (filename == null) {
-            String msg = "'" + stag.directive_name + ":" + stag.directive_arg + "': include file not found.";
-            throw new ConvertionException(msg, _converter.getFilename(), stag.linenum);
-        }
-
-        StringBuffer sb = new StringBuffer();
-        char[] buf = new char[512];
-        FileReader reader = null;
-        try {
-            reader = new FileReader(filename);
-            while (reader.read(buf) >= 0) {
-                sb.append(buf);
-            }
-        } catch (FileNotFoundException ex) {
-            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
-        } catch (UnsupportedEncodingException ex) {
-            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
-        } catch (IOException ex) {
-            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
-        } finally {
-            if (reader != null)
-              try {
-                  reader.close();
-              } catch (IOException ignore) { }
-        }
-
-        Converter converter = null;
-        try {
-            converter = (Converter)_converter.getClass().newInstance();
-        } catch (IllegalAccessException ex) {
-            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
-        } catch (InstantiationException ex) {
-            throw new ConvertionException(ex.toString(), _converter.getFilename(), stag.linenum);
-        }
-        converter.setFilename(filename);
-        // TBI
-        //converter.setPropertyies(_converter.getProperties());
-        Statement[] stmts = converter.convert(sb.toString());
-
-        if (stag.directive_name.equals("INCLUDE"))
-            stmtList.addAll(bodyStmtList);
-        for (int i = 0; i < stmts.length; i++)
-            stmtList.add(stmts[i]);
-        if (stag.directive_name.equals("Include"))
-            stmtList.addAll(bodyStmtList);
-        List elements = converter.getElementList();
-        for (Iterator it = elements.iterator(); it.hasNext(); ) {
-            Element element = (Element)it.next();
-            _converter.addElement(element);
-        }
-    }
-
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -5161,9 +5363,9 @@ public class PresentationDeclaration {
         attrs  = new HashMap();
         append = new ArrayList();
         //Statement[] stmts = {
-        //    new ExpandStatement(TokenType.STAG),
-        //    new ExpandStatement(TokenType.CONT),
-        //    new ExpandStatement(TokenType.ETAG),
+        //    new ExpandStatement(ExpandStatement.STAG),
+        //    new ExpandStatement(ExpandStatement.CONT),
+        //    new ExpandStatement(ExpandStatement.ETAG),
         //};
         //plogic = new BlockStatement(stmts);
     }
@@ -5229,28 +5431,41 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class DeclarationParser extends Parser {
 
-    private ExpressionParser _exprParser;
     private StatementParser  _stmtParser;
+    private ExpressionParser _exprParser;
 
     public DeclarationParser() {
-        this(new Scanner(), true);
+        this(new Scanner());
+    }
+
+    public DeclarationParser(Properties props) {
+        this(new Scanner(props));
     }
 
     public DeclarationParser(Scanner scanner) {
-        this(scanner, true);
+        this(scanner, scanner.getProperties());
     }
-    public DeclarationParser(Scanner scanner, boolean flagInit) {
-        super(scanner);
-        _stmtParser = new StatementParser(scanner, false);
+    public DeclarationParser(Scanner scanner, Properties props) {
+        this(scanner, props, true);
+    }
+    public DeclarationParser(Scanner scanner, Properties props, boolean flagInit) {
+        super(scanner, props);
+        _stmtParser = new StatementParser(scanner, props, false);
         _exprParser = _stmtParser.getExpressionParser();
         if (flagInit) _scanner.scan();
     }
 
     public StatementParser getStatementParser()   { return _stmtParser; }
     public ExpressionParser getExpressionParser() { return _exprParser; }
+
+    public Properties getProperties() { return _props; }
+    public String getProperty(String key) { return _props.getProperty(key); }
+    //public String setProperty(String key, String value) { _props.setProperty(key, value); }
+
 
     public String getFilename() { return _stmtParser.getFilename(); }
     public void setFilename(String filename) { _stmtParser.setFilename(filename); }
@@ -5259,15 +5474,15 @@ public class DeclarationParser extends Parser {
         _scanner.reset(input, 1);
         scan();
         List decls = parsePresentationDeclarations();
-        if (token() != TokenType.EOF) {
-            syntaxError("'" + TokenType.inspect(token(), value()) + "': unexpected token.");
+        if (getToken() != TokenType.EOF) {
+            syntaxError("'" + TokenType.inspect(getToken(), getValue()) + "': unexpected token.");
         }
         return decls;
     }
 
     public List parsePresentationDeclarations() {
         List decls = new ArrayList();
-        while (token() == TokenType.SHARP) {
+        while (getToken() == TokenType.SHARP) {
             PresentationDeclaration decl = parsePresentationDeclaration();
             decls.add(decl);
         }
@@ -5275,33 +5490,33 @@ public class DeclarationParser extends Parser {
     }
 
     public PresentationDeclaration parsePresentationDeclaration() {
-        assert token() == TokenType.SHARP;
+        assert getToken() == TokenType.SHARP;
         String name;
         List nameList = new ArrayList();
         int i = 0;
         while (true) {
             i += 1;
-            if (token() != TokenType.SHARP)
+            if (getToken() != TokenType.SHARP)
                 syntaxError("'#' required.");
             scan();
-            if (token() != TokenType.NAME)
+            if (getToken() != TokenType.NAME)
                 syntaxError("'#': marking name required.");
-            name = value();
+            name = getValue();
             nameList.add(name);
             scan();
-            if (token() != TokenType.COMMA) break;
+            if (getToken() != TokenType.COMMA) break;
             scan();
         }
-        if (token() != TokenType.L_CURLY)
+        if (getToken() != TokenType.L_CURLY)
             syntaxError("presentation declaration '#" + name + "' requires '{'.");
         scan();
         PresentationDeclaration decl = parseDeclarationParts();
         String[] names = new String[nameList.size()];
         nameList.toArray(names);
         decl.names = names;
-        if (token() != TokenType.R_CURLY)
+        if (getToken() != TokenType.R_CURLY)
             syntaxError("presentation declaration '#" + name + "' is not closed by '}'."
-                        + "(token=" + TokenType.inspect(token(),value()) + ")");
+                        + "(token=" + TokenType.inspect(getToken(),getValue()) + ")");
         scan();
         return decl;
     }
@@ -5325,12 +5540,12 @@ public class DeclarationParser extends Parser {
 
     public PresentationDeclaration parseDeclarationParts() {
         PresentationDeclaration decl = new PresentationDeclaration();
-        while (token() == TokenType.NAME) {
-            Object part = _parts.get(value());
+        while (getToken() == TokenType.NAME) {
+            Object part = _parts.get(getValue());
             if (part == null)
-                syntaxError("part name required but got '" + value() + "'.");
+                syntaxError("part name required but got '" + getValue() + "'.");
             scan();
-            if (token() != TokenType.COLON)
+            if (getToken() != TokenType.COLON)
                 syntaxError("'" + part + "' part requires ':'.");
             scan();
             if (false) /* nothing */ ;
@@ -5348,7 +5563,7 @@ public class DeclarationParser extends Parser {
 
     private void parseTagnamePart(PresentationDeclaration decl) {
         Expression expr = _exprParser.parseExpression();
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
           syntaxError("tagname part requires ';'.");
         scan();
         decl.tagname = expr;
@@ -5361,10 +5576,10 @@ public class DeclarationParser extends Parser {
               syntaxError("remove part requires attribute name.");
             String aname = ((StringExpression)expr).getValue();
             decl.remove.add(aname);
-            if (token() != TokenType.COMMA) break;
+            if (getToken() != TokenType.COMMA) break;
             scan();
         }
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
           syntaxError("remove part requires ';'.");
         scan();
     }
@@ -5377,10 +5592,10 @@ public class DeclarationParser extends Parser {
             String aname = ((StringExpression)expr).getValue();
             expr = _exprParser.parseExpression();
             decl.attrs.put(aname, expr);
-            if (token() != TokenType.COMMA) break;
+            if (getToken() != TokenType.COMMA) break;
             scan();
         }
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
           syntaxError("attrs part requires ';'.");
         scan();
     }
@@ -5389,10 +5604,10 @@ public class DeclarationParser extends Parser {
         while (true) {
             Expression expr = _exprParser.parseExpression();
             decl.append.add(expr);
-            if (token() != TokenType.COMMA) break;
+            if (getToken() != TokenType.COMMA) break;
             scan();
         }
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
           syntaxError("append part requires ';'.");
         scan();
     }
@@ -5400,13 +5615,13 @@ public class DeclarationParser extends Parser {
     private void parseValuePart(PresentationDeclaration decl) {
         Expression expr = _exprParser.parseExpression();
         decl.value = expr;
-        if (token() != TokenType.SEMICOLON)
+        if (getToken() != TokenType.SEMICOLON)
           syntaxError("value part requires ';'.");
         scan();
     }
 
     private void parsePlogicPart(PresentationDeclaration decl) {
-        if (token() != TokenType.L_CURLY)
+        if (getToken() != TokenType.L_CURLY)
           syntaxError("plogic part requires '{'.");
         BlockStatement stmt = (BlockStatement)_stmtParser.parseBlockStatement();
         decl.plogic = stmt;
@@ -5494,15 +5709,31 @@ import java.io.IOException;
 
 abstract public class Compiler {
 
-    abstract public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename);
+    abstract public Template compileString(String pdata, String plogic, String elemdecl,
+                                           String pdataFilename, String plogicFilename, String elemdeclFilename);
+    public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename) {
+        return compileString(pdata, plogic, null, pdataFilename, plogicFilename, null);
+    }
+    public Template compileString(String pdata, String plogic, String elemdecl) {
+        return compileString(pdata, plogic, elemdecl, null, null, null);
+    }
     public Template compileString(String pdata, String plogic) {
-        return compileString(pdata, plogic, null, null);
+        return compileString(pdata, plogic, null, null, null, null);
     }
 
-    abstract public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException;
+    public Template compileFile(String pdataFilename, String plogicFilename, String elemdeclFilename, String charset) throws IOException {
+        // read files
+        String pdata    = Utility.readFile(pdataFilename, charset);
+        String plogic   = Utility.readFile(plogicFilename, charset);
+        String elemdecl = Utility.readFile(elemdeclFilename, charset);
+        return compileString(pdata, plogic, elemdecl, pdataFilename, plogicFilename, elemdeclFilename);
+    }
+    public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException {
+        return compileFile(pdataFilename, plogicFilename, null, charset);
+    }
     public Template compileFile(String pdataFilename, String plogicFilename) throws IOException {
         String charset = System.getProperty("file.encoding");
-        return compileFile(pdataFilename, plogicFilename, charset);
+        return compileFile(pdataFilename, plogicFilename, null, charset);
     }
 
     abstract public void addPresentationLogic(String plogic, String filename);
@@ -5539,68 +5770,77 @@ abstract public class Compiler {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 import java.io.IOException;
 
 public class DefaultCompiler extends Compiler {
     private ExpressionParser  _exprParser;
     private StatementParser   _stmtParser;
     private DeclarationParser _declParser;
-    private Converter         _converter = new DefaultConverter();
+    private Converter         _converter;
     private List              _stmtList  = new ArrayList();
     private List              _declList  = new ArrayList();
     private Map               _elemTable = new HashMap();
     private BlockStatement    _pdataBlock;
+    private Properties        _props;
 
     public DefaultCompiler() {
-        _declParser = new DeclarationParser();
+        this(new Properties(Configuration.defaults));
+    }
+
+    public DefaultCompiler(Properties props) {
+        _props = props;
+        _converter  = new DefaultConverter(_props);
+        _declParser = new DeclarationParser(_props);
         _stmtParser = _declParser.getStatementParser();
         _exprParser = _stmtParser.getExpressionParser();
     }
 
 
-    public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename) {
+    public Template compileString(String pdata, String plogic, String elemdecl, String pdataFilename, String plogicFilename, String elemdeclFilename) {
+        // convert elemdecl
+        List elemList = null;
+        Map elementTable = null;
+        if (elemdecl != null) {
+            _converter.setFilename(elemdeclFilename);
+            _converter.convert(elemdecl);
+            elemList = _converter.getElementList();
+            elementTable = Element.createElementTable(elemList);
+        }
 
         // convert pdata
-        _converter.setFilename(pdataFilename);
-        Statement[] stmts = _converter.convert(pdata);
-
-        // create element table
-        List elemList = _converter.getElementList();
-        Map elementTable = Element.createElementTable(elemList);
+        Statement[] stmts = null;
+        if (pdata != null) {
+            _converter.setFilename(pdataFilename);
+            stmts = _converter.convert(pdata);
+            elemList = _converter.getElementList();
+            if (elementTable == null)
+                elementTable = Element.createElementTable(elemList);
+            else
+                Element.addElementList(elementTable, elemList);
+        }
 
         // parse plogic
-        _declParser.setFilename(plogicFilename);
-        List declList = _declParser.parse(plogic);
-
-        // merge declarations
-        Element.mergeDeclarationList(elementTable, declList);
+        if (plogic != null) {
+            _declParser.setFilename(plogicFilename);
+            List declList = _declParser.parse(plogic);
+            Element.mergeDeclarationList(elementTable, declList);
+        }
 
         // create block statement
         BlockStatement blockStmt = new BlockStatement(stmts);
 
         // expand
-        Expander expander = new DefaultExpander(elementTable);
+        Expander expander = new DefaultExpander(elementTable, _props);
         expander.expand(blockStmt, null);
 
         // return template
         return new Template(blockStmt);
-    }
-
-
-    public Template compileFile(String pdataFilename, String plogicFilename) throws IOException {
-        String charset = System.getProperty("file.encoding");
-        return compileFile(pdataFilename, plogicFilename, charset);
-    }
-
-    public Template compileFile(String pdataFilename, String plogicFilename, String charset) throws IOException {
-        // read files
-        String pdata  = Utility.readFile(pdataFilename, charset);
-        String plogic = Utility.readFile(plogicFilename, charset);
-        return compileString(pdata, plogic, pdataFilename, plogicFilename);
     }
 
 
@@ -5628,8 +5868,6 @@ public class DefaultCompiler extends Compiler {
         Element.addElementList(_elemTable, elemList);
     }
 
-
-
     public Template getTemplate() {
         // merge element table and declaration list
         Element.mergeDeclarationList(_elemTable, _declList);
@@ -5648,35 +5886,107 @@ public class DefaultCompiler extends Compiler {
 
 package __PACKAGE__;
 
+import java.util.Properties;
+import java.io.InputStream;
+import java.io.IOException;
+
+public class Configuration {
+
+    public static Properties defaults = new Properties();
+    static {
+        Configuration.init();
+    }
+
+    private static void init() {
+        // default properties
+        InputStream stream = null;
+        try {
+            String filename = "kwartz.properties";
+            stream = Configuration.class.getResourceAsStream(filename);
+            defaults.load(stream);
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();    // logging
+        }
+        finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();  // logging
+                }
+            }
+        }
+
+        // functions
+        Function.register("E",          new HtmlEscapeFunction());
+        Function.register("str_escape", new HtmlEscapeFunction());
+        Function.register("X",          new AsIsFunction());
+        Function.register("list_length", new ListLengthFunction());
+    }
+
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 import java.io.IOException;
 
 public class Kwartz {
 
-    public static Map __cache = new HashMap();
+    private Map _cache = new HashMap();
+    private Properties _props;
 
-    public static Template getTemplate(Object key, String pdataFilename, String plogicFilename) throws IOException {
-        String charset = System.getProperty("file.encoding");
-        return getTemplate(key, pdataFilename, plogicFilename, charset);
+    public Kwartz() {
+        this(new Properties(Configuration.defaults));
     }
-    public static Template getTemplate(Object key, String pdataFilename, String plogicFilename, String charset) throws IOException {
-        Template template = (Template)__cache.get(key);
+    public Kwartz(Properties props) {
+        _props = props;
+    }
+
+    public Properties getProperties() { return _props; }
+    public String getProperty(String key) { return _props.getProperty(key); }
+    //public String setProperty(String key, String value) { _props.setProperty(key, value); }
+
+
+    public Template getTemplate(Object key, String pdataFilename, String plogicFilename, String elemdeclFilename) throws IOException {
+        String charset = System.getProperty("file.encoding");
+        return getTemplate(key, pdataFilename, plogicFilename, elemdeclFilename, charset);
+    }
+
+    public Template getTemplate(Object key, String pdataFilename, String plogicFilename, String elemdeclFilename, String charset) throws IOException {
+        Template template = (Template)_cache.get(key);
         if (template == null) {
-            synchronized(__cache) {
+            synchronized(_cache) {
                 if (template == null) {
-                    Compiler compiler = new DefaultCompiler();
-                    template = compiler.compileFile(pdataFilename, plogicFilename, charset);
-                    Optimizer optimizer = new Optimizer();
-                    optimizer.optimize(template.getBlockStatement());
-                    __cache.put(key, template);
+                    template = compileFile(pdataFilename, plogicFilename, elemdeclFilename, charset);
+                    putTemplate(key, template);
                 }
             }
         }
         return template;
     }
-}
 
+    public Template compileFile(String pdataFilename, String plogicFilename, String elemdeclFilename, String charset) throws IOException {
+        Compiler compiler = new DefaultCompiler(_props);
+        Template template = compiler.compileFile(pdataFilename, plogicFilename, elemdeclFilename, charset);
+        Optimizer optimizer = new Optimizer(_props);
+        optimizer.optimize(template.getBlockStatement());
+        return template;
+    }
+
+    public Template getTemplate(Object key) {
+        return (Template)_cache.get(key);
+    }
+
+    public void putTemplate(Object key, Template template) {
+        _cache.put(key, template);
+    }
+}
 
 // --------------------------------------------------------------------------------
 
@@ -5706,13 +6016,14 @@ public class CompilerTest extends TestCase {
     String _pdata;
     String _expected;
     Map    _context = new HashMap();
+    Properties _props = new Properties(Configuration.defaults);
 
     private void _test() throws Exception {
         _test(false);
     }
 
     private void _test(boolean flagPrint) throws Exception {
-        Compiler compiler = new DefaultCompiler();
+        Compiler compiler = new DefaultCompiler(_props);
         //compiler.addPresentationLogic(_plogic);
         //compiler.addPresentationData(_pdata);
         //BlockStatement stmt = compiler.getBlockStatement();
@@ -5855,6 +6166,31 @@ public class CompilerTest extends TestCase {
         }
         public String getName() { return name; }
         public String getEmail() { return email; }
+    }
+
+
+    public void testCompile05() throws Exception {  // escape
+        _pdata = <<'END';
+            <a href="#" id="mark:name">foo</a>
+            <b id="value:str">foo</b><b id="value:E(str)">foo</b><b id="value:X(str)">foo</b>
+            <i id="value:str">foo</i><i id="Value:str">foo</i><i id="VALUE:str">foo</i>
+            END
+        _plogic = <<'END';
+            #name {
+               value:  user;
+               attrs:  "href" email;
+            }
+            END
+        _props.setProperty("kwartz.escape", "true");
+        _expected = <<'END';
+            <a href="ab@mail.com?a=1&amp;b=2">&lt;em&gt;A&amp;B&lt;/em&gt;</a>
+            <b>&lt;em&gt;A&amp;B&lt;/em&gt;</b><b>&lt;em&gt;A&amp;B&lt;/em&gt;</b><b><em>A&B</em></b>
+            <i>&lt;em&gt;A&amp;B&lt;/em&gt;</i><i>&lt;em&gt;A&amp;B&lt;/em&gt;</i><i><em>A&B</em></i>
+            END
+        _context.put("user",   "<em>A&B</em>");
+        _context.put("email",  "ab@mail.com?a=1&b=2");
+        _context.put("str",    "<em>A&B</em>");
+        _test();
     }
 
 
@@ -6344,6 +6680,7 @@ public class ExpanderTest extends TestCase {
     String _pdata;
     String _plogic;
     String _expected;
+    Properties _props = new Properties(Configuration.defaults);
 
     private void _test() {
         _test(false);
@@ -6351,11 +6688,11 @@ public class ExpanderTest extends TestCase {
 
     private void _test(boolean flagPrint) {
         // parse plogic
-        DeclarationParser declParser = new DeclarationParser();
+        DeclarationParser declParser = new DeclarationParser(_props);
         List declList = declParser.parse(_plogic);
 
         // parse pdata
-        Converter converter = new DefaultConverter();
+        Converter converter = new DefaultConverter(_props);
         Statement[] stmts = converter.convert(_pdata);
 
         // create block statement
@@ -6369,12 +6706,13 @@ public class ExpanderTest extends TestCase {
         Element.mergeDeclarationList(elementTable, declList);
 
         // expand
-        Expander expander = new DefaultExpander(elementTable);
+        Expander expander = new DefaultExpander(elementTable, _props);
         expander.expand(blockStmt, null);
 
         // assert
         String actual = blockStmt._inspect().toString();
         if (flagPrint) {
+            System.out.println("*** debug: kwartz.escape = " + _props.getProperty("kwartz.escape"));
             System.out.println(actual);
         } else {
             assertEquals(_expected, actual);
@@ -6637,6 +6975,66 @@ public class ExpanderTest extends TestCase {
             END
         _test();
     }
+
+
+    public void testExpand11() {  // escape
+        _pdata = <<'END';
+            <td id="mark:name">foo</td><td>@{email}@</td>
+            END
+        _plogic = <<'END';
+            #name {  value:  name; }
+            END
+        _props.setProperty("kwartz.escape", "true");
+        _expected = <<'END';
+            :block
+              :block
+                :print
+                  "<td"
+                  ">"
+                :print
+                  E()
+                    name
+                :print
+                  "</td>"
+              :print
+                "<td>"
+              :print
+                E()
+                  email
+              :print
+                "</td>\n"
+            END
+        _test();
+    }
+
+
+    public void testExpand12() {  // escape with E() and X()
+        _pdata = <<'END';
+            <td id="Value:name">foo</td><td>@{X(email)}@</td>
+            END
+        _plogic = <<'END';
+            END
+        _props.setProperty("kwartz.escape", "true");
+        _expected = <<'END';
+            :block
+              :print
+                "<td>"
+              :print
+                E()
+                  name
+              :print
+                "</td>"
+              :print
+                "<td>"
+              :print
+                X()
+                  email
+              :print
+                "</td>\n"
+            END
+        _test();
+    }
+
 
 /*
     public void testExpandXX() {

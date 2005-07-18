@@ -1,6 +1,13 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-18 (rev.15)
+	.- [change] constant TokenType.{STAG,CONT,ETAG,ELEMENT,CONTENT} is moved to class ExpandStatement
+	.- [change] Parser#token(), value(),... is renamed to getToken(), getValue(),...
+	.- [change] class variable Kwartz.__cache is changed to instance object
+	.- [enhance] properties support
+	.- [enhance] DefaultExpander#expand() escapes expressions of print statement when _props.get("kwartz.escape").equals("true")
+
 .: 2005-07-18 (rev.14)
 	.- [change] class Visitor is divided into ExpressionVisitor, StatementVisitor, and NodeVisitor
 	.- [change] add XxxStatement#accept(Expander expander, Element elem)

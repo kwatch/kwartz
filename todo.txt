@@ -9,6 +9,8 @@
 .- [_] new class Executor
 .- [v] template caching - 2005-07-13
 .- [_] reflection data caching
-.- [_] StatementVisitor, ExpressionVisitor, NodeVisitor
+.- [v] StatementVisitor, ExpressionVisitor, NodeVisitor
 .- [_] template search path
 .- [_] divide RelationalExpression into EqualRelationalExpression and ComparableRelationalExpression
+.- [_] logging (log4j, jdk14log)
+.- [_] functions (str_length(), str_index(), list_new(), hash_new(), ...)
