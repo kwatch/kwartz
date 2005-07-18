@@ -1,6 +1,11 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-18 (rev.14)
+	.- [change] class Visitor is divided into ExpressionVisitor, StatementVisitor, and NodeVisitor
+	.- [change] add XxxStatement#accept(Expander expander, Element elem)
+	.- [change] class Expander is changed to Interface and add new class DefaultExpander
+
 .: 2005-07-14 (rev.13)
 	.- [change] 'float' is changed to 'double'
 	.- [enhance] add caching mechanism in Kwartz.getTemplate

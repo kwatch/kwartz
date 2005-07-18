@@ -87,6 +87,32 @@ public class BenchmarkTest {
         }
 
     }
+    
+    
+    public static class FreeMarkerBenchmark implements Benchmark {
+        private String _filename;
+        
+        private static freemarker.template.Configuration config = new freemarker.template.Configuration();
+        static {
+            config.setObjectWrapper(new freemarker.template.DefaultObjectWrapper());
+        }
+        
+        public void setTestname(String testname) {
+            _filename = testname + ".ftl";
+        }
+        
+        public void execute(Writer writer, boolean flagCache, String key, Object value) throws Exception {
+            // create context
+            Map context = new HashMap();
+            context.put(key, value);
+            
+            // get template
+            freemarker.template.Template template = config.getTemplate(_filename);
+            
+            // execute
+            template.process(context, writer);
+        }
+    }
 
 
 

@@ -488,7 +488,7 @@ abstract class Node {
     public void setToken(int token) { _token = token; }
 
     abstract public Object evaluate(Map context);
-    abstract public Object accept(Visitor visitor);
+    abstract public Object accept(NodeVisitor visitor);
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
         for (int i = 0; i < level; i++) sb.append("  ");
@@ -505,50 +505,191 @@ abstract class Node {
 
 package __PACKAGE__;
 
-public class Visitor {
-    public final Object visit(Node node) {
-        return node.accept(this);
+public interface ExpressionVisitor {
+//    public Object visit(Expression expr) ;
+    //
+    public Object visitExpression(Expression expr);
+    //
+    public Object visitUnaryExpression(UnaryExpression expr)                 ;
+    public Object visitBinaryExpression(BinaryExpression expr)               ;
+    public Object visitArithmeticExpression(ArithmeticExpression expr)       ;
+    public Object visitConcatenationExpression(ConcatenationExpression expr) ;
+    public Object visitRelationalExpression(RelationalExpression expr)       ;
+    public Object visitAssignmentExpression(AssignmentExpression expr)       ;
+    public Object visitIndexExpression(IndexExpression expr)                 ;
+    public Object visitPropertyExpression(PropertyExpression expr)           ;
+    public Object visitMethodExpression(MethodExpression expr)               ;
+    public Object visitLogicalAndExpression(LogicalAndExpression expr)       ;
+    public Object visitLogicalOrExpression(LogicalOrExpression expr)         ;
+    public Object visitConditionalExpression(ConditionalExpression expr)     ;
+    public Object visitEmptyExpression(EmptyExpression expr)                 ;
+    public Object visitFunctionExpression(FunctionExpression expr)           ;
+    //;
+    public Object visitLiteralExpression(LiteralExpression expr)             ;
+    public Object visitStringExpression(StringExpression expr)               ;
+    public Object visitIntegerExpression(IntegerExpression expr)             ;
+    public Object visitDoubleExpression(DoubleExpression expr)               ;
+    public Object visitVariableExpression(VariableExpression expr)           ;
+    public Object visitBooleanExpression(BooleanExpression expr)             ;
+    public Object visitNullExpression(NullExpression expr)                   ;
+    public Object visitRawcodeExpression(RawcodeExpression expr)             ;
+    //
+}
+
+//--------------------------------------------------------------------------------
+
+//package __PACKAGE__;
+//
+//public class BaseExpressionVisitor implements ExpressionVisitor {
+////    public final Object visit(Expression expr) {
+////        return expr.accept(this);
+////    }
+//    //
+//    public Object visitExpression(Expression expr) {
+//        return expr.accept(this);
+//    }
+//    //
+//    public Object visitUnaryExpression(UnaryExpression expr)                 { return visitExpression(expr); }
+//    public Object visitBinaryExpression(BinaryExpression expr)               { return visitExpression(expr); }
+//    public Object visitArithmeticExpression(ArithmeticExpression expr)       { return visitExpression(expr); }
+//    public Object visitConcatenationExpression(ConcatenationExpression expr) { return visitExpression(expr); }
+//    public Object visitRelationalExpression(RelationalExpression expr)       { return visitExpression(expr); }
+//    public Object visitAssignmentExpression(AssignmentExpression expr)       { return visitExpression(expr); }
+//    public Object visitIndexExpression(IndexExpression expr)                 { return visitExpression(expr); }
+//    public Object visitPropertyExpression(PropertyExpression expr)           { return visitExpression(expr); }
+//    public Object visitMethodExpression(MethodExpression expr)               { return visitExpression(expr); }
+//    public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return visitExpression(expr); }
+//    public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return visitExpression(expr); }
+//    public Object visitConditionalExpression(ConditionalExpression expr)     { return visitExpression(expr); }
+//    public Object visitEmptyExpression(EmptyExpression expr)                 { return visitExpression(expr); }
+//    public Object visitFunctionExpression(FunctionExpression expr)           { return visitExpression(expr); }
+//    //
+//    public Object visitLiteralExpression(LiteralExpression expr)             { return visitExpression(expr); }
+//    public Object visitStringExpression(StringExpression expr)               { return visitExpression(expr); }
+//    public Object visitIntegerExpression(IntegerExpression expr)             { return visitExpression(expr); }
+//    public Object visitDoubleExpression(DoubleExpression expr)               { return visitExpression(expr); }
+//    public Object visitVariableExpression(VariableExpression expr)           { return visitExpression(expr); }
+//    public Object visitBooleanExpression(BooleanExpression expr)             { return visitExpression(expr); }
+//    public Object visitNullExpression(NullExpression expr)                   { return visitExpression(expr); }
+//    public Object visitRawcodeExpression(RawcodeExpression expr)             { return visitExpression(expr); }
+//    //
+//}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public interface StatementVisitor {
+//    public final Object visit(Node node);
+    //
+    public Object visitStatement(Statement stmt);
+    //
+    public Object visitBlockStatement(BlockStatement stmt)                   ;
+    public Object visitPrintStatement(PrintStatement stmt)                   ;
+    public Object visitExpressionStatement(ExpressionStatement stmt)         ;
+    public Object visitForeachStatement(ForeachStatement stmt)               ;
+    public Object visitWhileStatement(WhileStatement stmt)                   ;
+    public Object visitIfStatement(IfStatement stmt)                         ;
+    public Object visitElementStatement(ElementStatement stmt)               ;
+    public Object visitExpandStatement(ExpandStatement stmt)                 ;
+    public Object visitRawcodeStatement(RawcodeStatement stmt)               ;
+    public Object visitEmptyStatement(EmptyStatement stmt)                   ;
+}
+
+// --------------------------------------------------------------------------------
+
+//package __PACKAGE__;
+//
+//public class BaseStatementVisitor implements StatementVisitor {
+////    public final Object visit(Node node) {
+////        return node.accept(this);
+////    }
+//
+//    //
+//    public Object visitStatement(Statement stmt)   {
+//        return stmt.accept(this);
+//    }
+//    //
+//    public Object visitBlockStatement(BlockStatement stmt)                   { return visitStatement(stmt); }
+//    public Object visitPrintStatement(PrintStatement stmt)                   { return visitStatement(stmt); }
+//    public Object visitExpressionStatement(ExpressionStatement stmt)         { return visitStatement(stmt); }
+//    public Object visitForeachStatement(ForeachStatement stmt)               { return visitStatement(stmt); }
+//    public Object visitWhileStatement(WhileStatement stmt)                   { return visitStatement(stmt); }
+//    public Object visitIfStatement(IfStatement stmt)                         { return visitStatement(stmt); }
+//    public Object visitElementStatement(ElementStatement stmt)               { return visitStatement(stmt); }
+//    public Object visitExpandStatement(ExpandStatement stmt)                 { return visitStatement(stmt); }
+//    public Object visitRawcodeStatement(RawcodeStatement stmt)               { return visitStatement(stmt); }
+//    public Object visitEmptyStatement(EmptyStatement stmt)                   { return visitStatement(stmt); }
+//}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public abstract class NodeVisitor  { //implements ExpressionVisitor, StatementVisitor {
+    private ExpressionVisitor _exprVisitor;
+    private StatementVisitor  _stmtVisitor;
+
+    public NodeVisitor(ExpressionVisitor exprVisitor, StatementVisitor stmtVisitor) {
+        _exprVisitor = exprVisitor;
+        _stmtVisitor = stmtVisitor;
+    }
+
+    public Object visitNode(Node node) {
+        if (node instanceof Expression)
+            return ((Expression)node).accept(_exprVisitor);
+        else if (node instanceof Statement)
+            return ((Statement)node).accept(_stmtVisitor);
+        else
+            assert false;
+        return null;
     }
 
     //
-    public Object visitNode(Node expr)             { return null; }
-    public Object visitExpression(Expression expr) { return visitNode(expr); }
-    public Object visitStatement(Statement stmt)   { return visitNode(stmt); }
+    //public Object visitNode(Node expr)             { return null; }
+    public Object visitExpression(Expression expr) {
+        //return _exprVisitor.visitExpression(expr);
+        return expr.accept(_exprVisitor);
+    }
+    public Object visitStatement(Statement stmt)   {
+        //return _stmtVisitor.visitStatement(stmt);
+        return stmt.accept(_stmtVisitor);
+    }
     //
-    public Object visitUnaryExpression(UnaryExpression expr)                 { return visitExpression(expr); }
-    public Object visitBinaryExpression(BinaryExpression expr)               { return visitExpression(expr); }
-    public Object visitArithmeticExpression(ArithmeticExpression expr)       { return visitExpression(expr); }
-    public Object visitConcatenationExpression(ConcatenationExpression expr) { return visitExpression(expr); }
-    public Object visitRelationalExpression(RelationalExpression expr)       { return visitExpression(expr); }
-    public Object visitAssignmentExpression(AssignmentExpression expr)       { return visitExpression(expr); }
-    public Object visitIndexExpression(IndexExpression expr)                 { return visitExpression(expr); }
-    public Object visitPropertyExpression(PropertyExpression expr)           { return visitExpression(expr); }
-    public Object visitMethodExpression(MethodExpression expr)               { return visitExpression(expr); }
-    public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return visitExpression(expr); }
-    public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return visitExpression(expr); }
-    public Object visitConditionalExpression(ConditionalExpression expr)     { return visitExpression(expr); }
-    public Object visitEmptyExpression(EmptyExpression expr)                 { return visitExpression(expr); }
-    public Object visitFunctionExpression(FunctionExpression expr)           { return visitExpression(expr); }
-    //
-    public Object visitLiteralExpression(LiteralExpression expr)             { return visitExpression(expr); }
-    public Object visitStringExpression(StringExpression expr)               { return visitExpression(expr); }
-    public Object visitIntegerExpression(IntegerExpression expr)             { return visitExpression(expr); }
-    public Object visitDoubleExpression(DoubleExpression expr)                 { return visitExpression(expr); }
-    public Object visitVariableExpression(VariableExpression expr)           { return visitExpression(expr); }
-    public Object visitBooleanExpression(BooleanExpression expr)             { return visitExpression(expr); }
-    public Object visitNullExpression(NullExpression expr)                   { return visitExpression(expr); }
-    public Object visitRawcodeExpression(RawcodeExpression expr)             { return visitExpression(expr); }
-    //
-    public Object visitBlockStatement(BlockStatement stmt)                   { return visitStatement(stmt); }
-    public Object visitPrintStatement(PrintStatement stmt)                   { return visitStatement(stmt); }
-    public Object visitExpressionStatement(ExpressionStatement stmt)         { return visitStatement(stmt); }
-    public Object visitForeachStatement(ForeachStatement stmt)               { return visitStatement(stmt); }
-    public Object visitWhileStatement(WhileStatement stmt)                   { return visitStatement(stmt); }
-    public Object visitIfStatement(IfStatement stmt)                         { return visitStatement(stmt); }
-    public Object visitElementStatement(ElementStatement stmt)               { return visitStatement(stmt); }
-    public Object visitExpandStatement(ExpandStatement stmt)                 { return visitStatement(stmt); }
-    public Object visitRawcodeStatement(RawcodeStatement stmt)               { return visitStatement(stmt); }
-    public Object visitEmptyStatement(EmptyStatement stmt)                   { return visitStatement(stmt); }
+    //public Object visitUnaryExpression(UnaryExpression expr)                 { return _exprVisitor.visitUnaryExpression(expr)         ; }
+    //public Object visitBinaryExpression(BinaryExpression expr)               { return _exprVisitor.visitBinaryExpression(expr)        ; }
+    //public Object visitArithmeticExpression(ArithmeticExpression expr)       { return _exprVisitor.visitArithmeticExpression(expr)    ; }
+    //public Object visitConcatenationExpression(ConcatenationExpression expr) { return _exprVisitor.visitConcatenationExpression(expr) ; }
+    //public Object visitRelationalExpression(RelationalExpression expr)       { return _exprVisitor.visitRelationalExpression(expr)    ; }
+    //public Object visitAssignmentExpression(AssignmentExpression expr)       { return _exprVisitor.visitAssignmentExpression(expr)    ; }
+    //public Object visitIndexExpression(IndexExpression expr)                 { return _exprVisitor.visitIndexExpression(expr)         ; }
+    //public Object visitPropertyExpression(PropertyExpression expr)           { return _exprVisitor.visitPropertyExpression(expr)      ; }
+    //public Object visitMethodExpression(MethodExpression expr)               { return _exprVisitor.visitMethodExpression(expr)        ; }
+    //public Object visitLogicalAndExpression(LogicalAndExpression expr)       { return _exprVisitor.visitLogicalAndExpression(expr)    ; }
+    //public Object visitLogicalOrExpression(LogicalOrExpression expr)         { return _exprVisitor.visitLogicalOrExpression(expr)     ; }
+    //public Object visitConditionalExpression(ConditionalExpression expr)     { return _exprVisitor.visitConditionalExpression(expr)   ; }
+    //public Object visitEmptyExpression(EmptyExpression expr)                 { return _exprVisitor.visitEmptyExpression(expr)         ; }
+    //public Object visitFunctionExpression(FunctionExpression expr)           { return _exprVisitor.visitFunctionExpression(expr)      ; }
+    ////
+    //public Object visitLiteralExpression(LiteralExpression expr)             { return _exprVisitor.visitLiteralExpression(expr)       ; }
+    //public Object visitStringExpression(StringExpression expr)               { return _exprVisitor.visitStringExpression(expr)        ; }
+    //public Object visitIntegerExpression(IntegerExpression expr)             { return _exprVisitor.visitIntegerExpression(expr)       ; }
+    //public Object visitDoubleExpression(DoubleExpression expr)               { return _exprVisitor.visitDoubleExpression(expr)        ; }
+    //public Object visitVariableExpression(VariableExpression expr)           { return _exprVisitor.visitVariableExpression(expr)      ; }
+    //public Object visitBooleanExpression(BooleanExpression expr)             { return _exprVisitor.visitBooleanExpression(expr)       ; }
+    //public Object visitNullExpression(NullExpression expr)                   { return _exprVisitor.visitNullExpression(expr)          ; }
+    //public Object visitRawcodeExpression(RawcodeExpression expr)             { return _exprVisitor.visitRawcodeExpression(expr)       ; }
+    ////
+    //public Object visitBlockStatement(BlockStatement stmt)                   { return _stmtVisitor.visitBlockStatement(stmt)          ; }
+    //public Object visitPrintStatement(PrintStatement stmt)                   { return _stmtVisitor.visitPrintStatement(stmt)          ; }
+    //public Object visitExpressionStatement(ExpressionStatement stmt)         { return _stmtVisitor.visitExpressionStatement(stmt)     ; }
+    //public Object visitForeachStatement(ForeachStatement stmt)               { return _stmtVisitor.visitForeachStatement(stmt)        ; }
+    //public Object visitWhileStatement(WhileStatement stmt)                   { return _stmtVisitor.visitWhileStatement(stmt)          ; }
+    //public Object visitIfStatement(IfStatement stmt)                         { return _stmtVisitor.visitIfStatement(stmt)             ; }
+    //public Object visitElementStatement(ElementStatement stmt)               { return _stmtVisitor.visitElementStatement(stmt)        ; }
+    //public Object visitExpandStatement(ExpandStatement stmt)                 { return _stmtVisitor.visitExpandStatement(stmt)         ; }
+    //public Object visitRawcodeStatement(RawcodeStatement stmt)               { return _stmtVisitor.visitRawcodeStatement(stmt)        ; }
+    //public Object visitEmptyStatement(EmptyStatement stmt)                   { return _stmtVisitor.visitEmptyStatement(stmt)          ; }
 }
 
 // ================================================================================
@@ -560,7 +701,10 @@ abstract public class Expression extends Node {
         super(token);
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(NodeVisitor visitor) {
+        return visitor.visitExpression(this);
+    }
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitExpression(this);
     }
 }
@@ -589,7 +733,7 @@ public class BinaryExpression extends Expression {
     public Object evaluate(Map context, Visitor executer) {
         executer.executeBinaryExpression(context, left, right);
     }*/
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitBinaryExpression(this);
     }
 
@@ -626,7 +770,7 @@ public class UnaryExpression extends Expression {
     }
      */
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitUnaryExpression(this);
     }
 
@@ -723,7 +867,7 @@ public class ArithmeticExpression extends BinaryExpression {
         //return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitArithmeticExpression(this);
     }
 }
@@ -753,7 +897,7 @@ public class ConcatenationExpression extends BinaryExpression {
         return lvalue.toString() + rvalue.toString();
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitConcatenationExpression(this);
     }
 }
@@ -811,7 +955,7 @@ public class AssignmentExpression extends BinaryExpression {
         return rvalue;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitAssignmentExpression(this);
     }
 }
@@ -922,7 +1066,7 @@ public class RelationalExpression extends BinaryExpression {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitRelationalExpression(this);
     }
 }
@@ -973,7 +1117,7 @@ public class IndexExpression extends BinaryExpression {
         }
         return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitIndexExpression(this);
     }
 
@@ -1031,7 +1175,7 @@ public class PropertyExpression extends Expression {
         }
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitPropertyExpression(this);
     }
 
@@ -1090,7 +1234,7 @@ public class MethodExpression extends Expression {
         }
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitMethodExpression(this);
     }
 
@@ -1126,7 +1270,7 @@ public class LogicalAndExpression extends BinaryExpression {
             return Boolean.FALSE;
         return Boolean.TRUE;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitLogicalAndExpression(this);
     }
 }
@@ -1150,7 +1294,7 @@ public class LogicalOrExpression extends BinaryExpression {
             return Boolean.TRUE;
         return Boolean.FALSE;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitLogicalOrExpression(this);
     }
 }
@@ -1184,7 +1328,7 @@ public class EmptyExpression extends Expression {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitEmptyExpression(this);
     }
 
@@ -1226,7 +1370,7 @@ public class ConditionalExpression extends Expression {
           */
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitConditionalExpression(this);
     }
 
@@ -1493,7 +1637,7 @@ public class VariableExpression extends Expression {
         return context.get(_name);
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitVariableExpression(this);
     }
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1512,7 +1656,7 @@ abstract public class LiteralExpression extends Expression {
     public LiteralExpression(int token) {
         super(token);
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitLiteralExpression(this);
     }
 }
@@ -1533,7 +1677,7 @@ public class StringExpression extends LiteralExpression {
     public Object evaluate(Map context) {
         return _value;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitStringExpression(this);
     }
 
@@ -1571,7 +1715,7 @@ public class IntegerExpression extends LiteralExpression {
     public Object evaluate(Map context) {
         return new Integer(_value);
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitIntegerExpression(this);
     }
 
@@ -1597,7 +1741,7 @@ public class DoubleExpression extends LiteralExpression {
     public Object evaluate(Map context) {
         return new Double(_value);
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitDoubleExpression(this);
     }
 
@@ -1623,7 +1767,7 @@ public class BooleanExpression extends LiteralExpression {
     public Object evaluate(Map context) {
         return _value ? Boolean.TRUE : Boolean.FALSE;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitBooleanExpression(this);
     }
 
@@ -1658,7 +1802,7 @@ public class NullExpression extends LiteralExpression {
         /* return Null.NULL; */
         return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitNullExpression(this);
     }
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1686,7 +1830,7 @@ public class RawcodeExpression extends LiteralExpression {
         throw new EvaluationException("cannot evaluate rawcode expression");
         //return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(ExpressionVisitor visitor) {
         return visitor.visitRawcodeExpression(this);
     }
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1708,6 +1852,7 @@ abstract public class Statement extends Node {
     public Statement(int token) {
         super(token);
     }
+
     public Object evaluate(Map context) {
         StringWriter writer = new StringWriter();
         try {
@@ -1718,11 +1863,16 @@ abstract public class Statement extends Node {
         }
         return writer.toString();
     }
+
     abstract public Object execute(Map context, Writer writer) throws IOException;
 
-    public Object accept(Visitor visitor) {
-        return visitor.visitStatement(this);
+    public Object accept(NodeVisitor visitor) {
+        return accept((StatementVisitor)visitor);
     }
+
+    abstract public Object accept(StatementVisitor visitor);
+
+    abstract public Statement accept(Expander expander, Element elem);
 }
 
 // --------------------------------------------------------------------------------
@@ -1754,8 +1904,12 @@ public class BlockStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitBlockStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1805,8 +1959,12 @@ public class PrintStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitPrintStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1836,8 +1994,12 @@ public class ExpressionStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitExpressionStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1889,8 +2051,12 @@ public class ForeachStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitForeachStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1933,8 +2099,12 @@ public class WhileStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitWhileStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -1980,8 +2150,12 @@ public class IfStatement extends Statement {
         return null;
     }
 
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitIfStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2010,8 +2184,12 @@ public class ElementStatement extends Statement {
     public Object execute(Map context, Writer writer) {
         return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitElementStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2046,8 +2224,12 @@ public class ExpandStatement extends Statement {
     public Object execute(Map context, Writer writer) {
         return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitExpandStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2091,8 +2273,12 @@ public class RawcodeStatement extends Statement {
         throw new EvaluationException("cannot evaluate rawcode statement.");
         //return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitRawcodeStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2116,8 +2302,12 @@ public class EmptyStatement extends Statement {
     public Object execute(Map context, Writer writer) {
         return null;
     }
-    public Object accept(Visitor visitor) {
+    public Object accept(StatementVisitor visitor) {
         return visitor.visitEmptyStatement(this);
+    }
+
+    public Statement accept(Expander expander, Element elem) {
+        return expander.expand(this, elem);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2125,7 +2315,7 @@ public class EmptyStatement extends Statement {
     }
 }
 
-// --------------------------------------------------------------------------------
+// ================================================================================
 
 package __PACKAGE__;
 import java.util.Map;
@@ -3528,109 +3718,13 @@ public class Element {
 }
 
 // --------------------------------------------------------------------------------
-//
-//package __PACKAGE__;
-//
-//public interface Expander {
-//
-//    public Statemetn expand(Statement stmt, Element elem) {
-//        return stmt.expandWith(this);
-//    }
-//
-//    public Statement expand(BlockStatement blockStmt, Element elem) {
-//        Statement[] stmts = blockStmt.getStatements();
-//        for (int i = 0; i < stmts.length; i++) {
-//            Statement st = expand(st, elem);
-//            if (st != null) stmts[i] = st;
-//        }
-//        return null;
-//    }
-//
-//    public Statement expand(PrintStatement stmt, Element elem) {
-//        return null;
-//    }
-//
-//    public Statement expand(ExpressionStatement stmt, Element elem) {
-//        return null;
-//    }
-//
-//    public Statement expand(ForeachStatement stmt, Element elem) {
-//        Statement st = expand(stmt.getBodyStatement(), elem);
-//        if (st != null) stmt.setBodyStatement(st);
-//        return null;
-//    }
-//
-//    public Statement expand(WhileStatement stmt, Element elem) {
-//        Statement st = expand(stmt.getBodyStatement(), elem);
-//        if (st != null) stmt.setBodyStatement(st);
-//        return null;
-//    }
-//
-//    public Statement expand(IfStatement stmt, Element elem) {
-//        Statement st = expand(stmt.getThenStatement(), elem);
-//        if (st != null) stmt.setThenStatement(st);
-//        st = expand(stmt.getThenStatement(), elem);
-//        if (st != null) stmt.setElseStatement(st);
-//        return null;
-//    }
-//
-//    public Statement expand(ElementStatement stmt, Element elem) {
-//        assert false;
-//        return null;
-//    }
-//    public Statement expand(ExpandStatement stmt, Element elem) {
-//        ExpandStatement expandStmt;
-//        Statement st;
-//        Statement[] stmts;
-//        int type = ((ExpandStatement)stmt).getType();
-//        if (type  == TokenType.STAG) {
-//            st = _helper.buildPrintStatement(elem.getStag());
-//        }
-//        else if (type == TokenType.ETAG) {
-//            st = _helper.buildPrintStatement(elem.getEtag());
-//        }
-//        else if (type == TokenType.CONT) {
-//            stmts = elem.getContentStatements();
-//            st = new BlockStatement(stmts);
-//            expand(st, null);
-//        }
-//        else if (type == TokenType.CONTENT) {
-//            String name = ((ExpandStatement)stmt).getName();
-//            Element elem2 = (Element)_elementTable.get(name);
-//            if (elem2 == null) {
-//                throw new ExpantionException("'@content('" + name + ")': element not found.");
-//            }
-//            stmts = elem2.getContentStatements();
-//            st = new BlockStatement(stmts);
-//            expand(st, null);
-//        }
-//        else if (type == TokenType.SHARP) {
-//            String name = ((ExpandStatement)stmt).getName();
-//            Element elem2 = (Element)_elementTable.get(name);
-//            if (elem2 == null) {
-//                throw new ExpantionException("'@element('" + name + ")': element not found.");
-//            }
-//            st = elem.getPresentationLogic(); //block statment
-//            expand(st, elem2);
-//        }
-//        else {
-//            assert false;
-//        }
-//        return st;
-//    }
-//    public Statement expand(RawcodeStatement stmt, Element elem) {
-//        return null;
-//    }
-//}
-
-// --------------------------------------------------------------------------------
 
 package __PACKAGE__;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class Optimizer extends Visitor {   // statement visitor
+public class Optimizer implements StatementVisitor {   // statement visitor
 
     private void _concatArgs(Expression[] args, List argList, StringBuffer sb) {
         for (int i = 0; i < args.length; i++) {
@@ -3678,6 +3772,10 @@ public class Optimizer extends Visitor {   // statement visitor
 
     public void optimize(BlockStatement blockStmt) {
         visitBlockStatement(blockStmt);
+    }
+
+    public Object visitStatement(Statement stmt) {
+        return stmt.accept(this);
     }
 
     public Object visitBlockStatement(BlockStatement blockStmt) {
@@ -3731,7 +3829,25 @@ public class Optimizer extends Visitor {   // statement visitor
 
 }
 
+// --------------------------------------------------------------------------------
 
+package __PACKAGE__;
+
+public interface Expander {
+
+    public Statement expand(Statement           stmt, Element elem);
+    public Statement expand(PrintStatement      stmt, Element elem);
+    public Statement expand(ExpressionStatement stmt, Element elem);
+    public Statement expand(ForeachStatement    stmt, Element elem);
+    public Statement expand(WhileStatement      stmt, Element elem);
+    public Statement expand(IfStatement         stmt, Element elem);
+    public Statement expand(BlockStatement      stmt, Element elem);
+    public Statement expand(ExpandStatement     stmt, Element elem);
+    public Statement expand(ElementStatement    stmt, Element elem);
+    public Statement expand(RawcodeStatement    stmt, Element elem);
+    public Statement expand(EmptyStatement      stmt, Element elem);
+
+}
 
 // --------------------------------------------------------------------------------
 
@@ -3739,101 +3855,222 @@ package __PACKAGE__;
 
 import java.util.Map;
 
-public class Expander {
+public class DefaultExpander implements  Expander {
 
     private Map _elementTable;
     private TagHelper _helper = new TagHelper();
 
-    public Expander(Map elementTable) {
+    public DefaultExpander(Map elementTable) {
         _elementTable = elementTable;
     }
 
     public Statement expand(Statement stmt, Element elem) {
-        Statement st;
-        Statement[] stmts;
+        return stmt == null ? null : stmt.accept(this, elem);
+    }
 
-        switch (stmt.getToken()) {
-          case TokenType.PRINT:
-          case TokenType.EXPR:
-          case TokenType.RAWSTMT:
-            return null;
+    public Statement expand(PrintStatement stmt, Element elem) {
+        return null;
+    }
 
-          case TokenType.BLOCK:
-            stmts = ((BlockStatement)stmt).getStatements();
-            for (int i = 0; i < stmts.length; i++) {
-                st = expand(stmts[i], elem);
-                if (st != null) stmts[i] = st;
-            }
-            return null;
+    public Statement expand(ExpressionStatement stmt, Element elem) {
+        return null;
+    }
 
-          case TokenType.FOREACH:
-            st = expand(((ForeachStatement)stmt).getBodyStatement(), elem);
-            if (st != null) ((ForeachStatement)stmt).setBodyStatement(st);
-            return null;
-
-          case TokenType.WHILE:
-            st = expand(((WhileStatement)stmt).getBodyStatement(), elem);
-            if (st != null) ((WhileStatement)stmt).setBodyStatement(st);
-            return null;
-
-          case TokenType.IF:
-            IfStatement ifStmt = (IfStatement)stmt;
-            st = expand(ifStmt.getThenStatement(), elem);
-            if (st != null) ifStmt.setThenStatement(st);
-            if (ifStmt.getElseStatement() != null) {
-                st = expand(ifStmt.getElseStatement(), elem);
-                if (st != null) ifStmt.setElseStatement(st);
-            }
-            return null;
-
-          case TokenType.EXPAND:
-            ExpandStatement expandStmt;
-            int type = ((ExpandStatement)stmt).getType();
-            if (type  == TokenType.STAG) {
-                st = _helper.buildPrintStatement(elem.getStag());
-            }
-            else if (type == TokenType.ETAG) {
-                if (elem.getEtag() == null)
-                    st = new PrintStatement(new Expression[] {});
-                else
-                    st = _helper.buildPrintStatement(elem.getEtag());
-            }
-            else if (type == TokenType.CONT) {
-                stmts = elem.getContentStatements();
-                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
-                Statement st2 = expand(st, null);
-                if (st2 != null) st = st2;
-            }
-            else if (type == TokenType.CONTENT) {
-                String name = ((ExpandStatement)stmt).getName();
-                Element elem2 = (Element)_elementTable.get(name);
-                if (elem2 == null) {
-                    throw new ExpantionException("'@content('" + name + ")': element not found.");
-                }
-                stmts = elem2.getContentStatements();
-                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
-                Statement st2 = expand(st, null);
-                if (st2 != null) st = st2;
-            }
-            else if (type == TokenType.ELEMENT) {
-                String name = ((ExpandStatement)stmt).getName();
-                Element elem2 = (Element)_elementTable.get(name);
-                if (elem2 == null) {
-                    throw new ExpantionException("'@element('" + name + ")': element not found.");
-                }
-                st = elem2.getPresentationLogic(); //block statment
-                expand(st, elem2);
-            }
-            else {
-                assert false;
-                st = null;
-            }
-            return st;
+    public Statement expand(BlockStatement stmt, Element elem) {
+        Statement[] stmts = stmt.getStatements();
+        for (int i = 0; i < stmts.length; i++) {
+            Statement st = expand(stmts[i], elem);
+            if (st != null) stmts[i] = st;
         }
         return null;
     }
 
+    public Statement expand(ForeachStatement stmt, Element elem) {
+        Statement st = expand(stmt.getBodyStatement(), elem);
+        if (st != null) stmt.setBodyStatement(st);
+        return null;
+    }
+
+    public Statement expand(WhileStatement stmt, Element elem) {
+        Statement st = expand(stmt.getBodyStatement(), elem);
+        if (st != null) stmt.setBodyStatement(st);
+        return null;
+    }
+
+    public Statement expand(IfStatement stmt, Element elem) {
+        Statement st = expand(stmt.getThenStatement(), elem);
+        if (st != null) stmt.setThenStatement(st);
+        if (stmt.getElseStatement() != null) {
+            st = expand(stmt.getElseStatement(), elem);
+            if (st != null) stmt.setElseStatement(st);
+        }
+        return null;
+    }
+
+    public Statement expand(ElementStatement stmt, Element elem) {
+        assert false;
+        return null;
+    }
+
+    public Statement expand(ExpandStatement stmt, Element elem) {
+        ExpandStatement expandStmt;
+        Statement st;
+        Statement[] stmts;
+        int type = stmt.getType();
+        if (type  == TokenType.STAG) {
+            st = _helper.buildPrintStatement(elem.getStag());
+        }
+        else if (type == TokenType.ETAG) {
+            if (elem.getEtag() == null)
+                st = new PrintStatement(new Expression[] {});
+            else
+                st = _helper.buildPrintStatement(elem.getEtag());
+        }
+        else if (type == TokenType.CONT) {
+            stmts = elem.getContentStatements();
+            st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+            //st = new BlockStatement(stmts);
+            Statement st2 = expand(st, null);
+            if (st2 != null) st = st2;
+        }
+        else if (type == TokenType.CONTENT) {
+            String name = stmt.getName();
+            Element elem2 = (Element)_elementTable.get(name);
+            if (elem2 == null) {
+                throw new ExpantionException("'@content('" + name + ")': element not found.");
+            }
+            stmts = elem2.getContentStatements();
+            st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+            //st = new BlockStatement(stmts);
+            Statement st2 = expand(st, null);
+            if (st2 != null) st = st2;
+        }
+        else if (type == TokenType.ELEMENT) {
+            String name = stmt.getName();
+            Element elem2 = (Element)_elementTable.get(name);
+            if (elem2 == null) {
+                throw new ExpantionException("'@element('" + name + ")': element not found.");
+            }
+            st = elem2.getPresentationLogic(); //block statment
+            expand(st, elem2);
+        }
+        else {
+            assert false;
+            st = null;
+        }
+        return st;
+    }
+
+    public Statement expand(RawcodeStatement stmt, Element elem) {
+        return null;
+    }
+
+    public Statement expand(EmptyStatement stmt, Element elem) {
+        return null;
+    }
 }
+
+// --------------------------------------------------------------------------------
+
+//package __PACKAGE__;
+//
+//import java.util.Map;
+//
+//public class Expander {
+//
+//    private Map _elementTable;
+//    private TagHelper _helper = new TagHelper();
+//
+//    public Expander(Map elementTable) {
+//        _elementTable = elementTable;
+//    }
+//
+//    public Statement expand(Statement stmt, Element elem) {
+//        Statement st;
+//        Statement[] stmts;
+//
+//        switch (stmt.getToken()) {
+//          case TokenType.PRINT:
+//          case TokenType.EXPR:
+//          case TokenType.RAWSTMT:
+//            return null;
+//
+//          case TokenType.BLOCK:
+//            stmts = ((BlockStatement)stmt).getStatements();
+//            for (int i = 0; i < stmts.length; i++) {
+//                st = expand(stmts[i], elem);
+//                if (st != null) stmts[i] = st;
+//            }
+//            return null;
+//
+//          case TokenType.FOREACH:
+//            st = expand(((ForeachStatement)stmt).getBodyStatement(), elem);
+//            if (st != null) ((ForeachStatement)stmt).setBodyStatement(st);
+//            return null;
+//
+//          case TokenType.WHILE:
+//            st = expand(((WhileStatement)stmt).getBodyStatement(), elem);
+//            if (st != null) ((WhileStatement)stmt).setBodyStatement(st);
+//            return null;
+//
+//          case TokenType.IF:
+//            IfStatement ifStmt = (IfStatement)stmt;
+//            st = expand(ifStmt.getThenStatement(), elem);
+//            if (st != null) ifStmt.setThenStatement(st);
+//            if (ifStmt.getElseStatement() != null) {
+//                st = expand(ifStmt.getElseStatement(), elem);
+//                if (st != null) ifStmt.setElseStatement(st);
+//            }
+//            return null;
+//
+//          case TokenType.EXPAND:
+//            ExpandStatement expandStmt;
+//            int type = ((ExpandStatement)stmt).getType();
+//            if (type  == TokenType.STAG) {
+//                st = _helper.buildPrintStatement(elem.getStag());
+//            }
+//            else if (type == TokenType.ETAG) {
+//                if (elem.getEtag() == null)
+//                    st = new PrintStatement(new Expression[] {});
+//                else
+//                    st = _helper.buildPrintStatement(elem.getEtag());
+//            }
+//            else if (type == TokenType.CONT) {
+//                stmts = elem.getContentStatements();
+//                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+//                Statement st2 = expand(st, null);
+//                if (st2 != null) st = st2;
+//            }
+//            else if (type == TokenType.CONTENT) {
+//                String name = ((ExpandStatement)stmt).getName();
+//                Element elem2 = (Element)_elementTable.get(name);
+//                if (elem2 == null) {
+//                    throw new ExpantionException("'@content('" + name + ")': element not found.");
+//                }
+//                stmts = elem2.getContentStatements();
+//                st = stmts.length == 1 ? stmts[0] : new BlockStatement(stmts);
+//                Statement st2 = expand(st, null);
+//                if (st2 != null) st = st2;
+//            }
+//            else if (type == TokenType.ELEMENT) {
+//                String name = ((ExpandStatement)stmt).getName();
+//                Element elem2 = (Element)_elementTable.get(name);
+//                if (elem2 == null) {
+//                    throw new ExpantionException("'@element('" + name + ")': element not found.");
+//                }
+//                st = elem2.getPresentationLogic(); //block statment
+//                expand(st, elem2);
+//            }
+//            else {
+//                assert false;
+//                st = null;
+//            }
+//            return st;
+//        }
+//        return null;
+//    }
+//
+//}
 
 // --------------------------------------------------------------------------------
 
@@ -5255,7 +5492,7 @@ package __PACKAGE__;
 
 import java.io.IOException;
 
-abstract public class KwartzCompiler {
+abstract public class Compiler {
 
     abstract public Template compileString(String pdata, String plogic, String pdataFilename, String plogicFilename);
     public Template compileString(String pdata, String plogic) {
@@ -5308,7 +5545,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
 
-public class DefaultCompiler extends KwartzCompiler {
+public class DefaultCompiler extends Compiler {
     private ExpressionParser  _exprParser;
     private StatementParser   _stmtParser;
     private DeclarationParser _declParser;
@@ -5346,7 +5583,7 @@ public class DefaultCompiler extends KwartzCompiler {
         BlockStatement blockStmt = new BlockStatement(stmts);
 
         // expand
-        Expander expander = new Expander(elementTable);
+        Expander expander = new DefaultExpander(elementTable);
         expander.expand(blockStmt, null);
 
         // return template
@@ -5399,7 +5636,7 @@ public class DefaultCompiler extends KwartzCompiler {
         // create block statement
         BlockStatement blockStmt = new BlockStatement(_stmtList);
         // expand @stag, @cont, and @etag
-        Expander expander = new Expander(_elemTable);
+        Expander expander = new DefaultExpander(_elemTable);
         expander.expand(blockStmt, null);
         // return template
         return new Template(blockStmt);
@@ -5428,7 +5665,7 @@ public class Kwartz {
         if (template == null) {
             synchronized(__cache) {
                 if (template == null) {
-                    KwartzCompiler compiler = new DefaultCompiler();
+                    Compiler compiler = new DefaultCompiler();
                     template = compiler.compileFile(pdataFilename, plogicFilename, charset);
                     Optimizer optimizer = new Optimizer();
                     optimizer.optimize(template.getBlockStatement());
@@ -5475,7 +5712,7 @@ public class CompilerTest extends TestCase {
     }
 
     private void _test(boolean flagPrint) throws Exception {
-        KwartzCompiler compiler = new DefaultCompiler();
+        Compiler compiler = new DefaultCompiler();
         //compiler.addPresentationLogic(_plogic);
         //compiler.addPresentationData(_pdata);
         //BlockStatement stmt = compiler.getBlockStatement();
@@ -5725,7 +5962,7 @@ public class OptimizerTest extends TestCase {
         Element.mergeDeclarationList(elementTable, declList);
 
         // expand
-        Expander expander = new Expander(elementTable);
+        Expander expander = new DefaultExpander(elementTable);
         expander.expand(blockStmt, null);
         //if (flagPrint) System.out.println(blockStmt._inspect().toString());
 
@@ -6132,7 +6369,7 @@ public class ExpanderTest extends TestCase {
         Element.mergeDeclarationList(elementTable, declList);
 
         // expand
-        Expander expander = new Expander(elementTable);
+        Expander expander = new DefaultExpander(elementTable);
         expander.expand(blockStmt, null);
 
         // assert

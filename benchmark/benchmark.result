@@ -1,4 +1,6 @@
+----------------------------------------
 $ sh bench.sh -count 10000 -loop 10
+
 *** count=10000, loop=10, cache=true, write-mode=file
 KwartzBenchmark: 2.487 sec
 *** count=10000, loop=10, cache=false, write-mode=file
@@ -8,7 +10,21 @@ VelocityBenchmark: 2.508 sec
 *** count=10000, loop=10, cache=false, write-mode=file
 VelocityBenchmark: 8.719 sec
 
+*** count=10000, loop=10, cache=true, testname=test1, write-mode=file
+KwartzBenchmark: 3.057 sec
+*** count=10000, loop=10, cache=false, testname=test1, write-mode=file
+KwartzBenchmark: 11.55 sec
+*** count=10000, loop=10, cache=true, testname=test1, write-mode=file
+VelocityBenchmark: 3.17 sec
+*** count=10000, loop=10, cache=false, testname=test1, write-mode=file
+VelocityBenchmark: 10.99 sec
+*** count=10000, loop=10, cache=true, testname=test1, write-mode=file
+FreeMarkerBenchmark: 4.165 sec
+
+----------------------------------------
+
 $ sh bench.sh -count 10000 -loop 100
+
 *** count=10000, loop=100, cache=true, write-mode=file
 KwartzBenchmark: 4.662 sec
 *** count=10000, loop=100, cache=false, write-mode=file
@@ -18,7 +34,21 @@ VelocityBenchmark: 4.972 sec
 *** count=10000, loop=100, cache=false, write-mode=file
 VelocityBenchmark: 11.166 sec
 
+*** count=10000, loop=100, cache=true, testname=test1, write-mode=file
+KwartzBenchmark: 5.765 sec
+*** count=10000, loop=100, cache=false, testname=test1, write-mode=file
+KwartzBenchmark: 16.874 sec
+*** count=10000, loop=100, cache=true, testname=test1, write-mode=file
+VelocityBenchmark: 6.063 sec
+*** count=10000, loop=100, cache=false, testname=test1, write-mode=file
+VelocityBenchmark: 13.763 sec
+*** count=10000, loop=100, cache=true, testname=test1, write-mode=file
+FreeMarkerBenchmark: 6.946 sec
+
+----------------------------------------
+
 $ sh bench.sh -count 10000 -loop 1000
+
 *** count=10000, loop=1000, cache=true, write-mode=file
 KwartzBenchmark: 26.713 sec
 *** count=10000, loop=1000, cache=false, write-mode=file
@@ -28,7 +58,21 @@ VelocityBenchmark: 28.004 sec
 *** count=10000, loop=1000, cache=false, write-mode=file
 VelocityBenchmark: 33.903 sec
 
+*** count=10000, loop=1000, cache=true, testname=test1, write-mode=file
+KwartzBenchmark: 32.491 sec
+*** count=10000, loop=1000, cache=false, testname=test1, write-mode=file
+KwartzBenchmark: 68.238 sec
+*** count=10000, loop=1000, cache=true, testname=test1, write-mode=file
+VelocityBenchmark: 34.027 sec
+*** count=10000, loop=1000, cache=false, testname=test1, write-mode=file
+VelocityBenchmark: 42.455 sec
+*** count=10000, loop=1000, cache=true, testname=test1, write-mode=file
+FreeMarkerBenchmark: 34.733 sec
+
+----------------------------------------
+
 $ sh bench.sh -count 10 -loop 100000
+
 *** count=10, loop=100000, cache=true, write-mode=file
 KwartzBenchmark: 2.613 sec
 *** count=10, loop=100000, cache=false, write-mode=file
@@ -38,7 +82,21 @@ VelocityBenchmark: 2.883 sec
 *** count=10, loop=100000, cache=false, write-mode=file
 VelocityBenchmark: 3.018 sec
 
+*** count=10, loop=100000, cache=true, testname=test1, write-mode=file
+KwartzBenchmark: 3.172 sec
+*** count=10, loop=100000, cache=false, testname=test1, write-mode=file
+KwartzBenchmark: 5.704 sec
+*** count=10, loop=100000, cache=true, testname=test1, write-mode=file
+VelocityBenchmark: 3.538 sec
+*** count=10, loop=100000, cache=false, testname=test1, write-mode=file
+VelocityBenchmark: 3.599 sec
+*** count=10, loop=100000, cache=true, testname=test1, write-mode=file
+FreeMarkerBenchmark: 4.053 sec
+
+----------------------------------------
+
 $ sh bench.sh -count 100 -loop 100000
+
 *** count=100, loop=100000, cache=true, write-mode=file
 KwartzBenchmark: 23.495 sec
 *** count=100, loop=100000, cache=false, write-mode=file
@@ -48,10 +106,21 @@ VelocityBenchmark: 25.122 sec
 *** count=100, loop=100000, cache=false, write-mode=file
 VelocityBenchmark: 25.113 sec
 
+*** count=100, loop=100000, cache=true, testname=test1, write-mode=file
+KwartzBenchmark: 28.987 sec
+*** count=100, loop=100000, cache=false, testname=test1, write-mode=file
+KwartzBenchmark: 53.547 sec
+*** count=100, loop=100000, cache=true, testname=test1, write-mode=file
+VelocityBenchmark: 31.072 sec
+*** count=100, loop=100000, cache=false, testname=test1, write-mode=file
+VelocityBenchmark: 30.916 sec
+*** count=100, loop=100000, cache=true, testname=test1, write-mode=file
+FreeMarkerBenchmark: 36.286 sec
 
 -------------------------------------------------------------------------------- test2
 
 $ sh bench.sh -count 10000 -loop 100 -testname test2
+
 *** count=10000, loop=100, cache=true, testname=test2, write-mode=file
 KwartzBenchmark: 7.709 sec
 *** count=10000, loop=100, cache=false, testname=test2, write-mode=file
@@ -61,7 +130,20 @@ VelocityBenchmark: 8.508 sec
 *** count=10000, loop=100, cache=false, testname=test2, write-mode=file
 VelocityBenchmark: 19.317 sec
 
+*** count=10000, loop=100, cache=true, testname=test2, write-mode=file
+KwartzBenchmark: 9.54 sec
+*** count=10000, loop=100, cache=false, testname=test2, write-mode=file
+KwartzBenchmark: 23.354 sec
+*** count=10000, loop=100, cache=true, testname=test2, write-mode=file
+VelocityBenchmark: 10.134 sec
+*** count=10000, loop=100, cache=false, testname=test2, write-mode=file
+VelocityBenchmark: 22.931 sec
+*** count=10000, loop=100, cache=true, testname=test2, write-mode=file
+FreeMarkerBenchmark: 14.526 sec
+
+
 $ sh bench.sh -count 10000 -loop 1000 -testname test2
+
 *** count=10000, loop=1000, cache=true, testname=test2, write-mode=file
 KwartzBenchmark: 54.316 sec
 *** count=10000, loop=1000, cache=false, testname=test2, write-mode=file
@@ -70,6 +152,17 @@ KwartzBenchmark: 94.028 sec
 VelocityBenchmark: 61.09 sec
 *** count=10000, loop=1000, cache=false, testname=test2, write-mode=file
 VelocityBenchmark: 74.686 sec
+
+*** count=10000, loop=1000, cache=true, testname=test2, write-mode=file
+KwartzBenchmark: 67.215 sec
+*** count=10000, loop=1000, cache=false, testname=test2, write-mode=file
+KwartzBenchmark: 112.89 sec
+*** count=10000, loop=1000, cache=true, testname=test2, write-mode=file
+VelocityBenchmark: 71.688 sec
+*** count=10000, loop=1000, cache=false, testname=test2, write-mode=file
+VelocityBenchmark: 86.285 sec
+*** count=10000, loop=1000, cache=true, testname=test2, write-mode=file
+FreeMarkerBenchmark: 103.86 sec
 
 
 ## velocityCount§Úª»Õ—
