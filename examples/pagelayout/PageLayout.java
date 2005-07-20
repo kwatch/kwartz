@@ -4,13 +4,16 @@
  */
 import java.util.*;
 import java.io.*;
-import com.kuwata_lab.kwartz.KwartzCompiler;
+import com.kuwata_lab.kwartz.Kwartz;
+import com.kuwata_lab.kwartz.Compiler;
 import com.kuwata_lab.kwartz.DefaultCompiler;
 import com.kuwata_lab.kwartz.Context;
 import com.kuwata_lab.kwartz.Template;
 
 
 public class PageLayout {
+
+    private static Kwartz kwartz = new Kwartz();
 
     public static class Stock {
         private String symbol;
@@ -82,14 +85,23 @@ public class PageLayout {
         String page = stock == null ? "page1.html" : "page2.html";
 
         // compile template
-        KwartzCompiler compiler = new DefaultCompiler();
-        String charset = System.getProperty("file.encoding");
-        compiler.addPresentationLogicFile("menu.plogic", charset);
-        compiler.addPresentationLogicFile("page.plogic", charset);
-        compiler.addElementDefinitionFile("menu.html", charset);
-        compiler.addElementDefinitionFile(page, charset);
-        compiler.addPresentationDataFile("layout.html", charset);
-        Template template = compiler.getTemplate();
+        String cacheKey = page;
+        Template template = kwartz.getTemplate(cacheKey);
+        if (template == null) {
+            synchronized(kwartz) {
+                if (template == null) {
+                    Compiler compiler = new DefaultCompiler();
+                    String charset = System.getProperty("file.encoding");
+                    compiler.addPresentationLogicFile("menu.plogic", charset);
+                    compiler.addPresentationLogicFile("page.plogic", charset);
+                    compiler.addElementDefinitionFile("menu.html", charset);
+                    compiler.addElementDefinitionFile(page, charset);
+                    compiler.addPresentationDataFile("layout.html", charset);
+                    template = compiler.getTemplate();
+                    kwartz.addTemplate(cacheKey, template);
+                }
+            }
+        }
 
         // execute
         Context context = new Context();

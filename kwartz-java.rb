@@ -67,7 +67,7 @@ while line = DATA.gets()
       code << line
       while line = DATA.gets()
          code << line
-         if line =~ /\A(public|protected|private|class|abstract)\s+.*?([A-Z]\w+[a-z])/
+        if line =~ /\A(public|protected|private|class|abstract)\s+.*?([A-Z]\w+).*\{/
             klass = $2
          end
          break if line =~ /\A\}$/
@@ -124,6 +124,28 @@ kwartz.defun.function    =
 kwartz.charset           =
 #kwartz.embed_pattern     =
 kwartz.incdir            = .
+##
+kwartz.function.E             = com.kuwata_lab.kwartz.EscapeXmlFunction
+kwartz.function.X             = com.kuwata_lab.kwartz.AsIsFunction
+kwartz.function.escape_xml    = com.kuwata_lab.kwartz.EscapeXmlFunction
+kwartz.function.escape_url    = com.kuwata_lab.kwartz.EscapeUrlFunction
+kwartz.function.escape_sql    = com.kuwata_lab.kwartz.EscapeSqlFunction
+kwartz.function.str_length    = com.kuwata_lab.kwartz.StringLengthFunction
+kwartz.function.str_index     = com.kuwata_lab.kwartz.StringIndexFunction
+kwartz.function.str_linebreak = com.kuwata_lab.kwartz.StringLinebreakFunction
+kwartz.function.str_replace   = com.kuwata_lab.kwartz.StringReplaceFunction
+kwartz.function.str_tolower   = com.kuwata_lab.kwartz.StringToLowerFunction
+kwartz.function.str_toupper   = com.kuwata_lab.kwartz.StringToUpperFunction
+kwartz.function.str_trim      = com.kuwata_lab.kwartz.StringTrimFunction
+kwartz.function.str_empty     = com.kuwata_lab.kwartz.StringEmptyFunction
+kwartz.function.list_new      = com.kuwata_lab.kwartz.ListNewFunction
+kwartz.function.list_length   = com.kuwata_lab.kwartz.ListLengthFunction
+kwartz.function.list_empty    = com.kuwata_lab.kwartz.ListEmptyFunction
+kwartz.function.list_add      = com.kuwata_lab.kwartz.ListAddFunction
+kwartz.function.hash_new      = com.kuwata_lab.kwartz.HashNewFunction
+kwartz.function.hash_length   = com.kuwata_lab.kwartz.HashLengthFunction
+kwartz.function.hash_empty    = com.kuwata_lab.kwartz.HashEmptyFunction
+kwartz.function.hash_keys     = com.kuwata_lab.kwartz.HashKeysFunction
 END
 
 path = SRC_ROOT + '/' + PACKAGE.gsub(/\./, '/')
@@ -944,6 +966,7 @@ public class ConcatenationExpression extends BinaryExpression {
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
+import java.util.List;
 import java.util.Map;
 
 public class AssignmentExpression extends BinaryExpression {
@@ -981,10 +1004,34 @@ public class AssignmentExpression extends BinaryExpression {
             context.put(varname, rvalue);
             break;
           case TokenType.ARRAY:
-            // TBC
+            Expression expr = ((IndexExpression)_left).getLeft();
+            Object obj = expr.evaluate(context);
+            expr = ((IndexExpression)_left).getRight();
+            Object idx = expr.evaluate(context);
+            if (obj instanceof Map) {
+                ((Map)obj).put(idx, rvalue);
+            } else if (obj instanceof List) {
+                if (! (idx instanceof Integer))
+                    throw new EvaluationException("index of List object is not an integer.");
+                ((List)obj).add(((Integer)idx).intValue(), rvalue);
+            } else if (obj.getClass().isArray()) {
+                if (! (idx instanceof Integer))
+                    throw new EvaluationException("index of array is not an integer.");
+                ((Object[])obj)[((Integer)idx).intValue()] = rvalue;
+            } else {
+                throw new EvaluationException("invalid '[]' operator for non-list,map,nor array.");
+            }
             break;
           case TokenType.HASH:
-            // TBC
+            expr = ((IndexExpression)_left).getLeft();
+            obj = expr.evaluate(context);
+            expr = ((IndexExpression)_left).getRight();
+            idx = expr.evaluate(context);
+            if (obj instanceof Map) {
+                ((Map)obj).put(idx, rvalue);
+            } else {
+                throw new EvaluationException("invalid '[:]' operator for non-map object.");
+            }
             break;
           default:
             // error
@@ -1516,31 +1563,30 @@ import java.util.Map;
 import java.util.HashMap;
 
 abstract public class Function {
-    //protected String _name;
+    protected String _name;
 
     //public Function(String funcname) {
     //    _name = funcname;
     //}
 
-    //public String getName() { return _name; }
-    //public void setName(String name) { _name = name; }
+    public String getName() { return _name; }
+    public void setName(String name) { _name = name; }
 
     abstract public Object call(Map context, Expression[] arguments);
 
-    static Map _instances = new HashMap();
-    //public static void register(Function function) {
-    //    register(function.getName(), function);
-    //}
+    abstract public int arity();
+
+    static Map __instances = new HashMap();
+    static Map instances() { return __instances; }
     public static void register(String funcname, Function function) {
-        _instances.put(funcname, function);
+        __instances.put(funcname, function);
+        function.setName(funcname);
     }
-
     public static Function getInstance(String funcname) {
-        return (Function)_instances.get(funcname);
+        return (Function)__instances.get(funcname);
     }
-
     public static boolean isRegistered(String funcname) {
-        return _instances.containsKey(funcname);
+        return __instances.containsKey(funcname);
     }
 }
 
@@ -1548,49 +1594,14 @@ abstract public class Function {
 
 package __PACKAGE__;
 import java.util.Map;
+import java.util.ArrayList;
 
-public class HtmlEscapeFunction extends Function {
-    //public HtmlEscapeFunction() {
-    //    super("E");	// 'E' means 'escape'
-    //}
-
-    public Object call(Map context, Expression[] arguments) {
-        assert arguments.length == 1;
-        Expression expr = arguments[0];
-        Object val = expr.evaluate(context);
-        String s = val.toString();
-        s = s.replaceAll("&", "&amp;");
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll(">", "&gt;");
-        s = s.replaceAll("\"", "&quot");
-        return s;
-    }
-
-    //static {
-    //    Function.register("E", new HtmlEscapeFunction());
-    //    Function.register("str_escape", new HtmlEscapeFunction());
-    //}
-}
-
-// --------------------------------------------------------------------------------
-
-package __PACKAGE__;
-import java.util.Map;
-
-public class AsIsFunction extends Function {
-    //public AsIsFunction() {
-    //    super("X");
-    //}
+public class ListNewFunction extends Function {
+    public int arity() { return 0; }
 
     public Object call(Map context, Expression[] arguments) {
-        assert arguments.length == 1;
-        Expression expr = arguments[0];
-        return expr.evaluate(context);
+        return new ArrayList();
     }
-
-    //static {
-    //    Function.register("X", new AsIsFunction());
-    //}
 }
 
 // --------------------------------------------------------------------------------
@@ -1599,27 +1610,391 @@ package __PACKAGE__;
 import java.util.Map;
 import java.util.List;
 
-public class ListLengthFunction extends Function {
-    //public ListLengthFunction() {
-    //    super("list_length");
-    //}
+abstract public class ListFunction extends Function {
+    public int arity() { return 1; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 1;
+        Object list = arguments[0].evaluate(context);
+        if (list == null)  throw new EvaluationException(getName() + "(): argument is null.");
+        if (list instanceof List) {
+            return perform((List)list);
+        }
+        if (list.getClass().isArray()) {
+            return perform((Object[])list);
+        }
+        throw new EvaluationException(getName() + "(): argument is not a List nor an Array.");
+    }
+
+    abstract protected Object perform(List list);
+    abstract protected Object perform(Object[] list);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+
+public class ListLengthFunction extends ListFunction {
+    protected Object perform(List list) {
+        return new Integer(list.size());
+    }
+    protected Object perform(Object[] list) {
+        return new Integer(list.length);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+
+public class ListEmptyFunction extends ListFunction {
+    protected Object perform(List list) {
+        return list.size() == 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+    protected Object perform(Object[] list) {
+        return list.length == 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.util.List;
+
+abstract public class ListFunction2 extends Function {
+    public int arity() { return 2; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 2;
+        Object list = arguments[0].evaluate(context);
+        if (list == null)  throw new EvaluationException(getName() + "(): argument is null.");
+        Object val = arguments[1].evaluate(context);
+        if (list instanceof List) {
+            return perform((List)list, val);
+        }
+        if (list.getClass().isArray()) {
+            return perform((Object[])list, val);
+        }
+        throw new EvaluationException(getName() + "(): argument is not a List nor an Array.");
+    }
+
+    abstract protected Object perform(List list, Object val);
+    abstract protected Object perform(Object[] list, Object val);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+
+public class ListAddFunction extends ListFunction2 {
+    protected Object perform(List list, Object val) {
+        list.add(val);
+        return list;
+    }
+    protected Object perform(Object[] list, Object val) {
+        throw new EvaluationException(getName() + "(): cannot add value to an array.");
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.util.HashMap;
+
+public class HashNewFunction extends Function {
+    public int arity() { return 0; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 0;
+        return new HashMap();
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+abstract public class HashFunction extends Function {
+    public int arity() { return 1; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 1;
+        Object hash = arguments[0].evaluate(context);
+        if (hash == null)  throw new EvaluationException(getName() + "(): argument is null.");
+        if (hash instanceof Map) {
+            return perform((Map)hash);
+        }
+        throw new EvaluationException(getName() + "(): argument is not a Map.");
+    }
+
+    abstract protected Object perform(Map hash);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class HashLengthFunction extends HashFunction {
+    protected Object perform(Map hash) {
+        return new Integer(hash.size());
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class HashEmptyFunction extends HashFunction {
+    protected Object perform(Map hash) {
+        return hash.size() == 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+import java.util.ArrayList;
+
+public class HashKeysFunction extends HashFunction {
+    protected Object perform(Map hash) {
+        return new ArrayList(hash.keySet());
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+abstract public class StringFunction extends Function {
+    public int arity() { return 1; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 1;
+        Object str = arguments[0].evaluate(context);
+        if (str == null)
+            throw new EvaluationException(getName() + "(): argument is null.");
+        return perform(str.toString());
+    }
+
+    abstract protected Object perform(String str);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringLengthFunction extends StringFunction {
+    protected Object perform(String str) {
+        return new Integer(str.length());
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+public class StringEmptyFunction extends StringFunction {
+    protected Object perform(String str) {
+        return str.length() == 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringToLowerFunction extends StringFunction {
+    protected Object perform(String str) {
+        return str.toLowerCase();
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringToUpperFunction extends StringFunction {
+    protected Object perform(String str) {
+        return str.toUpperCase();
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringTrimFunction extends StringFunction {
+    protected Object perform(String str) {
+        return str.trim();
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringLinebreakFunction extends StringFunction {
+    protected Object perform(String str) {
+        return str.replaceAll("\\r?\\n", "<br />\\0");
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+abstract public class StringFunction2 extends Function {
+    public int arity() { return 2; }
+
+    public Object call(Map context, Expression[] arguments) {
+        assert arguments.length == 2;
+        Object str1 = arguments[0].evaluate(context);
+        if (str1 == null)
+            throw new EvaluationException(getName() + "(): first argument is null.");
+        Object str2 = arguments[1].evaluate(context);
+        if (str2 == null)
+            throw new EvaluationException(getName() + "(): second argument is null.");
+        return perform(str1.toString(), str2.toString());
+    }
+
+    abstract protected Object perform(String str1, String str2);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringIndexFunction extends StringFunction2 {
+    public Object perform(String str1, String str2) {
+        int index = str1.indexOf(str2);
+        return new Integer(index);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+abstract public class StringFunctionN extends Function {
+    //public int arity() { return N; }
+
+    public Object call(Map context, Expression[] arguments) {
+        int len = arity();
+        if (len != arguments.length)
+            throw new EvaluationException(getName() + "(): number of arguments is expected " + len + " but got " + arguments.length + ".");
+        String[] vals = new String[len];
+        for (int i = 0; i < len; i++) {
+            Expression expr = arguments[0];
+            Object val = expr.evaluate(context);
+            if (val == null)
+                throw new EvaluationException(getName() + "(): argument" + i + " is null.");
+            if (! (val instanceof String))
+                throw new EvaluationException(getName() + "(): argument" + i + " is not a string.");
+            vals[i] = (String)val;
+        }
+        return perform(vals);
+    }
+
+    abstract protected Object perform(String[] args);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class StringReplaceFunction extends StringFunctionN {
+    public int arity() { return 3; }
+
+    protected Object perform(String[] args) {
+        assert args.length == arity();
+        return args[0].replaceAll(args[1], args[2]);
+        //return args[0].replaceFirst(args[1], args[2]);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.Map;
+
+abstract public class EscapeFunction extends Function {
+    public int arity() { return 1; }
+
     public Object call(Map context, Expression[] arguments) {
         assert arguments.length == 1;
         Expression expr = arguments[0];
         Object val = expr.evaluate(context);
-        if (val instanceof List) {
-            return new Integer(((List)val).size());
-        }
-        if (val.getClass().isArray()) {
-            int len = ((Object[])val).length;
-            return new Integer(len);
-        }
-        throw new EvaluationException("list_length(): argument is not a List nor an Array.");
+        return perform(val);
     }
 
-    //static {
-    //    Function.register("list_length", new ListLengthFunction());
-    //}
+    abstract protected Object perform(Object arg);
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class EscapeXmlFunction extends EscapeFunction {
+    protected Object perform(Object arg) {
+        if (arg == null) return null;
+        String s = arg.toString();
+        s = s.replaceAll("&", "&amp;");
+        s = s.replaceAll("<", "&lt;");
+        s = s.replaceAll(">", "&gt;");
+        s = s.replaceAll("\"", "&quot");
+        return s;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class AsIsFunction extends EscapeFunction {
+    protected Object perform(Object arg) {
+        return arg;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.net.URLEncoder;
+
+public class EscapeUrlFunction extends EscapeFunction {
+    protected Object perform(Object arg) {
+        if (arg == null) return null;
+        String s = arg.toString();
+        return URLEncoder.encode(s);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class EscapeSqlFunction extends EscapeFunction {
+    protected Object perform(Object arg) {
+        if (arg == null) return null;
+        String s = arg.toString();
+        s = s.replaceAll("\\\\", "\\\\\\\\");
+        s = s.replaceAll("'", "\\\\'");
+        s = s.replaceAll("\"", "\\\\\"");
+        return s;
+    }
 }
 
 // ================================================================================
@@ -1630,22 +2005,29 @@ import java.util.Map;
 public class FunctionExpression extends Expression {
     private String _funcname;
     private Expression[] _arguments;
+    private Function _function;
+    
     public FunctionExpression(String funcname, Expression[] arguments) {
+        this(funcname, arguments, Function.getInstance(funcname));
+    }
+    public FunctionExpression(String funcname, Expression[] arguments, Function function) {
         super(TokenType.FUNCTION);
         _funcname = funcname;
         _arguments = arguments;
+        _function = function;
     }
 
     public String getFunctionName() { return _funcname; }
     public Expression[] getArguments()   { return _arguments; }
+    public Function getFunction() { return _function; }
+    public void setFunction(Function function) { _function = function; }
 
     public Object evaluate(Map context) {
-        Function func = Function.getInstance(_funcname);
-        if (func == null) {
+        if (_function == null) {
             //assert false;
             throw new EvaluationException("'" + _funcname + "': undefined function.");
         }
-        return func.call(context, _arguments);
+        return _function.call(context, _arguments);
     }
 
     public StringBuffer _inspect(int level, StringBuffer sb) {
@@ -2966,7 +3348,12 @@ public class ExpressionParser extends Parser {
             else if (name.equals("S")) s = " selected=\"selected\"";
             else if (name.equals("D")) s = " disabled=\"disabled\"";
             if (s == null) {
-                return new FunctionExpression(name, args);
+                Function function = Function.getInstance(name);
+                if (function != null) {
+                    if (function.arity() != args.length)
+                        semanticError(name + "(): number of arguments should be " + function.arity() + " but got " + args.length + ".");
+                }
+                return new FunctionExpression(name, args, function);
             } else {
                 if (args.length != 1)
                     semanticError(name + "(): should take only one argument.");
@@ -5792,7 +6179,6 @@ public class DefaultCompiler extends Compiler {
     public DefaultCompiler() {
         this(new Properties(Configuration.defaults));
     }
-
     public DefaultCompiler(Properties props) {
         _props = props;
         _converter  = new DefaultConverter(_props);
@@ -5886,18 +6272,25 @@ public class DefaultCompiler extends Compiler {
 
 package __PACKAGE__;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.io.InputStream;
 import java.io.IOException;
 
 public class Configuration {
 
     public static Properties defaults = new Properties();
+    //public static Map functions = new HashMap();
+
     static {
-        Configuration.init();
+        Configuration.initProperties();
+        Configuration.initFunctions();
     }
 
-    private static void init() {
+    private static void initProperties() {
         // default properties
         InputStream stream = null;
         try {
@@ -5917,12 +6310,43 @@ public class Configuration {
                 }
             }
         }
+    }
 
+    private static void initFunctions() {
+        Properties props = defaults;
+        registerFunctions(props, Function.instances());
+        //registerFunctions(props, functions);
+        //for (Iterator it = functions.keySet().iterator(); it.hasNext(); ) {
+        //    String   name = (String)it.next();
+        //    Function func = (Function)functions.get(name);
+        //    Function.register(name, func);
+        //}
+    }
+
+    public static void registerFunctions(Properties props, Map map) {
+        registerFunctions(props, map, true);
+    }
+    public static void registerFunctions(Properties props, Map map, boolean flagOverride) {  // move to Function class?
         // functions
-        Function.register("E",          new HtmlEscapeFunction());
-        Function.register("str_escape", new HtmlEscapeFunction());
-        Function.register("X",          new AsIsFunction());
-        Function.register("list_length", new ListLengthFunction());
+        for (Enumeration en = props.propertyNames(); en.hasMoreElements(); ) {
+            String pname = (String)en.nextElement();
+            if (pname.startsWith("kwartz.function.")) {
+                String funcname  = pname.substring("kwartz.function.".length());
+                if (!flagOverride && map.get(funcname) != null)
+                    continue;
+                String classname = (String)props.getProperty(pname);
+                try {
+                    Function func = (Function)Class.forName(classname).newInstance();
+                    map.put(funcname, func);
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();		// logging
+                } catch (IllegalAccessException ex) {
+                    ex.printStackTrace();		// logging
+                } catch (InstantiationException ex) {
+                    ex.printStackTrace();		// logging
+                }
+            }
+        }
     }
 
 }
@@ -5934,18 +6358,30 @@ package __PACKAGE__;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Enumeration;
 import java.io.IOException;
 
 public class Kwartz {
 
-    private Map _cache = new HashMap();
+    private Map _cache;
     private Properties _props;
+    //private Map _functions;
 
     public Kwartz() {
-        this(new Properties(Configuration.defaults));
+        this(null);
     }
     public Kwartz(Properties props) {
-        _props = props;
+        _cache     = new HashMap();  // or new WeakHashMap();
+        _props     = new Properties(Configuration.defaults);
+        //_functions = new HashMap(Configuration.functions);
+        if (props != null) {
+            for (Enumeration en = props.propertyNames(); en.hasMoreElements(); ) {
+                String pname = (String)en.nextElement();
+                String pvalue = props.getProperty(pname);
+                _props.setProperty(pname, pvalue);
+            }
+        }
+        Configuration.registerFunctions(props, Function.instances());
     }
 
     public Properties getProperties() { return _props; }
@@ -5953,18 +6389,13 @@ public class Kwartz {
     //public String setProperty(String key, String value) { _props.setProperty(key, value); }
 
 
-    public Template getTemplate(Object key, String pdataFilename, String plogicFilename, String elemdeclFilename) throws IOException {
-        String charset = System.getProperty("file.encoding");
-        return getTemplate(key, pdataFilename, plogicFilename, elemdeclFilename, charset);
-    }
-
     public Template getTemplate(Object key, String pdataFilename, String plogicFilename, String elemdeclFilename, String charset) throws IOException {
         Template template = (Template)_cache.get(key);
         if (template == null) {
             synchronized(_cache) {
                 if (template == null) {
                     template = compileFile(pdataFilename, plogicFilename, elemdeclFilename, charset);
-                    putTemplate(key, template);
+                    addTemplate(key, template);
                 }
             }
         }
@@ -5983,7 +6414,7 @@ public class Kwartz {
         return (Template)_cache.get(key);
     }
 
-    public void putTemplate(Object key, Template template) {
+    public void addTemplate(Object key, Template template) {
         _cache.put(key, template);
     }
 }
@@ -10296,6 +10727,132 @@ package __PACKAGE__;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.*;
+import java.io.*;
+
+public class FunctionTest extends TestCase {
+    String _input;
+    String _expected;
+    Map _context = new Context();
+
+    public void _test() throws Exception {
+        _test(false);
+    }
+    public void _test(boolean flagPrint) throws Exception {
+        StatementParser parser = new StatementParser();
+        BlockStatement stmt = parser.parse(_input);
+        StringWriter writer = new StringWriter();
+        stmt.execute(_context, writer);
+        String actual = writer.toString();
+        writer.close();
+        if (flagPrint)
+            System.out.println(actual);
+        else
+            assertEquals(_expected, actual);
+    }
+
+    public void testEscapeFunction1() throws Exception {
+        _input = <<'END';
+            s = "<em>\"A&B\"</em>\n";
+            print(E(s));
+            print(X(s));
+            print(escape_xml(s));
+            print(escape_url('http://localhost/~user/index?arg=<tag attr="foo">'), "\n");
+            print(escape_sql("'quote'" .+ '"doublequote"' .+ '\\escape'), "\n");
+            END
+        _expected = <<'END';
+            &lt;em&gt;&quotA&amp;B&quot&lt;/em&gt;
+            <em>"A&B"</em>
+            &lt;em&gt;&quotA&amp;B&quot&lt;/em&gt;
+            http%3A%2F%2Flocalhost%2F%7Euser%2Findex%3Farg%3D%3Ctag+attr%3D%22foo%22%3E
+            \'quote\'\"doublequote\"\\escape
+            END
+        _test();
+    }
+
+    public void testStringFunction1() throws Exception {
+        _input = <<'END';
+            s = " abc DEF";
+            print(str_length(s), "\n");
+            print(str_tolower(s), "\n");
+            print(str_toupper(s), "\n");
+            print(str_trim(s), "\n");
+            print(str_empty(s) ? "empty" : "not empty", "\n");
+            print(str_empty("") ? "empty" : "not empty", "\n");
+            END
+        _expected = <<'END';
+            8
+             abc def
+             ABC DEF
+            abc DEF
+            not empty
+            empty
+            END
+        _test();
+    }
+
+    public void testListFunction1() throws Exception {
+        _input = <<'END';
+            list = list_new();
+            print(list_length(list), "\n");
+            print(list_empty(list) ? "empty" : "not empty", "\n");
+            list[0] = "a";
+            print(list[0], "\n");
+            list_add(list, 123);
+            print(list[1], "\n");
+            print(list_empty(list) ? "empty" : "not empty", "\n");
+            END
+        _expected = <<'END';
+            0
+            empty
+            a
+            123
+            not empty
+            END
+        _test();
+    }
+
+    public void testHashFunction1() throws Exception {
+        _input = <<'END';
+            hash = hash_new();
+            print(hash_length(hash), "\n");
+            print(hash_empty(hash) ? "empty" : "not empty", "\n");
+            hash['foo'] = "FOO";
+            print(hash['foo'], "\n");
+            hash[:bar]  = "BAR";
+            print(hash[:bar], "\n");
+            list = hash_keys(hash);
+            print(list_length(list), "\n");
+            print("<", hash['null'], ">\n");
+            print(hash_length(hash), "\n");
+            print(hash_empty(hash) ? "empty" : "not empty", "\n");
+            END
+        _expected = <<'END';
+            0
+            empty
+            FOO
+            BAR
+            2
+            <>
+            2
+            not empty
+            END
+        _test();
+    }
+
+    // -----
+
+    public static void main(String[] args) {
+       junit.textui.TestRunner.run(FunctionTest.class);
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class KwartzTest extends TestCase {
     public static void main(String[] args) {
         TestSuite suite = new TestSuite();
@@ -10311,6 +10868,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(ExpanderTest.class));
         suite.addTest(new TestSuite(CompilerTest.class));
         suite.addTest(new TestSuite(OptimizerTest.class));
+        suite.addTest(new TestSuite(FunctionTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

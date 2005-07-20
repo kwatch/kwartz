@@ -1,11 +1,13 @@
 .- [_] new package kwartz.expression.*
 .- [_] new package kwartz.statement.*
+.- [_] new package kwartz.function.*
+.- [_] change package org.kuwata_lab.kwartz.* to kwartz.*
 .- [v] optimization: concatenate continuous strings - 2005-07-14
 .- [v] optimization: expand block statement - 2005-07-14
 .- [_] add filename and linenumber on Node
 .- [_] delete span tag
 .- [_] new class Tag.Attr(space, attrname, attrexpr)
-.- [_] properties support
+.- [_] properties support - 2005-07-18
 .- [_] new class Executor
 .- [v] template caching - 2005-07-13
 .- [_] reflection data caching
@@ -13,4 +15,15 @@
 .- [_] template search path
 .- [_] divide RelationalExpression into EqualRelationalExpression and ComparableRelationalExpression
 .- [_] logging (log4j, jdk14log)
-.- [_] functions (str_length(), str_index(), list_new(), hash_new(), ...)
+.- [v] functions (str_length(), str_index(), list_new(), hash_new(), ...) - 2005-07-20
+.- [_] create function table for each Kwartz instance
+.- [_] create macro table
+.- [_] timestamp detection
+.- [_] original properties: object value and tree structure
+.- [_] Translator class
+.- [_] Translator: JSP
+.- [_] Translator: Velocity
+.- [_] Translator: FreeMarker
+.- [_] Translator: eRuby
+.- [_] Translator: Ruby
+.- [_] Translator: PHP

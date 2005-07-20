@@ -1,22 +1,24 @@
 /*
- * @(#) Calendar.java
+ * @(#) CalendarExample.java
  * @id  $Id$
  */
 import java.util.*;
 import java.io.*;
-import com.kuwata_lab.kwartz.KwartzCompiler;
-import com.kuwata_lab.kwartz.DefaultCompiler;
+import com.kuwata_lab.kwartz.Kwartz;
 import com.kuwata_lab.kwartz.Context;
 import com.kuwata_lab.kwartz.Template;
 
 
 public class CalendarExample {
 
+    private static Kwartz kwartz = new Kwartz();
+
     public List getCalendarList(int year) throws Exception {
         // create template
-        KwartzCompiler compiler = new DefaultCompiler();
-        Template template = compiler.compileFile("calendar-month.html", "calendar-month.plogic");
-        
+        String charset = System.getProperty("file.encoding");
+        String cacheKey = "calendar-month";
+        Template template = kwartz.getTemplate(cacheKey, "calendar-month.html", "calendar-month.plogic", null, charset);
+
         // set calendar info
         Calendar calendar = Calendar.getInstance();
         //if (year <= 0) year = calendar.get(Calendar.YEAR);
@@ -37,25 +39,25 @@ public class CalendarExample {
             context.put("month", month);
             context.put("num_days", new Integer(num_days));
             context.put("first_weekday", new Integer(first_weekday));
-            
+
             // execute template
             String s = template.execute(context);
             list.add(s);
         }
         return list;
     }
-            
+
     public void execute(Writer writer) throws Exception {
         // get current year
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        
+
         // get calendar list
         List calendar_list = getCalendarList(year);
 
         // create tempate
-        KwartzCompiler compiler = new DefaultCompiler();
-        Template template = compiler.compileFile("calendar-page.html", "calendar-page.plogic");
-        //System.out.println(template.getBlockStatement()._inspect().toString());
+        String charset = System.getProperty("file.encoding");
+        String cacheKey = "calendar-page";
+        Template template = kwartz.getTemplate(cacheKey, "calendar-page.html", "calendar-page.plogic", null, charset);
 
         // execute
         Context context = new Context();
@@ -78,4 +80,4 @@ public class CalendarExample {
         }
     }
 
-} // class end
+}

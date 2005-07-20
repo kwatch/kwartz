@@ -4,14 +4,14 @@
  */
 import java.util.*;
 import java.io.*;
-import com.kuwata_lab.kwartz.KwartzCompiler;
-import com.kuwata_lab.kwartz.DefaultCompiler;
+import com.kuwata_lab.kwartz.Kwartz;
 import com.kuwata_lab.kwartz.Context;
 import com.kuwata_lab.kwartz.Template;
 
 
 public class Border2 {
 
+    private static Kwartz kwartz = new Kwartz();
     private String pdataFilename;
     private String plogicFilename;
 
@@ -42,9 +42,9 @@ public class Border2 {
         }
 
         // compile template
-        KwartzCompiler compiler = new DefaultCompiler();
         String charset = System.getProperty("file.encoding");
-        Template template = compiler.compileFile(pdataFilename, plogicFilename, charset);
+        String cacheKey = "border2";
+        Template template = kwartz.getTemplate(cacheKey, pdataFilename, plogicFilename, null, charset);
 
         // execute
         Context context = new Context();

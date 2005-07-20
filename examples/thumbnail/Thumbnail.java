@@ -5,8 +5,7 @@
 import java.util.*;
 import java.io.*;
 import java.text.MessageFormat;
-import com.kuwata_lab.kwartz.KwartzCompiler;
-import com.kuwata_lab.kwartz.DefaultCompiler;
+import com.kuwata_lab.kwartz.Kwartz;
 import com.kuwata_lab.kwartz.Context;
 import com.kuwata_lab.kwartz.Template;
 
@@ -25,6 +24,8 @@ public class Thumbnail {
         return s;
     }
 
+    // static variable
+    private static Kwartz kwartz = new Kwartz();
     
     // instance variables
     private String pdataFilename;
@@ -80,9 +81,9 @@ public class Thumbnail {
         }
 
         // compile template
-        KwartzCompiler compiler = new DefaultCompiler();
         String charset = System.getProperty("file.encoding");
-        Template template = compiler.compileFile(pdataFilename, plogicFilename, charset);
+        String cacheKey = "thumbnail";
+        Template template = kwartz.getTemplate(cacheKey, pdataFilename, plogicFilename, null, charset);
 
         // execute
         Context context = new Context();

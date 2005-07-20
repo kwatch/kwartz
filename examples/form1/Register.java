@@ -4,14 +4,14 @@
  */
 import java.util.*;
 import java.io.*;
-import com.kuwata_lab.kwartz.KwartzCompiler;
-import com.kuwata_lab.kwartz.DefaultCompiler;
+import com.kuwata_lab.kwartz.Kwartz;
 import com.kuwata_lab.kwartz.Context;
 import com.kuwata_lab.kwartz.Template;
 
 
 public class Register {
 
+    private static Kwartz kwartz = new Kwartz();
     private String username;
     private String gender;
     private String script_name;
@@ -49,11 +49,11 @@ public class Register {
         }
 
         // compile template
-        KwartzCompiler compiler = new DefaultCompiler();
         String charset = System.getProperty("file.encoding");
         String pdataFilename = view_name + ".html";
         String plogicFilename = view_name + ".plogic";
-        Template template = compiler.compileFile(pdataFilename, plogicFilename, charset);
+        String cacheKey = view_name;
+        Template template = kwartz.getTemplate(cacheKey, pdataFilename, plogicFilename, null, charset);
 
         // execute
         Context context = new Context();
@@ -90,4 +90,4 @@ public class Register {
         }
     }
 
-} // class end
+}

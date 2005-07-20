@@ -2,12 +2,12 @@
 classpath = ".#{File::PATH_SEPARATOR}../../src/java"
 compiler = "jikes -cp #{classpath}"
 
-all = ["result.html", "build.xml"]
+all = ["result1.html", "build.xml"]
 
 recipe  :all			, all
 
-recipe  "result.html"	, "Thumbnail.class", "thumbnail.html", "thumbnail.plogic" do |r|
-	cmd "java -cp #{classpath} Thumbnail > #{r.product}"
+recipe  "result1.html"	, "Thumbnail.class", "thumbnail.html", "thumbnail.plogic" do |r|
+	cmd "java -cp #{classpath} Thumbnail "
 	end
 
 grecipe  "*.class"	, "{1}.java"					do |r|
@@ -20,6 +20,7 @@ recipe  "build.xml"	, "build.kwaff"					do |r|
 
 recipe	:clear								do |r|
 	list = Dir.glob("*.class")
+	list.concat Dir.glob("result*.html")
 	list.concat all
 	remove_rf list unless list.empty?
 	end
