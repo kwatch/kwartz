@@ -1,6 +1,9 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-07-27 (rev.18)
+	.- [enhance] add macros
+
 .: 2005-07-20 (rev.17)
 	.- [enhance] add functions
 	.- [enhance] support assignment into array or hash

@@ -3,6 +3,8 @@
 ###
 ### usage: ruby kwartz-java.java
 ###
+### $Rev$
+###
 
 SRC_ROOT   = 'src/java'
 TEST_ROOT  = 'src/test'
@@ -124,6 +126,10 @@ kwartz.defun.function    =
 kwartz.charset           =
 #kwartz.embed_pattern     =
 kwartz.incdir            = .
+##
+kwartz.macro.C                = com.kuwata_lab.kwartz.CheckedMacro
+kwartz.macro.S                = com.kuwata_lab.kwartz.SelectedMacro
+kwartz.macro.D                = com.kuwata_lab.kwartz.DisabledMacro
 ##
 kwartz.function.E             = com.kuwata_lab.kwartz.EscapeXmlFunction
 kwartz.function.X             = com.kuwata_lab.kwartz.AsIsFunction
@@ -1478,27 +1484,27 @@ import java.util.HashMap;
 abstract public class Macro {
     protected String _name;
 
-    public Macro(String macroname) {
-        _name = macroname;
-    }
+    //public Macro(String macroname) {
+    //    _name = macroname;
+    //}
 
     public String getName() { return _name; }
     public void setName(String name) { _name = name; }
 
-    abstract public Expression call(Expression expr);
+    abstract public int arity();
+    abstract public Expression expand(Expression[] args);
 
-    static Map _instances = new HashMap();
-    public static void register(Macro macro) {
-        register(macro.getName(), macro);
-    }
+    static Map __instances = new HashMap();
+    public static Map instances() { return __instances; }
     public static void register(String name, Macro macro) {
-        _instances.put(name, macro);
+        __instances.put(name, macro);
+        macro.setName(name);
     }
     public static Macro getInstance(String name) {
-        return (Macro)_instances.get(name);
+        return (Macro)__instances.get(name);
     }
     public static boolean isRegistered(String name) {
-        return _instances.containsKey(name);
+        return __instances.containsKey(name);
     }
 }
 
@@ -1506,54 +1512,41 @@ abstract public class Macro {
 
 package __PACKAGE__;
 
-public class CheckedMacro extends Macro {
-    public CheckedMacro() {
-        super("C");
-    }
-    public Expression call(Expression expr) {
-        Expression left = new StringExpression(" checked=\"checked\"");
+abstract public class FormMacro extends Macro {
+    public int arity() { return 1; }
+
+    public Expression expand(Expression[] args) {
+        assert args.length == arity();
+        Expression left = new StringExpression(getValue());
         Expression right = new StringExpression("");
-        return new ConditionalExpression(expr, left, right);
+        return new ConditionalExpression(args[0], left, right);
     }
-    static {
-        Macro.register(new CheckedMacro());
-    }
+
+    abstract protected String getValue();
 }
 
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
 
-public class SelectedMacro extends Macro {
-    public SelectedMacro() {
-        super("S");
-    }
-    public Expression call(Expression expr) {
-        Expression left = new StringExpression(" checked=\"checked\"");
-        Expression right = new StringExpression("");
-        return new ConditionalExpression(expr, left, right);
-    }
-    static {
-        Macro.register(new SelectedMacro());
-    }
+public class CheckedMacro extends FormMacro {
+    protected String getValue() { return " checked=\"checked\""; }
 }
 
 // --------------------------------------------------------------------------------
 
 package __PACKAGE__;
 
-public class DisabledMacro extends Macro {
-    public DisabledMacro() {
-        super("D");
-    }
-    public Expression call(Expression expr) {
-        Expression left = new StringExpression(" disabled=\"disabled\"");
-        Expression right = new StringExpression("");
-        return new ConditionalExpression(expr, left, right);
-    }
-    static {
-        Macro.register(new DisabledMacro());
-    }
+public class SelectedMacro extends FormMacro {
+    protected String getValue() { return " selected=\"selected\""; }
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+
+public class DisabledMacro extends FormMacro {
+    protected String getValue() { return " disabled=\"disabled\""; }
 }
 
 // ================================================================================
@@ -1949,13 +1942,53 @@ package __PACKAGE__;
 
 public class EscapeXmlFunction extends EscapeFunction {
     protected Object perform(Object arg) {
-        if (arg == null) return null;
+        //if (arg == null) return null;   // or return "";
+        //String s = arg.toString();
+        //s = s.replaceAll("&",  "&amp;");
+        //s = s.replaceAll("<",  "&lt;");
+        //s = s.replaceAll(">",  "&gt;");
+        //s = s.replaceAll("\"", "&quot;");
+        //return s;
+        // ----------
+        if (arg == null) return null;   // or return "";
         String s = arg.toString();
-        s = s.replaceAll("&", "&amp;");
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll(">", "&gt;");
-        s = s.replaceAll("\"", "&quot");
-        return s;
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+              case '<':   sb.append("&lt;");    break;
+              case '>':   sb.append("&gt;");    break;
+              case '&':   sb.append("&amp;");   break;
+              case '"':   sb.append("&quot;");  break;
+              default:    sb.append(ch);
+            }
+        }
+        return sb.toString();
+        // ----------
+        //if (arg == null) return null;  // or return "";
+        //String s = arg.toString();
+        //StringBuffer sb = null;
+        //for (int i = 0; i < s.length(); i++) {
+        //    char ch = s.charAt(i);
+        //    String escaped;
+        //    switch (ch) {
+        //      case '<':   escaped = "&lt;";   break;
+        //      case '>':   escaped = "&gt;";   break;
+        //      case '&':   escaped = "&amp";   break;
+        //      case '"':   escaped = "&quot";  break;
+        //      default:    escaped = null;
+        //    }
+        //    if (escaped == null) {
+        //        if (sb != null) sb.append(ch);
+        //    } else {
+        //        if (sb == null) {
+        //            sb = new StringBuffer();
+        //            sb.append(s.substring(0, i));
+        //        }
+        //        sb.append(escaped);
+        //    }
+        //}
+        //return sb == null ? s : sb.toString();
     }
 }
 
@@ -2006,7 +2039,7 @@ public class FunctionExpression extends Expression {
     private String _funcname;
     private Expression[] _arguments;
     private Function _function;
-    
+
     public FunctionExpression(String funcname, Expression[] arguments) {
         this(funcname, arguments, Function.getInstance(funcname));
     }
@@ -3338,28 +3371,27 @@ public class ExpressionParser extends Parser {
         if (t == TokenType.NAME) {
             String name = getValue();
             t = scan();
-            if (t != TokenType.L_PAREN) return new VariableExpression(name);
+            if (t != TokenType.L_PAREN)
+                return new VariableExpression(name);
             scan();
             Expression[] args = parseArguments();
-            if (getToken() != TokenType.R_PAREN) syntaxError("missing ')' of function '" + name + "().");
+            if (getToken() != TokenType.R_PAREN)
+                syntaxError("missing ')' of function '" + name + "().");
             scan();
-            String s = null;
-            if      (name.equals("C")) s = " checked=\"checked\"";
-            else if (name.equals("S")) s = " selected=\"selected\"";
-            else if (name.equals("D")) s = " disabled=\"disabled\"";
-            if (s == null) {
-                Function function = Function.getInstance(name);
-                if (function != null) {
-                    if (function.arity() != args.length)
-                        semanticError(name + "(): number of arguments should be " + function.arity() + " but got " + args.length + ".");
-                }
-                return new FunctionExpression(name, args, function);
-            } else {
-                if (args.length != 1)
-                    semanticError(name + "(): should take only one argument.");
-                Expression condition = (Expression)args[0];
-                return new ConditionalExpression(condition, new StringExpression(s), new StringExpression(""));
+            Macro macro = Macro.getInstance(name);
+            if (macro != null) {
+                if (macro.arity() != args.length)
+                    semanticError(name + "(): number of arguments should be " + macro.arity() + " but got " + args.length + " argument(s).");
+                return macro.expand(args);
             }
+            Function function = Function.getInstance(name);
+            if (function != null) {
+                if (function.arity() != args.length)
+                    semanticError(name + "(): number of arguments should be " + function.arity() + " but got " + args.length + " argument(s).");
+                return new FunctionExpression(name, args, function);
+            }
+            // unregistered function
+            return new FunctionExpression(name, args, null);
         }
         else if (t == TokenType.L_PAREN) {
             scan();
@@ -6287,7 +6319,8 @@ public class Configuration {
 
     static {
         Configuration.initProperties();
-        Configuration.initFunctions();
+        Configuration.registerMacros(defaults);
+        Configuration.registerFunctions(defaults);
     }
 
     private static void initProperties() {
@@ -6312,32 +6345,24 @@ public class Configuration {
         }
     }
 
-    private static void initFunctions() {
-        Properties props = defaults;
-        registerFunctions(props, Function.instances());
-        //registerFunctions(props, functions);
-        //for (Iterator it = functions.keySet().iterator(); it.hasNext(); ) {
-        //    String   name = (String)it.next();
-        //    Function func = (Function)functions.get(name);
-        //    Function.register(name, func);
-        //}
+    static void registerMacros(Properties props) {
+        registerObjects(props, Macro.instances(), "kwartz.macro.", true);
+    }
+    static void registerFunctions(Properties props) {
+        registerObjects(props, Function.instances(), "kwartz.function.", true);
     }
 
-    public static void registerFunctions(Properties props, Map map) {
-        registerFunctions(props, map, true);
-    }
-    public static void registerFunctions(Properties props, Map map, boolean flagOverride) {  // move to Function class?
-        // functions
+    private static void registerObjects(Properties props, Map map, String prefix, boolean flagOverride) {  // move to Function class?
         for (Enumeration en = props.propertyNames(); en.hasMoreElements(); ) {
             String pname = (String)en.nextElement();
-            if (pname.startsWith("kwartz.function.")) {
-                String funcname  = pname.substring("kwartz.function.".length());
-                if (!flagOverride && map.get(funcname) != null)
+            if (pname.startsWith(prefix)) {  // "kwartz.macro." or "kwartz.function."
+                String name  = pname.substring(prefix.length());
+                if (!flagOverride && map.get(name) != null)
                     continue;
                 String classname = (String)props.getProperty(pname);
                 try {
-                    Function func = (Function)Class.forName(classname).newInstance();
-                    map.put(funcname, func);
+                    Object obj = Class.forName(classname).newInstance();  // Macro or Function
+                    map.put(name, obj);
                 } catch (ClassNotFoundException ex) {
                     ex.printStackTrace();		// logging
                 } catch (IllegalAccessException ex) {
@@ -6381,7 +6406,8 @@ public class Kwartz {
                 _props.setProperty(pname, pvalue);
             }
         }
-        Configuration.registerFunctions(props, Function.instances());
+        Configuration.registerMacros(props);
+        Configuration.registerFunctions(props);
     }
 
     public Properties getProperties() { return _props; }
@@ -9579,6 +9605,46 @@ public class ExpressionParserTest extends TestCase {
         expected = "+\n  a\n  b\n";
         _test(input, expected, "parseItem", ArithmeticExpression.class);
     }
+    public void testParseItem5() { // macro C(), S(), D()
+        input = "C(flag)";
+        expected = <<<'END';
+            ?:
+              flag
+              " checked=\"checked\""
+              ""
+            END
+        _test(input, expected, "parseItem", ConditionalExpression.class);
+        input = "S(gender=='M')";
+        expected = <<<'END';
+            ?:
+              ==
+                gender
+                "M"
+              " selected=\"selected\""
+              ""
+            END
+        _test(input, expected, "parseItem", ConditionalExpression.class);
+        input = "D(error!=null)";
+        expected = <<<'END';
+            ?:
+              !=
+                error
+                null
+              " disabled=\"disabled\""
+              ""
+            END
+        _test(input, expected, "parseItem", ConditionalExpression.class);
+    }
+    public void testParseItem6() { // arity of macros
+        input = "C(arg1, arg2)";
+        expected = "";
+        try {
+            _test(input, expected, "parseItem", ConditionalExpression.class);
+            fail("SemanticError expected but not throwed.");
+        } catch (SemanticException ex) {
+            // OK
+        }
+    }
 
     public void testParseFactor1() {  // array
         input = "a[10]";
@@ -10761,9 +10827,9 @@ public class FunctionTest extends TestCase {
             print(escape_sql("'quote'" .+ '"doublequote"' .+ '\\escape'), "\n");
             END
         _expected = <<'END';
-            &lt;em&gt;&quotA&amp;B&quot&lt;/em&gt;
+            &lt;em&gt;&quot;A&amp;B&quot;&lt;/em&gt;
             <em>"A&B"</em>
-            &lt;em&gt;&quotA&amp;B&quot&lt;/em&gt;
+            &lt;em&gt;&quot;A&amp;B&quot;&lt;/em&gt;
             http%3A%2F%2Flocalhost%2F%7Euser%2Findex%3Farg%3D%3Ctag+attr%3D%22foo%22%3E
             \'quote\'\"doublequote\"\\escape
             END
