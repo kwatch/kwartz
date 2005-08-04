@@ -389,6 +389,7 @@ __END__
  *  @(#) __CLASS__.java
  *  @Id  $Id$
  *  @copyright (C)2005 kuwata-lab.com all rights reserverd
+ @  @release $Release$
  */
 // --------------------------------------------------------------------------------
 
@@ -4163,8 +4164,8 @@ public class Element {
         if (decl.remove != null) {
             if (_stag.attrs != null) {
                 for (int i = _stag.attrs.size() - 1; i >= 0; i--) {
-                    Object[] attr = (Object[])_stag.attrs.get(i);
-                    Object aname = attr[1];
+                    Attr attr = (Attr)_stag.attrs.get(i);
+                    Object aname = attr.name;
                     if (decl.remove.contains(aname))
                        _stag.attrs.remove(i);
                 }
@@ -4178,22 +4179,22 @@ public class Element {
                 int i;
                 int len = _stag.attrs.size();
                 for (i = 0; i < len; i++) {
-                    Object[] attr = (Object[])_stag.attrs.get(i);
-                    if (aname.equals(attr[1])) {  // attr[1] is attribute name
-                        attr[2] = expr;           // attr[2] is attribute value
+                    Attr attr = (Attr)_stag.attrs.get(i);
+                    if (aname.equals(attr.name)) {
+                        attr.value = expr;
                         break;
                     }
                 }
                 if (i >= len) {
-                    Object[] attr = { " ", aname, expr, };
+                    Attr attr = new Attr(" ", aname, expr);
                     _stag.attrs.add(attr);
                 }
             }
             //for (int i = _stag.attrs.size() -1; i >= 0; i--) {
-            //    Object[] attr = (Object[])_stag.attrs.get(i);
-            //    Object aname = attr[1];
+            //    Attr attr = (Attr)_stag.attrs.get(i);
+            //    String aname = attr.name;
             //    Object expr = decl.attrs.get(aname);
-            //    if (expr != null)  attr[2] = expr;
+            //    if (expr != null)  attr.value = expr;
             //}
         }
         if (decl.append != null) {
@@ -4683,6 +4684,29 @@ public class ExpantionException extends BaseException {
 package __PACKAGE__;
 import java.util.List;
 
+class Attr {
+    String space;
+    String name;
+    Object value;        // Expression or String
+
+    Attr(String space, String name, Object value) {
+        this.space = space;
+        this.name  = name;
+        this.value = value;
+    }
+
+    /*
+    String space() { return space; }
+    String name()  { return name;  }
+    Object value() { return value; }
+     */
+}
+
+// --------------------------------------------------------------------------------
+
+package __PACKAGE__;
+import java.util.List;
+
 public class Tag {
     public String tag_str;
     public String before_text;
@@ -4702,7 +4726,7 @@ public class Tag {
     //
     public String directive_name;
     public String directive_arg;
-    public List attrs;
+    public List attrs;              // list of Attr
     public List append_exprs;
 
     public String _inspect() {
@@ -4856,10 +4880,10 @@ public class TagHelper {
         List list = new ArrayList();
         if (tag.attrs != null) {
             for (Iterator it = tag.attrs.iterator(); it.hasNext(); ) {
-                Object[] a = (Object[])it.next();
-                String aspace = (String)a[0];
-                String aname  = (String)a[1];
-                Object avalue = a[2];
+                Attr a = (Attr)it.next();
+                String aspace = a.space;
+                String aname  = a.name;
+                Object avalue = a.value;
                 sb.append(aspace);
                 sb.append(aname);
                 sb.append("=\"");
@@ -4940,8 +4964,8 @@ public class DirectiveHandler {
         String marking = stag.directive_arg;
         if (stag.attrs != null) {
             for (Iterator it = stag.attrs.iterator(); it.hasNext(); ) {
-                Object[] attr = (Object[])it.next();
-                String avalue = (String)attr[2];
+                Attr attr = (Attr)it.next();
+                String avalue = (String)attr.value;
                 Expression[] exprs = _helper.expandEmbeddedExpression(avalue, stag.linenum);
                 //Expression[] exprs = _converter.expandEmbeddedExpression(avalue, stag.linenum);
                 Expression expr;
@@ -4953,7 +4977,7 @@ public class DirectiveHandler {
                         expr = new ConcatenationExpression(expr, exprs[i]);
                     }
                 }
-                attr[2] = expr;    // avalue
+                attr.value = expr;
             }
         }
         _converter.addElement(new Element(marking, stag, etag, bodyStmtList));
@@ -5568,33 +5592,35 @@ public class DefaultConverter implements Converter {
 
 
     private static final String ATTR_PATTERN = "(\\s*)([-:_\\w]+)=\"(.*?)\"";
+    private static final String WORD_PATTERN = "\\A[-_\\w]+\\z";
 
     private void _parseAttributes(Tag tag) {
         final Pattern attrPattern = Pattern.compile(ATTR_PATTERN);
         Matcher m = attrPattern.matcher(tag.attr_str);
-        Object[] id_tuple = null;
-        Object[] kd_tuple = null;
+        Attr id_attr = null;
+        Attr kd_attr = null;
         while (m.find()) {
             String aspace  = m.group(1);
             String aname   = m.group(2);
             String avalue  = m.group(3);
             if (tag.attrs == null) tag.attrs = new ArrayList();
-            Object[] tuple = { aspace, aname, avalue };
-            tag.attrs.add(tuple);
-            if (aname.equals("id")) id_tuple = tuple;
-            else if (aname.equals("kw:d")) kd_tuple = tuple;
+            Attr attr = new Attr(aspace, aname, avalue);
+            tag.attrs.add(attr);
+            if (aname.equals("id")) id_attr = attr;
+            else if (aname.equals("kw:d")) kd_attr = attr;
         }
-        if (id_tuple != null) {
-            String id_value = (String)id_tuple[2];
+        if (id_attr != null) {
+            String id_value = (String)id_attr.value;
             _parseIdAttribute(id_value, tag);   // set tag.directive_name and tag.directive_arg
-            if (! Pattern.matches("\\A[-_\\w]+\\z", id_value)) {
-                tag.attrs.remove(id_tuple);
+            final Pattern word_pat = Pattern.compile(WORD_PATTERN);
+            if (! word_pat.matcher(id_value).find()) {
+                tag.attrs.remove(id_attr);
             }
         }
-        if (kd_tuple != null) {
-            String kd_value = (String)kd_tuple[2];
+        if (kd_attr != null) {
+            String kd_value = (String)kd_attr.value;
             _parseKdAttribute(kd_value, tag);   // set tag.directive_name and tag.directive_arg
-            tag.attrs.remove(kd_tuple);
+            tag.attrs.remove(kd_attr);
         }
     }
 
@@ -5631,24 +5657,24 @@ public class DefaultConverter implements Converter {
                 else if (dname.equals("Attr"))   s = "E(" + avalue + ")";
                 else                             s = "X(" + avalue + ")";
                 Expression expr = _helper.parseExpression(s, tag.linenum);
-                Object[] attr = null;
+                Attr attr = null;
                 if (tag.attrs == null) {
                     tag.attrs = new ArrayList();
-                    attr = new Object[] { " ", aname, expr };
+                    attr = new Attr(" ", aname, expr);
                     tag.attrs.add(attr);
                 } else {
                     for (int j = 0; j < tag.attrs.size(); j++) {
-                        Object[] tuple = (Object[])tag.attrs.get(j);
-                        if (aname.equals(tuple[1])) {
-                            attr = tuple;
+                        Attr attr2 = (Attr)tag.attrs.get(j);
+                        if (aname.equals(attr2.name)) {
+                            attr = attr2;
                             break;
                         }
                     }
                     if (attr == null) {
-                        attr = new Object[] { " ", aname, expr };
+                        attr = new Attr(" ", aname, expr);
                         tag.attrs.add(attr);
                     } else {
-                        attr[2] = expr;
+                        attr.value = expr;
                     }
                 }
             }
@@ -6452,9 +6478,9 @@ package __PACKAGE__;
 import java.util.HashMap;
 
 public class Context extends HashMap {
-    public void putAll(Object[][] tupleList) {
-        for (int i = 0; i < tupleList.length; i++) {
-            Object[] tuple = tupleList[i];
+    public void putAll(Object[][] tuples) {
+        for (int i = 0; i < tuples.length; i++) {
+            Object[] tuple = tuples[i];
             Object key   = tuple[0];
             Object value = tuple[1];
             this.put(key, value);
@@ -7820,23 +7846,23 @@ END
         assertEquals(null, tag.directive_arg);
         assertTrue(tag.attrs != null);
         assertEquals(1, tag.attrs.size());
-        Object[] attr = (Object[])tag.attrs.get(0);
-        assertEquals("class", attr[1]);
-        assertEquals(VariableExpression.class, attr[2].getClass());
+        Attr attr = (Attr)tag.attrs.get(0);
+        assertEquals("class", attr.name);
+        assertEquals(VariableExpression.class, attr.value.getClass());
         //
         _input    = "Attr:class:klass";
         _args     = new Object[] {_input, tag};
         _test();
-        attr = (Object[])tag.attrs.get(0);
-        assertEquals(FunctionExpression.class, attr[2].getClass());
-        assertEquals("E", ((FunctionExpression)attr[2]).getFunctionName());
+        attr = (Attr)tag.attrs.get(0);
+        assertEquals(FunctionExpression.class, attr.value.getClass());
+        assertEquals("E", ((FunctionExpression)attr.value).getFunctionName());
         //
         _input    = "ATTR:class:klass";
         _args     = new Object[] {_input, tag};
         _test();
-        attr = (Object[])tag.attrs.get(0);
-        assertEquals(FunctionExpression.class, attr[2].getClass());
-        assertEquals("X", ((FunctionExpression)attr[2]).getFunctionName());
+        attr = (Attr)tag.attrs.get(0);
+        assertEquals(FunctionExpression.class, attr.value.getClass());
+        assertEquals("X", ((FunctionExpression)attr.value).getFunctionName());
         //
         _input    = "append:' checked'";
         _args     = new Object[] {_input, tag};
@@ -7886,9 +7912,9 @@ END
         assertEquals("foo[:key]", tag.directive_arg);
         assertTrue(tag.attrs != null);
         assertEquals(1, tag.attrs.size());
-        Object[] attr = (Object[])tag.attrs.get(0);
-        assertEquals("class", attr[1]);
-        assertEquals(VariableExpression.class, attr[2].getClass());
+        Attr attr = (Attr)tag.attrs.get(0);
+        assertEquals("class", attr.name);
+        assertEquals(VariableExpression.class, attr.value.getClass());
         assertTrue(tag.append_exprs != null);
         assertEquals(1, tag.append_exprs.size());
         Object expr = tag.append_exprs.get(0);
@@ -7908,15 +7934,15 @@ END
         //
         assertTrue(tag.attrs != null);
         assertEquals(3, tag.attrs.size());
-        Object[] attr = (Object[])tag.attrs.get(0);
-        assertEquals("class", attr[1]);
-        assertEquals("even",  attr[2]);
-        attr = (Object[])tag.attrs.get(1);
-        assertEquals("bgcolor", attr[1]);
-        assertEquals("#FFCCCC",  attr[2]);
-        attr = (Object[])tag.attrs.get(2);
-        assertEquals("xml:ns", attr[1]);
-        assertEquals("foo",  attr[2]);
+        Attr attr = (Attr)tag.attrs.get(0);
+        assertEquals("class", attr.name);
+        assertEquals("even",  attr.value);
+        attr = (Attr)tag.attrs.get(1);
+        assertEquals("bgcolor", attr.name);
+        assertEquals("#FFCCCC",  attr.value);
+        attr = (Attr)tag.attrs.get(2);
+        assertEquals("xml:ns", attr.name);
+        assertEquals("foo",  attr.value);
     }
 
     public void testAttribute05() throws Exception { // _parseAttributes() {
@@ -7933,9 +7959,9 @@ END
         assertEquals("mark", tag.directive_name);
         assertEquals("foo", tag.directive_arg);
         assertEquals(3, tag.attrs.size());
-        Object[] attr = (Object[])tag.attrs.get(2);
-        assertEquals("id", attr[1]);
-        assertEquals("foo",  attr[2]);
+        Attr attr = (Attr)tag.attrs.get(2);
+        assertEquals("id", attr.name);
+        assertEquals("foo",  attr.value);
         //
         tag = new Tag();
         tag.attr_str = " class=\"even\"  bgcolor=\"#FFCCCC\" id=\"mark:foo\" ";
@@ -7945,10 +7971,10 @@ END
         assertEquals("mark", tag.directive_name);
         assertEquals("foo", tag.directive_arg);
         assertEquals(2, tag.attrs.size());
-        attr = (Object[])tag.attrs.get(0);
-        assertEquals("class", attr[1]);
-        attr = (Object[])tag.attrs.get(1);
-        assertEquals("bgcolor", attr[1]);
+        attr = (Attr)tag.attrs.get(0);
+        assertEquals("class", attr.name);
+        attr = (Attr)tag.attrs.get(1);
+        assertEquals("bgcolor", attr.name);
         //
         tag = new Tag();
         tag.attr_str = " class=\"even\" id=\"foo\" id=\"value:var\"";
@@ -7958,9 +7984,9 @@ END
         assertEquals("value", tag.directive_name);
         assertEquals("var", tag.directive_arg);
         assertEquals(2, tag.attrs.size());
-        attr = (Object[])tag.attrs.get(1);
-        assertEquals("id", attr[1]);
-        assertEquals("foo",  attr[2]);
+        attr = (Attr)tag.attrs.get(1);
+        assertEquals("id", attr.name);
+        assertEquals("foo",  attr.value);
     }
 
 
@@ -8005,15 +8031,15 @@ END
         assertEquals("mark", tag.directive_name);
         assertEquals("bar", tag.directive_arg);
         assertEquals(3, tag.attrs.size());
-        Object[] attr = (Object[])tag.attrs.get(0);
-        assertEquals("id", attr[1]);
-        assertEquals(VariableExpression.class, attr[2].getClass());
-        attr = (Object[])tag.attrs.get(1);
-        assertEquals("bgcolor", attr[1]);
-        assertEquals(String.class, attr[2].getClass());
-        attr = (Object[])tag.attrs.get(2);
-        assertEquals("class", attr[1]);
-        assertEquals(VariableExpression.class, attr[2].getClass());
+        Attr attr = (Attr)tag.attrs.get(0);
+        assertEquals("id", attr.name);
+        assertEquals(VariableExpression.class, attr.value.getClass());
+        attr = (Attr)tag.attrs.get(1);
+        assertEquals("bgcolor", attr.name);
+        assertEquals(String.class, attr.value.getClass());
+        attr = (Attr)tag.attrs.get(2);
+        assertEquals("class", attr.name);
+        assertEquals(VariableExpression.class, attr.value.getClass());
         assertTrue(tag.append_exprs != null);
         assertEquals(ConditionalExpression.class, tag.append_exprs.get(0).getClass());
     }

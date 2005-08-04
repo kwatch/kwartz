@@ -6,7 +6,7 @@
 .- [v] optimization: expand block statement - 2005-07-14
 .- [_] add filename and linenumber on Node
 .- [_] delete span tag
-.- [_] new class Tag.Attr(space, attrname, attrexpr)
+.- [v] new class Tag.Attr(space, attrname, attrexpr) - 2005-08-04
 .- [v] properties support - 2005-07-18
 .- [_] new class Executor
 .- [v] template caching - 2005-07-13
