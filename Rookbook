@@ -40,43 +40,61 @@ recipe :clear				do |r|
 	list = []
 	list.concat Dir.glob("#{src_path}/*.class")
 	list.concat Dir.glob("#{src_path}/*.java")
+	list.concat Dir.glob("#{src_path}/*.properties")
 	list.concat Dir.glob("#{test_path}/*.class")
 	list.concat Dir.glob("#{test_path}/*.java")
 	remove list
 	end
 
-grecipe "kwartz-*.jar"			do |r|
+grecipe "kwartz-*.jar"		, :compile		do |r|
 	chdir "src/java" do
-	    cmd "jar cf #{r.product} com/kuwata_lab/kwartz/*.class"
+	    cmd "jar cf ../../#{r.product} com/kuwata_lab/kwartz/kwartz.properties com/kuwata_lab/kwartz/*.class"
 	end
-	move "src/java/kwartz-{1}.jar", "."
+	#move "src/java/kwartz-{1}.jar", "."
 	end
 
 
-text_files = %w[ChangeLog todo.txt]
+#text_files = %w[ChangeLog README.txt COPYING todo.txt]
+text_files = %w[README.txt COPYING todo.txt]
 
-grecipe "kwartz-java-*.zip"	, "kwartz-{1}.jar"	do |r|
-	dir = r.product.gsub(/\.zip$/, '')
+grecipe "kwartz-java_*.{tar.gz|tar.bz2|zip}"	, "kwartz-{1}.jar"  do |r|
+	#dir = r.product.gsub(/\.zip$/, '')
+	dir = r.product.gsub("\.#{m[2]}", '')
 	rm_rf dir if test(?d, dir)
 	mkdir_p dir
 	#copy "kwartz-{1}.jar", dir
 	#copy [text_files], dir
 	chdir "examples" do cmd "rook :clear build.xml" end
-	store "examples/**/*", text_files, "kwartz-{1}.jar", dir
+	store "examples/**/*", text_files, dir
+	move  "kwartz-{1}.jar", dir
+	store "src/**/*.java", "src/**/*.properties", dir
 	list = []
 	list.concat Dir.glob("#{dir}/examples/**/Rookbook")
 	list.concat Dir.glob("#{dir}/examples/**/build.kwaff")
 	remove list
-	Dir.glob("#{dir}/**/*").each do |file|
-	   next unless test(?f, file)
-	   next if file =~ /\.jar$/
-	   File.open(file, "r+") do |f|
-	      s = f.read().gsub(/\$Release.*?\$/, "$Release: #{m[1]} $")
+	Dir.glob("#{dir}/**/*").each do |filename|
+	   next unless test(?f, filename)
+	   next if filename =~ /\.jar$/
+	   File.open(filename, "r+") do |f|
+	      s = f.read()
+	      s.gsub!(/\$Release.*?\$/, "$Release: #{m[1]} $")
+	      s.gsub!(/\$Copyright\$/,  "copyright(c) 2005 kuwata-lab.com all rights reserved")
+	      if filename =~ /\bbuild\.xml\z/
+	         s.sub!(/value="\.\.\/\.\.\/src\/java"/, "value=\"../../kwartz-#{m[1]}.jar\"")
+	      end
 	      f.rewind()
 	      f.truncate(0)
 	      f.write(s)
 	   end
 	end
-	cmd "zip -qr9 #{r.product} #{dir}"
+	case m[2]
+	when "tar.gz"
+	   cmd "tar czf #{r.product} #{dir}"
+	when "tar.bz2"
+	   cmd "tar cjf #{r.product} #{dir}"
+	when "zip"
+	   cmd "zip -qr9 #{r.product} #{dir}"
+	end
+	
 	end
 	

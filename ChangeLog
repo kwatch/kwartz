@@ -1,6 +1,12 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-08-10 (rev.20) (release 0.0.1)
+	.- [change] rewrite test cases
+	.- [enhance] add KwartzClassTest
+	.- [bugfix] error happened when 'new Kwartz(null)'
+	.- [enhance] add ':test' recipe in examples/*/Rookbook
+
 .: 2005-08-04 (rev.19)
 	.- [change] add Attr class instead of 'Object[] { space, aname, avalue }'
 

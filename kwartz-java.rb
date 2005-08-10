@@ -388,8 +388,8 @@ __END__
 /**
  *  @(#) __CLASS__.java
  *  @Id  $Id$
- *  @copyright (C)2005 kuwata-lab.com all rights reserverd
- @  @release $Release$
+ *  @copyright $Copyright$
+ *  @release $Release$
  */
 // --------------------------------------------------------------------------------
 
@@ -6431,9 +6431,9 @@ public class Kwartz {
                 String pvalue = props.getProperty(pname);
                 _props.setProperty(pname, pvalue);
             }
+            Configuration.registerMacros(props);
+            Configuration.registerFunctions(props);
         }
-        Configuration.registerMacros(props);
-        Configuration.registerFunctions(props);
     }
 
     public Properties getProperties() { return _props; }
@@ -6462,6 +6462,15 @@ public class Kwartz {
         return template;
     }
 
+    public Template compileString(String pdata, String plogic, String elemdecl, String charset) throws IOException {
+        Compiler compiler = new DefaultCompiler(_props);
+        Template template = compiler.compileString(pdata, plogic, elemdecl, charset);
+        Optimizer optimizer = new Optimizer(_props);
+        optimizer.optimize(template.getBlockStatement());
+        return template;
+    }
+
+
     public Template getTemplate(Object key) {
         return (Template)_cache.get(key);
     }
@@ -6485,6 +6494,123 @@ public class Context extends HashMap {
             Object value = tuple[1];
             this.put(key, value);
         }
+    }
+}
+
+// --------------------------------------------------------------------------------
+package __PACKAGE__;
+import junit.framework.TestCase;
+import java.util.*;
+import java.io.*;
+
+public class KwartzClassTest extends TestCase {
+
+    private String _pdata = null;
+    private String _plogic = null;
+    private String _elemdef = null;
+    private Context _context = new Context();
+    private Properties _props = new Properties();
+    private String _expected = null;
+    
+
+    private static final String PREFIX = ".KwartzClassTest";
+    private static final String CHARSET = System.getProperty("file.encoding");
+
+    public void _test(String basename) {
+        String pdataFilename   = _pdata   == null ? null : PREFIX + basename + ".html";
+        String plogicFilename  = _plogic  == null ? null : PREFIX + basename + ".plogic";
+        String elemdefFilename = _elemdef == null ? null : PREFIX + basename + ".elem.html";
+
+        try {
+            _createFile(pdataFilename, _pdata);
+            _createFile(plogicFilename, _plogic);
+            _createFile(elemdefFilename, _elemdef);
+            Kwartz kwartz = new Kwartz(_props);
+            String cacheKey = basename;
+            Template template = kwartz.getTemplate(cacheKey, pdataFilename, plogicFilename, elemdefFilename, CHARSET);
+            //System.err.println("*** debug: template=" + template.getBlockStatement()._inspect() + ".");
+            StringWriter writer = new StringWriter();
+            template.execute(_context, writer);
+            String actual = writer.toString();
+            writer.close();
+            assertEquals(_expected, actual);
+        }
+        catch (IOException ex) {
+            //ex.printStackTrace();
+            fail(ex.getMessage());
+        }
+        finally {
+            _deleteFile(pdataFilename);
+            _deleteFile(plogicFilename);
+            if (_elemdef != null) _deleteFile(elemdefFilename);
+        }
+    }
+
+    private void _createFile(String filename, String content) throws IOException {
+        if (content == null) return;
+        OutputStream output = new FileOutputStream(filename);
+        Writer writer = new OutputStreamWriter(output, CHARSET);
+        writer.write(content);
+        writer.flush();
+    }
+
+    private void _deleteFile(String filename) {
+        File file = new File(filename);
+        file.delete();
+    }
+
+
+    public void testGetTemplate1() {   // kwartz properties for Kwartz()
+        _pdata = <<'END';
+                <html>
+                 <body>
+                  <table id="LIST:item=list">
+                   <tr id="mark:list">
+                    <td><a href="#" id="mark:item">foo</a></td><td>@{item}@</td>
+                   </tr>
+                  </table>
+                 </body>
+                </html>
+                END
+        _plogic = <<'END';
+                #list {
+                  attrs:  "bgcolor" item_tgl;
+                  //attrs: "bgcolor" color;
+                  //plogic: {
+                  //  i = 0;
+                  //  foreach (item in list) {
+                  //    i += 1;
+                  //    color = i % 2 == 0 ? "#FFCCCC" : "#CCCCFF";
+                  //    @stag;
+                  //    @cont;
+                  //    @etag;
+                  //  }
+                  //}
+                }
+                #item {
+                  value: X(item);
+                  attrs: "href" E("?id=" .+ item .+ "&page=_top");
+                }
+                END
+        _expected = <<'END';
+                <html>
+                 <body>
+                  <table>
+                   <tr bgcolor="#CCCCFF">
+                    <td><a href="?id=foo&amp;page=_top">foo</a></td><td>foo</td>
+                   </tr>
+                   <tr bgcolor="#FFCCCC">
+                    <td><a href="?id=&lt;b&gt;bar&lt;/b&gt;&amp;page=_top"><b>bar</b></a></td><td>&lt;b&gt;bar&lt;/b&gt;</td>
+                   </tr>
+                  </table>
+                 </body>
+                </html>
+                END
+        _context.put("list", new String[] { "foo", "<b>bar</b>" });
+        _props.setProperty("kwartz.escape", "true");         // kwartz.escape
+        _props.setProperty("kwartz.even", "'#FFCCCC'");      // kwartz.even
+        _props.setProperty("kwartz.odd",  "'#CCCCFF'");      // kwartz.odd
+        _test("1");
     }
 }
 
@@ -8988,14 +9114,13 @@ import junit.framework.TestCase;
 
 public class StatementParserTest extends TestCase {
 
-    String input, expected;
+    String _input, _expected;
 
-    public Parser _test(String input, String expected, String method) {
-        return _test(input, expected, method, null);
+    public Parser _test(String method) {
+        return _test(method, null);
     }
-
-    public Parser _test(String input, String expected, String method, Class klass) {
-        Scanner scanner = new Scanner(input);
+    public Parser _test(String method, Class klass) {
+        Scanner scanner = new Scanner(_input);
         StatementParser parser = new StatementParser(scanner);
         Statement stmt = null;
         Statement[] stmts = null;
@@ -9032,13 +9157,13 @@ public class StatementParserTest extends TestCase {
         }
         if (stmt != null) {
             StringBuffer actual = stmt._inspect();
-            assertEquals(expected, actual.toString());
+            assertEquals(_expected, actual.toString());
         } else if (stmts != null) {
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < stmts.length; i++) {
                 stmts[i]._inspect(0, sb);
             }
-            assertEquals(expected, sb.toString());
+            assertEquals(_expected, sb.toString());
         } else {
             assert false;
         }
@@ -9047,158 +9172,194 @@ public class StatementParserTest extends TestCase {
 
 
     public void testParseBlockStatement1() {
-        input = "{ print(foo); print(bar); print(baz); }";
-        expected = ":block\n  :print\n    foo\n  :print\n    bar\n  :print\n    baz\n";
-        _test(input, expected, "parseBlockStatement", BlockStatement.class);
+        _input = "{ print(foo); print(bar); print(baz); }";
+        _expected = ":block\n  :print\n    foo\n  :print\n    bar\n  :print\n    baz\n";
+        _test("parseBlockStatement", BlockStatement.class);
     }
 
     public void testParseBlockStatement2() {
-        input = "{ i=0; i+=1; ; }";
-        expected = ":block\n"
-                 + "  :expr\n"
-                 + "    =\n"
-                 + "      i\n"
-                 + "      0\n"
-                 + "  :expr\n"
-                 + "    +=\n"
-                 + "      i\n"
-                 + "      1\n"
-                 + "  :empty_stmt\n"
-                 ;
-        _test(input, expected, "parseBlockStatement", BlockStatement.class);
+        _input = "{ i=0; i+=1; ; }";
+        _expected = <<'END';
+                :block
+                  :expr
+                    =
+                      i
+                      0
+                  :expr
+                    +=
+                      i
+                      1
+                  :empty_stmt
+                END
+        _test("parseBlockStatement", BlockStatement.class);
     }
 
 
     public void testParsePrintStatement1() { // print('foo');
-        input = "print('foo');";
-        expected = ":print\n  \"foo\"\n";
-        _test(input, expected, "parsePrintStatement", PrintStatement.class);
+        _input = "print('foo');";
+        _expected = <<'END';
+                :print
+                  "foo"
+                END
+        _test("parsePrintStatement", PrintStatement.class);
     }
     public void testParsePrintStatement2() { // print(a, 'foo'.+b, 100);
-        input = "print(a, 'foo'.+b, 100);";
-        expected = ":print\n  a\n  .+\n    \"foo\"\n    b\n  100\n";
-        _test(input, expected, "parsePrintStatement", PrintStatement.class);
+        _input = "print(a, 'foo'.+b, 100);";
+        _expected = <<'END';
+                :print
+                  a
+                  .+
+                    "foo"
+                    b
+                  100
+                END
+        _test("parsePrintStatement", PrintStatement.class);
     }
 
     public void testParseExpressionStatement1() { // x = 100;
-        input = "x = 100;";
-        expected = ":expr\n  =\n    x\n    100\n";
-        _test(input, expected, "parseExpressionStatement", ExpressionStatement.class);
+        _input = "x = 100;";
+        _expected = <<'END';
+                :expr
+                  =
+                    x
+                    100
+                END
+        _test("parseExpressionStatement", ExpressionStatement.class);
     }
 
     public void testParseExpressionStatement2() { // x[i][j] = i > j ? 0 : 1;
-        input = "x[i][j] = i > j ? 0 : 1;";
-        expected = ":expr\n  =\n    []\n      []\n        x\n        i\n      j\n    ?:\n      >\n        i\n        j\n      0\n      1\n";
-        _test(input, expected, "parseExpressionStatement", ExpressionStatement.class);
+        _input = "x[i][j] = i > j ? 0 : 1;";
+        _expected = <<'END';
+                :expr
+                  =
+                    []
+                      []
+                        x
+                        i
+                      j
+                    ?:
+                      >
+                        i
+                        j
+                      0
+                      1
+                END
+        _test("parseExpressionStatement", ExpressionStatement.class);
     }
 
 
     public void testParseForeachStatement1() {
-        input = "foreach(item in list) { print(item); }";
-        expected = ":foreach\n"
-                 + "  item\n"
-                 + "  list\n"
-                 + "  :block\n"
-                 + "    :print\n"
-                 + "      item\n"
-                 ;
-        _test(input, expected, "parseForeachStatement", ForeachStatement.class);
+        _input = "foreach(item in list) { print(item); }";
+        _expected = <<'END';
+                :foreach
+                  item
+                  list
+                  :block
+                    :print
+                      item
+                END
+        _test("parseForeachStatement", ForeachStatement.class);
     }
 
     public void testParseForeachStatement2() {
-        input = "foreach(item in list) print(item);";
-        expected = ":foreach\n"
-                 + "  item\n"
-                 + "  list\n"
-                 + "  :print\n"
-                 + "    item\n"
-                 ;
-        _test(input, expected, "parseForeachStatement", ForeachStatement.class);
+        _input = "foreach(item in list) print(item);";
+        _expected = <<'END';
+                :foreach
+                  item
+                  list
+                  :print
+                    item
+                END
+        _test("parseForeachStatement", ForeachStatement.class);
     }
 
 
     public void testParseIfStatement1() {
-        input = "if (flag) print(flag);";
-        expected = ":if\n"
-                 + "  flag\n"
-                 + "  :print\n"
-                 + "    flag\n"
-                 ;
-        _test(input, expected, "parseIfStatement", IfStatement.class);
+        _input = "if (flag) print(flag);";
+        _expected = <<'END';
+                :if
+                  flag
+                  :print
+                    flag
+                END
+        _test("parseIfStatement", IfStatement.class);
     }
 
     public void testParseIfStatement2() {
-        input = "if (flag) print(true); else print(false);";
-        expected = ":if\n"
-                 + "  flag\n"
-                 + "  :print\n"
-                 + "    true\n"
-                 + "  :print\n"
-                 + "    false\n"
-                 ;
-        _test(input, expected, "parseIfStatement", IfStatement.class);
+        _input = "if (flag) print(true); else print(false);";
+        _expected = <<'END';
+                :if
+                  flag
+                  :print
+                    true
+                  :print
+                    false
+                END
+        _test("parseIfStatement", IfStatement.class);
     }
 
     public void testParseIfStatement3() {
-        input = "if (flag1) print(aaa); else if (flag2) print(bbb); elseif(flag3) print(ccc); else print(ddd);";
-        expected = ":if\n"
-                 + "  flag1\n"
-                 + "  :print\n"
-                 + "    aaa\n"
-                 + "  :if\n"
-                 + "    flag2\n"
-                 + "    :print\n"
-                 + "      bbb\n"
-                 + "    :if\n"
-                 + "      flag3\n"
-                 + "      :print\n"
-                 + "        ccc\n"
-                 + "      :print\n"
-                 + "        ddd\n"
-                 ;
-        _test(input, expected, "parseIfStatement", IfStatement.class);
+        _input = "if (flag1) print(aaa); else if (flag2) print(bbb); elseif(flag3) print(ccc); else print(ddd);";
+        _expected = <<'END';
+                :if
+                  flag1
+                  :print
+                    aaa
+                  :if
+                    flag2
+                    :print
+                      bbb
+                    :if
+                      flag3
+                      :print
+                        ccc
+                      :print
+                        ddd
+                END
+        _test("parseIfStatement", IfStatement.class);
     }
 
 
     public void testParseWhileStatement1() {
-        input = "while (i < max) i += 1;";
-        expected = ":while\n"
-                 + "  <\n"
-                 + "    i\n"
-                 + "    max\n"
-                 + "  :expr\n"
-                 + "    +=\n"
-                 + "      i\n"
-                 + "      1\n"
-                 ;
-        _test(input, expected, "parseWhileStatement", WhileStatement.class);
+        _input = "while (i < max) i += 1;";
+        _expected = <<'END';
+                :while
+                  <
+                    i
+                    max
+                  :expr
+                    +=
+                      i
+                      1
+                END
+        _test("parseWhileStatement", WhileStatement.class);
     }
 
 
     public void testParseExpandStatement1() {
-        input = "@stag;";
-        expected = "@stag\n";
-        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
-        input = "@cont;";
-        expected = "@cont\n";
-        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
-        input = "@etag;";
-        expected = "@etag\n";
-        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
-        input = "@content(foo);";
-        expected = "@content(foo)\n";
-        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
-        input = "@element(foo);";
-        expected = "@element(foo)\n";
-        _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+        _input = "@stag;";
+        _expected = "@stag\n";
+        _test("parseExpandStatement", ExpandStatement.class);
+        _input = "@cont;";
+        _expected = "@cont\n";
+        _test("parseExpandStatement", ExpandStatement.class);
+        _input = "@etag;";
+        _expected = "@etag\n";
+        _test("parseExpandStatement", ExpandStatement.class);
+        _input = "@content(foo);";
+        _expected = "@content(foo)\n";
+        _test("parseExpandStatement", ExpandStatement.class);
+        _input = "@element(foo);";
+        _expected = "@element(foo)\n";
+        _test("parseExpandStatement", ExpandStatement.class);
     }
 
 
     public void testParseExpandStatement2() {
-        input = "@foo;";
-        expected = "";
+        _input = "@foo;";
+        _expected = "";
         try {
-            _test(input, expected, "parseExpandStatement", ExpandStatement.class);
+            _test("parseExpandStatement", ExpandStatement.class);
             fail("SyntaxException expected but not happened.");
         } catch (SyntaxException ex) {
             // OK
@@ -9207,56 +9368,58 @@ public class StatementParserTest extends TestCase {
 
 
     public void testParseStatementList1() {
-        input = "print(\"<table>\\n\");\n"
-              + "i = 0;\n"
-              + "foreach(item in list) {\n"
-              + "  i += 1;\n"
-              + "  color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';\n"
-              + "  print(\"<tr bgcolor=\\\"\", color, \"\\\">\\n\");\n"
-              + "  print(\"<td>\", item, \"</td>\n\");\n"
-              + "  print(\"</tr>\\n\");\n"
-              + "}\n"
-              + "print(\"</table>\\n\");\n"
-              ;
-        expected = ":print\n"
-                 + "  \"<table>\\n\"\n"
-                 + ":expr\n"
-                 + "  =\n"
-                 + "    i\n"
-                 + "    0\n"
-                 + ":foreach\n"
-                 + "  item\n"
-                 + "  list\n"
-                 + "  :block\n"
-                 + "    :expr\n"
-                 + "      +=\n"
-                 + "        i\n"
-                 + "        1\n"
-                 + "    :expr\n"
-                 + "      =\n"
-                 + "        color\n"
-                 + "        ?:\n"
-                 + "          ==\n"
-                 + "            %\n"
-                 + "              i\n"
-                 + "              2\n"
-                 + "            0\n"
-                 + "          \"#FFCCCC\"\n"
-                 + "          \"#CCCCFF\"\n"
-                 + "    :print\n"
-                 + "      \"<tr bgcolor=\\\"\"\n"
-                 + "      color\n"
-                 + "      \"\\\">\\n\"\n"
-                 + "    :print\n"
-                 + "      \"<td>\"\n"
-                 + "      item\n"
-                 + "      \"</td>\\n\"\n"
-                 + "    :print\n"
-                 + "      \"</tr>\\n\"\n"
-                 + ":print\n"
-                 + "  \"</table>\\n\"\n"
-                 ;
-        _test(input, expected, "parseStatementList");
+        _input = <<'END';
+                print("<table>\n");
+                i = 0;
+                foreach(item in list) {
+                  i += 1;
+                  color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+                  print("<tr bgcolor=\"", color, "\">\n");
+                  print("<td>", item, "</td>\n");
+                  print("</tr>\n");
+                }
+                print("</table>\n");
+                END
+        _expected = <<'END';
+                :print
+                  "<table>\n"
+                :expr
+                  =
+                    i
+                    0
+                :foreach
+                  item
+                  list
+                  :block
+                    :expr
+                      +=
+                        i
+                        1
+                    :expr
+                      =
+                        color
+                        ?:
+                          ==
+                            %
+                              i
+                              2
+                            0
+                          "#FFCCCC"
+                          "#CCCCFF"
+                    :print
+                      "<tr bgcolor=\""
+                      color
+                      "\">\n"
+                    :print
+                      "<td>"
+                      item
+                      "</td>\n"
+                    :print
+                      "</tr>\n"
+                :print
+                  "</table>\n"
+                END
+        _test("parseStatementList");
     }
 
 
@@ -9522,15 +9685,15 @@ import junit.framework.TestCase;
 
 public class ExpressionParserTest extends TestCase {
 
-    String input;
-    String expected;
+    String _input;
+    String _expected;
 
-    public ExpressionParser _test(String input, String expected, String method) {
-        return _test(input, expected, method, null);
+    public ExpressionParser _test(String method) {
+        return _test(method, null);
     }
 
-    public ExpressionParser _test(String input, String expected, String method, Class klass) {
-        Scanner scanner = new Scanner(input);
+    public ExpressionParser _test(String method, Class klass) {
+        Scanner scanner = new Scanner(_input);
         ExpressionParser parser = new ExpressionParser(scanner);
         Expression expr = null;
         if (method.equals("parseLiteral")) {
@@ -9565,83 +9728,92 @@ public class ExpressionParserTest extends TestCase {
             assertEquals(klass, expr.getClass());
         }
         StringBuffer actual = expr._inspect();
-        assertEquals(expected, actual.toString());
+        assertEquals(_expected, actual.toString());
         assertTrue("*** EOF expected ***", scanner.getToken() == TokenType.EOF);
         return parser;
     }
 
     public void testParseLiteral1() {  // integer
-        input = "100";
-        expected = "100\n";
-        _test(input, expected, "parseLiteral", IntegerExpression.class);
+        _input = "100";
+        _expected = "100\n";
+        _test("parseLiteral", IntegerExpression.class);
     }
     public void testParseLiteral2() {  // double
-        input = "3.14";
-        expected = "3.14\n";
-        _test(input, expected, "parseLiteral", DoubleExpression.class);
+        _input = "3.14";
+        _expected = "3.14\n";
+        _test("parseLiteral", DoubleExpression.class);
     }
     public void testParseLiteral3() {  // 'string'
-        input = "'foo'";
-        expected = "\"foo\"\n";
-        _test(input, expected, "parseLiteral", StringExpression.class);
-        input = "'\\n\\r\\t\\\\ \\''";              // '\n\r\t\\\\ \''
-        expected = "\"\\\\n\\\\r\\\\t\\\\ '\"\n";   // "\\n\\r\\t\\ '"
-        _test(input, expected, "parseLiteral", StringExpression.class);
+        _input = "'foo'";
+        _expected = "\"foo\"\n";
+        _test("parseLiteral", StringExpression.class);
+        _input = "'\\n\\r\\t\\\\ \\''";              // '\n\r\t\\\\ \''
+        _expected = "\"\\\\n\\\\r\\\\t\\\\ '\"\n";   // "\\n\\r\\t\\ '"
+        _test("parseLiteral", StringExpression.class);
     }
     public void testParseLiteral4() {  // "string"
-        input = "\"foo\"";
-        expected = "\"foo\"\n";
-        _test(input, expected, "parseLiteral", StringExpression.class);
-        input = "\"\\n\\r\\t \\\\ \\\" \"";        // "\n\r\t \\ \" "
-        expected = "\"\\n\\r\\t \\\\ \\\" \"\n";   // "\n\r\t \\ \" "
-        _test(input, expected, "parseLiteral", StringExpression.class);
+        _input = "\"foo\"";
+        _expected = "\"foo\"\n";
+        _test("parseLiteral", StringExpression.class);
+        _input = "\"\\n\\r\\t \\\\ \\\" \"";        // "\n\r\t \\ \" "
+        _expected = "\"\\n\\r\\t \\\\ \\\" \"\n";   // "\n\r\t \\ \" "
+        _test("parseLiteral", StringExpression.class);
     }
     public void testParseLiteral5() {  // true, false
-        input = "true";
-        expected = "true\n";
-        _test(input, expected, "parseLiteral", BooleanExpression.class);
-        input = "false";
-        expected = "false\n";
-        _test(input, expected, "parseLiteral", BooleanExpression.class);
+        _input = "true";
+        _expected = "true\n";
+        _test("parseLiteral", BooleanExpression.class);
+        _input = "false";
+        _expected = "false\n";
+        _test("parseLiteral", BooleanExpression.class);
     }
     public void testParseLiteral6() {  // null
-        input = "null";
-        expected = "null\n";
-        _test(input, expected, "parseLiteral", NullExpression.class);
+        _input = "null";
+        _expected = "null\n";
+        _test("parseLiteral", NullExpression.class);
     }
 
 
     public void testParseItem1() {  // variable
-        input = "foo";
-        expected = "foo\n";
-        _test(input, expected, "parseItem", VariableExpression.class);
+        _input = "foo";
+        _expected = "foo\n";
+        _test("parseItem", VariableExpression.class);
     }
     public void testParseItem2() {  // function()
-        input = "foo()";
-        expected = "foo()\n";
-        _test(input, expected, "parseItem", FunctionExpression.class);
+        _input = "foo()";
+        _expected = "foo()\n";
+        _test("parseItem", FunctionExpression.class);
     }
     public void testParseItem3() {  // function(100, 'va', arg)
-        input = "foo(100, 'val', arg)";
-        expected = "foo()\n  100\n  \"val\"\n  arg\n";
-        _test(input, expected, "parseItem", FunctionExpression.class);
+        _input = "foo(100, 'val', arg)";
+        _expected = <<'END';
+                foo()
+                  100
+                  "val"
+                  arg
+                END
+        _test("parseItem", FunctionExpression.class);
     }
     public void testParseItem4() {  // (expr)
-        input = "(a+b)";
-        expected = "+\n  a\n  b\n";
-        _test(input, expected, "parseItem", ArithmeticExpression.class);
+        _input = "(a+b)";
+        _expected = <<'END';
+                +
+                  a
+                  b
+                END
+        _test("parseItem", ArithmeticExpression.class);
     }
     public void testParseItem5() { // macro C(), S(), D()
-        input = "C(flag)";
-        expected = <<<'END';
+        _input = "C(flag)";
+        _expected = <<<'END';
             ?:
               flag
               " checked=\"checked\""
               ""
             END
-        _test(input, expected, "parseItem", ConditionalExpression.class);
-        input = "S(gender=='M')";
-        expected = <<<'END';
+        _test("parseItem", ConditionalExpression.class);
+        _input = "S(gender=='M')";
+        _expected = <<<'END';
             ?:
               ==
                 gender
@@ -9649,9 +9821,9 @@ public class ExpressionParserTest extends TestCase {
               " selected=\"selected\""
               ""
             END
-        _test(input, expected, "parseItem", ConditionalExpression.class);
-        input = "D(error!=null)";
-        expected = <<<'END';
+        _test("parseItem", ConditionalExpression.class);
+        _input = "D(error!=null)";
+        _expected = <<<'END';
             ?:
               !=
                 error
@@ -9659,13 +9831,13 @@ public class ExpressionParserTest extends TestCase {
               " disabled=\"disabled\""
               ""
             END
-        _test(input, expected, "parseItem", ConditionalExpression.class);
+        _test("parseItem", ConditionalExpression.class);
     }
     public void testParseItem6() { // arity of macros
-        input = "C(arg1, arg2)";
-        expected = "";
+        _input = "C(arg1, arg2)";
+        _expected = "";
         try {
-            _test(input, expected, "parseItem", ConditionalExpression.class);
+            _test("parseItem", ConditionalExpression.class);
             fail("SemanticError expected but not throwed.");
         } catch (SemanticException ex) {
             // OK
@@ -9673,58 +9845,90 @@ public class ExpressionParserTest extends TestCase {
     }
 
     public void testParseFactor1() {  // array
-        input = "a[10]";
-        expected = "[]\n  a\n  10\n";
-        _test(input, expected, "parseFactor", IndexExpression.class);
-        input = "a[i+1]";
-        expected = "[]\n  a\n  +\n    i\n    1\n";
-        _test(input, expected, "parseFactor", IndexExpression.class);
+        _input = "a[10]";
+        _expected = <<'END';;
+                []
+                  a
+                  10
+                END
+        _test("parseFactor", IndexExpression.class);
+        _input = "a[i+1]";
+        _expected = "[]\n  a\n  +\n    i\n    1\n";
+        _test("parseFactor", IndexExpression.class);
     }
     public void testParseFactor2() {  // hash
-        input = "a[:foo]";
-        expected = "[:]\n  a\n  \"foo\"\n";
-        _test(input, expected, "parseFactor", IndexExpression.class);
+        _input = "a[:foo]";
+        _expected = <<'END';
+                [:]
+                  a
+                  "foo"
+                END
+        _test("parseFactor", IndexExpression.class);
     }
     public void testParseFactor3() {  // property
-        input = "obj.prop1";
-        expected = ".\n  obj\n  prop1\n";
-        _test(input, expected, "parseFactor", PropertyExpression.class);
+        _input = "obj.prop1";
+        _expected = <<'END';
+                .
+                  obj
+                  prop1
+                END
+        _test("parseFactor", PropertyExpression.class);
     }
     public void testParseFactor4() {  // method
-        input = "obj.method1(arg1,arg2)";
-        expected = ".()\n  obj\n  method1()\n    arg1\n    arg2\n";
-        _test(input, expected, "parseFactor", MethodExpression.class);
+        _input = "obj.method1(arg1,arg2)";
+        _expected = <<'END';
+                .()
+                  obj
+                  method1()
+                    arg1
+                    arg2
+                END
+        _test("parseFactor", MethodExpression.class);
     }
     public void testParseFactor5() {  // nested array,hash
-        input = "a[i][:j][k]";
-        expected = "[]\n  [:]\n    []\n      a\n      i\n    \"j\"\n  k\n";
-        _test(input, expected, "parseFactor", IndexExpression.class);
-        input = "foo.bar.baz()";
-        expected = ".()\n  .\n    foo\n    bar\n  baz()\n";
-        _test(input, expected, "parseFactor", MethodExpression.class);
+        _input = "a[i][:j][k]";
+        _expected = <<'END';
+                []
+                  [:]
+                    []
+                      a
+                      i
+                    "j"
+                  k
+                END
+        _test("parseFactor", IndexExpression.class);
+        _input = "foo.bar.baz()";
+        _expected = <<'END';
+                .()
+                  .
+                    foo
+                    bar
+                  baz()
+                END
+        _test("parseFactor", MethodExpression.class);
     }
 
     public void testParseFactor6() {  // invalid array
-        input = "a[10;";
-        expected = null;
+        _input = "a[10;";
+        _expected = null;
         try {
-            _test(input, expected, "parseFactor", IndexExpression.class);
+            _test("parseFactor", IndexExpression.class);
         } catch (SyntaxException ex) {
             // OK
         }
     }
     public void testParseFactor7() {
-        input = "a[:+]";
-        expected = null;
+        _input = "a[:+]";
+        _expected = null;
         try {
-            _test(input, expected, "parseFactor", IndexExpression.class);
+            _test("parseFactor", IndexExpression.class);
         } catch (SyntaxException ex) {
             // OK
         }
-        input = "a[:foo-bar]";
-        expected = null;
+        _input = "a[:foo-bar]";
+        _expected = null;
         try {
-            _test(input, expected, "parseFactor", IndexExpression.class);
+            _test("parseFactor", IndexExpression.class);
         } catch (SyntaxException ex) {
             // OK
         }
@@ -9732,128 +9936,267 @@ public class ExpressionParserTest extends TestCase {
 
 
     public void testParseUnary1() {  // -1, +a, !false
-        input = "-1";
-        expected = "-.\n  1\n";
-        _test(input, expected, "parseUnary", UnaryExpression.class);
-        input = "+a";
-        expected = "+.\n  a\n";
-        _test(input, expected, "parseUnary", UnaryExpression.class);
-        input = "!false";
-        expected = "!\n  false\n";
-        _test(input, expected, "parseUnary", UnaryExpression.class);
+        _input = "-1";
+        _expected = <<'END';
+                -.
+                  1
+                END
+        _test("parseUnary", UnaryExpression.class);
+        _input = "+a";
+        _expected = <<'END';
+                +.
+                  a
+                END
+        _test("parseUnary", UnaryExpression.class);
+        _input = "!false";
+        _expected = <<'END';
+                !
+                  false
+                END
+        _test("parseUnary", UnaryExpression.class);
     }
 
     public void testParseUnary2() { // - - 1
-        input = "- -1";
+        _input = "- -1";
+        _expected = null;
         try {
-            _test(input, null, "parseUnary");
+            _test("parseUnary");
         } catch (SyntaxException ex) {
             // OK
         }
     }
 
     public void testParseTerm1() {  // term
-        input = "-x*y";
-        expected = "*\n  -.\n    x\n  y\n";
-        _test(input, expected, "parseTerm", ArithmeticExpression.class);
-        input = "a*b/c%d";
-        expected = "%\n  /\n    *\n      a\n      b\n    c\n  d\n";
-        _test(input, expected, "parseTerm", ArithmeticExpression.class);
+        _input = "-x*y";
+        _expected = <<'END';
+                *
+                  -.
+                    x
+                  y
+                END
+        _test("parseTerm", ArithmeticExpression.class);
+        _input = "a*b/c%d";
+        _expected = <<'END';
+                %
+                  /
+                    *
+                      a
+                      b
+                    c
+                  d
+                END
+        _test("parseTerm", ArithmeticExpression.class);
     }
 
     public void testParseArithmetic1() {  // arithmetic
-        input = "-a + b .+ c - d";
-        expected ="-\n  .+\n    +\n      -.\n        a\n      b\n    c\n  d\n";
-        _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
+        _input = "-a + b .+ c - d";
+        _expected = <<'END';
+                -
+                  .+
+                    +
+                      -.
+                        a
+                      b
+                    c
+                  d
+                END
+        _test("parseArithmetic", ArithmeticExpression.class);
     }
 
     public void testParseArithmetic2() {  // arithmetic
-        input = "-a*b + -c/d";
-        expected = "+\n  *\n    -.\n      a\n    b\n  /\n    -.\n      c\n    d\n";
-        _test(input, expected, "parseArithmetic", ArithmeticExpression.class);
+        _input = "-a*b + -c/d";
+        _expected = <<'END';
+                +
+                  *
+                    -.
+                      a
+                    b
+                  /
+                    -.
+                      c
+                    d
+                END
+        _test("parseArithmetic", ArithmeticExpression.class);
     }
 
     public void testParseConcatenation1() {  // arithmetic
-        input = "'dir/' .+ base .+ '.txt'";
-        expected = <<'END';
+        _input = "'dir/' .+ base .+ '.txt'";
+        _expected = <<'END';
             .+
               .+
                 "dir/"
                 base
               ".txt"
             END
-        _test(input, expected, "parseArithmetic", ConcatenationExpression.class);
+        _test("parseArithmetic", ConcatenationExpression.class);
     }
 
 
     public void testParseRelational1() {
-        input = "a==b";
-        expected = "==\n  a\n  b\n";
-        _test(input, expected, "parseRelational", RelationalExpression.class);
-        input = "a!=b";
-        expected = "!=\n  a\n  b\n";
-        _test(input, expected, "parseRelational", RelationalExpression.class);
-        input = "a<b";
-        expected = "<\n  a\n  b\n";
-        _test(input, expected, "parseRelational", RelationalExpression.class);
-        input = "a<=b";
-        expected = "<=\n  a\n  b\n";
-        _test(input, expected, "parseRelational", RelationalExpression.class);
-        input = "a>b";
-        expected = ">\n  a\n  b\n";
-        _test(input, expected, "parseRelational", RelationalExpression.class);
-        input = "a>=b";
-        expected = ">=\n  a\n  b\n";
+        _input = "a==b";
+        _expected = <<'END';
+                ==
+                  a
+                  b
+                END
+        _test("parseRelational", RelationalExpression.class);
+        _input = "a!=b";
+        _expected = <<'END';
+                !=
+                  a
+                  b
+                END
+        _test("parseRelational", RelationalExpression.class);
+        _input = "a<b";
+        _expected = <<'END';
+                <
+                  a
+                  b
+                END
+        _test("parseRelational", RelationalExpression.class);
+        _input = "a<=b";
+        _expected = <<'END';
+                <=
+                  a
+                  b
+                END
+        _test("parseRelational", RelationalExpression.class);
+        _input = "a>b";
+        _expected = <<'END';
+                >
+                  a
+                  b
+                END
+        _test("parseRelational", RelationalExpression.class);
+        _input = "a>=b";
+        _expected = <<'END';
+                >=
+                  a
+                  b
+                END
     }
 
 
     public void testParseLogicalAnd1() {  // a && b
-        input = "a && b";
-        expected = "&&\n  a\n  b\n";
-        _test(input, expected, "parseLogicalAnd", LogicalAndExpression.class);
-        input = "0<x&&x<100&&cond1&&cond2";
-        expected = "&&\n  &&\n    &&\n      <\n        0\n        x\n      <\n        x\n        100\n    cond1\n  cond2\n";
-        _test(input, expected, "parseLogicalAnd", LogicalAndExpression.class);
+        _input = "a && b";
+        _expected = <<'END';
+                &&
+                  a
+                  b
+                END
+        _test("parseLogicalAnd", LogicalAndExpression.class);
+        _input = "0<x&&x<100&&cond1&&cond2";
+        _expected = <<'END';
+                &&
+                  &&
+                    &&
+                      <
+                        0
+                        x
+                      <
+                        x
+                        100
+                    cond1
+                  cond2
+                END
+        _test("parseLogicalAnd", LogicalAndExpression.class);
     }
 
     public void testParseLogicalOr1() {   // a || b
-        input = "a||b";
-        expected = "||\n  a\n  b\n";
-        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
-        input = "0<x||x<100||cond1||cond2";
-        expected = "||\n  ||\n    ||\n      <\n        0\n        x\n      <\n        x\n        100\n    cond1\n  cond2\n";
-        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
-        input = "a&&b || c&&d || e&&f";
-        expected = "||\n  ||\n    &&\n      a\n      b\n    &&\n      c\n      d\n  &&\n    e\n    f\n";
-        _test(input, expected, "parseLogicalOr", LogicalOrExpression.class);
+        _input = "a||b";
+        _expected = "||\n  a\n  b\n";
+        _test("parseLogicalOr", LogicalOrExpression.class);
+        _input = "0<x||x<100||cond1||cond2";
+        _expected = <<'END';
+                ||
+                  ||
+                    ||
+                      <
+                        0
+                        x
+                      <
+                        x
+                        100
+                    cond1
+                  cond2
+                END
+        _test("parseLogicalOr", LogicalOrExpression.class);
+        _input = "a&&b || c&&d || e&&f";
+        _expected = <<'END';
+                ||
+                  ||
+                    &&
+                      a
+                      b
+                    &&
+                      c
+                      d
+                  &&
+                    e
+                    f
+                END
+        _test("parseLogicalOr", LogicalOrExpression.class);
     }
 
     public void testParseConditional1() {
-        input = "a ? b : c";
-        expected = "?:\n  a\n  b\n  c\n";
-        _test(input, expected, "parseConditional", ConditionalExpression.class);
+        _input = "a ? b : c";
+        _expected = <<'END';
+                ?:
+                  a
+                  b
+                  c
+                END
+        _test("parseConditional", ConditionalExpression.class);
     }
 
     public void testParseAssignment1() {
-        input = "a = b";
-        expected = "=\n  a\n  b\n";
-        _test(input, expected, "parseAssignment", AssignmentExpression.class);
-        input = "a = 1+f(2)";
-        expected = "=\n  a\n  +\n    1\n    f()\n      2\n";
-        _test(input, expected, "parseAssignment", AssignmentExpression.class);
+        _input = "a = b";
+        _expected = <<'END';
+                =
+                  a
+                  b
+                END
+        _test("parseAssignment", AssignmentExpression.class);
+        _input = "a = 1+f(2)";
+        _expected = <<'END';
+                =
+                  a
+                  +
+                    1
+                    f()
+                      2
+                END
+        _test("parseAssignment", AssignmentExpression.class);
     }
 
     public void testParseAssignment2() {
-        input = "a[i] = b";
-        expected = "=\n  []\n    a\n    i\n  b\n";
-        _test(input, expected, "parseAssignment", AssignmentExpression.class);
+        _input = "a[i] = b";
+        _expected = <<'END';
+                =
+                  []
+                    a
+                    i
+                  b
+                END
+        _test("parseAssignment", AssignmentExpression.class);
     }
 
 
     public void testParseExpression1() {
-        input = "color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'";
-        expected = "=\n  color\n  ?:\n    ==\n      %\n        i\n        2\n      0\n    \"#FFCCCC\"\n    \"#CCCCFF\"\n";
-        _test(input, expected, "parseExpression", AssignmentExpression.class);
+        _input = "color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'";
+        _expected = <<'END';
+                =
+                  color
+                  ?:
+                    ==
+                      %
+                        i
+                        2
+                      0
+                    "#FFCCCC"
+                    "#CCCCFF"
+                END
+        _test("parseExpression", AssignmentExpression.class);
     }
 
 
@@ -9872,14 +10215,16 @@ import junit.framework.TestCase;
 
 public class ScannerTest extends TestCase {
 
+    private String _input;
+    private String _expected;
 
-    public Scanner _test(String input, String expected) {
-        return _test(input, expected, true);
+    public Scanner _test() {
+        return _test(true);
     }
 
-    public Scanner _test(String input, String expected, boolean flag_test) {
+    public Scanner _test(boolean flag_test) {
         if (! flag_test) return null;
-        Scanner scanner = new Scanner(input);
+        Scanner scanner = new Scanner(_input);
         StringBuffer sbuf = new StringBuffer();
         while (scanner.scan() != TokenType.EOF) {
             sbuf.append(TokenType.tokenName(scanner.getToken()));
@@ -9888,14 +10233,15 @@ public class ScannerTest extends TestCase {
             sbuf.append(s);
             sbuf.append("\n");
         }
-        assertEquals(expected, sbuf.toString());
+        String actual = sbuf.toString();
+        assertEquals(_expected, actual);
         return scanner;
     }
 
     public void testScanner0() {  // basic test
-        String input = "if while foo";
-        String expected = "IF :if\nWHILE :while\nNAME foo\nEOF <<EOF>>\nEOF <<EOF>>\n";
-        Scanner scanner = new Scanner(input);
+        _input = "if while foo";
+        _expected = "IF :if\nWHILE :while\nNAME foo\nEOF <<EOF>>\nEOF <<EOF>>\n";
+        Scanner scanner = new Scanner(_input);
         StringBuffer sbuf = new StringBuffer();
         for (int i = 0; i < 5; i++) {
             scanner.scan();
@@ -9905,36 +10251,36 @@ public class ScannerTest extends TestCase {
             sbuf.append("\n");
         }
         String actual = sbuf.toString();
-        assertEquals(expected, actual);
+        assertEquals(_expected, actual);
     }
 
     public void testScanner11() {  // keywords
-        String input = "  if while  foreach else\nelseif\t\nin  ";
-        String expected = "IF :if\nWHILE :while\nFOREACH :foreach\nELSE :else\nELSEIF :elseif\nIN :in\n";
-        _test(input, expected);
-        input = "true false null nil empty";
-        expected = "TRUE true\nFALSE false\nNULL null\nNAME nil\nEMPTY empty\n";
-        _test(input, expected);
+        _input = "  if while  foreach else\nelseif\t\nin  ";
+        _expected = "IF :if\nWHILE :while\nFOREACH :foreach\nELSE :else\nELSEIF :elseif\nIN :in\n";
+        _test();
+        _input = "true false null nil empty";
+        _expected = "TRUE true\nFALSE false\nNULL null\nNAME nil\nEMPTY empty\n";
+        _test();
     }
 
     public void testScanner12() {  // integer, double
-        String input = "100 3.14";
-        String expected = "INTEGER 100\nDOUBLE 3.14\n";
-        _test(input, expected);
-        input = "100abc";
-        expected = null;
+        _input = "100 3.14";
+        _expected = "INTEGER 100\nDOUBLE 3.14\n";
+        _test();
+        _input = "100abc";
+        _expected = null;
         try {
-            _test(input, expected);
+            _test();
             fail("'100abc': LexicalException expected.");
         } catch (LexicalException ex) {
             // OK
         } catch (Exception ex) {
             fail("'100abc': LexicalException expected.");
         }
-        input = "3.14abc";
-        expected = null;
+        _input = "3.14abc";
+        _expected = null;
         try {
-            _test(input, expected);
+            _test();
             fail("'3.14abc': LexicalException expected.");
         } catch (LexicalException ex) {
             // OK
@@ -9944,12 +10290,13 @@ public class ScannerTest extends TestCase {
     }
 
     public void testScanner13() {  // comment
-        String input = "// foo\n123/* // \n*/456";
-        String expected = "INTEGER 123\nINTEGER 456\n";
-        _test(input, expected);
-        input = "/* \n//";
+        _input = "// foo\n123/* // \n*/456";
+        _expected = "INTEGER 123\nINTEGER 456\n";
+        _test();
+        _input = "/* \n//";
+        _expected = null;
         try {
-            _test(input, null);
+            _test();
             fail("LexicalException expected.");
         } catch (LexicalException ex) {
             // OK
@@ -9959,87 +10306,91 @@ public class ScannerTest extends TestCase {
     }
 
     public void testScanner14() {  // 'string'
-        String input = "'str1'";
-        String expected = "STRING \"str1\"\n";
-        //_test(input, expected);
-        input = "'\n\r\t\\ \\''";
-        expected = "STRING \"\\n\\r\\t\\\\ '\"\n";
-        _test(input, expected);
+        _input = "'str1'";
+        _expected = "STRING \"str1\"\n";
+        _test();
+        _input = "'\n\r\t\\ \\''";
+        _expected = "STRING \"\\n\\r\\t\\\\ '\"\n";
+        _test();
     }
 
     public void testScanner15() {  // "string"
-        String input = "\"str\"";
-        String expected = "STRING \"str\"\n";
-        _test(input, expected);
-        input = "\"\\n\\r\\t\\'\\\"\"";
-        expected = "STRING \"\\n\\r\\t'\\\"\"\n";
-        _test(input, expected);
+        _input = "\"str\"";
+        _expected = "STRING \"str\"\n";
+        _test();
+        _input = "\"\\n\\r\\t\\'\\\"\"";
+        _expected = "STRING \"\\n\\r\\t'\\\"\"\n";
+        _test();
     }
 
     public void testScanner21() {  // alithmetic op
-        String input = "+ - * / % .+";
-        String expected = "ADD +\nSUB -\nMUL *\nDIV /\nMOD %\nCONCAT .+\n";
-        _test(input, expected);
+        _input = "+ - * / % .+";
+        _expected = "ADD +\nSUB -\nMUL *\nDIV /\nMOD %\nCONCAT .+\n";
+        _test();
     }
 
     public void testScanner22() {  // assignment op
-        String input = "= += -= *= /= %= .+=";
-        String expected = "ASSIGN =\nADD_TO +=\nSUB_TO -=\nMUL_TO *=\nDIV_TO /=\nMOD_TO %=\nCONCAT_TO .+=\n";
-        _test(input, expected);
+        _input = "= += -= *= /= %= .+=";
+        _expected = "ASSIGN =\nADD_TO +=\nSUB_TO -=\nMUL_TO *=\nDIV_TO /=\nMOD_TO %=\nCONCAT_TO .+=\n";
+        _test();
     }
 
     public void testScanner23() {  // comparable op
-        String input = "== != < <= > >=";
-        String expected = "EQ ==\nNE !=\nLT <\nLE <=\nGT >\nGE >=\n";
-        _test(input, expected);
+        _input = "== != < <= > >=";
+        _expected = "EQ ==\nNE !=\nLT <\nLE <=\nGT >\nGE >=\n";
+        _test();
     }
 
     public void testScanner24() {  // logical op
-        String input = "! && ||";
-        String expected = "NOT !\nAND &&\nOR ||\n";
-        _test(input, expected);
+        _input = "! && ||";
+        _expected = "NOT !\nAND &&\nOR ||\n";
+        _test();
     }
 
     public void testScanner25() {  // symbols
-        String input = "[][::;?.,#";
-        String expected = "L_BRACKET [\nR_BRACKET ]\nL_BRACKETCOLON [:\nCOLON :\n"
+        _input = "[][::;?.,#";
+        _expected = "L_BRACKET [\nR_BRACKET ]\nL_BRACKETCOLON [:\nCOLON :\n"
                          + "SEMICOLON ;\nCONDITIONAL ?:\nPERIOD .\nCOMMA ,\nSHARP #\n";
-        _test(input, expected);
+        _test();
     }
 
     public void testScanner26() {  // expand
-        String input = "@stag";
-        String expected = "EXPAND @stag\n";
-        _test(input, expected);
+        _input = "@stag";
+        _expected = "EXPAND @stag\n";
+        _test();
     }
 
     public void testScanner31() {  // raw expr
-        String input = "s=" + "<" + "%= $foo %" + ">;";
-        String expected = "NAME s\nASSIGN =\nRAWEXPR <" + "%= $foo %" + ">\nSEMICOLON ;\n";
-        _test(input, expected);
+        _input = "s=" + "<" + "%= $foo %" + ">;";
+        _expected = "NAME s\nASSIGN =\nRAWEXPR <" + "%= $foo %" + ">\nSEMICOLON ;\n";
+        _test();
     }
 
     public void testScanner32() {  // raw stmt
-        String input = "<" + "% $foo %" + ">";
-        String expected = "RAWSTMT <" + "% $foo %" + ">\n";
-        _test(input, expected);
+        _input = "<" + "% $foo %" + ">";
+        _expected = "RAWSTMT <" + "% $foo %" + ">\n";
+        _test();
     }
 
     public void testScanner41() {  // invalid char
+        _expected = null;
         try {
-            _test("~", null);
+            _input = "~";
+            _test();
             fail("LexicalException expected (ch = '~').");
         } catch (LexicalException ex) {
             // OK
         }
         try {
-            _test("^", null);
+            _input = "^";
+            _test();
             fail("LexicalException expected (ch = '~').");
         } catch (LexicalException ex) {
             // OK
         }
         try {
-            _test("$", null);
+            _input = "$";
+            _test();
             fail("LexicalException expected (ch = '~').");
         } catch (LexicalException ex) {
             // OK
@@ -10476,29 +10827,22 @@ import java.io.IOException;
 public class StatementTest extends TestCase {
     private Map _context = new HashMap();
     private Statement _stmt;
+    private String _expected = null;
 
-    public void _testPrint(String expected) {
-        _testPrint(expected, _stmt);
-    }
-
-    public void _testPrint(String expected, Statement stmt) {
+    public void _testPrint() {
         try {
             StringWriter writer = new StringWriter();
-            stmt.execute(_context, writer);
+            _stmt.execute(_context, writer);
             String actual = writer.toString();
-            assertEquals(expected, actual);
+            assertEquals(_expected, actual);
         }
         catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public void _testInspect(String expected) {
-        _testInspect(expected, _stmt);
-    }
-
-    public void _testInspect(String expected, Statement stmt) {
-        assertEquals(expected, stmt._inspect());
+    public void _testInspect() {
+        assertEquals(_expected, _stmt._inspect());
     }
 
     public void testPrintStatement1() {  // literal
@@ -10510,8 +10854,9 @@ public class StatementTest extends TestCase {
             new BooleanExpression(false),
             new NullExpression(),
         };
-        Statement stmt = new PrintStatement(arglist);
-        _testPrint("123foo0.4truefalse", stmt);
+        _stmt = new PrintStatement(arglist);
+        _expected = "123foo0.4truefalse";
+        _testPrint();
     }
 
     public void testPrintStatement2() {  // variable
@@ -10521,8 +10866,9 @@ public class StatementTest extends TestCase {
         };
         _context.put("x", new String("foo"));
         _context.put("y", new Integer(123));
-        Statement stmt = new PrintStatement(arglist);
-        _testPrint("foo123", stmt);
+        _stmt = new PrintStatement(arglist);
+        _expected = "foo123";
+        _testPrint();
     }
 
     public void testPrintStatement3() {  // null value
@@ -10532,9 +10878,10 @@ public class StatementTest extends TestCase {
         };
         _context.put("x", new String("foo"));
         //_context.put("y", new Integer(123));
-        Statement stmt = new PrintStatement(arglist);
+        _stmt = new PrintStatement(arglist);
+        _expected = "foo";
         try {
-            _testPrint("foo", stmt);
+            _testPrint();
             fail("EvaluationException expected but not happened.");
         } catch (EvaluationException ex) {
             // OK
@@ -10556,8 +10903,9 @@ public class StatementTest extends TestCase {
                                         new StringExpression("foo"),
                                         new StringExpression("bar")),
         };
-        Statement stmt = new PrintStatement(arglist);
-        _testPrint("10foobar", stmt);
+        _stmt = new PrintStatement(arglist);
+        _expected = "10foobar";
+        _testPrint();
     }
 
     public void testExpressinStatement1() { // x = y = 100
@@ -10589,8 +10937,9 @@ public class StatementTest extends TestCase {
             new ExpressionStatement(expr2),
             new PrintStatement(arglist),
         };
-        Statement stmt = new BlockStatement(stmts);
-        _testPrint("11", stmt);
+        _stmt = new BlockStatement(stmts);
+        _expected = "11";
+        _testPrint();
         assertEquals(_context.get("x"), new Integer(11));
     }
 
@@ -10614,16 +10963,17 @@ public class StatementTest extends TestCase {
 
         // foreach(...) { ... }
         Statement block = new BlockStatement(stmts);
-        Statement stmt = new ForeachStatement(new VariableExpression("item"),
-                                              new VariableExpression("list"),
-                                              block);
+        _stmt = new ForeachStatement(new VariableExpression("item"),
+                                     new VariableExpression("list"),
+                                     block);
 
         // test
-        StringBuffer sb = new StringBuffer();
-        sb.append("item = foo\n");
-        sb.append("item = 123\n");
-        sb.append("item = bar\n");
-        _testPrint(sb.toString(), stmt);
+        _expected = <<'END';
+                item = foo
+                item = 123
+                item = bar
+                END
+        _testPrint();
     }
 
 
@@ -10645,11 +10995,11 @@ public class StatementTest extends TestCase {
 
         // while (...) { ... }
         Statement block = new BlockStatement(stmts);
-        Statement stmt = new WhileStatement(condition, block);
+        _stmt = new WhileStatement(condition, block);
 
         // test
-        String expected = "4,3,2,1,0,";
-        _testPrint(expected, stmt);
+        _expected = "4,3,2,1,0,";
+        _testPrint();
     }
 
     public void testIfStatement1() {
@@ -10664,14 +11014,18 @@ public class StatementTest extends TestCase {
         Statement then_body = new PrintStatement(args1);
         Statement else_body = new PrintStatement(args2);
         Statement stmt;
-        stmt = new IfStatement(condition1, then_body, null);
-        _testPrint("Yes", stmt);
-        stmt = new IfStatement(condition2, then_body, null);
-        _testPrint("", stmt);
-        stmt = new IfStatement(condition1, then_body, else_body);
-        _testPrint("Yes", stmt);
-        stmt = new IfStatement(condition2, then_body, else_body);
-        _testPrint("No", stmt);
+        _stmt = new IfStatement(condition1, then_body, null);
+        _expected = "Yes";
+        _testPrint();
+        _stmt = new IfStatement(condition2, then_body, null);
+        _expected = "";
+        _testPrint();
+        _stmt = new IfStatement(condition1, then_body, else_body);
+        _expected = "Yes";
+        _testPrint();
+        _stmt = new IfStatement(condition2, then_body, else_body);
+        _expected = "No";
+        _testPrint();
     }
 
     // -----
@@ -10693,28 +11047,28 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class InterpreterTest extends TestCase {
-    String input;
-    String expected;
-    Map context = new HashMap();
+    String _input;
+    String _expected;
+    Map _context = new HashMap();
 
-    public void _test(String input, Map context, String expected) {
+    public void _test() {
         Interpreter interpreter = new Interpreter();
-        interpreter.compile(input);
+        interpreter.compile(_input);
         try {
             java.io.StringWriter writer = new java.io.StringWriter();
-            interpreter.execute(context, writer);
+            interpreter.execute(_context, writer);
             String actual = writer.toString();
-            assertEquals(expected, actual);
+            assertEquals(_expected, actual);
         } catch (java.io.IOException ex) {
             ex.printStackTrace();
         }
         //StatementParser parser = new StatementParser();
-        //BlockStatement block = parser.parse(input);
+        //BlockStatement block = parser.parse(_input);
         //try {
         //    java.io.StringWriter writer = new java.io.StringWriter();
-        //    block.execute(context, writer);
+        //    block.execute(_context, writer);
         //    String actual = writer.toString();
-        //    assertEquals(expected, actual);
+        //    assertEquals(_expected, actual);
         //}
         //catch (java.io.IOException ex) {
         //    ex.printStackTrace();
@@ -10723,18 +11077,18 @@ public class InterpreterTest extends TestCase {
 
 
     public void testInterpreter1() {    // hello world
-        input = <<'END';
+        _input = <<'END';
             print("Hello ", user, "!\n");
             END
-        expected = <<'END';
+        _expected = <<'END';
             Hello World!
             END
-        context.put("user", "World");
-        _test(input, context, expected);
+        _context.put("user", "World");
+        _test();
     }
 
     public void testInterpreter2() {    // euclidean algorithm
-        input = <<'END';
+        _input = <<'END';
             // Euclidean algorithm
             x = a;  y = b;
             while (y > 0) {
@@ -10751,17 +11105,17 @@ public class InterpreterTest extends TestCase {
             print("GCD(", a, ",", b, ") == ", x, "\n");
             print("(x,y) == (", x, ",", y, ")\n");
             END
-        expected = <<'END';
+        _expected = <<'END';
             GCD(589,775) == 31
             (x,y) == (31,0)
             END
-        context.put("a", new Integer(589));
-        context.put("b", new Integer(775));
-        _test(input, context, expected);
+        _context.put("a", new Integer(589));
+        _context.put("b", new Integer(775));
+        _test();
     }
 
     public void testInterpreter3() {   // bordered table
-        input = <<'END';
+        _input = <<'END';
             print("<table>\n");
             i = 0;
             foreach(item in list) {
@@ -10773,7 +11127,7 @@ public class InterpreterTest extends TestCase {
             }
             print("</table>\n");
             END
-        expected = <<'END';
+        _expected = <<'END';
             <table>
               <tr bgcolor="#CCCCFF">
                 <td>foo</td><td>foo@mail.com</td>
@@ -10801,8 +11155,8 @@ public class InterpreterTest extends TestCase {
         item3.put("name", "baz");  item3.put("mail", "baz@mail.net");
         list.add(item3);
         //
-        context.put("list", list);
-        _test(input, context, expected);
+        _context.put("list", list);
+        _test();
     }
 
 
@@ -10961,6 +11315,7 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(CompilerTest.class));
         suite.addTest(new TestSuite(OptimizerTest.class));
         suite.addTest(new TestSuite(FunctionTest.class));
+        suite.addTest(new TestSuite(KwartzClassTest.class));
         junit.textui.TestRunner.run(suite);
     }
 }

@@ -25,5 +25,12 @@ recipe	:clear								do |r|
 	remove_rf list unless list.empty?
 	end
 
+recipe  :test   , "result1.html"                                        do |r|
+        cmd "diff result0.html .expected/result0.html"
+        cmd "diff result1.html .expected/result1.html"
+        cmd "diff result2.html .expected/result2.html"
+        end
+
+
 recipe  :default		, :all
 

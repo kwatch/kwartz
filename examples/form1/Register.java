@@ -11,7 +11,12 @@ import com.kuwata_lab.kwartz.Template;
 
 public class Register {
 
-    private static Kwartz kwartz = new Kwartz();
+    private static Kwartz kwartz;
+    static {
+        Properties props = new Properties();
+        props.setProperty("kwartz.escape", "true");
+        kwartz = new Kwartz(props);
+    }
     private String username;
     private String gender;
     private String script_name;
