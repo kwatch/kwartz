@@ -1,6 +1,10 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-24 (rev.21)
+	.- [enhance] add src/java/com/kuwata_lab/kwartz/kwartz.properties
+	.- [change] rename ChangeLog to ChangeLog.txt
+
 .: 2005-08-10 (rev.20) (release 0.0.1)
 	.- [change] rewrite test cases
 	.- [enhance] add KwartzClassTest
