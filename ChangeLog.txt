@@ -1,11 +1,16 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-24 (rev.23)
+	.- [change] rename package name from 'com.kuwata_lab.kwartz' to 'kwartz'
+	.- [change] remove 'project.xml' and 'project.properties'
+	.- [chagne] add lib/junit.jar
+
 .: 2005-12-24 (rev.22)
 	.- [change] move src/java to src/main/java
 
 .: 2005-12-24 (rev.21)
-	.- [enhance] add src/java/com/kuwata_lab/kwartz/kwartz.properties
+	.- [bugfix] add src/java/com/kuwata_lab/kwartz/kwartz.properties
 	.- [change] rename ChangeLog to ChangeLog.txt
 
 .: 2005-08-10 (rev.20) (release 0.0.1)

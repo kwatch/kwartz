@@ -4,37 +4,39 @@ recipe  :all		, :compile, :test
 
 
 source    = "kwartz-java.rb"
-package   = "com.kuwata_lab.kwartz"
-src_root  = "src/java"
-test_root = "src/test"
+package   = "kwartz"
+src_root  = "src/main/java"
+test_root = "src/test/java"
 src_path  = src_root  + "/" + package.gsub(/\./, '/')
 test_path = test_root + "/" + package.gsub(/\./, '/')
 
 junit_jar = "/usr/local/java/j2sdk/jre/lib/ext/junit.jar"
 junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
+junit_jar = "lib/junit.jar" unless test(?f, junit_jar)
 
 
 desc	"create *.java and compile them"
 recipe  :compile			do |r|
-	cmd "ruby #{source}"
+	#cmd "ruby #{source}"
 	cmd "jikes -g #{src_path}/*.java"
-	end
+    end
 
 
-classpath = ".:#{src_root}:#{test_root}:#{junit_jar}"
+sep = `uname -o` =~ /Cygwin/ ? ';' : ':'
+classpath = [".", src_root, test_root, junit_jar].join(sep)
 
 desc	"unit test"
-recipe  :test				do |r|
-	cmd "jikes -classpath #{classpath} #{test_path}/*.java"
-	cmd "java  -classpath #{classpath} #{package}.KwartzTest"
-	end
+recipe  :test		, :compile	do |r|
+	cmd "jikes -classpath '#{classpath}' #{test_path}/*.java"
+	cmd "java  -classpath '#{classpath}' #{package}.KwartzTest 2>&1 | tee test.log"
+    end
 
 recipe :clean				do |r|
 	list = []
 	list.concat Dir.glob("#{src_path}/*.class")
 	list.concat Dir.glob("#{test_path}/*.class")
         remove list
-        end
+    end
 
 recipe :clear				do |r|
 	list = []
@@ -44,14 +46,14 @@ recipe :clear				do |r|
 	list.concat Dir.glob("#{test_path}/*.class")
 	list.concat Dir.glob("#{test_path}/*.java")
 	remove list
-	end
+    end
 
 grecipe "kwartz-*.jar"		, :compile		do |r|
 	chdir "src/java" do
 	    cmd "jar cf ../../#{r.product} com/kuwata_lab/kwartz/kwartz.properties com/kuwata_lab/kwartz/*.class"
 	end
 	#move "src/java/kwartz-{1}.jar", "."
-	end
+    end
 
 
 #text_files = %w[ChangeLog README.txt COPYING todo.txt]
@@ -96,5 +98,4 @@ grecipe "kwartz-java_*.{tar.gz|tar.bz2|zip}"	, "kwartz-{1}.jar"  do |r|
 	   cmd "zip -qr9 #{r.product} #{dir}"
 	end
 	
-	end
-	
+    end

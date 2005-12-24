@@ -6,9 +6,10 @@
 ### $Rev$
 ###
 
-SRC_ROOT   = 'src/java'
-TEST_ROOT  = 'src/test'
-PACKAGE = 'com.kuwata_lab.kwartz'
+SRC_ROOT   = 'src/main/java'
+TEST_ROOT  = 'src/test/java'
+#PACKAGE = 'com.kuwata_lab.kwartz'
+PACKAGE    = 'kwartz'
 
 require 'fileutils'
 FileUtils.mkdir_p(SRC_ROOT)  unless test(?d, SRC_ROOT)
@@ -104,7 +105,7 @@ end
 ###
 ###
 
-properties = <<'END'
+properties = <<END
 ##
 ## $Release$
 ##
@@ -112,7 +113,7 @@ properties = <<'END'
 ##
 
 kwartz.escape            = false
-kwartz.newline           = \n
+kwartz.newline           = \\n
 kwartz.indent            = '  '
 kwartz.localvar_prefix   = _
 kwartz.globalvar_prefix  = _
@@ -127,31 +128,31 @@ kwartz.charset           =
 #kwartz.embed_pattern     =
 kwartz.incdir            = .
 ##
-kwartz.macro.C                = com.kuwata_lab.kwartz.CheckedMacro
-kwartz.macro.S                = com.kuwata_lab.kwartz.SelectedMacro
-kwartz.macro.D                = com.kuwata_lab.kwartz.DisabledMacro
+kwartz.macro.C                = #{PACKAGE}.CheckedMacro
+kwartz.macro.S                = #{PACKAGE}.SelectedMacro
+kwartz.macro.D                = #{PACKAGE}.DisabledMacro
 ##
-kwartz.function.E             = com.kuwata_lab.kwartz.EscapeXmlFunction
-kwartz.function.X             = com.kuwata_lab.kwartz.AsIsFunction
-kwartz.function.escape_xml    = com.kuwata_lab.kwartz.EscapeXmlFunction
-kwartz.function.escape_url    = com.kuwata_lab.kwartz.EscapeUrlFunction
-kwartz.function.escape_sql    = com.kuwata_lab.kwartz.EscapeSqlFunction
-kwartz.function.str_length    = com.kuwata_lab.kwartz.StringLengthFunction
-kwartz.function.str_index     = com.kuwata_lab.kwartz.StringIndexFunction
-kwartz.function.str_linebreak = com.kuwata_lab.kwartz.StringLinebreakFunction
-kwartz.function.str_replace   = com.kuwata_lab.kwartz.StringReplaceFunction
-kwartz.function.str_tolower   = com.kuwata_lab.kwartz.StringToLowerFunction
-kwartz.function.str_toupper   = com.kuwata_lab.kwartz.StringToUpperFunction
-kwartz.function.str_trim      = com.kuwata_lab.kwartz.StringTrimFunction
-kwartz.function.str_empty     = com.kuwata_lab.kwartz.StringEmptyFunction
-kwartz.function.list_new      = com.kuwata_lab.kwartz.ListNewFunction
-kwartz.function.list_length   = com.kuwata_lab.kwartz.ListLengthFunction
-kwartz.function.list_empty    = com.kuwata_lab.kwartz.ListEmptyFunction
-kwartz.function.list_add      = com.kuwata_lab.kwartz.ListAddFunction
-kwartz.function.hash_new      = com.kuwata_lab.kwartz.HashNewFunction
-kwartz.function.hash_length   = com.kuwata_lab.kwartz.HashLengthFunction
-kwartz.function.hash_empty    = com.kuwata_lab.kwartz.HashEmptyFunction
-kwartz.function.hash_keys     = com.kuwata_lab.kwartz.HashKeysFunction
+kwartz.function.E             = #{PACKAGE}.EscapeXmlFunction
+kwartz.function.X             = #{PACKAGE}.AsIsFunction
+kwartz.function.escape_xml    = #{PACKAGE}.EscapeXmlFunction
+kwartz.function.escape_url    = #{PACKAGE}.EscapeUrlFunction
+kwartz.function.escape_sql    = #{PACKAGE}.EscapeSqlFunction
+kwartz.function.str_length    = #{PACKAGE}.StringLengthFunction
+kwartz.function.str_index     = #{PACKAGE}.StringIndexFunction
+kwartz.function.str_linebreak = #{PACKAGE}.StringLinebreakFunction
+kwartz.function.str_replace   = #{PACKAGE}.StringReplaceFunction
+kwartz.function.str_tolower   = #{PACKAGE}.StringToLowerFunction
+kwartz.function.str_toupper   = #{PACKAGE}.StringToUpperFunction
+kwartz.function.str_trim      = #{PACKAGE}.StringTrimFunction
+kwartz.function.str_empty     = #{PACKAGE}.StringEmptyFunction
+kwartz.function.list_new      = #{PACKAGE}.ListNewFunction
+kwartz.function.list_length   = #{PACKAGE}.ListLengthFunction
+kwartz.function.list_empty    = #{PACKAGE}.ListEmptyFunction
+kwartz.function.list_add      = #{PACKAGE}.ListAddFunction
+kwartz.function.hash_new      = #{PACKAGE}.HashNewFunction
+kwartz.function.hash_length   = #{PACKAGE}.HashLengthFunction
+kwartz.function.hash_empty    = #{PACKAGE}.HashEmptyFunction
+kwartz.function.hash_keys     = #{PACKAGE}.HashKeysFunction
 END
 
 path = SRC_ROOT + '/' + PACKAGE.gsub(/\./, '/')
