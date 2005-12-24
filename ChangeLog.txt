@@ -1,6 +1,10 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-24 (rev.24)
+	.- [change] package name is changed to 'kwartz.function' about ?*Function.java
+	.- [change] package name is changed to 'kwartz.macro' about ?*Macro.java
+
 .: 2005-12-24 (rev.23)
 	.- [change] rename package name from 'com.kuwata_lab.kwartz' to 'kwartz'
 	.- [change] remove 'project.xml' and 'project.properties'

@@ -12,7 +12,10 @@ test_path = test_root + "/" + package.gsub(/\./, '/')
 
 junit_jar = "/usr/local/java/j2sdk/jre/lib/ext/junit.jar"
 junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
-junit_jar = "lib/junit.jar" unless test(?f, junit_jar)
+junit_jar = "./lib/junit.jar" unless test(?f, junit_jar)
+
+sep = RUBY_PLATFORM =~ /cygwin/ ? ';' : ':'
+classpath = [src_root, junit_jar].join(sep)
 
 
 desc	"create *.java and compile them"
