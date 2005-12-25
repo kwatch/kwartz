@@ -7,9 +7,9 @@
 package kwartz.macro;
 
 import kwartz.Macro;
-import kwartz.Expression;
-import kwartz.StringExpression;
-import kwartz.ConditionalExpression;
+import kwartz.node.ConditionalExpression;
+import kwartz.node.Expression;
+import kwartz.node.StringExpression;
 
 abstract public class FormMacro extends Macro {
     public int arity() { return 1; }

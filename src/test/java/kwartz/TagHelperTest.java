@@ -5,8 +5,9 @@
  *  @release $Release$
  */
 package kwartz;
+
+import kwartz.node.*;
 import junit.framework.TestCase;
-import java.util.*;
 
 public class TagHelperTest extends TestCase {
 
@@ -33,7 +34,7 @@ public class TagHelperTest extends TestCase {
         _input    = "x+y*z 100";
         _expected = "";
         try {
-            Expression expr = _helper.parseExpression(_input, 1);
+            _helper.parseExpression(_input, 1);
             fail("ConversionException expected but nothing happened.");
         } catch (ConvertionException ex) {
             // OK

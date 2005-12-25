@@ -9,6 +9,42 @@ package kwartz;
 import java.util.Map;
 import java.util.Properties;
 
+import kwartz.node.ArithmeticExpression;
+import kwartz.node.AssignmentExpression;
+import kwartz.node.BinaryExpression;
+import kwartz.node.BlockStatement;
+import kwartz.node.BooleanExpression;
+import kwartz.node.ConcatenationExpression;
+import kwartz.node.ConditionalExpression;
+import kwartz.node.DoubleExpression;
+import kwartz.node.ElementStatement;
+import kwartz.node.EmptyExpression;
+import kwartz.node.EmptyStatement;
+import kwartz.node.ExpandStatement;
+import kwartz.node.Expression;
+import kwartz.node.ExpressionStatement;
+import kwartz.node.ExpressionVisitor;
+import kwartz.node.ForeachStatement;
+import kwartz.node.FunctionExpression;
+import kwartz.node.IfStatement;
+import kwartz.node.IndexExpression;
+import kwartz.node.IntegerExpression;
+import kwartz.node.LiteralExpression;
+import kwartz.node.LogicalAndExpression;
+import kwartz.node.LogicalOrExpression;
+import kwartz.node.MethodExpression;
+import kwartz.node.NullExpression;
+import kwartz.node.PrintStatement;
+import kwartz.node.PropertyExpression;
+import kwartz.node.RawcodeExpression;
+import kwartz.node.RawcodeStatement;
+import kwartz.node.RelationalExpression;
+import kwartz.node.Statement;
+import kwartz.node.StringExpression;
+import kwartz.node.UnaryExpression;
+import kwartz.node.VariableExpression;
+import kwartz.node.WhileStatement;
+
 public class DefaultExpander implements  Expander {
 
     public static class LiteralVisitor implements ExpressionVisitor {
@@ -123,7 +159,7 @@ public class DefaultExpander implements  Expander {
     }
 
     public Statement expand(ExpandStatement stmt, Element elem) {
-        ExpandStatement expandStmt;
+        //ExpandStatement expandStmt;
         Statement st;
         Statement[] stmts;
         int type = stmt.getType();

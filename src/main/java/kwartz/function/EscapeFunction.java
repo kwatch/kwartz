@@ -7,7 +7,8 @@
 package kwartz.function;
 
 import kwartz.Function;
-import kwartz.Expression;
+import kwartz.node.Expression;
+
 import java.util.Map;
 
 abstract public class EscapeFunction extends Function {

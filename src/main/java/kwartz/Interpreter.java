@@ -10,6 +10,8 @@ import java.util.Properties;
 import java.io.Writer;
 import java.io.PrintWriter;
 
+import kwartz.node.Statement;
+
 public class Interpreter {
     private StatementParser _parser;
     private Statement _stmt = null;

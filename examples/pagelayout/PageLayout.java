@@ -4,11 +4,11 @@
  */
 import java.util.*;
 import java.io.*;
-import com.kuwata_lab.kwartz.Kwartz;
-import com.kuwata_lab.kwartz.Compiler;
-import com.kuwata_lab.kwartz.DefaultCompiler;
-import com.kuwata_lab.kwartz.Context;
-import com.kuwata_lab.kwartz.Template;
+import kwartz.Kwartz;
+import kwartz.Compiler;
+import kwartz.DefaultCompiler;
+import kwartz.Context;
+import kwartz.Template;
 
 
 public class PageLayout {

@@ -6,9 +6,9 @@
  */
 package kwartz;
 
-import java.util.Properties;
-
 public class ConvertionException extends BaseException {
+    private static final long serialVersionUID = -4252428578302794433L;
+
     private String _filename;
     private int _linenum;
 

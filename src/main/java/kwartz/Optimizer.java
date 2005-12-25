@@ -10,9 +10,24 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import kwartz.node.BlockStatement;
+import kwartz.node.ElementStatement;
+import kwartz.node.EmptyStatement;
+import kwartz.node.ExpandStatement;
+import kwartz.node.Expression;
+import kwartz.node.ExpressionStatement;
+import kwartz.node.ForeachStatement;
+import kwartz.node.IfStatement;
+import kwartz.node.PrintStatement;
+import kwartz.node.RawcodeStatement;
+import kwartz.node.Statement;
+import kwartz.node.StatementVisitor;
+import kwartz.node.StringExpression;
+import kwartz.node.WhileStatement;
+
 public class Optimizer implements StatementVisitor {   // statement visitor
 
-    private Properties _props;
+    private Properties _props; // for future use
 
     public Optimizer() {
         this(new Properties(Configuration.defaults));

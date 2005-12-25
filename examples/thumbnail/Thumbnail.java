@@ -5,9 +5,9 @@
 import java.util.*;
 import java.io.*;
 import java.text.MessageFormat;
-import com.kuwata_lab.kwartz.Kwartz;
-import com.kuwata_lab.kwartz.Context;
-import com.kuwata_lab.kwartz.Template;
+import kwartz.Kwartz;
+import kwartz.Context;
+import kwartz.Template;
 
 
 public class Thumbnail {

@@ -5,6 +5,7 @@
  *  @release $Release$
  */
 package kwartz;
+
 import junit.framework.TestCase;
 
 public class ScannerTest extends TestCase {

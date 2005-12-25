@@ -5,7 +5,6 @@
  *  @release $Release$
  */
 package kwartz;
-import java.util.List;
 
 class Attr {
     String space;

@@ -5,8 +5,9 @@
  *  @release $Release$
  */
 package kwartz;
+
+import kwartz.node.*;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import java.util.*;
 import java.io.*;

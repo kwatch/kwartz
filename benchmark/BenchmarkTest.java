@@ -1,10 +1,10 @@
 import java.util.*;
 import java.io.*;
 
-//import com.kuwata_lab.kwartz.KwartzCompiler;
-//import com.kuwata_lab.kwartz.DefaultCompiler;
-//import com.kuwata_lab.kwartz.Context;
-//import com.kuwata_lab.kwartz.Template;
+//import kwartz.KwartzCompiler;
+//import kwartz.DefaultCompiler;
+//import kwartz.Context;
+//import kwartz.Template;
 
 //import org.apache.velocity.VelocityContext;
 //import org.apache.velocity.Template;
@@ -23,27 +23,28 @@ public class BenchmarkTest {
 
 
     public static class KwartzBenchmark implements Benchmark {
-        private String _pdataFilename;
-        private String _plogicFilename;
+        private kwartz.Kwartz _kwartz = new kwartz.Kwartz();
+        private String _pdata_filename;
+        private String _plogic_filename;
 
         public void setTestname(String testname) {
-            _pdataFilename  = testname + ".html";
-            _plogicFilename = testname + ".plogic";
+            _pdata_filename  = testname + ".html";
+            _plogic_filename = testname + ".plogic";
         }
 
         public void execute(Writer writer, boolean flagCache, String key, Object value) throws Exception {
             // create context
-            com.kuwata_lab.kwartz.Context context = new com.kuwata_lab.kwartz.Context();
+            kwartz.Context context = new kwartz.Context();
             context.put(key, value);
 
             // compile template
-            com.kuwata_lab.kwartz.Template template;
+            kwartz.Template template;
             if (flagCache) {
-                String cachekey = _pdataFilename;
-                template = com.kuwata_lab.kwartz.Kwartz.getTemplate(cachekey, _pdataFilename, _plogicFilename);
+                String cachekey = _pdata_filename;
+                template = _kwartz.getTemplate(cachekey, _pdata_filename, _plogic_filename, null);
             } else {
-                com.kuwata_lab.kwartz.KwartzCompiler compiler = new com.kuwata_lab.kwartz.DefaultCompiler();
-                template = compiler.compileFile(_pdataFilename, _plogicFilename);
+                kwartz.Compiler compiler = new kwartz.DefaultCompiler();
+                template = compiler.compileFile(_pdata_filename, _plogic_filename, null);
             }
 
             // execute
@@ -87,8 +88,8 @@ public class BenchmarkTest {
         }
 
     }
-    
-    
+
+
     public static class FreeMarkerBenchmark implements Benchmark {
         private String _filename;
         

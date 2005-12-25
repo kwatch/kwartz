@@ -5,8 +5,10 @@
  *  @release $Release$
  */
 package kwartz;
+
+//import kwartz.Interpreter;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+//import junit.framework.TestSuite;
 
 import java.util.Map;
 import java.util.HashMap;

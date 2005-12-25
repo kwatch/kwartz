@@ -5,12 +5,13 @@
  *  @release $Release$
  */
 package kwartz;
+
+import kwartz.node.*;
 import junit.framework.TestCase;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.Writer;
 import java.io.StringWriter;
 import java.io.IOException;
 
@@ -203,7 +204,6 @@ public class StatementTest extends TestCase {
         Expression[] args2 = { new StringExpression("No"), };
         Statement then_body = new PrintStatement(args1);
         Statement else_body = new PrintStatement(args2);
-        Statement stmt;
         _stmt = new IfStatement(condition1, then_body, null);
         _expected = "Yes";
         _testPrint();

@@ -1,12 +1,9 @@
-/**
- *  @(#) Function.java
- *  @Id  $Id$
- *  @copyright $Copyright$
- *  @release $Release$
- */
 package kwartz;
+
 import java.util.Map;
 import java.util.HashMap;
+
+import kwartz.node.Expression;
 
 abstract public class Function {
     protected String _name;

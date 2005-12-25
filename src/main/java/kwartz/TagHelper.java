@@ -13,10 +13,15 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Properties;
 
+import kwartz.node.Expression;
+import kwartz.node.PrintStatement;
+import kwartz.node.Statement;
+import kwartz.node.StringExpression;
+
 public class TagHelper {
     private StatementParser  _stmtParser;
     private ExpressionParser _exprParser;
-    private Properties _props;
+    private Properties _props;  // for future use
 
 
     public TagHelper() {

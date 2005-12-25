@@ -11,6 +11,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import kwartz.node.BlockStatement;
+import kwartz.node.ExpandStatement;
+import kwartz.node.Expression;
+import kwartz.node.PrintStatement;
+import kwartz.node.Statement;
+import kwartz.node.StringExpression;
+
 public class Element {
     private String _name;
     private Tag    _stag;

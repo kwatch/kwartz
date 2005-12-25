@@ -1,6 +1,11 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-25 (rev.25)
+	.- [change] class 'Node', '*Expression', and '*Statement' are moved to new package 'kwartz.node'.
+	.- [change] abstract class 'Compiler' is changed to an interface
+	.- [change] class 'DefaultComiler' implements an interface 'Compiler'
+
 .: 2005-12-24 (rev.24)
 	.- [change] package name is changed to 'kwartz.function' about ?*Function.java
 	.- [change] package name is changed to 'kwartz.macro' about ?*Macro.java

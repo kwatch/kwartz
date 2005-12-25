@@ -6,13 +6,13 @@
  */
 package kwartz;
 
+
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.io.InputStream;
 import java.io.IOException;
+
 
 public class Configuration {
 

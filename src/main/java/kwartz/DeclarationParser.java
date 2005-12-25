@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 
+import kwartz.node.BlockStatement;
+import kwartz.node.Expression;
+import kwartz.node.StringExpression;
+
 public class DeclarationParser extends Parser {
 
     private StatementParser  _stmtParser;

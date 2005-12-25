@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Main implements Runnable {
     private String[]  _args;
     private List      _plogicFilenameList = new ArrayList();
-    private String    _action = "compile";
+    //private String    _action = "compile";
 
     public Main(String[] args) {
         _args = args;
@@ -35,7 +35,7 @@ public class Main implements Runnable {
                 i++;
                 if (i >= _args.length)
                     throw new CommandOptionException("-a: action name required.");
-                _action = _args[i];
+                //_action = _args[i];
             }
             else {
                 throw new CommandOptionException(optstr + ": invalid command-line option.");

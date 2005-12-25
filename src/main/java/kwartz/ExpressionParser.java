@@ -5,9 +5,32 @@
  *  @release $Release$
  */
 package kwartz;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import kwartz.node.ArithmeticExpression;
+import kwartz.node.AssignmentExpression;
+import kwartz.node.BooleanExpression;
+import kwartz.node.ConcatenationExpression;
+import kwartz.node.ConditionalExpression;
+import kwartz.node.DoubleExpression;
+import kwartz.node.EmptyExpression;
+import kwartz.node.Expression;
+import kwartz.node.FunctionExpression;
+import kwartz.node.IndexExpression;
+import kwartz.node.IntegerExpression;
+import kwartz.node.LogicalAndExpression;
+import kwartz.node.LogicalOrExpression;
+import kwartz.node.MethodExpression;
+import kwartz.node.NullExpression;
+import kwartz.node.PropertyExpression;
+import kwartz.node.RawcodeExpression;
+import kwartz.node.RelationalExpression;
+import kwartz.node.StringExpression;
+import kwartz.node.UnaryExpression;
+import kwartz.node.VariableExpression;
 
 public class ExpressionParser extends Parser {
 
@@ -311,8 +334,7 @@ public class ExpressionParser extends Parser {
      */
     public Expression parseLogicalAnd() {
         Expression expr = parseRelational();
-        int t;
-        while ((t = getToken()) == TokenType.AND) {
+        while (getToken() == TokenType.AND) {
             scan();
             Expression expr2 = parseRelational();
             expr = new LogicalAndExpression(expr, expr2);
@@ -328,8 +350,7 @@ public class ExpressionParser extends Parser {
      */
     public Expression parseLogicalOr() {
         Expression expr = parseLogicalAnd();
-        int t;
-        while ((t = getToken()) == TokenType.OR) {
+        while (getToken() == TokenType.OR) {
             scan();
             Expression expr2 = parseLogicalAnd();
             expr = new LogicalOrExpression(expr, expr2);
@@ -345,8 +366,7 @@ public class ExpressionParser extends Parser {
      */
     public Expression parseConditional() {
         Expression expr = parseLogicalOr();
-        int t;
-        if ((t = getToken()) == TokenType.CONDITIONAL) {
+        if (getToken() == TokenType.CONDITIONAL) {
             scan();
             Expression expr2 = parseExpression();
             if (getToken() != TokenType.COLON)

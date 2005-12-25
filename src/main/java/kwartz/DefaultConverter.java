@@ -15,9 +15,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
+import kwartz.node.Expression;
+import kwartz.node.Statement;
+
 public class DefaultConverter implements Converter {
 
-    private String _pdata;
+    //private String _pdata;
     private String _filename;
     private Map _properties = new HashMap();
     private int    _remained_linenum;
@@ -73,7 +76,7 @@ public class DefaultConverter implements Converter {
 
     public List fetchAll(String pdata) {
         final Pattern tagPattern = Pattern.compile(TAG_PATTERN);
-        _pdata = pdata;
+        //_pdata = pdata;
         int index = 0;
         int linenum = 1;
         char lastchar = '\0';
@@ -129,7 +132,7 @@ public class DefaultConverter implements Converter {
 
     public static void main(String[] args) {
         try {
-            java.io.Writer writer = new java.io.OutputStreamWriter(System.out);
+            //java.io.Writer writer = new java.io.OutputStreamWriter(System.out);
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < args.length; i++) {
                 java.io.InputStream input = new java.io.FileInputStream(args[i]);
@@ -172,9 +175,9 @@ public class DefaultConverter implements Converter {
     }
 
 
-    private Expression _parseExpression(String str, int linenum) {
-        return _helper.parseExpression(str, linenum);
-    }
+    //private Expression _parseExpression(String str, int linenum) {
+    //    return _helper.parseExpression(str, linenum);
+    //}
 
 
     private void _handleDirective(List stmtList, Tag stag, Tag etag, List bodyStmtList) {

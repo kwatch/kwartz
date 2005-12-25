@@ -5,6 +5,9 @@
  *  @release $Release$
  */
 package kwartz;
+
+import kwartz.node.*;
+import kwartz.DefaultConverter;
 import junit.framework.TestCase;
 import java.util.*;
 

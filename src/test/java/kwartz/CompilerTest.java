@@ -5,6 +5,7 @@
  *  @release $Release$
  */
 package kwartz;
+
 import junit.framework.TestCase;
 import java.util.*;
 import java.io.*;
@@ -21,11 +22,11 @@ public class CompilerTest extends TestCase {
     }
 
     private void _test(boolean flagPrint) throws Exception {
-        Compiler compiler = new DefaultCompiler(_props);
+        kwartz.Compiler compiler = new DefaultCompiler(_props);
         //compiler.addPresentationLogic(_plogic);
         //compiler.addPresentationData(_pdata);
         //BlockStatement stmt = compiler.getBlockStatement();
-        Template template = compiler.compileString(_pdata, _plogic);
+        Template template = compiler.compileString(_pdata, _plogic, null);
         Writer writer = new StringWriter();
         template.execute(_context, writer);
         String actual = writer.toString();

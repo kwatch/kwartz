@@ -5,6 +5,8 @@
  *  @release $Release$
  */
 package kwartz;
+
+import kwartz.node.*;
 import junit.framework.TestCase;
 import java.util.Map;
 import java.util.HashMap;
@@ -196,7 +198,7 @@ public class ExpressionTest extends TestCase {
     public void testRelationalExpression1() {
         Expression x = new VariableExpression("x");
         Expression y = new VariableExpression("y");
-        Expression z = new IntegerExpression(0);
+        //Expression z = new IntegerExpression(0);
         _context.put("x", new Integer(1));
         _context.put("y", new Integer(2));
         _expr = new RelationalExpression(TokenType.EQ, x, new IntegerExpression(1));
@@ -212,7 +214,7 @@ public class ExpressionTest extends TestCase {
     public void testRelationalExpression2() {
         Expression x = new VariableExpression("x");
         Expression y = new VariableExpression("y");
-        Expression z = new IntegerExpression(0);
+        //Expression z = new IntegerExpression(0);
         _context.put("x", new Integer(1));
         _context.put("y", new Integer(2));
         //
@@ -389,7 +391,7 @@ public class ExpressionTest extends TestCase {
     public void testConditionalExpression1() {
         Expression x = new VariableExpression("x");
         Expression y = new VariableExpression("y");
-        Expression z = new IntegerExpression(0);
+        //Expression z = new IntegerExpression(0);
         _context.put("x", new Integer(1));
         _context.put("y", new Integer(2));
         //

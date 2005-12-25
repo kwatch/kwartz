@@ -8,6 +8,9 @@ package kwartz;
 
 import java.util.List;
 
+import kwartz.node.Expression;
+import kwartz.node.Statement;
+
 public interface Converter {
     public Statement[] convert(String pdata);
 

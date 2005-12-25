@@ -13,6 +13,8 @@ import java.io.Writer;
 import java.io.StringWriter;
 import java.io.IOException;
 
+import kwartz.node.BlockStatement;
+
 public class Template {
 
     private BlockStatement _blockStmt;

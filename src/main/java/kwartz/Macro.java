@@ -1,12 +1,14 @@
 /**
  *  @(#) Macro.java
- *  @Id  $Id$
+ *  @Id  $Id: Macro.java 23 2005-12-24 00:45:48Z kwatch $
  *  @copyright $Copyright$
  *  @release $Release$
  */
 package kwartz;
 import java.util.Map;
 import java.util.HashMap;
+
+import kwartz.node.Expression;
 
 abstract public class Macro {
     protected String _name;

@@ -6,9 +6,10 @@
  */
 package kwartz.function;
 
-import kwartz.Function;
-import kwartz.Expression;
 import kwartz.EvaluationException;
+import kwartz.Function;
+import kwartz.node.Expression;
+
 import java.util.Map;
 
 abstract public class StringFunction2 extends Function {

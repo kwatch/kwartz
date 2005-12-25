@@ -7,7 +7,8 @@
 package kwartz.function;
 
 import kwartz.Function;
-import kwartz.Expression;
+import kwartz.node.Expression;
+
 import java.util.Map;
 import java.util.HashMap;
 

@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import kwartz.node.BlockStatement;
+import kwartz.node.Expression;
+
 public class PresentationDeclaration {
     public String[]       names;
     public Expression     tagname;

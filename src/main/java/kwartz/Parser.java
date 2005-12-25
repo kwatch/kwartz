@@ -8,6 +8,7 @@ package kwartz;
 
 import java.util.Properties;
 
+
 abstract public class Parser {
     protected Scanner _scanner;
     protected Properties _props;
