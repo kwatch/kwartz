@@ -1,0 +1,48 @@
+
+###
+### $Rev$
+### $Copyright$
+###
+
+$basename  ||= File.basename(Dir.pwd)
+$classname ||= $basename.capitalize
+$result    ||= 'result'
+$all       ||= ["#{$result}.html", "build.xml"]
+$files     ||= ["#{$basename}.html", "#{$basename}.plogic"]
+
+
+sep = RUBY_PLATFORM =~ /cygwin/ ? ';' : File::PATH_SEPARATOR
+$classpath ||= [".", "../../src/main/java"].join(sep)
+$compiler  ||= "jikes -cp '#{$classpath}'"
+
+recipe  :all			, $all
+
+recipe  "#{$result}.html"	, "#{$classname}.class", $files do |r|
+	unless $no_output
+	  cmd "java -cp '#{$classpath}' #{$classname}  > #{r.product}"
+	else
+	  cmd "java -cp '#{$classpath}' #{$classname}"
+	end
+    end
+
+grecipe  "*.class"	, "{1}.java"					do |r|
+	cmd "#{$compiler} {1}.java"
+    end
+
+recipe  "build.xml"	, "build.kwaff"					do |r|
+	cmd "kwaff #{r.ingred} > #{r.product}"
+    end
+
+recipe	:clear								do |r|
+	list = Dir.glob("*.class")
+	list.concat Dir.glob("result*.html")
+	list << "build.xml"
+	remove_rf list unless list.empty?
+    end
+
+recipe  :test	, "#{$result}.html"		do |r|
+	cmd "diff #{$result}.html .expected/#{$result}.html"
+    end
+
+recipe  :default		, :all
+

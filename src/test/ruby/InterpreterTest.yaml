@@ -1,0 +1,96 @@
+###
+### $Release$
+### $Rev$
+###
+---
+name:  Interpreter1
+desc:  hello world
+#
+input: |
+  print("Hello ", user, "!\n");
+#
+expected: |
+  Hello World!
+#
+context*:
+  java: |
+    _context.put("user", "World");
+#
+---
+name:  Interpreter2
+desc:  euclidean algorithm
+#
+input: |
+  // Euclidean algorithm
+  x = a;  y = b;
+  while (y > 0) {
+      if (x < y) {
+          tmp = y - x;
+          y = x;
+          x = tmp;
+      } else {
+          tmp = x - y;
+          x = y;
+          y = tmp;
+      }
+  }
+  print("GCD(", a, ",", b, ") == ", x, "\n");
+  print("(x,y) == (", x, ",", y, ")\n");
+#
+expected: |
+  GCD(589,775) == 31
+  (x,y) == (31,0)
+#
+context*:
+  java: |
+    _context.put("a", new Integer(589));
+    _context.put("b", new Integer(775));
+#
+---
+name:  Interpreter3
+desc:  bordered table
+#
+input: |
+  print("<table>\n");
+  i = 0;
+  foreach(item in list) {
+    i += 1;
+    color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+    print('  <tr bgcolor="', color, "\">\n");
+    print("    <td>", item[:name], "</td><td>", item[:mail], "</td>\n");
+    print("  </tr>\n");
+  }
+  print("</table>\n");
+#
+expected: |
+  <table>
+    <tr bgcolor="#CCCCFF">
+      <td>foo</td><td>foo@mail.com</td>
+    </tr>
+    <tr bgcolor="#FFCCCC">
+      <td>bar</td><td>bar@mail.org</td>
+    </tr>
+    <tr bgcolor="#CCCCFF">
+      <td>baz</td><td>baz@mail.net</td>
+    </tr>
+  </table>
+#
+context*:
+  java: |
+    //
+    List list = new ArrayList();
+    //
+    Map item1 = new HashMap();
+    item1.put("name", "foo");  item1.put("mail", "foo@mail.com");
+    list.add(item1);
+    //
+    Map item2 = new HashMap();
+    item2.put("name", "bar");  item2.put("mail", "bar@mail.org");
+    list.add(item2);
+    //
+    Map item3 = new HashMap();
+    item3.put("name", "baz");  item3.put("mail", "baz@mail.net");
+    list.add(item3);
+    //
+    _context.put("list", list);
+#

@@ -5,8 +5,8 @@
   * property
     - file        = build.properties
   * property
-    - name        = rootdir
-    - value       = ../../src/java
+    - name        = kwartz.path
+    - value       = ../../kwartz.jar
   * property
     - name        = mainclass
     - value       = Thumbnail
@@ -15,9 +15,9 @@
   * target
     - name        = compile
     * javac
-      - classpath = ${rootdir}
       - srcdir    = .
       - source    = 1.4
+      - classpath = .;${kwartz.path}
 
   # execute
   * target
@@ -25,15 +25,12 @@
     - depends     = compile
     * java
       - classname = ${mainclass}
-      - classpath = .:${rootdir}
+      - classpath = .;${kwartz.path}
 
   # clean
   * target
     - name         = clean
     * delete
-      - file       = ${mainclass}.class
-    * delete
       * fileset
         - dir      = .
-        * include
-          - name   = result*.html
+        - includes = result*.html,*.class

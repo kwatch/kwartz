@@ -1,33 +1,5 @@
+$basename = 'form1'
+$classname = 'Register'
+$files = %w[register.html register.plogic finish.html finish.plogic]
 
-classpath = ".#{File::PATH_SEPARATOR}../../src/java"
-compiler = "jikes -cp #{classpath}"
-
-all = ["result.html", "build.xml"]
-files = %w[register.html register.plogic finish.html finish.plogic]
-
-recipe  :all			, all
-
-recipe  "result.html"	, "Register.class", files			do |r|
-	cmd "java -cp #{classpath} Register > #{r.product}"
-	end
-
-grecipe  "*.class"	, "{1}.java"					do |r|
-	cmd "#{compiler} {1}.java"
-	end
-
-recipe  "build.xml"	, "build.kwaff"					do |r|
-	cmd "kwaff #{r.ingred} > #{r.product}"
-	end
-
-recipe	:clear								do |r|
-	list = Dir.glob("*.class")
-	list.concat all
-	remove_rf list unless list.empty?
-	end
-
-recipe  :test   , "result.html"                                         do |r|
-        cmd "diff result.html .expected/result.html"
-        end
-
-recipe  :default		, :all
-
+load "../Rookbook.common"

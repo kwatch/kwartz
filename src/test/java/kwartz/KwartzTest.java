@@ -27,4 +27,9 @@ public class KwartzTest extends TestCase {
         suite.addTest(new TestSuite(KwartzClassTest.class));
         junit.textui.TestRunner.run(suite);
     }
+    
+    // dummy
+    public void test1() {
+        assertTrue(true);
+    }
 }

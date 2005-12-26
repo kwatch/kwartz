@@ -1,0 +1,352 @@
+###
+### $Release$
+### $Rev$
+###
+---
+name:  optimizer01
+pdata: |
+  Hello <strong id="mark:user">World</strong>!
+#
+plogic: |
+  #user {
+    value: user;
+  }
+#
+compiled: |
+  :block
+    :print
+      "Hello"
+    :block
+      :print
+        " <strong"
+        ">"
+      :print
+        user
+      :print
+        "</strong>"
+    :print
+      "!\n"
+#
+optimized: |
+  :block
+    :print
+      "Hello <strong>"
+      user
+      "</strong>!\n"
+#
+---
+name:  optimizer02
+pdata: |
+  <ul id="mark:list">
+    <li>@{item}@</li>
+  </ul>
+#
+plogic: |
+  #list {
+      plogic: {
+          foreach (item in list) {
+              @stag;  // start tag
+              @cont;  // content
+              @etag;  // end tag
+          }
+      }
+  }
+#
+compiled: |
+  :block
+    :block
+      :foreach
+        item
+        list
+        :block
+          :print
+            "<ul"
+            ">\n"
+          :block
+            :print
+              "  <li>"
+            :print
+              item
+            :print
+              "</li>\n"
+          :print
+            "</ul>\n"
+#
+optimized: |
+  :block
+    :foreach
+      item
+      list
+      :block
+        :print
+          "<ul>\n  <li>"
+          item
+          "</li>\n</ul>\n"
+#
+---
+name:  optimizer03
+# use the same pdata with optimizer03
+pdata: |
+  <ul id="mark:list">
+    <li>@{item}@</li>
+  </ul>
+#
+plogic: |
+  #list {
+      plogic: {
+          @stag;  // start tag
+          foreach (item in list) {
+              @cont;  // content
+          }
+          @etag;  // end tag
+      }
+  }
+#
+compiled: |
+  :block
+    :block
+      :print
+        "<ul"
+        ">\n"
+      :foreach
+        item
+        list
+        :block
+          :block
+            :print
+              "  <li>"
+            :print
+              item
+            :print
+              "</li>\n"
+      :print
+        "</ul>\n"
+#
+optimized: |
+  :block
+    :print
+      "<ul>\n"
+    :foreach
+      item
+      list
+      :block
+        :print
+          "  <li>"
+          item
+          "</li>\n"
+    :print
+      "</ul>\n"
+#
+---
+name:  optimizer4
+pdata: |
+  <table id="table">
+    <tr class="odd" style="color:red" id="mark:list">
+      <td id="mark:name" style="font-weight:bold">foo</td>
+      <td><a href="..." id="mark:mail">foo@mail.org</a></td>
+    </tr>
+    <tr class="even" id="mark:dummy">
+      <td>bar</td>
+      <td>bar@mail.net</td>
+    </tr>
+  </table>
+#
+plogic: |
+  #table {
+      tagname:  "html:table";
+      append:   flag ? ' align="center"' : '';
+  }
+  #list {
+      attrs:  "class" klass;
+      remove: "style", "width";
+      plogic: {
+          i = 0;
+          foreach (item in list) {
+              i += 1;
+              klass = i % 2 == 0 ? 'even' : 'odd';
+              @stag;
+              @cont;
+              @etag;
+          }
+      }
+  }
+  #name {
+    value: item.name;
+  }
+  #mail {
+    value:  item.email;
+    attrs:  "href" "mailto:" .+ item.email;
+  }
+  #dummy {
+    plogic: { }
+  }
+#
+compiled: |
+  :block
+    :block
+      :print
+        "<html:table id=\""
+        "table"
+        "\""
+        ?:
+          flag
+          " align=\"center\""
+          ""
+        ">\n"
+      :block
+        :block
+          :expr
+            =
+              i
+              0
+          :foreach
+            item
+            list
+            :block
+              :expr
+                +=
+                  i
+                  1
+              :expr
+                =
+                  klass
+                  ?:
+                    ==
+                      %
+                        i
+                        2
+                      0
+                    "even"
+                    "odd"
+              :print
+                "  <tr class=\""
+                klass
+                "\""
+                ">\n"
+              :block
+                :block
+                  :print
+                    "    <td style=\""
+                    "font-weight:bold"
+                    "\""
+                    ">"
+                  :print
+                    .
+                      item
+                      name
+                  :print
+                    "</td>\n"
+                :print
+                  "    <td>"
+                :block
+                  :print
+                    "<a href=\""
+                    .+
+                      "mailto:"
+                      .
+                        item
+                        email
+                    "\""
+                    ">"
+                  :print
+                    .
+                      item
+                      email
+                  :print
+                    "</a>"
+                :print
+                  "</td>\n"
+              :print
+                "  </tr>\n"
+        :block
+      :print
+        "</html:table>\n"
+#
+optimized: |
+  :block
+    :print
+      "<html:table id=\"table\""
+      ?:
+        flag
+        " align=\"center\""
+        ""
+      ">\n"
+    :expr
+      =
+        i
+        0
+    :foreach
+      item
+      list
+      :block
+        :expr
+          +=
+            i
+            1
+        :expr
+          =
+            klass
+            ?:
+              ==
+                %
+                  i
+                  2
+                0
+              "even"
+              "odd"
+        :print
+          "  <tr class=\""
+          klass
+          "\">\n    <td style=\"font-weight:bold\">"
+          .
+            item
+            name
+          "</td>\n    <td><a href=\""
+          .+
+            "mailto:"
+            .
+              item
+              email
+          "\">"
+          .
+            item
+            email
+          "</a></td>\n  </tr>\n"
+    :print
+      "</html:table>\n"
+#
+---
+name:  optimizer05
+desc:  add attributes
+pdata: |
+  <img title="example image" src="dummy.png" id="mark:image">
+#
+plogic: |
+  #image {
+      attrs:  "src"  image_url, "class" klass;
+  }
+#
+compiled: |
+  :block
+    :block
+      :print
+        "<img title=\""
+        "example image"
+        "\" src=\""
+        image_url
+        "\" class=\""
+        klass
+        "\""
+        ">\n"
+      :block
+      :print
+#
+optimized: |
+  :block
+    :print
+      "<img title=\"example image\" src=\""
+      image_url
+      "\" class=\""
+      klass
+      "\">\n"
+#

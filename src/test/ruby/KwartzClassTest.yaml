@@ -1,0 +1,62 @@
+###
+### $Release$
+### $Rev$
+###
+---
+name:  GetTemplate1
+desc:  kwartz properties for Kwartz()
+#
+pdata: |
+  <html>
+   <body>
+    <table id="LIST:item=list">
+     <tr id="mark:list">
+      <td><a href="#" id="mark:item">foo</a></td><td>@{item}@</td>
+     </tr>
+    </table>
+   </body>
+  </html>
+#
+plogic: |
+  #list {
+    attrs:  "bgcolor" item_tgl;
+    //attrs: "bgcolor" color;
+    //plogic: {
+    //  i = 0;
+    //  foreach (item in list) {
+    //    i += 1;
+    //    color = i % 2 == 0 ? "#FFCCCC" : "#CCCCFF";
+    //    @stag;
+    //    @cont;
+    //    @etag;
+    //  }
+    //}
+  }
+  #item {
+    value: X(item);
+    attrs: "href" E("?id=" .+ item .+ "&page=_top");
+  }
+#
+expected: |
+  <html>
+   <body>
+    <table>
+     <tr bgcolor="#CCCCFF">
+      <td><a href="?id=foo&amp;page=_top">foo</a></td><td>foo</td>
+     </tr>
+     <tr bgcolor="#FFCCCC">
+      <td><a href="?id=&lt;b&gt;bar&lt;/b&gt;&amp;page=_top"><b>bar</b></a></td><td>&lt;b&gt;bar&lt;/b&gt;</td>
+     </tr>
+    </table>
+   </body>
+  </html>
+#
+context*:
+  java: |
+    _context.put("list", new String[] { "foo", "<b>bar</b>" });
+    _props.setProperty("kwartz.escape", "true");         // kwartz.escape
+    _props.setProperty("kwartz.even", "'#FFCCCC'");      // kwartz.even
+    _props.setProperty("kwartz.odd",  "'#CCCCFF'");      // kwartz.odd
+#
+basename: '1'
+

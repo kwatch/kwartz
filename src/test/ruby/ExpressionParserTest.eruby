@@ -1,0 +1,109 @@
+/**
+ *  @(#) ExpressionParserTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+
+import kwartz.node.*;
+import junit.framework.TestCase;
+
+public class ExpressionParserTest extends TestCase {
+
+    String _input;
+    String _expected;
+    String _method;
+    Class  _class;
+
+    public ExpressionParser _test() {
+        Scanner scanner = new Scanner(_input);
+        ExpressionParser parser = new ExpressionParser(scanner);
+        Expression expr = null;
+        if (_method.equals("parseLiteral")) {
+            expr = parser.parseLiteral();
+        } else if (_method.equals("parseItem")) {
+            expr = parser.parseItem();
+        } else if (_method.equals("parseFactor")) {
+            expr = parser.parseFactor();
+        } else if (_method.equals("parseUnary")) {
+            expr = parser.parseUnary();
+        } else if (_method.equals("parseTerm")) {
+            expr = parser.parseTerm();
+        } else if (_method.equals("parseArithmetic")) {
+            expr = parser.parseArithmetic();
+        } else if (_method.equals("parseRelational")) {
+            expr = parser.parseRelational();
+        } else if (_method.equals("parseLogicalAnd")) {
+            expr = parser.parseLogicalAnd();
+        } else if (_method.equals("parseLogicalOr")) {
+            expr = parser.parseLogicalOr();
+        } else if (_method.equals("parseConditional")) {
+            expr = parser.parseConditional();
+        } else if (_method.equals("parseAssignment")) {
+            expr = parser.parseAssignment();
+        } else if (_method.equals("parseExpression")) {
+            expr = parser.parseExpression();
+        } else {
+            fail("*** invalid _method name ***");
+        }
+        if (expr == null) fail("*** expr is null ***");
+        if (_class != null) {
+            assertEquals(_class, expr.getClass());
+        }
+        StringBuffer actual = expr._inspect();
+        assertEquals(_expected, actual.toString());
+        assertTrue("*** EOF expected ***", scanner.getToken() == TokenType.EOF);
+        return parser;
+    }
+
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["input", "expected", "method"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'] %>() {
+
+<%   if doc['input'] %>
+        _input = ""
+<%     doc['input'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['expected'] %>
+        _expected = ""
+<%     doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['method'] %>
+        _method = <%= doc['method'].inspect %>;
+<%   end %>
+<%   if doc['class'] %>
+        _class = <%= doc['class'] %>.class;
+<%   end %>
+<%   if doc.key?('print') %>
+        _print = <%= doc['print'].inspect %>;
+<%   end %>
+
+<%   if doc['exception'] %>
+        try {
+            _test();
+            fail("<%= doc['exception'] %> expected but not throwed.");
+        } catch (<%= doc['exception'] %> ex) {
+            // OK
+        }
+<%   else %>
+        _test();
+<%   end %>
+    }
+
+<% end %>
+}

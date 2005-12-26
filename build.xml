@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="Kwartz-Java" default="jar">
+  
+  <description>
+    a template sysmtem which realized the concept 'Independence of Presentation Logic (IoPL)'.
+  </description>
+
+  <!--** properties **-->
+  <property name="build.dir"    value="build" />
+  <property name="main.srcdir"  value="src/main/java"/>
+  <property name="main.destdir" value="build/main"/>
+  <property name="test.srcdir"  value="src/test/java"/>
+  <property name="test.destdir" value="build/test"/>
+  <property name="test.rubydir" value="src/test/ruby"/>
+  <property name="jar.junit"    value="lib/junit.jar" />
+
+  <!--** mkdir **-->
+  <target name="mkdir" depends="" description="create directories for build">
+    <mkdir dir="build/main" />
+    <mkdir dir="build/test" />
+  </target>
+
+  <!--** compile **-->
+  <target name="compile" depends="mkdir" description="comile *.java">
+    <javac srcdir="${main.srcdir}" destdir="${main.destdir}" target="1.4" source="1.4" />
+    <copy file="${main.srcdir}/kwartz/kwartz.properties" todir="${main.destdir}/kwartz" />
+  </target>
+
+  <!--** jar **-->
+  <target name="jar" depends="compile" description="create kwartz.jar">
+    <jar destfile="kwartz.jar" basedir="${main.destdir}" />
+  </target>
+
+  <!-- ** createst **-->
+  <target name="createst" description="generate test programs">
+    <mkdir dir="${test.srcdir}" />
+    <echo>${test.rubydir}</echo>
+    <apply executable="ruby" dir="${test.rubydir}"> <!-- dest="${test.srcdir}" is no need -->
+      <arg line="createst.rb"/>
+      <fileset dir="${test.rubydir}" includes="*.yaml" />
+      <!--
+      <fileset dir="${test.rubydir}">
+        <include name="*.yaml"/>
+      </fileset>
+      -->
+      <mapper id="outmap" type="glob" from="*.yaml" to="${test.srcdir}/kwartz/*.java" />
+      <redirector>
+        <outputmapper refid="outmap" />
+      </redirector>
+    </apply>
+  </target>
+
+  <!--** compiletest **-->
+  <target name="compiletest" depends="compile, createst">
+    <echo>${jar.junit}</echo>
+    <javac srcdir="${test.srcdir}" destdir="${test.destdir}" target="1.4" source="1.4">
+      <!--classpath path="${main.destdir}" /-->
+      <classpath>
+        <pathelement path="${main.destdir}" />
+        <pathelement path="${jar.junit}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!--** test **-->
+  <target name="test" depends="compiletest">
+    <junit printsummary="yes" haltonfailure="yes" showoutput="on" >
+      <classpath>
+        <pathelement path="${main.destdir}" />
+        <pathelement path="${test.destdir}" />
+        <pathelement path="${jar.junit}" />
+      </classpath>
+      <formatter type="plain" />
+      <!--
+      <test name="kwartz.CompilerTest" />
+      <test name="kwartz.ConverterTest" />
+      <test name="kwartz.DeclarationParserTest" />
+      <test name="kwartz.ExpanderTest" />
+      <test name="kwartz.ExpressionParserTest" />
+      <test name="kwartz.ExpressionTest" />
+      <test name="kwartz.FunctionTest" />
+      <test name="kwartz.InterpreterTest" />
+      <test name="kwartz.KwartzClassTest" />
+      <test name="kwartz.OptimizerTest" />
+      <test name="kwartz.ScannerTest" />
+      <test name="kwartz.StatementParserTest" />
+      <test name="kwartz.StatementTest" />
+      <test name="kwartz.TagHelperTest" />
+      -->
+      <!--
+      <test name="kwartz.KwartzTest" />
+      -->
+      <batchtest todir="${build.dir}">
+        <fileset dir="${test.destdir}">
+          <include name="**/*Test.class" />
+          <exclude name="**/KwartzTest.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--** clean **-->
+  <target name="clean">
+    <delete dir="${build.dir}" />
+  </target>
+
+</project>

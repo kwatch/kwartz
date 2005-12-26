@@ -10,10 +10,7 @@ package kwartz;
 import junit.framework.TestCase;
 //import junit.framework.TestSuite;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class InterpreterTest extends TestCase {
     String _input;
@@ -45,70 +42,84 @@ public class InterpreterTest extends TestCase {
     }
 
 
-    public void testInterpreter1() {    // hello world
+    // hello world
+    public void testInterpreter1() {
+
         _input = ""
-                 + "print(\"Hello \", user, \"!\\n\");\n"
-                 ;
+            + "print(\"Hello \", user, \"!\\n\");\n"
+            ;
+
         _expected = ""
-                    + "Hello World!\n"
-                    ;
+            + "Hello World!\n"
+            ;
+
         _context.put("user", "World");
+
         _test();
     }
 
-    public void testInterpreter2() {    // euclidean algorithm
+    // euclidean algorithm
+    public void testInterpreter2() {
+
         _input = ""
-                 + "// Euclidean algorithm\n"
-                 + "x = a;  y = b;\n"
-                 + "while (y > 0) {\n"
-                 + "    if (x < y) {\n"
-                 + "        tmp = y - x;\n"
-                 + "        y = x;\n"
-                 + "        x = tmp;\n"
-                 + "    } else {\n"
-                 + "        tmp = x - y;\n"
-                 + "        x = y;\n"
-                 + "        y = tmp;\n"
-                 + "    }\n"
-                 + "}\n"
-                 + "print(\"GCD(\", a, \",\", b, \") == \", x, \"\\n\");\n"
-                 + "print(\"(x,y) == (\", x, \",\", y, \")\\n\");\n"
-                 ;
+            + "// Euclidean algorithm\n"
+            + "x = a;  y = b;\n"
+            + "while (y > 0) {\n"
+            + "    if (x < y) {\n"
+            + "        tmp = y - x;\n"
+            + "        y = x;\n"
+            + "        x = tmp;\n"
+            + "    } else {\n"
+            + "        tmp = x - y;\n"
+            + "        x = y;\n"
+            + "        y = tmp;\n"
+            + "    }\n"
+            + "}\n"
+            + "print(\"GCD(\", a, \",\", b, \") == \", x, \"\\n\");\n"
+            + "print(\"(x,y) == (\", x, \",\", y, \")\\n\");\n"
+            ;
+
         _expected = ""
-                    + "GCD(589,775) == 31\n"
-                    + "(x,y) == (31,0)\n"
-                    ;
+            + "GCD(589,775) == 31\n"
+            + "(x,y) == (31,0)\n"
+            ;
+
         _context.put("a", new Integer(589));
         _context.put("b", new Integer(775));
+
         _test();
     }
 
-    public void testInterpreter3() {   // bordered table
+    // bordered table
+    public void testInterpreter3() {
+
         _input = ""
-                 + "print(\"<table>\\n\");\n"
-                 + "i = 0;\n"
-                 + "foreach(item in list) {\n"
-                 + "  i += 1;\n"
-                 + "  color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';\n"
-                 + "  print('  <tr bgcolor=\"', color, \"\\\">\\n\");\n"
-                 + "  print(\"    <td>\", item[:name], \"</td><td>\", item[:mail], \"</td>\\n\");\n"
-                 + "  print(\"  </tr>\\n\");\n"
-                 + "}\n"
-                 + "print(\"</table>\\n\");\n"
-                 ;
+            + "print(\"<table>\\n\");\n"
+            + "i = 0;\n"
+            + "foreach(item in list) {\n"
+            + "  i += 1;\n"
+            + "  color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';\n"
+            + "  print('  <tr bgcolor=\"', color, \"\\\">\\n\");\n"
+            + "  print(\"    <td>\", item[:name], \"</td><td>\", item[:mail], \"</td>\\n\");\n"
+            + "  print(\"  </tr>\\n\");\n"
+            + "}\n"
+            + "print(\"</table>\\n\");\n"
+            ;
+
         _expected = ""
-                    + "<table>\n"
-                    + "  <tr bgcolor=\"#CCCCFF\">\n"
-                    + "    <td>foo</td><td>foo@mail.com</td>\n"
-                    + "  </tr>\n"
-                    + "  <tr bgcolor=\"#FFCCCC\">\n"
-                    + "    <td>bar</td><td>bar@mail.org</td>\n"
-                    + "  </tr>\n"
-                    + "  <tr bgcolor=\"#CCCCFF\">\n"
-                    + "    <td>baz</td><td>baz@mail.net</td>\n"
-                    + "  </tr>\n"
-                    + "</table>\n"
-                    ;
+            + "<table>\n"
+            + "  <tr bgcolor=\"#CCCCFF\">\n"
+            + "    <td>foo</td><td>foo@mail.com</td>\n"
+            + "  </tr>\n"
+            + "  <tr bgcolor=\"#FFCCCC\">\n"
+            + "    <td>bar</td><td>bar@mail.org</td>\n"
+            + "  </tr>\n"
+            + "  <tr bgcolor=\"#CCCCFF\">\n"
+            + "    <td>baz</td><td>baz@mail.net</td>\n"
+            + "  </tr>\n"
+            + "</table>\n"
+            ;
+
         //
         List list = new ArrayList();
         //
@@ -125,13 +136,9 @@ public class InterpreterTest extends TestCase {
         list.add(item3);
         //
         _context.put("list", list);
+
         _test();
     }
 
 
-    // -----
-
-    public static void main(String[] args) {
-       junit.textui.TestRunner.run(InterpreterTest.class);
-    }
 }

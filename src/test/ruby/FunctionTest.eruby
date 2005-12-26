@@ -1,0 +1,66 @@
+/**
+ *  @(#) FunctionTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+
+import kwartz.node.*;
+import junit.framework.TestCase;
+
+import java.util.*;
+import java.io.*;
+
+public class FunctionTest extends TestCase {
+    String _input;
+    String _expected;
+    Map _context = new Context();
+
+    public void _test() throws Exception {
+        _test(false);
+    }
+    public void _test(boolean flagPrint) throws Exception {
+        StatementParser parser = new StatementParser();
+        BlockStatement stmt = parser.parse(_input);
+        StringWriter writer = new StringWriter();
+        stmt.execute(_context, writer);
+        String actual = writer.toString();
+        writer.close();
+        if (flagPrint)
+            System.out.println(actual);
+        else
+            assertEquals(_expected, actual);
+    }
+
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["input", "expected"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'] %>() throws Exception {
+<%   if doc['input'] %>
+        _input = ""
+<%     doc['input'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['expected'] %>
+        _expected = ""
+<%     doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+        _test();
+    }
+
+<% end %>
+
+}

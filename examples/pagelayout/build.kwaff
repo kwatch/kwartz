@@ -5,8 +5,8 @@
   * property
     - file        = build.properties
   * property
-    - name        = rootdir
-    - value       = ../../src/java
+    - name        = kwartz.path
+    - value       = ../../kwartz.jar
   * property
     - name        = mainclass
     - value       = PageLayout
@@ -15,9 +15,9 @@
   * target
     - name        = compile
     * javac
-      - classpath = ${rootdir}
       - srcdir    = .
       - source    = 1.4
+      - classpath = .;${kwartz.path}
 
   # execute
   * target
@@ -26,22 +26,18 @@
     * java
       - classname = ${mainclass}
       - output    = result1.html
-      - classpath = .:${rootdir}
+      - classpath = .;${kwartz.path}
     * java
       - classname = ${mainclass}
       - output    = result2.html
-      - classpath = .:${rootdir}
+      - classpath = .;${kwartz.path}
       * arg
         - value   = AAPL
-
 
   # clean
   * target
     - name         = clean
     * delete
       * fileset
-        - dir      =.
-        * include
-          - name   = *.class
-        * include
-          - name   = result*.html
+        - dir      = .
+        - includes = result*.html,*.class

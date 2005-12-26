@@ -13,45 +13,43 @@ public class ExpressionParserTest extends TestCase {
 
     String _input;
     String _expected;
+    String _method;
+    Class  _class;
 
-    public ExpressionParser _test(String method) {
-        return _test(method, null);
-    }
-
-    public ExpressionParser _test(String method, Class klass) {
+    public ExpressionParser _test() {
         Scanner scanner = new Scanner(_input);
         ExpressionParser parser = new ExpressionParser(scanner);
         Expression expr = null;
-        if (method.equals("parseLiteral")) {
+        if (_method.equals("parseLiteral")) {
             expr = parser.parseLiteral();
-        } else if (method.equals("parseItem")) {
+        } else if (_method.equals("parseItem")) {
             expr = parser.parseItem();
-        } else if (method.equals("parseFactor")) {
+        } else if (_method.equals("parseFactor")) {
             expr = parser.parseFactor();
-        } else if (method.equals("parseUnary")) {
+        } else if (_method.equals("parseUnary")) {
             expr = parser.parseUnary();
-        } else if (method.equals("parseTerm")) {
+        } else if (_method.equals("parseTerm")) {
             expr = parser.parseTerm();
-        } else if (method.equals("parseArithmetic")) {
+        } else if (_method.equals("parseArithmetic")) {
             expr = parser.parseArithmetic();
-        } else if (method.equals("parseRelational")) {
+        } else if (_method.equals("parseRelational")) {
             expr = parser.parseRelational();
-        } else if (method.equals("parseLogicalAnd")) {
+        } else if (_method.equals("parseLogicalAnd")) {
             expr = parser.parseLogicalAnd();
-        } else if (method.equals("parseLogicalOr")) {
+        } else if (_method.equals("parseLogicalOr")) {
             expr = parser.parseLogicalOr();
-        } else if (method.equals("parseConditional")) {
+        } else if (_method.equals("parseConditional")) {
             expr = parser.parseConditional();
-        } else if (method.equals("parseAssignment")) {
+        } else if (_method.equals("parseAssignment")) {
             expr = parser.parseAssignment();
-        } else if (method.equals("parseExpression")) {
+        } else if (_method.equals("parseExpression")) {
             expr = parser.parseExpression();
         } else {
-            fail("*** invalid method name ***");
+            fail("*** invalid _method name ***");
         }
         if (expr == null) fail("*** expr is null ***");
-        if (klass != null) {
-            assertEquals(klass, expr.getClass());
+        if (_class != null) {
+            assertEquals(_class, expr.getClass());
         }
         StringBuffer actual = expr._inspect();
         assertEquals(_expected, actual.toString());
@@ -59,477 +57,1051 @@ public class ExpressionParserTest extends TestCase {
         return parser;
     }
 
-    public void testParseLiteral1() {  // integer
-        _input = "100";
-        _expected = "100\n";
-        _test("parseLiteral", IntegerExpression.class);
-    }
-    public void testParseLiteral2() {  // double
-        _input = "3.14";
-        _expected = "3.14\n";
-        _test("parseLiteral", DoubleExpression.class);
-    }
-    public void testParseLiteral3() {  // 'string'
-        _input = "'foo'";
-        _expected = "\"foo\"\n";
-        _test("parseLiteral", StringExpression.class);
-        _input = "'\\n\\r\\t\\\\ \\''";              // '\n\r\t\\\\ \''
-        _expected = "\"\\\\n\\\\r\\\\t\\\\ '\"\n";   // "\\n\\r\\t\\ '"
-        _test("parseLiteral", StringExpression.class);
-    }
-    public void testParseLiteral4() {  // "string"
-        _input = "\"foo\"";
-        _expected = "\"foo\"\n";
-        _test("parseLiteral", StringExpression.class);
-        _input = "\"\\n\\r\\t \\\\ \\\" \"";        // "\n\r\t \\ \" "
-        _expected = "\"\\n\\r\\t \\\\ \\\" \"\n";   // "\n\r\t \\ \" "
-        _test("parseLiteral", StringExpression.class);
-    }
-    public void testParseLiteral5() {  // true, false
-        _input = "true";
-        _expected = "true\n";
-        _test("parseLiteral", BooleanExpression.class);
-        _input = "false";
-        _expected = "false\n";
-        _test("parseLiteral", BooleanExpression.class);
-    }
-    public void testParseLiteral6() {  // null
-        _input = "null";
-        _expected = "null\n";
-        _test("parseLiteral", NullExpression.class);
+
+    // integer
+    public void testParseLiteral1() {
+
+        _input = ""
+            + "100\n"
+            ;
+
+        _expected = ""
+            + "100\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = IntegerExpression.class;
+
+        _test();
     }
 
+    // double
+    public void testParseLiteral2() {
 
-    public void testParseItem1() {  // variable
-        _input = "foo";
-        _expected = "foo\n";
-        _test("parseItem", VariableExpression.class);
-    }
-    public void testParseItem2() {  // function()
-        _input = "foo()";
-        _expected = "foo()\n";
-        _test("parseItem", FunctionExpression.class);
-    }
-    public void testParseItem3() {  // function(100, 'va', arg)
-        _input = "foo(100, 'val', arg)";
+        _input = ""
+            + "3.14\n"
+            ;
+
         _expected = ""
-                    + "foo()\n"
-                    + "  100\n"
-                    + "  \"val\"\n"
-                    + "  arg\n"
-                    ;
-        _test("parseItem", FunctionExpression.class);
+            + "3.14\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = DoubleExpression.class;
+
+        _test();
     }
-    public void testParseItem4() {  // (expr)
-        _input = "(a+b)";
+
+    // string
+    public void testParseLiteral3() {
+
+        _input = ""
+            + "'foo'\n"
+            ;
+
         _expected = ""
-                    + "+\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseItem", ArithmeticExpression.class);
+            + "\"foo\"\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = StringExpression.class;
+
+        _test();
     }
-    public void testParseItem5() { // macro C(), S(), D()
-        _input = "C(flag)";
+
+    // string
+    public void testParseLiteral4() {
+
+        _input = ""
+            + "'\\n\\r\\t\\\\\\\\ \\''\n"
+            ;
+
         _expected = ""
-                    + "?:\n"
-                    + "  flag\n"
-                    + "  \" checked=\\\"checked\\\"\"\n"
-                    + "  \"\"\n"
-                    ;
-        _test("parseItem", ConditionalExpression.class);
-        _input = "S(gender=='M')";
-        _expected = ""
-                    + "?:\n"
-                    + "  ==\n"
-                    + "    gender\n"
-                    + "    \"M\"\n"
-                    + "  \" selected=\\\"selected\\\"\"\n"
-                    + "  \"\"\n"
-                    ;
-        _test("parseItem", ConditionalExpression.class);
-        _input = "D(error!=null)";
-        _expected = ""
-                    + "?:\n"
-                    + "  !=\n"
-                    + "    error\n"
-                    + "    null\n"
-                    + "  \" disabled=\\\"disabled\\\"\"\n"
-                    + "  \"\"\n"
-                    ;
-        _test("parseItem", ConditionalExpression.class);
+            + "\"\\\\n\\\\r\\\\t\\\\\\\\ '\"\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = StringExpression.class;
+
+        _test();
     }
-    public void testParseItem6() { // arity of macros
-        _input = "C(arg1, arg2)";
-        _expected = "";
+
+    // string
+    public void testParseLiteral5() {
+
+        _input = ""
+            + "\"foo\"\n"
+            ;
+
+        _expected = ""
+            + "\"foo\"\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = StringExpression.class;
+
+        _test();
+    }
+
+    // string
+    public void testParseLiteral6() {
+
+        _input = ""
+            + "\"\\n\\r\\t \\\\ \\\" \"\n"
+            ;
+
+        _expected = ""
+            + "\"\\n\\r\\t \\\\ \\\" \"\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = StringExpression.class;
+
+        _test();
+    }
+
+    // true, false
+    public void testParseLiteral7() {
+
+        _input = ""
+            + "true\n"
+            ;
+
+        _expected = ""
+            + "true\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = BooleanExpression.class;
+
+        _test();
+    }
+
+    // true, false
+    public void testParseLiteral8() {
+
+        _input = ""
+            + "false\n"
+            ;
+
+        _expected = ""
+            + "false\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = BooleanExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseLiteral9() {
+
+        _input = ""
+            + "null\n"
+            ;
+
+        _expected = ""
+            + "null\n"
+            ;
+
+        _method = "parseLiteral";
+        _class = NullExpression.class;
+
+        _test();
+    }
+
+    // variable
+    public void testParseItem1() {
+
+        _input = ""
+            + "foo\n"
+            ;
+
+        _expected = ""
+            + "foo\n"
+            ;
+
+        _method = "parseItem";
+        _class = VariableExpression.class;
+
+        _test();
+    }
+
+    // function()
+    public void testParseItem2() {
+
+        _input = ""
+            + "foo()\n"
+            ;
+
+        _expected = ""
+            + "foo()\n"
+            ;
+
+        _method = "parseItem";
+        _class = FunctionExpression.class;
+
+        _test();
+    }
+
+    // function(100, 'va', arg)
+    public void testParseItem3() {
+
+        _input = ""
+            + "foo(100, 'val', arg)\n"
+            ;
+
+        _expected = ""
+            + "foo()\n"
+            + "  100\n"
+            + "  \"val\"\n"
+            + "  arg\n"
+            ;
+
+        _method = "parseItem";
+        _class = FunctionExpression.class;
+
+        _test();
+    }
+
+    // (expr)
+    public void testParseItem4() {
+
+        _input = ""
+            + "(a+b)\n"
+            ;
+
+        _expected = ""
+            + "+\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseItem";
+        _class = ArithmeticExpression.class;
+
+        _test();
+    }
+
+    // macro C(), S(), D()
+    public void testParseItem5() {
+
+        _input = ""
+            + "C(flag)\n"
+            ;
+
+        _expected = ""
+            + "?:\n"
+            + "  flag\n"
+            + "  \" checked=\\\"checked\\\"\"\n"
+            + "  \"\"\n"
+            ;
+
+        _method = "parseItem";
+        _class = ConditionalExpression.class;
+
+        _test();
+    }
+
+    // macro C(), S(), D()
+    public void testParseItem6() {
+
+        _input = ""
+            + "S(gender=='M')\n"
+            ;
+
+        _expected = ""
+            + "?:\n"
+            + "  ==\n"
+            + "    gender\n"
+            + "    \"M\"\n"
+            + "  \" selected=\\\"selected\\\"\"\n"
+            + "  \"\"\n"
+            ;
+
+        _method = "parseItem";
+        _class = ConditionalExpression.class;
+
+        _test();
+    }
+
+    // macro C(), S(), D()
+    public void testParseItem7() {
+
+        _input = ""
+            + "D(error!=null)\n"
+            ;
+
+        _expected = ""
+            + "?:\n"
+            + "  !=\n"
+            + "    error\n"
+            + "    null\n"
+            + "  \" disabled=\\\"disabled\\\"\"\n"
+            + "  \"\"\n"
+            ;
+
+        _method = "parseItem";
+        _class = ConditionalExpression.class;
+
+        _test();
+    }
+
+    // arity of macros
+    public void testParseItem8() {
+
+        _input = ""
+            + "C(arg1, arg2)\n"
+            ;
+
+        _expected = ""
+            ;
+
+        _method = "parseItem";
+        _class = ConditionalExpression.class;
+
         try {
-            _test("parseItem", ConditionalExpression.class);
-            fail("SemanticError expected but not throwed.");
+            _test();
+            fail("SemanticException expected but not throwed.");
         } catch (SemanticException ex) {
             // OK
         }
     }
 
-    public void testParseFactor1() {  // array
-        _input = "a[10]";
+    // array
+    public void testParseFactor1() {
+
+        _input = ""
+            + "a[10]\n"
+            ;
+
         _expected = ""
-                    + "[]\n"
-                    + "  a\n"
-                    + "  10\n"
-                    ;;
-        _test("parseFactor", IndexExpression.class);
-        _input = "a[i+1]";
-        _expected = "[]\n  a\n  +\n    i\n    1\n";
-        _test("parseFactor", IndexExpression.class);
-    }
-    public void testParseFactor2() {  // hash
-        _input = "a[:foo]";
-        _expected = ""
-                    + "[:]\n"
-                    + "  a\n"
-                    + "  \"foo\"\n"
-                    ;
-        _test("parseFactor", IndexExpression.class);
-    }
-    public void testParseFactor3() {  // property
-        _input = "obj.prop1";
-        _expected = ""
-                    + ".\n"
-                    + "  obj\n"
-                    + "  prop1\n"
-                    ;
-        _test("parseFactor", PropertyExpression.class);
-    }
-    public void testParseFactor4() {  // method
-        _input = "obj.method1(arg1,arg2)";
-        _expected = ""
-                    + ".()\n"
-                    + "  obj\n"
-                    + "  method1()\n"
-                    + "    arg1\n"
-                    + "    arg2\n"
-                    ;
-        _test("parseFactor", MethodExpression.class);
-    }
-    public void testParseFactor5() {  // nested array,hash
-        _input = "a[i][:j][k]";
-        _expected = ""
-                    + "[]\n"
-                    + "  [:]\n"
-                    + "    []\n"
-                    + "      a\n"
-                    + "      i\n"
-                    + "    \"j\"\n"
-                    + "  k\n"
-                    ;
-        _test("parseFactor", IndexExpression.class);
-        _input = "foo.bar.baz()";
-        _expected = ""
-                    + ".()\n"
-                    + "  .\n"
-                    + "    foo\n"
-                    + "    bar\n"
-                    + "  baz()\n"
-                    ;
-        _test("parseFactor", MethodExpression.class);
+            + "[]\n"
+            + "  a\n"
+            + "  10\n"
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        _test();
     }
 
-    public void testParseFactor6() {  // invalid array
-        _input = "a[10;";
-        _expected = null;
-        try {
-            _test("parseFactor", IndexExpression.class);
-        } catch (SyntaxException ex) {
-            // OK
-        }
+    // array
+    public void testParseFactor2() {
+
+        _input = ""
+            + "a[i+1]\n"
+            ;
+
+        _expected = ""
+            + "[]\n"
+            + "  a\n"
+            + "  +\n"
+            + "    i\n"
+            + "    1\n"
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        _test();
     }
+
+    // hash
+    public void testParseFactor3() {
+
+        _input = ""
+            + "a[:foo]\n"
+            ;
+
+        _expected = ""
+            + "[:]\n"
+            + "  a\n"
+            + "  \"foo\"\n"
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        _test();
+    }
+
+    // property
+    public void testParseFactor4() {
+
+        _input = ""
+            + "obj.prop1\n"
+            ;
+
+        _expected = ""
+            + ".\n"
+            + "  obj\n"
+            + "  prop1\n"
+            ;
+
+        _method = "parseFactor";
+        _class = PropertyExpression.class;
+
+        _test();
+    }
+
+    // method
+    public void testParseFactor5() {
+
+        _input = ""
+            + "obj.method1(arg1,arg2)\n"
+            ;
+
+        _expected = ""
+            + ".()\n"
+            + "  obj\n"
+            + "  method1()\n"
+            + "    arg1\n"
+            + "    arg2\n"
+            ;
+
+        _method = "parseFactor";
+        _class = MethodExpression.class;
+
+        _test();
+    }
+
+    // nested array,hash
+    public void testParseFactor6() {
+
+        _input = ""
+            + "a[i][:j][k]\n"
+            ;
+
+        _expected = ""
+            + "[]\n"
+            + "  [:]\n"
+            + "    []\n"
+            + "      a\n"
+            + "      i\n"
+            + "    \"j\"\n"
+            + "  k\n"
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        _test();
+    }
+
+    // nested array,hash
     public void testParseFactor7() {
-        _input = "a[:+]";
-        _expected = null;
-        try {
-            _test("parseFactor", IndexExpression.class);
-        } catch (SyntaxException ex) {
-            // OK
-        }
-        _input = "a[:foo-bar]";
-        _expected = null;
-        try {
-            _test("parseFactor", IndexExpression.class);
-        } catch (SyntaxException ex) {
-            // OK
-        }
+
+        _input = ""
+            + "foo.bar.baz()\n"
+            ;
+
+        _expected = ""
+            + ".()\n"
+            + "  .\n"
+            + "    foo\n"
+            + "    bar\n"
+            + "  baz()\n"
+            ;
+
+        _method = "parseFactor";
+        _class = MethodExpression.class;
+
+        _test();
     }
 
+    // invalid array
+    public void testParseFactor8() {
 
-    public void testParseUnary1() {  // -1, +a, !false
-        _input = "-1";
-        _expected = ""
-                    + "-.\n"
-                    + "  1\n"
-                    ;
-        _test("parseUnary", UnaryExpression.class);
-        _input = "+a";
-        _expected = ""
-                    + "+.\n"
-                    + "  a\n"
-                    ;
-        _test("parseUnary", UnaryExpression.class);
-        _input = "!false";
-        _expected = ""
-                    + "!\n"
-                    + "  false\n"
-                    ;
-        _test("parseUnary", UnaryExpression.class);
-    }
+        _input = ""
+            + "a[10;\n"
+            ;
 
-    public void testParseUnary2() { // - - 1
-        _input = "- -1";
-        _expected = null;
+        _expected = ""
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
         try {
-            _test("parseUnary");
+            _test();
+            fail("SyntaxException expected but not throwed.");
         } catch (SyntaxException ex) {
             // OK
         }
     }
 
-    public void testParseTerm1() {  // term
-        _input = "-x*y";
+    // ...
+    public void testParseFactor9() {
+
+        _input = ""
+            + "a[:+]\n"
+            ;
+
         _expected = ""
-                    + "*\n"
-                    + "  -.\n"
-                    + "    x\n"
-                    + "  y\n"
-                    ;
-        _test("parseTerm", ArithmeticExpression.class);
-        _input = "a*b/c%d";
-        _expected = ""
-                    + "%\n"
-                    + "  /\n"
-                    + "    *\n"
-                    + "      a\n"
-                    + "      b\n"
-                    + "    c\n"
-                    + "  d\n"
-                    ;
-        _test("parseTerm", ArithmeticExpression.class);
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        try {
+            _test();
+            fail("SyntaxException expected but not throwed.");
+        } catch (SyntaxException ex) {
+            // OK
+        }
     }
 
-    public void testParseArithmetic1() {  // arithmetic
-        _input = "-a + b .+ c - d";
+    // ...
+    public void testParseFactor10() {
+
+        _input = ""
+            + "a[:foo-bar]\n"
+            ;
+
         _expected = ""
-                    + "-\n"
-                    + "  .+\n"
-                    + "    +\n"
-                    + "      -.\n"
-                    + "        a\n"
-                    + "      b\n"
-                    + "    c\n"
-                    + "  d\n"
-                    ;
-        _test("parseArithmetic", ArithmeticExpression.class);
+            ;
+
+        _method = "parseFactor";
+        _class = IndexExpression.class;
+
+        try {
+            _test();
+            fail("SyntaxException expected but not throwed.");
+        } catch (SyntaxException ex) {
+            // OK
+        }
     }
 
-    public void testParseArithmetic2() {  // arithmetic
-        _input = "-a*b + -c/d";
+    // -1, +a, !false
+    public void testParseUnary1() {
+
+        _input = ""
+            + "-1\n"
+            ;
+
         _expected = ""
-                    + "+\n"
-                    + "  *\n"
-                    + "    -.\n"
-                    + "      a\n"
-                    + "    b\n"
-                    + "  /\n"
-                    + "    -.\n"
-                    + "      c\n"
-                    + "    d\n"
-                    ;
-        _test("parseArithmetic", ArithmeticExpression.class);
+            + "-.\n"
+            + "  1\n"
+            ;
+
+        _method = "parseUnary";
+        _class = UnaryExpression.class;
+
+        _test();
     }
 
-    public void testParseConcatenation1() {  // arithmetic
-        _input = "'dir/' .+ base .+ '.txt'";
+    // -1, +a, !false
+    public void testParseUnary2() {
+
+        _input = ""
+            + "+a\n"
+            ;
+
         _expected = ""
-                    + ".+\n"
-                    + "  .+\n"
-                    + "    \"dir/\"\n"
-                    + "    base\n"
-                    + "  \".txt\"\n"
-                    ;
-        _test("parseArithmetic", ConcatenationExpression.class);
+            + "+.\n"
+            + "  a\n"
+            ;
+
+        _method = "parseUnary";
+        _class = UnaryExpression.class;
+
+        _test();
     }
 
+    // -1, +a, !false
+    public void testParseUnary3() {
 
+        _input = ""
+            + "!false\n"
+            ;
+
+        _expected = ""
+            + "!\n"
+            + "  false\n"
+            ;
+
+        _method = "parseUnary";
+        _class = UnaryExpression.class;
+
+        _test();
+    }
+
+    // - - 1
+    public void testParseUnary4() {
+
+        _input = ""
+            + "- -1\n"
+            ;
+
+        _expected = ""
+            ;
+
+        _method = "parseUnary";
+        _class = UnaryExpression.class;
+
+        try {
+            _test();
+            fail("SyntaxException expected but not throwed.");
+        } catch (SyntaxException ex) {
+            // OK
+        }
+    }
+
+    // term
+    public void testParseTerm1() {
+
+        _input = ""
+            + "-x*y\n"
+            ;
+
+        _expected = ""
+            + "*\n"
+            + "  -.\n"
+            + "    x\n"
+            + "  y\n"
+            ;
+
+        _method = "parseTerm";
+        _class = ArithmeticExpression.class;
+
+        _test();
+    }
+
+    // term
+    public void testParseTerm2() {
+
+        _input = ""
+            + "a*b/c%d\n"
+            ;
+
+        _expected = ""
+            + "%\n"
+            + "  /\n"
+            + "    *\n"
+            + "      a\n"
+            + "      b\n"
+            + "    c\n"
+            + "  d\n"
+            ;
+
+        _method = "parseTerm";
+        _class = ArithmeticExpression.class;
+
+        _test();
+    }
+
+    // arithmetic
+    public void testParseArithmetic1() {
+
+        _input = ""
+            + "-a + b .+ c - d\n"
+            ;
+
+        _expected = ""
+            + "-\n"
+            + "  .+\n"
+            + "    +\n"
+            + "      -.\n"
+            + "        a\n"
+            + "      b\n"
+            + "    c\n"
+            + "  d\n"
+            ;
+
+        _method = "parseArithmetic";
+        _class = ArithmeticExpression.class;
+
+        _test();
+    }
+
+    // arithmetic
+    public void testParseArithmetic2() {
+
+        _input = ""
+            + "-a*b + -c/d\n"
+            ;
+
+        _expected = ""
+            + "+\n"
+            + "  *\n"
+            + "    -.\n"
+            + "      a\n"
+            + "    b\n"
+            + "  /\n"
+            + "    -.\n"
+            + "      c\n"
+            + "    d\n"
+            ;
+
+        _method = "parseArithmetic";
+        _class = ArithmeticExpression.class;
+
+        _test();
+    }
+
+    // arithmetic
+    public void testParseConcatenation1() {
+
+        _input = ""
+            + "'dir/' .+ base .+ '.txt'\n"
+            ;
+
+        _expected = ""
+            + ".+\n"
+            + "  .+\n"
+            + "    \"dir/\"\n"
+            + "    base\n"
+            + "  \".txt\"\n"
+            ;
+
+        _method = "parseArithmetic";
+        _class = ConcatenationExpression.class;
+
+        _test();
+    }
+
+    // 
     public void testParseRelational1() {
-        _input = "a==b";
+
+        _input = ""
+            + "a==b\n"
+            ;
+
         _expected = ""
-                    + "==\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseRelational", RelationalExpression.class);
-        _input = "a!=b";
-        _expected = ""
-                    + "!=\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseRelational", RelationalExpression.class);
-        _input = "a<b";
-        _expected = ""
-                    + "<\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseRelational", RelationalExpression.class);
-        _input = "a<=b";
-        _expected = ""
-                    + "<=\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseRelational", RelationalExpression.class);
-        _input = "a>b";
-        _expected = ""
-                    + ">\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseRelational", RelationalExpression.class);
-        _input = "a>=b";
-        _expected = ""
-                    + ">=\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
+            + "==\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
     }
 
+    // 
+    public void testParseRelational2() {
 
-    public void testParseLogicalAnd1() {  // a && b
-        _input = "a && b";
+        _input = ""
+            + "a!=b\n"
+            ;
+
         _expected = ""
-                    + "&&\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseLogicalAnd", LogicalAndExpression.class);
-        _input = "0<x&&x<100&&cond1&&cond2";
-        _expected = ""
-                    + "&&\n"
-                    + "  &&\n"
-                    + "    &&\n"
-                    + "      <\n"
-                    + "        0\n"
-                    + "        x\n"
-                    + "      <\n"
-                    + "        x\n"
-                    + "        100\n"
-                    + "    cond1\n"
-                    + "  cond2\n"
-                    ;
-        _test("parseLogicalAnd", LogicalAndExpression.class);
+            + "!=\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
     }
 
-    public void testParseLogicalOr1() {   // a || b
-        _input = "a||b";
-        _expected = "||\n  a\n  b\n";
-        _test("parseLogicalOr", LogicalOrExpression.class);
-        _input = "0<x||x<100||cond1||cond2";
+    // 
+    public void testParseRelational3() {
+
+        _input = ""
+            + "a<b\n"
+            ;
+
         _expected = ""
-                    + "||\n"
-                    + "  ||\n"
-                    + "    ||\n"
-                    + "      <\n"
-                    + "        0\n"
-                    + "        x\n"
-                    + "      <\n"
-                    + "        x\n"
-                    + "        100\n"
-                    + "    cond1\n"
-                    + "  cond2\n"
-                    ;
-        _test("parseLogicalOr", LogicalOrExpression.class);
-        _input = "a&&b || c&&d || e&&f";
-        _expected = ""
-                    + "||\n"
-                    + "  ||\n"
-                    + "    &&\n"
-                    + "      a\n"
-                    + "      b\n"
-                    + "    &&\n"
-                    + "      c\n"
-                    + "      d\n"
-                    + "  &&\n"
-                    + "    e\n"
-                    + "    f\n"
-                    ;
-        _test("parseLogicalOr", LogicalOrExpression.class);
+            + "<\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
     }
 
+    // 
+    public void testParseRelational4() {
+
+        _input = ""
+            + "a<=b\n"
+            ;
+
+        _expected = ""
+            + "<=\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseRelational5() {
+
+        _input = ""
+            + "a>b\n"
+            ;
+
+        _expected = ""
+            + ">\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseRelational6() {
+
+        _input = ""
+            + "a>=b\n"
+            ;
+
+        _expected = ""
+            + ">=\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseRelational";
+        _class = RelationalExpression.class;
+
+        _test();
+    }
+
+    // a && b
+    public void testParseLogicalAnd1() {
+
+        _input = ""
+            + "a && b\n"
+            ;
+
+        _expected = ""
+            + "&&\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseLogicalAnd";
+        _class = LogicalAndExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseLogicalAnd2() {
+
+        _input = ""
+            + "0<x&&x<100&&cond1&&cond2\n"
+            ;
+
+        _expected = ""
+            + "&&\n"
+            + "  &&\n"
+            + "    &&\n"
+            + "      <\n"
+            + "        0\n"
+            + "        x\n"
+            + "      <\n"
+            + "        x\n"
+            + "        100\n"
+            + "    cond1\n"
+            + "  cond2\n"
+            ;
+
+        _method = "parseLogicalAnd";
+        _class = LogicalAndExpression.class;
+
+        _test();
+    }
+
+    // a || b
+    public void testParseLogicalOr1() {
+
+        _input = ""
+            + "a||b\n"
+            ;
+
+        _expected = ""
+            + "||\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseLogicalOr";
+        _class = LogicalOrExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseLogicalOr2() {
+
+        _input = ""
+            + "0<x||x<100||cond1||cond2\n"
+            ;
+
+        _expected = ""
+            + "||\n"
+            + "  ||\n"
+            + "    ||\n"
+            + "      <\n"
+            + "        0\n"
+            + "        x\n"
+            + "      <\n"
+            + "        x\n"
+            + "        100\n"
+            + "    cond1\n"
+            + "  cond2\n"
+            ;
+
+        _method = "parseLogicalOr";
+        _class = LogicalOrExpression.class;
+
+        _test();
+    }
+
+    // 
+    public void testParseLogicalOr3() {
+
+        _input = ""
+            + "a&&b || c&&d || e&&f\n"
+            ;
+
+        _expected = ""
+            + "||\n"
+            + "  ||\n"
+            + "    &&\n"
+            + "      a\n"
+            + "      b\n"
+            + "    &&\n"
+            + "      c\n"
+            + "      d\n"
+            + "  &&\n"
+            + "    e\n"
+            + "    f\n"
+            ;
+
+        _method = "parseLogicalOr";
+        _class = LogicalOrExpression.class;
+
+        _test();
+    }
+
+    // 
     public void testParseConditional1() {
-        _input = "a ? b : c";
+
+        _input = ""
+            + "a ? b : c\n"
+            ;
+
         _expected = ""
-                    + "?:\n"
-                    + "  a\n"
-                    + "  b\n"
-                    + "  c\n"
-                    ;
-        _test("parseConditional", ConditionalExpression.class);
+            + "?:\n"
+            + "  a\n"
+            + "  b\n"
+            + "  c\n"
+            ;
+
+        _method = "parseConditional";
+        _class = ConditionalExpression.class;
+
+        _test();
     }
 
+    // 
     public void testParseAssignment1() {
-        _input = "a = b";
+
+        _input = ""
+            + "a = b\n"
+            ;
+
         _expected = ""
-                    + "=\n"
-                    + "  a\n"
-                    + "  b\n"
-                    ;
-        _test("parseAssignment", AssignmentExpression.class);
-        _input = "a = 1+f(2)";
-        _expected = ""
-                    + "=\n"
-                    + "  a\n"
-                    + "  +\n"
-                    + "    1\n"
-                    + "    f()\n"
-                    + "      2\n"
-                    ;
-        _test("parseAssignment", AssignmentExpression.class);
+            + "=\n"
+            + "  a\n"
+            + "  b\n"
+            ;
+
+        _method = "parseAssignment";
+        _class = AssignmentExpression.class;
+
+        _test();
     }
 
+    // 
     public void testParseAssignment2() {
-        _input = "a[i] = b";
+
+        _input = ""
+            + "a = 1+f(2)\n"
+            ;
+
         _expected = ""
-                    + "=\n"
-                    + "  []\n"
-                    + "    a\n"
-                    + "    i\n"
-                    + "  b\n"
-                    ;
-        _test("parseAssignment", AssignmentExpression.class);
+            + "=\n"
+            + "  a\n"
+            + "  +\n"
+            + "    1\n"
+            + "    f()\n"
+            + "      2\n"
+            ;
+
+        _method = "parseAssignment";
+        _class = AssignmentExpression.class;
+
+        _test();
     }
 
+    // 
+    public void testParseAssignment3() {
 
+        _input = ""
+            + "a[i] = b\n"
+            ;
+
+        _expected = ""
+            + "=\n"
+            + "  []\n"
+            + "    a\n"
+            + "    i\n"
+            + "  b\n"
+            ;
+
+        _method = "parseAssignment";
+        _class = AssignmentExpression.class;
+
+        _test();
+    }
+
+    // 
     public void testParseExpression1() {
-        _input = "color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'";
+
+        _input = ""
+            + "color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'\n"
+            ;
+
         _expected = ""
-                    + "=\n"
-                    + "  color\n"
-                    + "  ?:\n"
-                    + "    ==\n"
-                    + "      %\n"
-                    + "        i\n"
-                    + "        2\n"
-                    + "      0\n"
-                    + "    \"#FFCCCC\"\n"
-                    + "    \"#CCCCFF\"\n"
-                    ;
-        _test("parseExpression", AssignmentExpression.class);
-    }
+            + "=\n"
+            + "  color\n"
+            + "  ?:\n"
+            + "    ==\n"
+            + "      %\n"
+            + "        i\n"
+            + "        2\n"
+            + "      0\n"
+            + "    \"#FFCCCC\"\n"
+            + "    \"#CCCCFF\"\n"
+            ;
 
+        _method = "parseExpression";
+        _class = AssignmentExpression.class;
 
-    // -----
-
-    public static void main(String[] args) {
-       junit.textui.TestRunner.run(ExpressionParserTest.class);
+        _test();
     }
 
 }

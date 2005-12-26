@@ -1,0 +1,105 @@
+/**
+ *  @(#) KwartzClassTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+import junit.framework.TestCase;
+import java.util.*;
+import java.io.*;
+
+public class KwartzClassTest extends TestCase {
+
+    private String _pdata;
+    private String _plogic;
+    private String _elemdef;
+    private Context _context = new Context();
+    private Properties _props = new Properties();
+    private String _expected;
+    private String _basename;
+
+
+    private static final String PREFIX = ".KwartzClassTest";
+    private static final String CHARSET = System.getProperty("file.encoding");
+
+    public void _test() {
+        String pdataFilename   = _pdata   == null ? null : PREFIX + _basename + ".html";
+        String plogicFilename  = _plogic  == null ? null : PREFIX + _basename + ".plogic";
+        String elemdefFilename = _elemdef == null ? null : PREFIX + _basename + ".elem.html";
+
+        try {
+            _createFile(pdataFilename, _pdata);
+            _createFile(plogicFilename, _plogic);
+            _createFile(elemdefFilename, _elemdef);
+            Kwartz kwartz = new Kwartz(_props);
+            String cacheKey = _basename;
+            Template template = kwartz.getTemplate(cacheKey, pdataFilename, plogicFilename, elemdefFilename, CHARSET);
+            //System.err.println("*** debug: template=" + template.getBlockStatement()._inspect() + ".");
+            StringWriter writer = new StringWriter();
+            template.execute(_context, writer);
+            String actual = writer.toString();
+            writer.close();
+            assertEquals(_expected, actual);
+        }
+        catch (IOException ex) {
+            //ex.printStackTrace();
+            fail(ex.getMessage());
+        }
+        finally {
+            _deleteFile(pdataFilename);
+            _deleteFile(plogicFilename);
+            if (_elemdef != null) _deleteFile(elemdefFilename);
+        }
+    }
+
+    private void _createFile(String filename, String content) throws IOException {
+        if (content == null) return;
+        OutputStream output = new FileOutputStream(filename);
+        Writer writer = new OutputStreamWriter(output, CHARSET);
+        writer.write(content);
+        writer.flush();
+    }
+
+    private void _deleteFile(String filename) {
+        File file = new File(filename);
+        file.delete();
+    }
+
+
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["pdata", "plogic", "expected", "context", "basename"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'] %>() {
+
+        _pdata = ""
+<%    doc['pdata'].each_line do |line| %>
+            + <%= line.inspect %>
+<%    end %>
+            ;
+
+        _plogic = ""
+<%    doc['plogic'].each_line do |line| %>
+            + <%= line.inspect %>
+<%    end %>
+            ;
+
+        _expected = ""
+<%    doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%    end %>
+            ;
+
+<%= doc['context'].gsub(/^/, '        ') %>
+
+        _basename = <%= doc['basename'].inspect %>;
+        _test();
+    }
+
+<% end %>
+}

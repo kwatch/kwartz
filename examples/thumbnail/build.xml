@@ -2,26 +2,23 @@
 <project name="thumbnail" default="execute">
 
   <property file="build.properties"/>
-  <property name="rootdir" value="../../src/java"/>
+  <property name="kwartz.path" value="../../kwartz.jar"/>
   <property name="mainclass" value="Thumbnail"/>
 
   <!-- compile -->
   <target name="compile">
-    <javac classpath="${rootdir}" srcdir="." source="1.4"/>
+    <javac srcdir="." source="1.4" classpath=".;${kwartz.path}"/>
   </target>
 
   <!-- execute -->
   <target name="execute" depends="compile">
-    <java classname="${mainclass}" classpath=".:${rootdir}"/>
+    <java classname="${mainclass}" classpath=".;${kwartz.path}"/>
   </target>
 
   <!-- clean -->
   <target name="clean">
-    <delete file="${mainclass}.class"/>
     <delete>
-      <fileset dir=".">
-        <include name="result*.html"/>
-      </fileset>
+      <fileset dir="." includes="result*.html,*.class"/>
     </delete>
   </target>
 

@@ -1,36 +1,13 @@
 
-classpath = ".#{File::PATH_SEPARATOR}../../src/java"
-compiler = "jikes -cp #{classpath}"
+$basename  = 'thumbnail'
+$classname = 'Thumbnail'
+$result    = 'result1'
+$no_output = true
 
-all = ["result1.html", "build.xml"]
-
-recipe  :all			, all
-
-recipe  "result1.html"	, "Thumbnail.class", "thumbnail.html", "thumbnail.plogic" do |r|
-	cmd "java -cp #{classpath} Thumbnail "
-	end
-
-grecipe  "*.class"	, "{1}.java"					do |r|
-	cmd "#{compiler} {1}.java"
-	end
-
-recipe  "build.xml"	, "build.kwaff"					do |r|
-	cmd "kwaff #{r.ingred} > #{r.product}"
-	end
-
-recipe	:clear								do |r|
-	list = Dir.glob("*.class")
-	list.concat Dir.glob("result*.html")
-	list.concat all
-	remove_rf list unless list.empty?
-	end
+load "../Rookbook.common"
 
 recipe  :test   , "result1.html"                                        do |r|
         cmd "diff result0.html .expected/result0.html"
         cmd "diff result1.html .expected/result1.html"
         cmd "diff result2.html .expected/result2.html"
         end
-
-
-recipe  :default		, :all
-

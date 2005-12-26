@@ -2,23 +2,24 @@
 <project name="border1" default="execute">
 
   <property file="build.properties"/>
-  <property name="rootdir" value="../../src/java"/>
+  <property name="kwartz.path" value="../../kwartz.jar"/>
   <property name="mainclass" value="Border1"/>
 
   <!-- compile -->
   <target name="compile">
-    <javac classpath="${rootdir}" srcdir="." source="1.4"/>
+    <javac srcdir="." source="1.4" classpath=".;${kwartz.path}"/>
   </target>
 
   <!-- execute -->
   <target name="execute" depends="compile">
-    <java classname="${mainclass}" output="result.html" classpath=".:${rootdir}"/>
+    <java classname="${mainclass}" classpath=".;${kwartz.path}" output="result.html"/>
   </target>
 
   <!-- clean -->
   <target name="clean">
-    <delete file="${mainclass}.class"/>
-    <delete file="result.html"/>
+    <delete>
+      <fileset dir="." includes="result*.html,*.class"/>
+    </delete>
   </target>
 
 </project>

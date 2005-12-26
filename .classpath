@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="benchmark"/>
+	<classpathentry kind="src" path="examples/border1"/>
+	<classpathentry kind="src" path="examples/border2"/>
+	<classpathentry kind="src" path="examples/border3"/>
+	<classpathentry kind="src" path="examples/breadcrumbs"/>
+	<classpathentry kind="src" path="examples/calendar"/>
+	<classpathentry kind="src" path="examples/form1"/>
+	<classpathentry kind="src" path="examples/pagelayout"/>
+	<classpathentry kind="src" path="examples/thumbnail"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/j2re1.4.2_10"/>
+	<classpathentry kind="lib" path="E:/local/home/kwatch/src/kwartz-java/trunk/benchmark/freemarker.jar"/>
+	<classpathentry kind="lib" path="E:/local/home/kwatch/src/kwartz-java/trunk/benchmark/log4j-1.2.11.jar"/>
+	<classpathentry kind="lib" path="E:/local/home/kwatch/src/kwartz-java/trunk/benchmark/velocity-1.4.jar"/>
+	<classpathentry kind="lib" path="E:/local/home/kwatch/src/kwartz-java/trunk/benchmark/velocity-dep-1.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

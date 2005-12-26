@@ -5,8 +5,8 @@
   * property
     - file        = build.properties
   * property
-    - name        = rootdir
-    - value       = ../../src/java
+    - name        = kwartz.path
+    - value       = ../../kwartz.jar
   * property
     - name        = mainclass
     - value       = Border3
@@ -15,9 +15,9 @@
   * target
     - name        = compile
     * javac
-      - classpath = ${rootdir}
       - srcdir    = .
       - source    = 1.4
+      - classpath = .;${kwartz.path}
 
   # execute
   * target
@@ -25,13 +25,13 @@
     - depends     = compile
     * java
       - classname = ${mainclass}
+      - classpath = .;${kwartz.path}
       - output    = result.html
-      - classpath = .:${rootdir}
 
   # clean
   * target
     - name         = clean
     * delete
-      - file       = ${mainclass}.class
-    * delete
-      - file       = result.html
+      * fileset
+        - dir      = .
+        - includes = result*.html,*.class

@@ -1,0 +1,107 @@
+/**
+ *  @(#) StatementParserTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+
+import kwartz.node.*;
+import junit.framework.TestCase;
+
+public class StatementParserTest extends TestCase {
+
+    String _input;
+    String _expected;
+    String _method;
+    Class _class;
+
+    public Parser _test() {
+        Scanner scanner = new Scanner(_input);
+        StatementParser parser = new StatementParser(scanner);
+        Statement stmt = null;
+        Statement[] stmts = null;
+        if (_method.equals("parsePrintStatement")) {
+            stmt = parser.parsePrintStatement();
+        } else if (_method.equals("parseExpressionStatement")) {
+            stmt = parser.parseExpressionStatement();
+        } else if (_method.equals("parseIfStatement")) {
+            stmt = parser.parseIfStatement();
+        } else if (_method.equals("parseForeachStatement")) {
+            stmt = parser.parseForeachStatement();
+        } else if (_method.equals("parseWhileStatement")) {
+            stmt = parser.parseWhileStatement();
+        } else if (_method.equals("parseExpandStatement")) {
+            stmt = parser.parseExpandStatement();
+        } else if (_method.equals("parseElementStatement")) {
+            stmt = parser.parseElementStatement();
+        } else if (_method.equals("parseRawcodeStatement")) {
+            stmt = parser.parseRawcodeStatement();
+        } else if (_method.equals("parseBlockStatement")) {
+            stmt = parser.parseBlockStatement();
+        } else if (_method.equals("parseStatementList")) {
+            stmts = parser.parseStatementList();
+        } else {
+            fail("*** invalid method name ***");
+        }
+
+        //Scanner scanner = parser.getScanner();
+        if (scanner.getToken() != TokenType.EOF)
+            fail("TokenType.EOF expected but got " + TokenType.inspect(scanner.getToken(), scanner.getValue()));
+
+        if (_class != null) {
+            assertEquals(_class, stmt.getClass());
+        }
+        if (stmt != null) {
+            StringBuffer actual = stmt._inspect();
+            assertEquals(_expected, actual.toString());
+        } else if (stmts != null) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < stmts.length; i++) {
+                stmts[i]._inspect(0, sb);
+            }
+            assertEquals(_expected, sb.toString());
+        } else {
+            assert false;
+        }
+        return parser;
+    }
+
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["input", "expected", "method"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'] %>() {
+
+        _input = <%= doc['input'].inspect %>;
+
+        _expected = ""
+<%   doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%   end %>
+            ;
+
+        _method = <%= doc['method'].inspect %>;
+<%   if doc['class'] %>
+        _class  = <%= doc['class'] %>.class;
+<%   end %>
+
+<%   if doc['exception'] %>
+        try {
+            _test();
+            fail("<%= doc['exception'] %> expected but not thrown.");
+        } catch (<%= doc['exception'] %> ex) {
+            // OK
+        }
+<%   else %>
+        _test();
+<%   end %>
+    }
+
+<% end %>
+}
+

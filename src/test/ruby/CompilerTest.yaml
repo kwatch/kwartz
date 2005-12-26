@@ -1,0 +1,148 @@
+###
+### $Release$
+### $Rev$
+###
+---
+name:  compile01
+desc:  string
+pdata: |
+  Hello <strong id="mark:user">World</strong>!
+plogic: |
+  #user {
+    value: user;
+  }
+expected: |
+  Hello <strong>Kwartz</strong>!
+context: |
+  _context.put("user", "Kwartz");
+#
+---
+name:  compile02
+desc:  list
+pdata: |
+  <ul id="mark:list">
+    <li>@{item}@</li>
+  </ul>
+plogic: |
+  #list {
+      plogic: {
+          foreach (item in list) {
+              @stag;  // start tag
+              @cont;  // content
+              @etag;  // end tag
+          }
+      }
+  }
+expected: |
+  <ul>
+    <li>foo</li>
+  </ul>
+  <ul>
+    <li>bar</li>
+  </ul>
+  <ul>
+    <li>baz</li>
+  </ul>
+context: |
+  _context.put("list", new Object[] { "foo", "bar", "baz" });
+#
+---
+name:  compile03
+desc:  user-defined class
+pdata: |
+  <table id="table">
+    <tr class="odd" style="color:red" id="mark:list">
+      <td id="mark:name" style="font-weight:bold">foo</td>
+      <td><a href="..." id="mark:mail">foo@mail.org</a></td>
+    </tr>
+    <tr class="even" id="mark:dummy">
+      <td>bar</td>
+      <td>bar@mail.net</td>
+    </tr>
+  </table>
+plogic: |
+  #table {
+      tagname:  "html:table";
+      append:   flag ? ' align="center"' : '';
+  }
+  #list {
+      attrs:  "class" klass;
+      remove: "style", "width";
+      plogic: {
+          i = 0;
+          foreach (item in list) {
+              i += 1;
+              klass = i % 2 == 0 ? 'even' : 'odd';
+              @stag;
+              @cont;
+              @etag;
+          }
+      }
+  }
+  #name {
+    value: item.name;
+  }
+  #mail {
+    value:  item.email;
+    attrs:  "href" "mailto:" .+ item.email;
+  }
+  #dummy {
+    plogic: { }
+  }
+expected: |
+  <html:table id="table" align="center">
+    <tr class="odd">
+      <td style="font-weight:bold">Foo</td>
+      <td><a href="mailto:foo@foo.org">foo@foo.org</a></td>
+    </tr>
+    <tr class="even">
+      <td style="font-weight:bold">Bar</td>
+      <td><a href="mailto:bar@bar.org">bar@bar.org</a></td>
+    </tr>
+    <tr class="odd">
+      <td style="font-weight:bold">Baz</td>
+      <td><a href="mailto:baz@baz.org">baz@baz.org</a></td>
+    </tr>
+  </html:table>
+context: |
+  List list = java.util.Arrays.asList(new Object[] {
+      new CompilerTest.User("Foo", "foo@foo.org"),
+      new CompilerTest.User("Bar", "bar@bar.org"),
+      new CompilerTest.User("Baz", "baz@baz.org"),
+  });
+  _context.put("list", list);
+  _context.put("flag", Boolean.TRUE);
+helper: |
+    public static class User {
+        private String name;
+        private String email;
+        public User(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+        public String getName() { return name; }
+        public String getEmail() { return email; }
+    }
+#
+---
+name:  compile05
+desc:  escape
+pdata: |
+  <a href="#" id="mark:name">foo</a>
+  <b id="value:str">foo</b><b id="value:E(str)">foo</b><b id="value:X(str)">foo</b>
+  <i id="value:str">foo</i><i id="Value:str">foo</i><i id="VALUE:str">foo</i>
+plogic: |
+  #name {
+     value:  user;
+     attrs:  "href" email;
+  }
+expected: |
+  <a href="ab@mail.com?a=1&amp;b=2">&lt;em&gt;A&amp;B&lt;/em&gt;</a>
+  <b>&lt;em&gt;A&amp;B&lt;/em&gt;</b><b>&lt;em&gt;A&amp;B&lt;/em&gt;</b><b><em>A&B</em></b>
+  <i>&lt;em&gt;A&amp;B&lt;/em&gt;</i><i>&lt;em&gt;A&amp;B&lt;/em&gt;</i><i><em>A&B</em></i>
+context: |
+  _props.setProperty("kwartz.escape", "true");
+  _context.put("user",   "<em>A&B</em>");
+  _context.put("email",  "ab@mail.com?a=1&b=2");
+  _context.put("str",    "<em>A&B</em>");
+  _test();

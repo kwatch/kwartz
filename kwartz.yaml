@@ -1,0 +1,56 @@
+
+## canditate(1)
+
+config:
+  basedir:  .
+  pdata:    [ '*.html' ]
+  plogic:   [ '*.plogic' ]
+  #layout:  layout.html
+  auto-detect: true
+  precompile:  no
+
+tempaltes:
+
+  - id:      file1
+    pdata:   [ file1.html ]
+    plogic:  [ file1.plogic ]
+    layout:  layout.html
+    
+  - id:      file2
+  
+  - id:      page1
+    pdata:   [ page1.html ]
+    plogic:  [ page.plogic, menu.plogic ]
+    layout:  layhout.html
+    
+  - id:      page2
+    pdata:   [ page2.html ]
+    plogic:  [ page.plogic, menu.plogic ]
+    layout:  layout.html
+
+
+## candidate(2)
+config:
+  pdata:  '*.html'
+  plogic: '*.plogic'
+  layout: layout.html
+  pdata-lib:  [ menu.html ]
+  plogic-lib: [ menu.plogic ]
+
+templates:
+  - id:      file1
+    pdata:   file1.html
+    plogic:  file1.plogic
+    layout:  layout.html
+
+  - id:      file2
+
+  - id:      page1
+    pdata:   page1.html
+    plogic:  page.plogic
+    pdata-lib: [ menu.html ]
+    plogic-lib: [ menu.plogic ]
+    layout:  layout.html
+ 
+ 
+ 

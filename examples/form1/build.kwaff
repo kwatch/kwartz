@@ -5,8 +5,8 @@
   * property
     - file        = build.properties
   * property
-    - name        = rootdir
-    - value       = ../../src/java
+    - name        = kwartz.path
+    - value       = ../../kwartz.jar
   * property
     - name        = mainclass
     - value       = Register
@@ -15,9 +15,9 @@
   * target
     - name        = compile
     * javac
-      - classpath = ${rootdir}
       - srcdir    = .
       - source    = 1.4
+      - classpath = .;${kwartz.path}
 
   # execute
   * target
@@ -25,12 +25,8 @@
     - depends     = compile
     * java
       - classname = ${mainclass}
-      - classpath = .:${rootdir}
+      - classpath = .;${kwartz.path}
       - output    = result.html
-      * arg
-        - value   = -username
-      * arg
-        - value   = Kwartz
 
   # clean
   * target
@@ -38,4 +34,4 @@
     * delete
       * fileset
         - dir      = .
-        - includes = *.class,result.html
+        - includes = result*.html,*.class

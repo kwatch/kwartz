@@ -1,0 +1,20 @@
+###
+### $Release$
+### $name$
+###
+name:  test_classes
+classes:
+  - ExpressionTest
+  - StatementTest
+  - ScannerTest
+  - ExpressionParserTest
+  - StatementParserTest
+  - InterpreterTest
+  - ConverterTest
+  - TagHelperTest
+  - DeclarationParserTest
+  - ExpanderTest
+  - CompilerTest
+  - OptimizerTest
+  - FunctionTest
+  - KwartzClassTest

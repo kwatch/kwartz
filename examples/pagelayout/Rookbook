@@ -1,37 +1,19 @@
+$basename  = 'pagelayout'
+$classname = 'PageLayout'
+$all       = ["result1.html", "result2.html", "build.xml"]
+$files     = %w[menu.html menu.plogic page.plogic]
 
-classpath = ".#{File::PATH_SEPARATOR}../../src/java"
-compiler = "jikes -cp #{classpath}"
+load "../Rookbook.common"
 
-all = ["result1.html", "result2.html", "build.xml"]
-files = %w[menu.html menu.plogic page.plogic]
-
-recipe  :all			, all
-
-recipe "result1.html"	, "PageLayout.class", "page1.html", files	do |r|
-	cmd "java -cp #{classpath} PageLayout  > #{r.product}"
+recipe "result1.html"	, "#{$classname}.class", "page1.html", $files	do |r|
+	cmd "java -cp '#{$classpath}' #{$classname}  > #{r.product}"
 	end
-recipe "result2.html"	, "PageLayout.class", "page2.html", files	do |r|
-	cmd "java -cp #{classpath} PageLayout AAPL > #{r.product}"
-	end
-
-grecipe  "*.class"	, "{1}.java"					do |r|
-	cmd "#{compiler} {1}.java"
-	end
-
-recipe  "build.xml"	, "build.kwaff"					do |r|
-	cmd "kwaff #{r.ingred} > #{r.product}"
-	end
-
-recipe	:clear								do |r|
-	list = Dir.glob("*.class")
-	list.concat all
-	remove_rf list unless list.empty?
+recipe "result2.html"	, "#{$classname}.class", "page2.html", $files	do |r|
+	cmd "java -cp '#{$classpath}' #{$classname} AAPL > #{r.product}"
 	end
 
 recipe  :test   , "result1.html", "result2.html"                        do |r|
         cmd "diff result1.html .expected/result1.html"
         cmd "diff result2.html .expected/result2.html"
         end
-
-recipe  :default		, :all
 

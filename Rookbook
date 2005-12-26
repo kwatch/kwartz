@@ -9,45 +9,61 @@ src_root  = "src/main/java"
 test_root = "src/test/java"
 src_path  = src_root  + "/" + package.gsub(/\./, '/')
 test_path = test_root + "/" + package.gsub(/\./, '/')
+ruby_path = "src/test/ruby"
 
 junit_jar = "/usr/local/java/j2sdk/jre/lib/ext/junit.jar"
 junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
 junit_jar = "./lib/junit.jar" unless test(?f, junit_jar)
 
 sep = RUBY_PLATFORM =~ /cygwin/ ? ';' : ':'
-classpath = [src_root, junit_jar].join(sep)
+classpath = [src_root, test_root, junit_jar].join(sep)
+
+
+jikes_pedantic_options = [
+#       "+Pmodifier-order",
+#       "+Predundant-modifiers",
+#       "+Pserial",
+        "+Pshadow",
+        "+Pswitchcheck",
+#       "+Pnaming-convention",
+#       "+Peffective-java",
+        "+Punused-type-imports",
+        "+Punused-package-imports",
+        ]
+jikes_option = "-classpath '#{classpath}' #{jikes_pedantic_options.join(' ')}"
 
 
 desc	"create *.java and compile them"
 recipe  :compile			do |r|
 	#cmd "ruby #{source}"
-	cmd "jikes -g #{src_path}/*.java"
+	cmd "jikes #{jikes_option} #{src_path}/*.java #{src_path}/*/*.java"
     end
 
 
-sep = `uname -o` =~ /Cygwin/ ? ';' : ':'
-classpath = [".", src_root, test_root, junit_jar].join(sep)
+test_names = Dir.glob("#{ruby_path}/*.eruby").collect{|f| File.basename(f).gsub(/\.eruby$/, '')}
+test_classes = test_names.collect{|t| "#{test_path}/#{t}.class"}
 
 desc	"unit test"
-recipe  :test		, :compile	do |r|
+recipe  :test		, :compile, test_classes	do |r|
 	cmd "jikes -classpath '#{classpath}' #{test_path}/*.java"
 	cmd "java  -classpath '#{classpath}' #{package}.KwartzTest 2>&1 | tee test.log"
+	#cmd "java -classpath '#{classpath}' junit.textui.TestRunner #{test_names.collect{|t| "kwartz.#{t}"}.join(" ")} 2>&1 | tee test.log"
     end
 
 recipe :clean				do |r|
 	list = []
-	list.concat Dir.glob("#{src_path}/*.class")
-	list.concat Dir.glob("#{test_path}/*.class")
+	list.concat Dir.glob("#{src_path}/**/*.class")
+	list.concat Dir.glob("#{test_path}/**/*.class")
         remove list
     end
 
 recipe :clear				do |r|
 	list = []
-	list.concat Dir.glob("#{src_path}/*.class")
-	list.concat Dir.glob("#{src_path}/*.java")
-	list.concat Dir.glob("#{src_path}/*.properties")
-	list.concat Dir.glob("#{test_path}/*.class")
-	list.concat Dir.glob("#{test_path}/*.java")
+	list.concat Dir.glob("#{src_path}/**/*.class")
+	#list.concat Dir.glob("#{src_path}/*.java")
+	#list.concat Dir.glob("#{src_path}/*.properties")
+	list.concat Dir.glob("#{test_path}/**/*.class")
+	list.concat Dir.glob("#{test_path}/**/*.java")
 	remove list
     end
 
@@ -56,6 +72,24 @@ grecipe "kwartz-*.jar"		, :compile		do |r|
 	    cmd "jar cf ../../#{r.product} com/kuwata_lab/kwartz/kwartz.properties com/kuwata_lab/kwartz/*.class"
 	end
 	#move "src/java/kwartz-{1}.jar", "."
+    end
+
+
+grecipe "#{test_path}/*.java"		, "#{ruby_path}/{1}.yaml", "#{ruby_path}/{1}.eruby" do |r|
+	cmd "ruby #{ruby_path}/createst.rb #{r.ingred} > #{r.product}"
+    end
+
+grecipe "#{test_path}/*Test.class"	, "#{test_path}/{1}Test.java"	do |r|
+	cmd "jikes #{jikes_option} #{test_path}/{1}Test.java"
+    end
+
+grecipe "*Test",	"#{test_path}/{1}Test.class"		do |r|
+	#klass = "#{m[1]}Test"
+	#java_file = "#{test_path}/#{klass}.java"
+	#yaml_file = "#{ruby_path}/#{klass}.yaml"
+	#cmd "ruby #{ruby_path}/createst.rb #{yaml_file} > #{java_file}"
+	#cmd "jikes #{jikes_option} #{java_file}"
+	cmd "java -classpath '#{classpath}' -ea junit.textui.TestRunner #{package}.{1}Test"
     end
 
 

@@ -1,6 +1,12 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-26 (rev.26)
+	.- [change] test programs are changed to be generated from *.eruby and *.yaml by createst.rb
+	.- [change] add 'build.xml'
+	.- [change] 'examples/*/Rookbook' loads 'examples/Rookbook.common'
+	.- [change] 'examples/*/build.kwaff' is generated from 'examples/build.kwaff.eruby'
+
 .: 2005-12-25 (rev.25)
 	.- [change] class 'Node', '*Expression', and '*Statement' are moved to new package 'kwartz.node'.
 	.- [change] abstract class 'Compiler' is changed to an interface

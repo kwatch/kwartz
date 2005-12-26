@@ -1,0 +1,98 @@
+/**
+ *  @(#) ExpanderTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+
+import kwartz.node.*;
+import junit.framework.TestCase;
+import java.util.*;
+
+public class ExpanderTest extends TestCase {
+    private String _pdata;
+    private String _plogic;
+    private String _expected;
+    private boolean _print;
+    private Properties _props = new Properties(Configuration.defaults);
+
+    private void _test() {
+        // parse plogic
+        DeclarationParser declParser = new DeclarationParser(_props);
+        List declList = declParser.parse(_plogic);
+
+        // parse pdata
+        Converter converter = new DefaultConverter(_props);
+        Statement[] stmts = converter.convert(_pdata);
+
+        // create block statement
+        BlockStatement blockStmt = new BlockStatement(stmts);
+
+        // create element table
+        List elemList = converter.getElementList();
+        Map elementTable = Element.createElementTable(elemList);
+
+        // merge declarations
+        Element.mergeDeclarationList(elementTable, declList);
+
+        // expand
+        Expander expander = new DefaultExpander(elementTable, _props);
+        expander.expand(blockStmt, null);
+
+        // assert
+        String actual = blockStmt._inspect().toString();
+        if (_print) {
+            System.out.println("*** debug: kwartz.escape = " + _props.getProperty("kwartz.escape"));
+            System.out.println(actual);
+        } else {
+            assertEquals(_expected, actual);
+        }
+    }
+
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["pdata", "plogic", "expected"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'].split(/_/).collect{|s| s.capitalize}.join("") %>() {
+<%   if doc['pdata'] %>
+        _pdata = ""
+<%     doc['pdata'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['plogic'] %>
+        _plogic = ""
+<%     doc['plogic'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['expected'] %>
+        _expected = ""
+<%     doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc.key?('print') %>
+        _print = <%= doc['print'].inspect %>;
+<%   end %>
+<%   if doc['properties'] %>
+<%     doc['properties'].each do |k, v| %>
+        _props.setProperty(<%= k.inspect %>, <%= v.to_s.inspect %>);
+<%     end %>
+<%   end %>
+        _test();
+    }
+
+<% end %>
+}

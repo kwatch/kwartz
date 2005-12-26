@@ -1,0 +1,66 @@
+/**
+ *  @(#) DeclarationParserTest.java
+ *  @Id  $Id$
+ *  @copyright $Copyright$
+ *  @release $Release$
+ */
+package kwartz;
+
+import junit.framework.TestCase;
+import java.util.*;
+
+public class DeclarationParserTest extends TestCase {
+    private String _input;
+    private String _expected;
+    private boolean _print = false;
+
+    private void _test() {
+        DeclarationParser parser = new DeclarationParser();
+        List decls = parser.parse(_input);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < decls.size(); i++) {
+            PresentationDeclaration decl = (PresentationDeclaration)decls.get(i);
+            decl._inspect(0, sb);
+        }
+        String actual = sb.toString();
+        if (_print) {
+            System.out.println(actual);
+        } else {
+            assertEquals(_expected, actual);
+        }
+    }
+
+<% docs = context[:docs] %>
+<% for doc in docs do %>
+<%   raise "'name:' is not found." unless doc['name'] %>
+<%   for key in ["desc", "input", "expected"] %>
+<%     raise "'#{key}:' is not found (name=#{doc['name']})." unless doc[key] %>
+<%   end %>
+    // <%= doc['desc'] %>
+    public void test<%= doc['name'].split(/_/).collect{|s| s.capitalize}.join("") %>() {
+
+<%   if doc['input'] %>
+        _input = ""
+<%     doc['input'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+
+<%   if doc['expected'] %>
+        _expected = ""
+<%     doc['expected'].each_line do |line| %>
+            + <%= line.inspect %>
+<%     end %>
+            ;
+<%   end %>
+<%   if doc.key?('print') %>
+        _print = <%= doc['print'].inspect %>;
+
+<%   end %>
+        _test();
+    }
+
+<% end %>
+
+}

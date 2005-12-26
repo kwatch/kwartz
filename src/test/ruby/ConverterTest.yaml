@@ -1,0 +1,907 @@
+###
+### $Release$
+### $Rev$
+###
+---
+name:  fetch_all1
+desc:  fetch_all
+method: fetchAll
+input: |
+  <html lang="ja">
+    <body>
+      <h1 style="color: #fffff">title</h1>
+    </body>
+  </html>
+expected: |+
+  tag_str      = "<html lang=\"ja\">\n"
+  before_text  = ""
+  before_space = ""
+  tagname      = "html"
+  attr_str     = " lang=\"ja\""
+  extra_space  = ""
+  after_space  = "\n"
+  is_etag      = false
+  is_empty     = false
+  is_begline   = true
+  is_endline   = true
+  start_pos    = 0
+  end_pos      = 17
+  linenum      = 1
+  
+  tag_str      = "  <body>\n"
+  before_text  = ""
+  before_space = "  "
+  tagname      = "body"
+  attr_str     = ""
+  extra_space  = ""
+  after_space  = "\n"
+  is_etag      = false
+  is_empty     = false
+  is_begline   = true
+  is_endline   = true
+  start_pos    = 17
+  end_pos      = 26
+  linenum      = 2
+  
+  tag_str      = "    <h1 style=\"color: #fffff\">"
+  before_text  = ""
+  before_space = "    "
+  tagname      = "h1"
+  attr_str     = " style=\"color: #fffff\""
+  extra_space  = ""
+  after_space  = ""
+  is_etag      = false
+  is_empty     = false
+  is_begline   = true
+  is_endline   = false
+  start_pos    = 26
+  end_pos      = 56
+  linenum      = 3
+  
+  tag_str      = "</h1>\n"
+  before_text  = "title"
+  before_space = ""
+  tagname      = "h1"
+  attr_str     = ""
+  extra_space  = ""
+  after_space  = "\n"
+  is_etag      = true
+  is_empty     = false
+  is_begline   = false
+  is_endline   = true
+  start_pos    = 61
+  end_pos      = 67
+  linenum      = 3
+  
+  tag_str      = "  </body>\n"
+  before_text  = ""
+  before_space = "  "
+  tagname      = "body"
+  attr_str     = ""
+  extra_space  = ""
+  after_space  = "\n"
+  is_etag      = true
+  is_empty     = false
+  is_begline   = true
+  is_endline   = true
+  start_pos    = 67
+  end_pos      = 77
+  linenum      = 4
+  
+  tag_str      = "</html>\n"
+  before_text  = ""
+  before_space = ""
+  tagname      = "html"
+  attr_str     = ""
+  extra_space  = ""
+  after_space  = "\n"
+  is_etag      = true
+  is_empty     = false
+  is_begline   = true
+  is_endline   = true
+  start_pos    = 77
+  end_pos      = 85
+  linenum      = 5
+  
+#
+---
+name:  converter21
+desc:  basic
+method: convert
+input: |
+  <span>Hello World</span>
+expected: |
+  :print
+    "<span>"
+  :print
+    "Hello World"
+  :print
+    "</span>\n"
+---
+name:  convert22
+desc:  'Helo @{user}@'
+input: |2
+   <span>Hello @{user}@</span>
+expected: |
+  :print
+    " <span>"
+  :print
+    "Hello "
+    user
+  :print
+    "</span>\n"
+---
+name:  convert23
+desc:  color="@{color}@"
+input: |2
+   <span color="@{color}@">Hello World</span>
+expected: |
+  :print
+    " <span color=\""
+    color
+    "\">"
+  :print
+    "Hello World"
+  :print
+    "</span>\n"
+#
+---
+name:  convert24
+desc:  keep spaces
+input: |2
+   <div  align="center"   bgcolor="#FFFFFF" >
+      <span style="color:red">CAUTION!</span>
+      <br  />
+   </div>
+expected: |
+  :print
+    " <div  align=\"center\"   bgcolor=\"#FFFFFF\" >\n"
+  :print
+    "    <span style=\"color:red\">"
+  :print
+    "CAUTION!"
+  :print
+    "</span>\n"
+  :print
+    "    <br  />\n"
+  :print
+    " </div>\n"
+#
+---
+name:  directive11
+desc:  id="foo"
+input: |
+  <div>
+   <span id="foo">bar</span>
+  </div>
+expected: |
+  :print
+    "<div>\n"
+  @element(foo)
+  :print
+    "</div>\n"
+#
+---
+name:  directive12
+desc:  id="mark:foo"
+input: |
+  <div>
+   <span id="mark:foo">bar</span>
+  </div>
+expected: |
+  :print
+    "<div>\n"
+  @element(foo)
+  :print
+    "</div>\n"
+#
+---
+name:  directive13
+desc:  kw:d="mark:foo"
+input: |
+  <div>
+    <span id="mark:bar" class="klass" kw:d="mark:foo">bar</span>
+  </div>
+expected: |
+  :print
+    "<div>\n"
+  @element(foo)
+  :print
+    "</div>\n"
+#
+---
+name:  directive21
+desc:  id="value:var"
+input: |
+  <li id="value:user.name">foo</li>
+expected: |
+  :print
+    "<li>"
+  :print
+    .
+      user
+      name
+  :print
+    "</li>\n"
+#
+---
+name:  directive22
+desc:  id="Value:var"
+input: |
+  <li id="Value:user.name">foo</li>
+expected: |
+  :print
+    "<li>"
+  :print
+    E()
+      .
+        user
+        name
+  :print
+    "</li>\n"
+#
+---
+name:  directive23
+desc:  id="Value:var"
+input: |
+  <li id="VALUE:user.name">foo</li>
+expected: |
+  :print
+    "<li>"
+  :print
+    X()
+      .
+        user
+        name
+  :print
+    "</li>\n"
+#
+---
+name:  directive24
+desc:  id="foreach:item=list"
+input: |
+  <ul id="foreach:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :foreach
+    item
+    list
+    :block
+      :print
+        "<ul>\n"
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+      :print
+        "</ul>\n"
+#
+---
+name:  directive32
+desc:  id="Foreach:item=list"
+input: |
+  <ul id="Foreach:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :expr
+    =
+      item_ctr
+      0
+  :foreach
+    item
+    list
+    :block
+      :expr
+        +=
+          item_ctr
+          1
+      :print
+        "<ul>\n"
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+      :print
+        "</ul>\n"
+#
+---
+name:  directive33
+desc:  id="FOREACH:item=list"
+input: |
+  <ul id="FOREACH:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :expr
+    =
+      item_ctr
+      0
+  :foreach
+    item
+    list
+    :block
+      :expr
+        +=
+          item_ctr
+          1
+      :expr
+        =
+          item_tgl
+          ?:
+            ==
+              %
+                item_ctr
+                2
+              0
+            "even"
+            "odd"
+      :print
+        "<ul>\n"
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+      :print
+        "</ul>\n"
+#
+---
+name:  directive34
+desc:  id="list:item=list"
+input: |
+  <ul id="list:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :print
+    "<ul>\n"
+  :foreach
+    item
+    list
+    :block
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+  :print
+    "</ul>\n"
+#
+---
+name:  directive35
+desc:  id="List:item=list"
+input: |
+  <ul id="List:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :print
+    "<ul>\n"
+  :expr
+    =
+      item_ctr
+      0
+  :foreach
+    item
+    list
+    :block
+      :expr
+        +=
+          item_ctr
+          1
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+  :print
+    "</ul>\n"
+#
+---
+name:  directive36
+desc:  id="LIST:item=list"
+input: |
+  <ul id="LIST:item=list">
+    <li>@{item}@</li>
+  </ul>
+expected: |
+  :print
+    "<ul>\n"
+  :expr
+    =
+      item_ctr
+      0
+  :foreach
+    item
+    list
+    :block
+      :expr
+        +=
+          item_ctr
+          1
+      :expr
+        =
+          item_tgl
+          ?:
+            ==
+              %
+                item_ctr
+                2
+              0
+            "even"
+            "odd"
+      :print
+        "  <li>"
+      :print
+        item
+      :print
+        "</li>\n"
+  :print
+    "</ul>\n"
+#
+---
+name:  directive41
+desc:  id="while:row=sth.fetch()"
+input: |
+  <ul id="while:row=sth.fetch()">
+    <li>@{row[0]}@</li>
+  </ul>
+expected: |
+  :while
+    =
+      row
+      .()
+        sth
+        fetch()
+    :block
+      :print
+        "<ul>\n"
+      :print
+        "  <li>"
+      :print
+        []
+          row
+          0
+      :print
+        "</li>\n"
+      :print
+        "</ul>\n"
+#
+---
+name:  directive42
+desc:  id="loop:row=sth.fetch()"
+input: |
+  <ul id="loop:row=sth.fetch()">
+    <li>@{row[0]}@</li>
+  </ul>
+expected: |
+  :print
+    "<ul>\n"
+  :while
+    =
+      row
+      .()
+        sth
+        fetch()
+    :block
+      :print
+        "  <li>"
+      :print
+        []
+          row
+          0
+      :print
+        "</li>\n"
+  :print
+    "</ul>\n"
+#
+---
+name:  directive51
+desc:  id="if:error!=null"
+input: |
+  <font color="red" id="if:error!=null">
+    ERROR!
+  </font>
+expected: |
+  :if
+    !=
+      error
+      null
+    :block
+      :print
+        "<font color=\"red\">\n"
+      :print
+        "  ERROR!\n"
+      :print
+        "</font>\n"
+#
+---
+name:  directive52
+desc:  id="elseif:warning!=null"
+input: |
+  <font color="red" id="if:error!=empty">
+    ERROR!
+  </font>
+  <font color="blue" id="elseif:warning!=null">
+    WARNING
+  </font>
+expected: |
+  :if
+    notempty
+      error
+    :block
+      :print
+        "<font color=\"red\">\n"
+      :print
+        "  ERROR!\n"
+      :print
+        "</font>\n"
+    :if
+      !=
+        warning
+        null
+      :block
+        :print
+          "<font color=\"blue\">\n"
+        :print
+          "  WARNING\n"
+        :print
+          "</font>\n"
+#
+---
+name:  directive53
+desc:  id="else:"
+input: |
+  <font color="red" id="if:error!=empty">
+    ERROR!
+  </font>
+  <font color="blue" id="elseif:warning!=null">
+    WARNING
+  </font>
+  <font color="black" id="else:">
+    Welcome
+  </font>
+expected: |
+  :if
+    notempty
+      error
+    :block
+      :print
+        "<font color=\"red\">\n"
+      :print
+        "  ERROR!\n"
+      :print
+        "</font>\n"
+    :if
+      !=
+        warning
+        null
+      :block
+        :print
+          "<font color=\"blue\">\n"
+        :print
+          "  WARNING\n"
+        :print
+          "</font>\n"
+      :block
+        :print
+          "<font color=\"black\">\n"
+        :print
+          "  Welcome\n"
+        :print
+          "</font>\n"
+#
+---
+name:  directive54
+desc:  several 'elseif:'
+input: |
+  <div>
+    <font color="red" id="if:error!=empty">ERROR!</font>
+    <font color="blue" id="elseif:warning!=empty">WARNING</font>
+    <font color="green" id="elseif:notify!=empty">NOTIFICATION</font>
+    <font color="black" id="else:">Welcome</font>
+  </div>
+expected: |
+  :print
+    "<div>\n"
+  :if
+    notempty
+      error
+    :block
+      :print
+        "  <font color=\"red\">"
+      :print
+        "ERROR!"
+      :print
+        "</font>\n"
+    :if
+      notempty
+        warning
+      :block
+        :print
+          "  <font color=\"blue\">"
+        :print
+          "WARNING"
+        :print
+          "</font>\n"
+      :if
+        notempty
+          notify
+        :block
+          :print
+            "  <font color=\"green\">"
+          :print
+            "NOTIFICATION"
+          :print
+            "</font>\n"
+        :block
+          :print
+            "  <font color=\"black\">"
+          :print
+            "Welcome"
+          :print
+            "</font>\n"
+  :print
+    "</div>\n"
+#
+---
+name:  directive55
+desc:  invalid if-else
+input: |
+  <div>
+    <font color="red" id="if:error!=empty">
+      ERROR!
+    </font>
+  
+    <font color="blue" id="elseif:warning!=empty">
+      WARNING
+    </font>
+  </div>
+expected: |
+exception*:
+  java: ConvertionException
+#
+---
+name:  directive61
+desc:  id="replace:elem1"
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="replace:title">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  @element(title)
+option: false
+#
+---
+name:  directive62
+desc:  'replace:elem1:element'
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="replace:title:element">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  @element(title)
+option: false
+#
+---
+name:  directive63
+desc:  'replace:elem1:content'
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="replace:title:content">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  @content(title)
+option: false
+#
+---
+name:  directive64
+desc:  'placeholder:elem1'
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="placeholder:title">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  :print
+    "<div>"
+  @element(title)
+  :print
+    "</div>\n"
+option: false
+#
+---
+name:  directive65
+desc:  'placeholder:elem1:element'
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="placeholder:title:element">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  :print
+    "<div>"
+  @element(title)
+  :print
+    "</div>\n"
+option: false
+#
+---
+name:  directive66
+desc:  'placeholder:elem1:content'
+input: |
+  <h1 id="mark:title">...title...</h1>
+  text
+  <div id="placeholder:title:content">foo</div>
+expected: |
+  @element(title)
+  :print
+    "text\n"
+  :print
+    "<div>"
+  @content(title)
+  :print
+    "</div>\n"
+option: false
+#
+---
+name:  directive71
+desc:  'set:var=value'
+input: |
+  <tr bgcolor="@{color}@" id="set:color=i%2==0?'#FFCCCC':'#CCCCFF'">
+    <td>item=@{item}@</td>
+  </tr>
+expected: |
+  :expr
+    =
+      color
+      ?:
+        ==
+          %
+            i
+            2
+          0
+        "#FFCCCC"
+        "#CCCCFF"
+  :print
+    "<tr bgcolor=\""
+    color
+    "\">\n"
+  :print
+    "  <td>"
+  :print
+    "item="
+    item
+  :print
+    "</td>\n"
+  :print
+    "</tr>\n"
+#
+---
+name:  directive72
+desc:  'dummy:d1'
+input: |
+  <tr>
+    <td>foo</td>
+  </tr>
+  <tr id="dummy:d1">
+    <td>foo</td>
+  </tr>
+expected: |
+  :print
+    "<tr>\n"
+  :print
+    "  <td>"
+  :print
+    "foo"
+  :print
+    "</td>\n"
+  :print
+    "</tr>\n"
+#
+---
+name:  directive73
+desc:  "include:'filename'"
+input: |
+  <div  bgcolor="red"   style="color:red"
+       id="attr:bgcolor=color;attr:ns:class:item[:klass];value:val" title="">foo</div>
+expected: |
+  :print
+    "<div  bgcolor=\""
+    color
+    "\"   style=\"color:red\" title=\"\" ns:class=\""
+    [:]
+      item
+      "klass"
+    "\">"
+  :print
+    val
+  :print
+    "</div>\n"
+#
+---
+name:  directive82
+desc:  'Attr: and ATTR:'
+input: |
+  <div  bgcolor="red"   style="color:red"
+       id="Attr:bgcolor=color;ATTR:ns:class:item[:klass];value:val" title="">foo</div>
+expected: |
+  :print
+    "<div  bgcolor=\""
+    E()
+      color
+    "\"   style=\"color:red\" title=\"\" ns:class=\""
+    X()
+      [:]
+        item
+        "klass"
+    "\">"
+  :print
+    val
+  :print
+    "</div>\n"
+#
+---
+name:  directive83
+desc:  attr directive with empty tag
+input: |
+  <div  bgcolor="red"   style="color:red"
+       id="Attr:bgcolor=color;ATTR:ns:class:item[:klass]" title="" />
+expected: |
+  :print
+    "<div  bgcolor=\""
+    E()
+      color
+    "\"   style=\"color:red\" title=\"\" ns:class=\""
+    X()
+      [:]
+        item
+        "klass"
+    "\" />\n"
+#
+---
+name:  directive84
+desc:  'append, Append, APPEND'
+input: |
+  <input type="checkbox" id="foo" kw:d="append:flag?' checked':'';Append:flag?' selected':'';APPEND:flag?' disabled':''" />
+expected: |
+  :print
+    "<input type=\"checkbox\" id=\"foo\""
+    ?:
+      flag
+      " checked"
+      ""
+    E()
+      ?:
+        flag
+        " selected"
+        ""
+    X()
+      ?:
+        flag
+        " disabled"
+        ""
+    " />\n"
+#
