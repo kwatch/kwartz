@@ -10,6 +10,8 @@ test_root = "src/test/java"
 src_path  = src_root  + "/" + package.gsub(/\./, '/')
 test_path = test_root + "/" + package.gsub(/\./, '/')
 ruby_path = "src/test/ruby"
+compiledir = "compile"
+copyright = "copyright(c) 2005 kuwata-lab.com all rights reserved"
 
 junit_jar = "/usr/local/java/j2sdk/jre/lib/ext/junit.jar"
 junit_jar = "/usr/local/java/junit/junit.jar" unless test(?f, junit_jar)
@@ -33,10 +35,13 @@ jikes_pedantic_options = [
 jikes_option = "-classpath '#{classpath}' #{jikes_pedantic_options.join(' ')}"
 
 
-desc	"create *.java and compile them"
-recipe  :compile			do |r|
-	#cmd "ruby #{source}"
-	cmd "jikes #{jikes_option} #{src_path}/*.java #{src_path}/*/*.java"
+desc "compile all java files"
+recipe :compile			do |r|
+	rm_rf compiledir if test(?d, compiledir)
+	mkdir compiledir
+	cmd  "jikes -d #{compiledir} #{jikes_option} #{src_root}/*/*.java #{src_root}/*/*/*.java"
+	files = Dir.glob("#{src_root}/**/*.properties")
+	copy files, "#{compiledir}/#{package}" if files && !files.empty?
     end
 
 
@@ -67,13 +72,13 @@ recipe :clear				do |r|
 	remove list
     end
 
-grecipe "kwartz-*.jar"		, :compile		do |r|
-	chdir "src/java" do
-	    cmd "jar cf ../../#{r.product} com/kuwata_lab/kwartz/kwartz.properties com/kuwata_lab/kwartz/*.class"
+desc  "generate jar file"
+grecipe "kwartz*.jar"		, :compile		do |r|
+	chdir compiledir do
+	    cmd "jar cf #{r.product} */*.class */*/*.class */*.properties "
 	end
-	#move "src/java/kwartz-{1}.jar", "."
+	move "#{compiledir}/#{r.product}", "."
     end
-
 
 grecipe "#{test_path}/*.java"		, "#{ruby_path}/{1}.yaml", "#{ruby_path}/{1}.eruby" do |r|
 	cmd "ruby #{ruby_path}/createst.rb #{r.ingred} > #{r.product}"
@@ -93,46 +98,67 @@ grecipe "*Test",	"#{test_path}/{1}Test.class"		do |r|
     end
 
 
-#text_files = %w[ChangeLog README.txt COPYING todo.txt]
-text_files = %w[README.txt COPYING todo.txt]
+class File
+  def self.edit(filename, &block)
+    File.open(filename, 'r+') do |f|
+      s = f.read()
+      yield(s)
+      f.rewind()
+      f.truncate(0)
+      f.write(s)
+    end
+  end
+end
 
-grecipe "kwartz-java_*.{tar.gz|tar.bz2|zip}"	, "kwartz-{1}.jar"  do |r|
-	#dir = r.product.gsub(/\.zip$/, '')
-	dir = r.product.gsub("\.#{m[2]}", '')
+
+#text_files = %w[ChangeLog README.txt COPYING todo.txt]
+text_files = %w[README.txt COPYING todo.txt build.xml]
+
+grecipe "kwartz-java_*.{tar.bz2|zip}"	, "kwartz-{1}.jar"  do |r|
+	## jar file
+	#jarfile = "kwartz-#{m[1]}.jar"
+	#jarfile = "kwartz.jar"
+	jarfile = r.ingred
+	
+	## delete archives
+	basename = r.product.gsub("\.#{m[2]}", '')
+	remove "#{basename}.tar.bz2" if test(?f, "#{basename}.tar.bz2")
+	remove "#{basename}.zip"     if test(?f, "#{basename}.zip")
+	
+	## mkdir
+	dir = basename
 	rm_rf dir if test(?d, dir)
 	mkdir_p dir
-	#copy "kwartz-{1}.jar", dir
-	#copy [text_files], dir
+	
+	## copy files
 	chdir "examples" do cmd "rook :clear build.xml" end
-	store "examples/**/*", text_files, dir
-	move  "kwartz-{1}.jar", dir
-	store "src/**/*.java", "src/**/*.properties", dir
-	list = []
-	list.concat Dir.glob("#{dir}/examples/**/Rookbook")
-	list.concat Dir.glob("#{dir}/examples/**/build.kwaff")
-	remove list
+	store "examples/*/*.{java,html,plogic,xml}", dir
+	store text_files, dir
+	move jarfile, dir
+	store "src/**/*.{java,properties}", "src/**/*.{eruby,yaml,rb}", dir
+	
+	## remove files
+	#list = []
+	#list.concat Dir.glob("#{dir}/examples/**/Rookbook")
+	#list.concat Dir.glob("#{dir}/examples/**/build.kwaff")
+	#remove list
+	
+	## edit $Release$ and $Copyright$
 	Dir.glob("#{dir}/**/*").each do |filename|
 	   next unless test(?f, filename)
+	   File.chmod(0644, filename)
 	   next if filename =~ /\.jar$/
-	   File.open(filename, "r+") do |f|
-	      s = f.read()
+	   File.edit(filename) do |s|
 	      s.gsub!(/\$Release.*?\$/, "$Release: #{m[1]} $")
-	      s.gsub!(/\$Copyright\$/,  "copyright(c) 2005 kuwata-lab.com all rights reserved")
-	      if filename =~ /\bbuild\.xml\z/
-	         s.sub!(/value="\.\.\/\.\.\/src\/java"/, "value=\"../../kwartz-#{m[1]}.jar\"")
+	      s.gsub!(/\$Copyright\$/,  copyright)
+	      if jarfile != 'kwartz.jar' && filename =~ /\/build.xml$/
+	         s.gsub!(/kwartz.jar/, jarfile)
 	      end
-	      f.rewind()
-	      f.truncate(0)
-	      f.write(s)
 	   end
 	end
-	case m[2]
-	when "tar.gz"
-	   cmd "tar czf #{r.product} #{dir}"
-	when "tar.bz2"
-	   cmd "tar cjf #{r.product} #{dir}"
-	when "zip"
-	   cmd "zip -qr9 #{r.product} #{dir}"
-	end
+	
+	## archive
+	cmd "tar cjf #{basename}.tar.bz2 #{dir}"
+	cmd "zip -qr9 #{basename}.zip #{dir}"
 	
     end

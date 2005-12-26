@@ -1,6 +1,10 @@
 .=title:	ChangeLog
 .?Revision:	$Rev$
 
+.: 2005-12-26 (rev.27)
+	.- [change] update Rookbook
+	.- [change] remove 'src/conf'
+
 .: 2005-12-26 (rev.26)
 	.- [change] test programs are changed to be generated from *.eruby and *.yaml by createst.rb
 	.- [change] add 'build.xml'
