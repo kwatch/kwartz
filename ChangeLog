@@ -3,6 +3,9 @@
 .?release:	$Release$
 .?lastupdate:	$Date$
 
+.: 2006-02-16 rev.100
+	.- website/index.txt update
+
 .: 2005-07-17 rev.99
 	.- release 2.0.4
 

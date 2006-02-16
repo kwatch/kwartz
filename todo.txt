@@ -66,4 +66,5 @@
 .- [_] phuny parser for ruby
 .- [_] unit test for visitor.rb
 .- [_] support of not only id tag but also class and tag in Converter
+.- [_] format() or sprintf()
 .- [_] correct my English (>_<)

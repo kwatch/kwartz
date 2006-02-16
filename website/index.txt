@@ -4,6 +4,15 @@
 .?stylesheet:	docstyle.css
 
 
+.$ News
+
+.: 2005-08-11
+	.- {{<kwartz-java_0.0.1 (alpha release)|download.cgi>}} released.
+.: 2005-05-17
+	.- {{<kwartz-ruby_2.0.4|download.cgi>}} released.
+.: 2005-01-10
+	.- {{<kwartz-php_0.3.2|download.cgi>}} released.
+
 
 .$ Introduction
 
@@ -44,7 +53,7 @@ enables you to separate the presentation logic (such as iteration or
 conditional branching) from the presentation data (HTML file).
 
 In a broad way, application can be divided into two layers: Business layer and
-Presentaion layer. These layers have their own data and logic.
+Presentation layer. These layers have their own data and logic.
 It is important that presentation layer should have it's own logic and that
 presentation logic should not be in business layer (Fig1).
 
@@ -69,7 +78,9 @@ See {{<Brief Overview|overview/index.cgi?page=1>}} for overview, or {{<Kwartz Us
 .$ Download
 	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz-ruby,}}' to install Kwartz-ruby.
 	.* Or download from {{<sourceforge.net/projects/kwartz/|download.cgi>}}
-           .- kwartz-ruby_2.0.2.tar.gz (2005-05-09 released)
+	   .- kwartz-ruby_2.0.4 (stable)
+	   .- kwartz-java_0.0.1 (alpha version) 
+	   .- kwartz-php_0.3.2 (obsolete)
 
 .$ Documents
 	.* {{<README|README.en.html>}}  ({{<Japanese|README.ja.html>}})
