@@ -1,19 +1,12 @@
-#!/usr/bin/ruby
+#!/usr/local/bin/ruby
 
 ###
-### invoke kwartz-ruby script
-###
-### Copyright (C) 2004-2005 kuwata-lab
-### All rights reserved.
-### $Id$
+### $Rev$
 ### $Release$
+### $Copyright$
 ###
 
-### if shell script
-#basedir=`dirname $0`
-#script=$basedir/kwartz-ruby
-#exec ruby $script $@
 
-### if ruby script
-script = __FILE__ + '-ruby'
-load script
+require 'kwartz/main'
+
+Kwartz::Main.main(ARGV)

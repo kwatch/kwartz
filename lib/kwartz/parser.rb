@@ -1,1047 +1,805 @@
 ###
-### copyright(c) 2005 kuwata-lab all rights reserved
-###
-### $Id$
+### $Rev$
 ### $Release$
+### $Copyright$
 ###
 
-require 'kwartz/exception'
-require 'kwartz/scanner'
+require 'kwartz/assert'
+require 'kwartz/error'
 require 'kwartz/node'
-require 'kwartz/element'
-require 'kwartz/util/orderedhash'
+
+
 
 module Kwartz
 
-   class ParseError < BaseError
-      def initialize(message, linenum, filename)
-         super(message, linenum, filename)
-      end
-   end
-
-   class SyntaxError < ParseError
-      def initialize(message, linenum, filename)
-         super(message, linenum, filename)
-      end
-   end
-
-   class SemanticError < ParseError
-      def initialize(message, linenum, filename)
-         super(message, linenum, filename)
-      end
-   end
-
-
-   class Parser
-
-      def initialize(input, properties={})
-         @scanner = Scanner.new(input, properties)
-         @properties = properties
-         _init()
-      end
-      attr_reader :properties
-
-      def reset(input, linenum=nil)
-         @scanner.reset(input, linenum)
-         _init()
-      end
-
-      def _init()
-         @scanner.scan()
-         @element_name_stack = []
-         @current_element_name = nil
-      end
-      private :_init
-
-      def scan()
-         return @scanner.scan()
-      end
-
-      def token()
-         return @scanner.token()
-      end
-
-      def token_str()
-         return @scanner.value()
-      end
-
-      def value()
-         return @scanner.value()
-      end
-
-      def syntax_error(msg)
-         raise SyntaxError.new(msg, @scanner.linenum, @scanner.filename)
-      end
-
-      def semantic_error(msg)
-         raise SemanticError.new(msg, @scanner.linenum, @scanner.filename)
-      end
-
-
-      ###
-      ### expression
-      ###
-
-      ##
-      ## BNF:
-      ##  arguments    ::=  expression | arguments ',' expression | e
-      ##               ::=  [ expression { ',' expression } ]
-      ##
-      def parse_arguments
-         arguments = []
-         return arguments if token() == ')'
-         expr = parse_expression()
-         arguments << expr
-         while token() == ','
-            scan()
-            expr = parse_expression()
-            arguments << expr
-         end
-         return arguments
-      end
-
-
-      ##
-      ## BNF:
-      ##  item         ::=  variable | function '(' arguments ')' | '(' expression ')'
-      ##
-      def parse_item_expr
-         tkn = token()
-         if tkn == :name
-            name = value()
-            tkn = scan()
-            if tkn != '('
-               return VariableExpression.new(name)
-            end
-            scan()
-            arguments = parse_arguments()
-            syntax_error("missing ')' of function '#{name}()'.") unless token() == ')'
-            scan()
-            s = nil
-            case name
-            when 'C';  s = ' checked="checked"'
-            when 'S';  s = ' selected="selected"'
-            when 'D';  s = ' disabled="disabled"'
-            end
-            if s == nil
-               return FunctionExpression.new(name, arguments)
-            else
-               semantic_error("#{name}(): should take only one argument.") unless arguments.length == 1
-               condition = arguments.first
-               return ConditionalExpression.new(condition, StringExpression.new(s), StringExpression.new(''))
-            end
-         elsif tkn == '('
-            scan()
-            expr = parse_expression()
-            syntax_error("')' expected ('(' is not closed by ')').") unless token() == ')'
-            scan()
-            return expr
-         else
-            Kwartz::assert("tkn == #{tkn}")
-         end
-      end
-
-
-      ##
-      ## BNF:
-      ##  literal      ::=  numeric | string | 'true' | 'false' | 'null' | 'empty' | rawcode-expr
-      ##
-      def parse_literal_expr
-         tkn = token()
-         case tkn
-         when :numeric
-            val = value()
-            scan()
-            return NumericExpression.new(val)
-         when :string
-            val = value()
-            scan()
-            return StringExpression.new(val)
-         when :true, :false
-            val = value()
-            scan()
-            return BooleanExpression.new(tkn == :true)
-         when :null
-            val = value()
-            scan()
-            return NullExpression.new()
-         when :empty
-            syntax_error("'empty' is allowed only in right-side of '==' or '!='.")
-         when :rawexpr
-            val = value()
-            scan()
-            return RawcodeExpression.new(val)
-         end
-         Kwartz::assert("tkn = #{token}")
-      end
-
-
-      ##
-      ## BNF:
-      ##  factor       ::=  literal | item | factor '[' expression ']' | factor '[:' name ']' | factor '.' property | factor '.' method '(' [ arguments ] ')'
-      ##
-      def parse_factor_expr
-         tkn = token()
-         case tkn
-         when :name, '('
-            expr = parse_item_expr()
-            while true
-               case token()
-               when '['
-                  scan()
-                  expr2 = parse_expression()
-                  syntax_error("']' expected ('[' is not closed by ']').") unless token() == ']'
-                  scan()
-                  expr = IndexExpression.new('[]', expr, expr2)
-               when '[:'
-                  scan()
-                  word = value()
-                  syntax_error("'#{tkn}': '[:' requires a word following.") unless token() == :name
-                  tkn = scan()
-                  syntax_error("'[:' is not closed by ']'.") unless tkn == ']'
-                  scan()
-                  expr = IndexExpression.new('[:]', expr, StringExpression.new(word))
-               when '.'
-                  scan()
-                  name = value()
-                  syntax_error("'#{tkn}': '.' requires a property or method name following.") unless token() == :name
-                  scan()
-                  if token() == '('
-                     method_name = name
-                     scan()
-                     arguments = parse_arguments()
-                     syntax_error("')' expected (method '#{method_name}()' is not closed by ')').") unless token() == ')'
-                     scan()
-                     expr = MethodExpression.new(expr, method_name, arguments)
-                  else
-                     prop_name = name
-                     expr = PropertyExpression.new(expr, prop_name)
-                  end
-               else
-                  break   # escape 'while true' loop
-               end
-            end
-            return expr
-         when :numeric, :string, :true, :false, :null, :empty, :rawexpr
-            expr = parse_literal_expr()
-            return expr
-         else
-            syntax_error("'#{tkn}': unexpected token.")
-         end
-      end
-
-
-      ##
-      ## BNF:
-      ##  unary        ::=  factor | '+' factor | '-' factor | '!' factor
-      ##               ::=  [ '+' | '-' | '!' ] factor
-      ##
-      def parse_unary_expr
-         if (tkn = token()) == '+' || tkn == '-' || tkn == '!'
-            scan()
-            expr2 = parse_factor_expr()
-            op = tkn == '!' ? tkn : tkn + '.'
-            expr = UnaryExpression.new(op, expr2)
-         else
-            expr = parse_factor_expr()
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  term         ::=  unary | term * factor | term '/' factor | term '%' factor
-      ##               ::=  unary { ('*' | '/' | '%') factor }
-      ##
-      def parse_term_expr
-         expr = parse_unary_expr()
-         while (tkn = token()) == '*' || tkn == '/' || tkn == '%'
-            scan()
-            expr2 = parse_factor_expr()
-            expr = ArithmeticExpression.new(tkn, expr, expr2)
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  arith        ::=  term | arith '+' term | arith '-' term | arith '.+' term
-      ##               ::=  term { ('+' | '-' | '.+') term }
-      ##
-      def parse_arith_expr
-         expr = parse_term_expr()
-         while (tkn = token()) == '+' || tkn == '-' || tkn == '.+'
-            scan()
-            expr2 = parse_term_expr()
-            expr = ArithmeticExpression.new(tkn, expr, expr2)
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  relational-op   ::=  '==' |  '!=' |  '>' |  '>=' |  '<' |  '<='
-      ##  relational      ::=  arith | arith relational-op arith | arith '==' 'empty' | arith '!=' 'empty'
-      ##                  ::=  arith [ relational-op arith ] | arith ('==' | '!=') 'empty'
-      ##
-      def parse_relational_expr
-         expr = parse_arith_expr()
-         if (op = token()) == '==' || op == '!=' || op == '>' || op == '>=' || op == '<' || op == '<='
-            scan()
-            if token() == :empty
-               if op == '=='
-                  scan()
-                  expr = EmptyExpression.new(:empty, expr)
-               elsif op == '!='
-                  scan()
-                  expr = EmptyExpression.new(:notempty, expr)
-               else
-                  syntax_error("'empty' is allowed only at the right-side of '==' or '!='.")
-               end
-            else
-               expr2 = parse_arith_expr()
-               expr = RelationalExpression.new(op, expr, expr2)
-            end
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  logical-and  ::=  relational | logical-and '&&' relational
-      ##               ::=  relational { '&&' relational }
-      ##
-      def parse_logical_and_expr
-         expr = parse_relational_expr()
-         while (op = token()) == '&&'
-            scan()
-            expr2 = parse_relational_expr()
-            expr = LogicalExpression.new(op, expr, expr2)
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  logical-or   ::=  logical-and | logical-or '||' logical-and
-      ##               ::=  logical-and { '||' logical-and }
-      ##
-      def parse_logical_or_expr
-         expr = parse_logical_and_expr()
-         while (op = token()) == '||'
-            scan()
-            expr2 = parse_logical_and_expr()
-            expr = LogicalExpression.new(op, expr, expr2)
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  conditional  ::=  logical-or | logical-or '?' expression ':' conditional
-      ##               ::=  logical-or [ '?' expression ':' conditional ]
-      ##
-      def parse_conditional_expr
-         expr = parse_logical_or_expr()
-         if token() == '?'
-            scan()
-            expr2 = parse_expression()
-            syntax_error("':' expected ('?' requires ':').") unless token() == ':'
-            scan()
-            expr3 = parse_conditional_expr()
-            expr = ConditionalExpression.new(expr, expr2, expr3)
-         end
-         return expr
-      end
-
-
-      ##
-      ## BNF:
-      ##  assign-op    ::=  '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '.+='
-      ##  assignment   ::=  conditional | assign-op assignment
-      ##
-      def parse_assignment_expr
-         expr = parse_conditional_expr()
-         op = token()
-         if op == '=' || op == '+=' || op == '-=' || op == '*=' || op == '/=' || op == '%=' || op == '.+='
-            unless lhs?(expr)
-               semantic_error("invalid assignment.")
-            end
-            scan()
-            expr2 = parse_assignment_expr()
-            expr = AssignmentExpression.new(op, expr, expr2)
-         end
-         return expr
-      end
-
-      def lhs?(expr)
-         case expr.token
-         when :variable, '[]', '[:]'
-            return true
-         when '.'
-            return expr.is_a?(PropertyExpression)
-         else
-            return false
-         end
-      end
-
-
-      ##
-      ## BNF:
-      ##  expression   ::=  assignment
-      ##
-      def parse_expression
-         return parse_assignment_expr()
-      end
-
-
-      ##
-      ## BNF:
-      ##  print-stmt   ::=  'print' '(' arguments ')' ';'
-      ##
-      def parse_print_stmt()
-         Kwartz::assert unless token() == :print
-         tkn = scan()
-         syntax_error("print-statement requires '('.") unless tkn == '('
-         scan()
-         arguments = parse_arguments()
-         syntax_error("print-statement requires ')'.") unless token() == ')'
-         tkn = scan()
-         syntax_error("print-statement requires ';'.") unless tkn == ';'
-         scan()
-         return PrintStatement.new(arguments)
-      end
-
-
-      ##
-      ## BNF:
-      ##  expr-stmt    ::=  expression ';'
-      ##
-      def parse_expr_stmt()
-         expr = parse_expression()
-         syntax_error("expression-statement requires ';'.") unless token() == ';'
-         scan()
-         return ExprStatement.new(expr)
-      end
-
-
-      ##
-      ## BNF:
-      ##  elseif-part  ::=  'elseif' '(' expression ')' statement elseif-part | e
-      ##
-      ## BNF:
-      ##  if-stmt      ::=  'if' '(' expression ')' statement
-      ##                  | 'if' '(' expression ')' statement elseif-part
-      ##                  | 'if' '(' expression ')' statement elseif-part 'else' statement
-      ##               ::=  'if' '(' expression ')' statement
-      ##                    { 'elseif' '(' expression ')' statement }
-      ##                    [ 'else' statement ]
-      ##
-      def parse_if_stmt()
-         Kwartz::assert unless token() == :if || token() == :elseif
-         word = token() == :if ? 'if' : 'elseif'
-         tkn = scan()
-         syntax_error("#{word}-statement requires '('.") unless tkn == '('
-         scan()
-         cond_expr = parse_expression()
-         syntax_error("#{word}-statement requires ')'.") unless token() == ')'
-         scan()
-         then_body = parse_statement()
-         if token() == :elseif
-            else_body = parse_if_stmt()
-         elsif token() == :else
-            scan()
-            else_body = parse_statement()
-         else
-            else_body = nil
-         end
-         return IfStatement.new(cond_expr, then_body, else_body)
-      end
-
-
-      ##
-      ## BNF:
-      ##  foreach-stmt ::=  'foreach' '(' variable 'in' expression ')' statement
-      ##
-      def parse_foreach_stmt()
-         Kwartz::assert unless token() == :foreach
-         tkn = scan()
-         syntax_error("foreach-statement requires '('.") unless tkn == '('
-         t = scan()
-         syntax_error("foreach-statement requires loop-variable but got '#{t}'.") unless t == :name
-         varname = value()
-         loopvar_expr = VariableExpression.new(varname)
-         t = scan()
-         syntax_error("foreach-statement requires 'in' but got '#{t}'.") unless t == :in || t == '='
-         scan()
-         list_expr = parse_expression()
-         syntax_error("foreach-statement requires ')'.") unless token() == ')'
-         scan()
-         body_stmt = parse_statement()
-         return ForeachStatement.new(loopvar_expr, list_expr, body_stmt)
-      end
-
-
-      ##
-      ## BNF:
-      ##  while-stmt   ::=  'while' '(' expression ')' statement
-      ##
-      def parse_while_stmt()
-         Kwartz::assert unless token() == :while
-         tkn = scan()
-         syntax_error("while-statement requires '('") unless tkn == '('
-         scan()
-         cond_expr = parse_expression()
-         syntax_error("while-statement requires ')'") unless token() == ')'
-         scan()
-         body_stmt = parse_statement()
-         return WhileStatement.new(cond_expr, body_stmt)
-      end
-
-
-      ##
-      ## BNF:
-      ##  expand-stmt   ::= '@stag' | '@cont' || '@etag' | '@element' '(' name ')' | '@content' '(' name ')'
-      ##
-      def parse_expand_stmt()
-         Kwartz::assert unless token() == '@'
-         type = value()
-         stmt = nil
-         case type
-         when 'stag', 'cont', 'etag'
-            name = nil
-         when 'element', 'content'
-            t = scan()
-            syntax_error("@#{type}() requires '('.") unless t == '('
-            t = scan()
-            syntax_error("@#{type}() requires an element name.") unless t == :name
-            name = value()
-            t = scan()
-            syntax_error("@#{type}() requires ')'.") unless t == ')'
-         else
-            syntax_error("'@' should be '@stag', '@cont', '@etag', '@element(name)' or '@content(name).")
-         end
-         t = scan()
-         syntax_error("@#{type} requires ';'.") unless t == ';'
-         scan()
-         return ExpandStatement.new(type.intern, name)
-      end
-
-
-      ##
-      ## rawcode-stmt ::= '<%' strings '%>' | '<?' strings '?>'
-      ##
-      def parse_rawcode_stmt()
-         Kwartz::assert unless token() == :rawcode
-         rawcode = value()
-         scan()
-         return RawcodeStatement.new(rawcode)
-      end
-
 
-      ##
-      ##
-      def parse_stmt_list()
-         list = []
-         while stmt = parse_statement()
-            list << stmt unless stmt == ';'
-         end
-         return list
-      end
-
-
-      ##
-      ## BNF:
-      ##  stmt-list    ::=  statement | stmt-list statement
-      ##               ::=  statement { statement }
-      ##  block-stmt   ::=  '{' '}' | '{' stmt-list '}'
-      ##
-      def parse_block_stmt()
-         Kwartz::assert unless token() == '{'
-         start_linenum = @scanner.linenum()
-         scan()
-         stmt_list = parse_stmt_list()
-         syntax_error("block-statement(starts at line #{start_linenum}) requires '}'.") unless token() == '}'
-         scan()
-         return BlockStatement.new(stmt_list)
-      end
-
 
-      ##
-      ## BNF:
-      ##  statement    ::=  print-stmt | if-stmt | foreach-stmt | while-stmt
-      ##                  | expr-stmt | block-stmt | expand-stmt | ';'
-      ##
-      def parse_statement()
-         case token()
-         when '}'
-            return nil
-         when '{'
-            return parse_block_stmt()
-         when :print
-            return parse_print_stmt()
-         when :if
-            return parse_if_stmt()
-         when :foreach, :for
-            return parse_foreach_stmt()
-         when :while
-            return parse_while_stmt()
-         when :element
-            return parse_element_stmt()
-         when '@', :expand
-            return parse_expand_stmt()
-         when :rawcode
-            return parse_rawcode_stmt()
-         when ';'
-            scan()
-            return ';'
-         when nil
-            return
-         when :name
-            return parse_expr_stmt()
-         when :rawexpr
-            return parse_expr_stmt()
-         else
-            #return parse_expr_stmt()
-            syntax_error("statement expected but got '#{token()}'")
-         end
-      end
-
-
-      ## ------------------------------------------------------------
+  module CharacterType
 
-      ##
-      ## EBNF:
-      ##   presentation-logic ::= { ( element-decl | document-decl ) }
-      ##
-      def parse_plogic
-         elem_decl_list = []
-         while token() == '#'
-            t = scan()
-            syntax_error("'#': element declaration requires an element name.") unless t == :name
-            if value() == 'DOCUMENT'
-               elem_decl = parse_document_decl()
-            else
-               elem_decl = parse_element_decl()
-            end
-            elem_decl_list << elem_decl
-         end
-         syntax_error("plogic is not ended, or '#' not found.") unless token() == nil
-         return elem_decl_list
-      end
 
-      ##
-      ## EBNF:
-      ##   element-decl  ::=  '#' name '{' { elem-part } '}'
-      ##
-      def parse_element_decl()
-         return _parse_element_decl('element') { parse_elem_part() }
-      end
+    def is_whitespace(ch)
+      return ch == ?\  || ch == ?\t || ch == ?\n || ch == ?\r
+    end
 
-      ##
-      ## EBNF:
-      ##   document-decl  ::=  '#' 'DOCUMENT' '{' { doc-part } '}'
-      ##
-      def parse_document_decl()
-         return _parse_element_decl('document') { parse_doc_part() }
-      end
-
-      def _parse_element_decl(decl_name)
-         Kwartz::assert("token()=#{token()}") unless token() == :name
-         marking = value()
-         t = scan()
-         syntax_error("'#': #{decl_name} declaration requires '{'.") unless t == '{'
-         scan()
-         hash = {}
-         while token() == :name
-            key, obj = yield()		# parse_elem_part() or parse_doc_part()
-            break unless key
-            hash[key] = obj
-         end
-         syntax_error("'#': #{decl_name} declaration requires '}'.") unless token() == '}'
-         scan()
-         #return ElementDeclaration.create_from_hash(marking, hash)
-         return Declaration.new(marking, hash)
-      end
-      private :_parse_element_decl
 
+    def is_alpha(ch)
+      return (?a <= ch && ch <= ?z) || (?A <= ch && ch <= ?Z)
+    end
 
-      ##
-      ## EBNF:
-      ##   elem-part     ::=  value-part | attrs-part | remove-part | append-part | tagname-part | plogic-part
-      ##
-      def parse_elem_part()
-         Kwartz::assert("token()=#{token()}") unless token() == :name
-         obj = nil
-         case key = value()
-         when 'value'     ;   obj = parse_value_part()
-         when 'attrs'     ;   obj = parse_attrs_part()
-         when 'attr'      ;   obj = parse_attr_part()    ; key = 'attrs'
-         when 'append'    ;   obj = parse_append_part()
-         when 'remove'    ;   obj = parse_remove_part()
-         when 'tagname'   ;   obj = parse_tagname_part()
-         when 'plogic'    ;   obj = parse_plogic_part()
-         else
-            syntax_error("'#{value()}': invalid part-name.")
-         end
-         return key.intern, obj
-      end
 
+    def is_digit(ch)
+      return ?0 <= ch && ch <= ?9
+    end
 
-      ##
-      ## EBNF:
-      ##   doc-part      ::= begin-part | end-part | global-part | local-part | vartype-part
-      ##
-      def parse_doc_part()
-         Kwartz::assert("token()=#{token()}") unless token() == :name
-         key = value()
-         case key
-         when 'begin'           ;   obj = parse_begin_part()
-         when 'end'             ;   obj = parse_end_part()
-         when 'global'          ;   obj = parse_global_part()
-         when 'local'           ;   obj = parse_local_part()
-         when 'require'         ;   obj = parse_require_part()
-         when 'vartype'         ;   obj = parse_vartype_part()
-         when 'global_vartype'  ;   obj = parse_globalvartype_part()
-         when 'local_vartype'   ;   obj = parse_localvartype_part()
-         else
-            syntax_error("'#{value()}': invalid part-name.")
-         end
-         return key.intern, obj
-      end
 
+    def is_identchar(ch)
+      return is_alpha(ch) || is_digit(ch) || ch == ?_
+    end
 
-      ##
-      ## EBNF:
-      ##   value-part    ::=  'value' ':' [ expression ] ';'
-      ##
-      def parse_value_part()
-         Kwartz::assert unless value() == 'value'
-         expr = _parse_part_expr('value')
-         return expr
-      end
-
-      def _parse_part_expr(part_name)
-         Kwartz::assert unless value() == part_name
-         scan()
-         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
-         t = scan()
-         if t == ';'
-            scan()
-            return nil
-         end
-         expr = parse_expression()
-         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
-         scan()
-         return expr
-      end
-      private :_parse_part_expr
 
+  end
 
-      ##
-      ## EBNF:
-      ##   attrs-part     ::=  'attrs' ':' [ string '=>' expression { ',' string '=>' expression } ] ';'
-      ##
-      def parse_attrs_part()
-         Kwartz::assert unless value() == 'attrs'
-         hash = _parse_part_hash('attrs')
-         return hash
-      end
-      def parse_attr_part()
-         Kwartz::assert unless value() == 'attr'
-         hash = _parse_part_hash('attr')
-         return hash
-      end
-
-      def _parse_part_hash(part_name)
-         Kwartz::assert unless value() == part_name
-         scan()
-         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
-         scan()
-         attrs = Kwartz::Util::OrderedHash.new
-         while token() != ';'
-            aname_expr = parse_expression()
-            syntax_error("attrs-declaration requires attribute names as string.") unless aname_expr.token == :string
-            aname = aname_expr.value
-            avalue_expr = parse_expression()
-            attrs[aname] = avalue_expr
-            break if token() != ','
-            scan()
-         end
-         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
-         scan()
-         return attrs
-      end
-      private :_parse_part_hash
 
 
-      ##
-      ## EBNF:
-      ##   remove-part   ::=  'remove' ':' [ string { ',' string } ] ';'
-      ##
-      def parse_remove_part()
-         list = _parse_part_strs('remove')
-         return list
-      end
-
-      def _parse_part_strs(part_name)
-         Kwartz::assert unless value() == part_name
-         scan()
-         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
-         list = []
-         while (t = scan()) != ';'         # or t == :string
-            syntax_error("#{part_name}-part requires a string.") unless token() == :string
-            str = value()
-            list << str
-            t = scan()
-            break if t != ','
-         end
-         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
-         scan()
-         return list
-      end
-      private :_parse_part_strs
+  class ParseError < BaseError
 
 
-      ##
-      ## EBNF:
-      ##   append-part   ::=  'append' ':' [ expression { ',' expression } ] ';'
-      ##
-      def parse_append_part()
-         list = _parse_part_exprs('append')
-         return list
-      end
-
-      def _parse_part_exprs(part_name)
-         Kwartz::assert unless value() == part_name
-         scan()
-         syntax_error("'#{part_name}' requires ':'.") unless token() == ':'
-         list = []
-         while (t = scan()) != ';'
-            expr = parse_expression()
-            list << expr
-            break if token() != ','
-         end
-         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
-         scan()
-         return list
-      end
-      private :_parse_part_expr
+    def initialize(message, linenum, column)
+      super(message, linenum, column)
+    end
 
 
-      ##
-      ## EBNF:
-      ##   tagname-part  ::=  'tagname' ':' [ expression ] ';'
-      ##
-      def parse_tagname_part()
-         expr = _parse_part_expr('tagname')
-         return expr
-      end
+  end
 
 
-      ##
-      ## EBNF:
-      ##   plogic-part   ::=  'plogic' ':' block-stmt
-      ##
-      def parse_plogic_part()
-         block_stmt = _parse_part_blockstmt('plogic')
-         return block_stmt
-      end
 
-      def _parse_part_blockstmt(part_name)
-         Kwartz::assert unless value() == part_name
-         t = scan()
-         syntax_error("#{part_name}-declaration requires ':'.") unless t == ':'
-         t = scan()
-         syntax_error("#{part_name}-declaration requires '{'.") unless t == '{'
-         block_stmt = parse_block_stmt()
-         return block_stmt
-      end
-      private :_parse_part_blockstmt
+  ##
+  ## [abstract] parser class for presentation logic
+  ##
+  class PresentationLogicParser
+    include CharacterType
+    include Assertion
 
 
-      ##
-      ## EBNF:
-      ##   begin-part    ::= 'begin' ':' block-stmt
-      ##
-      def parse_begin_part()
-         block_stmt = _parse_part_blockstmt('begin')
-         return block_stmt
-      end
+    def initialize(properties={})
+      # nothing
+    end
 
 
-      ##
-      ## EBNF:
-      ##   end-part      ::= 'end' ':' block-stmt
-      ##
-      def parse_end_part()
-         block_stmt = _parse_part_blockstmt('end')
-         return block_stmt
-      end
+    def _initialize(input)
+      @input   = input
+      @linenum = 1       # 1 start
+      @column  = 0       # 1 start
+      @pos     = -1      # 0 start
+      @max_pos = @input.length - 1
+      @token   = nil
+      @value   = nil
+      @error   = nil
+      getch()
+    end
 
 
-      ##
-      ## EBNF:
-      ##   global-part   ::= 'global' ':' [ name { ',' name } ] ';'
-      ##
-      def parse_global_part()
-         list = _parse_part_names('global')
-         return list
-      end
+    attr_reader :linenum, :column, :pos, :token, :value, :error
 
 
-      ##
-      ## EBNF:
-      ##   local-part    ::= 'local' ':'  [ name { ',' name } ] ';'
-      ##
-      def parse_local_part()
-         list = _parse_part_names('local')
-         return list
-      end
-
-      def _parse_part_names(key)
-         Kwartz::assert unless token() == :name && value() == key
-         t = scan()
-         syntax_error("#{key}-part requires ':'.") unless t == ':'
-         list = []
-         t = scan()
-         #while t != ';'
-         while t == :name
-            name = value()
-            list << name
-            t = scan()
-            break if t != ','
-            t = scan()
-         end
-         syntax_error("#{key}-part requires ';'.") unless t == ';'
-         scan()
-         return list
-      end
-      private :_parse_part_names
+    table = {}
+    %w[stag cont etag elem value attrs append].each do |word|
+      sym = word.intern
+      table[word]            = sym
+      table[word.capitalize] = sym
+      table[word.upcase]     = sym
+    end
+    %w[element remove tagname plogic document global local fixture before after].each do |word|
+      table[word] = word.intern
+    end
+    PLOGIC_KEYWORDS = table
 
 
-      ##
-      ## EBNF:
-      ##   require-part    ::= 'require' ':'  [ filename-str { ',' filename-str } ] ';'
-      ##   filename-str    ::= '"' filename '"'
-      ##
-      def parse_require_part()
-         #Kwartz::assert unless token() == :name && value() == 'require'
-         Kwartz::assert unless value() == 'require'
-         list = _parse_part_strs('require')
-         return list
-      end
+    table = {}
+    %w[stag cont etag elem value attrs append].each do |word|
+      table[word]            = nil       # ex. value
+      table[word.capitalize] = true      # ex. Value
+      table[word.upcase]     = false     # ex. VALUE
+    end
+    ESCAPE_FLAG_TABLE = table
 
 
-      ##
-      ## EBNF:
-      ##  vartype-part  ::= 'vartype' ':' '{' { type varname ';' } '}'
-      ##
-      def parse_vartype_part()
-         hash = _parse_part_vartype('vartype')
-         return hash
-      end
-
-      def parse_gvartype_part()
-         hash = _parse_part_vartype('global_vartype')
-         return hash
-      end
-
-      def parse_lvartype_part()
-         hash = _parse_part_vartype('local_vartype')
-         return hash
-      end
-
-      def _parse_part_vartype(part_name)
-         Kwartz::assert unless token() == :name && value() == part_name
-         t = scan()
-         syntax_error("#{part_name}-declaration requires ':'.") unless t == ':'
-         t = scan()
-         syntax_error("#{part_name}-declaration requires '{'.") unless t == '{'
-         hash = Kwartz::Util::OrderedHash.new
-         scan()
-         while token() != '}'
-            varname, vartype = _parse_vartype(part_name)
-            hash[varname] = vartype
-         end
-         syntax_error("#{part_name}-declaration is not closed by '}'.") unless token() == '}'
-         scan()
-         return hash
-      end
-      private :_parse_part_vartype
-
-      def _parse_vartype(part_name)
-         Kwartz::assert unless token() != '}'
-         list = []
-         t = token()
-         while t != ';' && t != '}' && t != nil		# Ohhhh...
-            list << (t.is_a?(String) ? t : value())
-            t = scan()
-         end
-         syntax_error("#{part_name}-part requires ';'.") unless token() == ';'
-         scan()
-         varname = list.pop()
-         vartype = list.join(' ')
-         return varname, vartype
-      end
-      private :_parse_vartype
+    def escape?(value)
+      return ESCAPE_FLAG_TABLE[value]
+    end
 
 
-      ##
-      ##
-      ##
+    ## scanner
 
-      def parse_program()
-         stmt_list = parse_stmt_list()
-         syntax_error("EOF expected but '#{token()}'.") unless token() == nil
-         #return stmt_list
-         return BlockStatement.new(stmt_list)
-      end
-
-      def parse()
-         return parse_program()
-      end
-
-      def _scan_all()
-         s = ''
-         s << @scanner.token.to_s << "\n"
-         while tkn = @scanner.scan()
-            s << tkn.to_s << "\n"
-         end
-         return s
-      end
-
-   end
-end
-
-
-if __FILE__ == $0
-   #--
-   input = ARGF.read()
-   parser = Kwartz::Parser.new(input)
-   #--
-   #decl = parser.parse_element_decl()
-   #print decl._inspect
-   #--
-   #decl = parser.parse_document_decl()
-   #print decl._inspect
-   #--
-   #decl_list = parser.parse_plogic()
-   #decl_list.each do |elem_decl|
-   #   print elem_decl._inspect()
-   #end
-   #--
-   expr = parser.parse_expression()
-   print expr._inspect()
-   #--
-   #stmt_list = parser.parse_stmt_list()
-   #stmt_list.each do |stmt|
-   #   print stmt._inspect()
-   #end
-end
+    def getch
+      return nil if @pos >= @max_pos
+      if @ch == ?\n
+        @linenum += 1
+        @column = 0
+      end
+      @pos += 1
+      @column += 1
+      @ch = @input[@pos]
+      return @ch
+    end
+
+
+    def scan_ident
+      ## identifer
+      if is_identchar(@ch)
+        sb = @ch.chr
+        while (c = getch()) && is_identchar(c)
+          sb << c.chr
+        end
+        @value = sb
+        return @token = :ident
+      end
+      return nil
+    end
+
+
+    def scan_string_dquoted
+      return nil unless @ch == ?"
+      s = ''
+      while (c = getch()) && c != ?"
+        if c == ?\\
+          c = getch()
+          break unless c
+          case c
+          when ?n  ;  s << "\n"
+          when ?t  ;  s << "\t"
+          when ?r  ;  s << "\r"
+          when ?b  ;  s << "\b"
+          when ?\\ ;  s << "\\"
+          when ?"  ;  s << '"'
+          else     ;  s << c.chr
+          end
+        else
+          s << c.chr
+        end
+      end
+      unless c
+        @error = :string_unclosed
+        return @token = :error
+      end
+      assert unless c == ?"
+      getch()
+      @value = s
+      return @token = :string
+    end
+
+
+    def scan_string_quoted
+      return nil unless @ch == ?'
+      s = ''
+      while (c = getch()) && c != ?'
+        if c == ?\\
+          c = getch()
+          break unless c
+          case c
+          when ?\\ ;  s << "\\"
+          when ?'  ;  s << "'"
+          else     ;  s << "\\" << c.chr
+          end
+        else
+          s << c.chr
+        end
+      end
+      unless c
+        @error = :string_unclosed
+        return @token = :error
+      end
+      assert unless c == ?'
+      getch()
+      @value = s
+      return @token = :string
+    end
+
+
+    ## called from scan()
+    def scan_hook
+      #raise NotImplementedError.new("#{self.class}#scan_hook() is not implemented.")
+    end
+
+
+    ## scan token
+    def scan
+      ## skip whitespaces
+      c = @ch
+      while is_whitespace(c)
+        c = getch()
+      end
+
+      ## return nil when EOF
+      if c == nil
+        @value = nil
+        return @token = nil
+      end
+
+      ## scan hook
+      ret = scan_hook()    # scan_hook() is overrided in subclass
+      return ret if ret
+
+      ## keyword or identifer
+      if is_identchar(c)
+        scan_ident()
+        @token = PLOGIC_KEYWORDS[@value] || :ident
+        return @token
+      end
+
+      ## "string"
+      if c == ?"
+        return scan_string_dquoted()
+      end
+
+      ## 'string'
+      if c == ?'
+        return scan_string_quoted()
+      end
+
+      ## '{'
+      if c == ?{
+        @value = "{"
+        getch()
+        return @token = :'{'
+      end
+
+      ## '}'
+      if c == ?}
+        @value = "}"
+        getch()
+        return @token = :'}'
+      end
+
+      ##
+      @value = c.chr
+      @error = :invalid_char
+      return @token = :error
+    end
+
+
+    def scan_block(skip_open_curly=false)
+      unless skip_open_curly
+        token = scan()
+        unless token == ?{
+          @error = :block_notfound
+          return @token = :error
+        end
+      end
+      start_pos = @pos
+      count = 1
+      while (c = getch()) != nil
+        if c == ?{
+          count += 1
+        elsif c == ?}
+          count -= 1
+          break if count == 0
+        end
+      end
+      unless c
+        @error = :block_unclosed
+        return @token = :error
+      end
+      assert unless c == ?}
+      @value = @input[start_pos, @pos - start_pos]
+      @token = :block
+      getch()
+      return @value
+    end
+
+
+    def scan_line
+      sb = @ch.chr
+      while (c = getch()) != nil && c != ?\n
+        sb << c.chr
+      end
+      sb.chop if sb[-1] == ?\r
+      getch()
+      return sb
+    end
+
+
+    ## parser
+
+
+    def parse_error(message, linenum=@linenum, column=@column)
+      return ParseError.new(message, linenum, column)
+    end
+
+
+    ## [abstract] parse input string and return list of ElementRuleset
+    def parse(input)
+      raise NotImplementedError("#{self.class}#parse() is not implemented.")
+    end
+
+
+    def _parse_block
+      scan()
+      unless @token == :'{'
+        raise parse_error("'#{@value}': '{' expected.")
+      end
+      start_linenum, start_column = @linenum, @column
+      t = scan_block(true)
+      if t == :error
+        if @error == :block_unclosed
+          raise parse_error("'{': not closed by '}'.", start_linenum, start_column)
+        else
+          assert("@error=#{@error}")
+        end
+      end
+      @value.sub!(/\A\s*\n/, '')
+      @value.sub!(/^\s+\z/, '')
+      return @value
+    end
+
+
+  end #class
+
+
+
+  ##
+  ## ruby style presentation logic parser
+  ##
+  ## presentation logic example (ruby style):
+  ##
+  ##   # comment
+  ##   element "list" {
+  ##     value  @var
+  ##     attrs  "class"=>@clssname, "bgcolor"=>color
+  ##     append @value==item['list'] ? ' checked' : ''
+  ##     plogic {
+  ##       @list.each { |item|
+  ##         _stag
+  ##         _cont
+  ##         _etag
+  ##       }
+  ##     }
+  ##   }
+  ##
+  class RubyStyleParser < PresentationLogicParser
+
+
+    def parse(input)
+      _initialize(input)
+      scan()
+      nodes = []
+      while @token != nil
+        if @token == :element
+          node = parse_element_ruleset()
+        elsif @token == :document
+          node = parse_document_ruleset()
+        else
+          raise parse_error("'#{@value}': element or document required.")
+        end
+        nodes << node
+      end
+      return nodes
+    end
+
+
+    protected
+
+
+    def scan_hook
+      ## line comment
+      c = @ch
+      if c == ?#
+        scan_line
+        return scan()
+      end
+      return nil
+    end
+
+
+    def parse_document_ruleset
+      assert unless @token == :document
+      scan()
+      unless @token == :'{'
+        raise parse_error("'#{@value}': document requires '{'.")
+      end
+      ruleset = DocumentRuleset.new
+      while @token
+        scan()
+        case @token
+        when :global    ;  has_space? ;  ruleset.set_global    _parse_list()
+        when :local     ;  has_space? ;  ruleset.set_local     _parse_list()
+        when :fixture   ;  has_space? ;  ruleset.set_fixture   _parse_block()
+        when :before    ;  has_space? ;  ruleset.set_before    _parse_block()
+        when :after     ;  has_space? ;  ruleset.set_after     _parse_block()
+        when :'}'       ;  break
+        else            ;  raise parse_error("'#{@value}': invalid token.")
+        end
+      end
+      unless @token == :'}'
+        raise parse_error("'#{@value}': document is not closed by '}'.")
+      end
+      scan()
+      return DocumentRuleset.new(hash)
+    end
+
+
+    def has_space?
+      unless @ch == ?\  || @ch == ?\t
+        raise parse_error("'#{@value}': following spaces are required but got '#{@ch.chr}'.")
+      end
+    end
+
+
+    def _parse_list
+      line = scan_line()
+      list = line.split(/,\s+/).collect {|item| item.strip}
+      return list
+    end
+
+
+    def _parse_strs
+      list = _parse_list()
+      list2 = []
+      list.each do |item|
+        case item
+        when /\A"(.*)"\z/  ; list2 << $1
+        when /\A'(.*)'\z/  ; list2 << $1
+        else
+          raise parse_error("'#{item}': argument of 'remove' should be string.")
+        end
+      end
+      return list2
+    end
+
+
+    def _parse_item
+      item = scan_line()
+      item.strip!
+      return item
+    end
+
+
+    def _parse_block
+      super
+    end
+
+
+    def _parse_tuples
+      line = scan_line()
+      items = line.split(/,\s+/)
+      tuples = []
+      items.each do |item|
+        unless item =~ /(.*?)=>(.*)/
+          raise parse_error("'#{item}': invalid pattern.")
+        end
+        key = $1;   key.strip!
+        val = $2;   val.strip!
+        if key =~ /\A"(.*)"\z/
+          key = $1
+        elsif key =~ /\A'(.*)'\z/
+          key = $1
+        else
+          raise parse_error("'#{key}': key must be \"...\" or '...'.")   #
+        end
+        tuples << [key, val]
+      end
+      return tuples
+    end
+
+
+    def parse_element_ruleset
+      assert unless @token == :element
+      scan()
+      @token == :string   or raise parse_error("'#{@value}': element name required in string.")
+      name = @value
+      name =~ /\A\w+\z/   or raise parse_error("'#{@value}': invalid element name.")
+      scan()
+      @token == :'{'      or raise parse_error("'#{@value}': '{' required.")
+      ruleset = ElementRuleset.new(name)
+      while true
+        scan()
+        flag_escape = escape?(@value)
+        break unless @token
+        #if @token.is_a?(Symbol) && (@ch != ?\  && @ch != ?\t)
+        #  raise parse_error("'#{@value}': following spaces are required but got '#{@ch.chr}'.")
+        #end
+        case @token
+        when :stag    ;  has_space? ;  ruleset.set_stag     _parse_item()   , flag_escape
+        when :cont    ;  has_space? ;  ruleset.set_cont     _parse_item()   , flag_escape
+        when :etag    ;  has_space? ;  ruleset.set_etag     _parse_item()   , flag_escape
+        when :elem    ;  has_space? ;  ruleset.set_elem     _parse_item()   , flag_escape
+        when :value   ;  has_space? ;  ruleset.set_value    _parse_item()   , flag_escape
+        when :attrs   ;  has_space? ;  ruleset.set_attrs    _parse_tuples() , flag_escape
+        when :append  ;  has_space? ;  ruleset.set_append   _parse_list()   , flag_escape
+        when :remove  ;  has_space? ;  ruleset.set_remove   _parse_strs()
+        when :tagname ;  has_space? ;  ruleset.set_tagname  _parse_item()
+        when :plogic  ;  has_space? ;  ruleset.set_plogic   _parse_block()
+        when :'}'     ;  break
+        else          ;  raise parse_error("'#{@value}': invalid token.")
+        end
+      end
+      assert unless token == :'}'
+      scan()
+      return ruleset
+    end
+
+
+  end #class
+
+
+  ##
+  ## css style presentation logic parser
+  ##
+  ## example of presentation logic in css style:
+  ##
+  ##   // comment
+  ##   #list {
+  ##     value:   @var;
+  ##     attrs:   "class" @classname, "bgcolro" color;
+  ##     append:  @value==item['list'] ? ' checked' : '';
+  ##     plogic:  {
+  ##       @list.each { |item|
+  ##         _stag
+  ##         _cont
+  ##         _etag
+  ##       }
+  ##     }
+  ##   }
+  ##
+  class CssStyleParser < PresentationLogicParser
+
+
+    def parse(input)
+      _initialize(input)
+      scan()
+      rulesets = []
+      while @token == ?#
+        scan_ident()
+        name = @value
+        if name == 'DOCUMENT'
+          ruleset = parse_document_ruleset()
+        else
+          ruleset = parse_element_ruleset()
+        end
+        rulesets << ruleset
+      end
+      unless @token == nil
+        raise parse_error("'#{@value}': '#name' is expected.")
+      end
+      return rulesets
+    end
+
+
+    protected
+
+
+    def scan_hook
+      ## comment
+      c = @ch
+      if c == ?/
+        c = getch()
+        if c == ?/      # line comment
+          scan_line()
+          getch()
+          return scan()
+        elsif c == ?*   # region comment
+          start_linenum = @linenum
+          while true
+            c = getch() while c != ?*
+            break if c == nil
+            c = getch()
+            break if c == ?/
+          end
+          if c == nil
+            @error = :comment_unclosed
+            @value = start_linenum
+            return @token == :error
+          end
+          getch()
+          return scan()
+        else
+          @value = '/'
+          return @token = ?/
+        end #if
+      end #if
+
+      ## '#mark'
+      if c == ?#
+        c = getch()
+        unless is_alpha(c)
+          @error = :invalid_char
+          @value = '#'
+          return @token = :error
+        end
+        @value = '#'
+        return @token = ?#
+      end #if
+
+      return nil
+
+    end #def
+
+
+    def parse_document_ruleset
+      assert unless @value == 'DOCUMENT'
+      start_linenum = @linenum
+      scan()
+      unless @token == :'{'
+        raise parse_error("'#{@value}': '{' is expected.")
+      end
+      ruleset = DocumentRuleset.new
+      while @token
+        scan()
+        case @token
+        when :'}'      ;  break
+        when :global   ;  has_colon?();  ruleset.set_global   _parse_words()
+        when :local    ;  has_colon?();  ruleset.set_local    _parse_words()
+        when :fixture  ;  has_colon?();  ruleset.set_fixture  _parse_block()
+        when :before   ;  has_colon?();  ruleset.set_before   _parse_block()
+        when :after    ;  has_colon?();  ruleset.set_after    _parse_block()
+        else
+          unless @token
+            raise parse_error("'#DOCUMENT': is not closed by '}'.", start_linenum)
+          else
+            raise parse_error("'#{@value}': unexpected token.")
+          end
+        end
+      end
+      assert unless @token == :'}'
+      scan()
+      return ruleset
+    end
+
+
+    def has_colon?
+      unless @ch == ?:
+        raise parse_error("'#{@value}': ':' is required.")
+      end
+      getch()
+    end
+
+
+    def parse_element_ruleset
+      assert unless @token == :ident
+      start_linenum = @linenum
+      name = @value
+      scan()
+      unless @token == :'{'
+        raise parse_error("'#{@value}': '{' is expected.")
+      end
+      ruleset = ElementRuleset.new(name)
+      while true
+        scan()
+        flag_escape = escape?(@value)
+        case @token
+        when nil     ;  break
+        when :'}'    ;  break
+        when :stag   ;  has_colon?();  ruleset.set_stag   _parse_expr() , flag_escape
+        when :cont   ;  has_colon?();  ruleset.set_cont   _parse_expr() , flag_escape
+        when :etag   ;  has_colon?();  ruleset.set_etag   _parse_expr() , flag_escape
+        when :elem   ;  has_colon?();  ruleset.set_elem   _parse_expr() , flag_escape
+        when :value  ;  has_colon?();  ruleset.set_value  _parse_expr() , flag_escape
+        when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
+        when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
+        when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
+        when :plogic ;  has_colon?();  ruleset.set_plogic _parse_block()
+        else
+          raise parse_error("'#{@value}': unexpected token.")
+        end
+      end
+      unless @token
+        raise parse_error("'##{name}': is not closed by '}'.", start_linenum)
+      end
+      assert "@token=#{@token.inspect}" unless @token == :'}'
+      scan()
+      return ruleset
+    end
+
+
+    private
+
+
+    def _parse_expr
+      expr = ''
+      while true
+        line = scan_line()
+        unless line && line =~ /([,;])[ \t]*(?:\/\/.*)?$/
+          raise parse_error("'#{@token}:': ';' is required.")
+        end
+        indicator = $1
+        expr << $`
+        break if indicator == ';'
+        expr << ",\n"
+      end
+      expr.strip!
+      return expr
+    end
+
+
+    def _parse_pairs
+      hash = {}
+      while true
+        line = scan_line()
+        unless line && line =~ /([,;])[ \t]*(\/\/.*)?$/
+          raise parse_error("'#{@token}:': ';' is required.")
+        end
+        indicator = $1
+        str = $`
+        if str =~ /\A\s*"([-:\w]+)"\s+(.*)\z/
+          aname = $1  ;  avalue = $2
+        elsif str =~ /\A\s*'([-:\w]+)'\s+(.*)\z/
+          aname = $1  ;  avalue = $2
+        else
+          raise parse_error("'#{@token}:': invalid mapping pattern")
+        end
+        hash[aname] = avalue
+        break if indicator == ';'
+      end
+      return hash
+    end
+
+
+    def _parse_words
+      list = []
+      while true
+        line = scan_line()
+        unless line && line =~ /([,;])[ \t]*(\/\/.*)?$/
+          raise parse_error("'#{@token}:': ';' is required.")
+        end
+        indicator = $1
+        s = $`
+        s.split(/,/).each do |word|
+          word.strip!
+          list << word
+        end
+        break if indicator == ';'
+      end
+      return list
+    end
+
+
+    def _parse_exprs
+      list = []
+      while true
+        line = scan_line()
+        unless line && line =~ /([,;])[ \t]*(\/\/.*)?$/
+          raise parse_error("'#{@token}:': ';' is required.")
+        end
+        indicator = $1
+        expr = $`
+        expr.strip!
+        list << expr
+        break if indicator == ';'
+      end
+      return list
+    end
+
+
+    def _parse_strs
+      list = []
+      while true
+        line = scan_line()
+        unless line && line =~ /([,;])[ \t]*(\/\/.*)?$/
+          raise parse_error("'#{@token}:': ';' is required.")
+        end
+        indicator = $1
+        s = $`
+        strs = s.split(/,/)
+        strs.each do |str|
+          str.strip!
+          unless str =~ /\A'(.*)'\z/ || str =~ /\A"(.*)"\z/
+            raise parse_error("'#{@token}': string list is expected.")
+          end
+          list << $1
+        end
+        break if indicator == ';'
+      end
+      return list
+    end
+
+
+    def _parse_block
+      super
+    end
+
+
+  end #class
+
+
+
+end #module

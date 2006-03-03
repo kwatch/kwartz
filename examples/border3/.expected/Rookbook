@@ -1,7 +1,0 @@
-#!/usr/bin/env rook
-
-$T = 'border3'
-
-basedir = File::dirname(__FILE__)
-load "#{basedir}/../../border2/.expected/Rookbook"
-

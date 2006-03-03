@@ -1,6 +1,0 @@
-grecipe "*.view",	"{1}.xhtml", "{1}.plogic"			do |r|
-	cmd "kwartz -p {1}.plogic {1}.xhtml > {1}.view"
-	end
-
-recipe :all,	"overview.view"
-

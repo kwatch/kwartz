@@ -1,677 +1,825 @@
 ###
-### copyright(c) 2005 kuwata-lab all rights reserved
-###
-### $Id$
+### $Rev$
 ### $Release$
+### $Copyright$
 ###
 
-require 'kwartz/config'
-require 'kwartz/exception'
-require 'kwartz/utility'
-require 'kwartz/util/orderedhash'
+require 'strscan'
+
+require 'kwartz/assert'
+require 'kwartz/error'
 require 'kwartz/node'
-require 'kwartz/parser'
+require 'kwartz/config'
+
+
 
 module Kwartz
 
-   class ConvertionError < BaseError
-      def initialize(errmsg, linenum=nil, filename=nil)
-         super(errmsg, linenum, filename)
+
+
+  class ConvertError < KwartzError
+
+
+    def initialize(message, linenum)
+      super(message)
+      @linenum = linenum
+    end
+
+    attr_accessor :linenum
+
+
+    def to_s
+      s = super
+      s << " (line #{@linenum})"
+      return s
+    end
+
+
+  end
+
+
+
+  class TagInfo
+
+
+    def initialize(matched, linenum=nil)
+      @prev_text   = matched[1]
+      @tag_text    = matched[2]
+      @head_space  = matched[3]
+      @is_etag     = matched[4] == '/'
+      @tagname     = matched[5]
+      @attr_str    = matched[6]
+      @extra_space = matched[7]
+      @is_empty    = matched[8] == '/'
+      @tail_space  = matched[9]
+      @linenum = linenum
+    end
+
+
+    attr_accessor :prev_text, :tag_text, :head_space, :is_etag, :tagname, :attr_str, :extra_space, :is_empty, :tail_space
+    attr_accessor :linenum
+    alias is_etag?  is_etag
+    alias is_empty? is_empty
+
+
+    def tagname=(tagname)
+      @tagname = tagname
+      rebuild_tag_text()
+      tagname
+    end
+
+
+    def rebuild_tag_text(attr_info=nil)
+      if attr_info
+        sb = ''
+        attr_info.each do |space, aname, avalue|
+          sb << "#{space}#{aname}=\"#{avalue}\""
+        end
+        @attr_str = sb
       end
-   end
+      @tag_text = "#{@head_space}<#{@is_etag ? '/' : ''}#{@tagname}#{@attr_str}#{@extra_space}#{@is_empty ? '/' : ''}>#{@tail_space}"
+    end
 
 
-   ##
-   ## convert presentation data into presentation logic.
-   ##
-   ## ex.
-   ##  input = '<tr id="foo"><td kd="value:data">foo</td></tr>'
-   ##  converter = Kwartz::Converter.new(input)
-   ##  plogic = converter.convert()
-   ##  print plogic
-   ##
-   class Converter
+    def _inspect
+      return [ @prev_text, @head_space, @is_etag, @tagname, @attr_str, @extra_space, @is_empty, @tail_space ]
+    end
 
-      def initialize(properties={})
-         @properties = properties
-         @kd_attr    = properties[:dattr] || Kwartz::Config::DATTR    # 'kd:kd'
-         #@ruby_attr  = properties[:ruby_attr_name] || 'kd::ruby'
-         #@delete_id_attr = properties[:delete_id_attr] || false
-         @even       = properties[:even]  || Kwartz::Config::EVEN     # "'even'"
-         @odd        = properties[:odd]   || Kwartz::Config::ODD      # "'odd'"
-         @noend_tags = properties[:noend] || Kwartz::Config::NOEND    # ['input', 'br', 'meta', 'img', 'hr']
-         @parser = Parser.new('', properties)
+
+  end
+
+
+
+  class AttrInfo
+
+
+    def initialize(attr_str)
+      @names  = []
+      @values = {}
+      @spaces = {}
+      attr_str.scan(/(\s+)([-:_\w]+)="([^"]*?)"/) do |space, name, value|
+        @names << name unless @values.key?(name)
+        @values[name] = value
+        @spaces[name] = space
       end
-      attr_reader :stmt_list, :elem_list
-      alias :element_list :elem_list
+      @directive = nil
+      @linenum = nil
+    end
+    attr_reader :names, :values, :spaces
+    attr_accessor :directive, :linenum
 
-      def reset(input)
-         @input = input
-         @filename = @properties[:filename]
-         @parser.reset(input)
-         @linenum = 1
-         @delta   = 0
-         @stmt_list = []
-         @elem_list = []
+
+    def [](name)
+      @values[name]
+    end
+
+
+    def []=(name, value)
+      @names << name unless @values.key?(name)
+      @values[name] = value
+      @spaces[name] = ' ' unless @spaces.key?(name)
+    end
+
+
+    def each
+      @names.each do |name|
+        space = @spaces[name]
+        value = @values[name]
+        yield(space, name, value)
+      end
+    end
+
+
+    def delete(name)
+      if @values.key?(name)
+        @names.delete(name)
+        @values.delete(name)
+        @spaces.delete(name)
+      end
+    end
+
+
+  end
+
+
+
+  class ElementInfo
+
+
+    def initialize(name, stag_info, etag_info, cont_stmts, attr_info, append_exprs)
+      @name         = name           # String
+      @stag_info    = stag_info      # TagInfo
+      @etag_info    = etag_info      # TagInfo
+      @cont_stmts   = cont_stmts     # list of Statement
+      @attr_info    = attr_info      # AttrInfo
+      @append_exprs = append_exprs   # list of NativeExpression
+      @plogic = [ ExpandStatement.new(:elem, @name) ]
+      @merged = nil
+    end
+
+    attr_accessor :name, :stag_info, :etag_info, :cont_stmts, :attr_info, :append_exprs, :plogic
+    attr_reader :stag_expr, :cont_expr, :etag_expr, :elem_expr
+
+
+    def merged?
+      @merged
+    end
+
+
+    def self.create(values={})
+      self.new(values[:name], values[:stag], values[:etag], values[:cont], values[:attr], values[:append])
+    end
+
+
+    def merge(elem_ruleset)
+      return unless elem_ruleset.name == @name
+      @merged = elem_ruleset
+      @stag_expr = _to_native_expr(elem_ruleset.stag)
+      @cont_expr = _to_native_expr(elem_ruleset.cont || elem_ruleset.value)
+      @etag_expr = _to_native_expr(elem_ruleset.etag)
+      @elem_expr = _to_native_expr(elem_ruleset.elem)
+      if @cont_expr
+        @cont_stmts = [ PrintStatement.new([@cont_expr]) ]
+        @stag_info.tail_space = ''
+        @etag_info.head_space = ''
+        @etag_info.rebuild_tag_text()
+      end
+      elem_ruleset.remove.each do |aname|
+        @attr_info.delete(aname)
+      end if elem_ruleset.remove
+      elem_ruleset.attrs.each do |aname, avalue|
+        @attr_info[aname] = _to_native_expr(avalue)
+      end if elem_ruleset.attrs
+      elem_ruleset.append.each do |expr|
+        (@append_exprs ||= []) << _to_native_expr(expr)
+      end if elem_ruleset.append
+      @tagname = elem_ruleset.tagname
+      @plogic = elem_ruleset.plogic if elem_ruleset.plogic
+    end
+
+
+    private
+
+
+    def _to_native_expr(value)
+      return value && value.is_a?(String) ? NativeExpression.new(value) : value
+    end
+
+
+  end
+
+
+
+  ##
+  ## helper module for Converter and Handler
+  ##
+  module ConverterHelper
+
+
+    ## return ConvertError
+    def convert_error(message, linenum)
+      return ConvertError.new(message, linenum)
+    end
+
+
+    ## raise errror if etag_info is null
+    def error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+      unless etag_info
+        raise convert_error("'#{d_name}:#{d_arg}': #{d_name} directive is not available with empty tag.", stag_info.linenum)
+      end
+    end
+
+
+    ## create print statement from text
+    def create_text_print_stmt(text)
+      return PrintStatement.new([text])
+      #return new PritnStatement.new([TextExpression.new(text)])
+    end
+
+
+    ## create array of String and NativeExpression for PrintStatement
+    def build_print_args(taginfo, attr_info, append_exprs)
+      unless attr_info || append_exprs
+        return [taginfo.tag_text]
+      end
+      args = []
+      t = taginfo
+      sb = "#{t.head_space}<#{t.is_etag ? '/' : ''}#{t.tagname}"
+      attr_info.each do |space, aname, avalue|
+        sb << "#{space}#{aname}=\""
+        if avalue.is_a?(NativeExpression)
+          args << sb     # TextExpression.new(sb)
+          args << avalue
+          sb = ''
+        else
+          sb << avalue
+        end
+        sb << '"'
+      end if attr_info
+      if append_exprs && !append_exprs.empty?
+        unless sb.empty?
+          args << sb     # TextExpression.new(sb)
+          sb = ''
+        end
+        args.concat(append_exprs)
+      end
+      sb << "#{t.extra_space}#{t.is_empty ? '/' : ''}>#{t.tail_space}"
+      args << sb         # TextExpression.new(sb)
+      return args
+    end
+
+
+    ## create PrintStatement for TagInfo
+    def build_print_stmt(taginfo, attr_info, append_exprs)
+      args = build_print_args(taginfo, attr_info, append_exprs)
+      return PrintStatement.new(args)
+    end
+
+
+    ## create PrintStatement for NativeExpression
+    def build_print_expr_stmt(native_expr, stag_info, etag_info)
+      head_space = (stag_info || etag_info).head_space
+      tail_space = (etag_info || stag_info).tail_space
+      args = []
+      args << head_space if head_space    # TexExpression.new(head_space)
+      args << native_expr
+      args << tail_space if tail_space    # TextExpression.new(tail_space)
+      return PrintStatement.new(args)
+    end
+
+
+  end
+
+
+
+  ##
+  ## [abstract] expand ExpandStatement and ElementInfo
+  ##
+  module ElementExpander
+    include Assertion
+
+
+    ## [abstract] get ElementRuleset
+    def get_element_ruleset(name)
+      raise NotImplementedError("#{self.class}#get_element_ruleset() is not implemented.")
+    end
+
+
+    ## [abstract] get ElementInfo
+    def get_element_info(name)
+      raise NotImplementedError("#{self.class}#get_element_info() is not implemented.")
+    end
+
+
+    ## expand ElementInfo
+    def expand_element_info(elem_info, stmt_list, content_only=false)
+      #elem_ruleset = @ruleset_table[elem_info.name]
+      elem_ruleset = get_element_ruleset(elem_info.name)
+      if elem_ruleset && !elem_info.merged?
+        elem_info.merge(elem_ruleset)
+      end
+      plogic = content_only ? [ ExpandStatement.new(:cont, elem_info.name) ] : elem_info.plogic
+      plogic.each do |stmt|
+        expand_statement(stmt, stmt_list, elem_info)
+      end
+      #if content_only
+      #  stmt = ExpandStatement.new(:cont, elem_info.name)
+      #  expand_statement(stmt, stmt_list, elem_info)
+      #else
+      #  element.plogic.each do |stmt|
+      #    expand_statement(stmt, stmt_list, elem_info)
+      #  end
+      #end
+    end
+
+
+    ## expand ExpandStatement
+    def expand_statement(stmt, stmt_list, elem_info)
+      if stmt.is_a?(ExpandStatement)
+        case stmt.kind
+
+        when :stag
+          assert unless elem_info
+          e = elem_info
+          if e.stag_expr
+            assert unless e.stag_expr.is_a?(NativeExpression)
+            stmt_list << build_print_expr_stmt(e.stag_expr, e.stag_info, nil)
+          else
+            stmt_list << build_print_stmt(e.stag_info, e.attr_info, e.append_exprs)
+          end
+
+        when :etag
+          assert unless elem_info
+          e = elem_info
+          if e.etag_expr
+            assert unless e.etag_expr.is_a?(NativeExpression)
+            stmt_list << build_print_expr_stmt(e.etag_expr, nil, e.etag_info)
+          elsif e.etag_info    # e.etag_info is nil when <br>, <input>, <hr>, <img>, <meta>
+            stmt_list << build_print_stmt(e.etag_info, nil, nil)
+          end
+
+        when :cont
+          e = elem_info
+          if e.cont_expr
+            assert unless e.cont_expr.is_a?(NativeExpression)
+            stmt_list << PrintStatement.new([e.cont_expr])
+          else
+            elem_info.cont_stmts.each do |cont_stmt|
+              expand_statement(cont_stmt, stmt_list, nil)
+            end
+          end
+
+        when :elem
+          assert unless elem_info
+          e = elem_info
+          if e.elem_expr
+            assert unless e.elem_expr.is_a?(NativeExpression)
+            stmt_list << build_print_expr_stmt(e.elem_expr, e.stag_info, e.etag_info)
+          else
+            stmt.kind = :stag
+            expand_statement(stmt, stmt_list, elem_info)
+            stmt.kind = :cont
+            expand_statement(stmt, stmt_list, elem_info)
+            stmt.kind = :etag
+            expand_statement(stmt, stmt_list, elem_info)
+            stmt.kind = :elem
+          end
+
+        when :element, :content
+          content_only = stmt.kind == :content
+          #elem_info = @elements[stmt.name]
+          elem_info = get_element_info(stmt.name)
+          unless elem_info
+            raise convert_error("element '#{stmt.name}' is not found.", nil)
+          end
+          expand_element_info(elem_info, stmt_list, content_only)
+
+        else
+          assert
+        end #case
+      else
+        stmt_list << stmt
+      end #if
+    end
+
+
+  end #module
+
+
+
+  ##
+  ## [abstract] handle directives
+  ##
+  class Handler
+    include Assertion
+    include ConverterHelper
+    include ElementExpander
+
+
+    def initialize(elem_rulesets=[], properties={})
+      @elem_rulesets = elem_rulesets
+      #@elem_ruleset_table = elem_rulesets.inject({}) { |table, ruleset| table[ruleset.name] = ruleset; table }
+      @elem_ruleset_table = {} ; elem_rulesets.each { |ruleset| @elem_ruleset_table[ruleset.name] = ruleset }
+      @elem_info_table = {}
+      @odd  = properties[:odd]     || Config::PROPERTY_ODD      # "'odd'"
+      @even = properties[:even]    || Config::PROPERTY_EVEN     # "'even'"
+    end
+    attr_reader :odd, :even
+    attr_accessor :converter
+
+
+    def get_element_ruleset(name)  # for ElementExpander module and Converter class
+      @elem_ruleset_table[name]
+    end
+
+
+    def get_element_info(name)  # for ElementExpander module
+      @elem_info_table[name]
+    end
+
+
+    protected
+
+
+    ## [abstract] directive pattern, which is used to detect directives.
+    def directive_pattern
+      raise NotImplementedError.new("#{self.class}#directive_pattern() is not implemented.")
+      #return /\A(\w+):\s*(.*)/
+    end
+
+
+    ## [abstract] mapping pattern, which is used to parse 'attr' directive.
+    def mapping_pattern
+      raise NotImplementedError.new("#{self.class}#mapping_pattern() is not implemented.")
+      #return /\A'([-:\w]+)'\s+(.*)/
+    end
+
+
+    ## [abstract] id format, which is used at has_directive?() method
+    def marking_format
+      raise NotImplementedError.new("#{self.class}#marking_format() is not implemented.")
+      #return 'id:%s'
+    end
+
+
+    public
+
+
+    ## handle directives ('stag', 'etag', 'elem', 'cont'(='value'))
+    ##
+    ## return true if directive name is one of 'stag', 'etag', 'elem', 'cont', and 'value',
+    ## else return false.
+    def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
+      d_name = directive_name
+      d_arg  = directive_arg
+      d_str  = directive_str
+
+      case directive_name
+
+      when nil
+        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        stmt_list.concat(cont_stmts)
+        stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info    # when empty-tag
+
+      when :dummy
+        # nothing
+
+      when :id
+        unless directive_arg =~ /\A(\w+)\z/ || directive_arg =~ /\A'(\w+)'\z/
+          raise convert_error("'#{d_str}': invalid marking name.", stag_info.linenum)
+        end
+        name = $1
+        elem_info = ElementInfo.new(name, stag_info, etag_info, cont_stmts, attr_info, append_exprs)
+        if @elem_info_table[name]
+          #unless Config::ALLOW_DUPLICATE_ID
+            previous_linenum = @elem_info_table[name].stag_info.linenum
+            raise convert_error("'#{d_str}': id '#{name}' is already used at line #{previous_linenum}.", stag_info.linenum)
+          #end
+        else
+          @elem_info_table[name] = elem_info
+        end
+        #stmt_list << ExpandStatement.new(:element, name)
+        expand_element_info(elem_info, stmt_list)
+
+      when :stag, :Stag, :STAG
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+        flag_escape = d_name == :stag ? nil : (d_name == :Stag)
+        expr = NativeExpression.new(d_arg, flag_escape)
+        stmt_list << build_print_expr_stmt(expr, stag_info, nil)
+        stmt_list.concat(cont_stmts)
+        stmt_list << build_print_stmt(etag_info, nil, nil)
+
+      when :etag, :Etag, :ETAG
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+        flag_escape = d_name == :etag ? nil : (d_name == :Etag)
+        expr = NativeExpression.new(d_arg, flag_escape)
+        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        stmt_list.concat(cont_stmts)
+        stmt_list << build_print_expr_stmt(expr, nil, etag_info)
+
+      when :elem, :Elem, :ELEM
+        flag_escape = d_name == :elem ? nil : (d_name == :Elem)
+        expr = NativeExpression.new(d_arg, flag_escape)
+        stmt_list << build_print_expr_stmt(expr, stag_info, etag_info)
+
+      when :cont, :Cont, :CONT, :value, :Value, :VALUE
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+        stag_info.tail_space = etag_info.head_space = nil    # delete spaces
+        args = build_print_args(stag_info, attr_info, append_exprs)
+        flag_escape = (d_name == :cont || d_name == :value) ? nil : (d_name == :Cont || d_name == :Value)
+        args << NativeExpression.new(d_arg, flag_escape)
+        args << etag_info.tag_text    # TextExpression.new(etag_info.tag_ext)
+        stmt_list << PrintStatement.new(args)
+
+      when :attr, :Attr, :ATTR
+        unless d_arg =~ self.mapping_pattern()     # ex. /\A'([-:\w]+)'\s+(.*)\z/
+          raise convert_error("'#{d_str}': invalid attr pattern.", stag_info.linenum)
+        end
+        aname = $1;  avalue = $2
+        flag_escape = d_name == :attr ? nil : (d_name == :Attr)
+        attr_info[aname] = NativeExpression.new(avalue, flag_escape)
+
+      when :append, :Append, :APPEND
+        flag_escape = d_name == :append ? nil : (d_name == :Append)
+        append_exprs << NativeExpression.new(d_arg, flag_escape)
+
+      when :replace, :placeholder
+        unless d_arg =~ /\A_?(element|content)\('?(\w+)'?\)\z/
+          raise convert_error("'#{d_str}': invalid #{d_name} format.", stag_info.linenum)
+        end
+        kind = $1
+        name = $2
+        content_only = kind == 'content'
+        is_replace = d_name == :replace
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if !is_replace
+        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if !is_replace
+        #stmt_list << ExpandStatement.new(:element, name)
+        elem_info = @elem_info_table[name]
+        unless elem_info
+          raise convert_error("'#{d_str}': element '#{name}' not found.", stag_info.linenum)
+        end
+        expand_element_info(elem_info, stmt_list, content_only)
+        stmt_list << build_print_stmt(etag_info, nil, nil)                if !is_replace
+
+      else
+        return false
+      end #case
+
+      return true
+
+    end
+
+
+  end #class
+
+
+
+  ##
+  ## [abstract] covnert presentation data into list of Statement.
+  ##
+  class Converter
+    include ConverterHelper
+
+
+    def initialize(handler, properties={})
+      @handler = handler
+      @handler.converter = self
+    end
+
+    attr_reader :input, :handler, :dattr
+
+
+    ## [abstract] convert string into list of Statement.
+    def convert(input)
+      raise NotImplementedError.new("#{self.class}#convert() is not implemented.")
+    end
+
+
+  end
+
+
+
+  ##
+  ## convert presentation data (html) into a list of Statement.
+  ## notice that TextConverter class hanlde html file as text format, not html format.
+  ##
+  class TextConverter < Converter
+
+
+    def initialize(handler, properties={})
+      super
+      @dattr = properties[:dattr]   || Config::PROPERTY_DATTR    # 'title'
+    end
+
+
+    def _initialize(input)
+      @scanner = StringScanner.new(input)
+      @rest = nil
+      @linenum = 1
+      @linenum_delta = 0
+    end
+    private :_initialize
+
+    attr_reader :rest, :linenum
+
+
+    def convert(input)
+      _initialize(input)
+      stmt_list = []
+      doc_ruleset = @handler.get_element_ruleset('DOCUMENT')
+      stmt_list << doc_ruleset.before if doc_ruleset && doc_ruleset.before
+      #stmt_list << NativeStatement.new(doc_ruleset.head.chomp, nil) if doc_ruleset && doc_ruleset.head
+      _convert(stmt_list)
+      stmt_list << doc_ruleset.after if doc_ruleset && doc_ruleset.after
+      #stmt_list << NativeStatement.new(doc_ruleset.tail.chomp, nil) if doc_ruleset && doc_ruleset.tail
+      return stmt_list
+    end
+
+
+    protected
+
+
+    #FETCH_PATTERN= /([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?)/    #"
+    @@fetch_pattern = /(.*?)(([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?))/m    #"
+
+
+    def self.fetch_pattern=(regexp)
+      @@fetch_pattern = regexp
+    end
+
+
+    private
+
+
+    def fetch
+      str = @scanner.scan(@@fetch_pattern)
+      unless str
+        @rest = @scanner.scan(/.*/)
+        return nil
+      end
+      taginfo = TagInfo.new(@scanner)
+      @linenum += (@linenum_delta + taginfo.prev_text.count("\n"))
+      @linenum_delta = taginfo.tag_text.count("\n")
+      taginfo.linenum = linenum
+      return taginfo
+    end
+
+
+    def _convert(stmt_list, start_tag_info=nil, start_attr_info=nil)
+      start_tagname = start_tag_info ? start_tag_info.tagname : nil
+      start_linenum = @linenum
+
+      ##
+      while taginfo = fetch()
+        #tag_text, prev_text, head_space, is_etag, tagname, attr_str, extra_space, is_empty, tail_space = taginfo.to_a
+
+        prev_text = taginfo.prev_text
+        stmt_list << create_text_print_stmt(prev_text) if prev_text && !prev_text.empty?
+
+        if taginfo.is_etag?              # end tag
+
+          if taginfo.tagname == start_tagname
+            etag_info = taginfo
+            return etag_info
+          else
+            stmt_list << create_text_print_stmt(taginfo.tag_text)
+          end
+
+        elsif taginfo.is_empty? || skip_etag?(taginfo)    # empty tag
+
+          attr_info = AttrInfo.new(taginfo.attr_str)
+          if has_directive?(attr_info, taginfo)
+            stag_info  = taginfo
+            etag_info  = nil
+            cont_stmts = []
+            handle_directive(stag_info, etag_info, cont_stmts, attr_info, stmt_list)
+          else
+            stmt_list << create_text_print_stmt(taginfo.tag_text)
+          end
+
+        else                            # start tag
+
+          attr_info = AttrInfo.new(taginfo.attr_str)
+          if has_directive?(attr_info, taginfo)
+            stag_info  = taginfo
+            cont_stmts = []
+            etag_info  = _convert(cont_stmts, taginfo)
+            handle_directive(stag_info, etag_info, cont_stmts, attr_info, stmt_list)
+          elsif taginfo.tagname == start_tagname
+            stag_info = taginfo
+            stmt_list << create_text_print_stmt(stag_info.tag_text)
+            etag_info = _convert(stmt_list, stag_info)
+            stmt_list << create_text_print_stmt(etag_info.tag_text)
+          else
+            stmt_list << create_text_print_stmt(taginfo.tag_text)
+          end
+
+        end #if
+
+      end #while
+
+      if start_tag_info
+        raise convert_error("'<#{start_tagname}>' is not closed.", start_tag_info.linenum)
       end
 
-      FETCH_PATTERN = /([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?)/	#"
+      stmt_list << create_text_print_stmt(@rest) if @rest
+      nil
 
-      def fetch
-         if @input !~ FETCH_PATTERN
-            @linenum += @delta
-            return @tagname = nil
-         end
-         @tag_str      = $&
-         @before_text  = $`
-         @before_space = $1
-         @slash_etag   = $2		# "" or "/"
-         @tagname      = $3
-         @attr_str     = $4
-         @extra_space  = $5
-         @slash_empty  = $6		# "" or "/"
-         @after_space  = $7
-         @after_text   = $'
+    end #def
 
-         @linenum  += @delta
-         @linenum  += $`.count("\n")
-         @delta    =  $&.count("\n")
 
-         @attr_names  = []
-         @attr_values = Kwartz::Util::OrderedHash.new
-         @attr_spaces = {}
-         @append_exprs = []
+    def handle_directive(stag_info, etag_info, cont_stmts, attr_info, stmt_list)
+      directive_name = directive_arg = directive_str = nil
+      append_exprs = nil
 
-         if ! @before_text.empty?
-            @is_begline = @before_text[-1] == ?\n
-         else
-            @is_begline = @prev_last_char == ?\n || ! @prev_last_char
-         end
-         @is_endline = @tag_str[-1] == ?\n
-         @is_whole_line = @is_begline && @is_endline
-         @prev_last_char = @tag_str[-1]
+      ## handle 'attr:' and 'append:' directives
+      d_str = nil
+      attr_info.directive.split(/;/).each do |d_str|
+        d_str.strip!
+        unless d_str =~ @handler.directive_pattern     # ex. /\A(\w+):\s*(.*)\z/
+          raise convert_error("'#{d_str}': invalid directive pattern", stag_info.linenum)
+        end
+        d_name = $1.intern   # directive name
+        d_arg  = $2 || ''    # directive arg
+        case d_name
+        when :attr, :Attr, :ATTR
+          @handler.handle(d_name, d_arg, d_str, stag_info, etag_info,
+                          cont_stmts, attr_info, append_exprs, stmt_list)
+        when :append, :Append, :APPEND
+          append_exprs ||= []
+          @handler.handle(d_name, d_arg, d_str, stag_info, etag_info,
+                          cont_stmts, attr_info, append_exprs, stmt_list)
+        else
+          if directive_name
+            raise convert_error("'#{d_str}': not available with '#{directive_name}' directive.", stag_info.linenum)
+          end
+          directive_name = d_name
+          directive_arg  = d_arg
+          directive_str  = d_str
+        end #case
+      end if attr_info.directive
 
-         if !@is_begline && !@is_endline  ## && @tagname == 'span'
-            @before_text += @before_space
-            @before_space = ''
-            @after_text   = @after_space + @after_text
-            @after_space  = ''
-            @tag_str.strip!
-         end
-
-         @input    = @after_text
-         return @tagname
+      ## handle other directives
+      ret = @handler.handle(directive_name, directive_arg, directive_str, stag_info, etag_info,
+                            cont_stmts, attr_info, append_exprs, stmt_list)
+      if directive_name && !ret
+        raise convert_error("'#{directive_str}': unknown directive.", stag_info.linenum)
       end
 
+    end
 
-      def fetch_all(input)
-         reset(input)
-         s = ''
-         while tagname = fetch()
-            s << "linenum+delta: #{@linenum}+#{@delta}\n"
-            s << "tagname:       #{@slash_etag}#{@tagname}#{@slash_empty}\n"
-            s << "before_text:   #{@before_text.inspect}\n"
-            s << "before_space:  #{@before_space.inspect}\n"
-            s << "attr_str:      #{@attr_str.inspect}\n"
-            s << "after_space:   #{@after_space.inspect}\n"
-            s << "\n"
-         end
-         s <<    "rest:          #{@input.inspect}\n"
-         s <<    "linenum:       #{@linenum}\n"
-         return s
+
+    ## detect whether directive is exist or not
+    def has_directive?(attr_info, taginfo)
+      ## title attribute
+      val = attr_info[@dattr]     # ex. @dattr == 'title'
+      if val && val.is_a?(String) && !val.empty?
+        if val[0] == ?\  ;
+          val[0,1] = ''     # delete a space
+          taginfo.rebuild_tag_text(attr_info)
+          #return false
+        elsif val =~ @handler.directive_pattern()    # ex. /\A(\w+):\s*(.*)/
+          attr_info.delete(@dattr)
+          attr_info.directive = val
+          return true
+        else
+          raise convert_error("'#{@dattr}=\"#{val}\"': invalid directive pattern.", taginfo.linenum)
+        end
       end
-
-      def convert(input)
-         reset(input)
-         if !@properties.key?(:newline) && input =~ /(\r?\n)/
-            @properties[:newline] = $1
-         end
-         _convert(nil, @stmt_list)
-         return BlockStatement.new(@stmt_list)
+      ## id attribute
+      val = attr_info['id']
+      if val
+        case val
+        when /\A\w+\z/
+          attr_info.directive = @handler.marking_format() % val   # ex. 'id:%s'
+          return true
+        #when @handler.directive_pattern()     # ex. /\A\w+:/
+        #  attr_info.delete('id')
+        #  attr_info.directive = val
+        #  return true
+        when /\Amark:(\w+)\z/       # *undocumented*
+          val = $1
+          attr_info.directive = @handler.marking_format() % val
+          attr_info.delete('id')
+          return true
+        end
       end
-
-      ## 0 for :set and :value, 1 for other
-      @@depths = { :set => 0, :value => 0, :Value => 0, :VALUE => 0 }
-      @@depths.default = 1
-
-      ## :value and :loop cannot be used with empty tag
-      @@empty_denied = {
-         :value => true, :Value => true, :VALUE => true,
-         :loop  => true, :Loop  => true, :LOOP  => true,
-         :list  => true, :List  => true, :LIST  => true,
-      }
-
-      private
-
-      def parse_expression(expr_str, linenum)
-         @parser.reset(expr_str, linenum)
-         expr = @parser.parse_expression()
-         unless @parser.token() == nil
-            raise ConvertionError.new("'#{expr_str}': invalid expression.", linenum, @filename)
-         end
-         return expr
-      end
-
-      def parse_expr_stmt(stmt_str)
-         @parser.reset(stmt_str, 1)
-         stmt = @parser.parse_expr_stmt()
-         unless @parser.token() == nil
-            raise ConvertionError.new("'#{stmt_str}': invalid statement.", linenum, @filename)
-         end
-         return stmt
-      end
-
-      def save_taginfo()
-         hash = {
-            :tagname       => @tagname,
-            :is_empty      => (@slash_empty == '/'),
-            :attr_names    => @attr_names,
-            :attr_values   => @attr_values,
-            :attr_spaces   => @attr_spaces,
-            :append_exprs  => @append_exprs,
-            :before_space  => @before_space,
-            :after_space   => @after_space,
-            :extra_space   => @extra_space,
-            :linenum       => @linenum,
-            :is_whole_line => @is_whole_line,
-            #:is_begline    => @is_begline,
-            #:is_endline    => @is_endline,
-         }
-         return hash
-      end
+      return false
+    end
 
 
-      def _convert(etagname, stmt_list=[], flag_tag_print=true)
-         start_linenum = @linenum
-         if etagname
-            Kwartz::assert unless @tagname == etagname
-            #if flag_tag_print
-            #   if @tagname == 'span' && @attr_values.empty?
-            #      stmt_list << create_print_node('', @linenum)
-            #   else
-            #      stmt_list << build_print_node()
-            #   end
-            #end
-            if flag_tag_print
-               if @tagname == 'span' && @attr_values.empty?
-                  flag_spantag = true
-                  s = @is_whole_line ? '' : @before_space + @after_space
-                  stmt_list << create_print_node(s, @linenum)
-               else
-                  flag_spantag = false
-                  stmt_list << build_print_node()
-               end
-            end
-         end
-
-         while tagname = fetch()
-            if !@before_text.empty?
-               stmt_list << create_print_node(@before_text, @linenum)
-            end
-
-            if @slash_etag == '/'		# end-tag
-               if @tagname == etagname
-                  #if flag_tag_print
-                  #   if @tagname == 'span' && @attr_values.empty?
-                  #      stmt_list << create_print_node('', @linenum)
-                  #   else
-                  #      stmt_list << build_print_node()
-                  #   end
-                  #end
-                  if flag_tag_print
-                     if flag_spantag
-                        s = @is_whole_line ? '' : @before_space + @after_space
-                        stmt_list << create_print_node(s, @linenum)
-                     else
-                        stmt_list << create_print_node(@tag_str, @linenum)
-                     end
-                  end
-                  return stmt_list
-               else
-                  stmt_list << create_print_node(@tag_str, @linenum)
-               end
-            elsif @slash_empty == '/' || @noend_tags.include?(@tagname)		# empty-tag
-               directive_name, directive_arg = parse_attr_str(@attr_str)
-               if directive_name
-                  if directive_name == :mark
-                     body_stmt_list = []
-                  elsif @tagname == 'span' && @attr_values.empty?
-                     s = @is_whole_line ? '' : @before_space + @after_space
-                     body_stmt = create_print_node(s, @linenum)
-                     body_stmt_list = [ body_stmt ]
-                  else
-                     body_stmt = build_print_node()
-                     body_stmt_list = [ body_stmt ]
-                  end
-                  staginfo = save_taginfo()
-                  etaginfo = nil
-                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, @linenum, staginfo, etaginfo)
-               else
-                  stmt_list << build_print_node()
-               end
-            else				# start-tag
-               directive_name, directive_arg = parse_attr_str(@attr_str)
-               if directive_name
-                  body_stmt_list = []
-                  stag_linenum = @linenum
-                  staginfo = save_taginfo()
-                  _convert(@tagname, body_stmt_list, directive_name != :mark)
-                  etaginfo = save_taginfo()
-                  handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, stag_linenum, staginfo, etaginfo)
-               elsif @tagname == etagname
-                  _convert(@tagname, stmt_list)
-               else
-                  stmt_list << build_print_node()
-               end
-            end
-         end # of while
-
-         if etagname
-            raise ConvertionError.new("'<#{etagname}>' is not closed by end-tag.", start_linenum, @filename)
-         end
-         if !@input.empty?
-            stmt_list << create_print_node(@input, @linenum)
-         end
-         return stmt_list
-      end
+    skip_etags = Config::NO_ETAGS    #  %w[input img br hr meta link]
+    #@@skip_etag_table = skip_etags.inject({}) { |table, tagname| table[tagname] = true; table }
+    @@skip_etag_table = {} ; skip_etags.each { |tagname| @@skip_etag_table[tagname] = true }
 
 
-      def handle_directive(directive_name, directive_arg, body_stmt_list, stmt_list, linenum, staginfo, etaginfo)
-         case directive_name
-         when :mark
-            marking = directive_arg
-            hash = staginfo[:attr_values]
-            hash.each do |aname, avalue|
-               Kwartz::assert unless avalue.is_a?(String)
-               list = expand_embed_expr(avalue, linenum)
-               if list.empty?
-                  expr = StringExpression.new("")
-               else
-                  expr = list.shift
-                  while !list.empty?
-                     left = expr
-                     right = list.shift
-                     expr = ArithmeticExpression.new('.+', left, right)
-                  end
-               end
-               hash[aname] = expr
-            end
-            @elem_list << Element.create_from_taginfo(marking, staginfo, etaginfo, body_stmt_list)
-            stmt_list << ExpandStatement.new(:element, marking)
-
-         when :value, :Value, :VALUE
-            if !etaginfo
-               msg = "directive '#{directive_name}' cannot use with empty tag."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            expr = parse_expression(directive_arg, linenum)
-            if directive_name == :Value
-               expr = FunctionExpression.new("E", [ expr ])
-            elsif directive_name == :VALUE
-               expr = FunctionExpression.new("X", [ expr ])
-            end
-            first_stmt = body_stmt_list.shift
-            last_stmt  = body_stmt_list.pop
-            stmt_list << first_stmt
-            stmt_list << PrintStatement.new( [ expr ] )
-            stmt_list << last_stmt
-
-         when :foreach, :Foreach, :FOREACH, :list, :List, :LIST, :loop, :Loop, :LOOP
-            flag_inner, flag_counter, flag_toggle = @@flag_matrix[directive_name]
-            Kwartz::assert if !flag_counter && flag_toggle
-            if flag_inner && !etaginfo
-               msg = "directive '#{directive_name}' cannot use with empty tag."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            unless directive_arg =~ /\A(\w+)\s*[:=]\s*(.*)/
-               msg = "'#{directive_name}:#{directive_arg}': invalid directive."
-               raise ConvertionError.new(msg, linenum, @filename)
-            end
-            var_name = $1
-            list_str = $2
-            loopvar_expr = VariableExpression.new(var_name)
-            list_expr = parse_expression(list_str, linenum)
-            if flag_inner
-               first_stmt = body_stmt_list.shift
-               last_stmt  = body_stmt_list.pop
-            end
-            stmt_list << first_stmt        if flag_inner
-            ctr_name = var_name + "_ctr"   if flag_counter
-            tgl_name = var_name + "_tgl"   if flag_toggle
-            stmt_list << parse_expr_stmt("#{ctr_name} = 0;")              if flag_counter
-            body_stmt_list.unshift(parse_expr_stmt("#{tgl_name} = #{ctr_name} % 2 == 0 ? #{@even} : #{@odd};")) if flag_toggle
-            body_stmt_list.unshift(parse_expr_stmt("#{ctr_name} += 1;"))  if flag_counter
-            stmt_list << ForeachStatement.new(loopvar_expr, list_expr, BlockStatement.new(body_stmt_list))
-            stmt_list << last_stmt         if flag_inner
-
-         when :if
-            expr = parse_expression(directive_arg, linenum)
-            stmt_list << IfStatement.new(expr, BlockStatement.new(body_stmt_list))
-
-         when :elseif
-            expr = parse_expression(directive_arg, linenum)
-            stmt = stmt_list[-1]
-            while stmt.token() == :if && stmt.else_stmt != nil
-               stmt = stmt.else_stmt
-            end
-            unless stmt.token() == :if
-               raise ConvertionError.new("elseif-directive must be at just after the if-statement or elseif-statement.", linenum, @filename)
-            end
-            stmt.else_stmt = IfStatement.new(expr, BlockStatement.new(body_stmt_list))
-
-         when :else
-            stmt = stmt_list[-1]
-            while stmt.token() == :if && stmt.else_stmt != nil
-               stmt = stmt.else_stmt
-            end
-            unless stmt.token() == :if
-               raise ConvertionError.new("else-directive must be at just after the if-statement or elseif-statement.", linenum, @filename)
-            end
-            stmt.else_stmt = BlockStatement.new(body_stmt_list)
-
-         when :set
-            expr = parse_expression(directive_arg, linenum)
-            stmt_list << ExprStatement.new(expr)
-            stmt_list.concat(body_stmt_list)
-
-         when :dummy
-            # nothing
-
-         when :while, :loop
-            expr = parse_expression(directive_arg, linenum)
-            flag_inner = directive_name == :loop
-            if flag_inner
-               first_stmt = body_stmt_list.shift
-               last_stmt  = body_stmt_list.pop
-               stmt_list << first_stmt
-               stmt_list << WhileStatement.new(expr, BlockStatement.new(body_stmt_list))
-               stmt_list << last_stmt
-            else
-               stmt_list << WhileStatement.new(expr, BlockStatement.new(body_stmt_list))
-            end
-
-         when :replace, :placeholder
-            if directive_arg =~ /\A(\w+)(:(content|element))?\z/
-               name = $1
-               type = $3 ? $3.intern : :element
-            else
-               raise ConvertionError.new("'#{name}': invalid name for replace-directive.", linenum, @filename)
-            end
-            flag_inner = directive_name == :placeholder
-            if flag_inner
-               unless etaginfo
-                  msg = "directive '#{directive_name}' cannot use with empty tag."
-                  raise ConvertionError.new(msg, linenum, @filename)
-               end
-               first_stmt = body_stmt_list.shift
-               last_stmt  = body_stmt_list.pop
-               stmt_list << first_stmt
-               stmt_list << ExpandStatement.new(type, name)
-               stmt_list << last_stmt
-            else
-               stmt_list << ExpandStatement.new(type, name)
-            end
-
-         when :include, :Include, :INCLUDE
-            basename = directive_arg
-            if basename =~ /\A"(.*)"\z/
-               basename = $1
-            elsif basename =~ /\A'(.*)'\z/
-               basename = $1
-            end
-
-            pathlist = @properties[:incdirs] || Kwartz::Config::INCDIRS || ['.']
-            filename = nil
-            pathlist.each do |path|
-               filename = path + '/' + basename
-               break if test(?f, filename)
-               filename = nil
-            end
-            unless filename
-               raise ConvertionError.new("'#{basename}': include file not found.", linenum, @filename)
-            end
-
-            pdata = File.open(filename) { |f| f.read() }
-            properties = @properties.dup()
-            properties[:filename] = filename
-            converter = Kwartz::Converter.new(properties)
-            block_stmt = converter.convert(pdata)
-
-            stmt_list.concat(body_stmt_list) if directive_name == :INCLUDE
-            block_stmt.statements.each do |stmt|
-               stmt_list << stmt
-            end
-            stmt_list.concat(body_stmt_list) if directive_name == :Include
-
-            element_list = converter.element_list
-            @elem_list.concat(element_list)
-
-         else
-            raise ConvertionError.new("'#{directive_name}': invalid directive", linenum, @filename)
-         end
-      end
+    def skip_etag?(taginfo)
+      return @@skip_etag_table[taginfo.tagname]
+    end
 
 
-      def parse_attr_str(str=@attr_str)
-         while str =~ /\A(\s*)([-:_\w]+)="(.*?)"/
-            space      = $1
-            attr_name  = $2
-            attr_value = $3
-            @attr_names << attr_name
-            @attr_values[attr_name] = attr_value
-            @attr_spaces[attr_name] = space
-            str = $'
-         end
-         Kwartz::assert unless str.empty?
-
-         if @attr_values['id']
-            dname, darg = parse_attr_idvalue(@attr_values['id'])
-            if dname
-               directive_name = dname
-               directive_arg = darg
-            end
-            if @attr_values['id'] !~ /\A[-_\w]+\z/
-               @attr_values.delete('id')
-               @attr_names.delete_if { |item| item=='id' }
-            end
-         end
-         if @attr_values[@kd_attr]
-            dname, darg = parse_attr_kdvalue(@attr_values[@kd_attr])
-            if dname
-               directive_name = dname
-               directive_arg = darg
-            end
-            @attr_values.delete(@kd_attr)
-            @attr_names.delete_if { |item| item==@kd_attr }
-         end
-
-         return directive_name, directive_arg
-      end
+  end #class
 
 
-      def parse_attr_idvalue(attr_value)
-         if attr_value =~ /\A[-_\w]+\z/
-            if attr_value.index(?-)
-               return nil, nil
-            else
-               return :mark, attr_value
-            end
-         end
-         return parse_attr_kdvalue(attr_value)
-      end
 
-
-      DIRECTIVES = {
-         :attr    =>  true,     :Attr    =>  true,     :ATTR    =>  true,
-         :append  =>  true,     :Append  =>  true,     :APPEND  =>  true,
-         :foreach =>  true,     :Foreach =>  true,     :FOREACH =>  true,
-         :list    =>  true,     :List    =>  true,     :LIST    =>  true,
-         :loop    =>  true,     :Loop    =>  true,     :LOOP    =>  true,
-         :include =>  true,     :Include =>  true,     :INCLUDE =>  true,
-         :value   =>  true,     :Value   =>  true,     :VALUE   =>  true,
-         :if      =>  true,
-         :elsif   =>  true,
-         :elseif  =>  true,
-         :else    =>  true,
-         :set     =>  true,
-         :while   =>  true,
-         #:loop    =>  true,
-         :mark    =>  true,
-         :dummy   =>  true,
-         :replace =>  true,
-         :placeholder =>  true,
-      }
-
-      def parse_attr_kdvalue(attr_value)
-         directive_name = directive_arg = nil
-         attr_value.split(/;/).each do |str|
-            #if str =~ /\A[_\w]+\z/
-            #   directive_name = :mark
-            #   directive_arg  = str
-            #   next
-            #end
-            if str !~ /\A(\w+):(.*)\z/
-               raise ConvertionError.new("'#{str}': invalid directive.", self)
-            end
-            d_name = $1.intern		# directive name
-            d_arg  = $2			# directive arg
-
-            unless DIRECTIVES[d_name]
-               raise ConvertionError.new("'#{d_name}': invalid directive name.", @linenum, @filename)
-            end
-            case d_name
-            when :attr, :Attr, :ATTR
-               if d_arg !~ /^([-_\w]+(?::[-_\w]+)?)[:=](.*)$/
-                  raise ConvertionError.new("'#{str}': invalid directive.", self)
-               end
-               attr_name = $1
-               attr_value = $2
-               e1, e2 = @@escape_matrix[d_name]
-               s = "#{e1}#{attr_value}#{e2}"
-               @attr_names << attr_name unless @attr_names.member?(attr_name)
-               @attr_values[attr_name] = parse_expression(s, @linenum)
-               #@attr_values[attr_name] = parse_expression("#{e1}#{attr_value}#{e2}", @linenum)
-            when :append, :Append, :APPEND
-               e1, e2 = @@escape_matrix[d_name]
-               @append_exprs << parse_expression("#{e1}#{d_arg}#{e2}", @linenum)
-            else
-               if directive_name != nil
-                  msg = "directive '#{directive_name}' and '#{d_name}': cannot specify two or more directives in an element."
-                  raise ConvertionError.new(msg, self)
-               end
-               directive_name = d_name;  directive_arg  = d_arg
-            end
-         end
-         return directive_name, directive_arg
-      end
-
-
-      def build_print_node(linenum=@linenum)
-         arguments = []
-         arguments << StringExpression.new("#{@before_space}<#{@slash_etag}#{@tagname}")
-         @attr_names.each do |aname|
-            avalue = @attr_values[aname]
-            aspace = @attr_spaces[aname] || ' '
-            if avalue.is_a?(Expression)
-               arguments << StringExpression.new("#{aspace}#{aname}=\"")
-               arguments << avalue
-               arguments << StringExpression.new("\"")
-            else
-               #arguments << StringExpression.new("#{aspace}#{aname}=\"#{avalue}\"")
-               str  = "#{aspace}#{aname}=\"#{avalue}\""
-               list = expand_embed_expr(str, linenum)
-               arguments.concat(list)
-            end
-         end
-         arguments.concat(@append_exprs) unless @append_exprs.empty?
-         arguments << StringExpression.new("#{@extra_space}#{@slash_empty}>#{@after_space}")
-         #
-         arguments2 = []
-         expr = nil
-         arguments.each do |arg|
-            if arg.is_a?(StringExpression)
-               expr = expr ? StringExpression.new(expr.value + arg.value) : arg
-            else
-               if expr
-                  arguments2 << expr
-                  expr = nil
-               end
-               arguments2 << arg
-            end
-         end
-         arguments2 << expr if expr
-         return PrintStatement.new(arguments2)
-      end
-
-
-      def create_print_node(str, linenum)
-         arguments = expand_embed_expr(str, linenum)
-         return PrintStatement.new(arguments)
-      end
-
-
-      def expand_embed_expr(str, linenum)
-         list = []
-         pattern = Kwartz::Config::EMBED_PATTERN   ## /\#\{(.*?)\}\#/
-         while str =~ pattern
-            front     = $`
-            following = $'
-            expr_str  = $1
-            if front && !front.empty?
-               list << StringExpression.new(front)
-            end
-            if expr_str && !expr_str.empty?
-               list << parse_expression(expr_str, linenum)
-            end
-            str = following
-         end
-         if str && !str.empty?
-            list << StringExpression.new(str)
-         end
-         return list
-      end
-
-
-      @@flag_matrix = {
-         # directive_name => [ flag_inner, flag_counter, flag_toggle ]
-         :foreach => [ false, false, false],
-         :Foreach => [ false, true,  false],
-         :FOREACH => [ false, true,  true ],
-         :list    => [ true,  false, false],
-         :List    => [ true,  true,  false],
-         :LIST    => [ true,  true,  true ],
-         :loop    => [ true,  false, false],
-         :Loop    => [ true,  true,  false],
-         :LOOP    => [ true,  true,  true ],
-      }
-
-      @@escape_matrix = {
-         :attr   => [ '',   ''  ],
-         :Attr   => [ 'E(', ')' ],
-         :ATTR   => [ 'X(', ')' ],
-         :append => [ '',   ''  ],
-         :Append => [ 'E(', ')' ],
-         :APPEND => [ 'X(', ')' ],
-         :value  => [ '',   ''  ],
-         :Value  => [ 'E(', ')' ],
-         :VALUE  => [ 'X(', ')' ],
-      }
-
-   end # class Convertion
-
-end # module Kwartz
-
-
-if __FILE__ == $0
-
-   input = ARGF.read()
-   converter = Kwartz::Converter.new()
-   #--
-   #print converter.fetch_all
-   #--
-   block_stmt = converter.convert(input)
-   print block_stmt._inspect
-   converter.elem_list.each do |elem|
-      print elem._inspect
-   end
-end
+end #moduel

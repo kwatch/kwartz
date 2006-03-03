@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-$T = 'thumbnail'
-
-basedir = File::dirname(__FILE__)
-load "#{basedir}/../../border2/.expected/Rookbook"

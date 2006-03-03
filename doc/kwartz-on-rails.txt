@@ -1,0 +1,1035 @@
+.=title:	Kwartzite on Rails
+.?version:	$Release$
+.?lastupdate:	$Date$
+.?copyright:	$Copyright$
+
+
+.$ Preface		| preface*
+
+This document shows some examples of Kwartzite on Rails.
+See {{<Kwartzite Users' Guide|users-guide.en.html>}} for details about Kwartzite.
+
+
+
+.$$ Table of Contents	| toc*
+
+.<<< kwartzite-on-rails.toc
+
+
+
+.$ Basic Examples
+
+.$$ Link
+
+.? link
+.--------------------
+<%= link_to "Add Comment", :action => "add_comment" %> 
+
+.--------------------
+
+.--------------------
+<a href="#" id="add_comment_link">Add Comment</a>
+.--------------------
+
+.--------------------
+#add_comment_link {
+  elem: link_to "Add Comment", :action => "add_comment";
+}
+.--------------------
+
+
+.$$ Form
+
+{{<Agile Web Development With Rails Chapter 17 Action View|http://media.pragprog.com/titles/rails/Chapter17.pdf>}}
+
+.? page 349, file 87
+.--------------------
+<%= error_messages_for("picture") %> 
+<%= form_tag({:action => 'save'}, :multipart => true) %> 
+    Comment: <%= text_field("picture", "comment") %> 
+    <br/> 
+    Upload your picture: <%= file_field("picture", "picture") %> 
+    <br/> 
+    <%= submit_tag("Upload file") %> 
+<%= end_form_tag %> 
+.--------------------
+
+
+.? Presentation data file on Kwartzite
+.-------------------- chapter17.html
+<span {{*title="error_messages_for 'picture'"*}}>error message</span>
+<form {{*title="form_tag {:action=>'save'}, :multipart=>true"*}}>
+  Comment: <input type="text" {{*title="text_field 'picture', 'comment'"*}}>
+  <br/>
+  Upload your picture: <input type="file" {{*title="file_field 'picture', 'picture'"*}}>
+  <br/>
+  <input type="submit" value="Upload file" {{*title="submit_tag"*}}>
+</form>
+.--------------------
+
+.? Generate eRuby file from presentation data
+.====================
+$ kwartzite chapter17.html
+.<<<:! kwartzite -l rails d/chapter17.html
+.====================
+
+
+
+.? from Rails API
+.--------------------
+  <%= form_tag :action=>"save" %>
+    Name:     <%= text_field "person", "name", "size" => 20 %>
+    Password: <%= password_field "person", "password", "maxsize" => 20 %>
+    Single?:  <%= check_box "person", "single" %>
+    Description:  <%= text_area "person", "description", "cols" => 20 %>
+    <%= submit_tag "Save" %>
+  <%= end_form_tag>
+.--------------------
+
+.? Presentation data file on Kwartzite (form-ex1.html)
+.-------------------- form-ex1.html
+  <form action="save" {{*title="form_tag"*}}>
+    Name:     <input type="text" size="20" {{*title="text_field 'person', 'name'"*}}>
+    Password: <input type="text" maxsize="20" {{*title="password_field 'person', 'password'"*}}>
+    Single?:  <input type="checkbox" {{*title="check_box 'person', 'single'"*}}>
+    Description:  <textarea cols="20" 
+                       {{*title="text_area 'person', 'description'"*}}></textarea>
+    <input type="sumit" value="Save" {{*title="submit_tag"*}}>
+  </form>
+.--------------------
+
+.? Generate eRuby file from presentation data file
+.====================
+$ kwartzite -l rails form-ex1.html
+.<<<:! kwartzite -l rails d/form-ex1.html
+.====================
+
+.#.--------------------
+.#  <form action="save" id="mark:save_form">
+.#    Name:     <input type="text" id="person_name" size="20">
+.#    Password: <input type="text" id="person_password" maxsize="20">
+.#    Single?:  <input type="checkbox" id="person_single">
+.#    Description:  <textarea cols="20" id="person_desc"></textarea>
+.#    <input type="sumit value="Save" id="mark:sumbit">
+.#  </form>
+.#.--------------------
+.#
+.#.--------------------
+.##save_form {
+.#  stag:  form_tag :action=>"save";
+.#}
+.#
+.##person_name {
+.#  elem:  text_field "person", "name", "size" => 20;
+.#}
+.#
+.##person_password {
+.#  elem:  password_field "person", "password", "maxsize" => 20;
+.#}
+.#
+.##person_single {
+.#  elem:  check_box "person", "single";
+.#}
+.#
+.##person_desc {
+.#  elem:  text_area "person", "description", "cols" => 20;
+.#}
+.#
+.##submit {
+.#  elem:  submit_tag "Save";
+.#}
+.#.--------------------
+
+
+
+
+.$ Rolling with Ruby on Rails	| rolling
+
+from {{<Rolling with Ruby on Rails|http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html?page=4>}}
+
+.#.$$ list.rhtml	| rolling-list
+.#
+.#.? Original eRuby file ({{<list.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html?page=4>}})
+.#.--------------------
+.#<html>
+.#<head>
+.#<title>All Recipes</title>
+.#</head>
+.#<body>
+.#
+.#<h1>Online Cookbook - All Recipes</h1>
+.#<table border="1">
+.# <tr>
+.#  <td width="80%"><p align="center"><i><b>Recipe</b></i></td>
+.#  <td width="20%"><p align="center"><i><b>Date</b></i></td>
+.# </tr>
+.#
+.# {{*<% @recipes.each do |recipe| %>*}}
+.#  <tr>
+.#   <td>{{*<%= link_to recipe.title, :action => "show", :id => recipe.id %>*}}</td>
+.#   <td>{{*<%= recipe.date %>*}}</td>
+.#  </tr>
+.# {{*<% end %>*}}
+.#</table>
+.#<p>{{*<%= link_to "Create new recipe", :action => "new" %>*}}</p>
+.#
+.#</body>
+.#</html>
+.#.--------------------
+.#
+.#.? Presentation data file on Kwartz (list.html)
+.#.-------------------- list.html
+.#<html>
+.#<head>
+.#<title>All Recipes</title>
+.#</head>
+.#<body>
+.#
+.#<h1>Online Cookbook - All Recipes</h1>
+.#<table border="1">
+.# <tr>
+.#  <td width="80%"><p align="center"><i><b>Recipe</b></i></td>
+.#  <td width="20%"><p align="center"><i><b>Date</b></i></td>
+.# </tr>
+.#
+.#  <tr>
+.#   <td>{{*<a href="#" id="mark:recipe_link">recipe.title</a>*}}</td>
+.#   <td {{*id="mark:recipe_date"*}}>recipe.date</td>
+.#  </tr>
+.#</table>
+.#<p><a href="#" id="mark:create_recipe_link">Create new recipe</a></p>
+.#
+.#</body>
+.#</html>
+.#.--------------------
+.#
+.#.? Presentation logic file on Kwartz (list.plogic)
+.#.-------------------- list.plogic
+.##recipes {
+.#  plogic: {
+.#    @recipes.each do |recipe|
+.#      _stag
+.#      _cont
+.#      _etag
+.#    end
+.#  }
+.#}
+.#
+.##recipe_link {
+.#  value:  link_to recipe.title, :action => "show", :id => recipe.id;
+.#}
+.#
+.##recipe_data {
+.#  value:  recipe.date;
+.#}
+.#
+.##create_recipe_link {
+.#  elem:  link_to "Create new recipe", :action => "new";
+.#}
+.#.--------------------
+
+
+
+.$$ edit.html		| rolling-edit
+
+.$$$ Original eRuby file	| rolling-edit-eruby
+
+.? {{<edit.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html?page=5>}}
+.--------------------
+<html>
+ <head>
+  <title>Edit Recipe</title>
+ </head>
+ <body>
+ <h1>Edit Recipe</h1>
+
+ <form action="../update/<%= @recipe.id %>" method="POST"">
+  <input id="recipe_id" name="recipe[id]" size="30" 
+         type="hidden" value="{{*<%= @recipe.id %>*}}" />
+  <p><b>Title</b><br>
+  <input id="recipe_title" name="recipe[title]" size="30" 
+         type="text" value="{{*<%= @recipe.title %>*}}" />
+  </p>
+  <p><b>Description</b><br>
+  <input id="recipe_description" name="recipe[description]" 
+         size="30" type="text" 
+         value="{{*<%= @recipe.description %>*}}" />
+  </p>
+  <p><b>Category:</b><br>
+
+  <select name="recipe[category_id]">
+   {{*<% @categories.each do |category| %>*}}
+       <option value="{{*<%= category.id %>*}}" 
+         {{*<%= ' selected' if category.id == @recipe.category_id %>*}}>
+         {{*<%= category.name %>*}}
+       </option>
+   {{*<% end %>*}}
+  </select></p>
+
+  <p><b>Instructions</b><br>
+  <textarea cols="40" id="recipe_instructions" 
+            name="recipe[instructions]" 
+            rows="20" wrap="virtual">
+    {{*<%= @recipe.instructions %>*}}
+  </textarea> </p>
+  <input type="submit" value="Update" />
+ </form>
+
+ <a href="/recipe/show/{{*<%= @recipe.id %>*}}">
+   Show
+ </a> | 
+ <a href="/recipe/list">
+  Back 
+ </a>
+
+ </body>
+</html>
+.--------------------
+
+
+.$$$ Kwartz template	| rolling-edit-kwartz
+
+.? Presentation data file (edit.html)
+.-------------------- edit.html
+<html>
+ <head>
+  <title>Edit Recipe</title>
+ </head>
+ <body>
+ <h1>Edit Recipe</h1>
+
+ <form action="update" method="POST" {{*title="mark:edit_form"*}}>
+  <input {{*id="recipe_id"*}} name="recipe[id]" size="30" 
+         type="hidden" value="" />
+  <p><b>Title</b><br>
+  <input {{*id="recipe_title"*}} name="recipe[title]" size="30" 
+         type="text" value="" />
+  </p>
+  <p><b>Description</b><br>
+  <input {{*id="recipe_description"*}} name="recipe[description]" 
+         size="30" type="text" 
+         value="" />
+  </p>
+  <p><b>Category:</b><br>
+
+  <select name="recipe[category_id]">
+       <option value="" {{*title="mark:category_option"*}}>
+         category.name
+       </option>
+  </select></p>
+
+  <p><b>Instructions</b><br>
+  <textarea cols="40" {{*id="recipe_instructions" *}}
+            name="recipe[instructions]" 
+            rows="20" wrap="virtual">
+    ...recipe instructions here...
+  </textarea> </p>
+  <input type="submit" value="Update" />
+ </form>
+
+ <a href="/recipe/show/0" {{*title="mark:show_link"*}}>
+   Show
+ </a> | 
+ <a href="/recipe/list">
+  Back 
+ </a>
+
+ </body>
+</html>
+.--------------------
+
+
+.? Presentation logic file (edit.plogic)
+.-------------------- edit.plogic
+#edit_form {
+  attrs:  "action" "../update/#{@recipe.id}";
+}
+
+#recipe_id {
+  attrs: "value" @recipe.id;
+}
+
+#recipe_title {
+  attrs:  "value" @recipe.title;
+}
+
+#recipe_description {
+  attrs:  "value" @recipe.description;
+}
+
+#category_option {
+  value:  category.name;
+  attrs:  "value" category.id;
+  append: ' selected' if category.id == @recipe.category_id;
+  plogic: {
+    @categories.each do |category|
+      _stag
+      _cont
+      _etag
+    end
+  }
+}
+
+#recipe_instructions {
+  value:  @recipe.instructions;
+}
+
+#show_link {
+  attrs:  "href" "/recipe/show/#{@recipe.id}";
+}
+.--------------------
+
+
+.? Generate eRuby file from presentation data/logic files
+.====================
+$ kwartzite -l rails -p edit.plogic edit.html
+.<<<:! kwartzite -l rails -p d/edit.plogic d/edit.html
+.====================
+
+
+
+.$$ new.rhtml		| rolling-new
+
+.$$$ Original eRuby file	| rolling-new-eruby
+
+.? {{<new.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/03/03/rails.html>}}
+.--------------------
+<html>
+ <head>
+  <title>New Recipe</title>
+ </head>
+ <body>
+  <h1>New Recipe</h1>
+  <form action="/recipe/create" method="post">
+   <p>
+    <b>Title</b><br/>
+    <input id="recipe_title" name="recipe[title]" size="30" type="text" value=""/>
+   </p>
+   <p>
+    <b>Description</b><br/>
+    <input id="recipe_description" name="recipe[description]" 
+           size="30" type="text" value=""/>
+   </p>
+   <p>
+    <b>Category:</b><br/>
+    <select name="recipe[category_id]">
+    {{*<% @categories.each do |category| %>*}}
+     <option value="{{*<%= category.id %>*}}"> 
+      {{*<%= category.name %>*}}
+     </option>
+    {{*<% end %>*}}
+    </select>
+   </p>
+   <p>
+    <b>Instructions</b><br/>
+    <textarea cols="40" id="recipe_instructions" name="recipe[instructions]" 
+              rows="20" wrap="virtual">
+    </textarea>
+   </p>
+   <input type="submit" value="Create"/>
+  </form> 
+  <a href="/recipe/list">Back</a> 
+ </body>
+</html>
+.--------------------
+
+
+.$$$ Kwartz template	| rolling-new-kwartz
+
+.? Presentation data file (new.html)
+.-------------------- new.html
+<html>
+ <head>
+  <title>New Recipe</title>
+ </head>
+ <body>
+  <h1>New Recipe</h1>
+  <form action="/recipe/create" method="post">
+   <p>
+    <b>Title</b><br/>
+    <input id="recipe_title" name="recipe[title]" size="30" type="text" value=""/>
+   </p>
+   <p>
+    <b>Description</b><br/>
+    <input id="recipe_description" name="recipe[description]" 
+           size="30" type="text" value=""/>
+   </p>
+   <p>
+    <b>Category:</b><br/>
+    <select name="recipe[category_id]">
+     <option value="" {{*title="mark:category_option"*}}>category.name</option>
+    </select>
+   </p>
+   <p>
+    <b>Instructions</b><br/>
+    <textarea cols="40" id="recipe_instructions" name="recipe[instructions]" 
+              rows="20" wrap="virtual">
+    </textarea>
+   </p>
+   <input type="submit" value="Create"/>
+  </form> 
+  <a href="/recipe/list">Back</a> 
+ </body>
+</html>
+.--------------------
+
+
+.? Presentation logic file (new.plogic)
+.-------------------- new.plogic
+#category_option {
+  value:  category.name;
+  attrs:  "value" category.id;
+  plogic: {
+    @categories.each do |category|
+      _stag
+      _cont
+      _etag
+    end
+  }
+}
+.--------------------
+
+
+.? Generate eRuby file from presentation data/logic files
+.====================
+$ kwartz -l rails -p new.plogic new.html
+.<<<:! kwartzite -l rails -p d/new.plogic d/new.html
+.====================
+
+
+
+.$$ standartd-layout.rhtml	| rolling-layout
+
+
+.$$$ Original eRuby file	| rolling-layout-eruby
+
+.? {{<standard-layout.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/03/03/rails.html?page=2>}}
+.--------------------
+<html>
+ <head>
+   <title>Online Cookbook</title>
+ </head>
+ <body>
+   <h1>Online Cookbook</h1>
+   {{*<%= @content_for_layout %>*}}
+   <p>
+    {{*<%= link_to "Create new recipe", *}}
+                 {{*:controller => "recipe", *}}
+                 {{*:action => "new" %>*}}
+     
+   {{*<%= link_to "Show all recipes", *}}
+               {{*:controller => "recipe", *}}
+               {{*:action => "list" %>*}}
+     
+   {{*<%= link_to "Show all categories", *}}
+               {{*:controller => "category", *}}
+               {{*:action => "list" %>*}}
+   </p>
+ </body>
+</html>
+.--------------------
+
+
+
+.$$$ Kwartz template		| rolling-layout-kwartz
+
+
+.? Presentation data file (standard-layout.html)
+.-------------------- standard-layout.html
+<html>
+ <head>
+   <title>Online Cookbook</title>
+ </head>
+ <body>
+   <h1>Online Cookbook</h1>
+
+   <div {{*title="elem: @content_for_layout"*}}>
+     ... content for layout ...
+   </div>
+
+   <p>
+     <a href="#" {{*title="link_to nil, :controller=>'recipe', :action=>'new'"*}}
+        >Create new recipe</a>
+     <a href="#"
+        {{*title="link_to nil, :controller=>'recipe', :action=>'list'"*}}
+	>Show all recipes</a>
+     <a href="#"
+        {{*title="link_to nil, :controller=>'category, :action=>'list'"*}}
+	>Show all categories</a>
+   </p>
+
+ </body>
+</html>
+.--------------------
+
+
+.#.? Presentation logic file  (standard-layout.plogic)
+.#.-------------------- standard-layout.plogic
+.#/** nothing **/
+.#.--------------------
+
+
+.? Generate eRuby file from presentation data/logic file
+.====================
+$ kwartz -l rails standard-layout.html
+.<<<:! kwartzite -l rails d/standard-layout.html
+.====================
+
+
+
+.$$ list.rhtml		| rolling-list
+
+
+.$$$ Original eRuby file	| rolling-list-eruby
+
+
+.? {{<list.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/03/03/rails.html?page=3>}}
+.--------------------
+<table border="1">
+ <tr>
+   <td width="40%"><p align="center"><i><b>Recipe</b></i></td>
+   <td width="20%"><p align="center"><i><b>Category</b></i></td>
+   <td width="20%"><p align="center"><i><b>Date</b></i></td>
+ </tr>
+
+ {{*<% @recipes.each do |recipe| %>*}}
+   {{*<% if (@category == nil) || (@category == recipe.category.name)%>*}}
+     <tr>
+      <td>
+        {{*<%= link_to recipe.title, *}}
+                   {{*:action => "show", *}}
+                   {{*:id => recipe.id %>*}}
+        <font size=-1>
+
+        {{*<%= link_to "(delete)", *}}
+                    {{*{:action => "delete", :id => recipe.id},*}}
+                    {{*:confirm => "Really delete #{recipe.title}?" %>*}}
+        </font>
+      </td>
+      <td>
+        {{*<%= link_to recipe.category.name, *}}
+                    {{*:action => "list", *}}
+                    {{*:category => "#{recipe.category.name}" %>*}}
+      </td>
+      <td>{{*<%= recipe.date %>*}}</td>
+     </tr>
+   {{*<% end %>*}}
+ {{*<% end %>*}}
+</table>
+.--------------------
+
+
+
+.$$$ Kwartz template	| rolling-list-kwartz
+
+
+.? Presentation data file (list.rhtml)
+.-------------------- list.html
+<table border="1" {{*id="mark:list_table"*}}>
+ <tr>
+   <td width="40%"><p align="center"><i><b>Recipe</b></i></td>
+   <td width="20%"><p align="center"><i><b>Category</b></i></td>
+   <td width="20%"><p align="center"><i><b>Date</b></i></td>
+ </tr>
+
+ <tr {{*id="mark:recipes"*}}>
+  <td>
+    <a href="#" {{*title="mark:show_link"*}}>show</a>
+    <font size=-1>
+    <a href="#" {{*title="mark:delete_link"*}}>(delete)</a>
+    </font>
+  </td>
+  <td>
+    <a href="#" {{*title="mark:category_link"*}}>category</a>
+  </td>
+  <td {{*title="mark:recipe_date"*}}>recipe.date</td>
+ </tr>
+
+</table>
+.--------------------
+
+
+.? Presentation logic file on Kwartz (list.plogic)
+.-------------------- list.plogic
+#recipes {
+  plogic: {
+    @recipes.each do |recipe|
+      if (@category == nil) || (@category == recipe.category.name)
+        _stag
+	_cont
+	_etag
+      end
+    end
+  }
+}
+
+#show_link {
+  elem:  link_to recipe.title, :action => "show", :id => recipe.id;
+}
+
+#delete_link {
+  elem:  link_to "(delete)",
+              {:action => "delete", :id => recipe.id},
+	      :confirm => "Really delete #{recipe.title}?";
+}
+
+#category_link {
+  elem:  link_to recipe.category.name,
+               :action=>"list", :category=>"#{recipe.category.name}";
+}
+
+#recipe_date {
+  value: recipe.date;
+}
+.--------------------
+
+
+.? Generate eRuby file from presentation data/logic files
+.====================
+$ kwartz -l rails -p list.plogic list.html
+.<<<:! kwartzite -l rails -p d/list.plogic d/list.html
+.====================
+
+
+
+
+.$ Ajax on Rails	| ajax
+
+from {{<Ajax on Rails|http://www.onlamp.com/pub/a/onlamp/2005/06/09/rails_ajax.html>}}
+
+
+.$$ index.rhtml		| ajax-index
+
+
+.$$$ Original eRuby file	| ajax-index-eruby
+.? {{<index.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/06/09/rails_ajax.html>}}
+.--------------------
+<html>
+  <head>
+    <title>Ajax Demo</title>
+    {{*<%= javascript_include_tag "prototype" %>*}}
+  </head>
+  <body>
+    <h1>What time is it?</h1>
+    <div id="time_div">
+      I don't have the time, but
+      {{*<%= link_to_remote( "click here",*}}
+                         {{*:update => "time_div",*}}
+                         {{*:url =>{ :action => :say_when }) %>*}}
+      and I will look it up.
+    </div>
+  </body>
+</html>
+.--------------------
+
+
+.$$$ Kwartz template	| ajax-index-kwartz
+
+.? Presentation data file (index.html)
+.-------------------- index.html
+<html>
+  <head>
+    <title>Ajax Demo</title>
+    <script title="elem: javascript_include_tag 'prototype'"></script>
+  </head>
+  <body>
+    <h1>What time is it?</h1>
+    <div id="time_div">
+      I don't have the time, but
+      <a href="#" title="link_to_remote nil, :update=>'time_div', :url=>{:action=>:say_when}">click here</a>
+      and I will look it up.
+    </div>
+  </body>
+</html>
+.--------------------
+
+
+.#.? Presentation logic file (index.plogic)
+.#.-------------------- index.plogic
+.#/** nothing **/
+.#.--------------------
+
+
+.? Generate eRuby script from presentation data/logic file
+.====================
+$ kwartz -l rails index.html
+.<<<:! kwartzite -l rails d/index.html
+.====================
+
+
+
+.$$ index2.rhtml	| ajax-index2
+
+
+.$$$ Original eRuby file	| ajax-index2-eruby
+
+.? {{<index2.rhtml|http://www.onlamp.com/pub/a/onlamp/2005/06/09/rails_ajax.html?page=2>}}
+.--------------------
+<html>
+  <head>
+    <title>Ajax List Demo</title>
+    {{*<%= javascript_include_tag "prototype" %>*}}
+  </head>
+  <body>
+    <h3>Add to list using Ajax</h3>
+    {{*<%= form_remote_tag(:update => "my_list",*}}
+                       {{*:url => { :action => :add_item },*}}
+                       {{*:position => "top" ) %>*}}
+      New item text:
+      {{*<%= text_field_tag :newitem %>*}}
+      {{*<%= submit_tag "Add item with Ajax" %>*}}
+    {{*<%= end_form_tag %>*}}
+    <ul id="my_list">
+      <li>Original item... please add more!</li>
+    </ul>
+  </body>
+</html>
+.--------------------
+
+
+
+.$$$ Kwartz template	| ajax-index2-kwartz
+
+
+.? Presentation data file in Kwartz (index2.html)
+.-------------------- index2.html
+<html>
+  <head>
+    <title>Ajax List Demo</title>
+    <script id="elem: javascript_include_tag 'prototype'"></script>
+  </head>
+  <body>
+    <h3>Add to list using Ajax</h3>
+    {{*<form title="mark: form">*}}
+      New item text:
+      {{*<input type="text" title="elem: text_filed_tag :newitem">*}}
+      {{*<input type="submit" value="Add item with Ajax" title="submit_tag:">*}}
+    {{*</form>*}}
+    <ul id="my_list">
+      <li>Original item... please add more!</li>
+    </ul>
+  </body>
+</html>
+.--------------------
+
+
+.? Presentation logic file in Kwartz (index2.plogic)
+.-------------------- index2.plogic
+#form {
+  stag:  form_remote_tag  :update=>"my_list",
+                          :url=>{:action=>:add_item },
+			  :position=>"top" ;
+}
+.--------------------
+
+
+.? Generate eRuby script from presentation data/logic file
+.====================
+$ kwartz -l rails -p index2.plogic index2.html
+.<<<:! kwartzite -l rails -p d/index2.plogic d/index2.html
+.====================
+
+
+
+
+.$ Agile Web Development With Rails
+
+from {{<Agile Web Development With Rails Chapter 7 Task B: Catalog Display|http://media.pragprog.com/titles/rails/Chapter7.pdf>}}
+
+.$$ store/index.rhtml (page 67, file 33)
+
+.$$$ Original eRuby file
+
+.? Original eRuby file (index.rhtml)
+.-------------------- store-index.rhtml
+<table cellpadding="5" cellspacing="0"> 
+<% for product in @products %> 
+  <tr valign="top"> 
+    <td> 
+      <img src="<%= product.image_url %>"/> 
+    </td> 
+    <td width="450"> 
+      <h3><%=h product.title %></h3> 
+      <small> 
+        <%= product.description %> 
+      </small> 
+      <br/> 
+      <strong>$<%= sprintf("%0.02f", product.price) %></strong> 
+      <%= link_to 'Add to Cart', 
+                  :action => 'add_to_cart', 
+                  :id => product %> 
+      <br/> 
+    </td> 
+  </tr> 
+  <tr><td colspan="2"><hr></td></tr> 
+<% end %> 
+</table> 
+.--------------------
+
+
+.$$$ Kwartzite template
+
+.? Presentation data (index.html)
+.-------------------- store-index.html
+<table cellpadding="5" cellspacing="0"
+       {{*title="list product in @products"*}}> 
+  <tr valign="top">
+    <td> 
+      <img {{*src="/img/sample.gif" title="attr: 'src' product.image_url"*}}/>
+    </td> 
+    <td width="450"> 
+      <h3 {{*title="cont: product.title"*}}>product title</h3>
+      <small> 
+        {{*<span title="elem: product.description">product description</span>*}}
+      </small> 
+      <br/> 
+      <strong {{*title="elem: sprintf('$%0.02f', product.price)"*}}>$3.14</strong>
+      {{*<a href="$" title="link_to nil, :action=>'add_to_cart', :id=>product">Add to Cart</a>*}}
+      <br/> 
+    </td> 
+  </tr> 
+  <tr><td colspan="2"><hr></td></tr> 
+</table> 
+.--------------------
+
+.? Generate eRuby file from presentation data
+.====================
+$ kwartzite -l rails index.html
+.<<<:! kwartzite -l rails d/store-index.html
+.====================
+
+
+
+
+.$$ layouts/store.rhtml (page 69, file 26)
+
+
+.$$$ Original eRuby file
+
+.? Original eRuby file (store.rhtml)
+.--------------------
+<html> 
+  <head> 
+    <title>Pragprog Books Online Store</title> 
+    <%= stylesheet_link_tag("depot") %> 
+  </head> 
+  <body> 
+    <div id="banner"> 
+      <div class="logo"> 
+        <img src="/images/logo.png"/> 
+      </div> 
+      <div class="titlepagename"> 
+        <%= @page_title || "Pragmatic Bookshelf" %> 
+      </div> 
+    </div> 
+    <div id="columns"> 
+      <div id="side"> 
+        <a class="side" href="http://www.../">Home</a><br /> 
+        <a class="side" href="http://www.../faq">Questions</a><br /> 
+        <a class="side" href="http://www.../news">News</a><br /> 
+        <a class="side" href="http://www.../contact">Contact</a><br /> 
+      </div> 
+
+      <div id="main"> 
+        <%= @content_for_layout %> 
+      </div> 
+    </div> 
+  </body> 
+</html> 
+.--------------------
+
+
+.? Original eRuby file (index.rhtml)
+.--------------------
+  <% for product in @products %> 
+    <div class="catalogentry"> 
+      <div class="catalogimage"> 
+        <img src="<%= product.image_url %>"/> 
+      </div> 
+  
+      <h3><%= h(product.title) %></h3> 
+        <%= product.description %> 
+        <span class="catalogprice"><%= sprintf("$%0.02f", product.price) %></span> 
+        <%= link_to 'Add to Cart', 
+                    {:action => 'add_to_cart', :id => product}, 
+                    :class => 'addtocart' %><br/> 
+    </div> 
+    <div class="separator">&nbsp;</div> 
+  <% end %> 
+  
+  <%= link_to "Show my cart", :action => 'display_cart' %> 
+.--------------------
+
+
+.$$$ Kwartzite template
+
+.? Presentation data file (store.html)
+.-------------------- store-store2.html
+<html> 
+  <head> 
+    <title>Pragprog Books Online Store</title>
+    {{*<stylesheet title="elem: stylesheet_link_tag('depot')"></stylesheet>*}}
+  </head> 
+  <body> 
+    <div id="banner"> 
+      <div class="logo"> 
+        <img src="/images/logo.png"/> 
+      </div> 
+      <div class="titlepagename"> 
+        {{*<span title="default: @page_title">Pragmatic Bookshelf</span>*}}
+      </div> 
+    </div> 
+    <div id="columns"> 
+      <div id="side"> 
+        <a class="side" href="http://www.../">Home</a><br /> 
+        <a class="side" href="http://www.../faq">Questions</a><br /> 
+        <a class="side" href="http://www.../news">News</a><br /> 
+        <a class="side" href="http://www.../contact">Contact</a><br /> 
+      </div> 
+
+      <div id="main">
+        {{*<span title="elem: @content_for_layout">... content ...</span>*}}
+      </div> 
+    </div> 
+  </body> 
+</html> 
+.--------------------
+
+
+.? Generate eRuby file from presentation data
+.====================
+$ kwartzite -l rails store.html
+.<<<:! kwartzite -l rails d/store-store2.html
+.====================
+
+
+
+.? Presentation data file (index.rhtml)
+.-------------------- store-index2.html
+  {{*<span title="for product in @products">*}}
+    <div class="catalogentry"> 
+      <div class="catalogimage"> 
+        <img src="image/catalog.png" {{*title="attr: 'src' product.image_url"*}} > 
+      </div> 
+  
+      <h3 {{*title="cont: h(product.title)"*}}></h3> 
+        {{*<span title="elem: product.description">...product description...</span>*}}
+        <span class="catalogprice" {{*title="cont: sprintf('$%0.02f', product.price)"*}}>$3.14</span>
+	{{*<a href="#"*}}
+	   {{*title="link_to nil, {:action=>'add_to_cart', :id=>product}, :class=>'addtocart'"*}}
+	   {{*>Add to Cart</a>*}}
+        <br/> 
+    </div> 
+    <div class="separator">&nbsp;</div>
+  {{*</span>*}}
+
+  {{*<a href="#" title="link_to nil, :action=>'display_cart'">Show my cart</a>*}}
+.--------------------
+
+.? Generate eRuby file from presentation data
+.====================
+$ kwartzite -l rails sotre.html
+.<<<:! kwartzite -l rails d/store-index2.html
+.====================
+
+

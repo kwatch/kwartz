@@ -1,0 +1,39 @@
+
+
+.$$ Element 'xxx' not found
+
+Issue: I got 'element xxx not found' error.
+
+.? ex.html - presentation data
+.--------------------
+<ul>
+  <li title="id: item">foo</il>
+</ul>
+
+<ul>
+ <li title="replace: element(item)">bar</li>
+</ul>
+.--------------------
+
+.? result
+.====================
+$ kwartzite -h ex.html
+'replace: element(item)': element 'item' not found. (line 6)
+.====================
+
+Cause: the end-tag '<li>' is miss-typed as '</il>'.
+
+.? ex.html - presentation data
+.--------------------
+<ul>
+  <li title="id: item">foo{{*</il>*}}
+</ul>
+
+<ul>
+ <li title="replace: element(item)">bar</li>
+</ul>
+.--------------------
+
+Solution: fix the end-tag.
+
+

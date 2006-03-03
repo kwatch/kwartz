@@ -1,49 +1,27 @@
 ###
-### copyright(c) 2005 kuwata-lab all rights reserved
-###
-### $Id$
+### $Rev$
 ### $Release$
+### $Copyright$
 ###
+
 
 module Kwartz
-   module Config
 
-      ## translator
-      ESCAPE          = false
-      NEWLINE         = "\n"
-      INDENT          = "  "
-      LOCALVAR_PREFIX = nil		# or set '_'
-      GLOBALVAR_PREFIX = nil		# set '@' if you are Rails user
 
-      ## compiler
-      LANG            = "eruby"
+  module Config
 
-      ## converter
-      ODD             = "'odd'"
-      EVEN            = "'even'"
-      DATTR           = "kw:d"
-      INCDIRS         = [ '.' ]		# directories from which 'include' directive includes
-      EMBED_PATTERN   = /@\{(.*?)\}@/	# or /\#\{(.*?)\}\#/
 
-      ## converter & element
-      NOEND           = [ "input", "br", "meta", "img", "hr" , "link" ]
+    PROPERTY_ESCAPE     = nil       # escape when true, not escape when false, handler depend when nil
+    PROPERTY_ODD        = "'odd'"
+    PROPERTY_EVEN       = "'even'"
+    PROPERTY_LANG       = 'erb'
+    PROPERTY_DATTR      = 'title'
+    #
+    NO_ETAGS            = [ 'input', 'img' ,'br', 'hr', 'meta', 'link' ]
+    #ALLOW_DUPLICATE_ID  = false
 
-      ## defun
-      DEFUN_CLASS     = nil		#
-      DEFUN_FUNCTION  = 'view_%s'       # or 'expand_%s' for compatible
 
-      ## kwartz command
-      CHARSET         = nil		# ex. UTF-8, EUC-JP
-      HEADER_JSTL11   = <<END
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-END
-      HEADER_JSTL10   = <<END
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
-END
-      HEADER_JSP_CHARSET = <<END
-<%@ page contentType="text/html; charset=__CHARSET__" %>
-END
+  end
 
-   end
+  
 end

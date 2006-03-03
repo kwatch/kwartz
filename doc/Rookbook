@@ -1,53 +1,13 @@
-#!/usr/bin/env rook
 
-if test(?f, 'm18n.rb')
-	m18n = 'm18n.rb'
-elsif test(?f, '../m18n.rb')
-	m18n = '../m18n.rb'
-end
+all = %w[kwartzite-on-rails.html]
+tagfile = 'html-css_i'
 
-products = [ "users-guide.en.html",  "users-guide.ja.html",
-             "reference.en.html",    "reference.ja.html",
-             "p-pattern.en.html",    "p-pattern.ja.html",
-           ]
-coproducts = [ "design.html", "design.css" ]
-byproducts = [
-               "users-guide.en.toc.html",  "users-guide.ja.toc.html", 
-               "reference.en.toc.html",    "reference.ja.toc.html",
-               "p-pattern.en.toc.html",    "p-pattern.ja.toc.html",
-               "users-guide.en.txt",       "users-guide.ja.txt", 
-               "reference.en.txt",         "reference.ja.txt",
-               "p-pattern.en.txt",         "p-pattern.ja.txt",
-             ]
+recipe :all	, all
 
-recipe  :all			, products, coproducts
-
-recipe	:clean								do |r|
-	delete byproducts
-	end
-
-recipe	:clear								do |r|
-	delete byproducts
-	delete products
-	delete coproducts
-	end
-
-desc
-grecipe '*.*.html'				, '{1}.{2}.txt'		do |r|
-	mkdir_p 'guide.d'
-	cmd "retrieve -d guide.d #{r.ingredients[0]}"
-	tagfile = m[2] == 'ja' ? 'html-css,euc' : 'html-css'
-	cmd "kwaser -t #{tagfile} -T2 #{r.ingredients[0]} > {1}.{2}.toc.html"
-	cmd "kwaser -t #{tagfile}     #{r.ingredients[0]} > {1}.{2}.html"
-	end
-
-desc
-grecipe '*.*.txt'				, '{1}.txt'		do |r|
-	cmd "ruby #{m18n} -l #{m[2].upcase} #{r.ingredients[0]} > #{r.product}"
-	end
-
-desc
-grecipe	'design.{html|css}'			, 'p-pattern.en.txt'	do |r|
-	cmd "retrieve -d guide.d #{r.ingredients[0]}"
-	move "guide.d/#{m[0]}", "."
-	end
+grecipe '*.html'	, '{1}.txt'	do |r|
+	dir = 'd'
+	mkdir dir unless test(?d, dir)
+	cmd "retrieve -d #{dir} {1}.txt"
+	cmd "kwaser -t #{tagfile} -T2 {1}.txt > {1}.toc.html"
+	cmd "kwaser -t #{tagfile}    {1}.txt > {1}.html"
+    end

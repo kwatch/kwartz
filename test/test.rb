@@ -1,58 +1,25 @@
-#!/usr/bin/ruby
-
 ###
-### $Id$
+### $Rev$
+### $Release$
+### $Copyright$
 ###
 
-$: << 'test'
-
-require 'test/unit'
-
-flag_quick = true
-if ARGV[0] && ARGV[0] == '-q'
-   flag_quick = false
-   ARGV.shift
+unless defined?(TESTDIR)
+  TESTDIR = File.dirname(File.expand_path(__FILE__))
+  basedir = File.dirname(TESTDIR)
+  libdir  = basedir + "/lib"
+  $LOAD_PATH << libdir << TESTDIR
 end
 
-suite = Test::Unit::TestSuite.new()
 
-require 'converter-test'
-suite << ConverterTest.suite()
+#require 'test-compile'
+#require 'test-directives'
+#require 'test-handlers'
+#require 'test-parser'
 
-require 'scanner-test'
-suite << ScannerTest.suite()
-
-require 'node-test'
-suite << ExpressionTest.suite()
-suite << StatementTest.suite()
-
-require 'parser-test'
-suite << ParseExpressionTest.suite()
-suite << ParseStatementTest.suite()
-suite << ParseDeclarationTest.suite()
-
-require 'element-test'
-suite << ElementTest.suite()
-
-require 'expander-test'
-suite << ExpanderTest.suite()
-
-require 'translator-test'
-suite << TranslatorTest.suite()
-
-require 'compiler-test'
-suite << CompilerTest.suite()
-suite << SpanTest.suite()
-
-require 'analyzer-test'
-suite << AnalyzerTest.suite()
-
-require 'defun-test'
-suite << DefunTest.suite()
-
-unless flag_quick
-   require 'examples-test'
-   suite << ExamplesTest.suite()
-end
-
-Test::Unit::UI::Console::TestRunner.run(suite)
+#suite = Test::Unit::TestSuite.new()
+#suite << CompileTest.suite()
+#suite << DirectivesTest.suite()
+#suite << ParserTest.suite()
+#require 'test/unit/ui/console/testrunner'
+#Test::Unit::UI::Console::TestRunner.run(suite)
