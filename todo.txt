@@ -13,3 +13,4 @@
 .* [_] template-toolkit support
 .* [_] '-a defun' support
 .* [_] #XMLDECL support
+.* [_] rename 'plogic:' to 'logic:'
