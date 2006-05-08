@@ -16,8 +16,9 @@ require 'test/unit'
 require 'yaml'
 require 'kwartz'
 require 'kwartz/main'
-require 'kwartz/util/test-util'
-require 'kwartz/util/assert-text-equal'
+require 'assert-text-equal'
+require 'testutil'
+
 
 
 

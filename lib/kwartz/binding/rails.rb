@@ -24,21 +24,25 @@ module Kwartz
   ##
   ##  ## text_field, password_field
   ##  <input type="text" size="10" maxsize="20" title="text_field 'user', 'name'">
-  ##   => <%= text_field 'user', 'name', 'size'=>10, 'maxsize'=>20 %>
-  ##  <input type="text" name="user[name]" title="text_field :size=10">
+  ##   => <%= text_field 'user', 'name', :size=>10, :maxsize=>20 %>
+  ##  <input type="text" name="user[name]" title="text_field :size=>10">
   ##   => <%= text_field "user", "name", :size=>10 %>
   ##  <input type="text" id="user_name" size="10" title="text_field">
-  ##   => <%= text_field "user", "name", 'size'=>10 %>
+  ##   => <%= text_field "user", "name", :size=>10 %>
   ##
-  ##  ## link_to, link_to_remote, button_to
+  ##  ## link_to, link_to_remote, link_to_unless_current
   ##  <a href="#" title="link_to :action=>'list'">Show list</a>
   ##   => <%= link_to "Show list", 'action'=>'show', 'id'=>@user.id %>
   ##  <a href="#" title="link_to label, :action=>'list'">Show list</a>
   ##   => <%= link_to label, 'action'=>'show', 'id'=>@user.id %>
   ##
+  ##  ## mail_to
+  ##  <a href="mail:www@example.com" title="mail_to">admin</a>
+  ##   => <%= mail_to "www@example.com", "admin" %>
+  ##
   ##  ## form_tag
-  ##  <form action="show" title="form_tag"> ... </form>
-  ##   => <%= form_tag 'action'=>"show" %> ... </form>
+  ##  <form action="show" title="form_tag :id=>2"> ... </form>
+  ##   => <%= form_tag :action=>"show", :id=>2 %> ... </form>
   ##
   ##  ## submit_tag
   ##  <input type="submit" value="OK" title="submit_tag">
@@ -46,9 +50,9 @@ module Kwartz
   ##
   ##  ## text_area
   ##  <textarea cols="30" rows="3" id="user_desc" title="text_area"></textarea>
-  ##   => <%= text_area "user", "desc", 'cols'=>30, 'rows'=>3 %>
+  ##   => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
   ##  <textarea cols="30" rows="3" name="user[desc]" title="text_area"></textarea>
-  ##   => <%= text_area "user", "desc", 'cols'=>30, 'rows'=>3 %>
+  ##   => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
   ##
   ##  ## hidden_field
   ##  <input type="hidden" id="user_id" title="hidden_field">
@@ -68,6 +72,17 @@ module Kwartz
   ##  <input type="radio" name="user[radio]" value="val2" title="radio_button">
   ##   => <%= radio_button "user", "radio", "val2" %>
   ##
+  ##  ## select, collection_select, country_select, time_zone_select, date_select, datetime_select
+  ##  <select name="user[birth]" title="date_select :start_year=>1970">
+  ##    <option value="2000">2000</option>
+  ##  </select>
+  ##   => <% date_select "user", "birth", :start_year=>1970 %>
+  ##
+  ##  ## image_tag, link_image_to, link_to_image
+  ##  <img src="foo.gif" alt="text" width="20" heigth="10" title="image_tag :size=>'30x40'">
+  ##   => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
+  ##
+
   class RailsHandler < ErbHandler
 
 
@@ -79,58 +94,78 @@ module Kwartz
     def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
       ret = super
       return ret if ret
-      
+
       d_name = directive_name
       d_arg  = directive_arg
       d_str  = directive_str
 
+      ## parse 'name="user[name]"' or 'id="user_name"'
+      case directive_name.to_s
+      when /(_|\A)radio_button\z/
+        add_directive_object_and_method_and_value(d_arg, attr_info)
+      when /_field\z/, /_area\z/, /_box\z/, /(_|\A)select\z/, 'input'
+        add_directive_object_and_method(d_arg, attr_info)
+      end
+
+      replace_elem = true
+
       case directive_name
 
-      when :text_field, :password_field, :file_field
-        add_directive_object_and_method(d_arg, attr_info)
-        #if (v = attr_info['value']) && v[0] == ?@
-        #  add_directive_expr_option(d_arg, 'value', v)
-        #end
+      when :text_field, :password_field, :hidden_field
+        #add_directive_object_and_method(d_arg, attr_info)
         add_directive_integer_option(d_arg, 'size', attr_info['size'])
         add_directive_integer_option(d_arg, 'maxsize', attr_info['maxsize'])
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
 
-      when :link_to, :link_to_remote, :button_to
+      when :file_field
+        #add_directive_object_and_method(d_arg, attr_info)
+        add_directive_integer_option(d_arg, 'size', attr_info['size'])
+
+      when :link_to, :link_to_remote, :link_to_unless_current
         add_directive_content_as_arg(d_arg, cont_stmts)
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
 
-      when :form_tag
+      when :mail_to
+        add_directive_content_as_arg(d_arg, cont_stmts)
+        add_directive_attr_as_arg(d_arg, attr_info, 'href')
+        d_arg.sub!(/\A\"mailto:/, '"')
+
+      when :form_tag, :start_form_tag
         add_directive_attr_as_option(d_arg, attr_info, 'action')
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list, false)
+        replace_elem = false
 
       when :text_area
-        add_directive_object_and_method(d_arg, attr_info)
+        #add_directive_object_and_method(d_arg, attr_info)
         add_directive_integer_option(d_arg, 'cols', attr_info['cols'])
         add_directive_integer_option(d_arg, 'rows', attr_info['rows'])
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
 
       when :submit_tag
         add_directive_attr_as_arg(d_arg, attr_info, 'value')
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
 
-      when :hidden_field
-        add_directive_object_and_method(d_arg, attr_info)
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
-
-      when :check_box
-        add_directive_object_and_method(d_arg, attr_info)
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
+      when :submit_to_remote
+        add_directive_attr_as_arg(d_arg, attr_info, 'value')
+        add_directive_attr_as_arg(d_arg, attr_info, 'name')
 
       when :radio_button
-        add_directive_object_and_method_and_value(d_arg, attr_info)
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
-        
+        #add_directive_object_and_method_and_value(d_arg, attr_info)
+
+      when :check_box
+        #add_directive_object_and_method(d_arg, attr_info)
+
+      when :select, :collection_select, :country_select, :time_zone_select, :date_select, :datetime_select
+        #add_directive_object_and_method(d_arg, attr_info)
+
+      when :image_tag, :link_image_to, :link_to_image
+        add_directive_attr_as_arg(d_arg, attr_info, 'src')
+        add_directive_str_option(d_arg, 'alt', attr_info['alt'])
+
       else
-        print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list)
 
       end #case
+
+      ##
+      print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list, replace_elem)
+
       return true      # everytime return true
-      
+
     end
 
 
@@ -138,32 +173,26 @@ module Kwartz
 
 
     def add_directive_object_and_method(d_arg, attr_info)
-      if d_arg.empty? || d_arg[0] == ?: || d_arg[0] == ?{
-        if (/\A(\w+)\[(.+)\]\z/ =~ attr_info['name']) || (/\A([a-zA-z0-9]+)_(.+)\z/ =~ attr_info['id'])
-          object = $1 ;  method = $2
-          d_arg[0,0] = "#{object.dump}, #{method.dump}#{d_arg.empty? ? '' : ', '}"
-        end
+      if (/\A(\w+)\[(\w+)\]\z/ =~ attr_info['name']) || (/\A([a-zA-A0-9]+)_(\w+)\z/ =~ attr_info['id'])
+        object = $1 ;  method = $2
+        d_arg[0,0] = "#{object.dump}, #{method.dump}#{d_arg.empty? ? '' : ', '}"
       end
     end
 
 
     def add_directive_object_and_method_and_value(d_arg, attr_info)
-      if d_arg.empty? || d_arg[0] == ?: || d_arg[0] == ?{
-        object = method = ''
-        if (/\A(\w+)\[(.+)\]\z/ =~ attr_info['name']) || (/\A([a-zA-z0-9]+)_(.+)\z/ =~ attr_info['id'])
-          object = $1 ;  method = $2
-        end
-        value = attr_info['value']
-        d_arg[0,0] = "#{object.dump}, #{method.dump}, #{value.dump}#{d_arg.empty? ? '' : ', '}"
+      object = method = ''
+      if (/\A(\w+)\[(\w+)\]\z/ =~ attr_info['name']) || (/\A([a-zA-z0-9]+)_(\w+?)_[a-zA-z0-9]+\z/ =~ attr_info['id'])
+        object = $1 ;  method = $2
       end
+      value = attr_info['value']
+      d_arg[0,0] = "#{object.dump}, #{method.dump}, #{value.dump}#{d_arg.empty? ? '' : ', '}"
     end
 
 
     def add_directive_attr_as_arg(d_arg, attr_info, attr_name)
       if (v = attr_info[attr_name]) && !v.empty?
-        if d_arg.empty? || d_arg[0] == ?: || d_arg[0] == ?{
-          d_arg[0,0] = "#{v.dump}#{d_arg.empty? ? '' : ', '}"
-        end
+        d_arg[0,0] = "#{v.dump}#{d_arg.empty? ? '' : ', '}"
       end
     end
 
@@ -175,7 +204,7 @@ module Kwartz
       end
     end
 
-    
+
     def add_directive_content_as_arg(d_arg, cont_stmts)
       if d_arg.empty? || d_arg[0] == ?: || d_arg[0] == ?{
         print_stmt = cont_stmts[0]
@@ -188,7 +217,7 @@ module Kwartz
     def add_directive_integer_option(directive_arg, attr_name, attr_value)
       if attr_value && attr_value =~ /\A\d+\z/
         directive_arg << ', ' unless directive_arg.empty?
-        directive_arg << "'#{attr_name}'=>#{attr_value.to_i}"
+        directive_arg << ":#{attr_name}=>#{attr_value.to_i}"
       end
     end
 
@@ -196,7 +225,7 @@ module Kwartz
     def add_directive_expr_option(directive_arg, attr_name, attr_value)
       if attr_value
         directive_arg << ', ' unless directive_arg.empty?
-        directive_arg << "'#{attr_name}'=>#{attr_value}"
+        directive_arg << ":#{attr_name}=>#{attr_value}"
       end
     end
 
@@ -204,7 +233,7 @@ module Kwartz
     def add_directive_str_option(directive_arg, attr_name, attr_value)
       if attr_value
         directive_arg << ', ' unless directive_arg.empty?
-        directive_arg << "'#{attr_name}'=>#{attr_value.to_s.dump}"
+        directive_arg << ":#{attr_name}=>#{attr_value.to_s.dump}"
       end
     end
 

@@ -15,8 +15,8 @@ require 'test/unit'
 require 'yaml'
 require 'kwartz'
 require 'kwartz/main'
-require 'kwartz/util/test-util'
-require 'kwartz/util/assert-text-equal'
+require 'assert-text-equal'
+require 'testutil'
 
 
 
@@ -53,6 +53,6 @@ class DirectivesTest < Test::Unit::TestCase
     actual = translator.translate(stmt_list)
     assert_text_equal(@expected, actual)
   end
-  
+
 
 end

@@ -11,10 +11,10 @@ require 'kwartz/error'
 require 'kwartz/node'
 require 'kwartz/config'
 
+require 'kwartz/abstract'
 
 
 module Kwartz
-
 
 
   class ConvertError < KwartzError
@@ -301,13 +301,15 @@ module Kwartz
 
     ## [abstract] get ElementRuleset
     def get_element_ruleset(name)
-      raise NotImplementedError("#{self.class}#get_element_ruleset() is not implemented.")
+      not_implemented
+      #raise NotImplementedError("#{self.class}#get_element_ruleset() is not implemented.")
     end
 
 
     ## [abstract] get ElementInfo
     def get_element_info(name)
-      raise NotImplementedError("#{self.class}#get_element_info() is not implemented.")
+      not_implemented
+      #raise NotImplementedError("#{self.class}#get_element_info() is not implemented.")
     end
 
 
@@ -443,21 +445,24 @@ module Kwartz
 
     ## [abstract] directive pattern, which is used to detect directives.
     def directive_pattern
-      raise NotImplementedError.new("#{self.class}#directive_pattern() is not implemented.")
+      not_implemented
+      #raise NotImplementedError.new("#{self.class}#directive_pattern() is not implemented.")
       #return /\A(\w+):\s*(.*)/
     end
 
 
     ## [abstract] mapping pattern, which is used to parse 'attr' directive.
     def mapping_pattern
-      raise NotImplementedError.new("#{self.class}#mapping_pattern() is not implemented.")
+      not_implemented
+      #raise NotImplementedError.new("#{self.class}#mapping_pattern() is not implemented.")
       #return /\A'([-:\w]+)'\s+(.*)/
     end
 
 
     ## [abstract] id format, which is used at has_directive?() method
     def marking_format
-      raise NotImplementedError.new("#{self.class}#marking_format() is not implemented.")
+      not_implemented
+      #raise NotImplementedError.new("#{self.class}#marking_format() is not implemented.")
       #return 'id:%s'
     end
 
@@ -591,7 +596,8 @@ module Kwartz
 
     ## [abstract] convert string into list of Statement.
     def convert(input)
-      raise NotImplementedError.new("#{self.class}#convert() is not implemented.")
+      not_implemented
+      #raise NotImplementedError.new("#{self.class}#convert() is not implemented.")
     end
 
 

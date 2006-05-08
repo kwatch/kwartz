@@ -1,7 +1,12 @@
-.+doc:	ChangeLog
-.?rev:	$Rev$
+.+document:	ChangeLog
+.?revision:	$Rev$
+
+: rev.104 (2006-05-08)
+	- [enhance] add 'abstract.rb'
+	- [enhance] rails.rb updated to support many helper method
+	- [change] 'test-util.rb' and 'assert-text-equal.rb' are moved from 'lib/kwartz/util/' to 'test/'
 
 : rev.103 (2006-03-03)
 	- first commitment of 3.0
 
-.-doc:
+.-document:

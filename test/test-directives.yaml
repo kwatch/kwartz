@@ -1,1213 +1,1214 @@
----
-name:      elem
-subject:   elem, Elem, ELEM
-desc:  |
-    'elem', 'Elem', and 'ELEM' directive replaces element by expression.
-    'Elem' directive escapes expression automatically, while 'ELEM' never escape it.
-    'elem' directive escapes expression when command-line option '-e' is specified
-    or PROPERTY_ESCAPE is true in configuration file.
-
-pdata*:
-  erb: |
-    <b title="elem: expr">foo</b>
-    <b title="Elem: expr">foo</b>
-    <b title="ELEM: expr">foo</b>
-
-  php: |
-    <b title="elem($expr)">foo</b>
-    <b title="Elem($expr)">foo</b>
-    <b title="ELEM($expr)">foo</b>
-
-  eperl: |
-    <b title="elem($expr)">foo</b>
-    <b title="Elem($expr)">foo</b>
-    <b title="ELEM($expr)">foo</b>
-
-  jstl: |
-    <b title="elem(expr)">foo</b>
-    <b title="Elem(expr)">foo</b>
-    <b title="ELEM(expr)">foo</b>
-
-expected*:
-  erb: |
-    <%= expr %>
-    <%=h expr %>
-    <%= expr %>
-
-  php: |
-    <?php echo $expr; ?>
-    <?php echo htmlspecialchars($expr); ?>
-    <?php echo $expr; ?>
-
-  eperl: |
-    <?= $expr !>
-    <?= sanitize($expr) !>
-    <?= $expr !>
-
-  jstl: |
-    ${expr}
-    ${expr}
-    <c:out value="${expr}" escapeXml="false"/>
+##
+- name:      elem
+  subject:   elem, Elem, ELEM
+  desc:  |
+      'elem', 'Elem', and 'ELEM' directive replaces element by expression.
+      'Elem' directive escapes expression automatically, while 'ELEM' never escape it.
+      'elem' directive escapes expression when command-line option '-e' is specified
+      or PROPERTY_ESCAPE is true in configuration file.
+  
+  pdata*:
+    erb: |
+      <b title="elem: expr">foo</b>
+      <b title="Elem: expr">foo</b>
+      <b title="ELEM: expr">foo</b>
+  
+    php: |
+      <b title="elem($expr)">foo</b>
+      <b title="Elem($expr)">foo</b>
+      <b title="ELEM($expr)">foo</b>
+  
+    eperl: |
+      <b title="elem($expr)">foo</b>
+      <b title="Elem($expr)">foo</b>
+      <b title="ELEM($expr)">foo</b>
+  
+    jstl: |
+      <b title="elem(expr)">foo</b>
+      <b title="Elem(expr)">foo</b>
+      <b title="ELEM(expr)">foo</b>
+  
+  expected*:
+    erb: |
+      <%= expr %>
+      <%=h expr %>
+      <%= expr %>
+  
+    php: |
+      <?php echo $expr; ?>
+      <?php echo htmlspecialchars($expr); ?>
+      <?php echo $expr; ?>
+  
+    eperl: |
+      <?= $expr !>
+      <?= sanitize($expr) !>
+      <?= $expr !>
+  
+    jstl: |
+      ${expr}
+      ${expr}
+      <c:out value="${expr}" escapeXml="false"/>
+    
+## 
+- name:      cont
+  subject:   cont, Cont, CONT
+  desc:  |
+      'cont', 'Cont', and 'CONT' directives replace content by expression.
+      'Cont' directive escapes expression automatically, while 'CONT' never escape it.
+      'cont' directive escapes expression when command-line option '-e' is specified
+      or PROPERTY_ESCAPE is true in configuration file.
+  
+  pdata*:
+    erb: |
+      <b title="cont: expr">foo</b>
+      <b title="Cont: expr">foo</b>
+      <b title="CONT: expr">foo</b>
+  
+    php: |
+      <b title="cont($expr)">foo</b>
+      <b title="Cont($expr)">foo</b>
+      <b title="CONT($expr)">foo</b>
+  
+    eperl: |
+      <b title="cont($expr)">foo</b>
+      <b title="Cont($expr)">foo</b>
+      <b title="CONT($expr)">foo</b>
+  
+    jstl: |
+      <b title="cont(expr)">foo</b>
+      <b title="Cont(expr)">foo</b>
+      <b title="CONT(expr)">foo</b>
+  
+  expected*:
+    erb: |
+      <b><%= expr %></b>
+      <b><%=h expr %></b>
+      <b><%= expr %></b>
+  
+    php: |
+      <b><?php echo $expr; ?></b>
+      <b><?php echo htmlspecialchars($expr); ?></b>
+      <b><?php echo $expr; ?></b>
+  
+    eperl: |
+      <b><?= $expr !></b>
+      <b><?= sanitize($expr) !></b>
+      <b><?= $expr !></b>
+  
+    jstl: |
+      <b>${expr}</b>
+      <b>${expr}</b>
+      <b><c:out value="${expr}" escapeXml="false"/></b>
+  
+  
+##
+- name:      value
+  subject:   value, Value, VALUE
+  desc:  |
+      'value', 'Value', and 'VALUE' directives are equivalent to
+      'cont', 'Cont', and 'CONT' directives respectively.
+  
+  pdata*:
+    erb: |
+      <b title="value: expr">foo</b>
+      <b title="Value: expr">foo</b>
+      <b title="VALUE: expr">foo</b>
+  
+    php: |
+      <b title="value($expr)">foo</b>
+      <b title="Value($expr)">foo</b>
+      <b title="VALUE($expr)">foo</b>
+  
+    eperl: |
+      <b title="value($expr)">foo</b>
+      <b title="Value($expr)">foo</b>
+      <b title="VALUE($expr)">foo</b>
+  
+    jstl: |
+      <b title="value(expr)">foo</b>
+      <b title="Value(expr)">foo</b>
+      <b title="VALUE(expr)">foo</b>
+  
+  expected*:
+    erb: |
+      <b><%= expr %></b>
+      <b><%=h expr %></b>
+      <b><%= expr %></b>
+  
+    php: |
+      <b><?php echo $expr; ?></b>
+      <b><?php echo htmlspecialchars($expr); ?></b>
+      <b><?php echo $expr; ?></b>
+  
+    eperl: |
+      <b><?= $expr !></b>
+      <b><?= sanitize($expr) !></b>
+      <b><?= $expr !></b>
+  
+    jstl: |
+      <b>${expr}</b>
+      <b>${expr}</b>
+      <b><c:out value="${expr}" escapeXml="false"/></b>
   
 
----
-name:      cont
-subject:   cont, Cont, CONT
-desc:  |
-    'cont', 'Cont', and 'CONT' directives replace content by expression.
-    'Cont' directive escapes expression automatically, while 'CONT' never escape it.
-    'cont' directive escapes expression when command-line option '-e' is specified
-    or PROPERTY_ESCAPE is true in configuration file.
-
-pdata*:
-  erb: |
-    <b title="cont: expr">foo</b>
-    <b title="Cont: expr">foo</b>
-    <b title="CONT: expr">foo</b>
-
-  php: |
-    <b title="cont($expr)">foo</b>
-    <b title="Cont($expr)">foo</b>
-    <b title="CONT($expr)">foo</b>
-
-  eperl: |
-    <b title="cont($expr)">foo</b>
-    <b title="Cont($expr)">foo</b>
-    <b title="CONT($expr)">foo</b>
-
-  jstl: |
-    <b title="cont(expr)">foo</b>
-    <b title="Cont(expr)">foo</b>
-    <b title="CONT(expr)">foo</b>
-
-expected*:
-  erb: |
-    <b><%= expr %></b>
-    <b><%=h expr %></b>
-    <b><%= expr %></b>
-
-  php: |
-    <b><?php echo $expr; ?></b>
-    <b><?php echo htmlspecialchars($expr); ?></b>
-    <b><?php echo $expr; ?></b>
-
-  eperl: |
-    <b><?= $expr !></b>
-    <b><?= sanitize($expr) !></b>
-    <b><?= $expr !></b>
-
-  jstl: |
-    <b>${expr}</b>
-    <b>${expr}</b>
-    <b><c:out value="${expr}" escapeXml="false"/></b>
-
-
----
-name:      value
-subject:   value, Value, VALUE
-desc:  |
-    'value', 'Value', and 'VALUE' directives are equivalent to
-    'cont', 'Cont', and 'CONT' directives respectively.
-
-pdata*:
-  erb: |
-    <b title="value: expr">foo</b>
-    <b title="Value: expr">foo</b>
-    <b title="VALUE: expr">foo</b>
-
-  php: |
-    <b title="value($expr)">foo</b>
-    <b title="Value($expr)">foo</b>
-    <b title="VALUE($expr)">foo</b>
-
-  eperl: |
-    <b title="value($expr)">foo</b>
-    <b title="Value($expr)">foo</b>
-    <b title="VALUE($expr)">foo</b>
-
-  jstl: |
-    <b title="value(expr)">foo</b>
-    <b title="Value(expr)">foo</b>
-    <b title="VALUE(expr)">foo</b>
-
-expected*:
-  erb: |
-    <b><%= expr %></b>
-    <b><%=h expr %></b>
-    <b><%= expr %></b>
-
-  php: |
-    <b><?php echo $expr; ?></b>
-    <b><?php echo htmlspecialchars($expr); ?></b>
-    <b><?php echo $expr; ?></b>
-
-  eperl: |
-    <b><?= $expr !></b>
-    <b><?= sanitize($expr) !></b>
-    <b><?= $expr !></b>
-
-  jstl: |
-    <b>${expr}</b>
-    <b>${expr}</b>
-    <b><c:out value="${expr}" escapeXml="false"/></b>
-
-
----
-name:      foreach
-subject:   foreach
-desc:  |
-    'foreach' directive interates element, while 'loop' directive iterates content.
-
-pdata*:
-  erb: |
-    <tr title="for item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-    <tr title="for key,value in hash">
-      <td title="cont key">key</td>
-      <td title="cont value">value</td>
-    </tr>
-    
-  php: |
-    <tr title="foreach($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="foreach($hash as $key=>$value)">
-      <td title="cont($key)">key</td>
-      <td title="cont($value)">value</td>
-    </tr>
-    
-  eperl: |
-    <tr title="foreach($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="foreach($key,$value in %hash)">
-      <td title="cont($key)">key</td>
-      <td title="cont($value)">value</td>
-    </tr>
-
-  jstl: |
-    <tr title="for(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-    <tr title="forEach(:var=>'v', :items=>:'params.list', :varStatus=>'status')">
-      <td title="cont(status.index)">1</td>
-      <td title="cont(v)"></td>
-    </tr>
-
-    <tr title="forEach(:var=>'n', :begin=>1, :end=>10, :step=>2)">
-      <td title="cont(n)">key</td>
-    </tr>
-    
-expected*:
-  erb: |
-    <% for item in list do %>
-    <tr>
-      <td><%= item %></td>
-    </tr>
-    <% end %>
-    
-    <% hash.each do |key, value| %>
-    <tr>
-      <td><%= key %></td>
-      <td><%= value %></td>
-    </tr>
-    <% end %>
-    
-  php: |
-    <?php foreach ($list as $item) { ?>
-    <tr>
-      <td><?php echo $item; ?></td>
-    </tr>
-    <?php } ?>
-    
-    <?php foreach ($hash as $key=>$value) { ?>
-    <tr>
-      <td><?php echo $key; ?></td>
-      <td><?php echo $value; ?></td>
-    </tr>
-    <?php } ?>
-    
-  eperl: |
-    <? foreach my $item (@list) { !>
-    <tr>
-      <td><?= $item !></td>
-    </tr>
-    <? } !>
-    
-    <? foreach my $key (keys %hash) { !>
-    <?   my $value = $hash{$key}; !>
-    <tr>
-      <td><?= $key !></td>
-      <td><?= $value !></td>
-    </tr>
-    <? } !>
-
-  jstl: |
-    <c:forEach var="item" items="${list}">
-    <tr>
-      <td>${item}</td>
-    </tr>
-    </c:forEach>
-    
-    <c:forEach var="v" items="${params.list}" varStatus="status">
-    <tr>
-      <td>${status.index}</td>
-      <td>${v}</td>
-    </tr>
-    </c:forEach>
-    
-    <c:forEach var="n" begin="1" end="10" step="2">
-    <tr>
-      <td>${n}</td>
-    </tr>
-    </c:forEach>
-
-
----
-name:      list
-subject:   list
-desc:  |
-    'list' directive interates content, while 'foreach' directive iterates element.
-
-pdata*:
-  erb: |
-    <tr title="List item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-    <tr title="List key,value in hash">
-      <td title="cont key">key</td>
-      <td title="cont value">value</td>
-    </tr>
-    
-  php: |
-    <tr title="list($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="list($hash as $key=>$value)">
-      <td title="cont($key)">key</td>
-      <td title="cont($value)">value</td>
-    </tr>
-    
-  eperl: |
-    <tr title="list($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="list($key,$value in %hash)">
-      <td title="cont($key)">key</td>
-      <td title="cont($value)">value</td>
-    </tr>
-
-  jstl: |
-    <tr title="list(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-expected*:
-  erb: |
-    <tr>
-    <% item_ctr = 0 %>
-    <% for item in list do %>
-    <%   item_ctr += 1 %>
-      <td><%= item %></td>
-    <% end %>
-    </tr>
-    
-    <tr>
-    <% key_ctr = 0 %>
-    <% hash.each do |key, value| %>
-    <%   key_ctr += 1 %>
-      <td><%= key %></td>
-      <td><%= value %></td>
-    <% end %>
-    </tr>
-    
-  php: |
-    <tr>
-    <?php foreach ($list as $item) { ?>
-      <td><?php echo $item; ?></td>
-    <?php } ?>
-    </tr>
-    
-    <tr>
-    <?php foreach ($hash as $key=>$value) { ?>
-      <td><?php echo $key; ?></td>
-      <td><?php echo $value; ?></td>
-    <?php } ?>
-    </tr>
-    
-  eperl: |
-    <tr>
-    <? foreach my $item (@list) { !>
-      <td><?= $item !></td>
-    <? } !>
-    </tr>
-    
-    <tr>
-    <? foreach my $key (keys %hash) { !>
-    <?   my $value = $hash{$key}; !>
-      <td><?= $key !></td>
-      <td><?= $value !></td>
-    <? } !>
-    </tr>
-
-  jstl: |
-    <tr>
-    <c:forEach var="item" items="${list}">
-      <td>${item}</td>
-    </c:forEach>
-    </tr>
-
-
----
-name:      foreach_ctr
-subject:   Foreach, List
-desc:  |
-    'Foreach' and 'List' directives iterate element or content with loop counter
-    (starting with 1).
-
-pdata*:
-  erb: |
-    <tr title="For item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-    <tr title="List item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-  php: |
-    <tr title="Foreach($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="List($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-  eperl: |
-    <tr title="Foreach($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="List($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-
-  jstl: |
-    <tr title="For(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-    <tr title="List(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-expected*:
-  erb: |
-    <% item_ctr = 0 %>
-    <% for item in list do %>
-    <%   item_ctr += 1 %>
-    <tr>
-      <td><%= item %></td>
-    </tr>
-    <% end %>
-    
-    <tr>
-    <% item_ctr = 0 %>
-    <% for item in list do %>
-    <%   item_ctr += 1 %>
-      <td><%= item %></td>
-    <% end %>
-    </tr>
-    
-  php: |
-    <?php $item_ctr = 0; ?>
-    <?php foreach ($list as $item) { ?>
-    <?php   $item_ctr++; ?>
-    <tr>
-      <td><?php echo $item; ?></td>
-    </tr>
-    <?php } ?>
-    
-    <tr>
-    <?php $item_ctr = 0; ?>
-    <?php foreach ($list as $item) { ?>
-    <?php   $item_ctr++; ?>
-      <td><?php echo $item; ?></td>
-    <?php } ?>
-    </tr>
-    
-  eperl: |
-    <? my $item_ctr = 0; !>
-    <? foreach my $item (@list) { !>
-    <?   $item_ctr++; !>
-    <tr>
-      <td><?= $item !></td>
-    </tr>
-    <? } !>
-    
-    <tr>
-    <? my $item_ctr = 0; !>
-    <? foreach my $item (@list) { !>
-    <?   $item_ctr++; !>
-      <td><?= $item !></td>
-    <? } !>
-    </tr>
-    
-  jstl: |
-    <c:forEach var="item" items="${list}" varStatus="item_status">
-    <c:set var="item_ctr" value="${item_status.count}" />
-    <tr>
-      <td>${item}</td>
-    </tr>
-    </c:forEach>
-    
-    <tr>
-    <c:forEach var="item" items="${list}" varStatus="item_status">
-    <c:set var="item_ctr" value="${item_status.count}" />
-      <td>${item}</td>
-    </c:forEach>
-    </tr>
-
-    
----
-name:      foreach_tgl
-subject:   FOREACH, LIST
-desc: |
-    'FOREACH' and 'LIST' directives iterate element or content with loop counter
-    and toggle variable.
-    Toggle values are "'odd'" and "'even'" in default.
-    You can change them by command-line option '--odd' and '--even'
-    or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
-
-pdata*:
-  erb: |
-    <tr title="FOR item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-    <tr title="LIST item in list">
-      <td title="cont item">foo</td>
-    </tr>
-    
-  php: |
-    <tr title="FOREACH($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="LIST($list as $item)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-  eperl: |
-    <tr title="FOREACH($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-    
-    <tr title="LIST($item in @list)">
-      <td title="cont($item)">foo</td>
-    </tr>
-
-  jstl: |
-    <tr title="FOR(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-    <tr title="LIST(item: list)">
-      <td title="cont(item)">foo</td>
-    </tr>
-    
-expected*:
-  erb: |
-    <% item_ctr = 0 %>
-    <% for item in list do %>
-    <%   item_ctr += 1 %>
-    <%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>
-    <tr>
-      <td><%= item %></td>
-    </tr>
-    <% end %>
-    
-    <tr>
-    <% item_ctr = 0 %>
-    <% for item in list do %>
-    <%   item_ctr += 1 %>
-    <%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>
-      <td><%= item %></td>
-    <% end %>
-    </tr>
-    
-  php: |
-    <?php $item_ctr = 0; ?>
-    <?php foreach ($list as $item) { ?>
-    <?php   $item_ctr++; ?>
-    <?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>
-    <tr>
-      <td><?php echo $item; ?></td>
-    </tr>
-    <?php } ?>
-    
-    <tr>
-    <?php $item_ctr = 0; ?>
-    <?php foreach ($list as $item) { ?>
-    <?php   $item_ctr++; ?>
-    <?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>
-      <td><?php echo $item; ?></td>
-    <?php } ?>
-    </tr>
-    
-  eperl: |
-    <? my $item_ctr = 0; !>
-    <? foreach my $item (@list) { !>
-    <?   $item_ctr++; !>
-    <?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>
-    <tr>
-      <td><?= $item !></td>
-    </tr>
-    <? } !>
-    
-    <tr>
-    <? my $item_ctr = 0; !>
-    <? foreach my $item (@list) { !>
-    <?   $item_ctr++; !>
-    <?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>
-      <td><?= $item !></td>
-    <? } !>
-    </tr>
-
-  jstl: |
-    <c:forEach var="item" items="${list}" varStatus="item_status">
-    <c:set var="item_ctr" value="${item_status.count}" />
-    <c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />
-    <tr>
-      <td>${item}</td>
-    </tr>
-    </c:forEach>
-    
-    <tr>
-    <c:forEach var="item" items="${list}" varStatus="item_status">
-    <c:set var="item_ctr" value="${item_status.count}" />
-    <c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />
-      <td>${item}</td>
-    </c:forEach>
-    </tr>
-
-
----
-name:      while
-subject:   while, loop
-desc: |
-    'while' and 'loop' directive iterates element or content
-    until conditional expression is false.
-
-pdata*:
-  erb: |
-    <tr title="while (item = dbh.fetch) != nil">
-      <td title="cont item.name">foo</td>
-    </tr>
-    
-    <tr title="loop (item = dbh.fetch) != nil">
-      <td title="cont item.name">foo</td>
-    </tr>
-
-  php: |
-    <tr title="while(($item = $dbh->fetch()) != null)">
-      <td title="cont($item->name)">foo</td>
-    </tr>
-    
-    <tr title="loop(($item = $dbh->fetch()) != null)">
-      <td title="cont($item->name)">foo</td>
-    </tr>
-
-  eperl: |
-    <tr title="while(($item = $dbh->fetch()) != null)">
-      <td title="cont($item->name)">foo</td>
-    </tr>
-    
-    <tr title="loop(($item = $dbh->fetch()) != null)">
-      <td title="cont($item->name)">foo</td>
-    </tr>
-
-#  jstl: |
-
-
-expected*:
-  erb: |
-    <% while (item = dbh.fetch) != nil do %>
-    <tr>
-      <td><%= item.name %></td>
-    </tr>
-    <% end %>
-    
-    <tr>
-    <% while (item = dbh.fetch) != nil do %>
-      <td><%= item.name %></td>
-    <% end %>
-    </tr>
-
-  php: |
-    <?php while (($item = $dbh->fetch()) != null) { ?>
-    <tr>
-      <td><?php echo $item->name; ?></td>
-    </tr>
-    <?php } ?>
-    
-    <tr>
-    <?php while (($item = $dbh->fetch()) != null) { ?>
-      <td><?php echo $item->name; ?></td>
-    <?php } ?>
-    </tr>
-
-  eperl: |
-    <? while (($item = $dbh->fetch()) != null) { !>
-    <tr>
-      <td><?= $item->name !></td>
-    </tr>
-    <? } !>
-    
-    <tr>
-    <? while (($item = $dbh->fetch()) != null) { !>
-      <td><?= $item->name !></td>
-    <? } !>
-    </tr>
-
-#  jstl: |
-
-
----
-name:      if
-subject:   if-then-else
-desc: |
-   'if', 'elsif'(or 'elseif'), and 'else' directives represent conditional branch.
-   Don't separate with empty lines between end-tag of 'if'/'elseif' directive and
-   start-tag of 'elseif'/'else' directive.
-
-pdata*:
-  erb: |
-    <div title="if status=='error'">
-      <p class="error" title="cont mesg">error</p>
-    </div>
-    <div title="elsif status=='warning'">
-      <p class="warning" title="cont mesg">waring</p>
-    </div>
-    <div title="else">
-      <p title="cont mesg">mesg</p>
-    </div>
-
-  php: |
-    <div title="if($status=='error')">
-      <p class="error" title="cont($mesg)">error</p>
-    </div>
-    <div title="elseif($status=='warning')">
-      <p class="warning" title="cont($mesg)">waring</p>
-    </div>
-    <div title="else">
-      <p title="cont($mesg)">mesg</p>
-    </div>
-
-  eperl: |
-    <div title="if($status=='error')">
-      <p class="error" title="cont($mesg)">error</p>
-    </div>
-    <div title="elsif($status=='warning')">
-      <p class="warning" title="cont($mesg)">waring</p>
-    </div>
-    <div title="else">
-      <p title="cont($mesg)">mesg</p>
-    </div>
-
-  jstl: |
-    <div title="if(status=='error')">
-      <p class="error" title="cont(mesg)">error</p>
-    </div>
-    <div title="elseif(status=='warning')">
-      <p class="warning" title="cont(mesg)">waring</p>
-    </div>
-    <div title="else">
-      <p title="cont(mesg)">mesg</p>
-    </div>
-
-expected*:
-  erb: |
-    <% if status=='error' then %>
-    <div>
-      <p class="error"><%= mesg %></p>
-    </div>
-    <% elsif status=='warning' then %>
-    <div>
-      <p class="warning"><%= mesg %></p>
-    </div>
-    <% else %>
-    <div>
-      <p><%= mesg %></p>
-    </div>
-    <% end %>
-
-  php: |
-    <?php if ($status=='error') { ?>
-    <div>
-      <p class="error"><?php echo $mesg; ?></p>
-    </div>
-    <?php } elseif ($status=='warning') { ?>
-    <div>
-      <p class="warning"><?php echo $mesg; ?></p>
-    </div>
-    <?php } else { ?>
-    <div>
-      <p><?php echo $mesg; ?></p>
-    </div>
-    <?php } ?>
-
-  eperl: |
-    <? if ($status=='error') { !>
-    <div>
-      <p class="error"><?= $mesg !></p>
-    </div>
-    <? } elsif ($status=='warning') { !>
-    <div>
-      <p class="warning"><?= $mesg !></p>
-    </div>
-    <? } else { !>
-    <div>
-      <p><?= $mesg !></p>
-    </div>
-    <? } !>
-
-  jstl: |
-    <c:choose><c:when test="${status=='error'}">
-    <div>
-      <p class="error">${mesg}</p>
-    </div>
-    </c:when><c:when test="${status=='warning'}">
-    <div>
-      <p class="warning">${mesg}</p>
-    </div>
-    </c:when><c:otherwise>
-    <div>
-      <p>${mesg}</p>
-    </div>
-    </c:otherwise></c:choose>
-
-
----
-name:      set
-subject:   set
-desc:  |
-    'set' directive executes any expression.
-    
-pdata*:
-  erb: |
-    <tr title="set color=i%2==0 ? 'red' : 'blue'">
-     <td title="cont: color">red</td>
-    </tr>
-    
-  php: |
-    <tr title="set($color=$i%2==0 ? 'red' : 'blue')">
-     <td title="cont($color)">red</td>
-    </tr>
-    
-  eperl: |
-    <tr title="set($color=i%2==0 ? 'red' : 'blue')">
-     <td title="cont($color)">red</td>
-    </tr>
-
-  jstl: |
-    <tr title="set(color=i%2==0 ? 'red' : 'blue')">
-     <td title="cont(color)">red</td>
-    </tr>
-
-expected*:
-  erb: |
-    <% color=i%2==0 ? 'red' : 'blue' %>
-    <tr>
-     <td><%= color %></td>
-    </tr>
-
-  php: |
-    <?php $color=$i%2==0 ? 'red' : 'blue'; ?>
-    <tr>
-     <td><?php echo $color; ?></td>
-    </tr>
-
-  eperl: |
-    <? $color=i%2==0 ? 'red' : 'blue'; !>
-    <tr>
-     <td><?= $color !></td>
-    </tr>
-
-  jstl: |
-    <c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" />
-    <tr>
-     <td>${color}</td>
-    </tr>
-
-
----
-name:      id
-subject:   id
-desc:  |
-    'id' directive marks the element by name.
-    Id name is used in presentation logic file or 'replace'/'placeholder' directive.
-    Id attribute is equivalent to 'id' directive if other direcitve is not specified.
-
-pdata*:
-  erb: |
-    <ul>
-     <li title="id: name">foo</li>
-    </ul>
-
-  php: |
-    <ul>
-     <li title="id(name)">foo</li>
-    </ul>
-
-  eperl: |
-    <ul>
-     <li title="id(name)">foo</li>
-    </ul>
-
-  eperl: |
-    <ul>
-     <li title="id(name)">foo</li>
-    </ul>
-
-expected*:
-  erb: |
-    <ul>
-     <li>foo</li>
-    </ul>
-
-  php: |
-    <ul>
-     <li>foo</li>
-    </ul>
-
-  eperl: |
-    <ul>
-     <li>foo</li>
-    </ul>
-
-  jstl: |
-    <ul>
-     <li>foo</li>
-    </ul>
-
-
----
-name:      attr
-subject:   attr, Attr, ATTR
-desc:  |
-    'attr', 'Attr', and 'ATTR' directives replace attribute value with expression.
-    'Attr' directive escapes expression automatically, while 'ATTR' never escape it.
-    'attr' directive escapes expression when command-line option '-e' is specified
-    or PROPERTY_ESCAPE is true in configuration file.
-
-    More than one directives are available in an element with separating by ';',
-    and available with other directive.
-
-pdata*:
-  erb: |
-    <tr class="odd"
-        title="FOR v in list; attr: 'class' v_tgl; attr: 'style' style">
-     <td title="cont v.name">foo</td>
-    </tr>
-
-  php: |
-    <tr class="odd"
-        title="FOREACH($list as $v); attr('class',$v_tgl); attr('style',$style)">
-     <td title="cont($v->name)">foo</td>
-    </tr>
-
-  eperl: |
-    <tr class="odd"
-        title="FOREACH($v in @list); attr('class',$v_tgl); attr('style',$style)">
-     <td title="cont($v->name)">foo</td>
-    </tr>
-
-  jstl: |
-    <tr class="odd"
-        title="FOR(v: list); attr('class',v_tgl); attr('style',style)">
-     <td title="cont(v.name)">foo</td>
-    </tr>
-
-expected*:
-  erb: |
-    <% v_ctr = 0 %>
-    <% for v in list do %>
-    <%   v_ctr += 1 %>
-    <%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %>
-    <tr class="<%= v_tgl %>" style="<%= style %>">
-     <td><%= v.name %></td>
-    </tr>
-    <% end %>
-
-  php: |
-    <?php $v_ctr = 0; ?>
-    <?php foreach ($list as $v) { ?>
-    <?php   $v_ctr++; ?>
-    <?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?>
-    <tr class="<?php echo $v_tgl; ?>" style="<?php echo $style; ?>">
-     <td><?php echo $v->name; ?></td>
-    </tr>
-    <?php } ?>
-
-  eperl: |
-    <? my $v_ctr = 0; !>
-    <? foreach my $v (@list) { !>
-    <?   $v_ctr++; !>
-    <?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !>
-    <tr class="<?= $v_tgl !>" style="<?= $style !>">
-     <td><?= $v->name !></td>
-    </tr>
-    <? } !>
-
-  jstl: |
-    <c:forEach var="v" items="${list}" varStatus="v_status">
-    <c:set var="v_ctr" value="${v_status.count}" />
-    <c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" />
-    <tr class="${v_tgl}" style="${style}">
-     <td>${v.name}</td>
-    </tr>
-    </c:forEach>
-
-
----
-name:      append
-subject:   append, Append, APPEND
-desc:  |
-    'append', 'Append', and 'APPEND' directives append expression at the end of start-tag.
-    'Append' directive escapes expression automatically, while 'APPEND' never escape it.
-    'append' directive escapes expression when command-line option '-e' is specified
-    or PROPERTY_ESCAPE is true in configuration file.
-    
-    More than one directives are available in an element with separating by ';',
-    and available with other directive.
-
-pdata*:
-  erb: |
-    <input type="checkbox"
-       title="append: flag1 ? ' checked=\'checked\'' : ''">
-#    <input type="checkbox" name="flag" value="y"
-#        title="append: flag1 ? ' checked=\'checked\'' : ''">
-
-  php: |
-    <input type="checkbox"
-       title="append($flag1 ? ' checked=\'checked\'' : '')">
-#    <input type="checkbox" name="flag" value="y"
-#       title="append($flag1 ? ' checked=\'checked\'' : '')">
-
-  eperl: |
-    <input type="checkbox"
-       title="append($flag1 ? ' checked=\'checked\'' : '')">
-#    <input type="checkbox" name="flag" value="y"
-#       title="append($flag1 ? ' checked=\'checked\'' : '')">
-
-  jstl: |
-    <input type="checkbox"
-       title="append(flag1 ? ' checked=\'checked\'' : '')">
-#    <input type="checkbox" name="flag" value="y"
-#       title="append(flag1 ? ' checked=\'checked\'' : '')">
-
-expected*:
-  erb: |
-    <input type="checkbox"<%= flag1 ? ' checked=\'checked\'' : '' %>>
-#    <input type="checkbox" name="flag" value="y"<%= flag1 ? ' checked=\'checked\'' : '' %>>
-
-  php: |
-    <input type="checkbox"<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>>
-#    <input type="checkbox" name="flag" value="y"<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>>
-    
-  eperl: |
-    <input type="checkbox"<?= $flag1 ? ' checked=\'checked\'' : '' !>>
-#    <input type="checkbox" name="flag" value="y"<?= $flag1 ? ' checked=\'checked\'' : '' !>>
-
-  jstl: |
-    <input type="checkbox"${flag1 ? ' checked=\'checked\'' : ''}>
-#    <input type="checkbox" name="flag" value="y"${flag1 ? ' checked=\'checked\'' : ''}>
-
-
----
-name:      dummy
-subject:   dummy
-desc:  |
-    'dummy' directive removes the element.
-    It is very useful when preview the HTML design in browser.
-
-pdata*:
-  erb: |
-    <ul>
-      <li>foo</li>
-      <li title="dummy:">bar</li>
-      <li title="dummy:">baz</li>
-    </ul>
-
-  php: |
-    <ul>
-      <li>foo</li>
-      <li title="dummy()">bar</li>
-      <li title="dummy()">baz</li>
-    </ul>
-
-  eperl: |
-    <ul>
-      <li>foo</li>
-      <li title="dummy()">bar</li>
-      <li title="dummy()">baz</li>
-    </ul>
-
-  jstl: |
-    <ul>
-      <li>foo</li>
-      <li title="dummy()">bar</li>
-      <li title="dummy()">baz</li>
-    </ul>
-
-expected*:
-  erb: |
-    <ul>
-      <li>foo</li>
-    </ul>
-
-  php: |
-    <ul>
-      <li>foo</li>
-    </ul>
-
-  eperl: |
-    <ul>
-      <li>foo</li>
-    </ul>
-
-  jstl: |
-    <ul>
-      <li>foo</li>
-    </ul>
-
-
----
-name:      default
-subject:   default, Default, DEFAULT
-desc:  |
-    'default', 'Default', and 'DEFAULT' directive replaces content by expression
-    only if expression is not nil, false, nor empty string.
-    'Default' directive escapes expression automatically, while 'DEFAULT' never escape it.
-    'default' directive escapes expression when command-line option '-e' is specified
-    or PROPERTY_ESCAPE is true in configuration file.
-
-pdata*:
-  erb: |
-    name: <em title="default: user">Guest</em>
-
-  php: |
-    name: <em title="default($user)">Guest</em>
-
-  eperl: |
-    name: <em title="default($user)">Guest</em>
-
-  jstl: |
-    name: <em title="default(user)">Guest</em>
-
-expected*:
-  erb: |
-    name: <em><% if user && user.empty? then %><%= user %><% else %>Guest<% end %></em>
-
-  php: |
-    name: <em><?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?php } ?></em>
-
-  eperl: |
-    name: <em><? if ($user) { !><?= $user !><? } else { !>Guest<? } !></em>
-
-  jstl: |
-    name: <em><c:out value="${user}" default="Guest" /></em>
-
-
----
-name:     replace
-subject:  replace, placeholder
-desc:  |
-    'replace' and 'placeholder' directives replace element or content
-    by other element or content.
-    
-pdata*:
-  erb: |
-    <div title="id: link">
-      back to <a href="/">home</a>.
-    </div>
-    <!-- -->
-    <p title="replace: element(link)">
-      back to home
-    </p>
-    <!-- -->
-    <p title="replace: content(link)">
-      back to home
-    </p>
-    <!-- -->
-    <p title="placeholder: element(link)">
-      back to home
-    </p>
-    <!-- -->
-    <p title="placeholder: content(link)">
-      back to home
-    </p>
-
-  php: &replace_pdata |
-    <div title="id(link)">
-      back to <a href="/">home</a>.
-    </div>
-    <!-- -->
-    <p title="replace(element(link))">
-      back to home
-    </p>
-    <!-- -->
-    <p title="replace(content(link))">
-      back to home
-    </p>
-    <!-- -->
-    <p title="placeholder(element(link))">
-      back to home
-    </p>
-    <!-- -->
-    <p title="placeholder(content(link))">
-      back to home
-    </p>
-
-  eperl: *replace_pdata
-
-  jstl: *replace_pdata
-
-expected*:
-  erb: &expected1 |
-    <div>
-      back to <a href="/">home</a>.
-    </div>
-    <!-- -->
-    <div>
-      back to <a href="/">home</a>.
-    </div>
-    <!-- -->
-      back to <a href="/">home</a>.
-    <!-- -->
-    <p>
-    <div>
-      back to <a href="/">home</a>.
-    </div>
-    </p>
-    <!-- -->
-    <p>
-      back to <a href="/">home</a>.
-    </p>
-
-  php: *expected1
-
-  eperl: *expected1
-
-  jstl: *expected1
-
+##
+- name:      foreach
+  subject:   foreach
+  desc:  |
+      'foreach' directive interates element, while 'loop' directive iterates content.
+  
+  pdata*:
+    erb: |
+      <tr title="for item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+      <tr title="for key,value in hash">
+        <td title="cont key">key</td>
+        <td title="cont value">value</td>
+      </tr>
+      
+    php: |
+      <tr title="foreach($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="foreach($hash as $key=>$value)">
+        <td title="cont($key)">key</td>
+        <td title="cont($value)">value</td>
+      </tr>
+      
+    eperl: |
+      <tr title="foreach($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="foreach($key,$value in %hash)">
+        <td title="cont($key)">key</td>
+        <td title="cont($value)">value</td>
+      </tr>
+  
+    jstl: |
+      <tr title="for(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+      <tr title="forEach(:var=>'v', :items=>:'params.list', :varStatus=>'status')">
+        <td title="cont(status.index)">1</td>
+        <td title="cont(v)"></td>
+      </tr>
+  
+      <tr title="forEach(:var=>'n', :begin=>1, :end=>10, :step=>2)">
+        <td title="cont(n)">key</td>
+      </tr>
+      
+  expected*:
+    erb: |
+      <% for item in list do %>
+      <tr>
+        <td><%= item %></td>
+      </tr>
+      <% end %>
+      
+      <% hash.each do |key, value| %>
+      <tr>
+        <td><%= key %></td>
+        <td><%= value %></td>
+      </tr>
+      <% end %>
+      
+    php: |
+      <?php foreach ($list as $item) { ?>
+      <tr>
+        <td><?php echo $item; ?></td>
+      </tr>
+      <?php } ?>
+      
+      <?php foreach ($hash as $key=>$value) { ?>
+      <tr>
+        <td><?php echo $key; ?></td>
+        <td><?php echo $value; ?></td>
+      </tr>
+      <?php } ?>
+      
+    eperl: |
+      <? foreach my $item (@list) { !>
+      <tr>
+        <td><?= $item !></td>
+      </tr>
+      <? } !>
+      
+      <? foreach my $key (keys %hash) { !>
+      <?   my $value = $hash{$key}; !>
+      <tr>
+        <td><?= $key !></td>
+        <td><?= $value !></td>
+      </tr>
+      <? } !>
+  
+    jstl: |
+      <c:forEach var="item" items="${list}">
+      <tr>
+        <td>${item}</td>
+      </tr>
+      </c:forEach>
+      
+      <c:forEach var="v" items="${params.list}" varStatus="status">
+      <tr>
+        <td>${status.index}</td>
+        <td>${v}</td>
+      </tr>
+      </c:forEach>
+      
+      <c:forEach var="n" begin="1" end="10" step="2">
+      <tr>
+        <td>${n}</td>
+      </tr>
+      </c:forEach>
+ 
+ 
+  
+- name:      list
+  subject:   list
+  desc:  |
+      'list' directive interates content, while 'foreach' directive iterates element.
+  
+  pdata*:
+    erb: |
+      <tr title="List item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+      <tr title="List key,value in hash">
+        <td title="cont key">key</td>
+        <td title="cont value">value</td>
+      </tr>
+      
+    php: |
+      <tr title="list($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="list($hash as $key=>$value)">
+        <td title="cont($key)">key</td>
+        <td title="cont($value)">value</td>
+      </tr>
+      
+    eperl: |
+      <tr title="list($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="list($key,$value in %hash)">
+        <td title="cont($key)">key</td>
+        <td title="cont($value)">value</td>
+      </tr>
+  
+    jstl: |
+      <tr title="list(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+  expected*:
+    erb: |
+      <tr>
+      <% item_ctr = 0 %>
+      <% for item in list do %>
+      <%   item_ctr += 1 %>
+        <td><%= item %></td>
+      <% end %>
+      </tr>
+      
+      <tr>
+      <% key_ctr = 0 %>
+      <% hash.each do |key, value| %>
+      <%   key_ctr += 1 %>
+        <td><%= key %></td>
+        <td><%= value %></td>
+      <% end %>
+      </tr>
+      
+    php: |
+      <tr>
+      <?php foreach ($list as $item) { ?>
+        <td><?php echo $item; ?></td>
+      <?php } ?>
+      </tr>
+      
+      <tr>
+      <?php foreach ($hash as $key=>$value) { ?>
+        <td><?php echo $key; ?></td>
+        <td><?php echo $value; ?></td>
+      <?php } ?>
+      </tr>
+      
+    eperl: |
+      <tr>
+      <? foreach my $item (@list) { !>
+        <td><?= $item !></td>
+      <? } !>
+      </tr>
+      
+      <tr>
+      <? foreach my $key (keys %hash) { !>
+      <?   my $value = $hash{$key}; !>
+        <td><?= $key !></td>
+        <td><?= $value !></td>
+      <? } !>
+      </tr>
+  
+    jstl: |
+      <tr>
+      <c:forEach var="item" items="${list}">
+        <td>${item}</td>
+      </c:forEach>
+      </tr>
+  
+ 
+ 
+- name:      foreach_ctr
+  subject:   Foreach, List
+  desc:  |
+      'Foreach' and 'List' directives iterate element or content with loop counter
+      (starting with 1).
+  
+  pdata*:
+    erb: |
+      <tr title="For item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+      <tr title="List item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+    php: |
+      <tr title="Foreach($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="List($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+    eperl: |
+      <tr title="Foreach($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="List($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+  
+    jstl: |
+      <tr title="For(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+      <tr title="List(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+  expected*:
+    erb: |
+      <% item_ctr = 0 %>
+      <% for item in list do %>
+      <%   item_ctr += 1 %>
+      <tr>
+        <td><%= item %></td>
+      </tr>
+      <% end %>
+      
+      <tr>
+      <% item_ctr = 0 %>
+      <% for item in list do %>
+      <%   item_ctr += 1 %>
+        <td><%= item %></td>
+      <% end %>
+      </tr>
+      
+    php: |
+      <?php $item_ctr = 0; ?>
+      <?php foreach ($list as $item) { ?>
+      <?php   $item_ctr++; ?>
+      <tr>
+        <td><?php echo $item; ?></td>
+      </tr>
+      <?php } ?>
+      
+      <tr>
+      <?php $item_ctr = 0; ?>
+      <?php foreach ($list as $item) { ?>
+      <?php   $item_ctr++; ?>
+        <td><?php echo $item; ?></td>
+      <?php } ?>
+      </tr>
+      
+    eperl: |
+      <? my $item_ctr = 0; !>
+      <? foreach my $item (@list) { !>
+      <?   $item_ctr++; !>
+      <tr>
+        <td><?= $item !></td>
+      </tr>
+      <? } !>
+      
+      <tr>
+      <? my $item_ctr = 0; !>
+      <? foreach my $item (@list) { !>
+      <?   $item_ctr++; !>
+        <td><?= $item !></td>
+      <? } !>
+      </tr>
+      
+    jstl: |
+      <c:forEach var="item" items="${list}" varStatus="item_status">
+      <c:set var="item_ctr" value="${item_status.count}" />
+      <tr>
+        <td>${item}</td>
+      </tr>
+      </c:forEach>
+      
+      <tr>
+      <c:forEach var="item" items="${list}" varStatus="item_status">
+      <c:set var="item_ctr" value="${item_status.count}" />
+        <td>${item}</td>
+      </c:forEach>
+      </tr>
+  
+      
+- name:      foreach_tgl
+  subject:   FOREACH, LIST
+  desc: |
+      'FOREACH' and 'LIST' directives iterate element or content with loop counter
+      and toggle variable.
+      Toggle values are "'odd'" and "'even'" in default.
+      You can change them by command-line option '--odd' and '--even'
+      or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
+  
+  pdata*:
+    erb: |
+      <tr title="FOR item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+      <tr title="LIST item in list">
+        <td title="cont item">foo</td>
+      </tr>
+      
+    php: |
+      <tr title="FOREACH($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="LIST($list as $item)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+    eperl: |
+      <tr title="FOREACH($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+      
+      <tr title="LIST($item in @list)">
+        <td title="cont($item)">foo</td>
+      </tr>
+  
+    jstl: |
+      <tr title="FOR(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+      <tr title="LIST(item: list)">
+        <td title="cont(item)">foo</td>
+      </tr>
+      
+  expected*:
+    erb: |
+      <% item_ctr = 0 %>
+      <% for item in list do %>
+      <%   item_ctr += 1 %>
+      <%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>
+      <tr>
+        <td><%= item %></td>
+      </tr>
+      <% end %>
+      
+      <tr>
+      <% item_ctr = 0 %>
+      <% for item in list do %>
+      <%   item_ctr += 1 %>
+      <%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>
+        <td><%= item %></td>
+      <% end %>
+      </tr>
+      
+    php: |
+      <?php $item_ctr = 0; ?>
+      <?php foreach ($list as $item) { ?>
+      <?php   $item_ctr++; ?>
+      <?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>
+      <tr>
+        <td><?php echo $item; ?></td>
+      </tr>
+      <?php } ?>
+      
+      <tr>
+      <?php $item_ctr = 0; ?>
+      <?php foreach ($list as $item) { ?>
+      <?php   $item_ctr++; ?>
+      <?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>
+        <td><?php echo $item; ?></td>
+      <?php } ?>
+      </tr>
+      
+    eperl: |
+      <? my $item_ctr = 0; !>
+      <? foreach my $item (@list) { !>
+      <?   $item_ctr++; !>
+      <?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>
+      <tr>
+        <td><?= $item !></td>
+      </tr>
+      <? } !>
+      
+      <tr>
+      <? my $item_ctr = 0; !>
+      <? foreach my $item (@list) { !>
+      <?   $item_ctr++; !>
+      <?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>
+        <td><?= $item !></td>
+      <? } !>
+      </tr>
+  
+    jstl: |
+      <c:forEach var="item" items="${list}" varStatus="item_status">
+      <c:set var="item_ctr" value="${item_status.count}" />
+      <c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />
+      <tr>
+        <td>${item}</td>
+      </tr>
+      </c:forEach>
+      
+      <tr>
+      <c:forEach var="item" items="${list}" varStatus="item_status">
+      <c:set var="item_ctr" value="${item_status.count}" />
+      <c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />
+        <td>${item}</td>
+      </c:forEach>
+      </tr>
+  
+  
+##
+- name:      while
+  subject:   while, loop
+  desc: |
+      'while' and 'loop' directive iterates element or content
+      until conditional expression is false.
+  
+  pdata*:
+    erb: |
+      <tr title="while (item = dbh.fetch) != nil">
+        <td title="cont item.name">foo</td>
+      </tr>
+      
+      <tr title="loop (item = dbh.fetch) != nil">
+        <td title="cont item.name">foo</td>
+      </tr>
+  
+    php: |
+      <tr title="while(($item = $dbh->fetch()) != null)">
+        <td title="cont($item->name)">foo</td>
+      </tr>
+      
+      <tr title="loop(($item = $dbh->fetch()) != null)">
+        <td title="cont($item->name)">foo</td>
+      </tr>
+  
+    eperl: |
+      <tr title="while(($item = $dbh->fetch()) != null)">
+        <td title="cont($item->name)">foo</td>
+      </tr>
+      
+      <tr title="loop(($item = $dbh->fetch()) != null)">
+        <td title="cont($item->name)">foo</td>
+      </tr>
+  
+  #  jstl: |
+  
+  
+  expected*:
+    erb: |
+      <% while (item = dbh.fetch) != nil do %>
+      <tr>
+        <td><%= item.name %></td>
+      </tr>
+      <% end %>
+      
+      <tr>
+      <% while (item = dbh.fetch) != nil do %>
+        <td><%= item.name %></td>
+      <% end %>
+      </tr>
+  
+    php: |
+      <?php while (($item = $dbh->fetch()) != null) { ?>
+      <tr>
+        <td><?php echo $item->name; ?></td>
+      </tr>
+      <?php } ?>
+      
+      <tr>
+      <?php while (($item = $dbh->fetch()) != null) { ?>
+        <td><?php echo $item->name; ?></td>
+      <?php } ?>
+      </tr>
+  
+    eperl: |
+      <? while (($item = $dbh->fetch()) != null) { !>
+      <tr>
+        <td><?= $item->name !></td>
+      </tr>
+      <? } !>
+      
+      <tr>
+      <? while (($item = $dbh->fetch()) != null) { !>
+        <td><?= $item->name !></td>
+      <? } !>
+      </tr>
+  
+  #  jstl: |
+  
+  
+
+- name:      if
+  subject:   if-then-else
+  desc: |
+     'if', 'elsif'(or 'elseif'), and 'else' directives represent conditional branch.
+     Don't separate with empty lines between end-tag of 'if'/'elseif' directive and
+     start-tag of 'elseif'/'else' directive.
+  
+  pdata*:
+    erb: |
+      <div title="if status=='error'">
+        <p class="error" title="cont mesg">error</p>
+      </div>
+      <div title="elsif status=='warning'">
+        <p class="warning" title="cont mesg">waring</p>
+      </div>
+      <div title="else">
+        <p title="cont mesg">mesg</p>
+      </div>
+  
+    php: |
+      <div title="if($status=='error')">
+        <p class="error" title="cont($mesg)">error</p>
+      </div>
+      <div title="elseif($status=='warning')">
+        <p class="warning" title="cont($mesg)">waring</p>
+      </div>
+      <div title="else">
+        <p title="cont($mesg)">mesg</p>
+      </div>
+  
+    eperl: |
+      <div title="if($status=='error')">
+        <p class="error" title="cont($mesg)">error</p>
+      </div>
+      <div title="elsif($status=='warning')">
+        <p class="warning" title="cont($mesg)">waring</p>
+      </div>
+      <div title="else">
+        <p title="cont($mesg)">mesg</p>
+      </div>
+  
+    jstl: |
+      <div title="if(status=='error')">
+        <p class="error" title="cont(mesg)">error</p>
+      </div>
+      <div title="elseif(status=='warning')">
+        <p class="warning" title="cont(mesg)">waring</p>
+      </div>
+      <div title="else">
+        <p title="cont(mesg)">mesg</p>
+      </div>
+  
+  expected*:
+    erb: |
+      <% if status=='error' then %>
+      <div>
+        <p class="error"><%= mesg %></p>
+      </div>
+      <% elsif status=='warning' then %>
+      <div>
+        <p class="warning"><%= mesg %></p>
+      </div>
+      <% else %>
+      <div>
+        <p><%= mesg %></p>
+      </div>
+      <% end %>
+  
+    php: |
+      <?php if ($status=='error') { ?>
+      <div>
+        <p class="error"><?php echo $mesg; ?></p>
+      </div>
+      <?php } elseif ($status=='warning') { ?>
+      <div>
+        <p class="warning"><?php echo $mesg; ?></p>
+      </div>
+      <?php } else { ?>
+      <div>
+        <p><?php echo $mesg; ?></p>
+      </div>
+      <?php } ?>
+  
+    eperl: |
+      <? if ($status=='error') { !>
+      <div>
+        <p class="error"><?= $mesg !></p>
+      </div>
+      <? } elsif ($status=='warning') { !>
+      <div>
+        <p class="warning"><?= $mesg !></p>
+      </div>
+      <? } else { !>
+      <div>
+        <p><?= $mesg !></p>
+      </div>
+      <? } !>
+  
+    jstl: |
+      <c:choose><c:when test="${status=='error'}">
+      <div>
+        <p class="error">${mesg}</p>
+      </div>
+      </c:when><c:when test="${status=='warning'}">
+      <div>
+        <p class="warning">${mesg}</p>
+      </div>
+      </c:when><c:otherwise>
+      <div>
+        <p>${mesg}</p>
+      </div>
+      </c:otherwise></c:choose>
+  
+ 
+## 
+- name:      set
+  subject:   set
+  desc:  |
+      'set' directive executes any expression.
+      
+  pdata*:
+    erb: |
+      <tr title="set color=i%2==0 ? 'red' : 'blue'">
+       <td title="cont: color">red</td>
+      </tr>
+      
+    php: |
+      <tr title="set($color=$i%2==0 ? 'red' : 'blue')">
+       <td title="cont($color)">red</td>
+      </tr>
+      
+    eperl: |
+      <tr title="set($color=i%2==0 ? 'red' : 'blue')">
+       <td title="cont($color)">red</td>
+      </tr>
+  
+    jstl: |
+      <tr title="set(color=i%2==0 ? 'red' : 'blue')">
+       <td title="cont(color)">red</td>
+      </tr>
+  
+  expected*:
+    erb: |
+      <% color=i%2==0 ? 'red' : 'blue' %>
+      <tr>
+       <td><%= color %></td>
+      </tr>
+  
+    php: |
+      <?php $color=$i%2==0 ? 'red' : 'blue'; ?>
+      <tr>
+       <td><?php echo $color; ?></td>
+      </tr>
+  
+    eperl: |
+      <? $color=i%2==0 ? 'red' : 'blue'; !>
+      <tr>
+       <td><?= $color !></td>
+      </tr>
+  
+    jstl: |
+      <c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" />
+      <tr>
+       <td>${color}</td>
+      </tr>
+  
+  
+##
+- name:      id
+  subject:   id
+  desc:  |
+      'id' directive marks the element by name.
+      Id name is used in presentation logic file or 'replace'/'placeholder' directive.
+      Id attribute is equivalent to 'id' directive if other direcitve is not specified.
+  
+  pdata*:
+    erb: |
+      <ul>
+       <li title="id: name">foo</li>
+      </ul>
+  
+    php: |
+      <ul>
+       <li title="id(name)">foo</li>
+      </ul>
+  
+    eperl: |
+      <ul>
+       <li title="id(name)">foo</li>
+      </ul>
+  
+    eperl: |
+      <ul>
+       <li title="id(name)">foo</li>
+      </ul>
+  
+  expected*:
+    erb: |
+      <ul>
+       <li>foo</li>
+      </ul>
+  
+    php: |
+      <ul>
+       <li>foo</li>
+      </ul>
+  
+    eperl: |
+      <ul>
+       <li>foo</li>
+      </ul>
+  
+    jstl: |
+      <ul>
+       <li>foo</li>
+      </ul>
+  
+  
+##
+- name:      attr
+  subject:   attr, Attr, ATTR
+  desc:  |
+      'attr', 'Attr', and 'ATTR' directives replace attribute value with expression.
+      'Attr' directive escapes expression automatically, while 'ATTR' never escape it.
+      'attr' directive escapes expression when command-line option '-e' is specified
+      or PROPERTY_ESCAPE is true in configuration file.
+  
+      More than one directives are available in an element with separating by ';',
+      and available with other directive.
+  
+  pdata*:
+    erb: |
+      <tr class="odd"
+          title="FOR v in list; attr: 'class' v_tgl; attr: 'style' style">
+       <td title="cont v.name">foo</td>
+      </tr>
+  
+    php: |
+      <tr class="odd"
+          title="FOREACH($list as $v); attr('class',$v_tgl); attr('style',$style)">
+       <td title="cont($v->name)">foo</td>
+      </tr>
+  
+    eperl: |
+      <tr class="odd"
+          title="FOREACH($v in @list); attr('class',$v_tgl); attr('style',$style)">
+       <td title="cont($v->name)">foo</td>
+      </tr>
+  
+    jstl: |
+      <tr class="odd"
+          title="FOR(v: list); attr('class',v_tgl); attr('style',style)">
+       <td title="cont(v.name)">foo</td>
+      </tr>
+  
+  expected*:
+    erb: |
+      <% v_ctr = 0 %>
+      <% for v in list do %>
+      <%   v_ctr += 1 %>
+      <%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %>
+      <tr class="<%= v_tgl %>" style="<%= style %>">
+       <td><%= v.name %></td>
+      </tr>
+      <% end %>
+  
+    php: |
+      <?php $v_ctr = 0; ?>
+      <?php foreach ($list as $v) { ?>
+      <?php   $v_ctr++; ?>
+      <?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?>
+      <tr class="<?php echo $v_tgl; ?>" style="<?php echo $style; ?>">
+       <td><?php echo $v->name; ?></td>
+      </tr>
+      <?php } ?>
+  
+    eperl: |
+      <? my $v_ctr = 0; !>
+      <? foreach my $v (@list) { !>
+      <?   $v_ctr++; !>
+      <?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !>
+      <tr class="<?= $v_tgl !>" style="<?= $style !>">
+       <td><?= $v->name !></td>
+      </tr>
+      <? } !>
+  
+    jstl: |
+      <c:forEach var="v" items="${list}" varStatus="v_status">
+      <c:set var="v_ctr" value="${v_status.count}" />
+      <c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" />
+      <tr class="${v_tgl}" style="${style}">
+       <td>${v.name}</td>
+      </tr>
+      </c:forEach>
+  
+  
+##
+- name:      append
+  subject:   append, Append, APPEND
+  desc:  |
+      'append', 'Append', and 'APPEND' directives append expression at the end of start-tag.
+      'Append' directive escapes expression automatically, while 'APPEND' never escape it.
+      'append' directive escapes expression when command-line option '-e' is specified
+      or PROPERTY_ESCAPE is true in configuration file.
+      
+      More than one directives are available in an element with separating by ';',
+      and available with other directive.
+  
+  pdata*:
+    erb: |
+      <input type="checkbox"
+         title="append: flag1 ? ' checked=\'checked\'' : ''">
+  #    <input type="checkbox" name="flag" value="y"
+  #        title="append: flag1 ? ' checked=\'checked\'' : ''">
+  
+    php: |
+      <input type="checkbox"
+         title="append($flag1 ? ' checked=\'checked\'' : '')">
+  #    <input type="checkbox" name="flag" value="y"
+  #       title="append($flag1 ? ' checked=\'checked\'' : '')">
+  
+    eperl: |
+      <input type="checkbox"
+         title="append($flag1 ? ' checked=\'checked\'' : '')">
+  #    <input type="checkbox" name="flag" value="y"
+  #       title="append($flag1 ? ' checked=\'checked\'' : '')">
+  
+    jstl: |
+      <input type="checkbox"
+         title="append(flag1 ? ' checked=\'checked\'' : '')">
+  #    <input type="checkbox" name="flag" value="y"
+  #       title="append(flag1 ? ' checked=\'checked\'' : '')">
+  
+  expected*:
+    erb: |
+      <input type="checkbox"<%= flag1 ? ' checked=\'checked\'' : '' %>>
+  #    <input type="checkbox" name="flag" value="y"<%= flag1 ? ' checked=\'checked\'' : '' %>>
+  
+    php: |
+      <input type="checkbox"<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>>
+  #    <input type="checkbox" name="flag" value="y"<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>>
+      
+    eperl: |
+      <input type="checkbox"<?= $flag1 ? ' checked=\'checked\'' : '' !>>
+  #    <input type="checkbox" name="flag" value="y"<?= $flag1 ? ' checked=\'checked\'' : '' !>>
+  
+    jstl: |
+      <input type="checkbox"${flag1 ? ' checked=\'checked\'' : ''}>
+  #    <input type="checkbox" name="flag" value="y"${flag1 ? ' checked=\'checked\'' : ''}>
+  
+
+  
+##
+- name:      dummy
+  subject:   dummy
+  desc:  |
+      'dummy' directive removes the element.
+      It is very useful when preview the HTML design in browser.
+  
+  pdata*:
+    erb: |
+      <ul>
+        <li>foo</li>
+        <li title="dummy:">bar</li>
+        <li title="dummy:">baz</li>
+      </ul>
+  
+    php: |
+      <ul>
+        <li>foo</li>
+        <li title="dummy()">bar</li>
+        <li title="dummy()">baz</li>
+      </ul>
+  
+    eperl: |
+      <ul>
+        <li>foo</li>
+        <li title="dummy()">bar</li>
+        <li title="dummy()">baz</li>
+      </ul>
+  
+    jstl: |
+      <ul>
+        <li>foo</li>
+        <li title="dummy()">bar</li>
+        <li title="dummy()">baz</li>
+      </ul>
+  
+  expected*:
+    erb: |
+      <ul>
+        <li>foo</li>
+      </ul>
+  
+    php: |
+      <ul>
+        <li>foo</li>
+      </ul>
+  
+    eperl: |
+      <ul>
+        <li>foo</li>
+      </ul>
+  
+    jstl: |
+      <ul>
+        <li>foo</li>
+      </ul>
+  
+  
+
+##
+- name:      default
+  subject:   default, Default, DEFAULT
+  desc:  |
+      'default', 'Default', and 'DEFAULT' directive replaces content by expression
+      only if expression is not nil, false, nor empty string.
+      'Default' directive escapes expression automatically, while 'DEFAULT' never escape it.
+      'default' directive escapes expression when command-line option '-e' is specified
+      or PROPERTY_ESCAPE is true in configuration file.
+  
+  pdata*:
+    erb: |
+      name: <em title="default: user">Guest</em>
+  
+    php: |
+      name: <em title="default($user)">Guest</em>
+  
+    eperl: |
+      name: <em title="default($user)">Guest</em>
+  
+    jstl: |
+      name: <em title="default(user)">Guest</em>
+  
+  expected*:
+    erb: |
+      name: <em><% if user && user.empty? then %><%= user %><% else %>Guest<% end %></em>
+  
+    php: |
+      name: <em><?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?php } ?></em>
+  
+    eperl: |
+      name: <em><? if ($user) { !><?= $user !><? } else { !>Guest<? } !></em>
+  
+    jstl: |
+      name: <em><c:out value="${user}" default="Guest" /></em>
+  
+  
+
+##
+- name:     replace
+  subject:  replace, placeholder
+  desc:  |
+      'replace' and 'placeholder' directives replace element or content
+      by other element or content.
+      
+  pdata*:
+    erb: |
+      <div title="id: link">
+        back to <a href="/">home</a>.
+      </div>
+      <!-- -->
+      <p title="replace: element(link)">
+        back to home
+      </p>
+      <!-- -->
+      <p title="replace: content(link)">
+        back to home
+      </p>
+      <!-- -->
+      <p title="placeholder: element(link)">
+        back to home
+      </p>
+      <!-- -->
+      <p title="placeholder: content(link)">
+        back to home
+      </p>
+  
+    php: &replace_pdata |
+      <div title="id(link)">
+        back to <a href="/">home</a>.
+      </div>
+      <!-- -->
+      <p title="replace(element(link))">
+        back to home
+      </p>
+      <!-- -->
+      <p title="replace(content(link))">
+        back to home
+      </p>
+      <!-- -->
+      <p title="placeholder(element(link))">
+        back to home
+      </p>
+      <!-- -->
+      <p title="placeholder(content(link))">
+        back to home
+      </p>
+  
+    eperl: *replace_pdata
+  
+    jstl: *replace_pdata
+  
+  expected*:
+    erb: &expected1 |
+      <div>
+        back to <a href="/">home</a>.
+      </div>
+      <!-- -->
+      <div>
+        back to <a href="/">home</a>.
+      </div>
+      <!-- -->
+        back to <a href="/">home</a>.
+      <!-- -->
+      <p>
+      <div>
+        back to <a href="/">home</a>.
+      </div>
+      </p>
+      <!-- -->
+      <p>
+        back to <a href="/">home</a>.
+      </p>
+  
+    php: *expected1
+  
+    eperl: *expected1
+  
+    jstl: *expected1
+  

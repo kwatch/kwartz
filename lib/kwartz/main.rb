@@ -24,15 +24,15 @@ module Kwartz
   ##
   class CommandOptionError < KwartzError
 
-    
+
     def initialize(message)
       super(message)
     end
 
-    
+
   end
 
-  
+
 
   ##
   ## main command
@@ -100,13 +100,14 @@ module Kwartz
           library.split!
           require library
         end
-      end 
+      end
 
       ruleset_list = []
       if options[?p]
-        parser = CssStyleParser.new(properties)
+        parser = parser_class.new(properties)
         options[?p].split(/,/).each do |filename|
           filename.strip!
+          test(?f, filename)  or raise CommandOptionError.new("#{filename}: file not found.")
           plogic = File.read(filename)
           ruleset_list.concat(parser.parse(plogic))
         end
@@ -118,6 +119,7 @@ module Kwartz
       stmt_list = []
       pdata = nil
       filenames.each do |filename|
+        test(?f, filename)  or raise CommandOptionError.new("#{filename}: file not found.")
         pdata = File.read(filename)
         handler = handler_class.new(ruleset_list)
         converter = TextConverter.new(handler, properties)
@@ -131,7 +133,7 @@ module Kwartz
       translator = translator_class.new(properties)
       output = translator.translate(stmt_list)
       return output
-      
+
     end
 
 
@@ -233,8 +235,8 @@ module Kwartz
     def option_error(message)
       return CommandOptionError.new(message)
     end
-    
-    
+
+
     def parse_argv(argv=@argv, single_opts='', argument_opts='', optional_opts='')
       options = {}
       properties = {}
@@ -283,19 +285,19 @@ module Kwartz
           end #while
 
         end #if
-              
+
       end #while
-      
+
       filenames = argv
       return options, properties, filenames
-      
+
     end #def
 
 
   end #class
 
-  
-  
+
+
 end #module
 
 
@@ -303,5 +305,5 @@ end #module
 if $0 == __FILE__
 
   Kwartz::Main.main(ARGV)
-  
+
 end

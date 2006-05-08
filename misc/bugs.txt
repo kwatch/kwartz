@@ -1,0 +1,40 @@
+.+doc:	Bug Record
+.?rev:	$Rev$
+
+
+$ scanner bug
+
+$$ detail: 
+
+when the last character in presentation logic file is not newline,
+parser reports that "'}': '#name' is expected.".
+
+.? presentation logic file
+--------------------
+#name {
+}
+--------------------
+
+.? execution
+====================
+$ kwartz -p hoge.plogic hoge.html
+line 2, column 1: '}': '#name' is expected.
+====================
+
+
+$$ solution
+
+.? patch
+--------------------
+--- lib/kwartz/parser.rb        (revision 103)
++++ lib/kwartz/parser.rb        (working copy)
+@@ -112,7 +112,7 @@
+     ## scanner
+ 
+     def getch
+-      return nil if @pos >= @max_pos
++      return @ch = nil if @pos >= @max_pos
+       if @ch == ?¡Àn
+         @linenum += 1
+         @column = 0
+--------------------

@@ -112,7 +112,7 @@ module Kwartz
     ## scanner
 
     def getch
-      return nil if @pos >= @max_pos
+      return @ch = nil if @pos >= @max_pos
       if @ch == ?\n
         @linenum += 1
         @column = 0

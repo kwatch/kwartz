@@ -1,137 +1,136 @@
----
-name:   compile1
-desc:   bordered table
-
-pdata*:
-
-  erb: |
-    <table>
-      <tr title="id: list" bgcolor="#FFCCCC">
-        <td title="id: name">foo</td>
-        <td title="id: mail">foo@mail.com</td>
-      </tr>
-      <tr title="dummy:" bgcolor="#CCCCFF">
-        <td>bar</td>
-        <td>bar@mail.org</td>
-      </tr>
-    </table>
-
-  php: &pdata01 |
-    <table>
-      <tr title="id(list)">
-        <td title="id(name)">foo</td>
-        <td title="id(mail)">foo</td>
-      </tr>
-      <tr title="dummy()">
-        <td>bar</td>
-        <td>bar@mail.org</td>
-      </tr>
-    </table>
-
-  eperl: *pdata01
-
-plogic*:
-
-  erb: |
-    #list {
-      attrs: 'bgcolor' color,
-             'title'   user.name;
-      plogic: {
-        @list.each_with_index { |user, i|
-          color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
-          _stag
-          _cont
-          _etag
+- name:   compile1
+  desc:   bordered table
+  
+  pdata*:
+  
+    erb: |
+      <table>
+        <tr title="id: list" bgcolor="#FFCCCC">
+          <td title="id: name">foo</td>
+          <td title="id: mail">foo@mail.com</td>
+        </tr>
+        <tr title="dummy:" bgcolor="#CCCCFF">
+          <td>bar</td>
+          <td>bar@mail.org</td>
+        </tr>
+      </table>
+  
+    php: &pdata01 |
+      <table>
+        <tr title="id(list)">
+          <td title="id(name)">foo</td>
+          <td title="id(mail)">foo</td>
+        </tr>
+        <tr title="dummy()">
+          <td>bar</td>
+          <td>bar@mail.org</td>
+        </tr>
+      </table>
+  
+    eperl: *pdata01
+  
+  plogic*:
+  
+    erb: |
+      #list {
+        attrs: 'bgcolor' color,
+               'title'   user.name;
+        plogic: {
+          @list.each_with_index { |user, i|
+            color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+            _stag
+            _cont
+            _etag
+          }
         }
       }
-    }
-    #name {
-      Value: user.name;
-    }
-    #mail {
-      cont: user[:mail];
-    }
-
-  php: |
-    #list {
-      attrs: 'bgcolor' $color,
-             'title'   $user->name;
-      plogic: {
-        $i = 0;
-        foreach ($list as $user) {
-          $i++;
-          $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-          _stag();
-          _cont();
-          _etag();
+      #name {
+        Value: user.name;
+      }
+      #mail {
+        cont: user[:mail];
+      }
+  
+    php: |
+      #list {
+        attrs: 'bgcolor' $color,
+               'title'   $user->name;
+        plogic: {
+          $i = 0;
+          foreach ($list as $user) {
+            $i++;
+            $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+            _stag();
+            _cont();
+            _etag();
+          }
         }
       }
-    }
-    #name {
-      Value: $user->name;
-    }
-    #mail {
-      cont: $user['mail'];
-    }
-
-  eperl: |
-    #list {
-      attrs: 'bgcolor' $color,
-             'title'   $user->name();
-      plogic: {
-        my $i = 0;
-        foreach my $user (@list) {
-          $i++;
-          my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
-          _stag();
-          _cont();
-          _etag();
+      #name {
+        Value: $user->name;
+      }
+      #mail {
+        cont: $user['mail'];
+      }
+  
+    eperl: |
+      #list {
+        attrs: 'bgcolor' $color,
+               'title'   $user->name();
+        plogic: {
+          my $i = 0;
+          foreach my $user (@list) {
+            $i++;
+            my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+            _stag();
+            _cont();
+            _etag();
+          }
         }
       }
-    }
-    #name {
-      Value: $user->name();
-    }
-    #mail {
-      cont: $user{'mail'};
-    }
-
-expected*:
-
-  erb: |
-    <table>
-    <%     @list.each_with_index { |user, i| %>
-    <%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>
-      <tr bgcolor="<%= color %>" title="<%= user.name %>">
-        <td><%=h user.name %></td>
-        <td><%= user[:mail] %></td>
-      </tr>
-    <%     } %>
-    </table>
-
-  php: |
-    <table>
-    <?php     $i = 0; ?>
-    <?php     foreach ($list as $user) { ?>
-    <?php       $i++; ?>
-    <?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>
-      <tr bgcolor="<?php echo $color; ?>" title="<?php echo $user->name; ?>">
-        <td><?php echo htmlspecialchars($user->name); ?></td>
-        <td><?php echo $user['mail']; ?></td>
-      </tr>
-    <?php     } ?>
-    </table>
-
-  eperl: |
-    <table>
-    <?     my $i = 0; !>
-    <?     foreach my $user (@list) { !>
-    <?       $i++; !>
-    <?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>
-      <tr bgcolor="<?= $color !>" title="<?= $user->name() !>">
-        <td><?= sanitize($user->name()) !></td>
-        <td><?= $user{'mail'} !></td>
-      </tr>
-    <?     } !>
-    </table>
-
+      #name {
+        Value: $user->name();
+      }
+      #mail {
+        cont: $user{'mail'};
+      }
+  
+  expected*:
+  
+    erb: |
+      <table>
+      <%     @list.each_with_index { |user, i| %>
+      <%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>
+        <tr bgcolor="<%= color %>" title="<%= user.name %>">
+          <td><%=h user.name %></td>
+          <td><%= user[:mail] %></td>
+        </tr>
+      <%     } %>
+      </table>
+  
+    php: |
+      <table>
+      <?php     $i = 0; ?>
+      <?php     foreach ($list as $user) { ?>
+      <?php       $i++; ?>
+      <?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>
+        <tr bgcolor="<?php echo $color; ?>" title="<?php echo $user->name; ?>">
+          <td><?php echo htmlspecialchars($user->name); ?></td>
+          <td><?php echo $user['mail']; ?></td>
+        </tr>
+      <?php     } ?>
+      </table>
+  
+    eperl: |
+      <table>
+      <?     my $i = 0; !>
+      <?     foreach my $user (@list) { !>
+      <?       $i++; !>
+      <?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>
+        <tr bgcolor="<?= $color !>" title="<?= $user->name() !>">
+          <td><?= sanitize($user->name()) !></td>
+          <td><?= $user{'mail'} !></td>
+        </tr>
+      <?     } !>
+      </table>
+  
