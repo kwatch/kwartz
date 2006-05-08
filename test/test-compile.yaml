@@ -35,7 +35,7 @@
       #list {
         attrs: 'bgcolor' color,
                'title'   user.name;
-        plogic: {
+        logic: {
           @list.each_with_index { |user, i|
             color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
             _stag
@@ -55,7 +55,7 @@
       #list {
         attrs: 'bgcolor' $color,
                'title'   $user->name;
-        plogic: {
+        logic: {
           $i = 0;
           foreach ($list as $user) {
             $i++;
@@ -77,7 +77,7 @@
       #list {
         attrs: 'bgcolor' $color,
                'title'   $user->name();
-        plogic: {
+        logic: {
           my $i = 0;
           foreach my $user (@list) {
             $i++;

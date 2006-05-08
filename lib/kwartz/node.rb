@@ -19,7 +19,7 @@ module Kwartz
       raise NotImplementedError("#{self.class}#accept() is not implemented.")
     end
 
-    
+
   end
 
 
@@ -67,7 +67,7 @@ module Kwartz
 #  ##
 #  class TextExpression < Expression
 #
-#    
+#
 #    def initialize(text)
 #      @text = text
 #    end
@@ -85,7 +85,7 @@ module Kwartz
 #      translator.translate_text_expr(self)
 #    end
 #
-#    
+#
 #  end
 
 
@@ -123,7 +123,7 @@ module Kwartz
       return @code
     end
 
-    
+
     def accept(translator)
       translator.translate_native_stmt(self)
     end
@@ -159,7 +159,7 @@ module Kwartz
     def accept(translator)
       assert
     end
-    
+
 
   end
 
@@ -198,7 +198,7 @@ module Kwartz
   class Ruleset
   end
 
-  
+
 
   ##
   ## represents '#name { ... }' entry in presentation logic file
@@ -212,7 +212,7 @@ module Kwartz
 
 
     attr_accessor :name, :stag, :cont, :etag, :elem
-    attr_accessor :value, :attrs, :append, :remove, :tagname, :plogic
+    attr_accessor :value, :attrs, :append, :remove, :tagname, :logic
 
 
     def set_stag(str, escape_flag=nil)
@@ -267,11 +267,11 @@ module Kwartz
       @tagname = str if str
     end
 
-    
-    def set_plogic(plogic_str)
-      return unless plogic_str
+
+    def set_logic(logic_str)
+      return unless logic_str
       stmt_list = []
-      plogic_str.each_line do |line|
+      logic_str.each_line do |line|
         if line =~ /^\s*_(stag|cont|etag|elem)(?:\(\))?;?\s*(?:\#.*)?$/
           kind = $1
           stmt_list << ExpandStatement.new(kind.intern, @name)
@@ -297,7 +297,7 @@ module Kwartz
           stmt_list << NativeStatement.new(line.chomp, nil)
         end
       end
-      @plogic = stmt_list
+      @logic = stmt_list
     end
 
 
@@ -320,10 +320,10 @@ module Kwartz
         sb << space << "  - #{name.inspect}\n"
       end if @remove
       sb << space <<   "tagname: #{@tagname == nil ? '' : @tagname.inspect}\n"
-      sb << space <<   "plogic: \n"
-      @plogic.each do |stmt|
+      sb << space <<   "logic: \n"
+      @logic.each do |stmt|
         sb << space << "  - " << stmt._inspect()
-      end if @plogic
+      end if @logic
       return sb
     end
 
@@ -375,5 +375,5 @@ module Kwartz
   end #class
 
 
-  
+
 end #module

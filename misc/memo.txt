@@ -1,0 +1,46 @@
+
+●directiveの名前
+
+  * elem:     elementをexprの値で置き換える
+  * stag:     stagをexprの値で置き換える
+  * etag:     etagをexprの値で置き換える
+  * cont:     contentをexprの値で置き換える
+  * value:    contentをexprの値で置き換える
+  * replace:  そのelementを別のelement/contentで置き換える
+  * placeholder: conetntを別のelement/contentで置き換える
+
+  * replace: を replace-element-by:, placeholder: を replace-content-by: にしたら？
+    - replace-element-by: expr(expr)	  replace-element-by-expr
+    - replace-element-by: element(id)	  replace-element-by-element
+    - replace-element-by: content(id)	  replace-element-by-content
+    - replace-content-by: expr(expr)	  replace-content-by-expr
+    - replace-content-by: element(id)	  replace-content-by-element
+    - replace-content-by: content(id)	  replace-content-by-content
+
+  * 「elem:」は「elementを式の値で置き換える」という意味で、「_elem」が「そのエレメント」を表すのは不自然か？
+
+  * 
+  
+
+●link_to
+
+  * link_to では、ラベルの文字列がpdataとplogicのそれぞれに現れるため、DRYに反する。
+    ----------
+    <a href="#" title="id: link_to1">click here</a>
+
+    #link_to1 {
+      elem:  link_to "click here", :action=>'show', :id=>1;
+    }
+    ----------
+  * これを避けるには、終了タグまで表示するlink_toではなく、開始タグだけを表示するstart_link_toが必要。
+    ----------
+    <a href="#" title="id: link_to1">click here</a>
+
+    #link_to1 {
+      stag:  start_link_to :action=>'show', :id=>1;
+    }
+    ----------
+  
+
+
+●submit_to

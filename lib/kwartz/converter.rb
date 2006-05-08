@@ -153,11 +153,11 @@ module Kwartz
       @cont_stmts   = cont_stmts     # list of Statement
       @attr_info    = attr_info      # AttrInfo
       @append_exprs = append_exprs   # list of NativeExpression
-      @plogic = [ ExpandStatement.new(:elem, @name) ]
+      @logic = [ ExpandStatement.new(:elem, @name) ]
       @merged = nil
     end
 
-    attr_accessor :name, :stag_info, :etag_info, :cont_stmts, :attr_info, :append_exprs, :plogic
+    attr_accessor :name, :stag_info, :etag_info, :cont_stmts, :attr_info, :append_exprs, :logic
     attr_reader :stag_expr, :cont_expr, :etag_expr, :elem_expr
 
 
@@ -194,7 +194,7 @@ module Kwartz
         (@append_exprs ||= []) << _to_native_expr(expr)
       end if elem_ruleset.append
       @tagname = elem_ruleset.tagname
-      @plogic = elem_ruleset.plogic if elem_ruleset.plogic
+      @logic = elem_ruleset.logic if elem_ruleset.logic
     end
 
 
@@ -320,15 +320,15 @@ module Kwartz
       if elem_ruleset && !elem_info.merged?
         elem_info.merge(elem_ruleset)
       end
-      plogic = content_only ? [ ExpandStatement.new(:cont, elem_info.name) ] : elem_info.plogic
-      plogic.each do |stmt|
+      logic = content_only ? [ ExpandStatement.new(:cont, elem_info.name) ] : elem_info.logic
+      logic.each do |stmt|
         expand_statement(stmt, stmt_list, elem_info)
       end
       #if content_only
       #  stmt = ExpandStatement.new(:cont, elem_info.name)
       #  expand_statement(stmt, stmt_list, elem_info)
       #else
-      #  element.plogic.each do |stmt|
+      #  element.logic.each do |stmt|
       #    expand_statement(stmt, stmt_list, elem_info)
       #  end
       #end

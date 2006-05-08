@@ -89,7 +89,7 @@ module Kwartz
       table[word.capitalize] = sym
       table[word.upcase]     = sym
     end
-    %w[element remove tagname plogic document global local fixture before after].each do |word|
+    %w[element remove tagname logic document global local fixture before after].each do |word|
       table[word] = word.intern
     end
     PLOGIC_KEYWORDS = table
@@ -347,7 +347,7 @@ module Kwartz
   ##     value  @var
   ##     attrs  "class"=>@clssname, "bgcolor"=>color
   ##     append @value==item['list'] ? ' checked' : ''
-  ##     plogic {
+  ##     logic {
   ##       @list.each { |item|
   ##         _stag
   ##         _cont
@@ -508,7 +508,7 @@ module Kwartz
         when :append  ;  has_space? ;  ruleset.set_append   _parse_list()   , flag_escape
         when :remove  ;  has_space? ;  ruleset.set_remove   _parse_strs()
         when :tagname ;  has_space? ;  ruleset.set_tagname  _parse_item()
-        when :plogic  ;  has_space? ;  ruleset.set_plogic   _parse_block()
+        when :logic   ;  has_space? ;  ruleset.set_logic    _parse_block()
         when :'}'     ;  break
         else          ;  raise parse_error("'#{@value}': invalid token.")
         end
@@ -532,7 +532,7 @@ module Kwartz
   ##     value:   @var;
   ##     attrs:   "class" @classname, "bgcolro" color;
   ##     append:  @value==item['list'] ? ' checked' : '';
-  ##     plogic:  {
+  ##     logic:   {
   ##       @list.each { |item|
   ##         _stag
   ##         _cont
@@ -677,7 +677,7 @@ module Kwartz
         when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
         when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
         when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
-        when :plogic ;  has_colon?();  ruleset.set_plogic _parse_block()
+        when :logic  ;  has_colon?();  ruleset.set_logic  _parse_block()
         else
           raise parse_error("'#{@value}': unexpected token.")
         end

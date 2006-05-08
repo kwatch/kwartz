@@ -1,7 +1,10 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
-: rev.104 (2006-05-08)
+: rev.106 (2006-05-09)
+	- [change] change 'plogic:' to 'logic:'
+
+: rev.105 (2006-05-08)
 	- [enhance] add 'abstract.rb'
 	- [enhance] rails.rb updated to support many helper method
 	- [change] 'test-util.rb' and 'assert-text-equal.rb' are moved from 'lib/kwartz/util/' to 'test/'
