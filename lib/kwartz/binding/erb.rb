@@ -138,7 +138,7 @@ module Kwartz
 
 
   ##
-  ## translator for ERB and Rails
+  ## translator for ERB
   ##
   class ErbTranslator < BaseTranslator
 

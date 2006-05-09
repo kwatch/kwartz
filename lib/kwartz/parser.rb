@@ -7,6 +7,7 @@
 require 'kwartz/assert'
 require 'kwartz/error'
 require 'kwartz/node'
+require 'kwartz/abstract'
 
 
 
@@ -198,7 +199,7 @@ module Kwartz
 
     ## called from scan()
     def scan_hook
-      #raise NotImplementedError.new("#{self.class}#scan_hook() is not implemented.")
+      #not_implemented
     end
 
 
@@ -309,7 +310,7 @@ module Kwartz
 
     ## [abstract] parse input string and return list of ElementRuleset
     def parse(input)
-      raise NotImplementedError("#{self.class}#parse() is not implemented.")
+      not_implemented
     end
 
 
@@ -447,6 +448,11 @@ module Kwartz
     end
 
 
+    def _parse_str
+      return _parse_strs()[0]
+    end
+
+
     def _parse_item
       item = scan_line()
       item.strip!
@@ -507,7 +513,7 @@ module Kwartz
         when :attrs   ;  has_space? ;  ruleset.set_attrs    _parse_tuples() , flag_escape
         when :append  ;  has_space? ;  ruleset.set_append   _parse_list()   , flag_escape
         when :remove  ;  has_space? ;  ruleset.set_remove   _parse_strs()
-        when :tagname ;  has_space? ;  ruleset.set_tagname  _parse_item()
+        when :tagname ;  has_space? ;  ruleset.set_tagname  _parse_str()
         when :logic   ;  has_space? ;  ruleset.set_logic    _parse_block()
         when :'}'     ;  break
         else          ;  raise parse_error("'#{@value}': invalid token.")
@@ -677,6 +683,7 @@ module Kwartz
         when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
         when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
         when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
+        when :tagname;  has_colon?();  ruleset.set_tagname  _parse_str()
         when :logic  ;  has_colon?();  ruleset.set_logic  _parse_block()
         else
           raise parse_error("'#{@value}': unexpected token.")
@@ -790,6 +797,11 @@ module Kwartz
         break if indicator == ';'
       end
       return list
+    end
+
+
+    def _parse_str
+      return _parse_strs()[0]
     end
 
 

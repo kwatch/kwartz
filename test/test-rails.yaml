@@ -17,8 +17,8 @@
       <input type="checkbox" id="user_chk1" title="check_box">
       <input type="checkbox" name="user[chk2]" title="check_box">
   expected: |
-      <%= check_box "user", "chk1" %>
-      <%= check_box "user", "chk2" %>
+      <%= check_box 'user', 'chk1' %>
+      <%= check_box 'user', 'chk2' %>
 
 ##
 - name:     file_field1
@@ -27,8 +27,8 @@
       <input type="file" id="user_attach" title="file_field">
       <input type="file" name="user[attach]" title="file_field">
   expected: |
-      <%= file_field "user", "attach" %>
-      <%= file_field "user", "attach" %>
+      <%= file_field 'user', 'attach' %>
+      <%= file_field 'user', 'attach' %>
 
 ##
 - name:     hidden_field1
@@ -37,8 +37,8 @@
       <input type="hidden" id="user_id" title="hidden_field">
       <input type="hidden" name="user[id]" title="hidden_field">
   expected: |
-      <%= hidden_field "user", "id" %>
-      <%= hidden_field "user", "id" %>
+      <%= hidden_field 'user', 'id' %>
+      <%= hidden_field 'user', 'id' %>
 
 ##
 - name:     password_field1
@@ -49,8 +49,8 @@
       <input type="password" size="10" maxsize="20" name="user3[name3]" title="password_field">
   expected: |
       <%= password_field 'user1', 'name1', :size=>10, :maxsize=>20 %>
-      <%= password_field "user2", "name2", :size=>10, :maxsize=>20 %>
-      <%= password_field "user3", "name3", :size=>10, :maxsize=>20 %>
+      <%= password_field 'user2', 'name2', :size=>10, :maxsize=>20 %>
+      <%= password_field 'user3', 'name3', :size=>10, :maxsize=>20 %>
 
 ##
 - name:     radio_button1
@@ -59,8 +59,8 @@
       <input type="radio" id="user_radio_button1" value="button1" title="radio_button">
       <input type="radio" name="user[radio]" value="button2" title="radio_button">
   expected: |
-      <%= radio_button "user", "radio", "button1" %>
-      <%= radio_button "user", "radio", "button2" %>
+      <%= radio_button 'user', 'radio', 'button1' %>
+      <%= radio_button 'user', 'radio', 'button2' %>
 
 ##
 - name:     text_area1
@@ -71,8 +71,8 @@
       <textarea cols="1" rows="30" name="user3[desc3]" title="text_area">...</textarea>
   expected: |
       <%= text_area 'user1', 'desc1', :cols=>3, :rows=>10 %>
-      <%= text_area "user2", "desc2", :cols=>2, :rows=>20 %>
-      <%= text_area "user3", "desc3", :cols=>1, :rows=>30 %>
+      <%= text_area 'user2', 'desc2', :cols=>2, :rows=>20 %>
+      <%= text_area 'user3', 'desc3', :cols=>1, :rows=>30 %>
 
 ##
 - name:     text_field1
@@ -83,8 +83,8 @@
       <input type="text" size="10" maxsize="20" name="user3[name3]" title="text_field">
   expected: |
       <%= text_field 'user1', 'name1', :size=>10, :maxsize=>20 %>
-      <%= text_field "user2", "name2", :size=>10, :maxsize=>20 %>
-      <%= text_field "user3", "name3", :size=>10, :maxsize=>20 %>
+      <%= text_field 'user2', 'name2', :size=>10, :maxsize=>20 %>
+      <%= text_field 'user3', 'name3', :size=>10, :maxsize=>20 %>
 
 ---
 ###
@@ -113,7 +113,7 @@
       <form title="form_tag ( {:action=>'show', :id=>2}, {:method=>'get', :multipart=>true} )">
       </form>
   expected: |
-      <%= form_tag 'action'=>"show" %>
+      <%= form_tag 'action'=>'show' %>
       </form>
       <%= form_tag ( {:action=>'show', :id=>2}, {:method=>'get', :multipart=>true} ) %>
       </form>
@@ -126,8 +126,8 @@
       <input type="submit" value="OK" title="submit_tag">
       <input type="submit"            title="submit_tag">
   expected: |
-      <%= submit_tag "OK" %>
-      <%= submit_tag "OK" %>
+      <%= submit_tag 'OK' %>
+      <%= submit_tag 'OK' %>
       <%= submit_tag  %>
 
 ---
@@ -161,10 +161,10 @@
         <option value="1">timezone</option>
       </select>
   expected: |
-      <%= select "user", "id", %[foo bar baz] %>
-      <%= collection_select "user", "id", @users %>
-      <%= country_select "user", "country" %>
-      <%= time_zone_select "user", "timezone" %>
+      <%= select 'user', 'id', %[foo bar baz] %>
+      <%= collection_select 'user', 'id', @users %>
+      <%= country_select 'user', 'country' %>
+      <%= time_zone_select 'user', 'timezone' %>
 
 ---
 ### UrlHelper
@@ -188,7 +188,7 @@
       <a href="#" title="link_to :action=>'show', :id=>@user.id">Show user</a>
       <a href="#" title="link_to text, :action=>'list'">All</a>
   expected: |
-      <%= link_to "Show user", :action=>'show', :id=>@user.id %>
+      <%= link_to 'Show user', :action=>'show', :id=>@user.id %>
       <%= link_to text, :action=>'list' %>
 
 ##
@@ -198,8 +198,8 @@
       <img src="foo.jpg" title="link_image_to :action=>'new', :id=>10">
       <img src="foo.jpg" title="link_to_image :action=>'new', :id=>10">
   expected: |
-      <%= link_image_to "foo.jpg", :action=>'new', :id=>10 %>
-      <%= link_to_image "foo.jpg", :action=>'new', :id=>10 %>
+      <%= link_image_to 'foo.jpg', :action=>'new', :id=>10 %>
+      <%= link_to_image 'foo.jpg', :action=>'new', :id=>10 %>
 
 ##
 - name:     mail_to1
@@ -207,7 +207,7 @@
   pdata: |
       <a href="mailto:admin@example.com" title="mail_to">contact</a>
   expected: |
-      <%= mail_to "admin@example.com", "contact" %>
+      <%= mail_to 'admin@example.com', 'contact' %>
 
 ---
 ###
@@ -238,7 +238,7 @@
       <a href="#" title="link_to_remote :action=>'show', :id=>@user.id">Show user</a>
       <a href="#" title="link_to_remote @text, :action=>'list'">All</a>
   expected: |
-      <%= link_to_remote "Show user", :action=>'show', :id=>@user.id %>
+      <%= link_to_remote 'Show user', :action=>'show', :id=>@user.id %>
       <%= link_to_remote @text, :action=>'list' %>
 
 ##
@@ -247,7 +247,7 @@
   pdata: |
       <input type="submit" name="NAME" value="SUBMIT" title="submit_to_remote">
   expected: |
-      <%= submit_to_remote "NAME", "SUBMIT" %>
+      <%= submit_to_remote 'NAME', 'SUBMIT' %>
 
 
 ---
@@ -269,7 +269,7 @@
   pdata: |
       <img src="/image/foo.gif" alt="text" title="image_tag">
   expected: |
-      <%= image_tag "/image/foo.gif", :alt=>"text" %>
+      <%= image_tag '/image/foo.gif', :alt=>'text' %>
 
 ---
 ### DateHelper	
@@ -297,5 +297,5 @@
       <select id="user_time" title="datetime_select :start_year=>1900">
       </select>
   expected: |
-      <%= date_select "user", "birth", :start_year=>2000, :include_blank=>true %>
-      <%= datetime_select "user", "time", :start_year=>1900 %>
+      <%= date_select 'user', 'birth', :start_year=>2000, :include_blank=>true %>
+      <%= datetime_select 'user', 'time', :start_year=>1900 %>

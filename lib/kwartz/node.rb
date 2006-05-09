@@ -120,7 +120,7 @@ module Kwartz
 
 
     def _inspect(indent=0)
-      return @code
+      return @code.inspect
     end
 
 
@@ -149,9 +149,9 @@ module Kwartz
 
     def _inspect(indent=0)
       if @kind == :element || @kind == :content
-        return "_#{@kind}(#{@name.inspect})\n"
+        return "_#{@kind}(#{@name.inspect})"
       else
-        return "_#{@kind}\n"
+        return "_#{@kind}"
       end
     end
 
@@ -303,28 +303,39 @@ module Kwartz
 
     def _inspect(indent=0)
       space = '  ' * indent
-      sb = ''
+      sb = []
       sb << space <<   "name: #{@name.inspect}\n"
-      sb << space <<   "value: #{@value == nil ? '' : @value.inspect}\n"
-      sb << space <<   "attrs: \n"
-      @attrs.each do |tuple|
-        sb << space << "  - name:  #{tuple[0].inspect}\n"
-        sb << space << "    value: #{tuple[1].inspect}\n"
+      #sb << space <<   "value: #{@value == nil ? '' : @value.inspect}\n"
+      sb << space <<   "stag: #{@stag.code.inspect}\n" unless @stag.nil?
+      sb << space <<   "cont: #{@cont.code.inspect}\n" unless @cont.nil?
+      sb << space <<   "etag: #{@etag.code.inspect}\n" unless @etag.nil?
+      sb << space <<   "elem: #{@elem.code.inspect}\n" unless @elem.nil?
+      #
+      sb << space <<   "attrs:\n" if @attrs
+      @attrs.keys.sort.each do |key|
+        val = @attrs[key]
+        sb << space << "  - name:  #{key.inspect}\n"
+        sb << space << "    value: #{val.code.inspect}\n"
       end if @attrs
-      sb << space <<   "append: \n"
+      #
+      sb << space <<   "append:\n" if @append
       @append.each do |expr|
-        sb << space << "  - #{value.inspect}\n"
+        sb << space << "  - #{expr.code.inspect}\n"
       end if @append
-      sb << space <<   "remove: \n"
+      #
+      sb << space <<   "remove:\n" if @remove
       @remove.each do |name|
         sb << space << "  - #{name.inspect}\n"
       end if @remove
-      sb << space <<   "tagname: #{@tagname == nil ? '' : @tagname.inspect}\n"
-      sb << space <<   "logic: \n"
+      #
+      sb << space <<   "tagname: #{@tagname.inspect}\n" unless @tagname.nil?
+      #
+      sb << space <<   "logic:\n" if @logic
       @logic.each do |stmt|
-        sb << space << "  - " << stmt._inspect()
+        sb << space << "  - " << stmt._inspect() << "\n"
       end if @logic
-      return sb
+      #
+      return sb.join
     end
 
 

@@ -107,7 +107,8 @@ module Kwartz
         add_directive_object_and_method(d_arg, attr_info)
       end
 
-      replace_elem = true
+      ## replace whole element, or only start tag
+      replace_elem = directive_name.to_s !~ /\Astart_/
 
       case directive_name
 
@@ -123,10 +124,13 @@ module Kwartz
       when :link_to, :link_to_remote, :link_to_unless_current
         add_directive_content_as_arg(d_arg, cont_stmts)
 
+      when :anchor, :anchor_remote
+        replace_elem = false
+
       when :mail_to
         add_directive_content_as_arg(d_arg, cont_stmts)
         add_directive_attr_as_arg(d_arg, attr_info, 'href')
-        d_arg.sub!(/\A\"mailto:/, '"')
+        d_arg.sub!(/\A\'mailto:/, "'")
 
       when :form_tag, :start_form_tag
         add_directive_attr_as_option(d_arg, attr_info, 'action')
@@ -172,10 +176,15 @@ module Kwartz
     protected
 
 
+    def quote(str)
+      return "'#{str.gsub(/['\\]/, '\\\\\&')}'"
+    end
+
+
     def add_directive_object_and_method(d_arg, attr_info)
       if (/\A(\w+)\[(\w+)\]\z/ =~ attr_info['name']) || (/\A([a-zA-A0-9]+)_(\w+)\z/ =~ attr_info['id'])
         object = $1 ;  method = $2
-        d_arg[0,0] = "#{object.dump}, #{method.dump}#{d_arg.empty? ? '' : ', '}"
+        d_arg[0,0] = "#{quote(object)}, #{quote(method)}#{d_arg.empty? ? '' : ', '}"
       end
     end
 
@@ -186,13 +195,13 @@ module Kwartz
         object = $1 ;  method = $2
       end
       value = attr_info['value']
-      d_arg[0,0] = "#{object.dump}, #{method.dump}, #{value.dump}#{d_arg.empty? ? '' : ', '}"
+      d_arg[0,0] = "#{quote(object)}, #{quote(method)}, #{quote(value)}#{d_arg.empty? ? '' : ', '}"
     end
 
 
     def add_directive_attr_as_arg(d_arg, attr_info, attr_name)
       if (v = attr_info[attr_name]) && !v.empty?
-        d_arg[0,0] = "#{v.dump}#{d_arg.empty? ? '' : ', '}"
+        d_arg[0,0] = "#{quote(v)}#{d_arg.empty? ? '' : ', '}"
       end
     end
 
@@ -200,7 +209,7 @@ module Kwartz
     def add_directive_attr_as_option(d_arg, attr_info, attr_name)
       if (s = attr_info[attr_name]) && !d_arg.index(attr_name)
         d_arg << ", " unless d_arg.empty?
-        d_arg << "'#{attr_name}'=>#{s.dump}"
+        d_arg << "'#{attr_name}'=>#{quote(s)}"
       end
     end
 
@@ -209,7 +218,7 @@ module Kwartz
       if d_arg.empty? || d_arg[0] == ?: || d_arg[0] == ?{
         print_stmt = cont_stmts[0]
         label = print_stmt.args[0]
-        d_arg[0,0] = "#{label.dump}#{d_arg.empty? ? '' : ', '}" if label
+        d_arg[0,0] = "#{quote(label)}#{d_arg.empty? ? '' : ', '}" if label
       end
     end
 
@@ -233,7 +242,7 @@ module Kwartz
     def add_directive_str_option(directive_arg, attr_name, attr_value)
       if attr_value
         directive_arg << ', ' unless directive_arg.empty?
-        directive_arg << ":#{attr_name}=>#{attr_value.to_s.dump}"
+        directive_arg << ":#{attr_name}=>#{quote(attr_value.to_s)}"
       end
     end
 
@@ -260,9 +269,20 @@ module Kwartz
   ##
   ## translator for rails
   ##
-  class RailsTranslator < ErbTranslator
+  class RailsTranslator < BaseTranslator
 
-    # nothing
+
+    RAILS_EMBED_PATTERNS = [
+      '<% ',    ' -%>',       # statement (chop newline)
+      '<%= ',   ' %>',        # expression
+      '<%=h ',  ' %>',        # escaped expression
+    ]
+
+
+    def initialize(properties={})
+      super(RAILS_EMBED_PATTERNS, properties)
+    end
+
 
   end
 

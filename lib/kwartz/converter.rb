@@ -575,6 +575,18 @@ module Kwartz
     end
 
 
+    def extract(elem_name)
+      elem_info = @elem_info_table[elem_name]
+      elem_info or raise convert_error("element '#{elem_name}' not found.", nil)
+      stmt_list = []
+      content_only = false
+      expand_element_info(elem_info, stmt_list, content_only)
+      #stmt_list << build_print_stmt(etag_info, nil, nil)
+      return stmt_list
+    end
+
+
+
   end #class
 
 

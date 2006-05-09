@@ -1,7 +1,12 @@
 
 properties:
-  - name:   base_testnames
-    value:  [test-directives, test-compile, test-handlers]
+
+  - project    :   kwartz
+  - release    :   0.0.0
+
+variables:
+
+  - base_testnames  : [test-directives, test-compile, test-handlers]
 
 recipes:
   - product:   :test

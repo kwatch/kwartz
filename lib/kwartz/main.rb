@@ -67,7 +67,7 @@ module Kwartz
 
     def execute(argv=@argv)
 
-      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpP')
+      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPx')
       options[?h] = true if properties[:help]
 
       if options[?h] || options[?v]
@@ -124,7 +124,13 @@ module Kwartz
         handler = handler_class.new(ruleset_list)
         converter = TextConverter.new(handler, properties)
         list = converter.convert(pdata)
+        list = handler.extract(options[?x]) if options[?x]
         stmt_list.concat(list)
+      end
+
+      if options[?x]
+        elem_id = options[?x]
+
       end
 
       if pdata[pdata.index(?\n) - 1] == ?\r
@@ -213,6 +219,7 @@ module Kwartz
       s << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
       s << "  -r library,... : require libraries\n"
       s << "  -p plogic,...  : presentation logic files\n"
+      s << "  -x elem-id     : extract the element\n"
       #s << "  -P style       : style of presentation logic (css/ruby/yaml)\n"
       s << "  --dattr=str    : directive attribute name\n"
       s << "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n"
@@ -277,10 +284,12 @@ module Kwartz
                 raise option_error("-#{optchar.chr}: argument required.")
               end
               options[optchar] = arg
+              optstr = ''
             elsif optional_opts && optional_opts.include?(optchar)
               arg = optstr
               arg = true unless arg && !arg.empty?
               options[optchar] = arg
+              optstr = ''
             end
           end #while
 

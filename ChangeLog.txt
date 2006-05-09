@@ -1,6 +1,12 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
+: rev.107
+	- [enhance] Handler#extract() added and command-line option '-x' supported
+	- [bugfix] Main#parse_argv() set optstr='' when required/optional argument
+	- [change] rails.rb changed not to use String#dump() to show japanese text
+	- [bugfix] test-parser.rb fixed
+
 : rev.106 (2006-05-09)
 	- [change] change 'plogic:' to 'logic:'
 

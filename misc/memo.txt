@@ -1,4 +1,17 @@
 
+
+●エラー表示
+
+  * parser と converter とでエラー行表示が異なる
+  * エラーになったファイル名が表示されない
+  * 使われていないidを警告表示する
+    - elementとrulesetの両方
+    - id名のtypoを見つけるため
+    - '-wc' オプションで表示するとか
+  * 
+  
+
+
 ●directiveの名前
 
   * elem:     elementをexprの値で置き換える
@@ -32,15 +45,56 @@
       elem:  link_to "click here", :action=>'show', :id=>1;
     }
     ----------
+
   * これを避けるには、終了タグまで表示するlink_toではなく、開始タグだけを表示するstart_link_toが必要。
     ----------
     <a href="#" title="id: link_to1">click here</a>
 
     #link_to1 {
       stag:  start_link_to :action=>'show', :id=>1;
+           # または anchor :action=>'show', :id=>1
     }
     ----------
-  
+
+  * あるいは、「$(CONTENT)」でcontentを参照できるとか。
+    ----------
+    #link_to1 {
+      stag:  link_to '$(CONTENT)', :action=>'show', :id=>1;
+    }
+    ----------
+
+  * link_to_if(condition, name, options) を考えると、$(CONTENT)をサポートしたほうがよさそう。
 
 
 ●submit_to
+
+  * submit_toではvalue属性の値が2度出てくる。
+    ----------
+    <input type="submit" value="OK">
+    
+    #submit {
+      elem:  submit_to "OK";
+    }
+    ----------
+
+  * これを解決するには属性の値を参照できないといけない？
+    ----------
+    #submit {
+      elem:  sumib_to "$(value)";
+    }
+    ----------
+
+
+●XML宣言
+
+  * XML宣言のlangを変えたいという話。テンプレートではlangを固定で指定する。
+    ----------
+    <?xml version="1.0" lang="EUC-JP"?>
+    <html>
+    </html>
+    ----------
+    ----------
+    #XMLDECL {
+      attr: 'lang' lang;
+    }
+    ----------
