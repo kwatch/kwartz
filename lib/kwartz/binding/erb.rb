@@ -134,6 +134,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('erb', ErbHandler)
 
 
 
@@ -156,6 +157,7 @@ module Kwartz
 
 
   end #class
+  Translator.register_class('erb', ErbTranslator)
 
 
 

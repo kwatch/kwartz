@@ -1,0 +1,26 @@
+#breadcrumbs {
+  logic: {
+    $i = 0;
+    foreach ($breadcrumbs as $item) {
+      if (++$i == 1) {
+        _element('separator');
+      }
+      _element('item');
+    }
+  }
+}  
+
+#item {
+  value:  $item['title'];
+  attrs:  "href" $item['path'];
+  logic: {
+      if ($item['path']) {
+        _stag();
+        _cont();
+        _etag();
+      } else {
+        _cont();
+      }
+  }
+}
+

@@ -1,0 +1,58 @@
+properties:
+  - target    :    xxx
+
+variables:
+  - t         :   $(target)
+  - all       :   [ $(t).rhtml, $(t).php, $(t).jsp ]
+
+recipes:
+
+  - product:	:default
+    ingreds:	[ Makefile ]
+    method: |
+	sys "make clean"
+	sys "make"
+
+  - product:	:all
+    ingreds:	[ $(all) ]
+
+  - product:	:clean
+    method: |
+	rm_f all, 'Makefile'
+
+  - product:	$(target).rhtml
+    ingreds:	[ $(target).eruby.plogic, $(target).html ]
+    method: |
+	sys "kwartz -l erb -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
+
+  - product:	$(target).php
+    ingreds:	[ $(target).php.plogic, $(target).html ]
+    method: |
+	sys "kwartz -l php -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
+
+  - product:	$(target).jsp
+    ingreds:	[ $(target).jstl.plogic, $(target).html ]
+    method: |
+	sys "kwartz -l jstl -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
+
+  - product:	Makefile
+    method: |
+	s = <<END
+	ALL = $(target).rhtml $(target).php $(target).jsp
+	
+	all:	${ALL}
+	
+	clean:
+		rm -f ${ALL}
+	
+	$(t).rhtml:	$(t).eruby.plogic $(t).html
+		kwartz -l erb -p $(t).eruby.plogic $(t).html > $(t).rhtml
+	
+	$(t).php:	$(t).php.plogic $(t).html
+		kwartz -l php -p $(t).php.plogic $(t).html > $(t).php
+	
+	$(t).jsp:	$(t).jstl.plogic $(t).html
+		kwartz -l jstl -p $(t).jstl.plogic $(t).html > $(t).jsp
+	END
+	s.gsub!(/^        /, "\t")
+	File.open('Makefile', 'w') { |f| f.write(s) }

@@ -1134,7 +1134,7 @@
 - name:     replace
   subject:  replace, placeholder
   desc:  |
-      'replace' and 'placeholder' directives replace element or content
+      'replace_element_by' and 'replace_content_by' directives replace element or content
       by other element or content.
       
   pdata*:
@@ -1143,19 +1143,19 @@
         back to <a href="/">home</a>.
       </div>
       <!-- -->
-      <p title="replace: element(link)">
+      <p title="replace_element_by: element(link)">
         back to home
       </p>
       <!-- -->
-      <p title="replace: content(link)">
+      <p title="replace_element_by: content(link)">
         back to home
       </p>
       <!-- -->
-      <p title="placeholder: element(link)">
+      <p title="replace_content_by: element(link)">
         back to home
       </p>
       <!-- -->
-      <p title="placeholder: content(link)">
+      <p title="replace_content_by: content(link)">
         back to home
       </p>
   
@@ -1164,19 +1164,19 @@
         back to <a href="/">home</a>.
       </div>
       <!-- -->
-      <p title="replace(element(link))">
+      <p title="replace_element_by(element(link))">
         back to home
       </p>
       <!-- -->
-      <p title="replace(content(link))">
+      <p title="replace_element_by(content(link))">
         back to home
       </p>
       <!-- -->
-      <p title="placeholder(element(link))">
+      <p title="replace_content_by(element(link))">
         back to home
       </p>
       <!-- -->
-      <p title="placeholder(content(link))">
+      <p title="replace_content_by(content(link))">
         back to home
       </p>
   

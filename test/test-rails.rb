@@ -30,10 +30,10 @@ class HandlerTest < Test::Unit::TestCase
 
 
   def _test
-    handler    = Kwartz::Main.get_handler_class(@binding).new
+    handler    = Kwartz::Handler.get_class(@binding).new
     converter  = Kwartz::TextConverter.new(handler)
     stmt_list  = converter.convert(@pdata)
-    translator = Kwartz::Main.get_translator_class(@binding).new
+    translator = Kwartz::Translator.get_class(@binding).new
     actual = translator.translate(stmt_list)
     assert_text_equal(@expected, actual)
   end

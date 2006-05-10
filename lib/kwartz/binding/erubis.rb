@@ -18,6 +18,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('erubis', ErubisHandler)
 
 
 
@@ -53,6 +54,7 @@ module Kwartz
 
 
   end
+  Translator.register_class('erubis', ErubisTranslator)
 
 
 

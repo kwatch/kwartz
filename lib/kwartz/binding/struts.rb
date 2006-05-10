@@ -21,17 +21,17 @@ module Kwartz
   class StrutsHandler < JstlHandler
 
 
-    
+
     def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
       ret = super
       return ret if ret
-      
+
       d_name = directive_name
       d_arg  = directive_arg
       d_str  = directive_str
 
       case directive_name
-        
+
       when :struts
         case tag = stag_info.tagname
         when 'input'  ;  tag = attr_info['type'] || 'text'  ; attr_info.delete('type')
@@ -63,7 +63,7 @@ module Kwartz
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info
-        
+
       end #case
       return true
 
@@ -71,6 +71,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('struts', StrutsHandler)
 
 
 
@@ -101,6 +102,7 @@ module Kwartz
 
 
   end
+  Translator.register_class('struts', StrutsTranslator)
 
 
 

@@ -54,6 +54,19 @@ module Kwartz
 #    end
 
 
+    @@class_table = {}
+
+
+    def self.register_class(lang, klass)
+      @@class_table[lang] = klass
+    end
+
+
+    def self.get_class(lang)
+      return @@class_table[lang]
+    end
+
+
   end #class
 
 

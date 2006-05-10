@@ -1,0 +1,21 @@
+#row {
+  attrs:  "bgcolor" color;
+  logic: {
+    list.each_with_index { |item, i|
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      _elem
+    }
+  }
+}
+
+#name {
+  value:  item[:name];
+}
+
+#mail {
+  value:  item[:mail];
+}
+
+#dummy1 {
+  logic: { }   /* ignore this element */
+}

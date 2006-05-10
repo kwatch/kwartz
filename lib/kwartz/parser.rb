@@ -63,12 +63,13 @@ module Kwartz
 
 
     def initialize(properties={})
-      # nothing
+      @properties = properties
     end
 
 
-    def _initialize(input)
+    def _initialize(input, filename='')
       @input   = input
+      @filename = filename
       @linenum = 1       # 1 start
       @column  = 0       # 1 start
       @pos     = -1      # 0 start
@@ -167,6 +168,17 @@ module Kwartz
       getch()
       @value = s
       return @token = :string
+    end
+
+
+    def scan_string
+      if @ch == ?'
+        return scan_string_quoted()
+      elsif @ch == ?"
+        return scan_string_dquoted()
+      else
+        return nil
+      end
     end
 
 
@@ -334,6 +346,19 @@ module Kwartz
     end
 
 
+    @@class_table = {}
+
+
+    def self.register_class(css, klass)
+      @@class_table[css] = klass
+    end
+
+
+    def self.get_class(css)
+      return @@class_table[css]
+    end
+
+
   end #class
 
 
@@ -360,8 +385,8 @@ module Kwartz
   class RubyStyleParser < PresentationLogicParser
 
 
-    def parse(input)
-      _initialize(input)
+    def parse(input, filename='')
+      _initialize(input, filename)
       scan()
       nodes = []
       while @token != nil
@@ -526,6 +551,8 @@ module Kwartz
 
 
   end #class
+  PresentationLogicParser.register_class('ruby', RubyStyleParser)
+
 
 
   ##
@@ -550,10 +577,21 @@ module Kwartz
   class CssStyleParser < PresentationLogicParser
 
 
-    def parse(input)
-      _initialize(input)
+    def parse(input, filename='')
+      _initialize(input, filename)
       scan()
       rulesets = []
+      while @token == ?@
+        c = getch();
+        scan_ident()
+        name = @value
+        if name == 'import'
+          imported_rulesets = parse_import_command()
+          rulesets += imported_rulesets
+        else
+          raise parse_error("@#{name}: unsupported command.")
+        end
+      end
       while @token == ?#
         scan_ident()
         name = @value
@@ -615,6 +653,12 @@ module Kwartz
         @value = '#'
         return @token = ?#
       end #if
+
+      ## '@import "foo.plogic"'
+      if c == ?@
+        @value = '@'
+        return @token = ?@
+      end
 
       return nil
 
@@ -695,6 +739,24 @@ module Kwartz
       assert "@token=#{@token.inspect}" unless @token == :'}'
       scan()
       return ruleset
+    end
+
+
+    def parse_import_command
+      c = @ch
+      c = getch() while is_whitespace(c)
+      t = scan_string()
+      t == :string  or raise parse_error("@import: requires filename.")
+      filename = @value
+      test(?f, filename)  or raise parse_error("'#{filename}': import file not found.")
+      c = @ch
+      c = getch() while is_whitespace(c)
+      c == ?; or raise parse_error("';' required.")
+      c = getch()
+      scan()
+      parser = self.class.new(@properties)
+      ruleset_list = parser.parse(File.read(filename), filename)
+      return ruleset_list
     end
 
 
@@ -811,6 +873,7 @@ module Kwartz
 
 
   end #class
+  PresentationLogicParser.register_class('css', CssStyleParser)
 
 
 

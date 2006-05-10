@@ -2,7 +2,8 @@
 .* [v] 'default' directive with if-then-else statement
 .* [v] NativeStatement#newline = false
 .* [_] tag selector support in presentation logic
-.* [_] --extract=name support
+.* [v] --extract=name support
+.* [_] layout file support
 .* [_] testdata support
 .* [_] YamlStylePLogicParser support
 .* [_] concat strings in Converter#_convert()
@@ -13,4 +14,4 @@
 .* [_] template-toolkit support
 .* [_] '-a defun' support
 .* [_] #XMLDECL support
-.* [_] rename 'plogic:' to 'logic:'
+.* [v] rename 'plogic:' to 'logic:'

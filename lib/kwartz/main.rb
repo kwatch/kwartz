@@ -67,7 +67,7 @@ module Kwartz
 
     def execute(argv=@argv)
 
-      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPx')
+      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPxi')
       options[?h] = true if properties[:help]
 
       if options[?h] || options[?v]
@@ -84,14 +84,14 @@ module Kwartz
       $DEBUG = options[?D] if options[?D]
 
       style = options[?P] || 'css'
-      parser_class = @@parser_table[style]
+      parser_class = PresentationLogicParser.get_class(style)
       parser_class     or raise option_error("-P #{style}: unknown style name (parser class not registered).")
 
       lang = options[?l] || Config::PROPERTY_LANG      # 'erb'
-      handler_class = @@handler_table[lang]
+      handler_class = Handler.get_class(lang)
       handler_class    or raise option_error("-l #{lang}: unknown name (handler class not registered).")
 
-      translator_class = @@translator_table[lang]
+      translator_class = Translator.get_class(lang)
       translator_class or raise option_error("-l #{lang}: unknown name (translator class not registered).")
 
       if options[?r]
@@ -115,23 +115,34 @@ module Kwartz
 
       properties[:escape] = true if options[?e] && !properties.key?(:escape)
 
-      properties[:handler] = handler_class.new
+
+
+      #properties[:handler] = handler_class.new
+      handler = handler_class.new(ruleset_list)
+      converter = TextConverter.new(handler, properties)
+
+      if options[?i]
+        import_filenames = options[?i].split(/,/)
+        import_filenames.each do |filename|
+          test(?f, filename)  or raise CommandOptionError.new("-i #{filename}: file not found.")
+          pdata = File.read(filename)
+          converter.convert(pdata)
+        end
+      end
+
+
       stmt_list = []
       pdata = nil
       filenames.each do |filename|
         test(?f, filename)  or raise CommandOptionError.new("#{filename}: file not found.")
         pdata = File.read(filename)
-        handler = handler_class.new(ruleset_list)
-        converter = TextConverter.new(handler, properties)
+        #handler = handler_class.new(ruleset_list)
+        #converter = TextConverter.new(handler, properties)
         list = converter.convert(pdata)
-        list = handler.extract(options[?x]) if options[?x]
         stmt_list.concat(list)
       end
 
-      if options[?x]
-        elem_id = options[?x]
-
-      end
+      stmt_list = handler.extract(options[?x]) if options[?x]
 
       if pdata[pdata.index(?\n) - 1] == ?\r
         properties[:nl] ||= "\r\n"
@@ -140,68 +151,6 @@ module Kwartz
       output = translator.translate(stmt_list)
       return output
 
-    end
-
-
-    ## presentation logic parsers
-    @@parser_table = {
-      'css'    => CssStyleParser,
-      'ruby'   => RubyStyleParser,
-      #'yaml'   => YamlStylePLogicParser,
-    }
-
-
-    ## directive handlers
-    @@handler_table = {
-      'erb'    => ErbHandler,
-      'php'    => PhpHandler,
-      'eperl'  => EperlHandler,
-      'rails'  => RailsHandler,
-      'jstl'   => JstlHandler,
-      'struts' => StrutsHandler,
-      'erubis' => ErubisHandler,
-    }
-
-
-    ## translators
-    @@translator_table = {
-      'erb'    => ErbTranslator,
-      'php'    => PhpTranslator,
-      'eperl'  => EperlTranslator,
-      'rails'  => RailsTranslator,
-      'jstl'   => JstlTranslator,
-      'struts' => StrutsTranslator,
-      'erubis' => ErubisTranslator,
-    }
-
-
-    def self.add_parser_class(name, parser_class)
-      @@parser_table[name] = parser_class
-    end
-
-
-    def self.get_parser_class(name)
-      @@parser_table[name]
-    end
-
-
-    def self.add_handler_class(name, handler_class)
-      @@handler_table[name] = handler_class
-    end
-
-
-    def self.get_handler_class(name)
-      @@handler_table[name]
-    end
-
-
-    def self.add_translator_class(name, translator_class)
-      @@translator_table[name] = translator_class
-    end
-
-
-    def self.get_translator_class(name)
-      @@translator_table[name]
     end
 
 
@@ -290,6 +239,8 @@ module Kwartz
               arg = true unless arg && !arg.empty?
               options[optchar] = arg
               optstr = ''
+            else
+              raise CommandOptionError.new("-#{optchar.chr}: invalid command option.")
             end
           end #while
 

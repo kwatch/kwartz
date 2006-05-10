@@ -46,10 +46,10 @@ class DirectivesTest < Test::Unit::TestCase
 
   def _test
     #$stderr.puts "*** debug: _test(): @lang=#{@lang.inspect}, @name=#{@name}"  if $DEBUG
-    handler = Kwartz::Main.get_handler_class(@lang).new()
+    handler = Kwartz::Handler.get_class(@lang).new()
     converter = Kwartz::TextConverter.new(handler)
     stmt_list = converter.convert(@pdata)
-    translator = Kwartz::Main.get_translator_class(@lang).new(:header=>'')
+    translator = Kwartz::Translator.get_class(@lang).new(:header=>'')
     actual = translator.translate(stmt_list)
     assert_text_equal(@expected, actual)
   end

@@ -30,11 +30,13 @@ module Kwartz
   ##  <input type="text" id="user_name" size="10" title="text_field">
   ##   => <%= text_field "user", "name", :size=>10 %>
   ##
-  ##  ## link_to, link_to_remote, link_to_unless_current
+  ##  ## link_to, link_to_remote
   ##  <a href="#" title="link_to :action=>'list'">Show list</a>
-  ##   => <%= link_to "Show list", 'action'=>'show', 'id'=>@user.id %>
-  ##  <a href="#" title="link_to label, :action=>'list'">Show list</a>
-  ##   => <%= link_to label, 'action'=>'show', 'id'=>@user.id %>
+  ##   => <%= link_to 'Show list', :action=>'list' %>
+  ##
+  ##  ## start_link_to, start_link_to_remote
+  ##  <a href="#" title="start_link_to :action=>'list'">Show list</a>
+  ##   => <%= start_link_to 'action'=>'list' %>Show list</a>
   ##
   ##  ## mail_to
   ##  <a href="mail:www@example.com" title="mail_to">admin</a>
@@ -263,6 +265,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('rails', RailsHandler)
 
 
 
@@ -285,6 +288,7 @@ module Kwartz
 
 
   end
+  Translator.register_class('rails', RailsTranslator)
 
 
 

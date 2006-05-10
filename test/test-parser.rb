@@ -26,6 +26,15 @@ class RubyStyleParserTest < Test::Unit::TestCase
 
 
   def _test
+    begin
+      eval @setup if @setup
+      __test
+    ensure
+      eval @teardown if @teardown
+    end
+  end
+
+  def __test
     case @parser
     when 'RubyStyleParser'
       parser = Kwartz::RubyStyleParser.new()
@@ -53,7 +62,6 @@ class RubyStyleParserTest < Test::Unit::TestCase
     end
     assert_text_equal(@expected, actual)
   end
-
 
 end
 

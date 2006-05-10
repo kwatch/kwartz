@@ -52,12 +52,12 @@ class CompileTest < Test::Unit::TestCase
 
 
   def _test
-    parser = Kwartz::Main.get_parser_class('css').new
+    parser = Kwartz::PresentationLogicParser.get_class('css').new
     ruleset_list = parser.parse(@plogic)
-    handler = Kwartz::Main.get_handler_class(@lang).new(ruleset_list)
+    handler = Kwartz::Handler.get_class(@lang).new(ruleset_list)
     converter = Kwartz::TextConverter.new(handler)
     stmt_list = converter.convert(@pdata)
-    translator = Kwartz::Main.get_translator_class(@lang).new
+    translator = Kwartz::Translator.get_class(@lang).new
     actual = translator.translate(stmt_list)
     assert_text_equal(@expected, actual)
   end

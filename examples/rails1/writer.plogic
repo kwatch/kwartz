@@ -1,0 +1,8 @@
+@import 'form.plogic';
+
+#replace_element_by_form_content {
+  logic: {
+    _content('form_content')
+  }
+}
+

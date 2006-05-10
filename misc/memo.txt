@@ -1,14 +1,27 @@
+●@import
+
+  * import path
+  * recursive importの検出
+    - 一度importしたものは再度importされないようにする？
+  * RubyStyleParserでは require かそれともloadか？
+
+
+●同名のruleset
+
+  * 同名のrulesetが見つかったとき、どうするか？
+    - #DOCUMENTは追加
+    - #nameは上書き
 
 
 ●エラー表示
 
   * parser と converter とでエラー行表示が異なる
   * エラーになったファイル名が表示されない
+    - parserではファイル名を保持していない！
   * 使われていないidを警告表示する
     - elementとrulesetの両方
     - id名のtypoを見つけるため
     - '-wc' オプションで表示するとか
-  * 
   
 
 

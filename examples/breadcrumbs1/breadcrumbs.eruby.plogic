@@ -1,0 +1,27 @@
+#breadcrumbs {
+  logic: {
+    i = 0
+    for item in breadcrumbs
+      i += 1
+      if i == 1
+         _element('separator')
+      end
+      _element('item')
+    end
+  }
+}  
+
+#item {
+  value:  item[:title];
+  attrs:  "href" item[:path];
+  logic: {
+      if item[:path]
+        _stag
+        _cont
+        _etag
+      else
+        _cont
+      end
+  }
+}
+

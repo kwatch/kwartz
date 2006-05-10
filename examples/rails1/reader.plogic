@@ -1,0 +1,29 @@
+
+#member_name {
+  Value:  @member.name;
+}
+
+#member_email {
+  Value:  @member.email;
+}
+
+#member_birth {
+  value:  @member.birth;
+}
+
+#member_gender {
+  value:  label;
+  logic: {
+    case @member.gender
+    when 'M'  ; label = 'Man'
+    when 'W'  ; label = 'Woman'
+    else      ; label = ' - '
+    end
+    _elem
+  }
+}
+
+#member_group {
+  Value:  @member.group.name;
+}
+

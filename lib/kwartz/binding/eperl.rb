@@ -19,16 +19,16 @@ module Kwartz
   ##
   class EperlHandler < Handler
 
-    
+
     PERL_DIRECTIVE_PATTERN = /\A(\w+)(?:\s*\(\s*(.*)\))?\z/
 
     def directive_pattern
       return PERL_DIRECTIVE_PATTERN
     end
-    
+
 
     PERL_MAPPING_PATTERN = /\A'([-:\w]+)',\s*(.*)\z/
-    
+
     def mapping_pattern
       return PERL_MAPPING_PATTERN
     end
@@ -39,18 +39,18 @@ module Kwartz
     def marking_format
       return PERL_MARKING_FORMAT
     end
-    
+
 
     def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
       ret = super
       return ret if ret
-      
+
       d_name = directive_name
       d_arg  = directive_arg
       d_str  = directive_str
 
       case directive_name
-        
+
       when :foreach, :Foreach, :FOREACH, :list, :List, :LIST
         is_foreach = d_name == :foreach || d_name == :Foreach || d_name == :FOREACH
         unless d_arg =~ /\A(\$\w+)(?:,\s*(\$\w+))?\s+in\s+(.*)\z/
@@ -74,7 +74,7 @@ module Kwartz
         stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if is_foreach
         stmt_list  <<  NativeStatement.new("}", :foreach)
         stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if !is_foreach
-        
+
       when :while, :loop
         is_while = d_name == :while
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)   if !is_while
@@ -84,20 +84,20 @@ module Kwartz
         stmt_list << build_print_stmt(etag_info, nil, nil)                  if is_while
         stmt_list << NativeStatement.new("}", :while)
         stmt_list << build_print_stmt(etag_info, nil, nil)                  if !is_while
-        
+
       when :set
         stmt_list << NativeStatement.new("#{d_arg};", :set)
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
-        
+
       when :if
         stmt_list << NativeStatement.new("if (#{d_arg}) {", :if)
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
         stmt_list << NativeStatement.new("}", :if)
-        
+
       when :elsif, :else
         unless !stmt_list.empty? && (st=stmt_list[-1]).is_a?(NativeStatement) && (st.kind == :if || st.kind == :elseif)
           raise convert_error("'#{d_str}': previous statement should be 'if' or 'elsif'.", stag_info.linenum)
@@ -114,7 +114,7 @@ module Kwartz
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
         stmt_list << NativeStatement.new("}", kind)
-        
+
       when :default, :Default, :DEFAULT
         error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
@@ -128,7 +128,7 @@ module Kwartz
 
       else
         return false
-        
+
       end #case
       return true
 
@@ -136,6 +136,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('eperl', EperlHandler)
 
 
 
@@ -158,6 +159,7 @@ module Kwartz
 
 
   end
+  Translator.register_class('eperl', EperlTranslator)
 
 
 

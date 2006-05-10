@@ -1,0 +1,23 @@
+#breadcrumbs {
+  logic: {
+    $last_index = count($breadcrumbs) - 1;
+    $i = 0;
+    foreach ($item as $breadcrumbs) {
+      if ($i++ < $last_index) {
+        _element('item1');
+      } else {
+        _element('item2');
+      }
+    } 
+  }
+}  
+
+#anchor {
+  value:  $item['title'];
+  attrs:  "href" $item['path'];
+}
+
+#item2 {
+  value:  $item['title'];
+}
+

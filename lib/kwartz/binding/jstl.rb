@@ -25,16 +25,16 @@ module Kwartz
       @jstl_ver = properties[:jstl] || 1.2
     end
 
-    
+
     JSTL_DIRECTIVE_PATTERN = /\A(\w+)(?:\s*\(\s*(.*)\))?\z/
 
     def directive_pattern
       return JSTL_DIRECTIVE_PATTERN
     end
-    
+
 
     JSTL_MAPPING_PATTERN = /\A'([-:\w]+)',\s*(.*)\z/
-    
+
     def mapping_pattern
       return JSTL_MAPPING_PATTERN
     end
@@ -45,18 +45,18 @@ module Kwartz
     def marking_format
       return JSTL_MARKING_FORMAT
     end
-    
+
 
     def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
       ret = super
       return ret if ret
-      
+
       d_name = directive_name
       d_arg  = directive_arg
       d_str  = directive_str
 
       case directive_name
-        
+
       when :for, :For, :FOR, :list, :List, :LIST
         is_foreach = d_name == :for || d_name == :For || d_name == :FOR
         unless d_arg =~ /\A(\w+)\s*:\s*(.*)\z/
@@ -91,10 +91,10 @@ module Kwartz
         stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if is_foreach
         stmt_list  <<  NativeStatement.new("</c:forEach>", :foreach)
         stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if !is_foreach
-        
+
       when :while, :loop
         raise convert_error("'#{d_str}': jstl doesn't support '#{d_arg}' directive.", stag_info.linenum)
-        
+
       when :set
         unless d_arg =~ /\A(\S+)\s*=\s*(.*)\z/
           raise convert_error("'#{d_str}': invalid argument.", stag_info.linenum)
@@ -105,7 +105,7 @@ module Kwartz
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
-        
+
       when :if
         sb = "<c:choose><c:when test=\"${#{d_arg}}\">"
         stmt_list << NativeStatement.new(sb, :if)
@@ -113,7 +113,7 @@ module Kwartz
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
         stmt_list << NativeStatement.new("</c:when></c:choose>", :if)
-        
+
       when :elseif, :else
         unless !stmt_list.empty? && (st=stmt_list[-1]).is_a?(NativeStatement) && (st.kind == :if || st.kind == :elseif)
           raise convert_error("'#{d_str}': previous statement should be 'if' or 'elseif'.", stag_info.linenum)
@@ -134,7 +134,7 @@ module Kwartz
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil)
         stmt_list << NativeStatement.new(sb, kind)
-        
+
       when :default, :Default, :DEFAULT
         error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
@@ -173,7 +173,7 @@ module Kwartz
 
       else
         return false
-        
+
       end #case
       return true
 
@@ -264,6 +264,7 @@ module Kwartz
 
 
   end #class
+  Handler.register_class('jstl', JstlHandler)
 
 
 
@@ -297,7 +298,7 @@ module Kwartz
           sb << "<%@ page contentType=\"text/html; charset=#{charset}\" %>" << @nl
         else
           #sb << "<%@ page contentType=\"text/html\" %>" << @nl
-        end    
+        end
         if @jstl_ver < 1.2
           sb << '<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>' << @nl
         else
@@ -322,6 +323,7 @@ module Kwartz
 
 
   end
+  Translator.register_class('jstl', JstlTranslator)
 
 
 

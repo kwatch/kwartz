@@ -1,7 +1,16 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
-: rev.107
+: rev.108 (2006-05-11)
+	- [enhance] @import 'file.plogic' supported in CssStyleParser
+	- [enhance] add examples/{table1,breadcrumbs{1,2},rails1}
+	- [change] directives 'relace:' and 'placeholder:' are renamed to 'replace_element_by:' and 'replace_content_by:' respectively
+	- [change] Main.add_xxx() and Main.get_xxx() are obsolete
+	- [enhance] Handler.register_class() and Handler.get_class() added
+	- [enhance] Translator.register_class() and Translator.get_class() added
+	- [enhance] PresentationLogicParser.register_class() and PresentationLogicParser.get_class() added
+
+: rev.107 (2006-05-10)
 	- [enhance] Handler#extract() added and command-line option '-x' supported
 	- [bugfix] Main#parse_argv() set optstr='' when required/optional argument
 	- [change] rails.rb changed not to use String#dump() to show japanese text

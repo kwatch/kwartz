@@ -1,0 +1,22 @@
+#row {
+  attrs:  "bgcolor" $color;
+  logic: {
+    $i = 0;
+    foreach ($list as $item) {
+      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      _elem();
+    }
+  }
+}
+
+#name {
+  value:  $item['name'];
+}
+
+#mail {
+  value:  $item['mail'];
+}
+
+#dummy1 {
+  logic: { }   /* ignore this element */
+}

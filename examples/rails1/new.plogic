@@ -1,0 +1,10 @@
+@import 'link_to.plogic';
+@import 'writer.plogic';
+
+#form_for_create {
+  stag:  start_form_tag :action=>'create';
+}
+
+#submit {
+  elem:  submit_tag 'Create';
+}
