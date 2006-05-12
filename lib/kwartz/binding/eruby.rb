@@ -14,29 +14,29 @@ module Kwartz
 
 
   ##
-  ## directive handler for ERB
+  ## directive handler for eRuby
   ##
-  class ErbHandler < Handler
+  class ErubyHandler < Handler
 
 
-    ERB_DIRECTIVE_PATTERN = /\A(\w+)(?:[:\s]\s*(.*))?\z/
+    ERUBY_DIRECTIVE_PATTERN = /\A(\w+)(?:[:\s]\s*(.*))?\z/
 
     def directive_pattern
-      return ERB_DIRECTIVE_PATTERN
+      return ERUBY_DIRECTIVE_PATTERN
     end
 
 
-    ERB_MAPPING_PATTERN = /\A'([-:\w]+)'\s+(.*)\z/
+    ERUBY_MAPPING_PATTERN = /\A'([-:\w]+)'\s+(.*)\z/
 
     def mapping_pattern
-      return ERB_MAPPING_PATTERN
+      return ERUBY_MAPPING_PATTERN
     end
 
 
-    ERB_MARKING_FORMAT = 'id: %s'
+    ERUBY_MARKING_FORMAT = 'id: %s'
 
     def marking_format
-      return ERB_MARKING_FORMAT
+      return ERUBY_MARKING_FORMAT
     end
 
 
@@ -116,7 +116,7 @@ module Kwartz
       when :default, :Default, :DEFAULT
         error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list << NativeStatement.new_without_newline("if #{d_arg} && #{d_arg}.empty? then", :if)
+        stmt_list << NativeStatement.new_without_newline("if (#{d_arg}) && !(#{d_arg}).to_s.empty? then", :if)
         flag_escape = d_name == :default ? nil : (d_name == :Default)
         stmt_list << PrintStatement.new([ NativeExpression.new(d_arg, flag_escape) ])
         stmt_list << NativeStatement.new_without_newline("else", :else)
@@ -134,17 +134,17 @@ module Kwartz
 
 
   end #class
-  Handler.register_class('erb', ErbHandler)
+  Handler.register_class('eruby', ErubyHandler)
 
 
 
   ##
-  ## translator for ERB
+  ## translator for eRuby
   ##
-  class ErbTranslator < BaseTranslator
+  class ErubyTranslator < BaseTranslator
 
 
-    ERB_EMBED_PATTERNS = [
+    ERUBY_EMBED_PATTERNS = [
       '<% ',    ' %>',        # statement
       '<%= ',   ' %>',        # expression
       '<%=h ',  ' %>',        # escaped expression
@@ -152,12 +152,12 @@ module Kwartz
 
 
     def initialize(properties={})
-      super(ERB_EMBED_PATTERNS, properties)
+      super(ERUBY_EMBED_PATTERNS, properties)
     end
 
 
   end #class
-  Translator.register_class('erb', ErbTranslator)
+  Translator.register_class('eruby', ErubyTranslator)
 
 
 

@@ -3,7 +3,7 @@
   
   pdata*:
   
-    erb: |
+    eruby: |
       <table>
         <tr title="id: list" bgcolor="#FFCCCC">
           <td title="id: name">foo</td>
@@ -31,7 +31,7 @@
   
   plogic*:
   
-    erb: |
+    eruby: |
       #list {
         attrs: 'bgcolor' color,
                'title'   user.name;
@@ -97,7 +97,7 @@
   
   expected*:
   
-    erb: |
+    eruby: |
       <table>
       <%     @list.each_with_index { |user, i| %>
       <%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>

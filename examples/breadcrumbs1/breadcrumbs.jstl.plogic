@@ -2,7 +2,7 @@
   logic: {
     <c:forEach var="item" items="${breadcrumbs}" varStatus="loop">
       <c:if test="${loop.count != 1}">
-        _element('separator')
+        _content('separator')
       </c:if>
       _element('item')
     </c:forEach> 

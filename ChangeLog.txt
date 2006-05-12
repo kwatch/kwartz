@@ -1,6 +1,14 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
+: rev.109
+	- [enhance] dummy <span> tag deletion support, with '--delspan' and PROPERTY_DELSPAN
+	- [change] binding/erb.rb is renamed to binding/eruby.rb
+	- [change] examples/rails/*.html are fixed to pass HTML checker (tidy)
+	- [change] rename command-line option '-x' (extract element) to '-X'
+	- [enhance] add new command-line option '-x' (extract content of element)
+	- [enhance] add 'doc/users-guide.txt'
+
 : rev.108 (2006-05-11)
 	- [enhance] @import 'file.plogic' supported in CssStyleParser
 	- [enhance] add examples/{table1,breadcrumbs{1,2},rails1}

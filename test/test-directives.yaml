@@ -8,7 +8,7 @@
       or PROPERTY_ESCAPE is true in configuration file.
   
   pdata*:
-    erb: |
+    eruby: |
       <b title="elem: expr">foo</b>
       <b title="Elem: expr">foo</b>
       <b title="ELEM: expr">foo</b>
@@ -29,7 +29,7 @@
       <b title="ELEM(expr)">foo</b>
   
   expected*:
-    erb: |
+    eruby: |
       <%= expr %>
       <%=h expr %>
       <%= expr %>
@@ -59,7 +59,7 @@
       or PROPERTY_ESCAPE is true in configuration file.
   
   pdata*:
-    erb: |
+    eruby: |
       <b title="cont: expr">foo</b>
       <b title="Cont: expr">foo</b>
       <b title="CONT: expr">foo</b>
@@ -80,7 +80,7 @@
       <b title="CONT(expr)">foo</b>
   
   expected*:
-    erb: |
+    eruby: |
       <b><%= expr %></b>
       <b><%=h expr %></b>
       <b><%= expr %></b>
@@ -109,7 +109,7 @@
       'cont', 'Cont', and 'CONT' directives respectively.
   
   pdata*:
-    erb: |
+    eruby: |
       <b title="value: expr">foo</b>
       <b title="Value: expr">foo</b>
       <b title="VALUE: expr">foo</b>
@@ -130,7 +130,7 @@
       <b title="VALUE(expr)">foo</b>
   
   expected*:
-    erb: |
+    eruby: |
       <b><%= expr %></b>
       <b><%=h expr %></b>
       <b><%= expr %></b>
@@ -158,7 +158,7 @@
       'foreach' directive interates element, while 'loop' directive iterates content.
   
   pdata*:
-    erb: |
+    eruby: |
       <tr title="for item in list">
         <td title="cont item">foo</td>
       </tr>
@@ -203,7 +203,7 @@
       </tr>
       
   expected*:
-    erb: |
+    eruby: |
       <% for item in list do %>
       <tr>
         <td><%= item %></td>
@@ -274,7 +274,7 @@
       'list' directive interates content, while 'foreach' directive iterates element.
   
   pdata*:
-    erb: |
+    eruby: |
       <tr title="List item in list">
         <td title="cont item">foo</td>
       </tr>
@@ -310,7 +310,7 @@
       </tr>
       
   expected*:
-    erb: |
+    eruby: |
       <tr>
       <% item_ctr = 0 %>
       <% for item in list do %>
@@ -373,7 +373,7 @@
       (starting with 1).
   
   pdata*:
-    erb: |
+    eruby: |
       <tr title="For item in list">
         <td title="cont item">foo</td>
       </tr>
@@ -410,7 +410,7 @@
       </tr>
       
   expected*:
-    erb: |
+    eruby: |
       <% item_ctr = 0 %>
       <% for item in list do %>
       <%   item_ctr += 1 %>
@@ -487,7 +487,7 @@
       or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
   
   pdata*:
-    erb: |
+    eruby: |
       <tr title="FOR item in list">
         <td title="cont item">foo</td>
       </tr>
@@ -524,7 +524,7 @@
       </tr>
       
   expected*:
-    erb: |
+    eruby: |
       <% item_ctr = 0 %>
       <% for item in list do %>
       <%   item_ctr += 1 %>
@@ -607,7 +607,7 @@
       until conditional expression is false.
   
   pdata*:
-    erb: |
+    eruby: |
       <tr title="while (item = dbh.fetch) != nil">
         <td title="cont item.name">foo</td>
       </tr>
@@ -638,7 +638,7 @@
   
   
   expected*:
-    erb: |
+    eruby: |
       <% while (item = dbh.fetch) != nil do %>
       <tr>
         <td><%= item.name %></td>
@@ -689,7 +689,7 @@
      start-tag of 'elseif'/'else' directive.
   
   pdata*:
-    erb: |
+    eruby: |
       <div title="if status=='error'">
         <p class="error" title="cont mesg">error</p>
       </div>
@@ -734,7 +734,7 @@
       </div>
   
   expected*:
-    erb: |
+    eruby: |
       <% if status=='error' then %>
       <div>
         <p class="error"><%= mesg %></p>
@@ -802,7 +802,7 @@
       'set' directive executes any expression.
       
   pdata*:
-    erb: |
+    eruby: |
       <tr title="set color=i%2==0 ? 'red' : 'blue'">
        <td title="cont: color">red</td>
       </tr>
@@ -823,7 +823,7 @@
       </tr>
   
   expected*:
-    erb: |
+    eruby: |
       <% color=i%2==0 ? 'red' : 'blue' %>
       <tr>
        <td><%= color %></td>
@@ -857,7 +857,7 @@
       Id attribute is equivalent to 'id' directive if other direcitve is not specified.
   
   pdata*:
-    erb: |
+    eruby: |
       <ul>
        <li title="id: name">foo</li>
       </ul>
@@ -878,7 +878,7 @@
       </ul>
   
   expected*:
-    erb: |
+    eruby: |
       <ul>
        <li>foo</li>
       </ul>
@@ -912,7 +912,7 @@
       and available with other directive.
   
   pdata*:
-    erb: |
+    eruby: |
       <tr class="odd"
           title="FOR v in list; attr: 'class' v_tgl; attr: 'style' style">
        <td title="cont v.name">foo</td>
@@ -937,7 +937,7 @@
       </tr>
   
   expected*:
-    erb: |
+    eruby: |
       <% v_ctr = 0 %>
       <% for v in list do %>
       <%   v_ctr += 1 %>
@@ -990,7 +990,7 @@
       and available with other directive.
   
   pdata*:
-    erb: |
+    eruby: |
       <input type="checkbox"
          title="append: flag1 ? ' checked=\'checked\'' : ''">
   #    <input type="checkbox" name="flag" value="y"
@@ -1015,7 +1015,7 @@
   #       title="append(flag1 ? ' checked=\'checked\'' : '')">
   
   expected*:
-    erb: |
+    eruby: |
       <input type="checkbox"<%= flag1 ? ' checked=\'checked\'' : '' %>>
   #    <input type="checkbox" name="flag" value="y"<%= flag1 ? ' checked=\'checked\'' : '' %>>
   
@@ -1041,7 +1041,7 @@
       It is very useful when preview the HTML design in browser.
   
   pdata*:
-    erb: |
+    eruby: |
       <ul>
         <li>foo</li>
         <li title="dummy:">bar</li>
@@ -1070,7 +1070,7 @@
       </ul>
   
   expected*:
-    erb: |
+    eruby: |
       <ul>
         <li>foo</li>
       </ul>
@@ -1103,7 +1103,7 @@
       or PROPERTY_ESCAPE is true in configuration file.
   
   pdata*:
-    erb: |
+    eruby: |
       name: <em title="default: user">Guest</em>
   
     php: |
@@ -1116,8 +1116,8 @@
       name: <em title="default(user)">Guest</em>
   
   expected*:
-    erb: |
-      name: <em><% if user && user.empty? then %><%= user %><% else %>Guest<% end %></em>
+    eruby: |
+      name: <em><% if (user) && !(user).to_s.empty? then %><%= user %><% else %>Guest<% end %></em>
   
     php: |
       name: <em><?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?php } ?></em>
@@ -1138,7 +1138,7 @@
       by other element or content.
       
   pdata*:
-    erb: |
+    eruby: |
       <div title="id: link">
         back to <a href="/">home</a>.
       </div>
@@ -1185,7 +1185,7 @@
     jstl: *replace_pdata
   
   expected*:
-    erb: &expected1 |
+    eruby: &expected1 |
       <div>
         back to <a href="/">home</a>.
       </div>

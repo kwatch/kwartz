@@ -2,8 +2,8 @@
   logic: {
     $i = 0;
     foreach ($breadcrumbs as $item) {
-      if (++$i == 1) {
-        _element('separator');
+      if (++$i > 1) {
+        _content('separator');
       }
       _element('item');
     }

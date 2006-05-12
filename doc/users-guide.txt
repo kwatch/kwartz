@@ -1,0 +1,1328 @@
+.=title:	Kwartz 3.0 Users' Guide
+.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.?lastupdate:	$Date$
+.?version:	$Rev$
+.?release:	$Release$
+.?stylesheet:	docstyle.css
+
+
+.$ Preface | preface*
+
+
+This is the users' guide of Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
+a template system which realized the concept of 'Independence of Presentation Logic'.
+
+
+
+.$$ Table of Contents	| toc*
+
+.#.+toc:
+   .<<< users-guide.toc
+.#.-toc:
+
+
+.#.$$ Changelog		| changelog*
+.#
+.#.: 2005-03-23
+.#	.- describe about new command-line option '-a defun'
+.#.: 2005-03-07
+.#	.- beta3 release
+.#.: 2005-02-19
+.#	.- beta2 release
+.#.: 2005-02-14
+.#	.- beta1 release
+
+
+
+.$ Introduction to Kwartz	| intro
+
+
+.$$ What's Kwartz?	| whatis
+
+
+Kwartz{{('Kwartz' is pronounced like 'Quartz'.)}} is a template system
+which realized the concept of {{*'Independence of Presentation Logic'(IoPL)*}}.
+
+You may know CSS (Cascading Style Sheet). CSS separates design from HTML file.
+In the same way, Kwartz separates presentation logics from HTML template.
+If you are familiar with CSS, you'll be also familiar with Kwartz.
+
+.#The following figure show the combination of HTML, CSS, JavaScript, and Kwartz.
+
+
+
+
+
+Kwartz-ruby is an implemenation of Kwartz in Ruby.
+There is a plan to implement Kwartz in PHP or Java.
+
+
+In the following, the word 'Kwartz' means the specification of the template system
+ and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+
+
+
+
+.$$ Features Overview	| features
+
+
+Kwartz has the following features:
+
+
+.%  Separates presentation logic from presentation data.
+	
+	Using template systems such as Smarty, Velocity, XMLC, amrita, etc,
+	you can separate HTML design from business logic as a template.
+	With Kwartz, you can separate presentation logic from a template.
+	In other words, Kwartz divides a template into 'presentation data' and 'presentation logic'.
+	You need not mix presentation logic into HTML files nor main program.
+	.#In Kwartz, you can separate not only business logic but also presentation logic from HTML.
+	
+	
+.%  Very fast
+	
+	Kwartz creates a script from a template (= presentation data and presentaion logic). 
+	All you have to do in main program is to call the output script.
+	Because Kwartz doesn't use DOM trees or the like, it is both fast and light-weight.
+	
+	
+.%  Multi-languages support
+	
+	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 & 1.1).
+	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.)}}.
+	This approach gives you the power of the target language fully.
+	For example, you can write Ruby on Rails helper method (such as {{,link_to,}}, {{,field_tag,}}, and so on) directly in your template file.
+	
+	
+.%  Doesn't break HTML design at all
+	
+	You must use directives like 
+	{{,{foreach ...}{/foreach},}} in {{<Smarty|http://smarty.php.net/>}} or
+	{{,#foreach(...),}} in {{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}}.
+	These directives break the HTML design of template.
+	Kwartz doesn't break HTML design because Kwartz uses id or title attributes for marking in an HTML template.
+	
+	
+.%  Able to handle any text file
+	
+	Kwartz uses an original template parser; not using an HTML or XML parser,
+	it is able to handle any type of text file (HTML, PostScript, CSV, and so on).
+	This also means that Kwartz can handle non-well-formed XML files, as well as well-formed XML files.
+	This is an advantage of Kwartz against {{<Enhydra XMLC|http://xmlc.objectweb.org/>}} or
+	{{<amrita|http://amrita.sourceforge.jp/>}}, which handle only XML/HTML files.
+	
+	
+.%  Auto-escape and Partial-escape
+	
+	Kwartz can do sanitizing automatically.
+	You don't need to write '{{,CGI.escapeHTML(var),}}' or '{{,htmlspecialchars($var),}}'.
+	You are free to turn sanitizing on/off, as well specifying which parts of the template to sanitize.
+
+
+
+
+.$$ Simple Example	| example1
+
+In Kwartz, a template is defined as both presentation data and presentation logic.
+They may be described in separate files.
+.#This is an example of a presentation data file and a presentation logic file.
+.#You should create these two files.
+
+This is an example of a presentation data file.
+.* '{{*{{,id="list1",}}*}}' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
+.* '{{*{{,id="mark:item1",}}*}}' is also an marking.
+   Difference between {{,id="mark:item1",}} and {{,id="item1",}} is that id attribute in the former format is removed automatically and the latter format is leaved.
+
+Presentation data file(example1.html):
+.-------------------- example1.html
+<table>
+  <tr {{*id="list1"*}}>
+    <td {{*id="mark:item1"*}}>foo</td>
+  </tr>
+</table>
+.--------------------
+
+And the following is an example of presentation logic.
+In presentation logic, you can operate on elements which are marked in presentation data.
+.* '{{*{{,#list1 { ... },}}*}}' represents an element marked with name 'list1' (= '<tr>...</tr>')
+    .- '{{*{{,logic: { ... },}}*}}' represents presentation logic of the element.
+    .- '{{*{{,_stag,}}*}}' represents a start tag (= '<tr>').
+    .- '{{*{{,_cont,}}*}}' represents content(= '<td id="mark:item1">foo</td>').
+    .- '{{*{{,_etag,}}*}}' represents an end tag(= '</tr>').
+    .- '{{*{{,for {{/var/}} in {{/list/}} ...,}}*}}' is a Ruby code to loop.
+       In this case, the element(= start-tag + content + end-tag) is looped.
+.* '{{*{{,#item1 { ... },}}*}}' represents an element marked with name 'item1' (= '<td>...</td>').
+    .- '{{*{{,value: {{/expression/}};,}}*}}' represents that the content of the element is replaced by value of {{,{{/expression/}},}}, which is value of a variable {{,member,}} in this case.
+
+
+.? Presentation logic file(example1.plogic):
+.-------------------- example1.plogic
+/* The element which is marked by 'id="list1"' */
+#list1 {
+  /* loop element */
+  logic: {
+    for member in @members
+      _stag           # start tag
+      _cont           # content
+      _etag           # end tag
+    end
+  }
+}
+
+/* The element which is marked by 'id="mark:item1"' */
+#item1 {
+  /* replace the content with value of a variable 'member' */
+  value: member;
+}
+.--------------------
+
+(Don't forget the semicolon at the end of line especially for Ruby user!)
+
+Kwartz generates eRuby script from the above files. This action is called 'compiling'.
+
+.? how to compile eRuby script
+.====================
+$ kwartz -p example1.plogic example1.html > example1.rhtml
+.====================
+
+The following is the compiled eRuby script.
+Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}} is leaved.
+
+.? generated eRuby script
+.--------------------
+.<<<:! (cd guide.d; kwartz -p example1.plogic example1.html)
+.--------------------
+
+
+
+.$$ Complex Example	| example2
+
+Next is bordered table example which is a little complex than previous.
+
+.? Presentation Data (example2.html):
+.-------------------- example2.html
+<table>
+ <tr bgcolor="#CCCCFF" {{*id="mark:list"*}}>
+  <td {{*id="mark:name"*}}>foo</td>
+  <td>
+   <a href="mailto:foo@mail.com" {{*id="mark:email"*}}>foo@mail.com</a>
+  </td>
+ </tr>
+</table>
+.--------------------
+
+
+The following is the presentation logic file.
+In the presentation logic, you should detect whether odd or even line in the iteration.
+.#Notice that only the content is iterated and the start-tag and the end-tag are not iterated.
+
+
+Presentation Logic (example2.plogic):
+.-------------------- example2.plogic
+/*
+ * an element which is marked by 'id="mark:list"'
+ *  - print value of a variable 'color' as bgcolor attribute value.
+ */
+#list {
+  attrs:  "bgcolor" color;
+  logic: {
+    @members.each_with_index do |member, i|
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      _stag    # start tag
+      _cont    # content
+      _etag    # end tag
+    end
+  }
+}
+
+/*
+ * an element which is marked by 'id="mark:name"':
+ *  - print value of member[:name] as content of the element.
+ */
+#name {
+  value: member[:name];
+}
+
+/*
+ * an element marked by 'id="mark:email"':
+ *  - print value of member[:email] as contentn of the element. 
+ *  - print "mailto:" and member[:email] as href attribute value.
+ */
+#email {
+  value: member[:email];
+  attrs: "href" "mailto:#{member[:email]}";
+}
+.--------------------
+
+(Don't forget the semicolon at the end of line especially for Ruby user!)
+
+You will find that there is no HTML tag in the presentation logic and no logic in the presentation data.
+That is to say, Kwartz can separate presentation logic from presentation data.
+
+.? compilation
+.====================
+$ kwartz -p example2.plogic example2.html > example2.rhtml
+.====================
+
+.? output script
+.--------------------
+.<<<:! (cd guide.d; kwartz -p example2.plogic example2.html)
+.--------------------
+
+
+
+.$$ Other Examples of Presentation Logic		| pattern
+
+Kwartz enables you to write complex presentation logic natulally.
+This section shows some examples.
+See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
+
+.#Presentation Data:
+.#.--------------------
+.#<ul id="mark:list">
+.# <li>@{member}@</li>
+.#</ul>
+.#.--------------------
+
+
+.* Iterate an element.
+	.--------------------
+	#list {
+	  logic: {
+	    for member in @members
+	      _stag
+	      _cont
+	      _etag
+	    end
+	  }
+	}
+	.--------------------
+   Or
+	.--------------------
+	#list {
+	  logic: {
+	    for member in @members
+	      _elem     # '_elem' is equivarent to _stag + _cont + _etag
+	    end
+	  }
+	}
+	.--------------------
+
+.* Iterate only contents. This is useful for <dl></dl>.
+	.--------------------
+	#list {
+	  logic: {
+	    _stag
+	    for member in @members
+	      _cont
+	    end
+	    _etag
+	  }
+	}
+	.--------------------
+
+.* Replace content of element by expression value.
+	.--------------------
+	#list {
+	  logic: {
+	    _stag
+	    print expr
+	    _etag
+	  }
+	}
+	.--------------------
+   Or
+	.--------------------
+	#list {
+	  value: expr;
+	}
+	.--------------------
+
+.* Replace element by exression value
+	.--------------------
+	#list {
+	  logic: {
+	    print expr
+	  }
+	}
+	.--------------------
+    Or
+	.--------------------
+	#list {
+	  elem:  expr;
+	}
+	.--------------------
+
+
+
+.* Delete start-tag and end-tag, and leaves content only.
+	.--------------------
+	#list {
+	  logic: {
+	    _cont
+	  }
+	}
+	.--------------------
+
+.* Delete elemnt. This is useful for delete dummy data.
+	.--------------------
+	#list {
+	  logic: {
+	  }
+	}
+	.--------------------
+
+.* Replace element by other element.
+	.--------------------
+	#list {
+	  logic: {
+	    _element(foo)  # expand other element marked with name 'foo'
+	  }
+	}
+	.--------------------
+
+.* Replace element by other element's content.
+	.--------------------
+	#list {
+	  logic: {
+	    _content(foo)  # expand content of other element
+	  }
+	}
+	.--------------------
+
+.* Include complex presentation logics.
+	.--------------------
+	#list {
+	  logic: {
+	    i = 0
+	    for member in @members
+	      i += 1
+	      if i % 2 == 0
+	        color = '#FFCCCC'
+	      else
+	        color = '#CCCCFF'
+	      end
+	      _elem    # '_elem' is equivarent to _stag + _cont + _etag
+	    end
+	  }
+	}
+	.--------------------
+
+It is very important that tag/attribute names don't appear in presentation logic at all.
+This way, you don't need to change presentation logic files even if the tag/attribute names are changed in the presentation data.
+.#In other words, you don't need to change presentaion logic files even if the tag/attribute name is changed in the presesntation data.
+
+
+Kwartz separates presentation logic from presentation data and main program.
+.#It means that Kwartz separates presentation logic from presentation data.
+
+
+
+.$ Features Detail
+
+
+.$$ Rules
+
+The following rules are available in presesntation logic file.
+These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz.
+
+.[ stag: {{/expr/}}; ]
+	Replace start-tag by expression value.
+
+.[ etag: {{/expr/}}; ]
+	Replace end-tag by expression value.
+
+.[ elem: {{/expr/}}; ]
+	Replace elemnt by expression value.
+
+.[ cont: {{/expr/}}; ]
+	Replace content of element by expressin value.
+
+.[ value: {{/expr/}}; ]
+	Equivarent to {{,cont: {{/expr/}},}}.
+
+.[ attrs: 'attrname' {{/expr/}}; ]
+	Replace attribute value by expression.
+	The following is an example to specify some attributes.
+	.--------------------
+	#foo {
+	  attrs:  'href'  item[:url],
+		  'id'    item[:id],
+	          'class' classname;
+	}
+	.--------------------
+
+.[ append: {{/expr/}}; ]
+	Append expression value to tail of tag.
+	This is used especially to add 'checked="checked"', 'selected="selected"'
+	into the form control tag.
+	.--------------------
+	#checkbox1 {
+	  append:  member[:age] > 18 ? ' checked="checked"' : '';
+	}
+	#select_options {
+	  append:  option[:value] == current_val ? ' selected="selected"' : '';
+	}
+	.--------------------
+
+.[ remove:  'attr1', 'attr2', 'attr3'; ]
+	Remove the attributes from the element.
+
+.[ logic: { ... } ]
+	Logic of the element.
+
+
+'stag:' and 'elem:' are very useful especially for Ruby on Rails.
+The following is an examle to use Kwartz in Ruby on Rails.
+
+.? link_to.plogic
+.-------------------- link_to.plogic
+#link_to_list {
+  elem:  link_to 'List', :action=>'list';
+}
+#link_to_show {
+  elem:  link_to 'Show', :action=>'show', :id=>@member.id;
+}
+#link_to_new {
+  elem:  link_to 'New', :aciton=>'new';
+}
+#link_to_edit {
+  elem:  link_to 'Edit', :aciton=>'edit', :id=>@member.id;
+}
+.--------------------
+
+.? enter.html
+.-------------------- enter.html
+<form {{*id="form"*}}>
+  Name: <input type="text" {{*id="member_name"*}}><br>
+  Password: <input type="password" {{*id="member_password"*}}><br>
+  Birthday: <select {{*id="member_birth"*}}>
+              <option value=""> - </option>
+	    </select>
+	    <br>
+  Gender:  <input type="checkbox" {{*id="member_gender_m"*}}>Man
+           <input type="checkbox" {{*id="member_gender_w"*}}>Woman
+	   <br>
+  <input type="submit" {{*id="form_submit"*}}>
+</form>
+
+<a href="#" {{*id="link_to_list"*}}>List</a> |
+<a href="#" {{*id="link_to_show"*}}>Show</a>
+.--------------------
+
+.? enter.plogic
+.-------------------- enter.plogic
+/* import presentation logic library */
+@import 'link_to.plogic';
+
+/* replace form control elements by Rails helper methods */
+#form {
+  stag:  start_form_tag  :action=>'new';
+}
+
+#form_submit {
+  elem:  submit_to 'Submit';
+}
+
+#member_name {
+  elem:  text_field  'member', 'name';
+}
+
+#member_password {
+  elem:  password_field  'member', 'password';
+}
+
+#member_birth {
+  elem:  date_select 'member', 'birth';
+}
+
+#member_gender_m {
+  elem:  check_box 'member', 'gender', 'm';
+}
+
+#member_gender_w {
+  elem:  check_box 'member', 'gender', 'w';
+}
+.--------------------
+
+
+.? compilation
+.====================
+$ kwartz -l rails -p enter.plogic enter.html > enter.rhtml
+.====================
+
+.? compiled eRuby script
+.--------------------
+.<<<:! (cd guide.d; kwartz -l rails -p enter.plogic enter.html)
+.--------------------
+
+
+
+.$$ Directives		| directives
+
+Presentation logic may be embedded into presentation data in Kwartz.
+.#In addition, you can 'embed' presentation logic into presentation data in Kwartz.
+You can choose to separate or not to sepearate presentation logic from presentation data.
+
+The reason to provide both solutions (separate or not) is {{*choosability*}}.
+Some preferes to separate presentation logic from presentaion data, and others may
+prefere to mix them.
+Both approaches have own advantages and disadvantages.
+Thus it is the user who determine to adopt which solution.
+Kwartz provides both approaches and you can select which to use.
+Kwartz doesn't enforce you to adopt a solution.
+
+To embed presentation logic into presentation data, use directives.
+Directive is a command to embed presentation logic into presentation data.
+In Kwartz, 'title'({{(It is able to change attribute name by command-line option '--dattr=name' or configuration option PROPRERTY_DATTR.)}}) attributes are used to describe directives.
+
+The following is an example to use directives.
+.* Directive {{,title="for {{/var/}} in {{/list/}}",}} means to iterate the element.
+.* Directive {{,title="value: {{/expression/}}",}} means to print value of expression as content of the element.
+.* Directive {{,title="dummy:",}} means that the element is a dummy and is not printed out.
+
+.? Presentation Data(example3.html):
+.-------------------- example3.html
+<table>
+  <tr {{*title="for member in @members"*}}>
+    <td {{*title="value: member.name"*}}>foo</td>
+    <td>
+      <a href="mailto:<%= member.email %>"
+         title="{{*value: member.email*}}">foo@mai.com</a>
+    </td>
+  </tr>
+  <tr {{*title="dummy:"*}}>
+    <td>bar</td>
+    <td><a href="mailto:bar@mail.org">bar@mail.org</a></td>
+  </tr>
+  <tr {{*title="dummy:"*}}>
+    <td>baz</td>
+    <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
+  </tr>
+</table>
+.--------------------
+
+.? Compile:
+.====================
+$ kwartz -l eruby   example3.html > example3.rhtml
+.====================
+
+.? Output script:
+.--------------------
+.<<<:! (cd guide.d; kwartz -l eruby example3.html)
+.--------------------
+
+Directives are different in each target language.
+For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
+See reference manual for details about directives.
+
+
+
+.$$ Escape 	| escape
+
+Kwartz supports Automatic-escape and Partially-escape.
+
+.* If command-line option '{{,-e,}}' is specified,  values of '{{,value: {{/expr/}},}}'
+   are escaped. (Automatic-escape)
+.* '{{,Value: {{/expr/}},}}' always escapes value even when '{{,-e,}}' is specified. (Prtially-escape)
+.* '{{,VALUE: {{/expr/}},}}' always doesn't escapes value even when '{{,-e,}}' is not specified. (Partially-unescape)
+
+.? presentation Data (escape1.html):
+.-------------------- escape1.html
+<tr>
+  <td id="mark:val1">foo</td>
+  <td id="mark:val2">bar</td>
+  <td id="mark:val3">baz</td>
+</tr>
+.--------------------
+
+.? presentation logic (escape1.plogic)
+.-------------------- escape1.plogic
+#val1 {
+  {{*value:*}} expr;
+}
+#val2 {
+  {{*Value:*}} expr;
+}
+#val3 {
+  {{*VALUE:*}} expr;
+}
+.--------------------
+
+.? compile without '{{,-e,}}' option.
+.====================
+$ kwartz -p escape1.plogic escape1.html
+.<<<:! (cd guide.d; kwartz -p escape1.plogic escape1.html)
+.====================
+
+.? comple with '{{,-e,}}' option.
+.====================
+$ kwartz {{*-e*}} -p escape1.plogic escape1.html
+.<<<:! (cd guide.d; kwartz -e -p escape1.plogic escape1.html)
+.====================
+
+In the same way, 'Stag:', 'Etag:', 'Elem:', 'Cont:', 'Attrs:', and 'Append:' part are
+always escaped, 'STAG:', 'ETAG:', 'ELEM:', 'CONT:', 'ATTRS:', and 'APPEND:' part are never escaped.
+
+Escape function or method is different for each tareget language.
+'h()' is used in eRuby and 'htmlspecialchars()' in PHP.
+JSTL prints escaped value in default.
+
+Directives {{,title="Value: {{/expr/}}",}}, {{,title="Attr: '{{/name/}}' {{/expr/}}",}}, and {{,title="Append: {{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
+
+Directives {{,title="VALUE: {{/expr/}}:",}}, {{,title="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,title="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+
+Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
+If this is true then Kwartz will escape values in default.
+
+
+
+.$$ Multi-language      | langs
+
+Kwartz-ruby now supports the following programming language.
+.* Ruby (eRuby)
+.* PHP
+.* JSP (JSTL 1.1 and 1.2)
+.* Perl (ePerl) [experimental]
+
+Presentation logics must be described in each target language.
+It means that if you have wrote presentation logics in Ruby, they were not reusable
+for PHP project (but you can get full-power of Ruby in presentation logic).
+
+The followings are examples of PHP and JSP.
+
+.? table1.html
+.-------------------- table1.html
+<html>
+  <body>
+  
+    <table>
+      <tr bgcolor="#CCCCFF" {{*id="mark:row"*}}>
+        <td {{*id="mark:name"*}}>Foo</td>
+        <td {{*id="mark:mail"*}}>foo@mail.com</td>
+      </tr>
+      <tr bgcolor="#FFCCCC" {{*id="mark:dummy1"*}}>
+        <td>Bar</td>
+        <td>bar@mail.org</td>
+      </tr>
+    </table>
+
+ </body>
+</html>
+.--------------------
+
+.? table1.php.plogic
+.-------------------- table1.php.plogic
+#row {
+  attrs:  "bgcolor" $color;
+  logic: {
+    $i = 0;
+    foreach ($list as $item) {
+      $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      _elem();
+    }
+  }
+}
+
+#name {
+  value:  $item['name'];
+}
+
+#mail {
+  value:  $item['mail'];
+}
+
+#dummy1 {
+  logic: { }   /* ignore this element */
+}
+.--------------------
+
+.? table1.jstl.plogic
+.-------------------- table1.jstl.plogic
+#row {
+  attrs:  "bgcolor" color;
+  logic: {
+    <c:forEach var="item" items="${list}" varStatus="loop">
+      <c:set var="color" value="${loop.index % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>
+      _elem
+    </c:forEach>
+  }
+}
+
+#name {
+  value:  item.name;
+}
+
+#mail {
+  value:  item.mail;
+}
+
+#dummy1 {
+  logic: { }   /* ignore this element */
+}
+.--------------------
+
+.? compile for PHP
+.====================
+$ kwartz -l php -p table1.php.plogic table1.html
+.<<<:! (cd guide.d; kwartz -l php -p table1.php.plogic table1.html)
+.====================
+
+.? compile for JSTL(1.2)
+.====================
+$ kwartz -l jstl -p table1.jstl.plogic table1.html
+.<<<:! (cd guide.d; kwartz -l jstl -p table1.jstl.plogic table1.html)
+.====================
+
+
+
+.$ Other Topics		| topics
+
+
+.$$ Restrictions around presentation logic	| restriction1
+
+There are several restrictions in presentation logic file.
+
+.* Position in which comment '{{,/* ... */,}}' is available is limited.
+   In the following example, 'value:' part will be error because
+   string from 'expr;' to the end of comment is regared as argument of 'value:' part.
+   .--------------------
+   /* this comment is ok */
+   #foo {
+     /* this comment is ok */
+     value:  expr;   /* this comment is NG! */
+     logic: {        /* this comment will be Ruby syntax error! */
+        for item in list    # ruby comment is OK in 'logic:' part
+	  _stag
+	  _cont
+	  _etag
+	end
+     }
+   }
+   .--------------------
+
+.* '_stag', '_cont', '_etag', '_elem', '_element()', and '_content()' must be placed
+   one in per line, because Kwartz-ruby scans 'logic:' part with regular expression
+   pattern such as '/^\s*_(stag|cont|etag|element|content)(\(.*\))\s*$/' or so.
+   .--------------------
+   #foo {
+     logic: {
+       # OK
+       if x > 0
+         _elem
+       end
+
+       # NG (parse failed)
+       _elem if x > 0
+     }
+   }
+   .--------------------
+
+.* The number of '{' and '}' must be equal in 'logic:' part.
+   .--------------------
+   #foo {
+     logic: {
+       str = "{"         # this will be parse error 
+       _elem
+     }
+   }
+   #bar {
+     logic: {
+       str = "{"         # add dummy '}' in comment!
+       _elem
+     }
+   }
+   .--------------------
+
+.* '@import "file.plogic"' should be at the beginning of presentation logic file.
+   .--------------------
+   /* OK */
+   @import 'file1.plogic';
+   
+   #foo {
+   }
+
+   /* NG */
+   @import 'file2.plogic';
+   .--------------------
+
+
+
+.$$ Restrictions around presentation data	| restriction2
+
+Kwartz parses presentation data file by regular expression pattern matching.
+It means that Kwartz doesn't use HTML parser nor XML parser for parsing presentation data.
+This approach enables Kwartz to handle any type of text file, and also brings the following restrictions to Kwartz.
+
+.* Cannot omit end tag if id attribute is specified.
+   .--------------------
+   <!-- Kwartz cannot parse the following because </li> is omitted. -->
+   <ul>
+    <li id="foo">foo
+   </ul>
+   .--------------------
+   An Element which doesn't have any content is to be written as an empty tag such as {{,<foo id="..."/>,}}.
+
+.* However, {{,<input>,}}, {{,<br>,}}, {{,<meta>,}}, {{,<img>,}}, and {{,<hr>,}} are allowed to omit end tag.
+   And these doesn't have to be written as an empty tag.
+   .--------------------
+   <!-- </input/> is omitted but Kwartz can parse correctly. -->
+   <input type="text" name="user" id="user">
+   .--------------------
+   Configuration option PROPERTY_NOEND lists these tag names in file 'kwartz/config.rb'.
+   Upper-case and lower-case are distinguished.
+
+.* Attribute values should be surrounded with '{{,",}}'.
+   .--------------------
+   <!-- Kwartz fails parsing because attribute value is not surrounded with '"'. -->
+   <h1 id="value:title" class=title>title</h1>
+   .--------------------
+
+
+
+.$$ Span Tag Deletion	| span
+
+The span tags which contains only directives are regarded as dummy tags and can be deleted automatically with command-line option '--delspan'.
+
+.? presentation data (delspan1.html)
+.-------------------- delspan1.html
+<h1><span {{*id="mark:title"*}}>title</span></h1>
+
+Hello <span {{*title="value: user"*}}>World</span>!
+.--------------------
+
+.? presentation logic (delspan1.plogic)
+.-------------------- delspan1.plogic
+#title {
+  value: title;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p delspan1.plogic {{*--delspan*}} delspan1.html
+.<<<:! (cd guide.d; kwartz -p delspan1.plogic --delspan delspan1.html)
+.====================
+
+The span tags are not removed when they have other attributes.
+
+.? presentation data (delspan2.html)
+.-------------------- delspan2.html
+<h1><span {{*id="mark:title"*}}>title</span></h1>
+
+Hello <span {{*title="value: user" style="color:black"*}}>World</span>!
+.--------------------
+
+.? presentation logic (delspan2.plogic)
+.-------------------- delspan2.plogic
+#title {
+  value: title;
+  attrs: "class" doctitle;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p delspan2.plogic {{*--delspan*}} delspan2.html
+.<<<:! (cd guide.d; kwartz -p delspan2.plogic --delspan delspan2.html)
+.====================
+
+
+.#@EOF
+
+.$$ Analyzing Global and Local Variables | analyze
+
+Kwartz have a function to analyze presentation data/logic files and inspect variables.
+
+In Kwartz, variables are called 'template global variables' if they are set in the main program and are passed to output script.
+Variables are called 'template local variables' if they are used only in the template.
+Kwartz have a function to detect whether variables are template global or local and report the result.
+
+Assume the following presentation data and presentation logic:
+
+Presentation Data (analyze.html):
+.-------------------- analyze.html
+<span kw:d="value:{{*title*}}">Analyzer Example</span>
+<dl id="mark:items">
+  <dt kw:d="value:{{*ctr*}}"></dt>
+  <dd kw:d="value:{{*item*}}">Foo</dd>
+</dl>
+.--------------------
+
+Presentation Logic (analyze.plogic):
+.-------------------- analyze.plogic
+#items {
+  plogic: {
+    @stag;
+    {{*ctr*}} = 0;
+    foreach ({{*item*}} in {{*list*}}) {
+      {{*ctr*}} += 1;
+      @cont;
+    }
+    @etag;
+  }
+}
+.--------------------
+
+In this case, variables {{,ctr,}} and {{,item,}} are template local variables because they are used only in the template.
+Variables {{,title,}} and {{,list,}} are template global variables because they are set in the main program and passed to output script.
+
+.#Kwartz can detect whether variables are global or local.
+Invoking kwartz with the command-line option {{,-a analyze,}} reports template global or local variables.
+
+Analyzing Example:
+.====================
+$ kwartz -a analyze -p analyze.plogic analyze.html
+{{*Global: title list*}}
+{{*Local:  ctr item*}}
+.====================
+
+
+
+.$$ Rename Template Global/Local Variable Names		| rename
+
+The command-line option {{,--globalvar-prefix={{/prefix/}},}} and {{,--localvar-prefix={{/prefix/}},}}
+add a prefix to global/local variable names in template.
+
+In Ruby or PHP, for example, if template local variables in templates have the same name of variables in main program,
+assignment into template local variables effects the control of main program.
+To avoid this confliction, you should add a prefix such as '_' to template local variable names automatically.
+
+The following is the example using 'analyze.html' and 'analyze.plogic' shown in the previous section.
+
+Compile:
+.====================
+$ kwartz -l eruby  -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+$ kwartz -l php    -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+$ kwartz -l jstl11 -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+$ kwartz -l velocity -p analyze.plogic {{*--localvar-prefix='_'*}} analyze.html
+.====================
+
+Output Script:
+.--------------------
+.<<<:! ./output.rb -p guide.d/analyze.plogic --localvar-prefix='_' guide.d/analyze.html
+.--------------------
+
+Constant GLOBALVAR_PREFIX and LOCALVAR_PREFIX in configuration file specifies the default prefix.
+
+
+
+.$$ Appending Expression to Start Tag  | topics-append
+
+The following is an example to print only attribute variable such as {{,<input type="..." checked>,}}.
+
+Presentation Data:
+.-------------------- topics-append1.pdata
+<input type="checkbox" name="foo" value="Y" id="foo" />
+.--------------------
+
+Presentation Logic:
+.-------------------- topics-append1.plogic
+#foo {
+  append: flag ? ' checked' : '';
+}
+.--------------------
+
+Output Script:
+.--------------------
+.<<<:! ./output.rb -l eruby,php,jstl11,jstl10,velocity -p guide.d/topics-append1.plogic guide.d/topics-append1.pdata
+.--------------------
+
+A directive {{,append({{/expr/}}),}} appends the value of the expression {{,{{/expr/}},}} in the element tag.
+
+Presentation Data:
+.-------------------- topics-append2.pdata
+<input type="checkbox" name="foo" value="Y" id="append:flag?' checked':''" />
+.--------------------
+
+.#Output Script:
+.#.--------------------
+.#.<<<:! ./output.rb -l eruby,php,jstl11,jstl10 guide.d/topics-append2.pdata
+.#.--------------------
+
+There are useful functions to print {{,checked="checked",}} or {{,selected="selected",}} easily.
+{{,C({{/expr/}}),}}, {{,S({{/expr/}}),}}, {{,D({{/expr/}}),}} prints 
+{{, checked="checked",}}, {{, selected="selected",}}, {{, disabled="disabled",}} respectively
+when the expression {{,{{/expr/}},}} is true.
+
+Presentation Data:
+.-------------------- topics-append3.pdata
+<input type="checkbox" name="foo" value="Y" id="foo" />
+.--------------------
+
+Presentation Logic:
+.-------------------- topics-append3.plogic
+#foo {
+  append: C(foo == 100);
+}
+.--------------------
+
+Output Script:
+.--------------------
+.<<<:! ./output.rb -l eruby,php,jstl11,jstl10,velocity -p guide.d/topics-append3.plogic guide.d/topics-append3.pdata
+.--------------------
+
+
+
+.$$ Describe Presentation Logic in Target Language	| rawcode
+
+
+Kwartz allows you to write presentation logics in target language (such as Ruby, PHP, Java, etc).
+.* {{,<%= {{/expression/}} %>,}} or {{,<?= {{/expression/}} ?>,}} means expression in target language.
+.* {{,<% {{/statement/}} %>,}} or {{,<? {{/statement/}} ?>,}} means statement in target language.
+   Semicolon(`{{,;,}}') is not needed after {{,%>,}} and {{,?>,}}.
+
+
+Presentation Logic(eRuby):
+.-------------------- topics-rawcode.plogic
+#foo {
+  value:  {{*<%= str.empty? ? "null" : str %>*}};
+  plogic: {
+    @stag;
+    {{*<% ENV.each do |name, value| %>*}}
+      @cont;
+    {{*<% end %>*}}
+    @etag;
+  }
+}
+.--------------------
+
+
+Presentation Logic(PHP):
+.-------------------- topics-rawcode2.plogic
+#foo {
+  value:  {{*<?= $str === NULL ? "null" : str ?>*}};
+  plogic: {
+    @stag;
+    {{*<?php foreach ($_ENV as $name => $value) { ?>*}}
+      @cont;
+    {{*<?php } ?>*}}
+    @etag;
+  }
+}
+.--------------------
+
+
+Kwartz just print code in {{,<%= ... %>,}} and {{,<% ... %>,}} and doesn't parse or analyze it.
+Therefore Kwartz doesn't report syntax error in the target code
+ nor report analyzing template local/global variables.
+
+
+Write {{,X(<%= {{/expression/}} %>),}} if you don't want to sanitize {{/expression/}}.
+
+
+
+.$$ Kwartz with Ruby on Rails	| rails
+
+
+Kwartz-ruby has a special option {{,-Rails,}} for Ruby on Rails.
+It is equivarent to {{,-l erb --globalvar-prefix='@',}}.
+
+
+If you want to use Rails-specific functions such as {{,link_to(),}} or {{,url_for(),}},
+use {{,<% {{/.../}} %>,}} or {{,<%= {{/.../}} %>,}} (or embed them into presentation data file).
+
+
+Presentation Data (list.html)
+.-------------------- list.html
+<html>
+ <body>
+
+  <h1>Online Cookbook - All Recipes</h1>
+  
+  <table border="1">
+   <tr>
+    <th width="80%">Recipe</th>
+    <th width="20%">Date</th>
+   </tr>
+   <tr {{*id="mark:recipes"*}}>
+    <td><a href="..." {{*id="mark:recipe_title"*}}>Hot Chips</a></td>
+    <td {{*id="mark:recipe_date"*}}>2004 November 11</td>
+   </tr>
+   <tr {{*id="dummy:d1"*}}>
+    <td><a href="...">Ice Water</a></td>
+    <td>2004 November 11</td>
+   </tr>
+  </table>
+
+  <p>
+   <a href="..." {{*id="mark:recipe_new"*}}>Create new recipe</a>
+  </p>
+
+ </body>
+</html>
+.--------------------
+
+
+Presentation Logic (list.plogic)
+.-------------------- list.plogic
+#recipes {
+  plogic: {
+    foreach (recipe in recipes) {
+      @stag;   // start tag
+      @cont;   // content
+      @etag;   // end tag
+    }
+  }
+}
+
+#recipe_title {
+  value: recipe.title;
+  attrs: "href" <%= url_for(:action => "show", :id => recipe.id) %>;
+}
+
+// Or
+//  #recipe_title {
+//    plogic: {
+//      print(<%= link_to recipe.title, :action => "show", :id => recipe.id %>);
+//    }
+//  }
+
+#recipe_date {
+  value: recipe.date;
+}
+
+#recipe_new {
+  attrs: "href" <%= url_for(:action => "new") %>;
+}
+
+// Or
+//  #recipe_new {
+//    plogic: {
+//      print(<%= link_to "Create new recipe", :action => "new" %>);
+//    }
+//  }
+.--------------------
+
+
+Compile:
+.====================
+$ kwartz {{*-Rails*}} -p list.plogic list.html > list.rhtml
+.====================
+
+
+Output Script:
+.--------------------
+.<<<:! kwartz-ruby -Rails -p guide.d/list.plogic guide.d/list.html
+.--------------------
+
+
+Write {{,X(<%= {{/expression/}} %>),}} if you don't want to sanitize {{/expression/}}.
+
+
+
+
+.$$ Compile Template into a Function of Ruby or PHP	| topic-defun
+
+
+Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
+
+
+Presentation Data (hoge1.html)
+.-------------------- hoge1.html
+Hello @{user}@ !
+<ul id="mark:list">
+  <li id="value:item">xxx</li>
+</ul>
+.--------------------
+
+Presentation Logic (hoge1.plogic)
+.-------------------- hoge1.plogic
+#list {
+  plogic: {
+    @stag;
+    foreach (item in list) {
+      @cont;
+    }
+    @stag;
+  }
+}
+.--------------------
+
+Compile:
+.====================
+$ kwartz -l eruby {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.rb
+$ kwartz -l php   {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.php
+.====================
+
+
+Output Script:
+.--------------------
+.<<<:! ./output.rb -l eruby,php -a defun -p guide.d/hoge1.plogic guide.d/hoge1.html
+.--------------------
+
+
+Two functions are defined by '-a defun' option. You can use whichever you prefer.
+.* {{,view_{{/filename/}}(),}} - a function which takes arguments by a hash object.
+.* {{,_view_{{/filename/}}(),}} - a function which takes arguments explicitly.
+
+
+.#Main Program:
+.#.-------------------- hoge-main.php
+.#<?php
+.#// set $args
+.#$user = "Kwartz";
+.#$list = array('Foo', 'Bar', 'Baz');
+.#{{*$args*}} = array('user'=>$user, 'list'=>$list);
+.#
+.#// output
+.#include('hoge.php');
+.#echo {{*expand_hoge1($args)*}};
+.#?>
+.#.--------------------
+
+
+You can specify funtion or method name with the command-line option '{{,-F {{/name/}},}}',
+class or module name with '{{,-C {{/name/}},}}', and arguments with '{{,-A {{/arg1,arg2,.../}},}}'.
+The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
+default class/module name and default function/method name.
+
+
+.#@EOF
+
+
+
+.$$ Auto-compiling with Timestamp Comparison		| autocompile
+
+
+Auto-compilation is available.
+Auto-compilation is a function to compare each file's timestamp and compile it if needed.
+Compilation will be done when:
+.* The output script file does not exist.
+.* The presentation data file is newer than the output script file.
+.* The presentation logic file exists and it is newer than the output script file.
+
+
+You can use auto-compile with {{,KwartzHelper::compile_template(),}}.
+Here is an example of the main program:
+.--------------------
+$pdata  = 'example.html';      # presentation data file
+$plogic = 'example.plogic';    # presentation logic file
+$view   = 'example.view';      # output script file
+$flag_escape = TRUE;           # flag of sanitizing
+
+{{*require_once('Kwartz/KwartzHelper.php');*}}
+{{*KwartzHelper::compile_template($pdata, $plogic, $view, $flag_escape)*}}
+
+include($view);
+.--------------------
+
+
+
+.#@EOF
+.-------------------- example1.rb
+#!/usr/bin/ruby
+	member_list = [ 'Oboro', 'Ominae', 'Jaquemonde' ]
+	## ERBを使う方法
+	## use ERB
+	require 'erb'
+	require 'cgi'        # for sanitizing
+	str = File.open('guide.d/example1.rhtml') { |f| f.read() }
+	str.untaint
+	trim_mode = 1
+	erb = ERB.new(str, $SAFE, trim_mode)
+	print erb.result(binding())
+.--------------------
+
+
+

@@ -6,12 +6,12 @@ properties:
 
 variables:
 
-  - base_testnames  : [test-directives, test-compile, test-handlers]
+  - base_testnames  : [test-directives, test-compile, test-rails, test-parser]
 
 recipes:
   - product:   :test
     method: |
         rm_rf 'test.log'
-        $base_testnames.each do |name|
+        base_testnames.each do |name|
           sys "ruby test/#{name}.rb 2>&1 | tee -a test.log"
         end

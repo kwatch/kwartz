@@ -178,7 +178,9 @@ module Kwartz
 
 
     def _inspect(indent=0)
-      list = @args.collect { |arg| arg.inspect }
+      list = @args.collect { |arg|
+        arg.is_a?(NativeExpression) ? "<%=#{arg.code}%>" : arg.inspect
+      }
       return "[ " + list.join(', ') + "]\n"
     end
 

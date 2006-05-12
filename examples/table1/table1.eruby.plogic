@@ -2,7 +2,7 @@
   attrs:  "bgcolor" color;
   logic: {
     list.each_with_index { |item, i|
-      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      color = i % 2 == 0 ? '#CCCCFF' : '#FFCCCC';
       _elem
     }
   }

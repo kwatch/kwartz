@@ -6,7 +6,7 @@
 
 
 require 'kwartz'
-require 'kwartz/binding/erb'
+require 'kwartz/binding/eruby'
 require 'kwartz/binding/php'
 require 'kwartz/binding/eperl'
 require 'kwartz/binding/rails'
@@ -67,7 +67,7 @@ module Kwartz
 
     def execute(argv=@argv)
 
-      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPxi')
+      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPxXi')
       options[?h] = true if properties[:help]
 
       if options[?h] || options[?v]
@@ -87,7 +87,7 @@ module Kwartz
       parser_class = PresentationLogicParser.get_class(style)
       parser_class     or raise option_error("-P #{style}: unknown style name (parser class not registered).")
 
-      lang = options[?l] || Config::PROPERTY_LANG      # 'erb'
+      lang = options[?l] || Config::PROPERTY_LANG      # 'eruby'
       handler_class = Handler.get_class(lang)
       handler_class    or raise option_error("-l #{lang}: unknown name (handler class not registered).")
 
@@ -115,10 +115,7 @@ module Kwartz
 
       properties[:escape] = true if options[?e] && !properties.key?(:escape)
 
-
-
-      #properties[:handler] = handler_class.new
-      handler = handler_class.new(ruleset_list)
+      handler = handler_class.new(ruleset_list, properties)
       converter = TextConverter.new(handler, properties)
 
       if options[?i]
@@ -129,7 +126,6 @@ module Kwartz
           converter.convert(pdata)
         end
       end
-
 
       stmt_list = []
       pdata = nil
@@ -142,7 +138,11 @@ module Kwartz
         stmt_list.concat(list)
       end
 
-      stmt_list = handler.extract(options[?x]) if options[?x]
+      elem_id = options[?x] || options[?X]
+      if elem_id
+        content_only = options[?x] ? true : false
+        stmt_list = handler.extract(elem_id, content_only)
+      end
 
       if pdata[pdata.index(?\n) - 1] == ?\r
         properties[:nl] ||= "\r\n"
@@ -158,27 +158,29 @@ module Kwartz
 
 
     def help
-      s = ''
-      s << "Usage: #{@command} [..options..] [-p plogic] file.html [file2.html ...]\n"
-      s << "  -h             : help\n"
-      s << "  -v             : version\n"
-      #s << "  -D             : debug mode\n"
-      s << "  -e             : alias of '--escape=true'\n"
-      s << "  -l lang        : erb/php/eperl/rails/jstl (default 'erb')\n"
-      s << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
-      s << "  -r library,... : require libraries\n"
-      s << "  -p plogic,...  : presentation logic files\n"
-      s << "  -x elem-id     : extract the element\n"
-      #s << "  -P style       : style of presentation logic (css/ruby/yaml)\n"
-      s << "  --dattr=str    : directive attribute name\n"
-      s << "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n"
-      s << "  --even=value   : even value for FOREACH/LOOP directive (default \"'even'\")\n"
-      s << "  --header=str   : header text\n"
-      s << "  --footer=str   : footer text\n"
-      s << "  --escape={true|false} : escape (sanitize) (default false)\n"
-      s << "  --jstl={1.2|1.1}      : JSTL version (default 1.2)\n"
-      s << "  --charset=charset     : character set for JSTL (default none)\n"
-      return s
+      sb = []
+      sb << "Usage: #{@command} [..options..] [-p plogic] file.html [file2.html ...]\n"
+      sb << "  -h             : help\n"
+      sb << "  -v             : version\n"
+      #sb << "  -D             : debug mode\n"
+      sb << "  -e             : alias of '--escape=true'\n"
+      sb << "  -l lang        : eruby/php/eperl/rails/jstl (default 'eruby')\n"
+      sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
+      sb << "  -r library,... : require libraries\n"
+      sb << "  -p plogic,...  : presentation logic files\n"
+      sb << "  -x elem-id     : extract content of element marked by elem-id\n"
+      sb << "  -X elem-id     : extract element marked by elem-id\n"
+      #sb << "  -P style       : style of presentation logic (css/ruby/yaml)\n"
+      sb << "  --dattr=str    : directive attribute name\n"
+      sb << "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n"
+      sb << "  --even=value   : even value for FOREACH/LOOP directive (default \"'even'\")\n"
+      sb << "  --header=str   : header text\n"
+      sb << "  --footer=str   : footer text\n"
+      sb << "  --delspan={true|false}: delete dummy span tag (default false)\n"
+      sb << "  --escape={true|false} : escape (sanitize) (default false)\n"
+      sb << "  --jstl={1.2|1.1}      : JSTL version (default 1.2)\n"
+      sb << "  --charset=charset     : character set for JSTL (default none)\n"
+      return sb.join
     end
 
 

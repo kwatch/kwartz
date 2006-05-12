@@ -3,7 +3,7 @@
   logic: {
     $i = 0;
     foreach ($list as $item) {
-      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
       _elem();
     }
   }

@@ -1,3 +1,46 @@
+.$$ Case-when statement cannot available
+
+Issue: Case-when statement cause an syntax error.
+
+.--------------------
+#item {
+  value:  label;
+  logic: {
+    case user.gender
+    when 'M'  ; label = 'Man'
+    when 'W'  ; label = 'Woman'
+    else      ; label = ' - '
+    end
+    _elem
+  }
+}
+.--------------------
+
+
+Cause: eRuby error
+
+.--------------------
+<%    case user.gender %>
+<%    when 'M'  ; label = 'Man' %>
+<%    when 'W'  ; label = 'Woman' %>
+<%    else      ; label = ' - ' %>
+<%    end %>
+<label><%= label %></label>
+.--------------------
+
+
+.--------------------
+_erbout = '';     case user.gender ; _erbout.concat "\n"
+    when 'M'  ; label = 'Man' ; _erbout.concat "\n"
+    when 'W'  ; label = 'Woman' ; _erbout.concat "\n"
+    else      ; label = ' - ' ; _erbout.concat "\n"
+    end ; _erbout.concat "\n"
+_erbout.concat "<label>"; _erbout.concat(( label ).to_s); _erbout.concat "</label>\n"
+.--------------------
+
+Solution: add command-line option '-l rails', or add trim-option 1 to ERB.
+
+
 
 
 .$$ Element 'xxx' not found

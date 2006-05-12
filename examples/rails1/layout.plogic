@@ -1,5 +1,5 @@
-#action_name {
-  elem:  controller.action_name;
+#header_title {
+  cont:  'Member: ' + controller.action_name;
 }
 
 #stylesheet {

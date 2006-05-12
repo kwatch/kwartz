@@ -30,7 +30,7 @@ class CompileTest < Test::Unit::TestCase
   load_yaml_documents(filename) do |ydoc|
     name = ydoc['name']
     desc = ydoc['desc']
-    lang_list = defined?($lang) && $lang ? [ $lang ] : %w[erb php eperl]
+    lang_list = defined?($lang) && $lang ? [ $lang ] : %w[eruby php eperl]
     lang_list.each do |lang|
       pdata    = ydoc['pdata*'][lang]
       plogic   = ydoc['plogic*'][lang]

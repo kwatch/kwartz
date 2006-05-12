@@ -1,6 +1,7 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <title>Member: <span id="mark:action_name"></span></title>
+  <title id="mark:header_title">Member: enter</title>
   <meta http-equiv="Content-Type" content="text/html">
   <link id="mark:stylesheet" rel="stylesheet" type="text/css" href="scaffold.css" />
 </head>
@@ -12,38 +13,38 @@
 
   <h1>Enter Member</h1>
 
-  <span id="mark:form_content">
+  <div id="mark:form_content">
 
     <div id="mark:error_messages"></div>
 
     <!--[form:member]-->
-    <p><label for="member_name">Name</label><br/>
+    <p><label for="member_name">Name</label><br>
     <input type="text" id="member_name"></p>
 
-    <p><label for="member_email">Email</label><br/>
+    <p><label for="member_email">Email</label><br>
     <input type="text" id="member_email"></p>
 
-    <p><label for="member_birth">Birth</label><br/>
+    <p><label for="member_birth">Birth</label><br>
     <select id="member_birth">
-      <options value=""> - <options>
+      <option value=""> - <option>
     </select>
     </p>
 
-    <p><label for="member_gender">Gender</label><br/>
+    <p><label for="member_gender">Gender</label><br>
     <input type="radio" id="member_gender_m"><label for="member_gender_m">Man</label>
     <input type="radio" id="member_gender_w"><label for="member_gender_w">Woman</label>
     </p>
 
-    <p><label for="member_group_id">Group</label><br/>
+    <p><label for="member_group_id">Group</label><br>
     <select id="member_group_id">
-      <options value=""> - </options>
-      <options value="1">group1</options>
-      <options value="2">group2</options>
+      <option value=""> - </option>
+      <option value="1">group1</option>
+      <option value="2">group2</option>
     </select>
     </p>
     <!--[eoform:member]-->
 
-  </span>
+  </div>
 
 </div>
 

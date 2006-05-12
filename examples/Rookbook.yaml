@@ -23,7 +23,7 @@ recipes:
   - product:	$(target).rhtml
     ingreds:	[ $(target).eruby.plogic, $(target).html ]
     method: |
-	sys "kwartz -l erb -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
+	sys "kwartz -l eruby -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
 
   - product:	$(target).php
     ingreds:	[ $(target).php.plogic, $(target).html ]
@@ -46,7 +46,7 @@ recipes:
 		rm -f ${ALL}
 	
 	$(t).rhtml:	$(t).eruby.plogic $(t).html
-		kwartz -l erb -p $(t).eruby.plogic $(t).html > $(t).rhtml
+		kwartz -l eruby -p $(t).eruby.plogic $(t).html > $(t).rhtml
 	
 	$(t).php:	$(t).php.plogic $(t).html
 		kwartz -l php -p $(t).php.plogic $(t).html > $(t).php

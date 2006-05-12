@@ -6,7 +6,7 @@
 
 require 'kwartz/converter'
 #require 'kwartz/translator'
-require 'kwartz/binding/erb'
+require 'kwartz/binding/eruby'
 
 
 
@@ -85,7 +85,7 @@ module Kwartz
   ##   => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
   ##
 
-  class RailsHandler < ErbHandler
+  class RailsHandler < ErubyHandler
 
 
     ##

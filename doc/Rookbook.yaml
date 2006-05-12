@@ -1,0 +1,20 @@
+
+variables:
+
+  - u      :   users-guide
+
+
+recipes:
+
+  - product:	:default
+    ingreds:	[ $(u).html ]
+
+  - product:	$(u).html
+    ingreds:	[ $(u).txt ]
+    method: |
+	dir = 'guide.d'
+	rm_rf dir 
+	mkdir dir
+	sys "retrieve -d #{dir} $(u).txt"
+	sys "kwaser -t html-css -T $(u).txt > $(u).toc.html"
+	sys "kwaser -t html-css    $(u).txt > $(u).html"

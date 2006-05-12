@@ -139,6 +139,11 @@ module Kwartz
     end
 
 
+    def empty?
+      return @names.empty?
+    end
+
+
   end
 
 
@@ -213,7 +218,14 @@ module Kwartz
   ##
   ## helper module for Converter and Handler
   ##
-  module ConverterHelper
+  module ConverterHelper       # :nodoc:
+
+
+    ## set @despan and @dattr
+    def include_properties(properties)
+      @dattr = properties[:dattr]   || Config::PROPERTY_DATTR    # default: 'title'
+      @delspan = properties.key?(:delspan) ? properties[:delspan] : Config::PROPERTY_DELSPAN  # delete dummy <span> tag or not
+    end
 
 
     ## return ConvertError
@@ -239,6 +251,7 @@ module Kwartz
 
     ## create array of String and NativeExpression for PrintStatement
     def build_print_args(taginfo, attr_info, append_exprs)
+      return [] if taginfo.tagname.nil?
       unless attr_info || append_exprs
         return [taginfo.tag_text]
       end
@@ -337,12 +350,19 @@ module Kwartz
 
     ## expand ExpandStatement
     def expand_statement(stmt, stmt_list, elem_info)
+
       if stmt.is_a?(ExpandStatement)
+        e = elem_info
+
+        ## delete dummy '<span>' tag
+        if @delspan && e.stag_info.tagname == 'span' && e.attr_info.empty? && e.append_exprs.nil? then
+          e.stag_info.tagname = e.etag_info.tagname = nil
+        end
+
         case stmt.kind
 
         when :stag
           assert unless elem_info
-          e = elem_info
           if e.stag_expr
             assert unless e.stag_expr.is_a?(NativeExpression)
             stmt_list << build_print_expr_stmt(e.stag_expr, e.stag_info, nil)
@@ -352,7 +372,6 @@ module Kwartz
 
         when :etag
           assert unless elem_info
-          e = elem_info
           if e.etag_expr
             assert unless e.etag_expr.is_a?(NativeExpression)
             stmt_list << build_print_expr_stmt(e.etag_expr, nil, e.etag_info)
@@ -361,7 +380,6 @@ module Kwartz
           end
 
         when :cont
-          e = elem_info
           if e.cont_expr
             assert unless e.cont_expr.is_a?(NativeExpression)
             stmt_list << PrintStatement.new([e.cont_expr])
@@ -373,7 +391,6 @@ module Kwartz
 
         when :elem
           assert unless elem_info
-          e = elem_info
           if e.elem_expr
             assert unless e.elem_expr.is_a?(NativeExpression)
             stmt_list << build_print_expr_stmt(e.elem_expr, e.stag_info, e.etag_info)
@@ -423,6 +440,7 @@ module Kwartz
       #@elem_ruleset_table = elem_rulesets.inject({}) { |table, ruleset| table[ruleset.name] = ruleset; table }
       @elem_ruleset_table = {} ; elem_rulesets.each { |ruleset| @elem_ruleset_table[ruleset.name] = ruleset }
       @elem_info_table = {}
+      include_properties(properties)     # @delspan and @dattr
       @odd  = properties[:odd]     || Config::PROPERTY_ODD      # "'odd'"
       @even = properties[:even]    || Config::PROPERTY_EVEN     # "'even'"
     end
@@ -446,7 +464,6 @@ module Kwartz
     ## [abstract] directive pattern, which is used to detect directives.
     def directive_pattern
       not_implemented
-      #raise NotImplementedError.new("#{self.class}#directive_pattern() is not implemented.")
       #return /\A(\w+):\s*(.*)/
     end
 
@@ -454,7 +471,6 @@ module Kwartz
     ## [abstract] mapping pattern, which is used to parse 'attr' directive.
     def mapping_pattern
       not_implemented
-      #raise NotImplementedError.new("#{self.class}#mapping_pattern() is not implemented.")
       #return /\A'([-:\w]+)'\s+(.*)/
     end
 
@@ -462,7 +478,6 @@ module Kwartz
     ## [abstract] id format, which is used at has_directive?() method
     def marking_format
       not_implemented
-      #raise NotImplementedError.new("#{self.class}#marking_format() is not implemented.")
       #return 'id:%s'
     end
 
@@ -482,6 +497,7 @@ module Kwartz
       case directive_name
 
       when nil
+        assert unless !attr_info.empty? || !append_exprs.empty?
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
         stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info    # when empty-tag
@@ -503,7 +519,7 @@ module Kwartz
         else
           @elem_info_table[name] = elem_info
         end
-        #stmt_list << ExpandStatement.new(:element, name)
+        #stmt_list << ExpandStatement.new(:element, name)     # lazy expantion
         expand_element_info(elem_info, stmt_list)
 
       when :stag, :Stag, :STAG
@@ -533,7 +549,8 @@ module Kwartz
         args = build_print_args(stag_info, attr_info, append_exprs)
         flag_escape = (d_name == :cont || d_name == :value) ? nil : (d_name == :Cont || d_name == :Value)
         args << NativeExpression.new(d_arg, flag_escape)
-        args << etag_info.tag_text    # TextExpression.new(etag_info.tag_ext)
+        #args << etag_info.tag_text
+        args << etag_info.tag_text if etag_info.tagname
         stmt_list << PrintStatement.new(args)
 
       when :attr, :Attr, :ATTR
@@ -575,11 +592,10 @@ module Kwartz
     end
 
 
-    def extract(elem_name)
+    def extract(elem_name, content_only=false)
       elem_info = @elem_info_table[elem_name]
       elem_info or raise convert_error("element '#{elem_name}' not found.", nil)
       stmt_list = []
-      content_only = false
       expand_element_info(elem_info, stmt_list, content_only)
       #stmt_list << build_print_stmt(etag_info, nil, nil)
       return stmt_list
@@ -625,6 +641,19 @@ module Kwartz
     end
 
 
+    @@class_table = {}
+
+
+    def self.register_class(style, klass)
+      @@class_table[style] = klass
+    end
+
+
+    def self.get_class(style)
+      return @@class_table[style]
+    end
+
+
   end
 
 
@@ -638,7 +667,7 @@ module Kwartz
 
     def initialize(handler, properties={})
       super
-      @dattr = properties[:dattr]   || Config::PROPERTY_DATTR    # 'title'
+      include_properties(properties)    # set @delspan and @dattr
     end
 
 
@@ -670,7 +699,7 @@ module Kwartz
 
 
     #FETCH_PATTERN= /([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?)/    #"
-    @@fetch_pattern = /(.*?)(([ \t]*)<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n?))/m    #"
+    @@fetch_pattern = /(.*?)((^[ \t]*)?<(\/?)([-:_\w]+)((?:\s+[-:_\w]+="[^"]*?")*)(\s*)(\/?)>([ \t]*\r?\n)?)/m    #"
 
 
     def self.fetch_pattern=(regexp)
@@ -789,6 +818,11 @@ module Kwartz
         end #case
       end if attr_info.directive
 
+      ## remove dummy <span> tag
+      if @delspan && stag_info.tagname == 'span' && attr_info.empty?  && append_exprs.nil? && directive_name != :id
+        stag_info.tagname = etag_info.tagname = nil
+      end
+
       ## handle other directives
       ret = @handler.handle(directive_name, directive_arg, directive_str, stag_info, etag_info,
                             cont_stmts, attr_info, append_exprs, stmt_list)
@@ -827,7 +861,7 @@ module Kwartz
         #  attr_info.delete('id')
         #  attr_info.directive = val
         #  return true
-        when /\Amark:(\w+)\z/       # *undocumented*
+        when /\Amark:(\w+)\z/
           val = $1
           attr_info.directive = @handler.marking_format() % val
           attr_info.delete('id')
@@ -849,6 +883,7 @@ module Kwartz
 
 
   end #class
+  Converter.register_class('text', TextConverter)
 
 
 

@@ -6,7 +6,7 @@
 
 require 'kwartz/converter'
 require 'kwartz/translator'
-require 'kwartz/binding/erb'
+require 'kwartz/binding/eruby'
 
 
 
@@ -14,7 +14,7 @@ module Kwartz
 
 
 
-  class ErubisHandler < ErbHandler
+  class ErubisHandler < ErubyHandler
 
 
   end #class
@@ -30,8 +30,8 @@ module Kwartz
 
     ERUBIS_EMBED_PATTERNS = [
       '<% ',    ' %>',        # statement
-      '<%== ',  ' %>',        # expression
-      '<%= ',   ' %>',        # escaped expression
+      '<%= ',   ' %>',        # expression
+      '<%== ',  ' %>',        # escaped expression
     ]
 
 
