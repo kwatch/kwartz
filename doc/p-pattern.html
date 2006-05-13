@@ -1,0 +1,1184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Presentation Pattern Catalog</title>
+  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" href="docstyle.css" type="text/css">
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+
+    <div align="left"><h1>Presentation Pattern Catalog</h1></div>
+    <div align="left">
+      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
+      last update: $Date$<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>Kwartz is the template system which realized the concept of '<b>Independence of Presentation Logic (IoPL)</b>.'
+This concept enables to use complex presentation logics without breaking HTML design at all.
+</p>
+<p>There are several patterns which help you to separate presentation logic from presentation data well.
+These patterns are called 'Presentation Patterns.'
+</p>
+<p>This document shows Presentation Patterns.
+</p>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#replacement">Replacement</a>
+  <ul>
+    <li><a href="#replace-elem-with-value">Replace Element with Value Pattern</a>
+    </li>
+    <li><a href="#replace-cont-with-value">Replace Content with Value Pattern</a>
+    </li>
+    <li><a href="#default-cont">Default Content Pattern</a>
+    </li>
+    <li><a href="#replace-elem-with-elem">Replace Element with Element/Content Pattern</a>
+    </li>
+    <li><a href="#replace-cont-with-elem">Replace Content with Element/Content Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#deletion">Deletion</a>
+  <ul>
+    <li><a href="#delete-elem">Delete Element Pattern</a>
+    </li>
+    <li><a href="#delete-tag">Delete Tag Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#iteration">Iteration</a>
+  <ul>
+    <li><a href="#iterate-elem">Iterate Element Pattern</a>
+    </li>
+    <li><a href="#iterate-cont">Iterate Content Pattern</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#selection">Selection</a>
+  <ul>
+    <li><a href="#select-elem">Select Element/Content Pattern</a>
+    </li>
+    <li><a href="#pickup-elem">Pick-up Element/Content Pattern</a>
+    </li>
+    <li><a href="#extract-elem">Extract Element/Content Pattern</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="replacement"></a>
+<h2 class="section1">Replacement</h2>
+<a name="replace-elem-with-value"></a>
+<h3 class="section2">Replace Element with Value Pattern</h3>
+<a name="replace-elem-with-value-desc"></a>
+<h4 class="section3">Description</h4>
+<p>You can replace the element with the value of expression.
+This is named 'Replace Element with Value Pattern.'
+</p>
+<br>
+
+<a name="replace-elem-with-value-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful to print out the value of a variable or an expression as text.
+</p>
+<br>
+
+<a name="replace-elem-with-value-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="replace1.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">Hello &lt;span <b>id="mark:user"</b>&gt;World&lt;/span&gt;!
+</pre>
+<a name="replace1.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* print value of variable 'username' instead of the element */
+#user {
+  logic: {
+    <b>print username</b>
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">Hello &lt;%= username %&gt;!</pre>
+<br>
+
+<a name="replace-elem-with-value-suppliment"></a>
+<h4 class="section3">Supplement</h4>
+<p>Kwartz supports the short-notation of this pattern.
+</p>
+<a name="replace1a.plogic"></a>
+<pre class="program">#user {
+  elem: user;
+}
+</pre>
+<p>   The output script will be:
+</p>
+<pre class="program">Hello &lt;%= user %&gt;!</pre>
+<br>
+
+<br>
+
+
+<a name="replace-cont-with-value"></a>
+<h3 class="section2">Replace Content with Value Pattern</h3>
+<a name="replace-cont-with-value-desc"></a>
+<h4 class="section3">Description</h4>
+<p>You can also replace only the content of the element in the same way.
+This is named 'Replace Content with Value Pattern.'
+</p>
+<br>
+
+<a name="replace-cont-with-value-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is used frequently because the situation to replace the content with value is very popular.
+</p>
+<br>
+
+<a name="replace-cont-with-value-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="replace2.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;h1 <b>id="mark:title"</b>&gt;Example&lt;/h1&gt;
+</pre>
+<a name="replace2.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* print expression value instead of content text */
+#title {
+  logic: {
+    _stag   # start-tag
+    <b>print title </b>
+    _etag   # end-tag
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+</pre>
+<br>
+
+<a name="replace-cont-with-value-suppliment"></a>
+<h4 class="section3">Supplement</h4>
+<p> Kwartz provides the shorter notation for this pattern.
+</p>
+<a name="replace2a.plogic"></a>
+<pre class="program">#title {
+  <b>cont: title;</b>
+    /* or value: title; */
+}
+</pre>
+<p>   The output will be:
+</p>
+<pre class="program">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+</pre>
+<p> Kwartz Directive '<code>title="cont: <i>expr</i>"</code>' or '<code>title="value:<i>expr</i>"</code>' lets you to use this pattern without presentation logic file.
+</p>
+<pre class="program">&lt;h1 <b>id="value: title"</b>&gt;Example&lt;/h1&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="default-cont"></a>
+<h3 class="section2">Default Content Pattern</h3>
+<a name="default-cont-description"></a>
+<h4 class="section3">Description</h4>
+<p>You can replace element or content only when a certain condition is true
+and the original element or content is displayed when the condition is false.
+This is named 'Default Content Pattern.'
+</p>
+<p>This pattern is an combination of 'Replace Element with Value Pattern' and 'Delete Tag Pattern'.
+</p>
+<br>
+
+<a name="default-cont-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>For example, there may be a placeholder to display username, and string 'Guest' is
+displayed when username is null or empty.
+</p>
+<br>
+
+<a name="default-content-example"></a>
+<h4 class="section3">Example Code</h4>
+<p>The following is an example to print content text as default value when value is null or empty.
+</p>
+<a name="replace5.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">Hello &lt;span <b>id="mark:user"</b>&gt;World&lt;/span&gt;!
+</pre>
+<a name="replace5.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* Print 'guest' as a default value when 'username' is empty string */
+#user {
+  logic: {
+    if username &amp;&amp; !username.empty?
+      <b>print username</b>   # print expression
+    else
+      <b>_cont</b>            # print content text
+    end
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">Hello &lt;%     if username &amp;&amp; !username.empty? %&gt;
+&lt;%= username %&gt;&lt;%     else %&gt;
+World&lt;%     end %&gt;
+!</pre>
+<br>
+
+<a name="default-content-suppliment"></a>
+<h4 class="section3">Suppliement</h4>
+<p>Directive 'title="default: <i>expr</i>"' is for Default Content Pattern.
+</p>
+<a name="replace5a.pdata"></a>
+<pre class="program">Hello &lt;span <b>title="default: user"</b>&gt;World&lt;/span&gt;!
+</pre>
+<p>The output is:
+</p>
+<pre class="output">Hello &lt;span&gt;&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;World&lt;% end %&gt;&lt;/span&gt;!</pre>
+<br>
+
+<br>
+
+
+<a name="replace-elem-with-elem"></a>
+<h3 class="section2">Replace Element with Element/Content Pattern</h3>
+<a name="replace-elem-with-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>You can replace the element with other element or content.
+This pattern is named 'Replace Element with Element Pattern.'
+or 'Replace Element with Content Pattern'.
+</p>
+<br>
+
+<a name="replace-elem-with-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful to reuse the element in other place.
+</p>
+<br>
+
+<a name="replace-elem-with-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="replace3.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;div <b>id="mark:links"</b>&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div <b>id="mark:links2"</b>&gt;
+  Home | Document | FAQ
+&lt;/div&gt;
+</pre>
+<a name="replace3.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* replace the element 'links2' with the element 'links' */
+#links2 {
+  logic: {
+    <b>_element(links)</b>
+  }
+}
+</pre>
+<p><code>_element(<i>name</i>)</code> represents the element which is marked with <code>id="mark:<i>name</i>"</code> or <code>id="<i>name</i>"</code>.
+</p>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+</pre>
+<p>Use '_content(<i>name</i>)' instead of '_element(<i>name</i>)'
+if you want to reuse content of other element.
+</p>
+<a name="replace3a.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* replace the element 'links2' with the content 'links' */
+#links2 {
+  logic: {
+    <b>_content(links)</b>
+  }
+}
+</pre>
+<br>
+
+<a name="replace-elem-with-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> Directive '<code>title="replace_element_with: _element(<i>name</i>)"</code>' and '<code>title="replace_element_with: _content(<i>name</i>)"</code>' lets you to use this pattern without presentation logic file.
+</p>
+<pre class="program">&lt;div <b>id="mark:links"</b>&gt;
+ &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
+
+&lt;div <b>id="replace_element_with: _element(links)"</b>&gt;
+  Home | Document | FAQ
+&lt;/div&gt;
+</pre>
+<p> The command-line option '<code>-i <i>file</i>,<i>file2</i>,...</code>' enables you
+   to use elements which are described in other files.
+   See Kwartz Users' Guide for details.
+</p>
+<br>
+
+<br>
+
+
+<a name="replace-cont-with-elem"></a>
+<h3 class="section2">Replace Content with Element/Content Pattern</h3>
+<a name="replace-cont-with-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>You can replace content of an element with other element or content.
+This pattern is named 'Replace Content with Element Pattern' and
+'Replace Content with Content Pattern'.
+</p>
+<br>
+
+<a name="replace-cont-with-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful to separate contents data and design layout into separate files.
+</p>
+<br>
+
+<a name="replace-cont-with-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<p>The following example contains four files.
+</p>
+<ul type="disc">
+<li>contents.html, contents.plogic - repsesents contents data.
+</li>
+<li>layout.html, layout.plogic - represents desing layout.
+</li>
+</ul>
+<a name="contents.html"></a>
+<div class="program_caption">
+Presentation Data(contents.html):</div>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    
+    &lt;p&gt;menu:&lt;/p&gt;
+    &lt;ul <b>id="mark:menu"</b>&gt;
+      &lt;li&gt;&lt;a href="..." <b>id="mark:menu_item"</b>&gt;menu1&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;article:&lt;/p&gt;
+    &lt;div <b>id="mark:article"</b>&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the concept
+         &lt;strong&gt;`Independence of Presentation Logic&lt;/strong&gt;.
+      &lt;/p&gt;
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<a name="contents.plogic"></a>
+<div class="program_caption">
+Presentation Logic(contents.plogic):</div>
+<pre class="program">#menu {
+  logic: {
+    _stag
+    for item in menu_list
+      _cont
+    end
+    _etag
+  }
+}
+
+#menu_item {
+  value:  item['name'];
+  attrs:  "href" item['url'];
+}
+</pre>
+<a name="layout.html"></a>
+<div class="program_caption">
+Presentation Data(layout.html):</div>
+<pre class="program">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;webpage&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td class="menu" width="100" valign="top"
+	    <b>id="mark:placeholder_menu"</b>&gt;
+          &lt;ul&gt;
+            &lt;li&gt;menu1&lt;/li&gt;
+            &lt;li&gt;menu2&lt;/li&gt;
+            &lt;li&gt;menu3&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td class="article" width="400" valign="top"
+	    <b>id="mark:placeholder_article"</b>&gt;
+          aaa&lt;br&gt;
+          bbb&lt;br&gt;
+          ccc&lt;br&gt;
+          ddd&lt;br&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2006 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<a name="layout.plogic"></a>
+<div class="program_caption">
+Presentation Logic(layout.plogic):</div>
+<pre class="program">/* replace content with other element */
+#placeholder_menu {
+  logic: {
+    _stag
+    <b>_element(menu)</b>
+    _etag
+  }
+}
+
+/* replace content with other content */
+#placeholder_article {
+  logic: {
+    _stag
+    <b>_content(article)</b>
+    _etag
+  }
+}
+</pre>
+<p>Compilation requires the command-line option <code>-i <i>file1,file2,...</i></code>
+which enables to import elements defined in other files.
+</p>
+<p>Compile:
+</p>
+<pre class="terminal">$ kwartz -l eruby  <b>-i contents.html</b> -p contens.plogic,layout.plogic layout.html
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;webpage&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="design.css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;table border="0"&gt;
+      &lt;tr&gt;
+        
+        &lt;!-- menu part --&gt;
+        &lt;td class="menu" width="100" valign="top"&gt;
+    &lt;ul&gt;
+&lt;%     for item in menu_list %&gt;
+      &lt;li&gt;&lt;a href="&lt;%= item['url'] %&gt;"&gt;&lt;%= item['name'] %&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;%     end %&gt;
+    &lt;/ul&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td class="article" width="400" valign="top"&gt;
+      &lt;h2&gt;What is Kwartz?&lt;/h2&gt;
+      &lt;p&gt;Kwartz is a template system, which realized the concept
+         &lt;strong&gt;`Independence of Presentation Logic&lt;/strong&gt;.
+      &lt;/p&gt;
+        &lt;/td&gt;
+        
+      &lt;/tr&gt;
+
+      &lt;!-- footer part --&gt;
+      &lt;tr&gt;
+        &lt;td colspan="2" class="copyright"&gt;
+          copyright&amp;copy; 2004-2006 kuwata-lab.com All Rights Reserverd
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+<a name="replace-cont-with-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> Kwartz Directive '<code>title="replace_content_with:_element(<i>name</i>)"</code>' and '<code>title="replace_content_with:_content(<i>name</i>)"</code>' lets you to use this pattern without presentation logic file(layout.plogic).
+</p>
+<div class="program_caption">
+Presentation Data(layout.html):</div>
+<pre class="program">             :
+        &lt;!-- menu part --&gt;
+        &lt;td class="menu" width="100" valign="top"
+            <b>title="replace_content_with: _element(menu)"</b>&gt;
+          &lt;ul&gt;
+            &lt;li&gt;menu1&lt;/li&gt;
+            &lt;li&gt;menu2&lt;/li&gt;
+            &lt;li&gt;menu3&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/td&gt;
+        
+        &lt;!-- article part --&gt;
+        &lt;td class="article" width="400" valign="top"&gt;
+            <b>title="replace_content_with: _content(article)"</b>&gt;
+          aaa&lt;br&gt;
+          bbb&lt;br&gt;
+          ccc&lt;br&gt;
+          ddd&lt;br&gt;
+        &lt;/td&gt;
+             :
+</pre>
+<br>
+
+<br>
+
+
+<br>
+
+
+<a name="deletion"></a>
+<h2 class="section1">Deletion</h2>
+<a name="delete-elem"></a>
+<h3 class="section2">Delete Element Pattern</h3>
+<a name="delete-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>If presentation logic is empty, the element is not printed out.
+This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
+</p>
+<br>
+
+<a name="delete-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern enables you to delete dummy element in presentation data.
+</p>
+<br>
+
+<a name="delete-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="dummy-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy"</b>&gt;bar&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<a name="dummy-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* delete dummy element */
+#dummy {
+  logic: {
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="delete-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p>Kwartz directive '<code>id="dummy:<i>str</i>"</code>' lets you to use this pattern without presentation logic file.
+</p>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="delete-tag"></a>
+<h3 class="section2">Delete Tag Pattern</h3>
+<a name="delete-tag-desc"></a>
+<h4 class="section3">Description</h4>
+<p>If you use only <code>_cont</code> and don't use <code>_stag</code> and <code>_cont</code>,
+you can remove start and end tags of the element.
+This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
+</p>
+<br>
+
+<a name="delete-tag-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful if you want to print tags according to condition.
+</p>
+<br>
+
+<a name="delete-tag-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="dummy-tag.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;a href="..." <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
+</pre>
+<a name="dummy-tag.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* delete tags when url is empty */
+#next {
+  attrs:  "href" url;
+  logic: {
+    if !url || url.empty?
+      <b>_cont</b>
+    else
+      _stag
+      _cont
+      _etag
+    end
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;%     if !url || url.empty? %&gt;
+Next&lt;%     else %&gt;
+&lt;a href="&lt;%= url %&gt;"&gt;Next&lt;/a&gt;
+&lt;%     end %&gt;
+</pre>
+<br>
+
+<br>
+
+
+<br>
+
+
+<a name="iteration"></a>
+<h2 class="section1">Iteration</h2>
+<a name="iterate-elem"></a>
+<h3 class="section2">Iterate Element Pattern</h3>
+<a name="iterate-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>Iteration which contains <code>_stag</code>, <code>_cont</code>, and <code>_etag</code> represents to iterate the element.
+This pattern is named 'Iterate Element' pattern.
+</p>
+<br>
+
+<a name="iterate-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>The situation is very popular which requres to print list items.
+This pattern is very useful for all these situations.
+</p>
+<br>
+
+<a name="iterate-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="iterate-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>id="mark:list"</b>&gt;
+   &lt;td title="value: item"&gt;item&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<a name="iterate-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* iterate element */
+#list {
+  logic: {
+    <b>for item in list</b>
+      _stag
+      _cont
+      _etag
+    <b>end</b>
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;table&gt;
+&lt;%     for item in list %&gt;
+  &lt;tr&gt;
+   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;%     end %&gt;
+&lt;/table&gt;
+</pre>
+<br>
+
+<a name="iterate-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> Kwartz directive <code>title="for <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+</p>
+<pre class="program">&lt;table&gt;
+  &lt;tr <b>title="for item in list"</b>&gt;
+    &lt;td title="value: item"&gt;item&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="iterate-cont"></a>
+<h3 class="section2">Iterate Content Pattern</h3>
+<a name="iterate-cont-desc"></a>
+<h4 class="section3">Description</h4>
+<p>Iteration which contains only <code>_cont</code> represents to iterate the content.
+This pattern is named 'Iterate Content' pattern.
+</p>
+<br>
+
+<a name="iterate-cont-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful when creating &lt;dl&gt;&lt;/dl&gt; list or table which repeats several rows.
+</p>
+<br>
+
+<a name="iterate-cont-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="iterate-cont.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;dl <b>id="mark:list"</b>&gt;
+  &lt;dt title="value: item.text"&gt;text&lt;/dt&gt;
+  &lt;dd title="value: item.desc"&gt;description&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<a name="iterate-cont.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* iterate only content */
+#list {
+  logic: {
+    _stag
+    <b>for item in items</b>
+      _cont
+    <b>end</b>
+    _etag
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;dl&gt;
+&lt;%     for item in items %&gt;
+  &lt;dt&gt;&lt;%= item.text %&gt;&lt;/dt&gt;
+  &lt;dd&gt;&lt;%= item.desc %&gt;&lt;/dd&gt;
+&lt;%     end %&gt;
+&lt;/dl&gt;
+</pre>
+<br>
+
+<a name="iterate-cont-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> Kwartz directive <code>title="list <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+</p>
+<pre class="program">&lt;dl <b>title="list item in items"</b>&gt;
+  &lt;dt title="value: item.text"&gt;text&lt;/dt&gt;
+  &lt;dd title="value: item.desc"&gt;description&lt;/dd&gt;
+&lt;/dl&gt;
+</pre>
+<br>
+
+<br>
+
+
+<br>
+
+
+<a name="selection"></a>
+<h2 class="section1">Selection</h2>
+<a name="select-elem"></a>
+<h3 class="section2">Select Element/Content Pattern</h3>
+<a name="select-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>The following is an example to choose a certain element or content from some elements.
+This pattern is named 'Select Element Pattern' or 'Select Content Pattern'.
+</p>
+<br>
+
+<a name="select-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful when you want to change data according to conditions.
+</p>
+<br>
+
+<a name="select-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="select-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;div id="mark:message"&gt;
+  &lt;span style="color:red"   <b>id="mark:error"</b>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <b>id="mark:warning"</b>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <b>id="mark:good"</b>&gt;No error.&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+<a name="select-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">/* select element according to status */
+#message {
+  logic: {
+    if status == 'error'
+      <b>_element(error)</b>      # ERROR!
+    else if (status == 'warning')
+      <b>_element(warning)</b>    # Warning:
+    else
+      <b>_element(good)</b>       # No error.
+    end
+  }
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;%     if status == 'error' %&gt;
+  &lt;span style="color:red"&gt;ERROR!&lt;/span&gt;
+&lt;%     else if (status == 'warning') %&gt;
+  &lt;span style="color:blue"&gt;Warning:&lt;/span&gt;
+&lt;%     else %&gt;
+  &lt;span style="color:black"&gt;No error.&lt;/span&gt;
+&lt;%     end %&gt;
+</pre>
+<br>
+
+<a name="select-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> Kwartz directive '<code>title="if <i>condition</i>"</code>', '<code>title="elsif <i>condition</i>"</code>', and '<code>title="else"</code>'
+   let you to use this pattern without presentation logic file.
+</p>
+<pre class="program">&lt;div&gt;
+  &lt;span style="color:red"   <b>title="if status=='error'"</b>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <b>title="elsif status=='warning'"</b>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <b>title="else"</b>&gt;No error.&lt;/span&gt;
+&lt;/div&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="pickup-elem"></a>
+<h3 class="section2">Pick-up Element/Content Pattern</h3>
+<a name="pickup-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>If you want to use certain elements or contents, do marking the elements and use only them in presentation logic.
+Unmarked elements are ignored and not printed.
+This pattern is named 'Pick-up Element Pattern' or 'Pick-up Content Pattern'.
+</p>
+<p>'Pick-up Element' pattern is opposite of 'Dummy Element' pattern.
+In 'Dummy Element' pattern, dummy elements are marked and removed so that necessary elements are leaved.
+In 'Pick-up Element' pattern, necessary elements are marked and leaved so that dummy elements are removed.
+</p>
+<br>
+
+<a name="pickup-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is useful when many dummy datas are exist.
+</p>
+<br>
+
+<a name="pickup-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<a name="pickup-elem.pdata"></a>
+<div class="program_caption">
+Presentation Data:</div>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;div <b>id="breadcrumbs"</b>&gt;
+      &lt;a href="/" <b>id="mark:crumb"</b>&gt;Home&lt;/a&gt;
+      &lt;span <b>id="mark:separator"</b>&gt;&amp;gt;&lt;/span&gt;
+      &lt;a href="/aaa/"&gt;AAA&lt;/a&gt; &amp;lt;
+      &lt;a href="/aaa/bbb/"&gt;BBB&lt;/a&gt; &amp;lgt;
+      &lt;a href="/aaa/bbb/ccc"&gt;CCC&lt;/a&gt; &amp;lgt;
+      &lt;strong <b>id="mark:title"</b>&gt;title&lt;/strong&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<a name="pickup-elem.plogic"></a>
+<div class="program_caption">
+Presentation Logic:</div>
+<pre class="program">#breadcrumbs {
+  logic: {
+    for item in list
+      <b>_element(crumb)</b>          # print &lt;a&gt;...&lt;/a&gt;
+      <b>_content(separator)</b>      # print '&amp;gt;'
+    end
+    <b>_element(title)</b>            # print &lt;strong&gt;title&lt;/strong&gt;
+  }
+}
+
+#crumb {
+  value:  item['name'];
+  attrs:  "href" item['path'];
+}
+#title {
+  value: title;
+}
+</pre>
+<div class="output_caption">
+Output Script:</div>
+<pre class="output">&lt;html&gt;
+  &lt;body&gt;
+&lt;%     for item in list %&gt;
+      &lt;a href="&lt;%= item['path'] %&gt;"&gt;&lt;%= item['name'] %&gt;&lt;/a&gt;
+&amp;gt;&lt;%     end %&gt;
+      &lt;strong&gt;&lt;%= title %&gt;&lt;/strong&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="extract-elem"></a>
+<h3 class="section2">Extract Element/Content Pattern</h3>
+<a name="extract-elem-desc"></a>
+<h4 class="section3">Description</h4>
+<p>It is able to extract a certain element or content form the whole presentation data.
+Other element and text strings are not printed.
+This pattern is named 'Extract Element Pattern' or 'Extract Content Pattern'.
+</p>
+<br>
+
+<a name="extract-elem-situation"></a>
+<h4 class="section3">Situation</h4>
+<p>This pattern is very useful to extract HTML fragments and make them libraries.
+</p>
+<br>
+
+<a name="extract-elem-example"></a>
+<h4 class="section3">Example Code</h4>
+<p>The following is an example to extract the HTML fragments 'tablist', 'menulist', and 'copyright' and generates the output scripts for them.
+</p>
+<a name="design.html"></a>
+<div class="program_caption">
+Presentation Data (<a href="design.html">design.html</a>):</div>
+<pre class="program">&lt;html <b>id="mark:whole"</b>&gt;
+  &lt;head&gt;
+    &lt;title&gt;Design Examples&lt;/title&gt;
+    &lt;link rel="stylesheet" href="design.css" type="text/css"&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;div <b>id="mark:tablist"</b>&gt;
+      &lt;div class="tabs" id="mark:tabs"&gt;
+        &lt;a href="/" class="" <b>id="mark:tab"</b>&gt;Home&lt;/a&gt;
+        &lt;a href="/product/" class="selected"&gt;Product&lt;/a&gt;
+        &lt;a href="/download/" class=""&gt;Download&lt;/a&gt;
+        &lt;a href="/support/" class=""&gt;Support&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div class="tabsline"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;br&gt;
+
+    &lt;div <b>id="mark:menulist"</b>&gt;
+      &lt;span class="menu_title" id="value:menu_title"&gt;MenuList&lt;/span&gt;
+      &lt;div class="menus" <b>id="mark:menus"</b>&gt;
+        &lt;a href="/cgi-bin/email.cgi" class="" <b>id="mark:menu"</b>&gt;E-Mail&lt;/a&gt;
+        &lt;span <b>id="mark:menu_separator"</b>&gt;&lt;br&gt;&lt;/span&gt;
+        &lt;a href="/cgi-bin/board.cgi" class="selected"&gt;MesgBoard&lt;/a&gt;&lt;br&gt;
+        &lt;a href="/cgi-bin/photo.cgi" class=""&gt;PhotoAlbum&lt;/a&gt;&lt;br&gt;
+        &lt;a href="/cgi-bin/greeting.cgi" class=""&gt;GreetingCard&lt;/a&gt;&lt;br&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;br&gt;
+      
+    &lt;p&gt; ..... &lt;/p&gt;
+    &lt;p&gt; ..... &lt;/p&gt;
+    &lt;p&gt; ..... &lt;/p&gt;
+    
+    &lt;div align="center" class="copyright" <b>id="mark:copyright"</b>&gt;
+      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+    &lt;/div&gt;
+    
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<a name="copyright.plogic"></a>
+<div class="program_caption">
+Presentation Logic (copyright.plogic):</div>
+<pre class="program">/* replace the 'whole' element with the element you want to extract */
+<b>#whole</b> {
+  logic: {
+    <b>_element(copyright)</b>
+  }
+}
+</pre>
+<a name="tablist.plogic"></a>
+<div class="program_caption">
+Presentation Logic (tablist.plogic):</div>
+<pre class="program">/* replace the 'whole' element with the element you want to extract */
+<b>#whole</b> {
+  logic: {
+    <b>_element(tablist)</b>
+  }
+}
+
+#tabs {
+  logic: {
+    _stag
+    for tab in tablist
+      klass = current_tabname == tab['name'] ? 'selected' : ''
+      _element(tab)
+    end
+    _etag
+  }
+}
+
+#tab {
+  value:  tab['name'];
+  attrs:  "href" tab['href'],
+          "class" klass;
+}
+</pre>
+<a name="menulist.plogic"></a>
+<div class="program_caption">
+Presentation Logic (menulist.plogic):</div>
+<pre class="program">/* replace the 'whole' element with the element you want to extract */
+<b>#whole</b> {
+  logic: {
+    <b>_element(menulist)</b>
+  }
+}
+
+#menus {
+  logic: {
+    _stag
+    foreach (menu in menulist) {
+      _element(menu)
+      _element(menu_separator)
+    }
+    _etag
+  }
+}
+
+#menu {
+  value:   menu['name'];
+  attrs:   "href" menu['cgipath'],
+           "class" klass;
+  logic: {
+    klass = current_menu == menu['name'] ? 'selected' : ''
+    _elem
+  }
+}
+</pre>
+<div class="terminal_caption">
+Compile:</div>
+<pre class="terminal">### copyright
+$ kwartz -l eruby -p copyright.plogic design.pdata &gt; copyright.rhtml
+
+### tablist
+$ kwartz -l eruby -p tablist.plogic   design.pdata &gt; tablist.rhtml
+
+### menulist
+$ kwartz -l eruby -p menulist.plogic  design.pdata &gt; menulist.rhtml
+</pre>
+<div class="output_caption">
+Output Script (copyright.rhtml):</div>
+<pre class="output">    &lt;div align="center" class="copyright"&gt;
+      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+    &lt;/div&gt;
+</pre>
+<div class="output_caption">
+Output Script (tablist.rhtml):</div>
+<pre class="output">    &lt;div&gt;
+      &lt;div class="tabs"&gt;
+&lt;%     for tab in tablist %&gt;
+&lt;%       klass = current_tabname == tab['name'] ? 'selected' : '' %&gt;
+        &lt;a href="&lt;%= tab['href'] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= tab['name'] %&gt;&lt;/a&gt;
+&lt;%     end %&gt;
+      &lt;/div&gt;
+      &lt;div class="tabsline"&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+</pre>
+<div class="output_caption">
+Output Script (menulist.rhtml):</div>
+<pre class="output">    &lt;div&gt;
+      &lt;span class="menu_title" id="value:menu_title"&gt;MenuList&lt;/span&gt;
+      &lt;div class="menus"&gt;
+&lt;%     foreach (menu in menulist) { %&gt;
+&lt;%     klass = current_menu == menu['name'] ? 'selected' : '' %&gt;
+        &lt;a href="&lt;%= menu['cgipath'] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu['name'] %&gt;&lt;/a&gt;
+        &lt;span&gt;&lt;br&gt;&lt;/span&gt;
+&lt;%     } %&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+</pre>
+<br>
+
+<a name="extract-elem-supplement"></a>
+<h4 class="section3">Supplement</h4>
+<p> The command-line option '<code>-X <i>name</i></code>' extracts the element marked with <code><i>name</i></code> in kwartz-ruby.
+</p>
+<p> The command-line option '<code>-x <i>name</i></code>' extracts the content of the element marked with <code><i>name</i></code> in kwartz-ruby.
+</p>
+<br>
+
+<br>
+
+
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

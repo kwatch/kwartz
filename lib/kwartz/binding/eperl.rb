@@ -34,10 +34,10 @@ module Kwartz
     end
 
 
-    PERL_MARKING_FORMAT = 'id(%s)'
+    PERL_DIRECTIVE_FORMAT = '%s(%s)'
 
-    def marking_format
-      return PERL_MARKING_FORMAT
+    def directive_format
+      return PERL_DIRECTIVE_FORMAT
     end
 
 

@@ -34,10 +34,10 @@ module Kwartz
     end
 
 
-    PHP_MARKING_FORMAT = 'id(%s)'
+    PHP_DIRECTIVE_FORMAT = '%s(%s)'
 
-    def marking_format
-      return PHP_MARKING_FORMAT
+    def directive_format
+      return PHP_DIRECTIVE_FORMAT
     end
 
 

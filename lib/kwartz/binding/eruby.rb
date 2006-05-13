@@ -33,10 +33,10 @@ module Kwartz
     end
 
 
-    ERUBY_MARKING_FORMAT = 'id: %s'
+    ERUBY_DIRECTIVE_FORMAT = '%s: %s'
 
-    def marking_format
-      return ERUBY_MARKING_FORMAT
+    def directive_format
+      return ERUBY_DIRECTIVE_FORMAT
     end
 
 

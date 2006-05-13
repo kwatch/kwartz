@@ -295,6 +295,9 @@ module Kwartz
             raise parse_error("'#{name}': invalid #{kind} name.", nil)
           end
           stmt_list << ExpandStatement.new(kind.intern, name)
+        elsif line =~ /^\s*print(?:\s+(\S+)|\((.+)\))\s*;?\s*(?:\#.*)?$/
+          arg = $1 || $2
+          stmt_list << PrintStatement.new([NativeExpression.new(arg)])
         else
           stmt_list << NativeStatement.new(line.chomp, nil)
         end

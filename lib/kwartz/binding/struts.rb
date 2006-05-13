@@ -16,9 +16,9 @@ module Kwartz
 
 
   ##
-  ## directive handler for Struts
+  ## [experimental] directive handler for Struts
   ##
-  class StrutsHandler < JstlHandler
+  class StrutsHandler < JstlHandler   # :nodoc:
 
 
 

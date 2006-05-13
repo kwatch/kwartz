@@ -40,10 +40,10 @@ module Kwartz
     end
 
 
-    JSTL_MARKING_FORMAT = 'id(%s)'
+    JSTL_DIRECTIVE_FORMAT = '%s(%s)'
 
-    def marking_format
-      return JSTL_MARKING_FORMAT
+    def directive_format
+      return JSTL_DIRECTIVE_FORMAT
     end
 
 

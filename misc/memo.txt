@@ -1,3 +1,14 @@
+●print文
+
+  * 「logic: { ... }」の中にprint文が書けるようにしたい
+
+
+●コメント
+
+  * 「value: expr; /* コメント */」がsyntax error にならないようにしたい
+  
+
+
 ●auto form
 
   * start_form_tag から end_form_tag までにある<input>や<select>や<textarea>を
@@ -7,6 +18,7 @@
   * <a href="rails::/controller/new"></a>
 
   * <input>タグの情報を読み取って、勝手に設定？
+  * formはblockか？
 
 
 ●@import

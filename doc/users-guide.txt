@@ -158,19 +158,18 @@ In presentation logic, you can operate on elements which are marked in presentat
 .? Presentation logic file(example1.plogic):
 .-------------------- example1.plogic
 /* The element which is marked by 'id="list1"' */
-#list1 {
-  /* loop element */
+{{*#list1*}} {
   logic: {
     for member in @members
-      _stag           # start tag
-      _cont           # content
-      _etag           # end tag
+      {{*_stag*}}           # start tag
+      {{*_cont*}}           # content
+      {{*_etag*}}           # end tag
     end
   }
 }
 
 /* The element which is marked by 'id="mark:item1"' */
-#item1 {
+{{*#item1*}} {
   /* replace the content with value of a variable 'member' */
   value: member;
 }
@@ -223,7 +222,7 @@ Presentation Logic (example2.plogic):
  * an element which is marked by 'id="mark:list"'
  *  - print value of a variable 'color' as bgcolor attribute value.
  */
-#list {
+{{*#list*}} {
   attrs:  "bgcolor" color;
   logic: {
     @members.each_with_index do |member, i|
@@ -239,7 +238,7 @@ Presentation Logic (example2.plogic):
  * an element which is marked by 'id="mark:name"':
  *  - print value of member[:name] as content of the element.
  */
-#name {
+{{*#name*}} {
   value: member[:name];
 }
 
@@ -248,7 +247,7 @@ Presentation Logic (example2.plogic):
  *  - print value of member[:email] as contentn of the element. 
  *  - print "mailto:" and member[:email] as href attribute value.
  */
-#email {
+{{*#email*}} {
   value: member[:email];
   attrs: "href" "mailto:#{member[:email]}";
 }
@@ -275,7 +274,7 @@ $ kwartz -p example2.plogic example2.html > example2.rhtml
 
 Kwartz enables you to write complex presentation logic natulally.
 This section shows some examples.
-See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
+See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 
 .#Presentation Data:
 .#.--------------------
@@ -302,7 +301,7 @@ See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
 	#list {
 	  logic: {
 	    for member in @members
-	      _elem     # '_elem' is equivarent to _stag + _cont + _etag
+	      _elem     # equivarent to _stag + _cont + _etag
 	    end
 	  }
 	}
@@ -372,7 +371,7 @@ See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
 	}
 	.--------------------
 
-.* Replace element by other element.
+.* Replace element with other element.
 	.--------------------
 	#list {
 	  logic: {
@@ -381,7 +380,7 @@ See {{<Presentation Pattern Catalog|p-pattern.en.html>}} for details.
 	}
 	.--------------------
 
-.* Replace element by other element's content.
+.* Replace element with other element's content.
 	.--------------------
 	#list {
 	  logic: {
@@ -472,89 +471,41 @@ These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz
 	Logic of the element.
 
 
-'stag:' and 'elem:' are very useful especially for Ruby on Rails.
+'stag:' and 'elem:' are useful especially for Ruby on Rails.
 The following is an examle to use Kwartz in Ruby on Rails.
 
-.? link_to.plogic
-.-------------------- link_to.plogic
-#link_to_list {
-  elem:  link_to 'List', :action=>'list';
-}
-#link_to_show {
-  elem:  link_to 'Show', :action=>'show', :id=>@member.id;
-}
-#link_to_new {
-  elem:  link_to 'New', :aciton=>'new';
-}
-#link_to_edit {
-  elem:  link_to 'Edit', :aciton=>'edit', :id=>@member.id;
-}
-.--------------------
-
-.? enter.html
-.-------------------- enter.html
+.? presentation data (form1.html)
+.-------------------- form1.html
 <form {{*id="form"*}}>
   Name: <input type="text" {{*id="member_name"*}}><br>
-  Password: <input type="password" {{*id="member_password"*}}><br>
   Birthday: <select {{*id="member_birth"*}}>
-              <option value=""> - </option>
-	    </select>
-	    <br>
-  Gender:  <input type="checkbox" {{*id="member_gender_m"*}}>Man
-           <input type="checkbox" {{*id="member_gender_w"*}}>Woman
-	   <br>
-  <input type="submit" {{*id="form_submit"*}}>
+              <option> - </option>
+            </select><br>
+ <input type="submit" {{*id="submit"*}}>
 </form>
-
-<a href="#" {{*id="link_to_list"*}}>List</a> |
-<a href="#" {{*id="link_to_show"*}}>Show</a>
 .--------------------
 
-.? enter.plogic
-.-------------------- enter.plogic
-/* import presentation logic library */
-@import 'link_to.plogic';
-
-/* replace form control elements by Rails helper methods */
-#form {
-  stag:  start_form_tag  :action=>'new';
+.? presentation logic (form1.plogic)
+.-------------------- form1.plogic
+{{*#form*}} {
+  {{*stag:*}}  start_form_tag :action=>'new';
 }
-
-#form_submit {
-  elem:  submit_to 'Submit';
+{{*#member_name*}} {
+  {{*elem:*}}  text_field 'member', 'name';
 }
-
-#member_name {
-  elem:  text_field  'member', 'name';
+{{*#member_birth*}} {
+  {{*elem:*}}  date_select 'member', birth';
 }
-
-#member_password {
-  elem:  password_field  'member', 'password';
-}
-
-#member_birth {
-  elem:  date_select 'member', 'birth';
-}
-
-#member_gender_m {
-  elem:  check_box 'member', 'gender', 'm';
-}
-
-#member_gender_w {
-  elem:  check_box 'member', 'gender', 'w';
+{{*#submit*}} {
+  {{*elem:*}}  submit_to 'Submit';
 }
 .--------------------
 
-
-.? compilation
+.? compile
 .====================
-$ kwartz -l rails -p enter.plogic enter.html > enter.rhtml
+$ kwartz -p form1.plogic form1.html
+.<<<:! (cd guide.d; kwartz -p form1.plogic form1.html)
 .====================
-
-.? compiled eRuby script
-.--------------------
-.<<<:! (cd guide.d; kwartz -l rails -p enter.plogic enter.html)
-.--------------------
 
 
 
@@ -568,7 +519,7 @@ The reason to provide both solutions (separate or not) is {{*choosability*}}.
 Some preferes to separate presentation logic from presentaion data, and others may
 prefere to mix them.
 Both approaches have own advantages and disadvantages.
-Thus it is the user who determine to adopt which solution.
+Thus it is the user who determine which solution to adopt.
 Kwartz provides both approaches and you can select which to use.
 Kwartz doesn't enforce you to adopt a solution.
 
@@ -581,8 +532,8 @@ The following is an example to use directives.
 .* Directive {{,title="value: {{/expression/}}",}} means to print value of expression as content of the element.
 .* Directive {{,title="dummy:",}} means that the element is a dummy and is not printed out.
 
-.? Presentation Data(example3.html):
-.-------------------- example3.html
+.? Presentation Data(directive1.html):
+.-------------------- directive1.html
 <table>
   <tr {{*title="for member in @members"*}}>
     <td {{*title="value: member.name"*}}>foo</td>
@@ -604,13 +555,27 @@ The following is an example to use directives.
 
 .? Compile:
 .====================
-$ kwartz -l eruby   example3.html > example3.rhtml
+$ kwartz -l eruby  directive1.html > directive1.rhtml
 .====================
 
 .? Output script:
 .--------------------
-.<<<:! (cd guide.d; kwartz -l eruby example3.html)
+.<<<:! (cd guide.d; kwartz -l eruby directive1.html)
 .--------------------
+
+If the first character of target attribute is a space, Kwartz recognize it as non-directive{{(This spec may change in the future if I get have better idea.)}}.
+
+.? presentation data (directive2.html)
+.-------------------- directive2.html
+<span {{*title="value: expr"*}}>foo</span>
+<span {{*title=" value: expr"*}}>bar</span>
+.--------------------
+
+.? compile
+.====================
+$ kwartz directive2.html
+.<<<:! (cd guide.d; kwartz directive2.html)
+.====================
 
 Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -620,12 +585,12 @@ See reference manual for details about directives.
 
 .$$ Escape 	| escape
 
-Kwartz supports Automatic-escape and Partially-escape.
+Kwartz supports Automatic-escape and Partial-escape/unescape.
 
 .* If command-line option '{{,-e,}}' is specified,  values of '{{,value: {{/expr/}},}}'
    are escaped. (Automatic-escape)
-.* '{{,Value: {{/expr/}},}}' always escapes value even when '{{,-e,}}' is specified. (Prtially-escape)
-.* '{{,VALUE: {{/expr/}},}}' always doesn't escapes value even when '{{,-e,}}' is not specified. (Partially-unescape)
+.* '{{,Value: {{/expr/}},}}' always escapes value even when '{{,-e,}}' is not specified. (Partial-escape)
+.* '{{,VALUE: {{/expr/}},}}' always doesn't escapes value even when '{{,-e,}}' is specified. (Partial-unescape)
 
 .? presentation Data (escape1.html):
 .-------------------- escape1.html
@@ -882,7 +847,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 .$$ Span Tag Deletion	| span
 
-The span tags which contains only directives are regarded as dummy tags and can be deleted automatically with command-line option '--delspan'.
+Kwartz regards span tags which contain only directives as dummy tags and delete them automatically when command-line option '--delspan' is specified.
 
 .? presentation data (delspan1.html)
 .-------------------- delspan1.html
@@ -926,6 +891,282 @@ Hello <span {{*title="value: user" style="color:black"*}}>World</span>!
 $ kwartz -p delspan2.plogic {{*--delspan*}} delspan2.html
 .<<<:! (cd guide.d; kwartz -p delspan2.plogic --delspan delspan2.html)
 .====================
+
+
+.$$ {{,link_to(),}} method in Ruby on Rails		| start_link_to
+
+{{,link_to(),}} method in Ruby on Rails is a little incompatible with Kwartz
+because you must specify link label in both presentation data and presentation logic.
+This is not DRY.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">{{*Create new recipe*}}</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  elem:  link_to {{*'Create new recipe'*}}, :action=>'new';
+}
+.--------------------
+
+It is recommended to include the following helper method
+in your 'app/helpers/application_helper.rb'.
+
+.--------------------
+module ApplicationHelper
+
+  def start_link_to(options = {}, html_options = nil, *parameters_for_method_reference)
+    s = link_to('', options, html_options, *parameters_for_method_reference)
+    s.sub!(/<\/a>\z/, '')
+  end
+  alias anchor start_link_to
+
+  def start_link_to_remote(options = {}, html_options = {})
+    s = link_to_remote(options, html_options)
+    s.sub!(/<\/a>\z/, '')
+  end
+  alias anchor_remote start_link_to_remote
+
+end
+.--------------------
+
+The above methods prints only start tag. You don't need to write label twice.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">Create new recipe</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  stag:  {{*start_link_to*}} :action=>'new';
+}
+.--------------------
+
+
+
+.$$ Import Presentation Logic File		| import-plogic
+
+'@imort "filename.plogic"' imports filename.plogic.
+This is useful to share common presentation logic in many files.
+
+.? link_to.plogic
+.-------------------- link_to2.plogic
+{{*#link_to_new*}} {
+  elem:  start_link_to :action=>'new';
+}
+{{*#link_to_show*}} {
+  elem:  start_link_to :action=>'show', :id=>@member;
+}
+{{*#link_to_edit*}} {
+  elem:  start_link_to :action=>'edit', :id=>@member;
+}
+{{*#link_to_list*}} {
+  elem:  start_link_to :action=>'list';
+}
+{{*#link_to_destroy*}} {
+  stag:  start_link_to({:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
+}
+.--------------------
+
+.? show.html
+.-------------------- show2.html
+<p>
+ Name: <span id="mark:name">foo</span> <br>
+ Email: <span id="mark:email">foo@mail.com</span> <br>
+</p>
+<a href="#" {{*id="link_to_edit"*}}>Edit this member</a> |
+<a href="#" {{*id="link_to_new"*}}>Create new member</a> |
+<a href="#" {{*id="link_to_list"*}}>Return to list</a>
+.--------------------
+
+.? show.plogic
+.--------------------
+{{*@import 'link_to.plogic';*}}
+
+#name {
+  Value: @member.name;
+}
+#email {
+  Value: @member.email;
+}
+.--------------------
+
+.#+++
+.-------------------- show2.plogic
+@import 'link_to2.plogic';
+
+#name {
+  Value: @member.name;
+}
+#email {
+  Value: @member.email;
+}
+.--------------------
+.#---
+
+.? compile
+.====================
+$ kwartz -p show.plogic show.html
+.<<<:! (cd guide.d; kwartz -p show2.plogic show2.html)
+.====================
+
+
+
+.$$ Import Elements in Other Files		| import-elem
+
+Command-line option '-i {{/filename,.../}}' imports element definitions form other files.
+
+.? form.html
+.-------------------- form.html
+<form>
+ <div {{*id="mark:form_content"*}}>
+  Name: <input type="text"><br>
+  Password: <input type="password"><br>
+ </div>
+ <input type="submit">
+</form>
+.--------------------
+
+.? new.html
+.-------------------- new.html
+<form action="/new">
+  <div {{*id="mark:replace_element_with"*}}></div>
+  <input type="submit" value="Create">
+</form>
+.--------------------
+
+.? new.plogic
+.-------------------- new.plogic
+/* use element which is defined other file */
+{{*#replace_element_with*}} {
+  logic: {
+    {{*_content(form_content)*}}
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz {{*-i form.html*}} -p new.plogic new.html
+.<<<:! (cd guide.d; kwartz -i form.html -p new.plogic new.html)
+.====================
+
+
+.$$ Extract Element		| extract
+
+Command option '-X {{/name/}}' extracts element marked as {{/name/}}
+and command option '-x {{/name/}}' extracts content of element.
+
+.? show.html
+.-------------------- show.html
+<html>
+ <body>
+  <div {{*id="mark:content"*}}>
+   <h1>Show</h1>
+   <p>Name: <span id="mark:name">foo</span></p>
+   <p>Email: <span id="mark:email">foo@mail.com</span></p>
+  </div>
+ </body>
+</html>
+.--------------------
+
+.? show.plogic
+.-------------------- show.plogic
+#name {
+  value: user.name;
+}
+#email {
+  value: user.email;
+}
+.--------------------
+
+.? compile with '-X' or '-x'
+.====================
+$ kwartz {{*-X content*}} -p show.plogic show.html
+.<<<:! (cd guide.d; kwartz -X content -p show.plogic show.html)
+
+$ kwartz {{*-x content*}} -p show.plogic show.html
+.<<<:! (cd guide.d; kwartz -x content -p show.plogic show.html)
+.====================
+
+
+.$$ Print Statement		| print-statement
+
+Print statement is available in 'logic:' part.
+
+.? print-stmt.html
+.-------------------- print-stmt.html
+<ul>
+  <li id="items">foo</li>
+</ul>
+.--------------------
+
+.? print-stmt.eruby.plogic
+.-------------------- print-stmt.eruby.plogic
+#items {
+  logic: {
+    for item in list
+      _stag
+      {{*print item*}}
+      _etag
+    end
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
+.<<<:! (cd guide.d; kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html)
+.====================
+
+.? print-stmt.php.plogic
+.-------------------- print-stmt.php.plogic
+#items {
+  logic: {
+    foreach ($list as $item) {
+      _stag();
+      {{*print($item);*}}
+      _etag();
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p print-stmt.php.plogic print-stmt.html
+.<<<:! (cd guide.d; kwartz -l php -p print-stmt.php.plogic print-stmt.html)
+.====================
+
+.? print-stmt.jstl.plogic
+.-------------------- print-stmt.jstl.plogic
+#items {
+  logic: {
+    <c:forEach var="item" items="${list}">
+      _stag
+      {{*print item*}}
+      _etag
+    </c:forEach>
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html
+.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html)
+
+$ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
+.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html)
+.====================
+
+It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead of
+print statement because they can escape or unescape exression value.
 
 
 .#@EOF

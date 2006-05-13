@@ -1,7 +1,15 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
-: rev.109
+: rev.111 (2006-05-13)
+	- [enhance] print statement support in logic: part
+	- [change] rename 'replace_element_by:' to 'replace_element_with:'
+	- [enhance] add 'doc/p-pattern.txt'
+	- [update] update doc/users-guide.txt
+	- [enhance] id="dummy:xxx" support
+	- [change] Handler#marking_format() is renamed to directive_format()
+
+: rev.110 (2006-05-12)
 	- [enhance] dummy <span> tag deletion support, with '--delspan' and PROPERTY_DELSPAN
 	- [change] binding/erb.rb is renamed to binding/eruby.rb
 	- [change] examples/rails/*.html are fixed to pass HTML checker (tidy)

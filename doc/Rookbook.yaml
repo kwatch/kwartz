@@ -7,14 +7,14 @@ variables:
 recipes:
 
   - product:	:default
-    ingreds:	[ $(u).html ]
+    ingreds:	[ users-guide.html, p-pattern.html ]
 
-  - product:	$(u).html
-    ingreds:	[ $(u).txt ]
+  - product:	*.html
+    ingreds:	[ $(1).txt ]
     method: |
 	dir = 'guide.d'
 	rm_rf dir 
 	mkdir dir
-	sys "retrieve -d #{dir} $(u).txt"
-	sys "kwaser -t html-css -T $(u).txt > $(u).toc.html"
-	sys "kwaser -t html-css    $(u).txt > $(u).html"
+	sys "retrieve -d #{dir} $(1).txt"
+	sys "kwaser -t html-css -T2 $(1).txt > $(1).toc.html"
+	sys "kwaser -t html-css     $(1).txt > $(1).html"
