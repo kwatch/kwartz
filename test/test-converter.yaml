@@ -55,16 +55,20 @@
 	[ "  <span class=\"foo\">", <%=expr%>, "</span>\n"]
 	[ "</p>\n"]
 	[ "<p>\n"]
-	"if x > 0 then"[ ]
+	"if x > 0 then"
+	[ ]
 	[ "positive"]
 	[ ]
-	"elsif x < 0 then"[ ]
+	"elsif x < 0 then"
+	[ ]
 	[ "negative"]
 	[ ]
-	"else"[ ]
+	"else"
+	[ ]
 	[ "zero"]
 	[ ]
-	"end"[ "</p>\n"]
+	"end"
+	[ "</p>\n"]
 
   output: |
 

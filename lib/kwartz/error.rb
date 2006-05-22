@@ -16,20 +16,26 @@ module Kwartz
 
   class BaseError < KwartzError
 
-    def initialize(message, linenum, column)
+    def initialize(message, filename, linenum, column=nil)
       super(message)
+      @filename = filename || '-'
       @linenum = linenum
       @column = column
     end
-    
-    attr_accessor :linenum, :column
+
+    attr_accessor :filename, :linenum, :column
 
     def to_s
       return super unless @linenum
-      return "line #{@linenum}, column #{@column}: " + super
+      #return "line #{@linenum}, column #{@column}: " + super
+      if @column
+        return "#{@filename}:#{@linenum}:#{@column}: " + super
+      else
+        return "#{@filename}:#{@linenum}: " + super
+      end
     end
 
   end
 
-  
+
 end

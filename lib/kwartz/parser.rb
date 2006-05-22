@@ -7,7 +7,7 @@
 require 'kwartz/assert'
 require 'kwartz/error'
 require 'kwartz/node'
-require 'kwartz/abstract'
+require 'abstract'
 
 
 
@@ -45,8 +45,8 @@ module Kwartz
   class ParseError < BaseError
 
 
-    def initialize(message, linenum, column)
-      super(message, linenum, column)
+    def initialize(message, filename, linenum, column)
+      super
     end
 
 
@@ -55,7 +55,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] parser class for presentation logic
+  ## .[abstract] parser class for presentation logic
   ##
   class PresentationLogicParser
     include CharacterType
@@ -316,12 +316,12 @@ module Kwartz
 
 
     def parse_error(message, linenum=@linenum, column=@column)
-      return ParseError.new(message, linenum, column)
+      return ParseError.new(message, @filename, linenum, column)
     end
 
 
-    ## [abstract] parse input string and return list of ElementRuleset
-    def parse(input)
+    ## .[abstract] parse input string and return list of ElementRuleset
+    def parse(input, filename='')
       not_implemented
     end
 

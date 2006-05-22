@@ -33,6 +33,124 @@ module Kwartz
   end
 
 
+  ##
+  ## command option class
+  ##
+  ## ex.
+  ##  option_table = [
+  ##    [?h, :help,    nil],
+  ##    [?v, :version, nil],
+  ##    [?f, :file,    "filename"],
+  ##  ]
+  ##  properties = {}
+  ##  options = CommandOption.new(option_table, properties)
+  ##  filenames = options.parse_argv(ARGV)
+  ##  p options.help
+  ##  p options.version
+  ##  p options.file
+  ##
+  class CommandOptions
+
+    def initialize(option_table, properties={})
+      @_option_table = option_table
+      @_properties = properties
+      buf = []
+      optchars = {}
+      option_table.each do |char, key, argname|
+        buf << "def #{key}; @#{key}; end; def #{key}=(val); @#{key}=val; end\n"
+      end
+      instance_eval buf.join
+    end
+
+    def _find_entry(key)
+      if key.is_a?(Fixnum)
+        return @_option_table.find { |row| row[0] == key }
+      else
+        key = key.to_s.intern unless key.is_a?(Symbol)
+        return @_option_table.find { |row| row[1] == key }
+      end
+    end
+    private :_find_entry
+
+    def [](key)
+      if key.is_a?(Fixnum)
+        entry = _find_entry(key)  or return
+        key = entry[1]
+      end
+      instance_variable_get("@#{key}")
+    end
+
+    def []=(key, val)
+      instance_variable_set("@#{key}", val)
+    end
+
+    def key?(key)
+      return instance_variables.include?("@#{key}")
+    end
+
+    def char(key)
+      entry = _find_entry(key)
+      return entry && entry[0]
+    end
+
+    def chr(key)
+      ch = char(key)
+      return ch ? ch.chr : ''
+    end
+
+    def parse_argv(argv)
+      properties = @_properties
+      while !argv.empty? && argv[0][0] == ?-
+        optstr = argv.shift
+        optstr = optstr[1, optstr.length - 1]
+        if optstr[0] == ?-           # properties
+          unless optstr =~ /\A-([-\w]+)(?:=(.*))?/
+            raise option_error("'-#{optstr}': invalid property pattern.")
+          end
+          pname = $1 ;  pvalue = $2
+          case pvalue
+          when nil                    ;  pvalue = true
+          when /\A\d+\z/              ;  pvalue = pvalue.to_i
+          when /\A\d+\.\d+\z/         ;  pvalue = pvalue.to_f
+          when 'true', 'yes', 'on'    ;  pvalue = true
+          when 'false', 'no', 'off'   ;  pvalue = false
+          when 'nil', 'null'          ;  pvalue = nil
+          when /\A'.*'\z/, /\A".*"\z/ ; pvalue = eval pvalue
+          end
+          properties[pname.intern] = pvalue
+        else                         # command-line options
+          while optstr && !optstr.empty?
+            optchar = optstr[0]
+            optstr = optstr[1, optstr.length - 1]
+            entry = _find_entry(optchar)
+            entry  or raise CommandOptionError.new("-#{optchar.chr}: unknown option.")
+            char, key, argname = entry
+            case argname
+            when nil, false
+              instance_variable_set("@#{key}", true)
+            when String
+              arg = optstr
+              arg = argv.shift unless arg && !arg.empty?
+              arg  or raise CommandOptionError.new("-#{optchar.chr}: #{argname} required.")
+              instance_variable_set("@#{key}", arg)
+              optstr = ''
+            when true
+              arg = optstr
+              arg = true unless arg && !arg.empty?
+              instance_variable_set("@#{key}", arg)
+              optstr = ''
+            else
+              raise "** internal error **"
+            end
+          end #while
+        end #if
+      end #while
+      filenames = argv
+      return filenames
+    end #def
+
+  end #class
+
 
   ##
   ## main command
@@ -65,90 +183,190 @@ module Kwartz
     end
 
 
+    @@option_table = [
+      [ ?h, :help,         nil ],
+      [ ?v, :version,      nil ],
+      [ ?e, :escape,       nil ],
+      [ ?D, :debug,        nil ],
+      [ ?t, :untabify,     nil ],
+      [ ?S, :intern,       nil ],
+      [ ?l, :lang,         'lang name' ],
+      [ ?k, :kanji,        'kanji code' ],
+      [ ?r, :requires,     'library name' ],
+      [ ?p, :plogics,      'file name' ],
+      [ ?P, :pstyle,       'parser style' ],
+      [ ?x, :extract_cont, 'element id' ],
+      [ ?X, :extract_elem, 'element id' ],
+      [ ?i, :imports,      'file name' ],
+      [ ?L, :layout,       'file name' ],
+      [ ?f, :yamlfile,     'yaml file' ],
+    ]
+
+
     def execute(argv=@argv)
 
-      options, properties, filenames = parse_argv(argv, 'hveD', 'lkrpPxXi')
-      options[?h] = true if properties[:help]
+      ## parse command-line options
+      options = CommandOptions.new(@@option_table, properties = {})
+      pdata_filenames = options.parse_argv(argv)
+      options.help = true if properties[:help]
 
-      if options[?h] || options[?v]
-        puts version() if options[?v]
-        puts help()    if options[?h]
+      ## help
+      if options.help || options.version
+        puts version() if options.version
+        puts help()    if options.help
         return nil
       end
 
-      if filenames.empty?
-        raise otpion_error("filename of presentation data is required.")
+      ## check filenames
+      if pdata_filenames.empty?
+        raise option_error("filename of presentation data is required.")
+      end
+      pdata_filenames.each do |filename|
+        test(?f, filename)  or raise option_error("#{filename}: file not found.")
       end
 
-      $KCODE = options[?k] if options[?k]
-      $DEBUG = options[?D] if options[?D]
+      ## options
+      $KCODE = options.kanji if options.kanji
+      $DEBUG = options.debug if options.debug
 
-      style = options[?P] || 'css'
-      parser_class = PresentationLogicParser.get_class(style)
-      parser_class     or raise option_error("-P #{style}: unknown style name (parser class not registered).")
+      ## parse class, hander class, translator class
+      style = options.pstyle || 'css'
+      unless parser_class = PresentationLogicParser.get_class(style)
+        s = "-#{options.chr(:pstyle)} #{style}"
+        raise option_error("#{s}: unknown style name (parser class not registered).")
+      end
+      lang = options.lang || Config::PROPERTY_LANG      # 'eruby'
+      unless handler_class = Handler.get_class(lang)
+        s = "-#{options.chr(:lang)} #{lang}"
+        raise option_error("#{s}: unknown lang name (handler class not registered).")
+      end
+      unless translator_class = Translator.get_class(lang)
+        s = "-#{options.chr(:lang)} #{lang}"
+        raise option_error("#{s}: unknown lang name (translator class not registered).")
+      end
 
-      lang = options[?l] || Config::PROPERTY_LANG      # 'eruby'
-      handler_class = Handler.get_class(lang)
-      handler_class    or raise option_error("-l #{lang}: unknown name (handler class not registered).")
-
-      translator_class = Translator.get_class(lang)
-      translator_class or raise option_error("-l #{lang}: unknown name (translator class not registered).")
-
-      if options[?r]
-        libraries = options[?r]
+      ## require libraries
+      if options.requires
+        libraries = options.requires
         libraries.split(/,/).each do |library|
-          library.split!
+          library.strip!
           require library
         end
       end
 
+      ## parse presentation logic file
       ruleset_list = []
-      if options[?p]
+      if options.plogics
         parser = parser_class.new(properties)
-        options[?p].split(/,/).each do |filename|
+        options.plogics.split(/,/).each do |filename|
           filename.strip!
-          test(?f, filename)  or raise CommandOptionError.new("#{filename}: file not found.")
+          if test(?f, filename)
+            # ok
+          elsif test(?f, filename + '.plogic')
+            filename += '.plogic'
+          else
+            s = "-#{options.chr(:plogics)} #{filename}[.plogic]"
+            raise option_error("#{s}: file not found.")
+          end
           plogic = File.read(filename)
-          ruleset_list.concat(parser.parse(plogic))
+          ruleset_list += parser.parse(plogic, filename)
         end
       end
 
-      properties[:escape] = true if options[?e] && !properties.key?(:escape)
+      ## properties
+      properties[:escape] = true if options.escape && !properties.key?(:escape)
 
+      ## create converter
       handler = handler_class.new(ruleset_list, properties)
       converter = TextConverter.new(handler, properties)
 
+      ## import-files and layout-file
+      import_filenames = []
       if options[?i]
-        import_filenames = options[?i].split(/,/)
-        import_filenames.each do |filename|
-          test(?f, filename)  or raise CommandOptionError.new("-i #{filename}: file not found.")
-          pdata = File.read(filename)
-          converter.convert(pdata)
+        (import_filenames = options.imports.split(/,/)).each do |filename|
+          unless test(?f, filename)
+            s = "-#{options.chr(:imports)}"
+            raise option_error("#{s} #{filename}: file not found.")
+          end
         end
       end
+      if options.layout
+        unless test(?f, options.layout)
+          s = "-#{options.chr(:layout)}"
+          raise option_error("#{s} #{options.layout}: file not found.")
+        end
+        import_filenames += pdata_filenames
+        pdata_filenames = [options.layout]
+      end
+      import_filenames.each do |filename|
+        pdata = File.read(filename)
+        converter.convert(pdata, filename)
+      end
 
+      ## convert presentation data file
       stmt_list = []
       pdata = nil
-      filenames.each do |filename|
-        test(?f, filename)  or raise CommandOptionError.new("#{filename}: file not found.")
+      pdata_filenames.each do |filename|
+        test(?f, filename)  or raise option_error("#{filename}: file not found.")
         pdata = File.read(filename)
         #handler = handler_class.new(ruleset_list)
         #converter = TextConverter.new(handler, properties)
-        list = converter.convert(pdata)
+        list = converter.convert(pdata, filename)
         stmt_list.concat(list)
       end
 
-      elem_id = options[?x] || options[?X]
+      ## extract element or content
+      elem_id = options.extract_cont || options.extract_elem
       if elem_id
-        content_only = options[?x] ? true : false
+        content_only = options.extract_cont ? true : false
         stmt_list = handler.extract(elem_id, content_only)
       end
 
+      ## translate statements into target code(eRuby, PHP, JSP)
       if pdata[pdata.index(?\n) - 1] == ?\r
         properties[:nl] ||= "\r\n"
       end
       translator = translator_class.new(properties)
       output = translator.translate(stmt_list)
+
+      ## load YAML file and evaluate eRuby script
+      if options.yamlfile
+        eruby_script = output
+        if lang == 'eruby' || lang == 'rails'
+          require 'erb'
+          trim_mode = properties.key?(:trim) ? properties[:trim] : 1
+          src = ERB.new(eruby_script, $SAFE, trim_mode).src
+          mod = ERB::Util
+        elsif lang == 'erubis'
+          require 'erubis'
+          src = Erubis::Eruby.new(eruby_script).src
+          mod = Erubis::XmlHelper
+        else
+          s1 = "-#{options.chr(:yamlfile)}"
+          s2 = "-#{options.chr(:lang)} #{lang}"
+          option_error("#{s1}: not available with '#{s2}'.")
+        end
+        unless test(?f, options.yamlfile)
+          s = "-#{options.chr(:yamlfile)} #{options.yamlfile}"
+          raise option_error("#{s}: file not found.")
+        end
+        str = File.read(options.yamlfile)
+        str = untabify(str) if options.untabify
+        require 'yaml'
+        ydoc = YAML.load(str)
+        unless ydoc.is_a?(Hash)
+          s = "-#{options.chr(:yamlfile)} #{options.yamlfile}"
+          raise option_error("#{s}: not a mapping.")
+        end
+        intern_hash_keys(ydoc) if options.intern
+        context = Object.new
+        ydoc.each do |key, val|
+          context.instance_variable_set("@#{key}", val)
+        end
+        context.extend(mod)    # ERB::Util or Erubis::XmlHelper
+        output = context.instance_eval(src)
+      end
+
       return output
 
     end
@@ -159,6 +377,7 @@ module Kwartz
 
     def help
       sb = []
+      sb << "kwalify - a template system which realized 'Independence of Presentation Logic'\n"
       sb << "Usage: #{@command} [..options..] [-p plogic] file.html [file2.html ...]\n"
       sb << "  -h             : help\n"
       sb << "  -v             : version\n"
@@ -168,18 +387,23 @@ module Kwartz
       sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
       sb << "  -r library,... : require libraries\n"
       sb << "  -p plogic,...  : presentation logic files\n"
+      sb << "  -i pdata,...   : import presentation data files\n"
+      sb << "  -L layoutfile  : layout file ('-L f1 f2' is equivalent to '-i f2 f1')\n"
       sb << "  -x elem-id     : extract content of element marked by elem-id\n"
       sb << "  -X elem-id     : extract element marked by elem-id\n"
+      sb << "  -f yamlfile    : YAML file for context values\n"
+      sb << "  -t             : expand tab character in YAML file\n"
+      sb << "  -S             : convert mapping key from string to symbol in YAML file\n"
       #sb << "  -P style       : style of presentation logic (css/ruby/yaml)\n"
       sb << "  --dattr=str    : directive attribute name\n"
       sb << "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n"
       sb << "  --even=value   : even value for FOREACH/LOOP directive (default \"'even'\")\n"
       sb << "  --header=str   : header text\n"
       sb << "  --footer=str   : footer text\n"
-      sb << "  --delspan={true|false}: delete dummy span tag (default false)\n"
-      sb << "  --escape={true|false} : escape (sanitize) (default false)\n"
-      sb << "  --jstl={1.2|1.1}      : JSTL version (default 1.2)\n"
-      sb << "  --charset=charset     : character set for JSTL (default none)\n"
+      sb << "  --delspan={true|false} : delete dummy span tag (default false)\n"
+      sb << "  --escape={true|false}  : escape (sanitize) (default false)\n"
+      sb << "  --jstl={1.2|1.1}       : JSTL version (default 1.2)\n"
+      sb << "  --charset=charset      : character set for JSTL (default none)\n"
       return sb.join
     end
 
@@ -195,65 +419,34 @@ module Kwartz
     end
 
 
-    def parse_argv(argv=@argv, single_opts='', argument_opts='', optional_opts='')
-      options = {}
-      properties = {}
+    def untabify(str, width=8)
+      sb = ''
+      str.scan(/(.*?)\t/m) do |s, |
+        len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+        sb << s << (" " * (width - len % width))
+      end
+      return $' ? (sb << $') : str
+    end
 
-      while !argv.empty? && argv[0][0] == ?-
 
-        optstr = argv.shift
-        optstr = optstr[1, optstr.length - 1]
-
-        if optstr[0] == ?-           # properties
-
-          unless optstr =~ /\A-([-\w]+)(?:=(.*))?/
-            raise option_error("'-#{optstr}': invalid property pattern.")
-          end
-          pname = $1 ;  pvalue = $2
-          case pvalue
-          when nil                    ;  pvalue = true
-          when /\A\d+\z/              ;  pvalue = pvalue.to_i
-          when /\A\d+\.\d+\z/         ;  pvalue = pvalue.to_f
-          when 'true', 'yes', 'on'    ;  pvalue = true
-          when 'false', 'no', 'off'   ;  pvalue = false
-          when 'nil', 'null'          ;  pvalue = nil
-          when /\A'.*'\z/, /\A".*"\z/ ; pvalue = eval pvalue
-          end
-          properties[pname.intern] = pvalue
-
-        else                         # command-line options
-
-          while optstr && !optstr.empty?
-            optchar = optstr[0]
-            optstr = optstr[1, optstr.length - 1]
-            if single_opts && single_opts.include?(optchar)
-              options[optchar] = true
-            elsif argument_opts && argument_opts.include?(optchar)
-              arg = optstr
-              arg = argv.shift unless arg && !arg.empty?
-              unless arg
-                raise option_error("-#{optchar.chr}: argument required.")
-              end
-              options[optchar] = arg
-              optstr = ''
-            elsif optional_opts && optional_opts.include?(optchar)
-              arg = optstr
-              arg = true unless arg && !arg.empty?
-              options[optchar] = arg
-              optstr = ''
-            else
-              raise CommandOptionError.new("-#{optchar.chr}: invalid command option.")
-            end
-          end #while
-
-        end #if
-
-      end #while
-
-      filenames = argv
-      return options, properties, filenames
-
-    end #def
+    def intern_hash_keys(obj, done={})
+      return if done.key?(obj.__id__)
+      case obj
+      when Hash
+        done[obj.__id__] = obj
+        obj.keys.each do |key|
+          obj[key.intern] = obj.delete(key) if key.is_a?(String)
+        end
+        obj.values.each do |val|
+          intern_hash_keys(val, done) if val.is_a?(Hash) || val.is_a?(Array)
+        end
+      when Array
+        done[obj.__id__] = obj
+        obj.each do
+          intern_hash_keys(val, done) if val.is_a?(Hash) || val.is_a?(Array)
+        end
+      end
+    end
 
 
   end #class

@@ -1,4 +1,5 @@
-.* [_] delete <span> tag which has only 'title' attribute
+.* [_] filename on ConvertError
+.* [v] delete <span> tag which has only 'title' attribute
 .* [v] 'default' directive with if-then-else statement
 .* [v] NativeStatement#newline = false
 .* [_] tag selector support in presentation logic
@@ -12,6 +13,6 @@
 .* [_] velocity support
 .* [_] freemarker support
 .* [_] template-toolkit support
-.* [_] '-a defun' support
+.* [_] '-a defun' (action 'define function') support
 .* [_] #XMLDECL support
 .* [v] rename 'plogic:' to 'logic:'

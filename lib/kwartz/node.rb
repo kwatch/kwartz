@@ -10,7 +10,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] abstract class for Expression and Statement
+  ## .[abstract] abstract class for Expression and Statement
   ##
   class Node
 
@@ -25,7 +25,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] expression
+  ## .[abstract] expression
   ##
   class Expression < Node
   end
@@ -61,7 +61,7 @@ module Kwartz
   end
 
 
-
+#--
 #  ##
 #  ## represents normal text
 #  ##
@@ -87,11 +87,11 @@ module Kwartz
 #
 #
 #  end
-
+#++
 
 
   ##
-  ## [abstract] statement class
+  ## .[abstract] statement class
   ##
   class Statement < Node
   end
@@ -181,7 +181,7 @@ module Kwartz
       list = @args.collect { |arg|
         arg.is_a?(NativeExpression) ? "<%=#{arg.code}%>" : arg.inspect
       }
-      return "[ " + list.join(', ') + "]\n"
+      return "[ " + list.join(', ') + "]"
     end
 
 
@@ -195,7 +195,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] ruleset entry in presentation logic file
+  ## .[abstract] ruleset entry in presentation logic file
   ##
   class Ruleset
   end
@@ -295,7 +295,8 @@ module Kwartz
             raise parse_error("'#{name}': invalid #{kind} name.", nil)
           end
           stmt_list << ExpandStatement.new(kind.intern, name)
-        elsif line =~ /^\s*print(?:\s+(\S+)|\((.+)\))\s*;?\s*(?:\#.*)?$/
+        #elsif line =~ /^\s*print(?:\s+(\S+)|\((.+)\))\s*;?\s*(?:\#.*)?$/
+        elsif line =~ /^\s*print(?:\s+(.*?)|\((.+)\))\s*;?\s*$/
           arg = $1 || $2
           stmt_list << PrintStatement.new([NativeExpression.new(arg)])
         else
@@ -380,11 +381,64 @@ module Kwartz
     end
 
     def set_before(str)
-      @before = NativeStatement.new(str.chomp, nil) if str
+      stmt_list = _parse_stmts(str)
+      @before = stmt_list
     end
 
     def set_after(str)
-      @after = NativeStatement.new(str.chomp, nil) if str
+      stmt_list = _parse_stmts(str)
+      @after = stmt_list
+    end
+
+    private
+
+    def _parse_stmts(str)
+      return unless str
+      stmt_list = []
+      str.each_line do |line|
+        #if line =~ /^\s*print(?:\s+(.*?)|\((.+)\))\s*;?\s*(?:\#.*)?$/
+        if line =~ /^\s*print(?:\s+(.*?)|\((.+)\))\s*;?\s*$/
+          arg = $1 || $2
+          stmt_list << PrintStatement.new([NativeExpression.new(arg)])
+        else
+          stmt_list << NativeStatement.new(line.chomp, nil)
+        end
+      end
+      return stmt_list
+    end
+
+    public
+
+    def _inspect(indent=0)
+      space = '  ' * indent
+      sb = []
+      sb << space <<   "name: #{@name.inspect}\n"
+      if @global
+        sb << space <<   "global:\n"
+        @global.each do |item|
+          sb << space << "  - #{item}\n"
+        end
+      end
+      if @local
+        sb << space <<   "local:\n"
+        @local.each do |item|
+          sb << space << "  - #{item}\n"
+        end
+      end
+      if @before
+        sb << space << "before:\n"
+        @before.each do |stmt|
+          sb << space << "  - #{stmt._inspect}\n"
+        end
+      end
+      if @after
+        sb << space << "after:\n"
+        @after.each do |stmt|
+          sb << space << "  - #{stmt._inspect}\n"
+        end
+      end
+      #
+      return sb.join
     end
 
 

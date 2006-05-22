@@ -16,7 +16,7 @@
     <div align="left"><h1>Kwartz 3.0 Users' Guide</h1></div>
     <div align="left">
       Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
-      last update: $Date: 2006-05-12 09:52:10 +0900 (Fri, 12 May 2006) $<br>
+      last update: $Date: 2006-05-13 12:58:18 +0900 (Sat, 13 May 2006) $<br>
     </div>
 
 <a name="preface"></a>
@@ -82,6 +82,8 @@ a template system which realized the concept of 'Independence of Presentation Lo
     <li><a href="#extract">Extract Element</a>
     </li>
     <li><a href="#print-statement">Print Statement</a>
+    </li>
+    <li><a href="#Add Code Before/After Document">Add Code Before/After Document</a>
     </li>
   </ul>
   </li>
@@ -593,7 +595,7 @@ logic: { ... } </b></dt>
 	Logic of the element.
 </dd>
 </dl>
-<p>'stag:' and 'elem:' are very useful especially for Ruby on Rails.
+<p>'stag:' and 'elem:' are useful especially for Ruby on Rails.
 The following is an examle to use Kwartz in Ruby on Rails.
 </p>
 <a name="form1.html"></a>
@@ -1389,6 +1391,43 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
 <p>It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead of
 print statement because they can escape or unescape exression value.
 </p>
+<br>
+
+
+<a name="Add Code Before/After Document"></a>
+<h3 class="section2">Add Code Before/After Document</h3>
+<p>There is a special keyword '#DOCUMENT' which means document.
+In '#DOCUMENT', 'before:' and 'after:' are available to add codes before/after document.
+</p>
+<a name="document-test.html"></a>
+<div class="program_caption">
+document-test.html</div>
+<pre class="program">&lt;html&gt;
+ &lt;body&gt;hello&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<a name="document-test.plogic"></a>
+<div class="program_caption">
+document-test.plogic</div>
+<pre class="program"><b>#DOCUMENT</b> {
+  <b>before:</b> {
+    title = _context[:title]
+    user  = _context[:user]
+  }
+  <b>after:</b> {
+    print "&lt;!--end--&gt;\n"
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -p document-test.plogic document-test.html
+&lt;%     title = _context[:title] %&gt;
+&lt;%     user  = _context[:user] %&gt;
+&lt;html&gt;
+ &lt;body&gt;hello&lt;/body&gt;
+&lt;/html&gt;
+&lt;%= "&lt;!--end--&gt;\n" %&gt;</pre>
 <br>
 
 

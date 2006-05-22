@@ -4,22 +4,8 @@
 ### $Copyright$
 ###
 
-unless defined?(TESTDIR)
-  TESTDIR = File.dirname(File.expand_path(__FILE__))
-  basedir = File.dirname(TESTDIR)
-  libdir  = basedir + "/lib"
-  $LOAD_PATH << libdir << TESTDIR
-end
 
-
-require 'test/unit'
-require 'yaml'
-require 'kwartz'
-require 'kwartz/main'
-require 'assert-text-equal'
-require 'testutil'
-
-
+require "#{File.dirname(__FILE__)}/test.rb"
 
 
 class CompileTest < Test::Unit::TestCase

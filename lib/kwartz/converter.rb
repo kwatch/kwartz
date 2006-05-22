@@ -11,7 +11,7 @@ require 'kwartz/error'
 require 'kwartz/node'
 require 'kwartz/config'
 
-require 'kwartz/abstract'
+require 'abstract'
 
 
 module Kwartz
@@ -20,8 +20,9 @@ module Kwartz
   class ConvertError < KwartzError
 
 
-    def initialize(message, linenum)
+    def initialize(message, filename, linenum)
       super(message)
+      @filename = filename
       @linenum = linenum
     end
 
@@ -30,8 +31,8 @@ module Kwartz
 
     def to_s
       s = super
-      s << " (line #{@linenum})"
-      return s
+      return "#{@filename}:#{@linenum}: #{s}"
+      #return "#{s}(line #{@linenum})"
     end
 
 
@@ -218,6 +219,8 @@ module Kwartz
   ##
   ## helper module for Converter and Handler
   ##
+  ## Handler and Converter class include this module.
+  ##
   module ConverterHelper       # :nodoc:
 
 
@@ -230,7 +233,7 @@ module Kwartz
 
     ## return ConvertError
     def convert_error(message, linenum)
-      return ConvertError.new(message, linenum)
+      return ConvertError.new(message, @filename, linenum)
     end
 
 
@@ -252,6 +255,13 @@ module Kwartz
     ## create array of String and NativeExpression for PrintStatement
     def build_print_args(taginfo, attr_info, append_exprs)
       return [] if taginfo.tagname.nil?
+      #if taginfo.tagname.nil?
+      #  if (!attr_info || attr_info.empty?) && (!append_exprs || append_exprs.empty?)
+      #    return []
+      #  else
+      #    taginfo.tagname = 'span'
+      #  end
+      #end
       unless attr_info || append_exprs
         return [taginfo.tag_text]
       end
@@ -306,23 +316,23 @@ module Kwartz
 
 
   ##
-  ## [abstract] expand ExpandStatement and ElementInfo
+  ## .[abstract] expand ExpandStatement and ElementInfo
+  ##
+  ## Handler class includes this module.
   ##
   module ElementExpander
     include Assertion
 
 
-    ## [abstract] get ElementRuleset
+    ## .[abstract] get ElementRuleset
     def get_element_ruleset(name)
       not_implemented
-      #raise NotImplementedError("#{self.class}#get_element_ruleset() is not implemented.")
     end
 
 
-    ## [abstract] get ElementInfo
+    ## .[abstract] get ElementInfo
     def get_element_info(name)
       not_implemented
-      #raise NotImplementedError("#{self.class}#get_element_info() is not implemented.")
     end
 
 
@@ -355,7 +365,7 @@ module Kwartz
         e = elem_info
 
         ## delete dummy '<span>' tag
-        if @delspan && e.stag_info.tagname == 'span' && e.attr_info.empty? && e.append_exprs.nil? then
+        if @delspan && e.stag_info.tagname == 'span' && e.attr_info.empty? && e.append_exprs.nil?
           e.stag_info.tagname = e.etag_info.tagname = nil
         end
 
@@ -427,7 +437,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] handle directives
+  ## .[abstract] handle directives
   ##
   class Handler
     include Assertion
@@ -443,9 +453,10 @@ module Kwartz
       include_properties(properties)     # @delspan and @dattr
       @odd  = properties[:odd]     || Config::PROPERTY_ODD      # "'odd'"
       @even = properties[:even]    || Config::PROPERTY_EVEN     # "'even'"
+      @filename = nil
     end
     attr_reader :odd, :even
-    attr_accessor :converter
+    attr_accessor :converter, :filename
 
 
     def get_element_ruleset(name)  # for ElementExpander module and Converter class
@@ -461,21 +472,21 @@ module Kwartz
     protected
 
 
-    ## [abstract] directive pattern, which is used to detect directives.
+    ## .[abstract] directive pattern, which is used to detect directives.
     def directive_pattern
       not_implemented
       #return /\A(\w+):\s*(.*)/
     end
 
 
-    ## [abstract] mapping pattern, which is used to parse 'attr' directive.
+    ## .[abstract] mapping pattern, which is used to parse 'attr' directive.
     def mapping_pattern
       not_implemented
       #return /\A'([-:\w]+)'\s+(.*)/
     end
 
 
-    ## [abstract] directive format, which is used at has_directive?() method
+    ## .[abstract] directive format, which is used at has_directive?() method
     def directive_format
       not_implemented
       #return '%s: %s'
@@ -500,7 +511,7 @@ module Kwartz
         assert unless !attr_info.empty? || !append_exprs.empty?
         stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
         stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info    # when empty-tag
+        stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info   # when empty-tag
 
       when :dummy
         # nothing
@@ -620,7 +631,7 @@ module Kwartz
 
 
   ##
-  ## [abstract] covnert presentation data into list of Statement.
+  ## .[abstract] covnert presentation data into list of Statement.
   ##
   class Converter
     include ConverterHelper
@@ -631,13 +642,12 @@ module Kwartz
       @handler.converter = self
     end
 
-    attr_reader :input, :handler, :dattr
+    attr_reader :handler   #, :dattr, :input
 
 
-    ## [abstract] convert string into list of Statement.
-    def convert(input)
+    ## .[abstract] convert string into list of Statement.
+    def convert(input, filename='')
       not_implemented
-      #raise NotImplementedError.new("#{self.class}#convert() is not implemented.")
     end
 
 
@@ -671,8 +681,10 @@ module Kwartz
     end
 
 
-    def _initialize(input)
+    def _initialize(input, filename)
       @scanner = StringScanner.new(input)
+      @filename = filename
+      @handler.filename = filename
       @rest = nil
       @linenum = 1
       @linenum_delta = 0
@@ -682,14 +694,14 @@ module Kwartz
     attr_reader :rest, :linenum
 
 
-    def convert(input)
-      _initialize(input)
+    def convert(input, filename='')
+      _initialize(input, filename)
       stmt_list = []
       doc_ruleset = @handler.get_element_ruleset('DOCUMENT')
-      stmt_list << doc_ruleset.before if doc_ruleset && doc_ruleset.before
+      stmt_list += doc_ruleset.before if doc_ruleset && doc_ruleset.before
       #stmt_list << NativeStatement.new(doc_ruleset.head.chomp, nil) if doc_ruleset && doc_ruleset.head
       _convert(stmt_list)
-      stmt_list << doc_ruleset.after if doc_ruleset && doc_ruleset.after
+      stmt_list += doc_ruleset.after if doc_ruleset && doc_ruleset.after
       #stmt_list << NativeStatement.new(doc_ruleset.tail.chomp, nil) if doc_ruleset && doc_ruleset.tail
       return stmt_list
     end

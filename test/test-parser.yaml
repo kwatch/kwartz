@@ -302,6 +302,43 @@
       File.unlink filename if test(?f, filename)
 
 ---
+- name:  parse_document
+  parser: CssStyleParser
+  input: |
+      #DOCUMENT {
+        local:  i, item, title, list;
+	global: _context;
+        before: {
+	  title = _context[:title]
+	  list = _context[:list]
+	}
+	after: {
+	  print "*** debug:\n"
+	  _context.each do |key, value|
+	     print "*** key=#{key}, value=#{value.inspect}"
+	  end
+	}
+      }
+  expected: |
+      - name: "DOCUMENT"
+        global:
+          - _context
+        local:
+          - i
+          - item
+          - title
+          - list
+        before:
+          - "    title = _context[:title]"
+          - "    list = _context[:list]"
+        after:
+          - [ <%="*** debug:\n"%>]
+          - "    _context.each do |key, value|"
+          - [ <%="*** key=#{key}, value=#{value.inspect}"%>]
+          - "    end"
+
+
+---
 - name:  parse_element_all1_css
   parser: CssStyleParser
   input: |

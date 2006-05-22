@@ -1,6 +1,19 @@
 .+document:	ChangeLog
 .?revision:	$Rev$
 
+: rev.112 (2006-05-14)
+	- [enhance] add document before/after part
+	- [change] abstract.rb is removed
+	- [enhance] converter and handler can take filename
+	- [enhance] add CommandOption class in main.rb
+	- [enhance] new command-line option '-f' (yaml file)
+	- [enhance] new command-line option '-t' (untabify)
+	- [enhance] new command-line option '-S' (intern hash keys)
+	- [change] add gemspec file
+	- [refact] remove common header from test/test-*.rb
+	- [enhance] add test/test-main.rb
+	- [enhance] add examples/*/expected
+
 : rev.111 (2006-05-13)
 	- [enhance] print statement support in logic: part
 	- [change] rename 'replace_element_by:' to 'replace_element_with:'

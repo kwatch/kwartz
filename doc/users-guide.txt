@@ -1169,6 +1169,39 @@ It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead
 print statement because they can escape or unescape exression value.
 
 
+
+.$$ Add Code Before/After Document
+
+There is a special keyword '#DOCUMENT' which means document.
+In '#DOCUMENT', 'before:' and 'after:' are available to add codes before/after document.
+
+.? document-test.html
+.-------------------- document-test.html
+<html>
+ <body>hello</body>
+</html>
+.--------------------
+
+.? document-test.plogic
+.-------------------- document-test.plogic
+{{*#DOCUMENT*}} {
+  {{*before:*}} {
+    title = _context[:title]
+    user  = _context[:user]
+  }
+  {{*after:*}} {
+    print "<!--end-->\n"
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p document-test.plogic document-test.html
+.<<<:! (cd guide.d; kwartz -p document-test.plogic document-test.html)
+.====================
+
+
 .#@EOF
 
 .$$ Analyzing Global and Local Variables | analyze

@@ -1,0 +1,20 @@
+<html>
+  <body>
+  
+    <table>
+      <tr bgcolor="#CCCCFF">
+        <td>Nomo</td>
+        <td>hideo@mail.com</td>
+      </tr>
+      <tr bgcolor="#FFCCCC">
+        <td>Ichiro</td>
+        <td>ichiro@mail.net</td>
+      </tr>
+      <tr bgcolor="#CCCCFF">
+        <td>Matsui</td>
+        <td>hideki@mail.org</td>
+      </tr>
+    </table>
+
+ </body>
+</html>

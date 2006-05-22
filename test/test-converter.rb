@@ -4,22 +4,7 @@
 ### $Copyright$
 ###
 
-unless defined?(TESTDIR)
-  TESTDIR = File.dirname(File.expand_path(__FILE__))
-  basedir = File.dirname(TESTDIR)
-  libdir  = basedir + "/lib"
-  $LOAD_PATH << libdir << TESTDIR
-end
-
-
-require 'test/unit'
-require 'yaml'
-require 'kwartz'
-require 'kwartz/main'
-require 'assert-text-equal'
-require 'testutil'
-
-
+require "#{File.dirname(__FILE__)}/test.rb"
 
 
 class CompileTest < Test::Unit::TestCase
@@ -37,11 +22,12 @@ class CompileTest < Test::Unit::TestCase
     handler = Kwartz::ErubyHandler.new(ruleset_list, :delspan=>true)
     converter = Kwartz::TextConverter.new(handler, :delspan=>true)
     stmt_list = converter.convert(@pdata)
-    sb = []
+    sb = ''
     stmt_list.each do |stmt|
-      sb << stmt._inspect
+      sb << (s = stmt._inspect)
+      sb << "\n" unless s[-1] == ?\n
     end
-    assert_text_equal(@expected, sb.join)
+    assert_text_equal(@expected, sb)
   end
 
 

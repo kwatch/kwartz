@@ -40,7 +40,7 @@ def load_yaml_documents(filename, options={}, &block)
     ident         or  raise "*** #{identkey} is not found."
     table[ident]  and raise "*** #{identkey} '#{ident}' is duplicated."
     table[ident] = ydoc
-    yield(ydoc)
+    yield(ydoc) if block
   end
 
   return list
