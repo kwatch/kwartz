@@ -8,7 +8,7 @@
 require "#{File.dirname(__FILE__)}/test.rb"
 
 
-class CompileTest < Test::Unit::TestCase
+class RulesetTest < Test::Unit::TestCase
 
 
   ## define test methods
@@ -18,9 +18,13 @@ class CompileTest < Test::Unit::TestCase
     desc = ydoc['desc']
     lang_list = defined?($lang) && $lang ? [ $lang ] : %w[eruby php jstl eperl]
     lang_list.each do |lang|
-      pdata    = ydoc['pdata*'][lang]
+      pdata    = ydoc['pdata'] || ydoc['pdata*'][lang]
       plogic   = ydoc['plogic*'][lang]
       expected = ydoc['expected*'][lang]
+      rexp = /(\{\{\*|\*\}\})/
+      pdata.gsub!(rexp, '') if pdata
+      plogic.gsub!(rexp, '') if plogic
+      expected.gsub!(rexp, '') if expected
       #next unless pdata
       eval <<-END
         def test_#{lang}_#{name}

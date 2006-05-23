@@ -1,0 +1,269 @@
+.=title:	Kwartz-ruby 3.0 Reference Guide
+.?lastupdate:	$Date$
+.?version:	$Release$
+.?stylesheet:	docstyle.css
+
+
+.$ Pesentation Logic 
+
+Presentation logic in Kwartz is similar to Cascading Style Sheet (CSS).
+.* Presentation logic file is a set of ruleset.
+.* Ruleset is a pair of selector and a set of declaration.
+.* Declaration is a pair of property and value.
+
+.? Pseudo-EBNF syntax of presentation logic
+.____________________
+plogic       ::=  ruleset*
+ruleset      ::=  selector '{' [ declaration ';' ]* '}'
+selector     ::=  '#' name
+declaration  ::=  property ':' value
+property     ::=  'elem'   | 'stag'   | 'cont'   | 'etag'  | 'value'
+                | 'attrs'  | 'append' | 'remove' | 'logic'
+		| 'begin'  | 'end'
+.#declaration  ::=  'elem:' expression
+.#               |  'stag:' expression
+.#	       |  'cont:' expression
+.#	       |  'etag:' expression
+.#	       |  'value:' expression
+.#	       |  'attrs:' attributes
+.#	       |  'append:' expressions
+.#	       |  'remove:' qnames
+.#	       |  'logic:' '{' statements '}'
+.#attributes   ::=  attribute { ',' attribute }
+.#attribute    ::=  qname expression
+.#qnames       ::=  qname { ',' qname }
+.#qname        ::=  '"' name '"'
+.#               |  "'" name "'"
+.#expressions  ::=  { expression }
+.#statements   ::=  { statement }
+.____________________
+
+
+
+.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
+
+Special selector {{,#DOCUMENT,}} represents entire of document.
+Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
+The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+
+
+
+.$ Directives
+
+Directives are commands to embed presentation logics into presentation data.
+For example, {{,title="for item in @list",}} directive represents iteration of the element.
+
+Directives are provided for '{{*choosability*}}'.
+This is very important concept for Kwartz (and other products by kuwata-lab).
+In Kwartz, you can separate presentation logics from presentation data, or 'mix' them.
+It is the user or customer of Kwartz and not developer who determine which solution to adopt.
+All Kwartz can do is to provide the both solution to users.
+
+Notice that the notation of directives are different for each target language.
+For example, iteration directive is {{,title="for item in list",}} in Ruby,
+{{,title="foreach($list as $item)",}} in PHP.
+See the {{,directive notation table,}} for PHP, Java, and Perl user.
+
+
+
+.$$ {{,mark:,}} directive
+
+.? presentation data (ex-mark.pdata)
+.-------------------- ex-mark.pdata
+<p {{*id="item1"*}}>foo</p>
+<p {{*id="mark:item2"*}}>bar</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-mark.pdata
+.<<<:! (cd d; kwartz ex-mark.pdata)
+.====================
+
+
+.$$ {{,elem:,}}, {{,stag:,}}, {{,cont:,}}, {{,etag:,}}, {{,value:,}} directive
+
+{{,elem:,}}, {{,stag:,}}, {{,cont:,}}, and {{,etag:,}} directive replaces
+the element, start-tag, content, and end-tag by expression value.
+{{,value:,}} directive is equivarent to {{,cont:,}}.
+
+.? presentation data (ex-elem.pdata)
+.-------------------- ex-elem.pdata
+<p {{*title="elem: expr1"*}}>AAA</p>
+
+<p {{*title="stag: expr2"*}}>BBB</p>
+
+<p {{*title="cont: expr3"*}}>CCC</p>
+
+<p {{*title="etag: expr4"*}}>DDD</p>
+
+<p {{*title="value: expr5"*}}>EEE</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-value.pdata
+.<<<:! (cd d; kwartz ex-elem.pdata)
+.====================
+
+Expression is described in target program language (Ruby, PHP, Java, Perl, and so on).
+For example, if you are PHP user then you should describe such as {{,title="value",}}
+
+
+.$$ {{,value:,}} directive
+
+.? presentation data (ex-value.pdata)
+.-------------------- ex-value.pdata
+<tr>
+ <td title="value: user[:name]">user name</td>
+ <td title="value: user[:mail]">user email</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-value.pdata
+.<<<:! (cd d; kwartz ex-value.pdata)
+.====================
+
+
+.$$ Directive Notations
+
+mark	 ., id="mark:name"		., id="mark:name",	id="mark:name"
+dummy    ., id="dummy:str"
+
+.+--------------------------------------------------------------------------------
+directive ., Ruby	., PHP	    ., JSTL     .,  Perl
+.--------------------------------------------------------------------------------
+elem	 ., title="elem expr"	.\
+         ., title="elem(expr)"  .\
+	 ., title="elem(expr)"  .\
+         ., title="elem(expr)"  .\
+
+stag	 ., title="stag expr"   .\
+	 ., title="stag(expr)"	.\
+	 ., title="stag(expr)"	.\
+	 ., title="stag(expr)"	.\
+
+cont	 ., title="cont expr"   .\
+	 ., title="cont(expr)"  .\
+	 ., title="cont(expr)"  .\
+	 ., title="cont(expr)"  .\
+
+etag	 ., title="etag expr"   .\
+	 ., title="etag(expr)"  .\
+	 ., title="etag(expr)"  .\
+	 ., title="etag(expr)"  .\
+
+value	 ., title="value expr"  .\
+	 ., title="value(expr)" .\
+	 ., title="value(expr)" .\
+	 ., title="value(expr)" .\
+
+attr	 ., title="attr 'name' value"  .\
+	 ., title="attr('name', value)" .\
+	 ., title="attr(expr)" .\
+	 ., title="attr(expr)" .\
+
+foreach  ., title="for item in list"          .\
+	 ., title="foreach($list as $item)"   .\
+	 ., title="for(item: list)"           .\
+	 ., title="foreach($item in @list)"   .\
+
+list     ., title="list item in list"         .\
+	 ., title="list($list as $item)"      .\
+	 ., title="list(item: list)"          .\
+	 ., title="list($item in @list)"      .\
+
+while    ., title="while i > 0"                .\
+	 ., title="while($i > 0)"              .\
+	 ., title="while(i > 0)"               .\
+	 ., title="while($i > 0)"              .\
+
+loop     ., title="loop i > 0"                .\
+	 ., title="loop($i > 0)"              .\
+	 ., title="loop(i > 0)"               .\
+	 ., title="loop($i > 0)"              .\
+
+if       ., title="if i==0"                    .\
+         ., title="if($i==0)"                  .\
+         ., title="if(i==0)"                   .\
+         ., title="if($i==0)"                  .\
+
+else if  ., title="elsif i<0"                  .\
+         ., title="elseif($i<0)"               .\
+         ., title="elseif(i<0)"                .\
+         ., title="elsif($i<0)"                .\
+
+else     ., title="else"                      .\
+         ., title="else"                      .\
+	 ., title="else"                      .\
+	 ., title="else"                      .\
+
+set      ., title="set var=1"                .\
+         ., title="set($var=1)"              .\
+         ., title="set(var=1)"               .\
+         ., title="set($var=1)"              .\
+
+.+--------------------------------------------------------------------------------
+
+
+<%
+
+  yamlfile = '../test/test-directives.yaml'
+  
+  def untabify(str, width=8)
+    sb = ''
+    str.scan(/(.*?)\t/m) do |s, |
+      len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+      sb << s << (" " * (width - len % width))
+    end
+    return $' ? (sb << $') : str
+  end
+
+  require 'yaml'
+  str = File.read(yamlfile)
+  str = untabify(str)
+  context = YAML.load(str)
+
+  context.each do |data|
+    name     = data['name']
+    subject  = data['subject']
+    desc     = data['desc']
+    pdata    = data['pdata*']
+    expected = data['expected*']
+%>
+
+
+.$$ <%= subject %>  | directive-<%= name %>
+
+<%= desc %>
+
+<%
+    if data['common']
+      list = [ ['Ruby, PHP, JSP, Perl'], 'eruby' ]
+    else
+      list = [ ['Ruby', 'eruby'], ['PHP', 'php'], ['JSP', 'jstl'], ['Perl', 'eperl'] ]
+    end
+    list.each do |title, lang|
+      next unless pdata[lang]
+ %>
+.$$$ <%= title %>
+
+.? presentation data (ex-<%= name %>.pdata)
+.--------------------
+<%= pdata[lang] %>.--------------------
+
+.? compile
+.====================
+$ kwartz -l <%= lang %> ex-<%= name %>.pdata
+<%= expected[lang] %>.====================
+
+<%
+    end
+%>
+
+
+<%
+  end
+%>

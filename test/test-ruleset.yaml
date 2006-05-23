@@ -1,0 +1,330 @@
+---
+- name:   elem
+  desc: |
+        {{,elem:,}}, {{,Elem:,}}, and {{,ELEM:,}} properties replaces the element
+        with expression value.
+
+        {{,Elem:,}} always escape expression value while {{,ELEM:,}} never escape it.
+        {{,elem:,}} escapes when command-line option '-e' is specified or
+        configuration option 'PROPERTY_ESCAPE' is ture.
+
+  pdata: |
+        <p id="mark:name1">aaa</p>
+        <p id="mark:name2">bbb</p>
+        <p id="mark:name3">ccc</p>
+      
+  plogic*:
+    eruby: |
+        #name1 {
+          elem: user[:name];
+        }
+        #name2 {
+          Elem: user[:name];
+        }
+        #name3 {
+          ELEM: user[:name];
+        }
+    php: |
+        #name1 {
+          elem: $user['name'];
+        }
+        #name2 {
+          Elem: $user['name'];
+        }
+        #name3 {
+          ELEM: $user['name'];
+        }
+    eperl: |
+        #name1 {
+          elem: $user{'name'};
+        }
+        #name2 {
+          Elem: $user{'name'};
+        }
+        #name3 {
+          ELEM: $user{'name'};
+        }
+    jstl: |
+        #name1 {
+          elem: user.name;
+        }
+        #name2 {
+          Elem: user.name;
+        }
+        #name3 {
+          ELEM: user.name;
+        }
+
+  expected*:
+    eruby: |
+        <%= user[:name] %>
+        <%=h user[:name] %>
+        <%= user[:name] %>
+    php: |
+        <?php echo $user['name']; ?>
+        <?php echo htmlspecialchars($user['name']); ?>
+        <?php echo $user['name']; ?>
+    eperl: |
+        <?= $user{'name'} !>
+        <?= sanitize($user{'name'}) !>
+        <?= $user{'name'} !>
+    jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        ${user.name}
+        ${user.name}
+        <c:out value="${user.name}" escapeXml="false"/>
+
+##
+- name:    attrs
+  title:   attrs, Attrs, ATTRS
+  desc: |
+        {{,attrs:,}}, {{,Attrs:,}}, {{,ATTRS:,}}, property replaces or adds attributes.
+
+        {{,Attrs:,}} always escape expression value while {{,ATTRS:,}} never escape it.
+        {{,attrs:,}} escapes when command-line option '-e' is specified or
+        configuration option 'PROPERTY_ESCAPE' is ture.
+
+  pdata: |
+        <p id="mark:item" class="para">
+          AAA
+        </p>
+
+  plogic*:
+    eruby: |
+        #item {
+          {{*attrs:*}} 'class' klass,
+                 'style' style;
+        }
+    php: |
+        #item {
+          {{*attrs:*}} 'class' $class,
+                 'style' $style;
+        }
+    jstl: |
+        #item {
+          {{*attrs:*}} 'class' klass,
+                 'style' style;
+        }
+    eperl: |
+        #item {
+          {{*attrs:*}} 'class' $class,
+                 'style' $style;
+        }
+
+  expected*:
+    eruby: |
+        <p class="<%= klass %>" style="<%= style %>">
+          AAA
+        </p>
+    php: |
+        <p class="<?php echo $class; ?>" style="<?php echo $style; ?>">
+          AAA
+        </p>
+    jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        <p class="${klass}" style="${style}">
+          AAA
+        </p>
+    eperl: |
+        <p class="<?= $class !>" style="<?= $style !>">
+          AAA
+        </p>
+
+  postscript: |
+        Notice that the follwing will be parse error
+        because Kwartz parses {{,attrs:,}} property with pattern matching.
+        
+        .--------------------
+        #foo {
+          attrs: 'class' klass, 'style' style;
+        }
+        .--------------------
+
+##
+- name:    append
+  title:   append, Append, APPEND
+  desc: |
+        {{,append:,}}, {{,Append:,}}, {{,APPEND:,}} directive appends
+        expressions to the start tag.
+
+        {{,Append:,}} always escape expression value while {{,APPEND:,}} never escape it.
+        {{,append:,}} escapes when command-line option '-e' is specified or
+        configuration option 'PROPERTY_ESCAPE' is ture.
+
+  pdata: |
+        <input type="checkboxk" id="mark:remember" value="y">Remeber me
+
+  plogic*:
+    eruby: |
+        #remember {
+          {{*append:*}} flag ? ' checked' : '';
+        }
+    php: |
+        #remember {
+          {{*append:*}} $flag ? ' checked' : '';
+        }
+    jstl: |
+        #remember {
+          {{*append:*}} flag ? ' checked' : '';
+        }
+    eperl: |
+        #remember {
+          {{*append:*}} $flag ? ' checked' : '';
+        }
+
+  expected*:
+    eruby: |
+        <input type="checkboxk" value="y"<%= flag ? ' checked' : '' %>>Remeber me
+    php: |
+        <input type="checkboxk" value="y"<?php echo $flag ? ' checked' : ''; ?>>Remeber me
+    jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        <input type="checkboxk" value="y"${flag ? ' checked' : ''}>Remeber me
+    eperl: |
+        <input type="checkboxk" value="y"<?= $flag ? ' checked' : '' !>>Remeber me
+ 
+
+  postscript: |
+        The following is an example to append several expressions.
+        
+        .--------------------
+        #remember {
+          append:  expr1,
+                   expr2,
+                   expr3;
+        }
+        .--------------------
+        
+        Notice that the following will be syntax error.
+        
+        .--------------------
+        #remember {
+          append:  expr1, expr2, expr3;
+        }
+        .--------------------
+
+##
+#- name:    remove
+#  title:   remove
+#  common:  yes
+#  desc: |
+#        {{,remove:,}} property removes attributes.
+#
+#  pdata: |
+#        <p id="foo" class="paragraph" style="color: red">
+#         AAA
+#        </p>
+#
+#  plogic*:
+#    eruby: &remove_pdata |
+#        #foo {
+#          {{*remove:*}} 'id', 'style';
+#        }
+#    php: *remove_pdata
+#    jstl: *remove_pdata
+#    eperl: *remove_pdata
+#
+#  expected*:
+#    eruby: &remove_expected |
+#        <p class="paragraph">
+#         AAA
+#        </p>
+#    php:   &remove_expected
+#    jstl:  &remove_expected
+#    eperl: &remove_expected
+#
+#
+#- name:    logic
+#  title:   logic
+#  desc: |
+#        {{,logic:,}} property represents the presentation logic body of the element.
+#        In the {{,logic:,}} property, the folllowings are available.
+#        .[ {{,_elem,}} ]        represents the element
+#        .[ {{,_stag,}} ]        represents start-tag of the element
+#        .[ {{,_cont,}} ]        represents content of the element
+#        .[ {{,_stag,}} ]        represents end-tag of the element
+#        .[ {{,_element({{/name/}}),}} ]    represents the other element marked as {{/name/}}.
+#        .[ {{,_content({{/name/}}),}} ]    represents the content of other element marked as {{/name/}}.
+#
+#        In the {{,logic:,}} property, it is able to write statements in target language
+#        (Ruby, PHP, Java, Perl, and so on).
+#
+#  pdata: |
+#        <ul>
+#          <li id="mark:items">AAA</li>
+#        </ul>
+#
+#  plogic*:
+#    eruby: |
+#        #items {
+#          value: item;
+#          {{*logic:*}} {
+#            @list.each do |item|
+#              {{*_stag*}}
+#              {{*_cont*}}
+#              {{*_etag*}}
+#            end
+#          }
+#        }
+#    php: |
+#        #items {
+#          value: $item;
+#          {{*logic:*}} {
+#            foreach ($list as $item) {
+#              {{*_stag();*}}
+#              {{*_cont();*}}
+#              {{*_etag();*}}
+#            }
+#          }
+#        }
+#    jstl: |
+#        #items {
+#          value: item;
+#          {{*logic:*}} {
+#            <c:forEach var="item" items="#{list}">
+#              {{*_stag();*}}
+#              {{*_cont();*}}
+#              {{*_etag();*}}
+#            </c:forEach>
+#          }
+#        }
+#    eperl: |
+#        #items {
+#          value: $item;
+#          {{*logic:*}} {
+#            foreach ($item in @list) {
+#              {{*_stag();*}}
+#              {{*_cont();*}}
+#              {{*_etag();*}}
+#            }
+#          }
+#        }
+#
+#  expected*:
+#    eruby: |
+#        <ul>
+#        <%     @list.each do |item| %>
+#          <li><%= item %></li>
+#        <%     end %>
+#        </ul>
+#    php: |
+#        <ul>
+#        <?php     foreach ($list as $item) { ?>
+#          <li><?php echo $item; ?></li>
+#        <?php     } ?>
+#        </ul>
+#    jstl: |
+#        <ul>
+#        <c:forEach var="item" items="${list}">
+#          <li>${item}</li>
+#        </c:forEach>
+#        </ul>
+#    eperl: |
+#        <ul>
+#        <?     foreach ($item in @list) { %>
+#          <li><?= item %></li>
+#        <?     } %>
+#        </ul>

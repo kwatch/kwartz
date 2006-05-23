@@ -9,7 +9,6 @@ require "#{File.dirname(__FILE__)}/test.rb"
 
 class DirectivesTest < Test::Unit::TestCase
 
-
   ## define test methods
   filename = __FILE__.sub(/\.rb$/, '.yaml')
   #filename = 'test-directives.yaml'
@@ -18,12 +17,14 @@ class DirectivesTest < Test::Unit::TestCase
     langs = defined?($lang) && $lang ? [$lang] : ydoc['pdata*'].keys
     langs.each do |lang|
       #$stderr.puts "*** debug: lang=#{lang.inspect}, name=#{name.inspect}" if $DEBUG
+      pdata = ydoc['pdata*'][lang].gsub(/(\{\{\*|\*\}\})/, '')
+      expected = ydoc['expected*'][lang].gsub(/(\{\{\*|\*\}\})/, '')
       eval <<-END
         def test_#{name}_#{lang}
           @name = #{name.inspect}
           @lang = #{lang.inspect}
-          @pdata = #{ydoc['pdata*'][lang].inspect}
-          @expected = #{ydoc['expected*'][lang].inspect}
+          @pdata = #{pdata.inspect}
+          @expected = #{expected.inspect}
           _test()
         end
       END

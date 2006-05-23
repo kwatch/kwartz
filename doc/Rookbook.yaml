@@ -2,12 +2,15 @@
 variables:
 
   - u      :   users-guide
+  - r      :   reference
+  - tagfile :  html-css
+  
 
 
 recipes:
 
   - product:	:default
-    ingreds:	[ users-guide.html, p-pattern.html ]
+    ingreds:	[ users-guide.html, p-pattern.html, $(r).html ]
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
@@ -18,3 +21,14 @@ recipes:
 	sys "retrieve -d #{dir} $(1).txt"
 	sys "kwaser -t html-css -T2 $(1).txt > $(1).toc.html"
 	sys "kwaser -t html-css     $(1).txt > $(1).html"
+
+  - product:    $(r).html
+    ingreds:	[ $(r).txt ]
+    byprods:	[ $(r).toc.html ]
+    method: |
+	dir = 'd'
+	rm_rf dir
+	mkdir dir
+	sys "retrieve -d #{dir} #{@ingred}"
+	sys "kwaser -t $(tagfile) -T2 #{@ingred} > #{@byprod}"
+	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"

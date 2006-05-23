@@ -576,24 +576,41 @@ module Kwartz
         flag_escape = d_name == :append ? nil : (d_name == :Append)
         append_exprs << NativeExpression.new(d_arg, flag_escape)
 
+      when :replace_element_with_element, :replace_element_with_content,
+           :replace_content_with_element, :replace_content_with_content
+        arr = d_name.to_s.split(/_/)
+        replace_cont = arr[1] == 'content'
+        with_content = arr[3] == 'content'
+        name = d_arg
+        #
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if replace_cont
+        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if replace_cont
+        #stmt_list << ExpandStatement.new(:element, name)
+        elem_info = @elem_info_table[name]
+        unless elem_info
+          raise convert_error("'#{d_str}': element '#{name}' not found.", stag_info.linenum)
+        end
+        expand_element_info(elem_info, stmt_list, with_content)
+        stmt_list << build_print_stmt(etag_info, nil, nil)                if replace_cont
+
       when :replace_element_with, :replace_content_with, :replace, :placeholder
         unless d_arg =~ /\A_?(element|content)\(["']?(\w+)["']?\)\z/
           raise convert_error("'#{d_str}': invalid #{d_name} format.", stag_info.linenum)
         end
         kind = $1
         name = $2
-        content_only = kind == 'content'
-        is_replace = d_name == :replace_element_with || d_name == :replace
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if !is_replace
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if !is_replace
+        replace_cont = d_name == :replace_content_with || d_name == :placeholder
+        with_content = kind == 'content'
+        #
+        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if replace_cont
+        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
           raise convert_error("'#{d_str}': element '#{name}' not found.", stag_info.linenum)
         end
-        expand_element_info(elem_info, stmt_list, content_only)
-        stmt_list << build_print_stmt(etag_info, nil, nil)                if !is_replace
-
+        expand_element_info(elem_info, stmt_list, with_content)
+        stmt_list << build_print_stmt(etag_info, nil, nil)                if replace_cont
       else
         return false
       end #case
@@ -681,7 +698,7 @@ module Kwartz
     end
 
 
-    def _initialize(input, filename)
+    def reset(input, filename)
       @scanner = StringScanner.new(input)
       @filename = filename
       @handler.filename = filename
@@ -689,13 +706,13 @@ module Kwartz
       @linenum = 1
       @linenum_delta = 0
     end
-    private :_initialize
+    private :reset
 
     attr_reader :rest, :linenum
 
 
     def convert(input, filename='')
-      _initialize(input, filename)
+      reset(input, filename)
       stmt_list = []
       doc_ruleset = @handler.get_element_ruleset('DOCUMENT')
       stmt_list += doc_ruleset.before if doc_ruleset && doc_ruleset.before
@@ -873,7 +890,8 @@ module Kwartz
         #  attr_info.delete('id')
         #  attr_info.directive = val
         #  return true
-        when /\A(mark|dummy):(\w+)\z/
+        when /\A(mark|dummy):(\w+)\z/,
+             /\A(replace_(?:element|content)_with_(?:element|content)):(\w+)\z/
           attr_info.directive = @handler.directive_format() % [$1, $2]
           attr_info.delete('id')
           return true

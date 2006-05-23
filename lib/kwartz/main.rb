@@ -377,7 +377,7 @@ module Kwartz
 
     def help
       sb = []
-      sb << "kwalify - a template system which realized 'Independence of Presentation Logic'\n"
+      sb << "kwartz - a template system which realized 'Independence of Presentation Logic'\n"
       sb << "Usage: #{@command} [..options..] [-p plogic] file.html [file2.html ...]\n"
       sb << "  -h             : help\n"
       sb << "  -v             : version\n"
@@ -442,7 +442,7 @@ module Kwartz
         end
       when Array
         done[obj.__id__] = obj
-        obj.each do
+        obj.each do |val|
           intern_hash_keys(val, done) if val.is_a?(Hash) || val.is_a?(Array)
         end
       end

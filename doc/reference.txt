@@ -1,0 +1,391 @@
+.=title:	Kwartz-ruby 3.0 Reference Guide
+.?lastupdate:	$Date$
+.?version:	$Release$
+.?stylesheet:	docstyle.css
+
+
+.$ Pesentation Logic 
+
+Presentation logic in Kwartz is similar to Cascading Style Sheet (CSS).
+.* Presentation logic file is a set of ruleset.
+.* Ruleset is a pair of selector and a set of declaration.
+.* Declaration is a pair of property and value.
+
+.? Pseudo-EBNF syntax of presentation logic
+.____________________
+plogic       ::=  ruleset*
+ruleset      ::=  selector '{' [ declaration ';' ]* '}'
+selector     ::=  '#' name
+declaration  ::=  property ':' value
+property     ::=  'elem'   | 'stag'   | 'cont'   | 'etag'  | 'value'
+                | 'attrs'  | 'append' | 'remove' | 'logic'
+		| 'begin'  | 'end'
+.#declaration  ::=  'elem:' expression
+.#               |  'stag:' expression
+.#	       |  'cont:' expression
+.#	       |  'etag:' expression
+.#	       |  'value:' expression
+.#	       |  'attrs:' attributes
+.#	       |  'append:' expressions
+.#	       |  'remove:' qnames
+.#	       |  'logic:' '{' statements '}'
+.#attributes   ::=  attribute { ',' attribute }
+.#attribute    ::=  qname expression
+.#qnames       ::=  qname { ',' qname }
+.#qname        ::=  '"' name '"'
+.#               |  "'" name "'"
+.#expressions  ::=  { expression }
+.#statements   ::=  { statement }
+.____________________
+
+
+.$$ {{,elem:,}}, {{,stag:,}}, {{,cont:,}}, {{,etag:,}}, {{,value:,}} properties
+
+{{,elem:,}}, {{,stag:,}}, {{,cont:,}}, and {{,etag:,}} properties replaces
+the element, start-tag, content, and end-tag with expression value respectively.
+{{,value:,}} property is the same as {{,cont:,}} property.
+
+.? presentatio data (ex1.pdata)
+.-------------------- ex1.pdata
+<p id="mark:elem1">AAA</p>
+
+<p id="mark:stag1">BBB</p>
+
+<p id="mark:cont1">CCC</p>
+
+<p id="mark:etag1">DDD</p>
+.--------------------
+
+.? presentation logic (ex1.plogic)
+.-------------------- ex1.plogic
+#elem1 {
+  {{*elem:*}} expr1;
+}
+#stag1 {
+  {{*stag:*}} expr2;
+}
+#cont1 {
+  {{*cont:*}} expr3;
+}
+#etag1 {
+  {{*etag:*}} expr4;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p ex1.plogic ex1.pdata
+.<<<:! (cd d; kwartz -p ex1.plogic ex1.pdata)
+.====================
+
+
+
+.$$ {{,attrs:,}} property
+
+{{,attrs:,}} property replaces or adds attributes.
+
+.? presentation data (ex2.pdata)
+.-------------------- ex2.pdata
+<p id="mark:foo" class="para">
+  AAA
+</p>
+.--------------------
+
+.? presentaion logic (ex2.plogic)
+.-------------------- ex2.plogic
+#foo {
+  {{*attrs:*}} 'class' klass,
+         'style' style;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p ex2.plogic ex2.pdata
+.<<<:! (cd d; kwartz -p ex2.plogic ex2.pdata)
+.====================
+
+Notice that the follwing will be parse error
+because Kwartz parses {{,attrs:,}} property with pattern matching.
+
+.--------------------
+#foo {
+  attrs: 'class' klass, 'style' style;
+}
+.--------------------
+
+
+
+.$$ {{,append:,}} property
+
+{{,append:,}} directive appends expressions to the start tag.
+
+.? presentaion data (ex3.pdata)
+.-------------------- ex3.pdata
+<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.--------------------
+
+.? presentaion logic (ex3.plogic)
+.-------------------- ex3.plogic
+#remember {
+  {{*append:*}} remember ? ' checked' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p ex3.plogic ex3.pdata
+.<<<:! (cd d; kwartz -p ex3.plogic ex3.pdata)
+.====================
+
+The following is an example to append several expressions.
+
+.--------------------
+#remember {
+  append:  expr1,
+           expr2,
+	   expr3;
+}
+.--------------------
+
+Notice that the following will be syntax error.
+
+.--------------------
+#remember {
+  append:  expr1, expr2, expr3;
+}
+.--------------------
+
+
+.$$ {{,remove:,}} property
+
+{{,remove:,}} property removes attributes.
+
+.? presentaion data (ex4.pdata)
+.-------------------- ex4.pdata
+<p id="foo" class="paragraph" style="color: red">
+ AAA
+</p>
+.--------------------
+
+.? presentaion logic (ex4.plogic)
+.-------------------- ex4.plogic
+#foo {
+  {{*remove:*}} 'id', 'style';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p ex4.plogic ex4.pdata
+.<<<:! (cd d; kwartz -p ex4.plogic ex4.pdata)
+.====================
+
+
+.$$ {{,logic:,}} property
+
+{{,logic:,}} property represents the presentation logic body of the element.
+In the {{,logic:,}} property, the folllowings are available.
+.[ {{,_elem,}} ]	represents the element
+.[ {{,_stag,}} ]	represents start-tag of the element
+.[ {{,_cont,}} ]	represents content of the element
+.[ {{,_stag,}} ]	represents end-tag of the element
+.[ {{,_element({{/name/}}),}} ]	   represents the other element marked as {{/name/}}.
+.[ {{,_content({{/name/}}),}} ]	   represents the content of other element marked as {{/name/}}.
+
+In the {{,logic:,}} property, it is able to write statements in target language (Ruby, PHP, Java, Perl, and so on).
+
+.? presentaion data (ex5.pdata)
+.-------------------- ex5.pdata
+<ul>
+  <li id="mark:foo">AAA</li>
+</ul>
+.--------------------
+
+.? presentaion logic (ex5.plogic)
+.-------------------- ex5.plogic
+#foo {
+  value: item;
+  {{*logic:*}} {
+    @list.each do |item|
+      {{*_stag*}}
+      {{*_cont*}}
+      {{*_etag*}}
+    end
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -p ex5.plogic ex5.pdata
+.<<<:! (cd d; kwartz -p ex5.plogic ex5.pdata)
+.====================
+
+
+.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
+
+Special selector {{,#DOCUMENT,}} represents entire of document.
+Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
+The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+
+
+
+.$ Directives
+
+Directives are commands to embed presentation logics into presentation data.
+For example, {{,title="for item in @list",}} directive represents iteration of the element.
+
+Directives are provided for '{{*choosability*}}'.
+This is very important concept for Kwartz (and other products by kuwata-lab).
+In Kwartz, you can separate presentation logics from presentation data, or 'mix' them.
+It is the user or customer of Kwartz and not developer who determine which solution to adopt.
+All Kwartz can do is to provide the both solution to users.
+
+Notice that the notation of directives are different for each target language.
+For example, iteration directive is {{,title="for item in list",}} in Ruby,
+{{,title="foreach($list as $item)",}} in PHP.
+See the {{,directive notation table,}} for PHP, Java, and Perl user.
+
+
+
+.$$ {{,mark:,}} directive
+
+.? presentation data (ex-mark.pdata)
+.-------------------- ex-mark.pdata
+<p {{*id="item1"*}}>foo</p>
+<p {{*id="mark:item2"*}}>bar</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-mark.pdata
+.<<<:! (cd d; kwartz ex-mark.pdata)
+.====================
+
+
+.$$ {{,elem:,}}, {{,stag:,}}, {{,cont:,}}, {{,etag:,}}, {{,value:,}} directive
+
+{{,elem:,}}, {{,stag:,}}, {{,cont:,}}, and {{,etag:,}} directive replaces
+the element, start-tag, content, and end-tag by expression value.
+{{,value:,}} directive is equivarent to {{,cont:,}}.
+
+.? presentation data (ex-elem.pdata)
+.-------------------- ex-elem.pdata
+<p {{*title="elem: expr1"*}}>AAA</p>
+
+<p {{*title="stag: expr2"*}}>BBB</p>
+
+<p {{*title="cont: expr3"*}}>CCC</p>
+
+<p {{*title="etag: expr4"*}}>DDD</p>
+
+<p {{*title="value: expr5"*}}>EEE</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-value.pdata
+.<<<:! (cd d; kwartz ex-elem.pdata)
+.====================
+
+Expression is described in target program language (Ruby, PHP, Java, Perl, and so on).
+For example, if you are PHP user then you should describe such as {{,title="value",}}
+
+
+.$$ {{,value:,}} directive
+
+.? presentation data (ex-value.pdata)
+.-------------------- ex-value.pdata
+<tr>
+ <td title="value: user[:name]">user name</td>
+ <td title="value: user[:mail]">user email</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz ex-value.pdata
+.<<<:! (cd d; kwartz ex-value.pdata)
+.====================
+
+
+.$$ Directive Notations
+
+mark	 ., id="mark:name"		., id="mark:name",	id="mark:name"
+dummy    ., id="dummy:str"
+
+.+--------------------------------------------------------------------------------
+directive ., Ruby	., PHP	    ., JSTL     .,  Perl
+.--------------------------------------------------------------------------------
+elem	 ., title="elem expr"	.\
+         ., title="elem(expr)"  .\
+	 ., title="elem(expr)"  .\
+         ., title="elem(expr)"  .\
+
+stag	 ., title="stag expr"   .\
+	 ., title="stag(expr)"	.\
+	 ., title="stag(expr)"	.\
+	 ., title="stag(expr)"	.\
+
+cont	 ., title="cont expr"   .\
+	 ., title="cont(expr)"  .\
+	 ., title="cont(expr)"  .\
+	 ., title="cont(expr)"  .\
+
+etag	 ., title="etag expr"   .\
+	 ., title="etag(expr)"  .\
+	 ., title="etag(expr)"  .\
+	 ., title="etag(expr)"  .\
+
+value	 ., title="value expr"  .\
+	 ., title="value(expr)" .\
+	 ., title="value(expr)" .\
+	 ., title="value(expr)" .\
+
+attr	 ., title="attr 'name' value"  .\
+	 ., title="attr('name', value)" .\
+	 ., title="attr(expr)" .\
+	 ., title="attr(expr)" .\
+
+foreach  ., title="for item in list"          .\
+	 ., title="foreach($list as $item)"   .\
+	 ., title="for(item: list)"           .\
+	 ., title="foreach($item in @list)"   .\
+
+list     ., title="list item in list"         .\
+	 ., title="list($list as $item)"      .\
+	 ., title="list(item: list)"          .\
+	 ., title="list($item in @list)"      .\
+
+while    ., title="while i > 0"                .\
+	 ., title="while($i > 0)"              .\
+	 ., title="while(i > 0)"               .\
+	 ., title="while($i > 0)"              .\
+
+loop     ., title="loop i > 0"                .\
+	 ., title="loop($i > 0)"              .\
+	 ., title="loop(i > 0)"               .\
+	 ., title="loop($i > 0)"              .\
+
+if       ., title="if i==0"                    .\
+         ., title="if($i==0)"                  .\
+         ., title="if(i==0)"                   .\
+         ., title="if($i==0)"                  .\
+
+else if  ., title="elsif i<0"                  .\
+         ., title="elseif($i<0)"               .\
+         ., title="elseif(i<0)"                .\
+         ., title="elsif($i<0)"                .\
+
+else     ., title="else"                      .\
+         ., title="else"                      .\
+	 ., title="else"                      .\
+	 ., title="else"                      .\
+
+set      ., title="set var=1"                .\
+         ., title="set($var=1)"              .\
+         ., title="set(var=1)"               .\
+         ., title="set($var=1)"              .\
+
+.+--------------------------------------------------------------------------------

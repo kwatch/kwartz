@@ -1,7 +1,14 @@
 .+document:	ChangeLog
+.?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.112 (2006-05-14)
+: rev.113 (2006-05-23)
+	- [enhance] add doc/reference.{txt,eruby}
+	- [enhance] add test/test-ruleset.{rb,yaml}
+	- [enhance] add directive id="replace_element/content_with_element/content:mark"
+	- [change] TextConverter#_initialize() is renamed to reset()
+
+: rev.112 (2006-05-22)
 	- [enhance] add document before/after part
 	- [change] abstract.rb is removed
 	- [enhance] converter and handler can take filename

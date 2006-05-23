@@ -1,3 +1,72 @@
+●Rule
+
+  * CSS2のspecificationによると、
+    - 「#foo」はselector
+    - 「color: red」はdeclaration
+    - 「#foo { color: red }」はruleset
+    というらしい。
+
+    .? CSS2構文定義より
+    --------------------
+    stylesheet  : [ CDO | CDC | S | statement ]*;
+    statement   : ruleset | at-rule;
+    at-rule     : ATKEYWORD S* any* [ block | ';' S* ];
+    block       : '{' S* [ any | block | ATKEYWORD S* | ';' ]* '}' S*;
+    ruleset     : selector? '{' S* declaration? [ ';' S* declaration? ]* '}' S*;
+    selector    : any+;
+    declaration : property ':' S* value;
+    property    : IDENT S*;
+    value       : [ any | block | ATKEYWORD S* ]+;
+    any         : [ IDENT | NUMBER | PERCENTAGE | DIMENSION | STRING
+                  | DELIM | URI | HASH | UNICODE-RANGE | INCLUDES
+                  | FUNCTION | DASHMATCH | '(' any* ')' | '[' any* ']' ] S*;
+    --------------------
+
+
+●ディレクティブ用タグ
+
+  * ディレクティブのタグ名
+    - id
+    - title
+    - kw:d
+  * titleをtitleとして使いたい場合が面倒
+
+
+●begin/end
+
+  * 現在は before/after
+    --------------------
+    #DOCUMENT {
+      before: {
+        ...
+      }
+      after: {
+        ...
+      }
+    }
+    --------------------
+  * これを begin/end に戻すか？
+    --------------------
+    #DOCUMENT {
+      begin: {
+        ...
+      }
+      end: {
+        ...
+      }
+    }
+    --------------------
+  * Ruby style parserではBEGIN/ENDのほうがよい？
+    --------------------
+    BEGIN {
+      ...
+    }
+    END {
+      ...
+    }
+    --------------------
+
+
 ●print文
 
   * 「logic: { ... }」の中にprint文が書けるようにしたい
