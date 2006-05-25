@@ -742,7 +742,7 @@ module Kwartz
     def fetch
       str = @scanner.scan(@@fetch_pattern)
       unless str
-        @rest = @scanner.scan(/.*/)
+        @rest = @scanner.scan(/.*/m)
         return nil
       end
       taginfo = TagInfo.new(@scanner)

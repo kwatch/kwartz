@@ -134,6 +134,8 @@
 	</table>
 
     jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 	<table>
 	    <c:forEach var="user" items="${list}" varStatus="loop">
 	      <c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>

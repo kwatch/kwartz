@@ -13,6 +13,8 @@ class RulesetTest < Test::Unit::TestCase
 
   ## define test methods
   filename = __FILE__.sub(/\.rb$/, '.yaml')
+  #testmethod = '_test_ruleset'
+  testmethod = '_test'
   load_yaml_documents(filename) do |ydoc|
     name = ydoc['name']
     desc = ydoc['desc']
@@ -26,7 +28,7 @@ class RulesetTest < Test::Unit::TestCase
       plogic.gsub!(rexp, '') if plogic
       expected.gsub!(rexp, '') if expected
       #next unless pdata
-      eval <<-END
+      module_eval <<-END
         def test_#{lang}_#{name}
           @name = #{name.inspect}
           @lang = #{lang.inspect}
@@ -34,7 +36,7 @@ class RulesetTest < Test::Unit::TestCase
           @pdata = #{pdata.inspect}
           @plogic = #{plogic.inspect}
           @expected = #{expected.inspect}
-          _test()
+          #{testmethod}()
         end
       END
     end

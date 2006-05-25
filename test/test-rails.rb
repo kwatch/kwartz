@@ -7,7 +7,7 @@
 require "#{File.dirname(__FILE__)}/test.rb"
 
 
-class HandlerTest < Test::Unit::TestCase
+class RailsTest < Test::Unit::TestCase
 
 
   ## define test methods

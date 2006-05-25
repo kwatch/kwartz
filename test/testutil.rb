@@ -4,6 +4,9 @@
 ### $Copyright$
 ###
 
+require 'yaml'
+
+
 def load_yaml_documents(filename, options={}, &block)
 
   str = File.read(filename)
@@ -51,6 +54,7 @@ end
 
 def load_yaml_testdata(filename, options={})
 
+  $stderr.puts "*** debug: load_yaml_testdata(): self=#{self.inspect}" if $DEBUG
   identkey   = options[:identkey]   || 'name'
   testmethod = options[:testmethod] || '_test'
   load_yaml_documents(filename, options) do |ydoc|
@@ -62,7 +66,7 @@ def load_yaml_testdata(filename, options={})
     s  <<  "  #{testmethod}\n"
     s  <<  "end\n"
     $stderr.puts "*** load_yaml_testdata(): eval_str=<<'END'\n#{s}END" if $DEBUG
-    eval s
+    module_eval s   # not eval!
   end
 
 end

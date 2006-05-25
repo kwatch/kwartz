@@ -72,40 +72,56 @@
 
   output: |
 
----
-- name:    span2
+###
+#- name:    span2
+#  pdata: |
+#        <p>
+#	  <span id="mark:section1">title</span>
+#	  <span id="mark:section2">title</span>
+#	  <span id="mark:section3">title</span>
+#        </p>
+#
+#  plogic: |
+#	#section1 {
+#	  value: title1;
+#	}
+#	#section2 {
+#	  value: title2;
+#	  attrs: "class" name;
+#	}
+#	#section3 {
+#	  value: title3;
+#	  append: ' checked="checked"';
+#	}
+#
+#  expected: |
+#	[ "<p>\n"]
+#	[ ]
+#	[ <%=title1%>]
+#	[ ]
+#	[ "  <span class=\"", <%=name%>, "\">"]
+#	[ <%=title2%>]
+#	[ "</span>\n"]
+#	[ "  <span", <%=' checked="checked"'%>, ">"]
+#	[ <%=title3%>]
+#	[ "</span>\n"]
+#	[ "</p>\n"]
+# 
+#
+#  output: |
+#
+
+
+##
+- name:    unmatched
+  desc:    unmatched text to fetch pattern
+  bug:     self found
   pdata: |
-        <p>
-	  <span id="mark:section1">title</span>
-	  <span id="mark:section2">title</span>
-	  <span id="mark:section3">title</span>
-        </p>
-
+	foo
+	bar
+	baz
   plogic: |
-	#section1 {
-	  value: title1;
-	}
-	#section2 {
-	  value: title2;
-	  attrs: "class" name;
-	}
-	#section3 {
-	  value: title3;
-	  append: ' checked="checked"';
-	}
-
   expected: |
-	[ "<p>\n"]
-	[ ]
-	[ <%=title1%>]
-	[ ]
-	[ "  <span class=\"", <%=name%>, "\">"]
-	[ <%=title2%>]
-	[ "</span>\n"]
-	[ "  <span", <%=' checked="checked"'%>, ">"]
-	[ <%=title3%>]
-	[ "</span>\n"]
-	[ "</p>\n"]
- 
+        [ "foo\nbar\nbaz\n"]
 
-  output: |
+

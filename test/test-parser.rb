@@ -7,7 +7,7 @@
 require "#{File.dirname(__FILE__)}/test.rb"
 
 
-class RubyStyleParserTest < Test::Unit::TestCase
+class ParserTest < Test::Unit::TestCase
 
   ## define test methods
   filename = __FILE__.sub(/\.rb$/, '.yaml')

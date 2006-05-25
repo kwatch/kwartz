@@ -7,7 +7,7 @@
 require "#{File.dirname(__FILE__)}/test.rb"
 
 
-class CompileTest < Test::Unit::TestCase
+class ConverterTest < Test::Unit::TestCase
 
 
   ## define test methods

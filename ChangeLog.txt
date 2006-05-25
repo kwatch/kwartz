@@ -2,6 +2,14 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+
+: rev.115
+	- [refact] refactered test/test-*.rb
+	- [bugfix] 'eva' is changed to 'module_eval' in test/testutil.rb 
+
+: rev.114
+	- [bugfix] converter didn't get text when it doesn't match to fetch_pattern
+
 : rev.113 (2006-05-23)
 	- [enhance] add doc/reference.{txt,eruby}
 	- [enhance] add test/test-ruleset.{rb,yaml}
