@@ -153,6 +153,12 @@ module Kwartz
     end
 
 
+    def translate_string(str)
+      str.gsub!(/<\?xml/, '<<?php ?>?xml')
+      super(str)
+    end
+
+
   end
   Translator.register_class('php', PhpTranslator)
 

@@ -1,3 +1,19 @@
+●プレゼンテーションパターン
+
+  * 名前を変えるべき？
+    - element replacement with expression
+    - element replacement with element
+    - element replacement with content
+    - content replacement with expression
+    - content replacement with element
+    - content replacement with content
+    - element iteration
+    - content iteration
+    - element deletion
+    - content deletion
+    - tag deletion
+
+
 ●Rule
 
   * CSS2のspecificationによると、

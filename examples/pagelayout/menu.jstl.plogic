@@ -1,0 +1,14 @@
+#menulist {
+  logic:  {
+    _stag;
+    <c:forEach var="menu" items="${menulist}">
+      _cont;
+    </c:forEach>
+    _etag;
+  }
+}
+
+#menu {
+  value:  menu.label;
+  attrs:  'href' menu.url;
+}

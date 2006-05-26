@@ -2,7 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.115 (2006-05-25)
+: rev.116 (2006-05-26)
+	- [enhance] PhpTranslator replaces '<?xml' with '<<?php ?>?xml'
+	- [enahnce] add 'examples/pagelayout1'
+	- [enhance] JstlTranslator print string literal as it is (ex. "http://${url}")
+
+: rev.115 (2006-05-26)
 	- [update] doc/reference.eruby updated
 	- [change] 'before:' and 'after:' properties are renamed to 'begin:' and 'end:' respectively
 

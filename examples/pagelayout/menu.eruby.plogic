@@ -1,0 +1,14 @@
+#menulist {
+  logic:  {
+    _stag
+    @menulist.each do |menu|
+      _cont
+    end
+    _etag
+  }
+}
+
+#menu {
+  value:  menu[:label];
+  attrs:  'href' menu[:url];
+}

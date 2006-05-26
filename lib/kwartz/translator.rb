@@ -6,6 +6,7 @@
 
 
 require 'kwartz/node'
+require 'abstract'
 
 
 
@@ -20,37 +21,37 @@ module Kwartz
 
     ## [abstract] translate list of Statement into String and return it
     def translate(stmt_list)
-      raise NotImplementedError.new("#{self.class}#translate() is not implemented.")
+      not_implemented
     end
 
 
     ## [abstract] translate NativeStatement using visitor pattern
     def translate_native_stmt(stmt)
-      raise NotImplementedError.new("#{self.class}#translate_native_stmt() is not implemented.")
+      not_implemented
     end
 
 
     ## [abstract] translate PrintStatement using visitor pattern
     def translate_print_stmt(stmt)
-      raise NotImplementedError.new("#{self.class}#translate_print_stmt() is not implemented.")
+      not_implemented
     end
 
 
     ## [abstract] translate NativeExpression using visitor pattern
     def translate_native_expr(expr)
-      raise NotImplementedError.new("#{self.class}#translate_native_expr() is not implemented.")
+      not_implemented
     end
 
 
     ## [abstract] translate String using visitor pattern
     def translate_string(str)
-      raise NotImplementedError.new("#{self.class}#translate_string() is not implemented.")
+      not_implemented
     end
 
 
 #    ## [abstract] translate TextExpression using visitor pattern
 #    def translate_text_expr(expr)
-#      raise NotImplementedError.new("#{self.class}#translate_text_expr() is not implemented.")
+#      not_implemented
 #    end
 
 

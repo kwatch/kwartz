@@ -1,0 +1,3243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Kwartz-ruby 3.0 Reference Guide</title>
+  <meta name="generator" content="kwaser">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <link rel="stylesheet" href="docstyle.css" type="text/css">
+ </head>
+ <body>
+
+  <blockquote>
+   <div class="mainbody">
+
+    <div align="left"><h1>Kwartz-ruby 3.0 Reference Guide</h1></div>
+    <div align="left">
+      last update: $Date: 2006-05-23 20:45:08 +0900 (Tue, 23 May 2006) $<br>
+    </div>
+
+<a name="preface"></a>
+<h2 class="section1">Preface</h2>
+<p>This document<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is the reference manual of Kwartz-ruby 3.0.
+</p>
+<p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system which realized the concept 'Independence of Presentation Logic'.
+It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
+</p>
+<p>If you are new to Kwartz, see <a href="users-guide.html">Users' Guide</a> at first.
+</p>
+<div class="footnote">
+ <dl compact>
+  <dt>(<a name="fnref:1" href="#fnlink:1">*1</a>)</dt>
+  <dd>This document is generated automatically from unit-test data. Knuth had propsed integration of code and document.  I propose integration of test and document :-)</dd>
+  <dt>(<a name="fnref:2" href="#fnlink:2">*2</a>)</dt>
+  <dd>Development of Kwartz had subsidized by Exploratory Software Project of <a href="http://www.ipa.go.jp/about/english/index.html">IPA (Information-Technology Promotion Agency Japan)</a>.</dd>
+ </dl>
+</div>
+<a name="toc"></a>
+<h3 class="section2">Table of Contents</h3>
+<ul>
+  <li><a href="#preface">Preface</a>
+  <ul>
+    <li><a href="#toc">Table of Contents</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#plogic">Pesentation Logic</a>
+  <ul>
+    <li><a href="#property-elem">elem, Elem, ELEM</a>
+    </li>
+    <li><a href="#property-cont">cont, Cont, CONT</a>
+    </li>
+    <li><a href="#property-value">value, Value, VALUE</a>
+    </li>
+    <li><a href="#property-stag">stag, Stag, STAG</a>
+    </li>
+    <li><a href="#property-etag">etag, Etag, ETAG</a>
+    </li>
+    <li><a href="#property-attrs">attrs, Attrs, ATTRS</a>
+    </li>
+    <li><a href="#property-append">append, Append, APPEND</a>
+    </li>
+    <li><a href="#property-remove">remove</a>
+    </li>
+    <li><a href="#property-logic">logic</a>
+    </li>
+    <li><a href="#property-begin">begin, end</a>
+    </li>
+    <li><a href="#<code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties"><code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties</a>
+    </li>
+  </ul>
+  </li>
+  <li><a href="#directives">Directives</a>
+  <ul>
+    <li><a href="#directive-elem">elem, Elem, ELEM</a>
+    </li>
+    <li><a href="#directive-stag">stag, Stag, STAG</a>
+    </li>
+    <li><a href="#directive-etag">etag, Etag, ETAG</a>
+    </li>
+    <li><a href="#directive-cont">cont, Cont, CONT</a>
+    </li>
+    <li><a href="#directive-value">value, Value, VALUE</a>
+    </li>
+    <li><a href="#directive-foreach">foreach</a>
+    </li>
+    <li><a href="#directive-list">list</a>
+    </li>
+    <li><a href="#directive-foreach_ctr">Foreach, List</a>
+    </li>
+    <li><a href="#directive-foreach_tgl">FOREACH, LIST</a>
+    </li>
+    <li><a href="#directive-while">while, loop</a>
+    </li>
+    <li><a href="#directive-if">if-then-else</a>
+    </li>
+    <li><a href="#directive-set">set</a>
+    </li>
+    <li><a href="#directive-mark">mark</a>
+    </li>
+    <li><a href="#directive-attr">attr, Attr, ATTR</a>
+    </li>
+    <li><a href="#directive-append">append, Append, APPEND</a>
+    </li>
+    <li><a href="#directive-dummy">dummy</a>
+    </li>
+    <li><a href="#directive-default">default, Default, DEFAULT</a>
+    </li>
+    <li><a href="#directive-replace">replace_element/content_with_element/content</a>
+    </li>
+  </ul>
+  </li>
+</ul>
+<br>
+
+
+<br>
+
+
+<a name="plogic"></a>
+<h2 class="section1">Pesentation Logic</h2>
+<p>Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
+</p>
+<ul type="disc">
+<li>Presentation logic file is a set of ruleset.
+</li>
+<li>Ruleset is a pair of selector and declarations.
+</li>
+<li>Declaration is a pair of property and value.
+</li>
+</ul>
+<div class="output_caption">
+Pseudo-EBNF syntax of presentation logic</div>
+<pre class="output">plogic       ::=  ruleset*
+ruleset      ::=  selector '{' [ declaration ';' ]* '}'
+selector     ::=  '#' name
+declaration  ::=  property ':' value
+property     ::=  'elem'   | 'Elem'   | 'ELEM'
+               |  'stag'   | 'Stag'   | 'STAG'
+	       |  'etag'   | 'Etag'   | 'ETAG'
+	       |  'cont'   | 'Cont'   | 'CONT'
+	       |  'value'  | 'Value'  | 'VALUE'
+	       |  'attrs'  | 'Attrs'  | 'ATTRS'
+	       |  'append' | 'Append' | 'APPEND'
+	       |  'remove'
+	       |  'logic'
+</pre>
+<p>Notice that the tail semicolon of declaration is not omittable.
+</p>
+<a name="property-elem"></a>
+<h3 class="section2">elem, Elem, ELEM</h3>
+<p><code>elem:</code>, <code>Elem:</code>, and <code>ELEM:</code> properties replaces the element
+with expression value.
+</p>
+<p><code>Elem:</code> always escape expression value while <code>ELEM:</code> never escape it.
+<code>elem:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<a name="property-elem-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-elem.plogic)</div>
+<pre class="program">#name1 {
+  <b>elem:</b> user[:name];
+}
+#name2 {
+  <b>Elem:</b> user[:name];
+}
+#name3 {
+  <b>ELEM:</b> user[:name];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-elem.plogic ex-elem.pdata
+<b>&lt;%= user[:name] %&gt;</b>
+<b>&lt;%=h user[:name] %&gt;</b>
+<b>&lt;%= user[:name] %&gt;</b>
+</pre>
+<br>
+
+<a name="property-elem-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-elem.plogic)</div>
+<pre class="program">#name1 {
+  <b>elem:</b> $user['name'];
+}
+#name2 {
+  <b>Elem:</b> $user['name'];
+}
+#name3 {
+  <b>ELEM:</b> $user['name'];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-elem.plogic ex-elem.pdata
+<b>&lt;?php echo $user['name']; ?&gt;</b>
+<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>
+<b>&lt;?php echo $user['name']; ?&gt;</b>
+</pre>
+<br>
+
+<a name="property-elem-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-elem.plogic)</div>
+<pre class="program">#name1 {
+  <b>elem:</b> user.name;
+}
+#name2 {
+  <b>Elem:</b> user.name;
+}
+#name3 {
+  <b>ELEM:</b> user.name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-elem.plogic ex-elem.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+<b>${user.name}</b>
+<b>${user.name}</b>
+<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>
+</pre>
+<br>
+
+<a name="property-elem-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-elem.plogic)</div>
+<pre class="program">#name1 {
+  <b>elem:</b> $user{'name'};
+}
+#name2 {
+  <b>Elem:</b> $user{'name'};
+}
+#name3 {
+  <b>ELEM:</b> $user{'name'};
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-elem.plogic ex-elem.pdata
+<b>&lt;?= $user{'name'} !&gt;</b>
+<b>&lt;?= sanitize($user{'name'}) !&gt;</b>
+<b>&lt;?= $user{'name'} !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-cont"></a>
+<h3 class="section2">cont, Cont, CONT</h3>
+<p><code>cont:</code>, <code>Cont:</code>, and <code>CONT:</code> properties replaces the element
+with expression value.
+</p>
+<p><code>Cont:</code> always escape expression value while <code>CONT:</code> never escape it.
+<code>cont:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<a name="property-cont-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-cont.plogic)</div>
+<pre class="program">#name1 {
+  <b>cont:</b> user[:name];
+}
+#name2 {
+  <b>Cont:</b> user[:name];
+}
+#name3 {
+  <b>CONT:</b> user[:name];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-cont.plogic ex-cont.pdata
+&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;%=h user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-cont-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-cont.plogic)</div>
+<pre class="program">#name1 {
+  <b>cont:</b> $user['name'];
+}
+#name2 {
+  <b>Cont:</b> $user['name'];
+}
+#name3 {
+  <b>CONT:</b> $user['name'];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-cont.plogic ex-cont.pdata
+&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-cont-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-cont.plogic)</div>
+<pre class="program">#name1 {
+  <b>cont:</b> user.name;
+}
+#name2 {
+  <b>Cont:</b> user.name;
+}
+#name3 {
+  <b>CONT:</b> user.name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-cont.plogic ex-cont.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
+&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-cont-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-cont.plogic)</div>
+<pre class="program">#name1 {
+  <b>cont:</b> $user{'name'};
+}
+#name2 {
+  <b>Cont:</b> $user{'name'};
+}
+#name3 {
+  <b>CONT:</b> $user{'name'};
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-cont.plogic ex-cont.pdata
+&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= sanitize($user{'name'}) !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-value"></a>
+<h3 class="section2">value, Value, VALUE</h3>
+<p><code>value:</code>, <code>Value:</code>, and <code>VALUE:</code> properties replaces the element
+with expression value.
+These are the same as <code>cont:</code>, <code>Cont:</code>, and <code>CONT:</code> properties
+respectively.
+</p>
+<a name="property-value-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-value.plogic)</div>
+<pre class="program">#name1 {
+  <b>value:</b> user[:name];
+}
+#name2 {
+  <b>Value:</b> user[:name];
+}
+#name3 {
+  <b>VALUE:</b> user[:name];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-value.plogic ex-value.pdata
+&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;%=h user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-value-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-value.plogic)</div>
+<pre class="program">#name1 {
+  <b>value:</b> $user['name'];
+}
+#name2 {
+  <b>Value:</b> $user['name'];
+}
+#name3 {
+  <b>VALUE:</b> $user['name'];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-value.plogic ex-value.pdata
+&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-value-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-value.plogic)</div>
+<pre class="program">#name1 {
+  <b>value:</b> user.name;
+}
+#name2 {
+  <b>Value:</b> user.name;
+}
+#name3 {
+  <b>VALUE:</b> user.name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-value.plogic ex-value.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
+&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-value-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;p id="mark:name1"&gt;aaa&lt;/p&gt;
+&lt;p id="mark:name2"&gt;bbb&lt;/p&gt;
+&lt;p id="mark:name3"&gt;ccc&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-value.plogic)</div>
+<pre class="program">#name1 {
+  <b>value:</b> $user{'name'};
+}
+#name2 {
+  <b>Value:</b> $user{'name'};
+}
+#name3 {
+  <b>VALUE:</b> $user{'name'};
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-value.plogic ex-value.pdata
+&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= sanitize($user{'name'}) !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-stag"></a>
+<h3 class="section2">stag, Stag, STAG</h3>
+<p><code>stage:</code>, <code>Stag:</code>, and <code>STAG:</code> properties replaces the start-tag
+with expression value.
+</p>
+<p><code>Stag:</code> always escape expression value while <code>STAG:</code> never escape it.
+<code>stag:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<a name="property-stag-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;a href="#" id="mark:link1"&gt;&lt;img src="button1.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link2"&gt;&lt;img src="button2.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link3"&gt;&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-stag.plogic)</div>
+<pre class="program">#link1 {
+  <b>stag:</b> start_link_to :action=&gt;'list';
+}
+#link2 {
+  <b>Stag:</b> start_link_to :action=&gt;'list';
+}
+#link3 {
+  <b>STAG:</b> start_link_to :action=&gt;'list';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
+<b>&lt;%= start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<b>&lt;%=h start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<b>&lt;%= start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<br>
+
+<a name="property-stag-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;a href="#" id="mark:link1"&gt;&lt;img src="button1.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link2"&gt;&lt;img src="button2.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link3"&gt;&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-stag.plogic)</div>
+<pre class="program">#link1 {
+  <b>stag:</b> start_link_to('list');
+}
+#link2 {
+  <b>Stag:</b> start_link_to('list');
+}
+#link3 {
+  <b>STAG:</b> start_link_to('list');
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-stag.plogic ex-stag.pdata
+<b>&lt;?php echo start_link_to('list'); ?&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<b>&lt;?php echo htmlspecialchars(start_link_to('list')); ?&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<b>&lt;?php echo start_link_to('list'); ?&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<br>
+
+<a name="property-stag-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;a href="#" id="mark:link1"&gt;&lt;img src="button1.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link2"&gt;&lt;img src="button2.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link3"&gt;&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-stag.plogic)</div>
+<pre class="program">#link1 {
+  <b>stag:</b> fn:start_link_to('list');
+}
+#link2 {
+  <b>Stag:</b> fn:start_link_to('list');
+}
+#link3 {
+  <b>STAG:</b> fn:start_link_to('list');
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+<b>${fn:start_link_to('list')}</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<b>${fn:start_link_to('list')}</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<b>&lt;c:out value="${fn:start_link_to('list')}" escapeXml="false"/&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<br>
+
+<a name="property-stag-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;a href="#" id="mark:link1"&gt;&lt;img src="button1.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link2"&gt;&lt;img src="button2.png"&gt;&lt;/a&gt;
+&lt;a href="#" id="mark:link3"&gt;&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-stag.plogic)</div>
+<pre class="program">#link1 {
+  <b>stag:</b> start_link_to('list');
+}
+#link2 {
+  <b>Stag:</b> start_link_to('list');
+}
+#link3 {
+  <b>STAG:</b> start_link_to('list');
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
+<b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<b>&lt;?= sanitize(start_link_to('list')) !&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-etag"></a>
+<h3 class="section2">etag, Etag, ETAG</h3>
+<p><code>stage:</code>, <code>Etag:</code>, and <code>ETAG:</code> properties replaces the end-tag
+with expression value.
+</p>
+<p><code>Etag:</code> always escape expression value while <code>ETAG:</code> never escape it.
+<code>etag:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<a name="property-etag-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;li id="mark:item1"&gt;foo&lt;/li&gt;
+&lt;li id="mark:item2"&gt;bar&lt;/li&gt;
+&lt;li id="mark:item3"&gt;baz&lt;/li&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-etag.plogic)</div>
+<pre class="program">#item1 {
+  <b>etag:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+#item2 {
+  <b>Etag:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+#item3 {
+  <b>ETAG:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-etag.plogic ex-etag.pdata
+&lt;li&gt;foo<b>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
+&lt;li&gt;bar<b>&lt;%=h is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
+&lt;li&gt;baz<b>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
+</pre>
+<br>
+
+<a name="property-etag-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;li id="mark:item1"&gt;foo&lt;/li&gt;
+&lt;li id="mark:item2"&gt;bar&lt;/li&gt;
+&lt;li id="mark:item3"&gt;baz&lt;/li&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-etag.plogic)</div>
+<pre class="program">#item1 {
+  <b>etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+#item2 {
+  <b>Etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+#item3 {
+  <b>ETAG:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-etag.plogic ex-etag.pdata
+&lt;li&gt;foo<b>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</b>
+&lt;li&gt;bar<b>&lt;?php echo htmlspecialchars($is_xml ? '&lt;/li&gt;' : ''); ?&gt;</b>
+&lt;li&gt;baz<b>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</b>
+</pre>
+<br>
+
+<a name="property-etag-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;li id="mark:item1"&gt;foo&lt;/li&gt;
+&lt;li id="mark:item2"&gt;bar&lt;/li&gt;
+&lt;li id="mark:item3"&gt;baz&lt;/li&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-etag.plogic)</div>
+<pre class="program">#item1 {
+  <b>etag:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+#item2 {
+  <b>Etag:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+#item3 {
+  <b>ETAG:</b> is_xml ? '&lt;/li&gt;' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-etag.plogic ex-etag.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;li&gt;foo<b>${is_xml ? '&lt;/li&gt;' : ''}</b>
+&lt;li&gt;bar<b>${is_xml ? '&lt;/li&gt;' : ''}</b>
+&lt;li&gt;baz<b>&lt;c:out value="${is_xml ? '&lt;/li&gt;' : ''}" escapeXml="false"/&gt;</b>
+</pre>
+<br>
+
+<a name="property-etag-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;li id="mark:item1"&gt;foo&lt;/li&gt;
+&lt;li id="mark:item2"&gt;bar&lt;/li&gt;
+&lt;li id="mark:item3"&gt;baz&lt;/li&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-etag.plogic)</div>
+<pre class="program">#item1 {
+  <b>etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+#item2 {
+  <b>Etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+#item3 {
+  <b>ETAG:</b> $is_xml ? '&lt;/li&gt;' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-etag.plogic ex-etag.pdata
+&lt;li&gt;foo<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
+&lt;li&gt;bar<b>&lt;?= sanitize($is_xml ? '&lt;/li&gt;' : '') !&gt;</b>
+&lt;li&gt;baz<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-attrs"></a>
+<h3 class="section2">attrs, Attrs, ATTRS</h3>
+<p><code>attrs:</code>, <code>Attrs:</code>, <code>ATTRS:</code>, property replaces or adds attributes.
+</p>
+<p><code>Attrs:</code> always escape expression value while <code>ATTRS:</code> never escape it.
+<code>attrs:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<p>Notice that the follwing will be parse error
+because Kwartz parses <code>attrs:</code> property with pattern matching.
+</p>
+<pre class="program">#foo {
+  attrs: 'class' klass, 'style' style;
+}
+</pre>
+<a name="property-attrs-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-attrs.pdata)</div>
+<pre class="program">&lt;p id="mark:item" class="para"&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrs.plogic)</div>
+<pre class="program">#item {
+  <b>attrs:</b> 'class' klass,
+         'style' style;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-attrs.plogic ex-attrs.pdata
+&lt;p <b>class="&lt;%= klass %&gt;"</b> <b>style="&lt;%= style %&gt;"</b>&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-attrs-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-attrs.pdata)</div>
+<pre class="program">&lt;p id="mark:item" class="para"&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrs.plogic)</div>
+<pre class="program">#item {
+  <b>attrs:</b> 'class' $class,
+         'style' $style;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-attrs.plogic ex-attrs.pdata
+&lt;p <b>class="&lt;?php echo $class; ?&gt;"</b> <b>style="&lt;?php echo $style; ?&gt;"</b>&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-attrs-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-attrs.pdata)</div>
+<pre class="program">&lt;p id="mark:item" class="para"&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrs.plogic)</div>
+<pre class="program">#item {
+  <b>attrs:</b> 'class' klass,
+         'style' style;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-attrs.plogic ex-attrs.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;p <b>class="${klass}"</b> <b>style="${style}"</b>&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-attrs-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-attrs.pdata)</div>
+<pre class="program">&lt;p id="mark:item" class="para"&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrs.plogic)</div>
+<pre class="program">#item {
+  <b>attrs:</b> 'class' $class,
+         'style' $style;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-attrs.plogic ex-attrs.pdata
+&lt;p <b>class="&lt;?= $class !&gt;"</b> <b>style="&lt;?= $style !&gt;"</b>&gt;
+  AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-append"></a>
+<h3 class="section2">append, Append, APPEND</h3>
+<p><code>append:</code>, <code>Append:</code>, <code>APPEND:</code> directive appends
+expressions to the start tag.
+</p>
+<p><code>Append:</code> always escape expression value while <code>APPEND:</code> never escape it.
+<code>append:</code> escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+</p>
+<p>The following is an example to append several expressions.
+</p>
+<pre class="program">#remember {
+  append:  expr1,
+           expr2,
+           expr3;
+}
+</pre>
+<p>Notice that the following will be parse error.
+</p>
+<pre class="program">#remember {
+  append:  expr1, expr2, expr3;
+}
+</pre>
+<a name="property-append-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkboxk" id="mark:remember" value="y"&gt;Remeber me
+</pre>
+<div class="program_caption">
+presentation logic (ex-append.plogic)</div>
+<pre class="program">#remember {
+  <b>append:</b> flag ? ' checked' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-append.plogic ex-append.pdata
+&lt;input type="checkboxk" value="y"<b>&lt;%= flag ? ' checked' : '' %&gt;</b>&gt;Remeber me
+</pre>
+<br>
+
+<a name="property-append-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkboxk" id="mark:remember" value="y"&gt;Remeber me
+</pre>
+<div class="program_caption">
+presentation logic (ex-append.plogic)</div>
+<pre class="program">#remember {
+  <b>append:</b> $flag ? ' checked' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-append.plogic ex-append.pdata
+&lt;input type="checkboxk" value="y"<b>&lt;?php echo $flag ? ' checked' : ''; ?&gt;</b>&gt;Remeber me
+</pre>
+<br>
+
+<a name="property-append-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkboxk" id="mark:remember" value="y"&gt;Remeber me
+</pre>
+<div class="program_caption">
+presentation logic (ex-append.plogic)</div>
+<pre class="program">#remember {
+  <b>append:</b> flag ? ' checked' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-append.plogic ex-append.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;input type="checkboxk" value="y"<b>${flag ? ' checked' : ''}</b>&gt;Remeber me
+</pre>
+<br>
+
+<a name="property-append-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkboxk" id="mark:remember" value="y"&gt;Remeber me
+</pre>
+<div class="program_caption">
+presentation logic (ex-append.plogic)</div>
+<pre class="program">#remember {
+  <b>append:</b> $flag ? ' checked' : '';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-append.plogic ex-append.pdata
+&lt;input type="checkboxk" value="y"<b>&lt;?= $flag ? ' checked' : '' !&gt;</b>&gt;Remeber me
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-remove"></a>
+<h3 class="section2">remove</h3>
+<p><code>remove:</code> property removes attributes.
+</p>
+<a name="property-remove-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-remove.pdata)</div>
+<pre class="program">&lt;p id="foo" class="paragraph" style="color: red"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-remove.plogic)</div>
+<pre class="program">#foo {
+  <b>remove:</b> 'id', 'style';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-remove.plogic ex-remove.pdata
+&lt;p class="paragraph"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-remove-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-remove.pdata)</div>
+<pre class="program">&lt;p id="foo" class="paragraph" style="color: red"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-remove.plogic)</div>
+<pre class="program">#foo {
+  <b>remove:</b> 'id', 'style';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-remove.plogic ex-remove.pdata
+&lt;p class="paragraph"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-remove-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-remove.pdata)</div>
+<pre class="program">&lt;p id="foo" class="paragraph" style="color: red"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-remove.plogic)</div>
+<pre class="program">#foo {
+  <b>remove:</b> 'id', 'style';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-remove.plogic ex-remove.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;p class="paragraph"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="property-remove-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-remove.pdata)</div>
+<pre class="program">&lt;p id="foo" class="paragraph" style="color: red"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-remove.plogic)</div>
+<pre class="program">#foo {
+  <b>remove:</b> 'id', 'style';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-remove.plogic ex-remove.pdata
+&lt;p class="paragraph"&gt;
+ AAA
+&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-logic"></a>
+<h3 class="section2">logic</h3>
+<p><code>logic:</code> property represents the presentation logic body of the element.
+In the <code>logic:</code> property, the folllowings are available.
+</p>
+<dl class="dl3">
+<dt class="dt3"><b>
+<code>_elem</code> </b></dt>
+<dd class="dd3">
+        represents the element
+</dd>
+<dt class="dt3"><b>
+<code>_stag</code> </b></dt>
+<dd class="dd3">
+        represents start-tag of the element
+</dd>
+<dt class="dt3"><b>
+<code>_cont</code> </b></dt>
+<dd class="dd3">
+        represents content of the element
+</dd>
+<dt class="dt3"><b>
+<code>_stag</code> </b></dt>
+<dd class="dd3">
+        represents end-tag of the element
+</dd>
+<dt class="dt3"><b>
+<code>_element(<i>name</i>)</code> </b></dt>
+<dd class="dd3">
+        represents the other element marked as <i>name</i>.
+</dd>
+<dt class="dt3"><b>
+<code>_content(<i>name</i>)</code> </b></dt>
+<dd class="dd3">
+        represents the content of other element marked as <i>name</i>.
+</dd>
+</dl>
+<p>In the <code>logic:</code> property, it is able to write statements in target language
+(Ruby, PHP, Java, Perl, and so on).
+</p>
+<a name="property-logic-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-logic.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li id="mark:items"&gt;AAA&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-logic.plogic)</div>
+<pre class="program">#items {
+  value: item;
+  <b>logic:</b> {
+    @list.each do |item|
+      <b>_stag</b>
+      <b>_cont</b>
+      <b>_etag</b>
+    end
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-logic.plogic ex-logic.pdata
+&lt;ul&gt;
+<b>&lt;%     @list.each do |item| %&gt;</b>
+  &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
+<b>&lt;%     end %&gt;</b>
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="property-logic-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-logic.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li id="mark:items"&gt;AAA&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-logic.plogic)</div>
+<pre class="program">#items {
+  value: $item;
+  <b>logic:</b> {
+    foreach ($list as $item) {
+      <b>_stag();</b>
+      <b>_cont();</b>
+      <b>_etag();</b>
+    }
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-logic.plogic ex-logic.pdata
+&lt;ul&gt;
+<b>&lt;?php     foreach ($list as $item) { ?&gt;</b>
+  &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
+<b>&lt;?php     } ?&gt;</b>
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="property-logic-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-logic.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li id="mark:items"&gt;AAA&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-logic.plogic)</div>
+<pre class="program">#items {
+  value: item;
+  <b>logic:</b> {
+    &lt;c:forEach var="item" items="${list}"&gt;
+      <b>_stag();</b>
+      <b>_cont();</b>
+      <b>_etag();</b>
+    &lt;/c:forEach&gt;
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-logic.plogic ex-logic.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;ul&gt;
+    <b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+  &lt;li&gt;${item}&lt;/li&gt;
+    <b>&lt;/c:forEach&gt;</b>
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="property-logic-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-logic.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li id="mark:items"&gt;AAA&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-logic.plogic)</div>
+<pre class="program">#items {
+  value: $item;
+  <b>logic:</b> {
+    foreach ($item in @list) {
+      <b>_stag();</b>
+      <b>_cont();</b>
+      <b>_etag();</b>
+    }
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-logic.plogic ex-logic.pdata
+&lt;ul&gt;
+<b>&lt;?     foreach ($item in @list) { !&gt;</b>
+  &lt;li&gt;&lt;?= $item !&gt;&lt;/li&gt;
+<b>&lt;?     } !&gt;</b>
+&lt;/ul&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="property-begin"></a>
+<h3 class="section2">begin, end</h3>
+<p><code>begin:</code> and <code>end:</code> property represents the prework and postwork
+of document respectively.
+These properties takes target code block and are available only with
+'#DOCUMENT' selector.
+</p>
+<a name="property-begin-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-begin.pdata)</div>
+<pre class="program">&lt;p&gt;Hello &lt;span id="mark:username"&gt;world&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+ &lt;li id="mark:menu"&gt;menu item&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-begin.plogic)</div>
+<pre class="program">#DOCUMENT {
+  <b>begin:</b> {
+    username = @context[:username]
+    menulist = @context[:menulist]
+  }
+  <b>end:</b> {
+    print "&lt;!-- document end --&gt;\n"
+
+  }
+}
+#username {
+  value:  username;
+}
+#menu {
+  value: menu;
+  logic: {
+    for menu in menulist
+      _elem
+    end
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-begin.plogic ex-begin.pdata
+<b>&lt;%     username = @context[:username] %&gt;</b>
+<b>&lt;%     menulist = @context[:menulist] %&gt;</b>
+&lt;p&gt;Hello &lt;span&gt;&lt;%= username %&gt;&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+&lt;%     for menu in menulist %&gt;
+ &lt;li&gt;&lt;%= menu %&gt;&lt;/li&gt;
+&lt;%     end %&gt;
+&lt;/ul&gt;
+<b>&lt;%= "&lt;!-- document end --&gt;\n" %&gt;</b>
+</pre>
+<br>
+
+<a name="property-begin-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-begin.pdata)</div>
+<pre class="program">&lt;p&gt;Hello &lt;span id="mark:username"&gt;world&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+ &lt;li id="mark:menu"&gt;menu item&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-begin.plogic)</div>
+<pre class="program">#DOCUMENT {
+  <b>begin:</b> {
+    $username = $context['username'];
+    $menulist = $context['menulist'];
+  }
+  <b>end:</b> {
+    print("&lt;!-- document end --&gt;\n");
+
+  }
+}
+#username {
+  value:  $username;
+}
+#menu {
+  value: $menu;
+  logic: {
+    foreach ($menulist as $menu) {
+      _elem();
+    }
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-begin.plogic ex-begin.pdata
+<b>&lt;?php     $username = $context['username']; ?&gt;</b>
+<b>&lt;?php     $menulist = $context['menulist']; ?&gt;</b>
+&lt;p&gt;Hello &lt;span&gt;&lt;?php echo $username; ?&gt;&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+&lt;?php     foreach ($menulist as $menu) { ?&gt;
+ &lt;li&gt;&lt;?php echo $menu; ?&gt;&lt;/li&gt;
+&lt;?php     } ?&gt;
+&lt;/ul&gt;
+<b>&lt;?php echo "&lt;!-- document end --&gt;\n"; ?&gt;</b>
+</pre>
+<br>
+
+<a name="property-begin-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-begin.pdata)</div>
+<pre class="program">&lt;p&gt;Hello &lt;span id="mark:username"&gt;world&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+ &lt;li id="mark:menu"&gt;menu item&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-begin.plogic)</div>
+<pre class="program">#DOCUMENT {
+  <b>begin:</b> {
+    &lt;c:set var="username" value="${context.username}"/&gt;
+    &lt;c:set var="menulist" value="${context.menulist}"/&gt;
+  }
+  <b>end:</b> {
+    &lt;c:out value="&lt;!-- document end --&gt;\n"/&gt;
+  }
+}
+#username {
+  value:  username;
+}
+#menu {
+  value:  menu;
+  logic: {
+    &lt;c:forEach var="menu" items="${menulist}"&gt;
+      _elem();
+    &lt;/c:forEach&gt;
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-begin.plogic ex-begin.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+    <b>&lt;c:set var="username" value="${context.username}"/&gt;</b>
+    <b>&lt;c:set var="menulist" value="${context.menulist}"/&gt;</b>
+&lt;p&gt;Hello &lt;span&gt;${username}&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+    &lt;c:forEach var="menu" items="${menulist}"&gt;
+ &lt;li&gt;${menu}&lt;/li&gt;
+    &lt;/c:forEach&gt;
+&lt;/ul&gt;
+    <b>&lt;c:out value="&lt;!-- document end --&gt;\n"/&gt;</b>
+</pre>
+<br>
+
+<a name="property-begin-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-begin.pdata)</div>
+<pre class="program">&lt;p&gt;Hello &lt;span id="mark:username"&gt;world&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+ &lt;li id="mark:menu"&gt;menu item&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-begin.plogic)</div>
+<pre class="program">#DOCUMENT {
+  <b>begin:</b> {
+    $username = $context{'username'};
+    @menulist = $context{'menulist'};
+  }
+  <b>end:</b> {
+    print("&lt;!-- document end --&gt;\n");
+
+  }
+}
+#username {
+  value:  $username;
+}
+#menu {
+  value: $menu;
+  logic: {
+    foreach ($menu in @menulist) {
+      _elem();
+    }
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
+<b>&lt;?     $username = $context{'username'}; !&gt;</b>
+<b>&lt;?     @menulist = $context{'menulist'}; !&gt;</b>
+&lt;p&gt;Hello &lt;span&gt;&lt;?= $username !&gt;&lt;/span&gt;!&lt;/p&gt;
+&lt;ul&gt;
+&lt;?     foreach ($menu in @menulist) { !&gt;
+ &lt;li&gt;&lt;?= $menu !&gt;&lt;/li&gt;
+&lt;?     } !&gt;
+&lt;/ul&gt;
+<b>&lt;?= "&lt;!-- document end --&gt;\n" !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="<code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties"></a>
+<h3 class="section2"><code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties</h3>
+<p>Special selector <code>#DOCUMENT</code> represents entire of document.
+Only the <code>begin:</code> and <code>end:</code> properties are available in <code>#DOCUMENT</code> selector.
+The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+</p>
+<br>
+
+
+<br>
+
+
+<a name="directives"></a>
+<h2 class="section1">Directives</h2>
+<p>Directives are commands to embed presentation logics into presentation data.
+For example, <code>title="for item in @list"</code> directive represents iteration of the element.
+</p>
+<p>Directives are provided for '<b>choosability</b>'.
+This is very important concept for Kwartz (and other products by kuwata-lab).
+In Kwartz, you can separate presentation logics from presentation data, or 'mix' them.
+It is the user or customer of Kwartz and not developer who determine which solution to adopt.
+All Kwartz can do is to provide the both solution to users.
+</p>
+<p>Notice that the notation of directives are different for each target language.
+For example, iteration directive is <code>title="for item in list"</code> in Ruby,
+<code>title="foreach($list as $item)"</code> in PHP.
+See the <code>directive notation table</code> for PHP, Java, and Perl user.
+</p>
+<a name="directive-elem"></a>
+<h3 class="section2">elem, Elem, ELEM</h3>
+<p>'elem', 'Elem', and 'ELEM' directive replaces element by expression.
+</p>
+<p>'Elem' directive escapes expression automatically, while 'ELEM' never escape it.
+'elem' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<a name="directive-elem-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;b <b>title="elem: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Elem: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ELEM: expr"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-elem.pdata
+<b>&lt;%= expr %&gt;</b>
+<b>&lt;%=h expr %&gt;</b>
+<b>&lt;%= expr %&gt;</b>
+</pre>
+<br>
+
+<a name="directive-elem-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;b <b>title="elem($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Elem($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ELEM($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-elem.pdata
+<b>&lt;?php echo $expr; ?&gt;</b>
+<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>
+<b>&lt;?php echo $expr; ?&gt;</b>
+</pre>
+<br>
+
+<a name="directive-elem-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;b <b>title="elem(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Elem(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ELEM(expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-elem.pdata
+<b>${expr}</b>
+<b>${expr}</b>
+<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>
+</pre>
+<br>
+
+<a name="directive-elem-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-elem.pdata)</div>
+<pre class="program">&lt;b <b>title="elem($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Elem($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ELEM($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-elem.pdata
+<b>&lt;?= $expr !&gt;</b>
+<b>&lt;?= sanitize($expr) !&gt;</b>
+<b>&lt;?= $expr !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-stag"></a>
+<h3 class="section2">stag, Stag, STAG</h3>
+<p>'stag', 'Stag', and 'STAG' directive replaces start-tag by expression.
+</p>
+<p>'Stag' directive escapes expression automatically, while 'STAG' never escape it.
+'stag' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<a name="directive-stag-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;b <b>title="stag: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Stag: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="STAG: expr"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-stag.pdata
+<b>&lt;%= expr %&gt;</b>foo&lt;/b&gt;
+<b>&lt;%=h expr %&gt;</b>foo&lt;/b&gt;
+<b>&lt;%= expr %&gt;</b>foo&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-stag-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;b <b>title="stag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Stag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="STAG($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-stag.pdata
+<b>&lt;?php echo $expr; ?&gt;</b>foo&lt;/b&gt;
+<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>foo&lt;/b&gt;
+<b>&lt;?php echo $expr; ?&gt;</b>foo&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-stag-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;b <b>title="stag(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Stag(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="STAG(expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-stag.pdata
+<b>${expr}</b>foo&lt;/b&gt;
+<b>${expr}</b>foo&lt;/b&gt;
+<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>foo&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-stag-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-stag.pdata)</div>
+<pre class="program">&lt;b <b>title="stag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Stag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="STAG($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-stag.pdata
+<b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
+<b>&lt;?= sanitize($expr) !&gt;</b>foo&lt;/b&gt;
+<b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-etag"></a>
+<h3 class="section2">etag, Etag, ETAG</h3>
+<p>'etag', 'Etag', and 'ETAG' directive replaces start-tag by expression.
+</p>
+<p>'Etag' directive escapes expression automatically, while 'ETAG' never escape it.
+'etag' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<a name="directive-etag-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;b <b>title="etag: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Etag: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ETAG: expr"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-etag.pdata
+&lt;b&gt;foo<b>&lt;%= expr %&gt;</b>
+&lt;b&gt;foo<b>&lt;%=h expr %&gt;</b>
+&lt;b&gt;foo<b>&lt;%= expr %&gt;</b>
+</pre>
+<br>
+
+<a name="directive-etag-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;b <b>title="etag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Etag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ETAG($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-etag.pdata
+&lt;b&gt;foo<b>&lt;?php echo $expr; ?&gt;</b>
+&lt;b&gt;foo<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>
+&lt;b&gt;foo<b>&lt;?php echo $expr; ?&gt;</b>
+</pre>
+<br>
+
+<a name="directive-etag-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;b <b>title="etag(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Etag(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ETAG(expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-etag.pdata
+&lt;b&gt;foo<b>${expr}</b>
+&lt;b&gt;foo<b>${expr}</b>
+&lt;b&gt;foo<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>
+</pre>
+<br>
+
+<a name="directive-etag-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-etag.pdata)</div>
+<pre class="program">&lt;b <b>title="etag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Etag($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="ETAG($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-etag.pdata
+&lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
+&lt;b&gt;foo<b>&lt;?= sanitize($expr) !&gt;</b>
+&lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-cont"></a>
+<h3 class="section2">cont, Cont, CONT</h3>
+<p>'cont', 'Cont', and 'CONT' directives replace content by expression.
+</p>
+<p>'Cont' directive escapes expression automatically, while 'CONT' never escape it.
+'cont' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<a name="directive-cont-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;b <b>title="cont: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Cont: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="CONT: expr"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-cont.pdata
+&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;%=h expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-cont-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;b <b>title="cont($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Cont($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="CONT($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-cont.pdata
+&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-cont-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;b <b>title="cont(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Cont(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="CONT(expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-cont.pdata
+&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
+&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-cont-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-cont.pdata)</div>
+<pre class="program">&lt;b <b>title="cont($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Cont($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="CONT($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-cont.pdata
+&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= sanitize($expr) !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-value"></a>
+<h3 class="section2">value, Value, VALUE</h3>
+<p>'value', 'Value', and 'VALUE' directives are equivalent to
+'cont', 'Cont', and 'CONT' directives respectively.
+</p>
+<a name="directive-value-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;b <b>title="value: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Value: expr"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="VALUE: expr"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-value.pdata
+&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;%=h expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-value-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;b <b>title="value($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Value($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="VALUE($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-value.pdata
+&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-value-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;b <b>title="value(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Value(expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="VALUE(expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-value.pdata
+&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
+&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<a name="directive-value-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-value.pdata)</div>
+<pre class="program">&lt;b <b>title="value($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="Value($expr)"</b>&gt;foo&lt;/b&gt;
+&lt;b <b>title="VALUE($expr)"</b>&gt;foo&lt;/b&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-value.pdata
+&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= sanitize($expr) !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-foreach"></a>
+<h3 class="section2">foreach</h3>
+<p>'foreach' directive interates element, while 'loop' directive iterates content.
+</p>
+<a name="directive-foreach-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-foreach.pdata)</div>
+<pre class="program">&lt;tr <b>title="for item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="for key,value in hash"</b>&gt;
+  &lt;td title="cont key"&gt;key&lt;/td&gt;
+  &lt;td title="cont value"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-foreach.pdata
+<b>&lt;% for item in list do %&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;% end %&gt;</b>
+
+<b>&lt;% hash.each do |key, value| %&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= key %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= value %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;% end %&gt;</b>
+</pre>
+<br>
+
+<a name="directive-foreach-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-foreach.pdata)</div>
+<pre class="program">&lt;tr <b>title="foreach($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="foreach($hash as $key=&gt;$value)"</b>&gt;
+  &lt;td title="cont($key)"&gt;key&lt;/td&gt;
+  &lt;td title="cont($value)"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-foreach.pdata
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;?php } ?&gt;</b>
+
+<b>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $key; ?&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?php echo $value; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;?php } ?&gt;</b>
+</pre>
+<br>
+
+<a name="directive-foreach-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-foreach.pdata)</div>
+<pre class="program">&lt;tr <b>title="for(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="forEach(:var=&gt;'v', :items=&gt;:'params.list', :varStatus=&gt;'status')"</b>&gt;
+  &lt;td title="cont(status.index)"&gt;1&lt;/td&gt;
+  &lt;td title="cont(v)"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="forEach(:var=&gt;'n', :begin=&gt;1, :end=&gt;10, :step=&gt;2)"</b>&gt;
+  &lt;td title="cont(n)"&gt;key&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-foreach.pdata
+<b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;${item}&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;/c:forEach&gt;</b>
+
+<b>&lt;c:forEach var="v" items="${params.list}" varStatus="status"&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;${status.index}&lt;/td&gt;
+  &lt;td&gt;${v}&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;/c:forEach&gt;</b>
+
+<b>&lt;c:forEach var="n" begin="1" end="10" step="2"&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;${n}&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;/c:forEach&gt;</b>
+</pre>
+<br>
+
+<a name="directive-foreach-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-foreach.pdata)</div>
+<pre class="program">&lt;tr <b>title="foreach($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="foreach($key,$value in %hash)"</b>&gt;
+  &lt;td title="cont($key)"&gt;key&lt;/td&gt;
+  &lt;td title="cont($value)"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-foreach.pdata
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;? } !&gt;</b>
+
+<b>&lt;? foreach my $key (keys %hash) { !&gt;</b>
+<b>&lt;?   my $value = $hash{$key}; !&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?= $key !&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?= $value !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;? } !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-list"></a>
+<h3 class="section2">list</h3>
+<p>'list' directive interates content, while 'foreach' directive iterates element.
+</p>
+<a name="directive-list-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-list.pdata)</div>
+<pre class="program">&lt;tr <b>title="list item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="list key,value in hash"</b>&gt;
+  &lt;td title="cont key"&gt;key&lt;/td&gt;
+  &lt;td title="cont value"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-list.pdata
+&lt;tr&gt;
+<b>&lt;% for item in list do %&gt;</b>
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+<b>&lt;% end %&gt;</b>
+&lt;/tr&gt;
+
+&lt;tr&gt;
+<b>&lt;% hash.each do |key, value| %&gt;</b>
+  &lt;td&gt;&lt;%= key %&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;%= value %&gt;&lt;/td&gt;
+<b>&lt;% end %&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-list-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-list.pdata)</div>
+<pre class="program">&lt;tr <b>title="list($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="list($hash as $key=&gt;$value)"</b>&gt;
+  &lt;td title="cont($key)"&gt;key&lt;/td&gt;
+  &lt;td title="cont($value)"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-list.pdata
+&lt;tr&gt;
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+<b>&lt;?php } ?&gt;</b>
+&lt;/tr&gt;
+
+&lt;tr&gt;
+<b>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</b>
+  &lt;td&gt;&lt;?php echo $key; ?&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?php echo $value; ?&gt;&lt;/td&gt;
+<b>&lt;?php } ?&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-list-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-list.pdata)</div>
+<pre class="program">&lt;tr <b>title="list(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-list.pdata
+&lt;tr&gt;
+<b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+  &lt;td&gt;${item}&lt;/td&gt;
+<b>&lt;/c:forEach&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-list-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-list.pdata)</div>
+<pre class="program">&lt;tr <b>title="list($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="list($key,$value in %hash)"</b>&gt;
+  &lt;td title="cont($key)"&gt;key&lt;/td&gt;
+  &lt;td title="cont($value)"&gt;value&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-list.pdata
+&lt;tr&gt;
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+<b>&lt;? } !&gt;</b>
+&lt;/tr&gt;
+
+&lt;tr&gt;
+<b>&lt;? foreach my $key (keys %hash) { !&gt;</b>
+<b>&lt;?   my $value = $hash{$key}; !&gt;</b>
+  &lt;td&gt;&lt;?= $key !&gt;&lt;/td&gt;
+  &lt;td&gt;&lt;?= $value !&gt;&lt;/td&gt;
+<b>&lt;? } !&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-foreach_ctr"></a>
+<h3 class="section2">Foreach, List</h3>
+<p>'Foreach' and 'List' directives iterate element or content with loop counter
+(starting with 1).
+</p>
+<a name="directive-foreach_ctr-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-foreach_ctr.pdata)</div>
+<pre class="program">&lt;tr <b>title="For item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="List item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-foreach_ctr.pdata
+<b>&lt;% item_ctr = 0 %&gt;</b>
+<b>&lt;% for item in list do %&gt;</b>
+<b>&lt;%   item_ctr += 1 %&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;% end %&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;% item_ctr = 0 %&gt;</b>
+<b>&lt;% for item in list do %&gt;</b>
+<b>&lt;%   item_ctr += 1 %&gt;</b>
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+<b>&lt;% end %&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_ctr-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-foreach_ctr.pdata)</div>
+<pre class="program">&lt;tr <b>title="Foreach($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="List($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-foreach_ctr.pdata
+<b>&lt;?php $item_ctr = 0; ?&gt;</b>
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<b>&lt;?php   $item_ctr++; ?&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;?php } ?&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;?php $item_ctr = 0; ?&gt;</b>
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<b>&lt;?php   $item_ctr++; ?&gt;</b>
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+<b>&lt;?php } ?&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_ctr-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-foreach_ctr.pdata)</div>
+<pre class="program">&lt;tr <b>title="For(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="List(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-foreach_ctr.pdata
+<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
+<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;${item}&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;/c:forEach&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
+<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+  &lt;td&gt;${item}&lt;/td&gt;
+<b>&lt;/c:forEach&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_ctr-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-foreach_ctr.pdata)</div>
+<pre class="program">&lt;tr <b>title="Foreach($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="List($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-foreach_ctr.pdata
+<b>&lt;? my $item_ctr = 0; !&gt;</b>
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<b>&lt;?   $item_ctr++; !&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;? } !&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;? my $item_ctr = 0; !&gt;</b>
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<b>&lt;?   $item_ctr++; !&gt;</b>
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+<b>&lt;? } !&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-foreach_tgl"></a>
+<h3 class="section2">FOREACH, LIST</h3>
+<p>'FOREACH' and 'LIST' directives iterate element or content with loop counter
+and toggle variable.
+Toggle values are "'odd'" and "'even'" in default.
+You can change them by command-line option '--odd' and '--even'
+or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
+</p>
+<a name="directive-foreach_tgl-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-foreach_tgl.pdata)</div>
+<pre class="program">&lt;tr <b>title="FOR item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="LIST item in list"</b>&gt;
+  &lt;td title="cont item"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-foreach_tgl.pdata
+<b>&lt;% item_ctr = 0 %&gt;</b>
+<b>&lt;% for item in list do %&gt;</b>
+<b>&lt;%   item_ctr += 1 %&gt;</b>
+<b>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;% end %&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;% item_ctr = 0 %&gt;</b>
+<b>&lt;% for item in list do %&gt;</b>
+<b>&lt;%   item_ctr += 1 %&gt;</b>
+<b>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</b>
+  &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
+<b>&lt;% end %&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_tgl-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-foreach_tgl.pdata)</div>
+<pre class="program">&lt;tr <b>title="FOREACH($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="LIST($list as $item)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-foreach_tgl.pdata
+<b>&lt;?php $item_ctr = 0; ?&gt;</b>
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<b>&lt;?php   $item_ctr++; ?&gt;</b>
+<b>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;?php } ?&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;?php $item_ctr = 0; ?&gt;</b>
+<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<b>&lt;?php   $item_ctr++; ?&gt;</b>
+<b>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</b>
+  &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
+<b>&lt;?php } ?&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_tgl-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-foreach_tgl.pdata)</div>
+<pre class="program">&lt;tr <b>title="FOR(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="LIST(item: list)"</b>&gt;
+  &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-foreach_tgl.pdata
+<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
+<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+<b>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" /&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;${item}&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;/c:forEach&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
+<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+<b>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" /&gt;</b>
+  &lt;td&gt;${item}&lt;/td&gt;
+<b>&lt;/c:forEach&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-foreach_tgl-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-foreach_tgl.pdata)</div>
+<pre class="program">&lt;tr <b>title="FOREACH($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="LIST($item in @list)"</b>&gt;
+  &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-foreach_tgl.pdata
+<b>&lt;? my $item_ctr = 0; !&gt;</b>
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<b>&lt;?   $item_ctr++; !&gt;</b>
+<b>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;? } !&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;? my $item_ctr = 0; !&gt;</b>
+<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<b>&lt;?   $item_ctr++; !&gt;</b>
+<b>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</b>
+  &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
+<b>&lt;? } !&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-while"></a>
+<h3 class="section2">while, loop</h3>
+<p>'while' and 'loop' directive iterates element or content
+until conditional expression is false.
+</p>
+<p>JSTL doesn't support these directives because JSTL doesn't have
+'while' custom tag.
+</p>
+<a name="directive-while-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-while.pdata)</div>
+<pre class="program">&lt;tr <b>title="while (item = dbh.fetch) != nil"</b>&gt;
+  &lt;td title="cont item.name"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="loop (item = dbh.fetch) != nil"</b>&gt;
+  &lt;td title="cont item.name"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-while.pdata
+<b>&lt;% while (item = dbh.fetch) != nil do %&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;%= item.name %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;% end %&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;% while (item = dbh.fetch) != nil do %&gt;</b>
+  &lt;td&gt;&lt;%= item.name %&gt;&lt;/td&gt;
+<b>&lt;% end %&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-while-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-while.pdata)</div>
+<pre class="program">&lt;tr <b>title="while(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+  &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="loop(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+  &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-while.pdata
+<b>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;?php } ?&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</b>
+  &lt;td&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/td&gt;
+<b>&lt;?php } ?&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-while-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-while.pdata)</div>
+<pre class="program">&lt;tr <b>title="while(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+  &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr <b>title="loop(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+  &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-while.pdata
+<b>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</b>
+&lt;tr&gt;
+  &lt;td&gt;&lt;?= $item-&gt;name !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+<b>&lt;? } !&gt;</b>
+
+&lt;tr&gt;
+<b>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</b>
+  &lt;td&gt;&lt;?= $item-&gt;name !&gt;&lt;/td&gt;
+<b>&lt;? } !&gt;</b>
+&lt;/tr&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-if"></a>
+<h3 class="section2">if-then-else</h3>
+<p>'if', 'elsif'(or 'elseif'), and 'else' directives represent conditional branch.
+</p>
+<p>Don't separate with empty lines between end-tag of 'if'/'elseif' directive and
+start-tag of 'elseif'/'else' directive.
+</p>
+<a name="directive-if-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-if.pdata)</div>
+<pre class="program">&lt;div <b>title="if status=='error'"</b>&gt;
+  &lt;p class="error" title="cont mesg"&gt;error&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="elsif status=='warning'"</b>&gt;
+  &lt;p class="warning" title="cont mesg"&gt;waring&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="else"</b>&gt;
+  &lt;p title="cont mesg"&gt;mesg&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-if.pdata
+<b>&lt;% if status=='error' then %&gt;</b>
+&lt;div&gt;
+  &lt;p class="error"&gt;&lt;%= mesg %&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;% elsif status=='warning' then %&gt;</b>
+&lt;div&gt;
+  &lt;p class="warning"&gt;&lt;%= mesg %&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;% else %&gt;</b>
+&lt;div&gt;
+  &lt;p&gt;&lt;%= mesg %&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;% end %&gt;</b>
+</pre>
+<br>
+
+<a name="directive-if-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-if.pdata)</div>
+<pre class="program">&lt;div <b>title="if($status=='error')"</b>&gt;
+  &lt;p class="error" title="cont($mesg)"&gt;error&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="elseif($status=='warning')"</b>&gt;
+  &lt;p class="warning" title="cont($mesg)"&gt;waring&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="else"</b>&gt;
+  &lt;p title="cont($mesg)"&gt;mesg&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-if.pdata
+<b>&lt;?php if ($status=='error') { ?&gt;</b>
+&lt;div&gt;
+  &lt;p class="error"&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;?php } elseif ($status=='warning') { ?&gt;</b>
+&lt;div&gt;
+  &lt;p class="warning"&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;?php } else { ?&gt;</b>
+&lt;div&gt;
+  &lt;p&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;?php } ?&gt;</b>
+</pre>
+<br>
+
+<a name="directive-if-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-if.pdata)</div>
+<pre class="program">&lt;div <b>title="if(status=='error')"</b>&gt;
+  &lt;p class="error" title="cont(mesg)"&gt;error&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="elseif(status=='warning')"</b>&gt;
+  &lt;p class="warning" title="cont(mesg)"&gt;waring&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="else"</b>&gt;
+  &lt;p title="cont(mesg)"&gt;mesg&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-if.pdata
+<b>&lt;c:choose&gt;&lt;c:when test="${status=='error'}"&gt;</b>
+&lt;div&gt;
+  &lt;p class="error"&gt;${mesg}&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;/c:when&gt;&lt;c:when test="${status=='warning'}"&gt;</b>
+&lt;div&gt;
+  &lt;p class="warning"&gt;${mesg}&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;/c:when&gt;&lt;c:otherwise&gt;</b>
+&lt;div&gt;
+  &lt;p&gt;${mesg}&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;/c:otherwise&gt;&lt;/c:choose&gt;</b>
+</pre>
+<br>
+
+<a name="directive-if-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-if.pdata)</div>
+<pre class="program">&lt;div <b>title="if($status=='error')"</b>&gt;
+  &lt;p class="error" title="cont($mesg)"&gt;error&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="elsif($status=='warning')"</b>&gt;
+  &lt;p class="warning" title="cont($mesg)"&gt;waring&lt;/p&gt;
+&lt;/div&gt;
+&lt;div <b>title="else"</b>&gt;
+  &lt;p title="cont($mesg)"&gt;mesg&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-if.pdata
+<b>&lt;? if ($status=='error') { !&gt;</b>
+&lt;div&gt;
+  &lt;p class="error"&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;? } elsif ($status=='warning') { !&gt;</b>
+&lt;div&gt;
+  &lt;p class="warning"&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;? } else { !&gt;</b>
+&lt;div&gt;
+  &lt;p&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
+&lt;/div&gt;
+<b>&lt;? } !&gt;</b>
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-set"></a>
+<h3 class="section2">set</h3>
+<p>'set' directive executes any expression.
+</p>
+<a name="directive-set-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-set.pdata)</div>
+<pre class="program">&lt;tr <b>title="set color=i%2==0 ? 'red' : 'blue'"</b>&gt;
+ &lt;td title="cont: color"&gt;red&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-set.pdata
+<b>&lt;% color=i%2==0 ? 'red' : 'blue' %&gt;</b>
+&lt;tr&gt;
+ &lt;td&gt;&lt;%= color %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-set-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-set.pdata)</div>
+<pre class="program">&lt;tr <b>title="set($color=$i%2==0 ? 'red' : 'blue')"</b>&gt;
+ &lt;td title="cont($color)"&gt;red&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-set.pdata
+<b>&lt;?php $color=$i%2==0 ? 'red' : 'blue'; ?&gt;</b>
+&lt;tr&gt;
+ &lt;td&gt;&lt;?php echo $color; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-set-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-set.pdata)</div>
+<pre class="program">&lt;tr <b>title="set(color=i%2==0 ? 'red' : 'blue')"</b>&gt;
+ &lt;td title="cont(color)"&gt;red&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-set.pdata
+<b>&lt;c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" /&gt;</b>
+&lt;tr&gt;
+ &lt;td&gt;${color}&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<br>
+
+<a name="directive-set-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-set.pdata)</div>
+<pre class="program">&lt;tr <b>title="set($color=i%2==0 ? 'red' : 'blue')"</b>&gt;
+ &lt;td title="cont($color)"&gt;red&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-set.pdata
+<b>&lt;? $color=i%2==0 ? 'red' : 'blue'; !&gt;</b>
+&lt;tr&gt;
+ &lt;td&gt;&lt;?= $color !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-mark"></a>
+<h3 class="section2">mark</h3>
+<p>'mark' directive marks the element by name.
+Name is used as selector of ruleset in presentation logic file.
+Id attribute is equivalent to 'mark' directive if other direcitve is not specified.
+</p>
+<p>'mark' directive is language-independent when used with id attribute.
+</p>
+<a name="directive-mark-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-mark.pdata)</div>
+<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
+ &lt;li <b>title="id: item"</b>&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-mark.pdata
+&lt;ul&gt;
+ &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-mark-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-mark.pdata)</div>
+<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
+ &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-mark.pdata
+&lt;ul&gt;
+ &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-mark-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-mark.pdata)</div>
+<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
+ &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-mark.pdata
+&lt;ul&gt;
+ &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-attr"></a>
+<h3 class="section2">attr, Attr, ATTR</h3>
+<p>'attr', 'Attr', and 'ATTR' directives replace attribute value with expression.
+'Attr' directive escapes expression automatically, while 'ATTR' never escape it.
+'attr' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<p>More than one directives are available in an element with separating by ';',
+and available with other directive.
+</p>
+<a name="directive-attr-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-attr.pdata)</div>
+<pre class="program">&lt;tr class="odd"
+    title="FOR v in list; <b>attr: 'class' v_tgl; attr: 'style' style</b>"&gt;
+ &lt;td title="cont v.name"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-attr.pdata
+&lt;% v_ctr = 0 %&gt;
+&lt;% for v in list do %&gt;
+&lt;%   v_ctr += 1 %&gt;
+&lt;%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %&gt;
+&lt;tr <b>class="&lt;%= v_tgl %&gt;"</b> <b>style="&lt;%= style %&gt;"&gt;</b>
+ &lt;td&gt;&lt;%= v.name %&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;% end %&gt;
+</pre>
+<br>
+
+<a name="directive-attr-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-attr.pdata)</div>
+<pre class="program">&lt;tr class="odd"
+    title="FOREACH($list as $v); <b>attr('class',$v_tgl); attr('style',$style)</b>"&gt;
+ &lt;td title="cont($v-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-attr.pdata
+&lt;?php $v_ctr = 0; ?&gt;
+&lt;?php foreach ($list as $v) { ?&gt;
+&lt;?php   $v_ctr++; ?&gt;
+&lt;?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?&gt;
+&lt;tr <b>class="&lt;?php echo $v_tgl; ?&gt;"</b> <b>style="&lt;?php echo $style; ?&gt;"</b>&gt;
+ &lt;td&gt;&lt;?php echo $v-&gt;name; ?&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;?php } ?&gt;
+</pre>
+<br>
+
+<a name="directive-attr-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-attr.pdata)</div>
+<pre class="program">&lt;tr class="odd"
+    title="FOR(v: list); <b>attr('class',v_tgl); attr('style',style)</b>"&gt;
+ &lt;td title="cont(v.name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-attr.pdata
+&lt;c:forEach var="v" items="${list}" varStatus="v_status"&gt;
+&lt;c:set var="v_ctr" value="${v_status.count}" /&gt;
+&lt;c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" /&gt;
+&lt;tr <b>class="${v_tgl}"</b> <b>style="${style}"</b>&gt;
+ &lt;td&gt;${v.name}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/c:forEach&gt;
+</pre>
+<br>
+
+<a name="directive-attr-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-attr.pdata)</div>
+<pre class="program">&lt;tr class="odd"
+    title="FOREACH($v in @list); <b>attr('class',$v_tgl); attr('style',$style)</b>"&gt;
+ &lt;td title="cont($v-&gt;name)"&gt;foo&lt;/td&gt;
+&lt;/tr&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-attr.pdata
+&lt;? my $v_ctr = 0; !&gt;
+&lt;? foreach my $v (@list) { !&gt;
+&lt;?   $v_ctr++; !&gt;
+&lt;?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !&gt;
+&lt;tr <b>class="&lt;?= $v_tgl !&gt;"</b> <b>style="&lt;?= $style !&gt;"</b>&gt;
+ &lt;td&gt;&lt;?= $v-&gt;name !&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;? } !&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-append"></a>
+<h3 class="section2">append, Append, APPEND</h3>
+<p>'append', 'Append', and 'APPEND' directives append expression at the end of start-tag.
+'Append' directive escapes expression automatically, while 'APPEND' never escape it.
+'append' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<p>More than one directives are available in an element with separating by ';',
+and available with other directive.
+</p>
+<a name="directive-append-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkbox"
+   <b>title="append: flag1 ? ' checked=\'checked\'' : ''"</b>&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-append.pdata
+&lt;input type="checkbox"<b>&lt;%= flag1 ? ' checked=\'checked\'' : '' %&gt;</b>&gt;
+</pre>
+<br>
+
+<a name="directive-append-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkbox"
+   <b>title="append($flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-append.pdata
+&lt;input type="checkbox"<b>&lt;?php echo $flag1 ? ' checked=\'checked\'' : ''; ?&gt;</b>&gt;
+</pre>
+<br>
+
+<a name="directive-append-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkbox"
+   <b>title="append(flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-append.pdata
+&lt;input type="checkbox"<b>${flag1 ? ' checked=\'checked\'' : ''}</b>&gt;
+</pre>
+<br>
+
+<a name="directive-append-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-append.pdata)</div>
+<pre class="program">&lt;input type="checkbox"
+   <b>title="append($flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-append.pdata
+&lt;input type="checkbox"<b>&lt;?= $flag1 ? ' checked=\'checked\'' : '' !&gt;</b>&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-dummy"></a>
+<h3 class="section2">dummy</h3>
+<p>'dummy' directive removes the element.
+It is very useful when preview the HTML design in browser.
+</p>
+<p>'dummy' directive is language-independent when used with id attribute.
+</p>
+<a name="directive-dummy-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-dummy.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
+  &lt;li <b>title="dummy:"</b>&gt;baz&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-dummy.pdata
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-dummy-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-dummy.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
+  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-dummy.pdata
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-dummy-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-dummy.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
+  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-dummy.pdata
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-dummy-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-dummy.pdata)</div>
+<pre class="program">&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
+  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-dummy.pdata
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-default"></a>
+<h3 class="section2">default, Default, DEFAULT</h3>
+<p>'default', 'Default', and 'DEFAULT' directive replaces content by expression
+only if expression is not nil, false, nor empty string.
+</p>
+<p>'Default' directive escapes expression automatically, while 'DEFAULT' never escape it.
+'default' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+</p>
+<a name="directive-default-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-default.pdata)</div>
+<pre class="program">name: &lt;em <b>title="default: user"</b>&gt;Guest&lt;/em&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-default.pdata
+name: &lt;em&gt;<b>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;Guest&lt;% end %&gt;</b>&lt;/em&gt;
+</pre>
+<br>
+
+<a name="directive-default-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-default.pdata)</div>
+<pre class="program">name: &lt;em <b>title="default($user)"</b>&gt;Guest&lt;/em&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-default.pdata
+name: &lt;em&gt;<b>&lt;?php if ($user) { ?&gt;&lt;?php echo $user; ?&gt;&lt;?php } else { ?&gt;Guest&lt;?php } ?&gt;</b>&lt;/em&gt;
+</pre>
+<br>
+
+<a name="directive-default-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-default.pdata)</div>
+<pre class="program">name: &lt;em <b>title="default(user)"</b>&gt;Guest&lt;/em&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-default.pdata
+name: &lt;em&gt;<b>&lt;c:out value="${user}" default="Guest" /&gt;</b>&lt;/em&gt;
+</pre>
+<br>
+
+<a name="directive-default-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-default.pdata)</div>
+<pre class="program">name: &lt;em <b>title="default($user)"</b>&gt;Guest&lt;/em&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-default.pdata
+name: &lt;em&gt;<b>&lt;? if ($user) { !&gt;&lt;?= $user !&gt;&lt;? } else { !&gt;Guest&lt;? } !&gt;</b>&lt;/em&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-replace"></a>
+<h3 class="section2">replace_element/content_with_element/content</h3>
+<p>'replace_element_with_element', 'replace_element_with_content',
+'replace_content_with_element', and 'replace_content_with_content'
+directives replace element or content with other element or content.
+</p>
+<p>These directives are language-independent when used with id attribute.
+</p>
+<a name="directive-replace-eruby"></a>
+<h4 class="section3">Ruby, PHP, JSP, Perl</h4>
+<div class="program_caption">
+presentation data (ex-replace.pdata)</div>
+<pre class="program">&lt;div <b>id="mark:link"</b>&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;p <b>id="replace_element_with_element:link"</b>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace element with other content--&gt;
+&lt;p <b>id="replace_element_with_content:link"</b>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other element --&gt;
+&lt;p <b>id="replace_content_with_element:link"</b>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p <b>id="replace_content_with_content:link"</b>&gt;
+  back to home
+&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-replace.pdata
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other content--&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+
+&lt;!-- replace content with other element --&gt;
+&lt;p&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<br>
+
+
+
+   </div>
+  </blockquote>
+
+ </body>
+</html>

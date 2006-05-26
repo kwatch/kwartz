@@ -312,12 +312,16 @@ module Kwartz
 
     def translate_native_expr(expr)
       assert unless expr.is_a?(NativeExpression)
-      flag_escape = expr.escape?
-      flag_escape = @escape if flag_escape == nil
-      if flag_escape == false
-        @sb << @expr_l << expr.code << @expr_r       # ex. <c:out value="${expr}" escapeXml="false"/>
+      if expr.code =~ /\A"(.*)"\z/ || expr.code =~ /\A'(.*)'\z/
+        @sb << $1
       else
-        @sb << @escape_l << expr.code << @escape_r   # ex. <c:out value="${expr}"/>
+        flag_escape = expr.escape?
+        flag_escape = @escape if flag_escape.nil?
+        if flag_escape == false
+          @sb << @expr_l << expr.code << @expr_r       # ex. <c:out value="${expr}" escapeXml="false"/>
+        else
+          @sb << @escape_l << expr.code << @escape_r   # ex. <c:out value="${expr}"/>
+        end
       end
     end
 

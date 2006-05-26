@@ -1,0 +1,36 @@
+#stocks {
+  logic: {
+    <c:forEach var="stock" items="${stocks}">
+      _elem;
+    </c:forEach>
+  }
+}
+
+#stock_symbol {
+  value:  stock.symbol;
+}
+
+#stock_symbol_link {
+  value:  stock.symbol;
+  attrs:  'href' "?symbol=${stock.symbol}";
+}
+
+#stock_company {
+  Value:  stock.company;
+}
+
+#stock_price {
+  value:  stock.price;
+}
+
+#stock_rate {
+  value:  "${stock.rate}%";
+  append: klass;
+  logic: {
+    <c:set var="klass" value=""/>
+    <c:if test="${stock.rate lt 0.0}">
+      <c:set var="klass" value=" class='minus'"/>
+    </c:if>
+    _elem;
+  }
+}
