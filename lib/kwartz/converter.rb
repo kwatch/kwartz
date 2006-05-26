@@ -715,10 +715,10 @@ module Kwartz
       reset(input, filename)
       stmt_list = []
       doc_ruleset = @handler.get_element_ruleset('DOCUMENT')
-      stmt_list += doc_ruleset.before if doc_ruleset && doc_ruleset.before
+      stmt_list += doc_ruleset.begin if doc_ruleset && doc_ruleset.begin
       #stmt_list << NativeStatement.new(doc_ruleset.head.chomp, nil) if doc_ruleset && doc_ruleset.head
       _convert(stmt_list)
-      stmt_list += doc_ruleset.after if doc_ruleset && doc_ruleset.after
+      stmt_list += doc_ruleset.end if doc_ruleset && doc_ruleset.end
       #stmt_list << NativeStatement.new(doc_ruleset.tail.chomp, nil) if doc_ruleset && doc_ruleset.tail
       return stmt_list
     end

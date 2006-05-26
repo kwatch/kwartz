@@ -13,71 +13,70 @@
         <p id="mark:name1">aaa</p>
         <p id="mark:name2">bbb</p>
         <p id="mark:name3">ccc</p>
-      
+
   plogic*:
     eruby: |
         #name1 {
-          elem: user[:name];
+          {{*elem:*}} user[:name];
         }
         #name2 {
-          Elem: user[:name];
+          {{*Elem:*}} user[:name];
         }
         #name3 {
-          ELEM: user[:name];
+          {{*ELEM:*}} user[:name];
         }
     php: |
         #name1 {
-          elem: $user['name'];
+          {{*elem:*}} $user['name'];
         }
         #name2 {
-          Elem: $user['name'];
+          {{*Elem:*}} $user['name'];
         }
         #name3 {
-          ELEM: $user['name'];
+          {{*ELEM:*}} $user['name'];
         }
     eperl: |
         #name1 {
-          elem: $user{'name'};
+          {{*elem:*}} $user{'name'};
         }
         #name2 {
-          Elem: $user{'name'};
+          {{*Elem:*}} $user{'name'};
         }
         #name3 {
-          ELEM: $user{'name'};
+          {{*ELEM:*}} $user{'name'};
         }
     jstl: |
         #name1 {
-          elem: user.name;
+          {{*elem:*}} user.name;
         }
         #name2 {
-          Elem: user.name;
+          {{*Elem:*}} user.name;
         }
         #name3 {
-          ELEM: user.name;
+          {{*ELEM:*}} user.name;
         }
 
   expected*:
     eruby: |
-        <%= user[:name] %>
-        <%=h user[:name] %>
-        <%= user[:name] %>
+        {{*<%= user[:name] %>*}}
+        {{*<%=h user[:name] %>*}}
+        {{*<%= user[:name] %>*}}
     php: |
-        <?php echo $user['name']; ?>
-        <?php echo htmlspecialchars($user['name']); ?>
-        <?php echo $user['name']; ?>
+        {{*<?php echo $user['name']; ?>*}}
+        {{*<?php echo htmlspecialchars($user['name']); ?>*}}
+        {{*<?php echo $user['name']; ?>*}}
     eperl: |
-        <?= $user{'name'} !>
-        <?= sanitize($user{'name'}) !>
-        <?= $user{'name'} !>
+        {{*<?= $user{'name'} !>*}}
+        {{*<?= sanitize($user{'name'}) !>*}}
+        {{*<?= $user{'name'} !>*}}
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        ${user.name}
-        ${user.name}
-        <c:out value="${user.name}" escapeXml="false"/>
+        {{*${user.name}*}}
+        {{*${user.name}*}}
+        {{*<c:out value="${user.name}" escapeXml="false"/>*}}
 
 ##
----
 - name:   cont
   title:  cont, Cont, CONT
   desc: |
@@ -92,68 +91,68 @@
         <p id="mark:name1">aaa</p>
         <p id="mark:name2">bbb</p>
         <p id="mark:name3">ccc</p>
-      
+
   plogic*:
     eruby: |
         #name1 {
-          cont: user[:name];
+          {{*cont:*}} user[:name];
         }
         #name2 {
-          Cont: user[:name];
+          {{*Cont:*}} user[:name];
         }
         #name3 {
-          CONT: user[:name];
+          {{*CONT:*}} user[:name];
         }
     php: |
         #name1 {
-          cont: $user['name'];
+          {{*cont:*}} $user['name'];
         }
         #name2 {
-          Cont: $user['name'];
+          {{*Cont:*}} $user['name'];
         }
         #name3 {
-          CONT: $user['name'];
+          {{*CONT:*}} $user['name'];
         }
     eperl: |
         #name1 {
-          cont: $user{'name'};
+          {{*cont:*}} $user{'name'};
         }
         #name2 {
-          Cont: $user{'name'};
+          {{*Cont:*}} $user{'name'};
         }
         #name3 {
-          CONT: $user{'name'};
+          {{*CONT:*}} $user{'name'};
         }
     jstl: |
         #name1 {
-          cont: user.name;
+          {{*cont:*}} user.name;
         }
         #name2 {
-          Cont: user.name;
+          {{*Cont:*}} user.name;
         }
         #name3 {
-          CONT: user.name;
+          {{*CONT:*}} user.name;
         }
 
   expected*:
     eruby: |
-        <p><%= user[:name] %></p>
-        <p><%=h user[:name] %></p>
-        <p><%= user[:name] %></p>
+        <p>{{*<%= user[:name] %>*}}</p>
+        <p>{{*<%=h user[:name] %>*}}</p>
+        <p>{{*<%= user[:name] %>*}}</p>
     php: |
-        <p><?php echo $user['name']; ?></p>
-        <p><?php echo htmlspecialchars($user['name']); ?></p>
-        <p><?php echo $user['name']; ?></p>
+        <p>{{*<?php echo $user['name']; ?>*}}</p>
+        <p>{{*<?php echo htmlspecialchars($user['name']); ?>*}}</p>
+        <p>{{*<?php echo $user['name']; ?>*}}</p>
     eperl: |
-        <p><?= $user{'name'} !></p>
-        <p><?= sanitize($user{'name'}) !></p>
-        <p><?= $user{'name'} !></p>
+        <p>{{*<?= $user{'name'} !>*}}</p>
+        <p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+        <p>{{*<?= $user{'name'} !>*}}</p>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        <p>${user.name}</p>
-        <p>${user.name}</p>
-        <p><c:out value="${user.name}" escapeXml="false"/></p>
+        <p>{{*${user.name}*}}</p>
+        <p>{{*${user.name}*}}</p>
+        <p>{{*<c:out value="${user.name}" escapeXml="false"/>*}}</p>
 
 ##
 - name:   value
@@ -168,68 +167,68 @@
         <p id="mark:name1">aaa</p>
         <p id="mark:name2">bbb</p>
         <p id="mark:name3">ccc</p>
-      
+
   plogic*:
     eruby: |
         #name1 {
-          value: user[:name];
+          {{*value:*}} user[:name];
         }
         #name2 {
-          Value: user[:name];
+          {{*Value:*}} user[:name];
         }
         #name3 {
-          VALUE: user[:name];
+          {{*VALUE:*}} user[:name];
         }
     php: |
         #name1 {
-          value: $user['name'];
+          {{*value:*}} $user['name'];
         }
         #name2 {
-          Value: $user['name'];
+          {{*Value:*}} $user['name'];
         }
         #name3 {
-          VALUE: $user['name'];
+          {{*VALUE:*}} $user['name'];
         }
     eperl: |
         #name1 {
-          value: $user{'name'};
+          {{*value:*}} $user{'name'};
         }
         #name2 {
-          Value: $user{'name'};
+          {{*Value:*}} $user{'name'};
         }
         #name3 {
-          VALUE: $user{'name'};
+          {{*VALUE:*}} $user{'name'};
         }
     jstl: |
         #name1 {
-          value: user.name;
+          {{*value:*}} user.name;
         }
         #name2 {
-          Value: user.name;
+          {{*Value:*}} user.name;
         }
         #name3 {
-          VALUE: user.name;
+          {{*VALUE:*}} user.name;
         }
 
   expected*:
     eruby: |
-        <p><%= user[:name] %></p>
-        <p><%=h user[:name] %></p>
-        <p><%= user[:name] %></p>
+        <p>{{*<%= user[:name] %>*}}</p>
+        <p>{{*<%=h user[:name] %>*}}</p>
+        <p>{{*<%= user[:name] %>*}}</p>
     php: |
-        <p><?php echo $user['name']; ?></p>
-        <p><?php echo htmlspecialchars($user['name']); ?></p>
-        <p><?php echo $user['name']; ?></p>
+        <p>{{*<?php echo $user['name']; ?>*}}</p>
+        <p>{{*<?php echo htmlspecialchars($user['name']); ?>*}}</p>
+        <p>{{*<?php echo $user['name']; ?>*}}</p>
     eperl: |
-        <p><?= $user{'name'} !></p>
-        <p><?= sanitize($user{'name'}) !></p>
-        <p><?= $user{'name'} !></p>
+        <p>{{*<?= $user{'name'} !>*}}</p>
+        <p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+        <p>{{*<?= $user{'name'} !>*}}</p>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        <p>${user.name}</p>
-        <p>${user.name}</p>
-        <p><c:out value="${user.name}" escapeXml="false"/></p>
+        <p>{{*${user.name}*}}</p>
+        <p>{{*${user.name}*}}</p>
+        <p>{{*<c:out value="${user.name}" escapeXml="false"/>*}}</p>
 
 ##
 - name:   stag
@@ -246,68 +245,68 @@
 	<a href="#" id="mark:link1"><img src="button1.png"></a>
 	<a href="#" id="mark:link2"><img src="button2.png"></a>
 	<a href="#" id="mark:link3"><img src="button3.png"></a>
-      
+
   plogic*:
     eruby: |
         #link1 {
-          stag: start_link_to :action=>'list';
+          {{*stag:*}} start_link_to :action=>'list';
         }
         #link2 {
-          Stag: start_link_to :action=>'list';
+          {{*Stag:*}} start_link_to :action=>'list';
         }
         #link3 {
-          STAG: start_link_to :action=>'list';
+          {{*STAG:*}} start_link_to :action=>'list';
         }
     php: |
         #link1 {
-          stag: start_link_to('list');
+          {{*stag:*}} start_link_to('list');
         }
         #link2 {
-          Stag: start_link_to('list');
+          {{*Stag:*}} start_link_to('list');
         }
         #link3 {
-          STAG: start_link_to('list');
+          {{*STAG:*}} start_link_to('list');
         }
     eperl: |
         #link1 {
-          stag: start_link_to('list');
+          {{*stag:*}} start_link_to('list');
         }
         #link2 {
-          Stag: start_link_to('list');
+          {{*Stag:*}} start_link_to('list');
         }
         #link3 {
-          STAG: start_link_to('list');
+          {{*STAG:*}} start_link_to('list');
         }
     jstl: |
         #link1 {
-          stag: fn:start_link_to('list');
+          {{*stag:*}} fn:start_link_to('list');
         }
         #link2 {
-          Stag: fn:start_link_to('list');
+          {{*Stag:*}} fn:start_link_to('list');
         }
         #link3 {
-          STAG: fn:start_link_to('list');
+          {{*STAG:*}} fn:start_link_to('list');
         }
 
   expected*:
     eruby: |
-	<%= start_link_to :action=>'list' %><img src="button1.png"></a>
-	<%=h start_link_to :action=>'list' %><img src="button2.png"></a>
-	<%= start_link_to :action=>'list' %><img src="button3.png"></a>
+	{{*<%= start_link_to :action=>'list' %>*}}<img src="button1.png"></a>
+	{{*<%=h start_link_to :action=>'list' %>*}}<img src="button2.png"></a>
+	{{*<%= start_link_to :action=>'list' %>*}}<img src="button3.png"></a>
     php: |
-	<?php echo start_link_to('list'); ?><img src="button1.png"></a>
-	<?php echo htmlspecialchars(start_link_to('list')); ?><img src="button2.png"></a>
-	<?php echo start_link_to('list'); ?><img src="button3.png"></a>
+	{{*<?php echo start_link_to('list'); ?>*}}<img src="button1.png"></a>
+	{{*<?php echo htmlspecialchars(start_link_to('list')); ?>*}}<img src="button2.png"></a>
+	{{*<?php echo start_link_to('list'); ?>*}}<img src="button3.png"></a>
     eperl: |
-	<?= start_link_to('list') !><img src="button1.png"></a>
-	<?= sanitize(start_link_to('list')) !><img src="button2.png"></a>
-	<?= start_link_to('list') !><img src="button3.png"></a>
+	{{*<?= start_link_to('list') !>*}}<img src="button1.png"></a>
+	{{*<?= sanitize(start_link_to('list')) !>*}}<img src="button2.png"></a>
+	{{*<?= start_link_to('list') !>*}}<img src="button3.png"></a>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-	${fn:start_link_to('list')}<img src="button1.png"></a>
-	${fn:start_link_to('list')}<img src="button2.png"></a>
-	<c:out value="${fn:start_link_to('list')}" escapeXml="false"/><img src="button3.png"></a>
+	{{*${fn:start_link_to('list')}*}}<img src="button1.png"></a>
+	{{*${fn:start_link_to('list')}*}}<img src="button2.png"></a>
+	{{*<c:out value="${fn:start_link_to('list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
 
 ##
 - name:   etag
@@ -324,68 +323,68 @@
 	<li id="mark:item1">foo</li>
 	<li id="mark:item2">bar</li>
 	<li id="mark:item3">baz</li>
-      
+
   plogic*:
     eruby: |
         #item1 {
-          etag: is_xml ? '</li>' : '';
+          {{*etag:*}} is_xml ? '</li>' : '';
         }
         #item2 {
-          Etag: is_xml ? '</li>' : '';
+          {{*Etag:*}} is_xml ? '</li>' : '';
         }
         #item3 {
-          ETAG: is_xml ? '</li>' : '';
+          {{*ETAG:*}} is_xml ? '</li>' : '';
         }
     php: |
         #item1 {
-          etag: $is_xml ? '</li>' : '';
+          {{*etag:*}} $is_xml ? '</li>' : '';
         }
         #item2 {
-          Etag: $is_xml ? '</li>' : '';
+          {{*Etag:*}} $is_xml ? '</li>' : '';
         }
         #item3 {
-          ETAG: $is_xml ? '</li>' : '';
+          {{*ETAG:*}} $is_xml ? '</li>' : '';
         }
     eperl: |
         #item1 {
-          etag: $is_xml ? '</li>' : '';
+          {{*etag:*}} $is_xml ? '</li>' : '';
         }
         #item2 {
-          Etag: $is_xml ? '</li>' : '';
+          {{*Etag:*}} $is_xml ? '</li>' : '';
         }
         #item3 {
-          ETAG: $is_xml ? '</li>' : '';
+          {{*ETAG:*}} $is_xml ? '</li>' : '';
         }
     jstl: |
         #item1 {
-          etag: is_xml ? '</li>' : '';
+          {{*etag:*}} is_xml ? '</li>' : '';
         }
         #item2 {
-          Etag: is_xml ? '</li>' : '';
+          {{*Etag:*}} is_xml ? '</li>' : '';
         }
         #item3 {
-          ETAG: is_xml ? '</li>' : '';
+          {{*ETAG:*}} is_xml ? '</li>' : '';
         }
 
   expected*:
     eruby: |
-	<li>foo<%= is_xml ? '</li>' : '' %>
-	<li>bar<%=h is_xml ? '</li>' : '' %>
-	<li>baz<%= is_xml ? '</li>' : '' %>
+	<li>foo{{*<%= is_xml ? '</li>' : '' %>*}}
+	<li>bar{{*<%=h is_xml ? '</li>' : '' %>*}}
+	<li>baz{{*<%= is_xml ? '</li>' : '' %>*}}
     php: |
-	<li>foo<?php echo $is_xml ? '</li>' : ''; ?>
-	<li>bar<?php echo htmlspecialchars($is_xml ? '</li>' : ''); ?>
-	<li>baz<?php echo $is_xml ? '</li>' : ''; ?>
+	<li>foo{{*<?php echo $is_xml ? '</li>' : ''; ?>*}}
+	<li>bar{{*<?php echo htmlspecialchars($is_xml ? '</li>' : ''); ?>*}}
+	<li>baz{{*<?php echo $is_xml ? '</li>' : ''; ?>*}}
     eperl: |
-	<li>foo<?= $is_xml ? '</li>' : '' !>
-	<li>bar<?= sanitize($is_xml ? '</li>' : '') !>
-	<li>baz<?= $is_xml ? '</li>' : '' !>
+	<li>foo{{*<?= $is_xml ? '</li>' : '' !>*}}
+	<li>bar{{*<?= sanitize($is_xml ? '</li>' : '') !>*}}
+	<li>baz{{*<?= $is_xml ? '</li>' : '' !>*}}
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-	<li>foo${is_xml ? '</li>' : ''}
-	<li>bar${is_xml ? '</li>' : ''}
-	<li>baz<c:out value="${is_xml ? '</li>' : ''}" escapeXml="false"/>
+	<li>foo{{*${is_xml ? '</li>' : ''}*}}
+	<li>bar{{*${is_xml ? '</li>' : ''}*}}
+	<li>baz{{*<c:out value="${is_xml ? '</li>' : ''}" escapeXml="false"/>*}}
 
 ##
 - name:   attrs
@@ -426,28 +425,28 @@
 
   expected*:
     eruby: |
-        <p class="<%= klass %>" style="<%= style %>">
+        <p {{*class="<%= klass %>"*}} {{*style="<%= style %>"*}}>
           AAA
         </p>
     php: |
-        <p class="<?php echo $class; ?>" style="<?php echo $style; ?>">
+        <p {{*class="<?php echo $class; ?>"*}} {{*style="<?php echo $style; ?>"*}}>
           AAA
         </p>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        <p class="${klass}" style="${style}">
+        <p {{*class="${klass}"*}} {{*style="${style}"*}}>
           AAA
         </p>
     eperl: |
-        <p class="<?= $class !>" style="<?= $style !>">
+        <p {{*class="<?= $class !>"*}} {{*style="<?= $style !>"*}}>
           AAA
         </p>
 
   postscript: |
         Notice that the follwing will be parse error
         because Kwartz parses {{,attrs:,}} property with pattern matching.
-        
+
         .--------------------
         #foo {
           attrs: 'class' klass, 'style' style;
@@ -488,20 +487,20 @@
 
   expected*:
     eruby: |
-        <input type="checkboxk" value="y"<%= flag ? ' checked' : '' %>>Remeber me
+        <input type="checkboxk" value="y"{{*<%= flag ? ' checked' : '' %>*}}>Remeber me
     php: |
-        <input type="checkboxk" value="y"<?php echo $flag ? ' checked' : ''; ?>>Remeber me
+        <input type="checkboxk" value="y"{{*<?php echo $flag ? ' checked' : ''; ?>*}}>Remeber me
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-        <input type="checkboxk" value="y"${flag ? ' checked' : ''}>Remeber me
+        <input type="checkboxk" value="y"{{*${flag ? ' checked' : ''}*}}>Remeber me
     eperl: |
-        <input type="checkboxk" value="y"<?= $flag ? ' checked' : '' !>>Remeber me
- 
+        <input type="checkboxk" value="y"{{*<?= $flag ? ' checked' : '' !>*}}>Remeber me
+
 
   postscript: |
         The following is an example to append several expressions.
-        
+
         .--------------------
         #remember {
           append:  expr1,
@@ -509,9 +508,9 @@
                    expr3;
         }
         .--------------------
-        
-        Notice that the following will be syntax error.
-        
+
+        Notice that the following will be parse error.
+
         .--------------------
         #remember {
           append:  expr1, expr2, expr3;
@@ -560,12 +559,18 @@
   desc: |
         {{,logic:,}} property represents the presentation logic body of the element.
         In the {{,logic:,}} property, the folllowings are available.
-        .[ {{,_elem,}} ]        represents the element
-        .[ {{,_stag,}} ]        represents start-tag of the element
-        .[ {{,_cont,}} ]        represents content of the element
-        .[ {{,_stag,}} ]        represents end-tag of the element
-        .[ {{,_element({{/name/}}),}} ]    represents the other element marked as {{/name/}}.
-        .[ {{,_content({{/name/}}),}} ]    represents the content of other element marked as {{/name/}}.
+        .[ {{,_elem,}} ]
+		represents the element
+        .[ {{,_stag,}} ]
+		represents start-tag of the element
+        .[ {{,_cont,}} ]
+		represents content of the element
+        .[ {{,_stag,}} ]
+		represents end-tag of the element
+        .[ {{,_element({{/name/}}),}} ]
+		represents the other element marked as {{/name/}}.
+        .[ {{,_content({{/name/}}),}} ]
+		represents the content of other element marked as {{/name/}}.
 
         In the {{,logic:,}} property, it is able to write statements in target language
         (Ruby, PHP, Java, Perl, and so on).
@@ -624,27 +629,176 @@
   expected*:
     eruby: |
         <ul>
-        <%     @list.each do |item| %>
+        {{*<%     @list.each do |item| %>*}}
           <li><%= item %></li>
-        <%     end %>
+        {{*<%     end %>*}}
         </ul>
     php: |
         <ul>
-        <?php     foreach ($list as $item) { ?>
+        {{*<?php     foreach ($list as $item) { ?>*}}
           <li><?php echo $item; ?></li>
-        <?php     } ?>
+        {{*<?php     } ?>*}}
         </ul>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         <ul>
-            <c:forEach var="item" items="${list}">
+            {{*<c:forEach var="item" items="${list}">*}}
           <li>${item}</li>
-            </c:forEach>
+            {{*</c:forEach>*}}
         </ul>
     eperl: |
         <ul>
-        <?     foreach ($item in @list) { !>
+        {{*<?     foreach ($item in @list) { !>*}}
           <li><?= $item !></li>
+        {{*<?     } !>*}}
+        </ul>
+
+##
+- name:   begin
+  title:  begin, end
+  desc: |
+        {{,begin:,}} and {{,end:,}} property represents the prework and postwork
+	of document respectively.
+	These properties takes target code block and are available only with
+	'#DOCUMENT' selector.
+
+  pdata: |
+        <p>Hello <span id="mark:username">world</span>!</p>
+	<ul>
+	 <li id="mark:menu">menu item</li>
+	</ul>
+
+  plogic*:
+    eruby: |
+        #DOCUMENT {
+	  {{*begin:*}} {
+	    username = @context[:username]
+	    menulist = @context[:menulist]
+	  }
+	  {{*end:*}} {
+	    print "<!-- document end -->\n"
+
+	  }
+	}
+	#username {
+	  value:  username;
+	}
+	#menu {
+	  value: menu;
+	  logic: {
+	    for menu in menulist
+	      _elem
+	    end
+	  }
+	}
+    php: |
+        #DOCUMENT {
+	  {{*begin:*}} {
+	    $username = $context['username'];
+	    $menulist = $context['menulist'];
+	  }
+	  {{*end:*}} {
+	    print("<!-- document end -->\n");
+
+	  }
+	}
+	#username {
+	  value:  $username;
+	}
+	#menu {
+	  value: $menu;
+	  logic: {
+	    foreach ($menulist as $menu) {
+	      _elem();
+	    }
+	  }
+	}
+    jstl: |
+        #DOCUMENT {
+	  {{*begin:*}} {
+	    <c:set var="username" value="${context.username}"/>
+	    <c:set var="menulist" value="${context.menulist}"/>
+	  }
+	  {{*end:*}} {
+	    <c:out value="<!-- document end -->\n"/>
+	  }
+	}
+	#username {
+	  value:  username;
+	}
+	#menu {
+	  value:  menu;
+	  logic: {
+	    <c:forEach var="menu" items="${menulist}">
+	      _elem();
+	    </c:forEach>
+	  }
+	}
+    eperl: |
+        #DOCUMENT {
+	  {{*begin:*}} {
+	    $username = $context{'username'};
+	    @menulist = $context{'menulist'};
+	  }
+	  {{*end:*}} {
+	    print("<!-- document end -->\n");
+
+	  }
+	}
+	#username {
+	  value:  $username;
+	}
+	#menu {
+	  value: $menu;
+	  logic: {
+	    foreach ($menu in @menulist) {
+	      _elem();
+	    }
+	  }
+	}
+
+  expected*:
+    eruby: |-
+	{{*<%     username = @context[:username] %>*}}
+	{{*<%     menulist = @context[:menulist] %>*}}
+	<p>Hello <span><%= username %></span>!</p>
+        <ul>
+        <%     for menu in menulist %>
+         <li><%= menu %></li>
+        <%     end %>
+        </ul>
+	{{*<%= "<!-- document end -->\n" %>*}}
+
+    php: |-
+        {{*<?php     $username = $context['username']; ?>*}}
+        {{*<?php     $menulist = $context['menulist']; ?>*}}
+	<p>Hello <span><?php echo $username; ?></span>!</p>
+        <ul>
+        <?php     foreach ($menulist as $menu) { ?>
+         <li><?php echo $menu; ?></li>
+        <?php     } ?>
+        </ul>
+	{{*<?php echo "<!-- document end -->\n"; ?>*}}
+    jstl: |
+        <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+            {{*<c:set var="username" value="${context.username}"/>*}}
+            {{*<c:set var="menulist" value="${context.menulist}"/>*}}
+	<p>Hello <span>${username}</span>!</p>
+        <ul>
+            <c:forEach var="menu" items="${menulist}">
+         <li>${menu}</li>
+            </c:forEach>
+        </ul>
+	    {{*<c:out value="<!-- document end -->\n"/>*}}
+    eperl: |-
+	{{*<?     $username = $context{'username'}; !>*}}
+	{{*<?     @menulist = $context{'menulist'}; !>*}}
+	<p>Hello <span><?= $username !></span>!</p>
+        <ul>
+        <?     foreach ($menu in @menulist) { !>
+         <li><?= $menu !></li>
         <?     } !>
         </ul>
+	{{*<?= "<!-- document end -->\n" !>*}}

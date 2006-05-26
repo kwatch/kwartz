@@ -214,6 +214,12 @@ module Kwartz
       #not_implemented
     end
 
+    ## .[abstract] detect parser-specific keywords
+    ##
+    ## return symbol if keyword is token, else return nil
+    def keywords(keyword)
+      not_implemented
+    end
 
     ## scan token
     def scan
@@ -236,7 +242,7 @@ module Kwartz
       ## keyword or identifer
       if is_identchar(c)
         scan_ident()
-        @token = PLOGIC_KEYWORDS[@value] || :ident
+        @token = keywords(@value) || PLOGIC_KEYWORDS[@value] || :ident
         return @token
       end
 
@@ -415,6 +421,12 @@ module Kwartz
       end
       return nil
     end
+
+
+    def keywords(keyword)
+      return RUBYSTYLE_KEYWORDS[keyword]
+    end
+    RUBYSTYLE_KEYWORDS = { 'BEGIN' => :BEGIN, 'END' => :END }
 
 
     def parse_document_ruleset
@@ -665,6 +677,12 @@ module Kwartz
     end #def
 
 
+    def keywords(keyword)
+      return CSSSTYLE_KEYWORDS[keyword]
+    end
+    CSSSTYLE_KEYWORDS = { 'begin'=>:begin, 'end'=>:end }
+
+
     def parse_document_ruleset
       assert unless @value == 'DOCUMENT'
       start_linenum = @linenum
@@ -680,8 +698,10 @@ module Kwartz
         when :global   ;  has_colon?();  ruleset.set_global   _parse_words()
         when :local    ;  has_colon?();  ruleset.set_local    _parse_words()
         when :fixture  ;  has_colon?();  ruleset.set_fixture  _parse_block()
-        when :before   ;  has_colon?();  ruleset.set_before   _parse_block()
-        when :after    ;  has_colon?();  ruleset.set_after    _parse_block()
+        when :begin    ;  has_colon?();  ruleset.set_begin   _parse_block()
+        when :end      ;  has_colon?();  ruleset.set_end    _parse_block()
+        #when :before   ;  has_colon?();  ruleset.set_before   _parse_block()
+        #when :after    ;  has_colon?();  ruleset.set_after    _parse_block()
         else
           unless @token
             raise parse_error("'#DOCUMENT': is not closed by '}'.", start_linenum)

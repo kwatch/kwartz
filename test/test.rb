@@ -21,13 +21,13 @@ require 'kwartz/main'
 
 if $0 == __FILE__
 
-  #require 'test-compile'
-  #require 'test-ruleset'
-  #require 'test-converter'
-  #require 'test-directives'
-  #require 'test-rails'
-  #require 'test-parser'
-  #require 'test-main'
+  require 'test-compile'
+  require 'test-converter'
+  require 'test-directives'
+  require 'test-main'
+  require 'test-parser'
+  require 'test-rails'
+  require 'test-ruleset'
   #
   #suite = Test::Unit::TestSuite.new()
   #suite << CompileTest.suite()

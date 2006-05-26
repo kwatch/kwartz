@@ -308,11 +308,11 @@
       #DOCUMENT {
         local:  i, item, title, list;
 	global: _context;
-        before: {
+        begin: {
 	  title = _context[:title]
 	  list = _context[:list]
 	}
-	after: {
+	end: {
 	  print "*** debug:\n"
 	  _context.each do |key, value|
 	     print "*** key=#{key}, value=#{value.inspect}"
@@ -328,10 +328,10 @@
           - item
           - title
           - list
-        before:
+        begin:
           - "    title = _context[:title]"
           - "    list = _context[:list]"
-        after:
+        end:
           - [ <%="*** debug:\n"%>]
           - "    _context.each do |key, value|"
           - [ <%="*** key=#{key}, value=#{value.inspect}"%>]

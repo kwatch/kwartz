@@ -4,11 +4,31 @@
 .?stylesheet:	docstyle.css
 
 
-.$ Pesentation Logic 
+.$ Preface	| preface*
 
-Presentation logic in Kwartz is similar to Cascading Style Sheet (CSS).
+This document{{(This document is generated automatically from unit-test data. Knuth had propsed integration of code and document.  I propose integration of test and document :-))}} is the reference manual of Kwartz-ruby 3.0.
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept 'Independence of Presentation Logic'.
+It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
+
+If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
+
+
+
+.$$ Table of Contents	      | toc*
+
+.<<< reference.toc
+
+
+
+.# --------------------------------------------------------------------------------
+
+
+.$ Pesentation Logic	| plogic
+
+Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 .* Presentation logic file is a set of ruleset.
-.* Ruleset is a pair of selector and a set of declaration.
+.* Ruleset is a pair of selector and declarations.
 .* Declaration is a pair of property and value.
 
 .? Pseudo-EBNF syntax of presentation logic
@@ -17,93 +37,707 @@ plogic       ::=  ruleset*
 ruleset      ::=  selector '{' [ declaration ';' ]* '}'
 selector     ::=  '#' name
 declaration  ::=  property ':' value
-property     ::=  'elem'   | 'stag'   | 'cont'   | 'etag'  | 'value'
-                | 'attrs'  | 'append' | 'remove' | 'logic'
-		| 'begin'  | 'end'
-.#declaration  ::=  'elem:' expression
-.#               |  'stag:' expression
-.#	       |  'cont:' expression
-.#	       |  'etag:' expression
-.#	       |  'value:' expression
-.#	       |  'attrs:' attributes
-.#	       |  'append:' expressions
-.#	       |  'remove:' qnames
-.#	       |  'logic:' '{' statements '}'
-.#attributes   ::=  attribute { ',' attribute }
-.#attribute    ::=  qname expression
-.#qnames       ::=  qname { ',' qname }
-.#qname        ::=  '"' name '"'
-.#               |  "'" name "'"
-.#expressions  ::=  { expression }
-.#statements   ::=  { statement }
+property     ::=  'elem'   | 'Elem'   | 'ELEM'
+               |  'stag'   | 'Stag'   | 'STAG'
+	       |  'etag'   | 'Etag'   | 'ETAG'
+	       |  'cont'   | 'Cont'   | 'CONT'
+	       |  'value'  | 'Value'  | 'VALUE'
+	       |  'attrs'  | 'Attrs'  | 'ATTRS'
+	       |  'append' | 'Append' | 'APPEND'
+	       |  'remove'
+	       |  'logic'
 .____________________
 
+Notice that the tail semicolon of declaration is not omittable.
 
-.$$ {{,elem:,}}, {{,stag:,}}, {{,cont:,}}, {{,etag:,}}, {{,value:,}} properties
 
-{{,elem:,}}, {{,stag:,}}, {{,cont:,}}, and {{,etag:,}} properties replaces
-the element, start-tag, content, and end-tag with expression value respectively.
-{{,value:,}} property is the same as {{,cont:,}} property.
 
-.? presentatio data (ex1.pdata)
-.-------------------- ex1.pdata
-<p id="mark:elem1">AAA</p>
+.$$ elem, Elem, ELEM	| property-elem
 
-<p id="mark:stag1">BBB</p>
+{{,elem:,}}, {{,Elem:,}}, and {{,ELEM:,}} properties replaces the element
+with expression value.
 
-<p id="mark:cont1">CCC</p>
+{{,Elem:,}} always escape expression value while {{,ELEM:,}} never escape it.
+{{,elem:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
 
-<p id="mark:etag1">DDD</p>
+
+
+
+.$$$ Ruby	| property-elem-eruby
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
 .--------------------
 
-.? presentation logic (ex1.plogic)
-.-------------------- ex1.plogic
-#elem1 {
-  {{*elem:*}} expr1;
-}
-#stag1 {
-  {{*stag:*}} expr2;
-}
-#cont1 {
-  {{*cont:*}} expr3;
-}
-#etag1 {
-  {{*etag:*}} expr4;
-}
+.? presentation logic (ex-elem.plogic)
 .--------------------
-
-.? compile
-.====================
-$ kwartz -p ex1.plogic ex1.pdata
-.<<<:! (cd d; kwartz -p ex1.plogic ex1.pdata)
-.====================
-
-
-
-.$$ {{,attrs:,}} property
-
-{{,attrs:,}} property replaces or adds attributes.
-
-.? presentation data (ex2.pdata)
-.-------------------- ex2.pdata
-<p id="mark:foo" class="para">
-  AAA
-</p>
-.--------------------
-
-.? presentaion logic (ex2.plogic)
-.-------------------- ex2.plogic
-#foo {
-  {{*attrs:*}} 'class' klass,
-         'style' style;
+#name1 {
+  {{*elem:*}} user[:name];
+}
+#name2 {
+  {{*Elem:*}} user[:name];
+}
+#name3 {
+  {{*ELEM:*}} user[:name];
 }
 .--------------------
 
 .? compile
 .====================
-$ kwartz -p ex2.plogic ex2.pdata
-.<<<:! (cd d; kwartz -p ex2.plogic ex2.pdata)
+$ kwartz -l eruby -p ex-elem.plogic ex-elem.pdata
+{{*<%= user[:name] %>*}}
+{{*<%=h user[:name] %>*}}
+{{*<%= user[:name] %>*}}
 .====================
+
+.$$$ PHP	| property-elem-php
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-elem.plogic)
+.--------------------
+#name1 {
+  {{*elem:*}} $user['name'];
+}
+#name2 {
+  {{*Elem:*}} $user['name'];
+}
+#name3 {
+  {{*ELEM:*}} $user['name'];
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-elem.plogic ex-elem.pdata
+{{*<?php echo $user['name']; ?>*}}
+{{*<?php echo htmlspecialchars($user['name']); ?>*}}
+{{*<?php echo $user['name']; ?>*}}
+.====================
+
+.$$$ JSP	| property-elem-jstl
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-elem.plogic)
+.--------------------
+#name1 {
+  {{*elem:*}} user.name;
+}
+#name2 {
+  {{*Elem:*}} user.name;
+}
+#name3 {
+  {{*ELEM:*}} user.name;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-elem.plogic ex-elem.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+{{*${user.name}*}}
+{{*${user.name}*}}
+{{*<c:out value="${user.name}" escapeXml="false"/>*}}
+.====================
+
+.$$$ Perl	| property-elem-eperl
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-elem.plogic)
+.--------------------
+#name1 {
+  {{*elem:*}} $user{'name'};
+}
+#name2 {
+  {{*Elem:*}} $user{'name'};
+}
+#name3 {
+  {{*ELEM:*}} $user{'name'};
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-elem.plogic ex-elem.pdata
+{{*<?= $user{'name'} !>*}}
+{{*<?= sanitize($user{'name'}) !>*}}
+{{*<?= $user{'name'} !>*}}
+.====================
+
+
+
+.$$ cont, Cont, CONT	| property-cont
+
+{{,cont:,}}, {{,Cont:,}}, and {{,CONT:,}} properties replaces the element
+with expression value.
+
+{{,Cont:,}} always escape expression value while {{,CONT:,}} never escape it.
+{{,cont:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+
+
+
+
+.$$$ Ruby	| property-cont-eruby
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-cont.plogic)
+.--------------------
+#name1 {
+  {{*cont:*}} user[:name];
+}
+#name2 {
+  {{*Cont:*}} user[:name];
+}
+#name3 {
+  {{*CONT:*}} user[:name];
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-cont.plogic ex-cont.pdata
+<p>{{*<%= user[:name] %>*}}</p>
+<p>{{*<%=h user[:name] %>*}}</p>
+<p>{{*<%= user[:name] %>*}}</p>
+.====================
+
+.$$$ PHP	| property-cont-php
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-cont.plogic)
+.--------------------
+#name1 {
+  {{*cont:*}} $user['name'];
+}
+#name2 {
+  {{*Cont:*}} $user['name'];
+}
+#name3 {
+  {{*CONT:*}} $user['name'];
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-cont.plogic ex-cont.pdata
+<p>{{*<?php echo $user['name']; ?>*}}</p>
+<p>{{*<?php echo htmlspecialchars($user['name']); ?>*}}</p>
+<p>{{*<?php echo $user['name']; ?>*}}</p>
+.====================
+
+.$$$ JSP	| property-cont-jstl
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-cont.plogic)
+.--------------------
+#name1 {
+  {{*cont:*}} user.name;
+}
+#name2 {
+  {{*Cont:*}} user.name;
+}
+#name3 {
+  {{*CONT:*}} user.name;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-cont.plogic ex-cont.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<p>{{*${user.name}*}}</p>
+<p>{{*${user.name}*}}</p>
+<p>{{*<c:out value="${user.name}" escapeXml="false"/>*}}</p>
+.====================
+
+.$$$ Perl	| property-cont-eperl
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-cont.plogic)
+.--------------------
+#name1 {
+  {{*cont:*}} $user{'name'};
+}
+#name2 {
+  {{*Cont:*}} $user{'name'};
+}
+#name3 {
+  {{*CONT:*}} $user{'name'};
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-cont.plogic ex-cont.pdata
+<p>{{*<?= $user{'name'} !>*}}</p>
+<p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+<p>{{*<?= $user{'name'} !>*}}</p>
+.====================
+
+
+
+.$$ value, Value, VALUE	| property-value
+
+{{,value:,}}, {{,Value:,}}, and {{,VALUE:,}} properties replaces the element
+with expression value.
+These are the same as {{,cont:,}}, {{,Cont:,}}, and {{,CONT:,}} properties
+respectively.
+
+
+
+
+.$$$ Ruby	| property-value-eruby
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-value.plogic)
+.--------------------
+#name1 {
+  {{*value:*}} user[:name];
+}
+#name2 {
+  {{*Value:*}} user[:name];
+}
+#name3 {
+  {{*VALUE:*}} user[:name];
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-value.plogic ex-value.pdata
+<p>{{*<%= user[:name] %>*}}</p>
+<p>{{*<%=h user[:name] %>*}}</p>
+<p>{{*<%= user[:name] %>*}}</p>
+.====================
+
+.$$$ PHP	| property-value-php
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-value.plogic)
+.--------------------
+#name1 {
+  {{*value:*}} $user['name'];
+}
+#name2 {
+  {{*Value:*}} $user['name'];
+}
+#name3 {
+  {{*VALUE:*}} $user['name'];
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-value.plogic ex-value.pdata
+<p>{{*<?php echo $user['name']; ?>*}}</p>
+<p>{{*<?php echo htmlspecialchars($user['name']); ?>*}}</p>
+<p>{{*<?php echo $user['name']; ?>*}}</p>
+.====================
+
+.$$$ JSP	| property-value-jstl
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-value.plogic)
+.--------------------
+#name1 {
+  {{*value:*}} user.name;
+}
+#name2 {
+  {{*Value:*}} user.name;
+}
+#name3 {
+  {{*VALUE:*}} user.name;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-value.plogic ex-value.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<p>{{*${user.name}*}}</p>
+<p>{{*${user.name}*}}</p>
+<p>{{*<c:out value="${user.name}" escapeXml="false"/>*}}</p>
+.====================
+
+.$$$ Perl	| property-value-eperl
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<p id="mark:name1">aaa</p>
+<p id="mark:name2">bbb</p>
+<p id="mark:name3">ccc</p>
+.--------------------
+
+.? presentation logic (ex-value.plogic)
+.--------------------
+#name1 {
+  {{*value:*}} $user{'name'};
+}
+#name2 {
+  {{*Value:*}} $user{'name'};
+}
+#name3 {
+  {{*VALUE:*}} $user{'name'};
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-value.plogic ex-value.pdata
+<p>{{*<?= $user{'name'} !>*}}</p>
+<p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+<p>{{*<?= $user{'name'} !>*}}</p>
+.====================
+
+
+
+.$$ stag, Stag, STAG	| property-stag
+
+{{,stage:,}}, {{,Stag:,}}, and {{,STAG:,}} properties replaces the start-tag
+with expression value.
+
+{{,Stag:,}} always escape expression value while {{,STAG:,}} never escape it.
+{{,stag:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+
+
+
+
+.$$$ Ruby	| property-stag-eruby
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<a href="#" id="mark:link1"><img src="button1.png"></a>
+<a href="#" id="mark:link2"><img src="button2.png"></a>
+<a href="#" id="mark:link3"><img src="button3.png"></a>
+.--------------------
+
+.? presentation logic (ex-stag.plogic)
+.--------------------
+#link1 {
+  {{*stag:*}} start_link_to :action=>'list';
+}
+#link2 {
+  {{*Stag:*}} start_link_to :action=>'list';
+}
+#link3 {
+  {{*STAG:*}} start_link_to :action=>'list';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
+{{*<%= start_link_to :action=>'list' %>*}}<img src="button1.png"></a>
+{{*<%=h start_link_to :action=>'list' %>*}}<img src="button2.png"></a>
+{{*<%= start_link_to :action=>'list' %>*}}<img src="button3.png"></a>
+.====================
+
+.$$$ PHP	| property-stag-php
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<a href="#" id="mark:link1"><img src="button1.png"></a>
+<a href="#" id="mark:link2"><img src="button2.png"></a>
+<a href="#" id="mark:link3"><img src="button3.png"></a>
+.--------------------
+
+.? presentation logic (ex-stag.plogic)
+.--------------------
+#link1 {
+  {{*stag:*}} start_link_to('list');
+}
+#link2 {
+  {{*Stag:*}} start_link_to('list');
+}
+#link3 {
+  {{*STAG:*}} start_link_to('list');
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-stag.plogic ex-stag.pdata
+{{*<?php echo start_link_to('list'); ?>*}}<img src="button1.png"></a>
+{{*<?php echo htmlspecialchars(start_link_to('list')); ?>*}}<img src="button2.png"></a>
+{{*<?php echo start_link_to('list'); ?>*}}<img src="button3.png"></a>
+.====================
+
+.$$$ JSP	| property-stag-jstl
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<a href="#" id="mark:link1"><img src="button1.png"></a>
+<a href="#" id="mark:link2"><img src="button2.png"></a>
+<a href="#" id="mark:link3"><img src="button3.png"></a>
+.--------------------
+
+.? presentation logic (ex-stag.plogic)
+.--------------------
+#link1 {
+  {{*stag:*}} fn:start_link_to('list');
+}
+#link2 {
+  {{*Stag:*}} fn:start_link_to('list');
+}
+#link3 {
+  {{*STAG:*}} fn:start_link_to('list');
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+{{*${fn:start_link_to('list')}*}}<img src="button1.png"></a>
+{{*${fn:start_link_to('list')}*}}<img src="button2.png"></a>
+{{*<c:out value="${fn:start_link_to('list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
+.====================
+
+.$$$ Perl	| property-stag-eperl
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<a href="#" id="mark:link1"><img src="button1.png"></a>
+<a href="#" id="mark:link2"><img src="button2.png"></a>
+<a href="#" id="mark:link3"><img src="button3.png"></a>
+.--------------------
+
+.? presentation logic (ex-stag.plogic)
+.--------------------
+#link1 {
+  {{*stag:*}} start_link_to('list');
+}
+#link2 {
+  {{*Stag:*}} start_link_to('list');
+}
+#link3 {
+  {{*STAG:*}} start_link_to('list');
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
+{{*<?= start_link_to('list') !>*}}<img src="button1.png"></a>
+{{*<?= sanitize(start_link_to('list')) !>*}}<img src="button2.png"></a>
+{{*<?= start_link_to('list') !>*}}<img src="button3.png"></a>
+.====================
+
+
+
+.$$ etag, Etag, ETAG	| property-etag
+
+{{,stage:,}}, {{,Etag:,}}, and {{,ETAG:,}} properties replaces the end-tag
+with expression value.
+
+{{,Etag:,}} always escape expression value while {{,ETAG:,}} never escape it.
+{{,etag:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+
+
+
+
+.$$$ Ruby	| property-etag-eruby
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<li id="mark:item1">foo</li>
+<li id="mark:item2">bar</li>
+<li id="mark:item3">baz</li>
+.--------------------
+
+.? presentation logic (ex-etag.plogic)
+.--------------------
+#item1 {
+  {{*etag:*}} is_xml ? '</li>' : '';
+}
+#item2 {
+  {{*Etag:*}} is_xml ? '</li>' : '';
+}
+#item3 {
+  {{*ETAG:*}} is_xml ? '</li>' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-etag.plogic ex-etag.pdata
+<li>foo{{*<%= is_xml ? '</li>' : '' %>*}}
+<li>bar{{*<%=h is_xml ? '</li>' : '' %>*}}
+<li>baz{{*<%= is_xml ? '</li>' : '' %>*}}
+.====================
+
+.$$$ PHP	| property-etag-php
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<li id="mark:item1">foo</li>
+<li id="mark:item2">bar</li>
+<li id="mark:item3">baz</li>
+.--------------------
+
+.? presentation logic (ex-etag.plogic)
+.--------------------
+#item1 {
+  {{*etag:*}} $is_xml ? '</li>' : '';
+}
+#item2 {
+  {{*Etag:*}} $is_xml ? '</li>' : '';
+}
+#item3 {
+  {{*ETAG:*}} $is_xml ? '</li>' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-etag.plogic ex-etag.pdata
+<li>foo{{*<?php echo $is_xml ? '</li>' : ''; ?>*}}
+<li>bar{{*<?php echo htmlspecialchars($is_xml ? '</li>' : ''); ?>*}}
+<li>baz{{*<?php echo $is_xml ? '</li>' : ''; ?>*}}
+.====================
+
+.$$$ JSP	| property-etag-jstl
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<li id="mark:item1">foo</li>
+<li id="mark:item2">bar</li>
+<li id="mark:item3">baz</li>
+.--------------------
+
+.? presentation logic (ex-etag.plogic)
+.--------------------
+#item1 {
+  {{*etag:*}} is_xml ? '</li>' : '';
+}
+#item2 {
+  {{*Etag:*}} is_xml ? '</li>' : '';
+}
+#item3 {
+  {{*ETAG:*}} is_xml ? '</li>' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-etag.plogic ex-etag.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<li>foo{{*${is_xml ? '</li>' : ''}*}}
+<li>bar{{*${is_xml ? '</li>' : ''}*}}
+<li>baz{{*<c:out value="${is_xml ? '</li>' : ''}" escapeXml="false"/>*}}
+.====================
+
+.$$$ Perl	| property-etag-eperl
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<li id="mark:item1">foo</li>
+<li id="mark:item2">bar</li>
+<li id="mark:item3">baz</li>
+.--------------------
+
+.? presentation logic (ex-etag.plogic)
+.--------------------
+#item1 {
+  {{*etag:*}} $is_xml ? '</li>' : '';
+}
+#item2 {
+  {{*Etag:*}} $is_xml ? '</li>' : '';
+}
+#item3 {
+  {{*ETAG:*}} $is_xml ? '</li>' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-etag.plogic ex-etag.pdata
+<li>foo{{*<?= $is_xml ? '</li>' : '' !>*}}
+<li>bar{{*<?= sanitize($is_xml ? '</li>' : '') !>*}}
+<li>baz{{*<?= $is_xml ? '</li>' : '' !>*}}
+.====================
+
+
+
+.$$ attrs, Attrs, ATTRS	| property-attrs
+
+{{,attrs:,}}, {{,Attrs:,}}, {{,ATTRS:,}}, property replaces or adds attributes.
+
+{{,Attrs:,}} always escape expression value while {{,ATTRS:,}} never escape it.
+{{,attrs:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+
 
 Notice that the follwing will be parse error
 because Kwartz parses {{,attrs:,}} property with pattern matching.
@@ -115,28 +749,119 @@ because Kwartz parses {{,attrs:,}} property with pattern matching.
 .--------------------
 
 
+.$$$ Ruby	| property-attrs-eruby
 
-.$$ {{,append:,}} property
-
-{{,append:,}} directive appends expressions to the start tag.
-
-.? presentaion data (ex3.pdata)
-.-------------------- ex3.pdata
-<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.? presentation data (ex-attrs.pdata)
+.--------------------
+<p id="mark:item" class="para">
+  AAA
+</p>
 .--------------------
 
-.? presentaion logic (ex3.plogic)
-.-------------------- ex3.plogic
-#remember {
-  {{*append:*}} remember ? ' checked' : '';
+.? presentation logic (ex-attrs.plogic)
+.--------------------
+#item {
+  {{*attrs:*}} 'class' klass,
+         'style' style;
 }
 .--------------------
 
 .? compile
 .====================
-$ kwartz -p ex3.plogic ex3.pdata
-.<<<:! (cd d; kwartz -p ex3.plogic ex3.pdata)
+$ kwartz -l eruby -p ex-attrs.plogic ex-attrs.pdata
+<p {{*class="<%= klass %>"*}} {{*style="<%= style %>"*}}>
+  AAA
+</p>
 .====================
+
+.$$$ PHP	| property-attrs-php
+
+.? presentation data (ex-attrs.pdata)
+.--------------------
+<p id="mark:item" class="para">
+  AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-attrs.plogic)
+.--------------------
+#item {
+  {{*attrs:*}} 'class' $class,
+         'style' $style;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-attrs.plogic ex-attrs.pdata
+<p {{*class="<?php echo $class; ?>"*}} {{*style="<?php echo $style; ?>"*}}>
+  AAA
+</p>
+.====================
+
+.$$$ JSP	| property-attrs-jstl
+
+.? presentation data (ex-attrs.pdata)
+.--------------------
+<p id="mark:item" class="para">
+  AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-attrs.plogic)
+.--------------------
+#item {
+  {{*attrs:*}} 'class' klass,
+         'style' style;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-attrs.plogic ex-attrs.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<p {{*class="${klass}"*}} {{*style="${style}"*}}>
+  AAA
+</p>
+.====================
+
+.$$$ Perl	| property-attrs-eperl
+
+.? presentation data (ex-attrs.pdata)
+.--------------------
+<p id="mark:item" class="para">
+  AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-attrs.plogic)
+.--------------------
+#item {
+  {{*attrs:*}} 'class' $class,
+         'style' $style;
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-attrs.plogic ex-attrs.pdata
+<p {{*class="<?= $class !>"*}} {{*style="<?= $style !>"*}}>
+  AAA
+</p>
+.====================
+
+
+
+.$$ append, Append, APPEND	| property-append
+
+{{,append:,}}, {{,Append:,}}, {{,APPEND:,}} directive appends
+expressions to the start tag.
+
+{{,Append:,}} always escape expression value while {{,APPEND:,}} never escape it.
+{{,append:,}} escapes when command-line option '-e' is specified or
+configuration option 'PROPERTY_ESCAPE' is ture.
+
 
 The following is an example to append several expressions.
 
@@ -144,11 +869,11 @@ The following is an example to append several expressions.
 #remember {
   append:  expr1,
            expr2,
-	   expr3;
+           expr3;
 }
 .--------------------
 
-Notice that the following will be syntax error.
+Notice that the following will be parse error.
 
 .--------------------
 #remember {
@@ -157,19 +882,108 @@ Notice that the following will be syntax error.
 .--------------------
 
 
-.$$ {{,remove:,}} property
+.$$$ Ruby	| property-append-eruby
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.--------------------
+
+.? presentation logic (ex-append.plogic)
+.--------------------
+#remember {
+  {{*append:*}} flag ? ' checked' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-append.plogic ex-append.pdata
+<input type="checkboxk" value="y"{{*<%= flag ? ' checked' : '' %>*}}>Remeber me
+.====================
+
+.$$$ PHP	| property-append-php
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.--------------------
+
+.? presentation logic (ex-append.plogic)
+.--------------------
+#remember {
+  {{*append:*}} $flag ? ' checked' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-append.plogic ex-append.pdata
+<input type="checkboxk" value="y"{{*<?php echo $flag ? ' checked' : ''; ?>*}}>Remeber me
+.====================
+
+.$$$ JSP	| property-append-jstl
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.--------------------
+
+.? presentation logic (ex-append.plogic)
+.--------------------
+#remember {
+  {{*append:*}} flag ? ' checked' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-append.plogic ex-append.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<input type="checkboxk" value="y"{{*${flag ? ' checked' : ''}*}}>Remeber me
+.====================
+
+.$$$ Perl	| property-append-eperl
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkboxk" id="mark:remember" value="y">Remeber me
+.--------------------
+
+.? presentation logic (ex-append.plogic)
+.--------------------
+#remember {
+  {{*append:*}} $flag ? ' checked' : '';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-append.plogic ex-append.pdata
+<input type="checkboxk" value="y"{{*<?= $flag ? ' checked' : '' !>*}}>Remeber me
+.====================
+
+
+
+.$$ remove	| property-remove
 
 {{,remove:,}} property removes attributes.
 
-.? presentaion data (ex4.pdata)
-.-------------------- ex4.pdata
+
+
+
+.$$$ Ruby	| property-remove-eruby
+
+.? presentation data (ex-remove.pdata)
+.--------------------
 <p id="foo" class="paragraph" style="color: red">
  AAA
 </p>
 .--------------------
 
-.? presentaion logic (ex4.plogic)
-.-------------------- ex4.plogic
+.? presentation logic (ex-remove.plogic)
+.--------------------
 #foo {
   {{*remove:*}} 'id', 'style';
 }
@@ -177,34 +991,123 @@ Notice that the following will be syntax error.
 
 .? compile
 .====================
-$ kwartz -p ex4.plogic ex4.pdata
-.<<<:! (cd d; kwartz -p ex4.plogic ex4.pdata)
+$ kwartz -l eruby -p ex-remove.plogic ex-remove.pdata
+<p class="paragraph">
+ AAA
+</p>
+.====================
+
+.$$$ PHP	| property-remove-php
+
+.? presentation data (ex-remove.pdata)
+.--------------------
+<p id="foo" class="paragraph" style="color: red">
+ AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-remove.plogic)
+.--------------------
+#foo {
+  {{*remove:*}} 'id', 'style';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-remove.plogic ex-remove.pdata
+<p class="paragraph">
+ AAA
+</p>
+.====================
+
+.$$$ JSP	| property-remove-jstl
+
+.? presentation data (ex-remove.pdata)
+.--------------------
+<p id="foo" class="paragraph" style="color: red">
+ AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-remove.plogic)
+.--------------------
+#foo {
+  {{*remove:*}} 'id', 'style';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-remove.plogic ex-remove.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<p class="paragraph">
+ AAA
+</p>
+.====================
+
+.$$$ Perl	| property-remove-eperl
+
+.? presentation data (ex-remove.pdata)
+.--------------------
+<p id="foo" class="paragraph" style="color: red">
+ AAA
+</p>
+.--------------------
+
+.? presentation logic (ex-remove.plogic)
+.--------------------
+#foo {
+  {{*remove:*}} 'id', 'style';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-remove.plogic ex-remove.pdata
+<p class="paragraph">
+ AAA
+</p>
 .====================
 
 
-.$$ {{,logic:,}} property
+
+.$$ logic	| property-logic
 
 {{,logic:,}} property represents the presentation logic body of the element.
 In the {{,logic:,}} property, the folllowings are available.
-.[ {{,_elem,}} ]	represents the element
-.[ {{,_stag,}} ]	represents start-tag of the element
-.[ {{,_cont,}} ]	represents content of the element
-.[ {{,_stag,}} ]	represents end-tag of the element
-.[ {{,_element({{/name/}}),}} ]	   represents the other element marked as {{/name/}}.
-.[ {{,_content({{/name/}}),}} ]	   represents the content of other element marked as {{/name/}}.
+.[ {{,_elem,}} ]
+        represents the element
+.[ {{,_stag,}} ]
+        represents start-tag of the element
+.[ {{,_cont,}} ]
+        represents content of the element
+.[ {{,_stag,}} ]
+        represents end-tag of the element
+.[ {{,_element({{/name/}}),}} ]
+        represents the other element marked as {{/name/}}.
+.[ {{,_content({{/name/}}),}} ]
+        represents the content of other element marked as {{/name/}}.
 
-In the {{,logic:,}} property, it is able to write statements in target language (Ruby, PHP, Java, Perl, and so on).
+In the {{,logic:,}} property, it is able to write statements in target language
+(Ruby, PHP, Java, Perl, and so on).
 
-.? presentaion data (ex5.pdata)
-.-------------------- ex5.pdata
+
+
+
+.$$$ Ruby	| property-logic-eruby
+
+.? presentation data (ex-logic.pdata)
+.--------------------
 <ul>
-  <li id="mark:foo">AAA</li>
+  <li id="mark:items">AAA</li>
 </ul>
 .--------------------
 
-.? presentaion logic (ex5.plogic)
-.-------------------- ex5.plogic
-#foo {
+.? presentation logic (ex-logic.plogic)
+.--------------------
+#items {
   value: item;
   {{*logic:*}} {
     @list.each do |item|
@@ -218,9 +1121,325 @@ In the {{,logic:,}} property, it is able to write statements in target language 
 
 .? compile
 .====================
-$ kwartz -p ex5.plogic ex5.pdata
-.<<<:! (cd d; kwartz -p ex5.plogic ex5.pdata)
+$ kwartz -l eruby -p ex-logic.plogic ex-logic.pdata
+<ul>
+{{*<%     @list.each do |item| %>*}}
+  <li><%= item %></li>
+{{*<%     end %>*}}
+</ul>
 .====================
+
+.$$$ PHP	| property-logic-php
+
+.? presentation data (ex-logic.pdata)
+.--------------------
+<ul>
+  <li id="mark:items">AAA</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-logic.plogic)
+.--------------------
+#items {
+  value: $item;
+  {{*logic:*}} {
+    foreach ($list as $item) {
+      {{*_stag();*}}
+      {{*_cont();*}}
+      {{*_etag();*}}
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-logic.plogic ex-logic.pdata
+<ul>
+{{*<?php     foreach ($list as $item) { ?>*}}
+  <li><?php echo $item; ?></li>
+{{*<?php     } ?>*}}
+</ul>
+.====================
+
+.$$$ JSP	| property-logic-jstl
+
+.? presentation data (ex-logic.pdata)
+.--------------------
+<ul>
+  <li id="mark:items">AAA</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-logic.plogic)
+.--------------------
+#items {
+  value: item;
+  {{*logic:*}} {
+    <c:forEach var="item" items="${list}">
+      {{*_stag();*}}
+      {{*_cont();*}}
+      {{*_etag();*}}
+    </c:forEach>
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-logic.plogic ex-logic.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<ul>
+    {{*<c:forEach var="item" items="${list}">*}}
+  <li>${item}</li>
+    {{*</c:forEach>*}}
+</ul>
+.====================
+
+.$$$ Perl	| property-logic-eperl
+
+.? presentation data (ex-logic.pdata)
+.--------------------
+<ul>
+  <li id="mark:items">AAA</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-logic.plogic)
+.--------------------
+#items {
+  value: $item;
+  {{*logic:*}} {
+    foreach ($item in @list) {
+      {{*_stag();*}}
+      {{*_cont();*}}
+      {{*_etag();*}}
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-logic.plogic ex-logic.pdata
+<ul>
+{{*<?     foreach ($item in @list) { !>*}}
+  <li><?= $item !></li>
+{{*<?     } !>*}}
+</ul>
+.====================
+
+
+
+.$$ begin, end	| property-begin
+
+{{,begin:,}} and {{,end:,}} property represents the prework and postwork
+of document respectively.
+These properties takes target code block and are available only with
+'#DOCUMENT' selector.
+
+
+
+
+.$$$ Ruby	| property-begin-eruby
+
+.? presentation data (ex-begin.pdata)
+.--------------------
+<p>Hello <span id="mark:username">world</span>!</p>
+<ul>
+ <li id="mark:menu">menu item</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-begin.plogic)
+.--------------------
+#DOCUMENT {
+  {{*begin:*}} {
+    username = @context[:username]
+    menulist = @context[:menulist]
+  }
+  {{*end:*}} {
+    print "<!-- document end -->\n"
+
+  }
+}
+#username {
+  value:  username;
+}
+#menu {
+  value: menu;
+  logic: {
+    for menu in menulist
+      _elem
+    end
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-begin.plogic ex-begin.pdata
+{{*<%     username = @context[:username] %>*}}
+{{*<%     menulist = @context[:menulist] %>*}}
+<p>Hello <span><%= username %></span>!</p>
+<ul>
+<%     for menu in menulist %>
+ <li><%= menu %></li>
+<%     end %>
+</ul>
+{{*<%= "<!-- document end -->\n" %>*}}
+.====================
+
+.$$$ PHP	| property-begin-php
+
+.? presentation data (ex-begin.pdata)
+.--------------------
+<p>Hello <span id="mark:username">world</span>!</p>
+<ul>
+ <li id="mark:menu">menu item</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-begin.plogic)
+.--------------------
+#DOCUMENT {
+  {{*begin:*}} {
+    $username = $context['username'];
+    $menulist = $context['menulist'];
+  }
+  {{*end:*}} {
+    print("<!-- document end -->\n");
+
+  }
+}
+#username {
+  value:  $username;
+}
+#menu {
+  value: $menu;
+  logic: {
+    foreach ($menulist as $menu) {
+      _elem();
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-begin.plogic ex-begin.pdata
+{{*<?php     $username = $context['username']; ?>*}}
+{{*<?php     $menulist = $context['menulist']; ?>*}}
+<p>Hello <span><?php echo $username; ?></span>!</p>
+<ul>
+<?php     foreach ($menulist as $menu) { ?>
+ <li><?php echo $menu; ?></li>
+<?php     } ?>
+</ul>
+{{*<?php echo "<!-- document end -->\n"; ?>*}}
+.====================
+
+.$$$ JSP	| property-begin-jstl
+
+.? presentation data (ex-begin.pdata)
+.--------------------
+<p>Hello <span id="mark:username">world</span>!</p>
+<ul>
+ <li id="mark:menu">menu item</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-begin.plogic)
+.--------------------
+#DOCUMENT {
+  {{*begin:*}} {
+    <c:set var="username" value="${context.username}"/>
+    <c:set var="menulist" value="${context.menulist}"/>
+  }
+  {{*end:*}} {
+    <c:out value="<!-- document end -->\n"/>
+  }
+}
+#username {
+  value:  username;
+}
+#menu {
+  value:  menu;
+  logic: {
+    <c:forEach var="menu" items="${menulist}">
+      _elem();
+    </c:forEach>
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-begin.plogic ex-begin.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    {{*<c:set var="username" value="${context.username}"/>*}}
+    {{*<c:set var="menulist" value="${context.menulist}"/>*}}
+<p>Hello <span>${username}</span>!</p>
+<ul>
+    <c:forEach var="menu" items="${menulist}">
+ <li>${menu}</li>
+    </c:forEach>
+</ul>
+    {{*<c:out value="<!-- document end -->\n"/>*}}
+.====================
+
+.$$$ Perl	| property-begin-eperl
+
+.? presentation data (ex-begin.pdata)
+.--------------------
+<p>Hello <span id="mark:username">world</span>!</p>
+<ul>
+ <li id="mark:menu">menu item</li>
+</ul>
+.--------------------
+
+.? presentation logic (ex-begin.plogic)
+.--------------------
+#DOCUMENT {
+  {{*begin:*}} {
+    $username = $context{'username'};
+    @menulist = $context{'menulist'};
+  }
+  {{*end:*}} {
+    print("<!-- document end -->\n");
+
+  }
+}
+#username {
+  value:  $username;
+}
+#menu {
+  value: $menu;
+  logic: {
+    foreach ($menu in @menulist) {
+      _elem();
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
+{{*<?     $username = $context{'username'}; !>*}}
+{{*<?     @menulist = $context{'menulist'}; !>*}}
+<p>Hello <span><?= $username !></span>!</p>
+<ul>
+<?     foreach ($menu in @menulist) { !>
+ <li><?= $menu !></li>
+<?     } !>
+</ul>
+{{*<?= "<!-- document end -->\n" !>*}}
+.====================
+
+
 
 
 .$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
@@ -230,8 +1449,10 @@ Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}}
 The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
 
 
+.# --------------------------------------------------------------------------------
 
-.$ Directives
+
+.$ Directives		| directives
 
 Directives are commands to embed presentation logics into presentation data.
 For example, {{,title="for item in @list",}} directive represents iteration of the element.
@@ -249,143 +1470,1819 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
 
 
 
-.$$ {{,mark:,}} directive
-
-.? presentation data (ex-mark.pdata)
-.-------------------- ex-mark.pdata
-<p {{*id="item1"*}}>foo</p>
-<p {{*id="mark:item2"*}}>bar</p>
-.--------------------
-
-.? compile
-.====================
-$ kwartz ex-mark.pdata
-.<<<:! (cd d; kwartz ex-mark.pdata)
-.====================
 
 
-.$$ {{,elem:,}}, {{,stag:,}}, {{,cont:,}}, {{,etag:,}}, {{,value:,}} directive
+.$$ elem, Elem, ELEM	| directive-elem
 
-{{,elem:,}}, {{,stag:,}}, {{,cont:,}}, and {{,etag:,}} directive replaces
-the element, start-tag, content, and end-tag by expression value.
-{{,value:,}} directive is equivarent to {{,cont:,}}.
+'elem', 'Elem', and 'ELEM' directive replaces element by expression.
+
+'Elem' directive escapes expression automatically, while 'ELEM' never escape it.
+'elem' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+
+
+.$$$ Ruby	| directive-elem-eruby
 
 .? presentation data (ex-elem.pdata)
-.-------------------- ex-elem.pdata
-<p {{*title="elem: expr1"*}}>AAA</p>
-
-<p {{*title="stag: expr2"*}}>BBB</p>
-
-<p {{*title="cont: expr3"*}}>CCC</p>
-
-<p {{*title="etag: expr4"*}}>DDD</p>
-
-<p {{*title="value: expr5"*}}>EEE</p>
+.--------------------
+<b {{*title="elem: expr"*}}>foo</b>
+<b {{*title="Elem: expr"*}}>foo</b>
+<b {{*title="ELEM: expr"*}}>foo</b>
 .--------------------
 
 .? compile
 .====================
-$ kwartz ex-value.pdata
-.<<<:! (cd d; kwartz ex-elem.pdata)
+$ kwartz -l eruby ex-elem.pdata
+{{*<%= expr %>*}}
+{{*<%=h expr %>*}}
+{{*<%= expr %>*}}
 .====================
 
-Expression is described in target program language (Ruby, PHP, Java, Perl, and so on).
-For example, if you are PHP user then you should describe such as {{,title="value",}}
+
+.$$$ PHP	| directive-elem-php
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<b {{*title="elem($expr)"*}}>foo</b>
+<b {{*title="Elem($expr)"*}}>foo</b>
+<b {{*title="ELEM($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-elem.pdata
+{{*<?php echo $expr; ?>*}}
+{{*<?php echo htmlspecialchars($expr); ?>*}}
+{{*<?php echo $expr; ?>*}}
+.====================
 
 
-.$$ {{,value:,}} directive
+.$$$ JSP	| directive-elem-jstl
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<b {{*title="elem(expr)"*}}>foo</b>
+<b {{*title="Elem(expr)"*}}>foo</b>
+<b {{*title="ELEM(expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-elem.pdata
+{{*${expr}*}}
+{{*${expr}*}}
+{{*<c:out value="${expr}" escapeXml="false"/>*}}
+.====================
+
+
+.$$$ Perl	| directive-elem-eperl
+
+.? presentation data (ex-elem.pdata)
+.--------------------
+<b {{*title="elem($expr)"*}}>foo</b>
+<b {{*title="Elem($expr)"*}}>foo</b>
+<b {{*title="ELEM($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-elem.pdata
+{{*<?= $expr !>*}}
+{{*<?= sanitize($expr) !>*}}
+{{*<?= $expr !>*}}
+.====================
+
+
+
+
+
+.$$ stag, Stag, STAG	| directive-stag
+
+'stag', 'Stag', and 'STAG' directive replaces start-tag by expression.
+
+'Stag' directive escapes expression automatically, while 'STAG' never escape it.
+'stag' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+
+
+.$$$ Ruby	| directive-stag-eruby
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<b {{*title="stag: expr"*}}>foo</b>
+<b {{*title="Stag: expr"*}}>foo</b>
+<b {{*title="STAG: expr"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-stag.pdata
+{{*<%= expr %>*}}foo</b>
+{{*<%=h expr %>*}}foo</b>
+{{*<%= expr %>*}}foo</b>
+.====================
+
+
+.$$$ PHP	| directive-stag-php
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<b {{*title="stag($expr)"*}}>foo</b>
+<b {{*title="Stag($expr)"*}}>foo</b>
+<b {{*title="STAG($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-stag.pdata
+{{*<?php echo $expr; ?>*}}foo</b>
+{{*<?php echo htmlspecialchars($expr); ?>*}}foo</b>
+{{*<?php echo $expr; ?>*}}foo</b>
+.====================
+
+
+.$$$ JSP	| directive-stag-jstl
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<b {{*title="stag(expr)"*}}>foo</b>
+<b {{*title="Stag(expr)"*}}>foo</b>
+<b {{*title="STAG(expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-stag.pdata
+{{*${expr}*}}foo</b>
+{{*${expr}*}}foo</b>
+{{*<c:out value="${expr}" escapeXml="false"/>*}}foo</b>
+.====================
+
+
+.$$$ Perl	| directive-stag-eperl
+
+.? presentation data (ex-stag.pdata)
+.--------------------
+<b {{*title="stag($expr)"*}}>foo</b>
+<b {{*title="Stag($expr)"*}}>foo</b>
+<b {{*title="STAG($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-stag.pdata
+{{*<?= $expr !>*}}foo</b>
+{{*<?= sanitize($expr) !>*}}foo</b>
+{{*<?= $expr !>*}}foo</b>
+.====================
+
+
+
+
+
+.$$ etag, Etag, ETAG	| directive-etag
+
+'etag', 'Etag', and 'ETAG' directive replaces start-tag by expression.
+
+'Etag' directive escapes expression automatically, while 'ETAG' never escape it.
+'etag' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+
+
+.$$$ Ruby	| directive-etag-eruby
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<b {{*title="etag: expr"*}}>foo</b>
+<b {{*title="Etag: expr"*}}>foo</b>
+<b {{*title="ETAG: expr"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-etag.pdata
+<b>foo{{*<%= expr %>*}}
+<b>foo{{*<%=h expr %>*}}
+<b>foo{{*<%= expr %>*}}
+.====================
+
+
+.$$$ PHP	| directive-etag-php
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<b {{*title="etag($expr)"*}}>foo</b>
+<b {{*title="Etag($expr)"*}}>foo</b>
+<b {{*title="ETAG($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-etag.pdata
+<b>foo{{*<?php echo $expr; ?>*}}
+<b>foo{{*<?php echo htmlspecialchars($expr); ?>*}}
+<b>foo{{*<?php echo $expr; ?>*}}
+.====================
+
+
+.$$$ JSP	| directive-etag-jstl
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<b {{*title="etag(expr)"*}}>foo</b>
+<b {{*title="Etag(expr)"*}}>foo</b>
+<b {{*title="ETAG(expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-etag.pdata
+<b>foo{{*${expr}*}}
+<b>foo{{*${expr}*}}
+<b>foo{{*<c:out value="${expr}" escapeXml="false"/>*}}
+.====================
+
+
+.$$$ Perl	| directive-etag-eperl
+
+.? presentation data (ex-etag.pdata)
+.--------------------
+<b {{*title="etag($expr)"*}}>foo</b>
+<b {{*title="Etag($expr)"*}}>foo</b>
+<b {{*title="ETAG($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-etag.pdata
+<b>foo{{*<?= $expr !>*}}
+<b>foo{{*<?= sanitize($expr) !>*}}
+<b>foo{{*<?= $expr !>*}}
+.====================
+
+
+
+
+
+.$$ cont, Cont, CONT	| directive-cont
+
+'cont', 'Cont', and 'CONT' directives replace content by expression.
+
+'Cont' directive escapes expression automatically, while 'CONT' never escape it.
+'cont' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+
+
+.$$$ Ruby	| directive-cont-eruby
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<b {{*title="cont: expr"*}}>foo</b>
+<b {{*title="Cont: expr"*}}>foo</b>
+<b {{*title="CONT: expr"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-cont.pdata
+<b>{{*<%= expr %>*}}</b>
+<b>{{*<%=h expr %>*}}</b>
+<b>{{*<%= expr %>*}}</b>
+.====================
+
+
+.$$$ PHP	| directive-cont-php
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<b {{*title="cont($expr)"*}}>foo</b>
+<b {{*title="Cont($expr)"*}}>foo</b>
+<b {{*title="CONT($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-cont.pdata
+<b>{{*<?php echo $expr; ?>*}}</b>
+<b>{{*<?php echo htmlspecialchars($expr); ?>*}}</b>
+<b>{{*<?php echo $expr; ?>*}}</b>
+.====================
+
+
+.$$$ JSP	| directive-cont-jstl
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<b {{*title="cont(expr)"*}}>foo</b>
+<b {{*title="Cont(expr)"*}}>foo</b>
+<b {{*title="CONT(expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-cont.pdata
+<b>{{*${expr}*}}</b>
+<b>{{*${expr}*}}</b>
+<b>{{*<c:out value="${expr}" escapeXml="false"/>*}}</b>
+.====================
+
+
+.$$$ Perl	| directive-cont-eperl
+
+.? presentation data (ex-cont.pdata)
+.--------------------
+<b {{*title="cont($expr)"*}}>foo</b>
+<b {{*title="Cont($expr)"*}}>foo</b>
+<b {{*title="CONT($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-cont.pdata
+<b>{{*<?= $expr !>*}}</b>
+<b>{{*<?= sanitize($expr) !>*}}</b>
+<b>{{*<?= $expr !>*}}</b>
+.====================
+
+
+
+
+
+.$$ value, Value, VALUE	| directive-value
+
+'value', 'Value', and 'VALUE' directives are equivalent to
+'cont', 'Cont', and 'CONT' directives respectively.
+
+
+
+.$$$ Ruby	| directive-value-eruby
 
 .? presentation data (ex-value.pdata)
-.-------------------- ex-value.pdata
-<tr>
- <td title="value: user[:name]">user name</td>
- <td title="value: user[:mail]">user email</td>
+.--------------------
+<b {{*title="value: expr"*}}>foo</b>
+<b {{*title="Value: expr"*}}>foo</b>
+<b {{*title="VALUE: expr"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-value.pdata
+<b>{{*<%= expr %>*}}</b>
+<b>{{*<%=h expr %>*}}</b>
+<b>{{*<%= expr %>*}}</b>
+.====================
+
+
+.$$$ PHP	| directive-value-php
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<b {{*title="value($expr)"*}}>foo</b>
+<b {{*title="Value($expr)"*}}>foo</b>
+<b {{*title="VALUE($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-value.pdata
+<b>{{*<?php echo $expr; ?>*}}</b>
+<b>{{*<?php echo htmlspecialchars($expr); ?>*}}</b>
+<b>{{*<?php echo $expr; ?>*}}</b>
+.====================
+
+
+.$$$ JSP	| directive-value-jstl
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<b {{*title="value(expr)"*}}>foo</b>
+<b {{*title="Value(expr)"*}}>foo</b>
+<b {{*title="VALUE(expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-value.pdata
+<b>{{*${expr}*}}</b>
+<b>{{*${expr}*}}</b>
+<b>{{*<c:out value="${expr}" escapeXml="false"/>*}}</b>
+.====================
+
+
+.$$$ Perl	| directive-value-eperl
+
+.? presentation data (ex-value.pdata)
+.--------------------
+<b {{*title="value($expr)"*}}>foo</b>
+<b {{*title="Value($expr)"*}}>foo</b>
+<b {{*title="VALUE($expr)"*}}>foo</b>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-value.pdata
+<b>{{*<?= $expr !>*}}</b>
+<b>{{*<?= sanitize($expr) !>*}}</b>
+<b>{{*<?= $expr !>*}}</b>
+.====================
+
+
+
+
+
+.$$ foreach	| directive-foreach
+
+'foreach' directive interates element, while 'loop' directive iterates content.
+
+
+
+.$$$ Ruby	| directive-foreach-eruby
+
+.? presentation data (ex-foreach.pdata)
+.--------------------
+<tr {{*title="for item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+
+<tr {{*title="for key,value in hash"*}}>
+  <td title="cont key">key</td>
+  <td title="cont value">value</td>
 </tr>
 .--------------------
 
 .? compile
 .====================
-$ kwartz ex-value.pdata
-.<<<:! (cd d; kwartz ex-value.pdata)
+$ kwartz -l eruby ex-foreach.pdata
+{{*<% for item in list do %>*}}
+<tr>
+  <td><%= item %></td>
+</tr>
+{{*<% end %>*}}
+
+{{*<% hash.each do |key, value| %>*}}
+<tr>
+  <td><%= key %></td>
+  <td><%= value %></td>
+</tr>
+{{*<% end %>*}}
 .====================
 
 
-.$$ Directive Notations
+.$$$ PHP	| directive-foreach-php
 
-mark	 ., id="mark:name"		., id="mark:name",	id="mark:name"
-dummy    ., id="dummy:str"
+.? presentation data (ex-foreach.pdata)
+.--------------------
+<tr {{*title="foreach($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
 
-.+--------------------------------------------------------------------------------
-directive ., Ruby	., PHP	    ., JSTL     .,  Perl
-.--------------------------------------------------------------------------------
-elem	 ., title="elem expr"	.\
-         ., title="elem(expr)"  .\
-	 ., title="elem(expr)"  .\
-         ., title="elem(expr)"  .\
+<tr {{*title="foreach($hash as $key=>$value)"*}}>
+  <td title="cont($key)">key</td>
+  <td title="cont($value)">value</td>
+</tr>
+.--------------------
 
-stag	 ., title="stag expr"   .\
-	 ., title="stag(expr)"	.\
-	 ., title="stag(expr)"	.\
-	 ., title="stag(expr)"	.\
+.? compile
+.====================
+$ kwartz -l php ex-foreach.pdata
+{{*<?php foreach ($list as $item) { ?>*}}
+<tr>
+  <td><?php echo $item; ?></td>
+</tr>
+{{*<?php } ?>*}}
 
-cont	 ., title="cont expr"   .\
-	 ., title="cont(expr)"  .\
-	 ., title="cont(expr)"  .\
-	 ., title="cont(expr)"  .\
+{{*<?php foreach ($hash as $key=>$value) { ?>*}}
+<tr>
+  <td><?php echo $key; ?></td>
+  <td><?php echo $value; ?></td>
+</tr>
+{{*<?php } ?>*}}
+.====================
 
-etag	 ., title="etag expr"   .\
-	 ., title="etag(expr)"  .\
-	 ., title="etag(expr)"  .\
-	 ., title="etag(expr)"  .\
 
-value	 ., title="value expr"  .\
-	 ., title="value(expr)" .\
-	 ., title="value(expr)" .\
-	 ., title="value(expr)" .\
+.$$$ JSP	| directive-foreach-jstl
 
-attr	 ., title="attr 'name' value"  .\
-	 ., title="attr('name', value)" .\
-	 ., title="attr(expr)" .\
-	 ., title="attr(expr)" .\
+.? presentation data (ex-foreach.pdata)
+.--------------------
+<tr {{*title="for(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
 
-foreach  ., title="for item in list"          .\
-	 ., title="foreach($list as $item)"   .\
-	 ., title="for(item: list)"           .\
-	 ., title="foreach($item in @list)"   .\
+<tr {{*title="forEach(:var=>'v', :items=>:'params.list', :varStatus=>'status')"*}}>
+  <td title="cont(status.index)">1</td>
+  <td title="cont(v)"></td>
+</tr>
 
-list     ., title="list item in list"         .\
-	 ., title="list($list as $item)"      .\
-	 ., title="list(item: list)"          .\
-	 ., title="list($item in @list)"      .\
+<tr {{*title="forEach(:var=>'n', :begin=>1, :end=>10, :step=>2)"*}}>
+  <td title="cont(n)">key</td>
+</tr>
+.--------------------
 
-while    ., title="while i > 0"                .\
-	 ., title="while($i > 0)"              .\
-	 ., title="while(i > 0)"               .\
-	 ., title="while($i > 0)"              .\
+.? compile
+.====================
+$ kwartz -l jstl ex-foreach.pdata
+{{*<c:forEach var="item" items="${list}">*}}
+<tr>
+  <td>${item}</td>
+</tr>
+{{*</c:forEach>*}}
 
-loop     ., title="loop i > 0"                .\
-	 ., title="loop($i > 0)"              .\
-	 ., title="loop(i > 0)"               .\
-	 ., title="loop($i > 0)"              .\
+{{*<c:forEach var="v" items="${params.list}" varStatus="status">*}}
+<tr>
+  <td>${status.index}</td>
+  <td>${v}</td>
+</tr>
+{{*</c:forEach>*}}
 
-if       ., title="if i==0"                    .\
-         ., title="if($i==0)"                  .\
-         ., title="if(i==0)"                   .\
-         ., title="if($i==0)"                  .\
+{{*<c:forEach var="n" begin="1" end="10" step="2">*}}
+<tr>
+  <td>${n}</td>
+</tr>
+{{*</c:forEach>*}}
+.====================
 
-else if  ., title="elsif i<0"                  .\
-         ., title="elseif($i<0)"               .\
-         ., title="elseif(i<0)"                .\
-         ., title="elsif($i<0)"                .\
 
-else     ., title="else"                      .\
-         ., title="else"                      .\
-	 ., title="else"                      .\
-	 ., title="else"                      .\
+.$$$ Perl	| directive-foreach-eperl
 
-set      ., title="set var=1"                .\
-         ., title="set($var=1)"              .\
-         ., title="set(var=1)"               .\
-         ., title="set($var=1)"              .\
+.? presentation data (ex-foreach.pdata)
+.--------------------
+<tr {{*title="foreach($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
 
-.+--------------------------------------------------------------------------------
+<tr {{*title="foreach($key,$value in %hash)"*}}>
+  <td title="cont($key)">key</td>
+  <td title="cont($value)">value</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-foreach.pdata
+{{*<? foreach my $item (@list) { !>*}}
+<tr>
+  <td><?= $item !></td>
+</tr>
+{{*<? } !>*}}
+
+{{*<? foreach my $key (keys %hash) { !>*}}
+{{*<?   my $value = $hash{$key}; !>*}}
+<tr>
+  <td><?= $key !></td>
+  <td><?= $value !></td>
+</tr>
+{{*<? } !>*}}
+.====================
+
+
+
+
+
+.$$ list	| directive-list
+
+'list' directive interates content, while 'foreach' directive iterates element.
+
+
+
+.$$$ Ruby	| directive-list-eruby
+
+.? presentation data (ex-list.pdata)
+.--------------------
+<tr {{*title="list item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+
+<tr {{*title="list key,value in hash"*}}>
+  <td title="cont key">key</td>
+  <td title="cont value">value</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-list.pdata
+<tr>
+{{*<% for item in list do %>*}}
+  <td><%= item %></td>
+{{*<% end %>*}}
+</tr>
+
+<tr>
+{{*<% hash.each do |key, value| %>*}}
+  <td><%= key %></td>
+  <td><%= value %></td>
+{{*<% end %>*}}
+</tr>
+.====================
+
+
+.$$$ PHP	| directive-list-php
+
+.? presentation data (ex-list.pdata)
+.--------------------
+<tr {{*title="list($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="list($hash as $key=>$value)"*}}>
+  <td title="cont($key)">key</td>
+  <td title="cont($value)">value</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-list.pdata
+<tr>
+{{*<?php foreach ($list as $item) { ?>*}}
+  <td><?php echo $item; ?></td>
+{{*<?php } ?>*}}
+</tr>
+
+<tr>
+{{*<?php foreach ($hash as $key=>$value) { ?>*}}
+  <td><?php echo $key; ?></td>
+  <td><?php echo $value; ?></td>
+{{*<?php } ?>*}}
+</tr>
+.====================
+
+
+.$$$ JSP	| directive-list-jstl
+
+.? presentation data (ex-list.pdata)
+.--------------------
+<tr {{*title="list(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-list.pdata
+<tr>
+{{*<c:forEach var="item" items="${list}">*}}
+  <td>${item}</td>
+{{*</c:forEach>*}}
+</tr>
+.====================
+
+
+.$$$ Perl	| directive-list-eperl
+
+.? presentation data (ex-list.pdata)
+.--------------------
+<tr {{*title="list($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="list($key,$value in %hash)"*}}>
+  <td title="cont($key)">key</td>
+  <td title="cont($value)">value</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-list.pdata
+<tr>
+{{*<? foreach my $item (@list) { !>*}}
+  <td><?= $item !></td>
+{{*<? } !>*}}
+</tr>
+
+<tr>
+{{*<? foreach my $key (keys %hash) { !>*}}
+{{*<?   my $value = $hash{$key}; !>*}}
+  <td><?= $key !></td>
+  <td><?= $value !></td>
+{{*<? } !>*}}
+</tr>
+.====================
+
+
+
+
+
+.$$ Foreach, List	| directive-foreach_ctr
+
+'Foreach' and 'List' directives iterate element or content with loop counter
+(starting with 1).
+
+
+
+.$$$ Ruby	| directive-foreach_ctr-eruby
+
+.? presentation data (ex-foreach_ctr.pdata)
+.--------------------
+<tr {{*title="For item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+
+<tr {{*title="List item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-foreach_ctr.pdata
+{{*<% item_ctr = 0 %>*}}
+{{*<% for item in list do %>*}}
+{{*<%   item_ctr += 1 %>*}}
+<tr>
+  <td><%= item %></td>
+</tr>
+{{*<% end %>*}}
+
+<tr>
+{{*<% item_ctr = 0 %>*}}
+{{*<% for item in list do %>*}}
+{{*<%   item_ctr += 1 %>*}}
+  <td><%= item %></td>
+{{*<% end %>*}}
+</tr>
+.====================
+
+
+.$$$ PHP	| directive-foreach_ctr-php
+
+.? presentation data (ex-foreach_ctr.pdata)
+.--------------------
+<tr {{*title="Foreach($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="List($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-foreach_ctr.pdata
+{{*<?php $item_ctr = 0; ?>*}}
+{{*<?php foreach ($list as $item) { ?>*}}
+{{*<?php   $item_ctr++; ?>*}}
+<tr>
+  <td><?php echo $item; ?></td>
+</tr>
+{{*<?php } ?>*}}
+
+<tr>
+{{*<?php $item_ctr = 0; ?>*}}
+{{*<?php foreach ($list as $item) { ?>*}}
+{{*<?php   $item_ctr++; ?>*}}
+  <td><?php echo $item; ?></td>
+{{*<?php } ?>*}}
+</tr>
+.====================
+
+
+.$$$ JSP	| directive-foreach_ctr-jstl
+
+.? presentation data (ex-foreach_ctr.pdata)
+.--------------------
+<tr {{*title="For(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
+
+<tr {{*title="List(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-foreach_ctr.pdata
+{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+<tr>
+  <td>${item}</td>
+</tr>
+{{*</c:forEach>*}}
+
+<tr>
+{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+  <td>${item}</td>
+{{*</c:forEach>*}}
+</tr>
+.====================
+
+
+.$$$ Perl	| directive-foreach_ctr-eperl
+
+.? presentation data (ex-foreach_ctr.pdata)
+.--------------------
+<tr {{*title="Foreach($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="List($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-foreach_ctr.pdata
+{{*<? my $item_ctr = 0; !>*}}
+{{*<? foreach my $item (@list) { !>*}}
+{{*<?   $item_ctr++; !>*}}
+<tr>
+  <td><?= $item !></td>
+</tr>
+{{*<? } !>*}}
+
+<tr>
+{{*<? my $item_ctr = 0; !>*}}
+{{*<? foreach my $item (@list) { !>*}}
+{{*<?   $item_ctr++; !>*}}
+  <td><?= $item !></td>
+{{*<? } !>*}}
+</tr>
+.====================
+
+
+
+
+
+.$$ FOREACH, LIST	| directive-foreach_tgl
+
+'FOREACH' and 'LIST' directives iterate element or content with loop counter
+and toggle variable.
+Toggle values are "'odd'" and "'even'" in default.
+You can change them by command-line option '--odd' and '--even'
+or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
+
+
+
+.$$$ Ruby	| directive-foreach_tgl-eruby
+
+.? presentation data (ex-foreach_tgl.pdata)
+.--------------------
+<tr {{*title="FOR item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+
+<tr {{*title="LIST item in list"*}}>
+  <td title="cont item">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-foreach_tgl.pdata
+{{*<% item_ctr = 0 %>*}}
+{{*<% for item in list do %>*}}
+{{*<%   item_ctr += 1 %>*}}
+{{*<%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>*}}
+<tr>
+  <td><%= item %></td>
+</tr>
+{{*<% end %>*}}
+
+<tr>
+{{*<% item_ctr = 0 %>*}}
+{{*<% for item in list do %>*}}
+{{*<%   item_ctr += 1 %>*}}
+{{*<%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>*}}
+  <td><%= item %></td>
+{{*<% end %>*}}
+</tr>
+.====================
+
+
+.$$$ PHP	| directive-foreach_tgl-php
+
+.? presentation data (ex-foreach_tgl.pdata)
+.--------------------
+<tr {{*title="FOREACH($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="LIST($list as $item)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-foreach_tgl.pdata
+{{*<?php $item_ctr = 0; ?>*}}
+{{*<?php foreach ($list as $item) { ?>*}}
+{{*<?php   $item_ctr++; ?>*}}
+{{*<?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>*}}
+<tr>
+  <td><?php echo $item; ?></td>
+</tr>
+{{*<?php } ?>*}}
+
+<tr>
+{{*<?php $item_ctr = 0; ?>*}}
+{{*<?php foreach ($list as $item) { ?>*}}
+{{*<?php   $item_ctr++; ?>*}}
+{{*<?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>*}}
+  <td><?php echo $item; ?></td>
+{{*<?php } ?>*}}
+</tr>
+.====================
+
+
+.$$$ JSP	| directive-foreach_tgl-jstl
+
+.? presentation data (ex-foreach_tgl.pdata)
+.--------------------
+<tr {{*title="FOR(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
+
+<tr {{*title="LIST(item: list)"*}}>
+  <td title="cont(item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-foreach_tgl.pdata
+{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+<tr>
+  <td>${item}</td>
+</tr>
+{{*</c:forEach>*}}
+
+<tr>
+{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+  <td>${item}</td>
+{{*</c:forEach>*}}
+</tr>
+.====================
+
+
+.$$$ Perl	| directive-foreach_tgl-eperl
+
+.? presentation data (ex-foreach_tgl.pdata)
+.--------------------
+<tr {{*title="FOREACH($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+
+<tr {{*title="LIST($item in @list)"*}}>
+  <td title="cont($item)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-foreach_tgl.pdata
+{{*<? my $item_ctr = 0; !>*}}
+{{*<? foreach my $item (@list) { !>*}}
+{{*<?   $item_ctr++; !>*}}
+{{*<?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>*}}
+<tr>
+  <td><?= $item !></td>
+</tr>
+{{*<? } !>*}}
+
+<tr>
+{{*<? my $item_ctr = 0; !>*}}
+{{*<? foreach my $item (@list) { !>*}}
+{{*<?   $item_ctr++; !>*}}
+{{*<?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>*}}
+  <td><?= $item !></td>
+{{*<? } !>*}}
+</tr>
+.====================
+
+
+
+
+
+.$$ while, loop	| directive-while
+
+'while' and 'loop' directive iterates element or content
+until conditional expression is false.
+
+JSTL doesn't support these directives because JSTL doesn't have
+'while' custom tag.
+
+
+
+.$$$ Ruby	| directive-while-eruby
+
+.? presentation data (ex-while.pdata)
+.--------------------
+<tr {{*title="while (item = dbh.fetch) != nil"*}}>
+  <td title="cont item.name">foo</td>
+</tr>
+
+<tr {{*title="loop (item = dbh.fetch) != nil"*}}>
+  <td title="cont item.name">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-while.pdata
+{{*<% while (item = dbh.fetch) != nil do %>*}}
+<tr>
+  <td><%= item.name %></td>
+</tr>
+{{*<% end %>*}}
+
+<tr>
+{{*<% while (item = dbh.fetch) != nil do %>*}}
+  <td><%= item.name %></td>
+{{*<% end %>*}}
+</tr>
+.====================
+
+
+.$$$ PHP	| directive-while-php
+
+.? presentation data (ex-while.pdata)
+.--------------------
+<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
+  <td title="cont($item->name)">foo</td>
+</tr>
+
+<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
+  <td title="cont($item->name)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-while.pdata
+{{*<?php while (($item = $dbh->fetch()) != null) { ?>*}}
+<tr>
+  <td><?php echo $item->name; ?></td>
+</tr>
+{{*<?php } ?>*}}
+
+<tr>
+{{*<?php while (($item = $dbh->fetch()) != null) { ?>*}}
+  <td><?php echo $item->name; ?></td>
+{{*<?php } ?>*}}
+</tr>
+.====================
+
+
+.$$$ Perl	| directive-while-eperl
+
+.? presentation data (ex-while.pdata)
+.--------------------
+<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
+  <td title="cont($item->name)">foo</td>
+</tr>
+
+<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
+  <td title="cont($item->name)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-while.pdata
+{{*<? while (($item = $dbh->fetch()) != null) { !>*}}
+<tr>
+  <td><?= $item->name !></td>
+</tr>
+{{*<? } !>*}}
+
+<tr>
+{{*<? while (($item = $dbh->fetch()) != null) { !>*}}
+  <td><?= $item->name !></td>
+{{*<? } !>*}}
+</tr>
+.====================
+
+
+
+
+
+.$$ if-then-else	| directive-if
+
+'if', 'elsif'(or 'elseif'), and 'else' directives represent conditional branch.
+
+Don't separate with empty lines between end-tag of 'if'/'elseif' directive and
+start-tag of 'elseif'/'else' directive.
+
+
+
+.$$$ Ruby	| directive-if-eruby
+
+.? presentation data (ex-if.pdata)
+.--------------------
+<div {{*title="if status=='error'"*}}>
+  <p class="error" title="cont mesg">error</p>
+</div>
+<div {{*title="elsif status=='warning'"*}}>
+  <p class="warning" title="cont mesg">waring</p>
+</div>
+<div {{*title="else"*}}>
+  <p title="cont mesg">mesg</p>
+</div>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-if.pdata
+{{*<% if status=='error' then %>*}}
+<div>
+  <p class="error"><%= mesg %></p>
+</div>
+{{*<% elsif status=='warning' then %>*}}
+<div>
+  <p class="warning"><%= mesg %></p>
+</div>
+{{*<% else %>*}}
+<div>
+  <p><%= mesg %></p>
+</div>
+{{*<% end %>*}}
+.====================
+
+
+.$$$ PHP	| directive-if-php
+
+.? presentation data (ex-if.pdata)
+.--------------------
+<div {{*title="if($status=='error')"*}}>
+  <p class="error" title="cont($mesg)">error</p>
+</div>
+<div {{*title="elseif($status=='warning')"*}}>
+  <p class="warning" title="cont($mesg)">waring</p>
+</div>
+<div {{*title="else"*}}>
+  <p title="cont($mesg)">mesg</p>
+</div>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-if.pdata
+{{*<?php if ($status=='error') { ?>*}}
+<div>
+  <p class="error"><?php echo $mesg; ?></p>
+</div>
+{{*<?php } elseif ($status=='warning') { ?>*}}
+<div>
+  <p class="warning"><?php echo $mesg; ?></p>
+</div>
+{{*<?php } else { ?>*}}
+<div>
+  <p><?php echo $mesg; ?></p>
+</div>
+{{*<?php } ?>*}}
+.====================
+
+
+.$$$ JSP	| directive-if-jstl
+
+.? presentation data (ex-if.pdata)
+.--------------------
+<div {{*title="if(status=='error')"*}}>
+  <p class="error" title="cont(mesg)">error</p>
+</div>
+<div {{*title="elseif(status=='warning')"*}}>
+  <p class="warning" title="cont(mesg)">waring</p>
+</div>
+<div {{*title="else"*}}>
+  <p title="cont(mesg)">mesg</p>
+</div>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-if.pdata
+{{*<c:choose><c:when test="${status=='error'}">*}}
+<div>
+  <p class="error">${mesg}</p>
+</div>
+{{*</c:when><c:when test="${status=='warning'}">*}}
+<div>
+  <p class="warning">${mesg}</p>
+</div>
+{{*</c:when><c:otherwise>*}}
+<div>
+  <p>${mesg}</p>
+</div>
+{{*</c:otherwise></c:choose>*}}
+.====================
+
+
+.$$$ Perl	| directive-if-eperl
+
+.? presentation data (ex-if.pdata)
+.--------------------
+<div {{*title="if($status=='error')"*}}>
+  <p class="error" title="cont($mesg)">error</p>
+</div>
+<div {{*title="elsif($status=='warning')"*}}>
+  <p class="warning" title="cont($mesg)">waring</p>
+</div>
+<div {{*title="else"*}}>
+  <p title="cont($mesg)">mesg</p>
+</div>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-if.pdata
+{{*<? if ($status=='error') { !>*}}
+<div>
+  <p class="error"><?= $mesg !></p>
+</div>
+{{*<? } elsif ($status=='warning') { !>*}}
+<div>
+  <p class="warning"><?= $mesg !></p>
+</div>
+{{*<? } else { !>*}}
+<div>
+  <p><?= $mesg !></p>
+</div>
+{{*<? } !>*}}
+.====================
+
+
+
+
+
+.$$ set	| directive-set
+
+'set' directive executes any expression.
+
+
+
+.$$$ Ruby	| directive-set-eruby
+
+.? presentation data (ex-set.pdata)
+.--------------------
+<tr {{*title="set color=i%2==0 ? 'red' : 'blue'"*}}>
+ <td title="cont: color">red</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-set.pdata
+{{*<% color=i%2==0 ? 'red' : 'blue' %>*}}
+<tr>
+ <td><%= color %></td>
+</tr>
+.====================
+
+
+.$$$ PHP	| directive-set-php
+
+.? presentation data (ex-set.pdata)
+.--------------------
+<tr {{*title="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
+ <td title="cont($color)">red</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-set.pdata
+{{*<?php $color=$i%2==0 ? 'red' : 'blue'; ?>*}}
+<tr>
+ <td><?php echo $color; ?></td>
+</tr>
+.====================
+
+
+.$$$ JSP	| directive-set-jstl
+
+.? presentation data (ex-set.pdata)
+.--------------------
+<tr {{*title="set(color=i%2==0 ? 'red' : 'blue')"*}}>
+ <td title="cont(color)">red</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-set.pdata
+{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" />*}}
+<tr>
+ <td>${color}</td>
+</tr>
+.====================
+
+
+.$$$ Perl	| directive-set-eperl
+
+.? presentation data (ex-set.pdata)
+.--------------------
+<tr {{*title="set($color=i%2==0 ? 'red' : 'blue')"*}}>
+ <td title="cont($color)">red</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-set.pdata
+{{*<? $color=i%2==0 ? 'red' : 'blue'; !>*}}
+<tr>
+ <td><?= $color !></td>
+</tr>
+.====================
+
+
+
+
+
+.$$ mark	| directive-mark
+
+'mark' directive marks the element by name.
+Name is used as selector of ruleset in presentation logic file.
+Id attribute is equivalent to 'mark' directive if other direcitve is not specified.
+
+'mark' directive is language-independent when used with id attribute.
+
+
+
+.$$$ Ruby	| directive-mark-eruby
+
+.? presentation data (ex-mark.pdata)
+.--------------------
+<ul {{*id="mark:list"*}}>
+ <li {{*title="id: item"*}}>foo</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-mark.pdata
+<ul>
+ <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ PHP	| directive-mark-php
+
+.? presentation data (ex-mark.pdata)
+.--------------------
+<ul {{*id="mark:list"*}}>
+ <li {{*title="id(item)"*}}>foo</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-mark.pdata
+<ul>
+ <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ Perl	| directive-mark-eperl
+
+.? presentation data (ex-mark.pdata)
+.--------------------
+<ul {{*id="mark:list"*}}>
+ <li {{*title="id(item)"*}}>foo</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-mark.pdata
+<ul>
+ <li>foo</li>
+</ul>
+.====================
+
+
+
+
+
+.$$ attr, Attr, ATTR	| directive-attr
+
+'attr', 'Attr', and 'ATTR' directives replace attribute value with expression.
+'Attr' directive escapes expression automatically, while 'ATTR' never escape it.
+'attr' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+More than one directives are available in an element with separating by ';',
+and available with other directive.
+
+
+
+.$$$ Ruby	| directive-attr-eruby
+
+.? presentation data (ex-attr.pdata)
+.--------------------
+<tr class="odd"
+    title="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
+ <td title="cont v.name">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-attr.pdata
+<% v_ctr = 0 %>
+<% for v in list do %>
+<%   v_ctr += 1 %>
+<%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %>
+<tr {{*class="<%= v_tgl %>"*}} {{*style="<%= style %>">*}}
+ <td><%= v.name %></td>
+</tr>
+<% end %>
+.====================
+
+
+.$$$ PHP	| directive-attr-php
+
+.? presentation data (ex-attr.pdata)
+.--------------------
+<tr class="odd"
+    title="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+ <td title="cont($v->name)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-attr.pdata
+<?php $v_ctr = 0; ?>
+<?php foreach ($list as $v) { ?>
+<?php   $v_ctr++; ?>
+<?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?>
+<tr {{*class="<?php echo $v_tgl; ?>"*}} {{*style="<?php echo $style; ?>"*}}>
+ <td><?php echo $v->name; ?></td>
+</tr>
+<?php } ?>
+.====================
+
+
+.$$$ JSP	| directive-attr-jstl
+
+.? presentation data (ex-attr.pdata)
+.--------------------
+<tr class="odd"
+    title="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
+ <td title="cont(v.name)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-attr.pdata
+<c:forEach var="v" items="${list}" varStatus="v_status">
+<c:set var="v_ctr" value="${v_status.count}" />
+<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" />
+<tr {{*class="${v_tgl}"*}} {{*style="${style}"*}}>
+ <td>${v.name}</td>
+</tr>
+</c:forEach>
+.====================
+
+
+.$$$ Perl	| directive-attr-eperl
+
+.? presentation data (ex-attr.pdata)
+.--------------------
+<tr class="odd"
+    title="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+ <td title="cont($v->name)">foo</td>
+</tr>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-attr.pdata
+<? my $v_ctr = 0; !>
+<? foreach my $v (@list) { !>
+<?   $v_ctr++; !>
+<?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !>
+<tr {{*class="<?= $v_tgl !>"*}} {{*style="<?= $style !>"*}}>
+ <td><?= $v->name !></td>
+</tr>
+<? } !>
+.====================
+
+
+
+
+
+.$$ append, Append, APPEND	| directive-append
+
+'append', 'Append', and 'APPEND' directives append expression at the end of start-tag.
+'Append' directive escapes expression automatically, while 'APPEND' never escape it.
+'append' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+More than one directives are available in an element with separating by ';',
+and available with other directive.
+
+
+
+.$$$ Ruby	| directive-append-eruby
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkbox"
+   {{*title="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-append.pdata
+<input type="checkbox"{{*<%= flag1 ? ' checked=\'checked\'' : '' %>*}}>
+.====================
+
+
+.$$$ PHP	| directive-append-php
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkbox"
+   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-append.pdata
+<input type="checkbox"{{*<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>*}}>
+.====================
+
+
+.$$$ JSP	| directive-append-jstl
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkbox"
+   {{*title="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-append.pdata
+<input type="checkbox"{{*${flag1 ? ' checked=\'checked\'' : ''}*}}>
+.====================
+
+
+.$$$ Perl	| directive-append-eperl
+
+.? presentation data (ex-append.pdata)
+.--------------------
+<input type="checkbox"
+   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-append.pdata
+<input type="checkbox"{{*<?= $flag1 ? ' checked=\'checked\'' : '' !>*}}>
+.====================
+
+
+
+
+
+.$$ dummy	| directive-dummy
+
+'dummy' directive removes the element.
+It is very useful when preview the HTML design in browser.
+
+'dummy' directive is language-independent when used with id attribute.
+
+
+
+.$$$ Ruby	| directive-dummy-eruby
+
+.? presentation data (ex-dummy.pdata)
+.--------------------
+<ul>
+  <li>foo</li>
+  <li {{*id="dummy:d1"*}}>bar</li>
+  <li {{*title="dummy:"*}}>baz</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-dummy.pdata
+<ul>
+  <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ PHP	| directive-dummy-php
+
+.? presentation data (ex-dummy.pdata)
+.--------------------
+<ul>
+  <li>foo</li>
+  <li {{*id="dummy:d1"*}}>bar</li>
+  <li {{*title="dummy()"*}}>baz</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-dummy.pdata
+<ul>
+  <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ JSP	| directive-dummy-jstl
+
+.? presentation data (ex-dummy.pdata)
+.--------------------
+<ul>
+  <li>foo</li>
+  <li {{*id="dummy:d1"*}}>bar</li>
+  <li {{*title="dummy()"*}}>baz</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-dummy.pdata
+<ul>
+  <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ Perl	| directive-dummy-eperl
+
+.? presentation data (ex-dummy.pdata)
+.--------------------
+<ul>
+  <li>foo</li>
+  <li {{*id="dummy:d1"*}}>bar</li>
+  <li {{*title="dummy()"*}}>baz</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-dummy.pdata
+<ul>
+  <li>foo</li>
+</ul>
+.====================
+
+
+
+
+
+.$$ default, Default, DEFAULT	| directive-default
+
+'default', 'Default', and 'DEFAULT' directive replaces content by expression
+only if expression is not nil, false, nor empty string.
+
+'Default' directive escapes expression automatically, while 'DEFAULT' never escape it.
+'default' directive escapes expression when command-line option '-e' is specified
+or PROPERTY_ESCAPE is true in configuration file.
+
+
+
+.$$$ Ruby	| directive-default-eruby
+
+.? presentation data (ex-default.pdata)
+.--------------------
+name: <em {{*title="default: user"*}}>Guest</em>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-default.pdata
+name: <em>{{*<% if (user) && !(user).to_s.empty? then %><%= user %><% else %>Guest<% end %>*}}</em>
+.====================
+
+
+.$$$ PHP	| directive-default-php
+
+.? presentation data (ex-default.pdata)
+.--------------------
+name: <em {{*title="default($user)"*}}>Guest</em>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-default.pdata
+name: <em>{{*<?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?php } ?>*}}</em>
+.====================
+
+
+.$$$ JSP	| directive-default-jstl
+
+.? presentation data (ex-default.pdata)
+.--------------------
+name: <em {{*title="default(user)"*}}>Guest</em>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-default.pdata
+name: <em>{{*<c:out value="${user}" default="Guest" />*}}</em>
+.====================
+
+
+.$$$ Perl	| directive-default-eperl
+
+.? presentation data (ex-default.pdata)
+.--------------------
+name: <em {{*title="default($user)"*}}>Guest</em>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-default.pdata
+name: <em>{{*<? if ($user) { !><?= $user !><? } else { !>Guest<? } !>*}}</em>
+.====================
+
+
+
+
+
+.$$ replace_element/content_with_element/content	| directive-replace
+
+'replace_element_with_element', 'replace_element_with_content',
+'replace_content_with_element', and 'replace_content_with_content'
+directives replace element or content with other element or content.
+
+These directives are language-independent when used with id attribute.
+
+
+
+.$$$ Ruby, PHP, JSP, Perl	| directive-replace-eruby
+
+.? presentation data (ex-replace.pdata)
+.--------------------
+<div {{*id="mark:link"*}}>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<p {{*id="replace_element_with_element:link"*}}>
+  back to home
+</p>
+
+<!-- replace element with other content-->
+<p {{*id="replace_element_with_content:link"*}}>
+  back to home
+</p>
+
+<!-- replace content with other element -->
+<p {{*id="replace_content_with_element:link"*}}>
+  back to home
+</p>
+
+<!-- replace content with other content -->
+<p {{*id="replace_content_with_content:link"*}}>
+  back to home
+</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-replace.pdata
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other content-->
+  back to <a href="/">home</a>.
+
+<!-- replace content with other element -->
+<p>
+<div>
+  back to <a href="/">home</a>.
+</div>
+</p>
+
+<!-- replace content with other content -->
+<p>
+  back to <a href="/">home</a>.
+</p>
+.====================
+
+
+

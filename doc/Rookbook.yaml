@@ -4,7 +4,8 @@ variables:
   - u      :   users-guide
   - r      :   reference
   - tagfile :  html-css
-  
+
+  - reference_testdata : [ ../test/test-ruleset.yaml, ../test/test-directives.yaml ]
 
 
 recipes:
@@ -32,3 +33,8 @@ recipes:
 	sys "retrieve -d #{dir} #{@ingred}"
 	sys "kwaser -t $(tagfile) -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"
+
+  - product:	$(r).txt
+    ingreds:    [ $(r).eruby, $(reference_testdata) ]
+    method: |
+	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"

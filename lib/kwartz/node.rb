@@ -366,7 +366,7 @@ module Kwartz
     def initialize(name='DOCUMENT')
       @name = name
     end
-    attr_accessor :name, :global, :local, :fixture, :before, :after
+    attr_accessor :name, :global, :local, :fixture, :begin, :end  #:before, :after
 
     def set_global(list)
       @global = list if list
@@ -380,14 +380,14 @@ module Kwartz
       @fixture = NativeStatement.new(str.chomp, nil) if str
     end
 
-    def set_before(str)
+    def set_begin(str)
       stmt_list = _parse_stmts(str)
-      @before = stmt_list
+      @begin = stmt_list
     end
 
-    def set_after(str)
+    def set_end(str)
       stmt_list = _parse_stmts(str)
-      @after = stmt_list
+      @end = stmt_list
     end
 
     private
@@ -425,15 +425,15 @@ module Kwartz
           sb << space << "  - #{item}\n"
         end
       end
-      if @before
-        sb << space << "before:\n"
-        @before.each do |stmt|
+      if @begin
+        sb << space << "begin:\n"
+        @begin.each do |stmt|
           sb << space << "  - #{stmt._inspect}\n"
         end
       end
-      if @after
-        sb << space << "after:\n"
-        @after.each do |stmt|
+      if @end
+        sb << space << "end:\n"
+        @end.each do |stmt|
           sb << space << "  - #{stmt._inspect}\n"
         end
       end

@@ -957,29 +957,29 @@
   subject:   mark
   desc:  |
       'mark' directive marks the element by name.
-      Name is used in presentation logic file or 'replace'/'placeholder' directive.
+      Name is used as selector of ruleset in presentation logic file.
       Id attribute is equivalent to 'mark' directive if other direcitve is not specified.
 
       'mark' directive is language-independent when used with id attribute.
 
   pdata*:
     eruby: |
-      <ul id="mark:list">
+      <ul {{*id="mark:list"*}}>
        <li {{*title="id: item"*}}>foo</li>
       </ul>
 
     php: |
-      <ul id="mark:list">
+      <ul {{*id="mark:list"*}}>
        <li {{*title="id(item)"*}}>foo</li>
       </ul>
 
     eperl: |
-      <ul id="mark:list">
+      <ul {{*id="mark:list"*}}>
        <li {{*title="id(item)"*}}>foo</li>
       </ul>
 
     eperl: |
-      <ul id="mark:list">
+      <ul {{*id="mark:list"*}}>
        <li {{*title="id(item)"*}}>foo</li>
       </ul>
 
