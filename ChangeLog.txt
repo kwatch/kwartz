@@ -2,7 +2,10 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.117
+: rev.118 (2006-06-01)
+	- [update] 'webiste/*' updated
+
+: rev.117 (2006-05-31)
 	- [enhance] add 'load_yaml_testdata_with_each_lang()' in test/testutil.rb
 	- [change] move 'test/assert-text-equal.rb' and 'test/testcase-helper.rb' to 'lib/kwalify/util/'
 	- [enhance] 'doc/p-pattern.txt' is to '*.eruby' and be testable

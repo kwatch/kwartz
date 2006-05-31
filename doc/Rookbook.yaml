@@ -16,15 +16,23 @@ recipes:
     ingreds:	[ :test, $(u).html, $(p).html, $(r).html ]
     method: |
 	  mkdir_p "p-pattern"
-	  cp "#{dir}/design.*", "p-pattern"
+	  cp "#{tmpdir}/design.*", "p-pattern"
+
+  - product:    :clean
+    method: |
+	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt'
+
+  - product:	:clear
+    method: |
+	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.html', 'test-*', 'p-pattern'
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
     byprods:    [ $(1).toc.html ]
     method: |
 	dir = '$(tmpdir)'
-	rm_rf dir 
-	mkdir dir
+	#rm_rf dir 
+	mkdir_p dir
 	sys "retrieve -d #{dir} $(1).txt"
 	sys "kwaser -t $(tagfile) -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"

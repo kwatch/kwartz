@@ -80,8 +80,8 @@ The following figure show the relation of HTML, CSS, JavaScript, and Kwartz.
 
 .+++++
 <div style="text-align: center">
-<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br>
-<img src="img/fig04.png" alter="relation of HTML, CSS, JavaScript, and Kwartz" >
+<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br />
+<img src="img/fig04.png" alt="relation of HTML, CSS, JavaScript, and Kwartz" />
 </div>
 .+++++
 
@@ -480,10 +480,10 @@ Kwartz separates presentation logic from presentation data and main program.
 
 
 
-.$ Features Detail
+.$ Features Detail	| detail
 
 
-.$$ RuleSet and Properties
+.$$ RuleSet and Properties	| ruleset
 
 Format of presentation logic in Kwartz is similar to CSS (Cascading Style Sheet).
 .* Presentation logic file is a set of Ruleset.
@@ -1418,7 +1418,7 @@ print statement because they can escape or unescape exression value.
 
 
 
-.$$ Add Code at Beginning/End of Document
+.$$ Add Code at Beginning/End of Document  	    | begin
 
 '#DOCUMENT' is a special selector which represents the document.
 In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beginning/end of document.
@@ -1571,6 +1571,8 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 .$$ Makefile and Rakefile		| makefile
 
+The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
+
 .? example of Makefile
 .--------------------
 .SUFFIXES:  .rhtml .html .plogic
@@ -1587,7 +1589,7 @@ file3.rhtml: file3.html file3.plogic $(LAYOUT)
 	kwartz -p file3.plogic -L $(LAYOUT) file3.html > file3.rhtml
 .--------------------
 
-.? example of Rakefile
+.? example of Rakefile for {{<Rake|http://rake.rubyforge.org/>}}
 .--------------------
 all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
@@ -1605,7 +1607,7 @@ file 'file3.rhtml' => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rantfile
+.? example of Rantfile for {{<Rant|http://make.rubyforge.org/>}}
 .--------------------
 all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
@@ -1623,16 +1625,16 @@ file "file3.rhtml" => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rookbook
+.? example of Rookbook for {{<Rook|http://www.rubyforge.org/projects/rook>}}
 .--------------------
-variables:
-  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+properties:
   - layout  :  layout.html
 
-recipes:
+variables:
+  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+  - rook_product:  $(all)
 
-  - product:	:default
-    ingreds:	$(all)
+recipes:
 
   - product:	*.rhtml
     ingreds:	[ $(1).html, $(1).plogic ]
@@ -1644,7 +1646,7 @@ recipes:
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L #{layout} #{pdata} > #{@product}"
+	sys "kwartz- p #{plogic} -L $(layout) #{pdata} > #{@product}"
 .--------------------
 
 

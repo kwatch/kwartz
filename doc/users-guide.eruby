@@ -80,8 +80,8 @@ The following figure show the relation of HTML, CSS, JavaScript, and Kwartz.
 
 .+++++
 <div style="text-align: center">
-<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br>
-<img src="img/fig04.png" alter="relation of HTML, CSS, JavaScript, and Kwartz" >
+<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br />
+<img src="img/fig04.png" alt="relation of HTML, CSS, JavaScript, and Kwartz" />
 </div>
 .+++++
 

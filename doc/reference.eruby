@@ -203,6 +203,11 @@ $ kwartz -l [%= lang %] ex-[%= name %].pdata
 %]
 
 
+[%
+  end
+%]
+
+
 
 .$ Command-Line Options		| cmdline
 
@@ -239,8 +244,3 @@ Command-line properties:
 .[ --jstl={1.2|1.1}       ]	JSTL version (default 1.2).
 .[ --charset=charset      ]	Character-set for JSTL (default none).
 
-
-
-[%
-  end
-%]

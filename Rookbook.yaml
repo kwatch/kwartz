@@ -79,8 +79,9 @@ recipes:
 	store 'lib/**/*', 'bin/**/*', '$(apidocdir)/**/*', 'test/**/*', dir
 	store %w[README.txt ChangeLog COPYING setup.rb $(project).gemspec], dir
 	#
-	chdir 'doc' do sys 'rook -F :all' done
+	chdir 'doc' do sys 'rook -F :all' end
 	store 'doc/users-guide.html', 'doc/p-pattern.html', 'doc/reference.html', 'doc/docstyle.css', 'doc/img/*.png', dir
+	store 'doc/p-pattern/*', dir
 	#
 	Dir.glob('examples/*').each do |dirname|
 	  next unless test(?d, dirname)

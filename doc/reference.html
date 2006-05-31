@@ -14,7 +14,7 @@
 
     <div align="left"><h1>Kwartz-ruby 3.0 Reference Guide</h1></div>
     <div align="left">
-      last update: $Date: 2006-05-26 10:29:18 +0900 (Fri, 26 May 2006) $<br>
+      last update: $Date: 2006-05-31 11:14:08 +0900 (Wed, 31 May 2006) $<br>
     </div>
 
 <a name="preface"></a>
@@ -106,6 +106,8 @@ It means that presentation logics are separated from both presentation data (typ
     <li><a href="#directive-replace">replace_element/content_with_element/content</a>
     </li>
   </ul>
+  </li>
+  <li><a href="#cmdline">Command-Line Options</a>
   </li>
 </ul>
 <br>
@@ -3251,6 +3253,138 @@ compile</div>
 <br>
 
 
+<br>
+
+
+<a name="cmdline"></a>
+<h2 class="section1">Command-Line Options</h2>
+<p>Usage:  kwartz [..options..] [-p file.plogic] file.html &gt; file.rhtml
+</p>
+<p>Command-line options:
+</p>
+<dl class="dl3" compact>
+<dt class="dt3"><b>
+-h             </b></dt>
+<dd class="dd3">
+	Show help.
+</dd>
+<dt class="dt3"><b>
+-v             </b></dt>
+<dd class="dd3">
+	Show version.
+</dd>
+<dt class="dt3"><b>
+-e             </b></dt>
+<dd class="dd3">
+	Escape (sanitize) expression value.
+			This is an alias of '<code>--escape=true</code>'
+</dd>
+<dt class="dt3"><b>
+-l lang        </b></dt>
+<dd class="dd3">
+	Target language ('eruby, 'php', 'eperl', 'rails', or 'jstl').
+			Default is 'eruby'.
+</dd>
+<dt class="dt3"><b>
+-k kanji       </b></dt>
+<dd class="dd3">
+	Kanji code (euc/sjis/utf8). Default is null.
+</dd>
+<dt class="dt3"><b>
+-r library,... </b></dt>
+<dd class="dd3">
+	Require libraries.
+</dd>
+<dt class="dt3"><b>
+-p plogic,...  </b></dt>
+<dd class="dd3">
+	Presentation logic files. Suffix '.plogic' is omittable.
+</dd>
+<dt class="dt3"><b>
+-i pdata,...   </b></dt>
+<dd class="dd3">
+	Import presentation data files.
+</dd>
+<dt class="dt3"><b>
+-L layoutfile  </b></dt>
+<dd class="dd3">
+	Layout file. '-L f1 f2' is equivalent to '-i f2 f1'.
+</dd>
+<dt class="dt3"><b>
+-x elem-id     </b></dt>
+<dd class="dd3">
+	Extract content of element marked by elem-id.
+</dd>
+<dt class="dt3"><b>
+-X elem-id     </b></dt>
+<dd class="dd3">
+	Extract element marked by elem-id.
+</dd>
+<dt class="dt3"><b>
+-f yamlfile    </b></dt>
+<dd class="dd3">
+	YAML file for context values.
+</dd>
+<dt class="dt3"><b>
+-t             </b></dt>
+<dd class="dd3">
+	Expand tab character in YAML file.
+</dd>
+<dt class="dt3"><b>
+-S             </b></dt>
+<dd class="dd3">
+	Convert mapping key from string to symbol in YAML file.
+</dd>
+</dl>
+<p>Command-line properties:
+</p>
+<dl class="dl3" compact>
+<dt class="dt3"><b>
+--dattr=str    </b></dt>
+<dd class="dd3">
+	Directive attribute name.
+</dd>
+<dt class="dt3"><b>
+--odd=value    </b></dt>
+<dd class="dd3">
+	Odd value for FOREACH/LOOP directive (default "'odd'").
+</dd>
+<dt class="dt3"><b>
+--even=value   </b></dt>
+<dd class="dd3">
+	Even value for FOREACH/LOOP directive (default "'even'").
+</dd>
+<dt class="dt3"><b>
+--header=str   </b></dt>
+<dd class="dd3">
+	Header text.
+</dd>
+<dt class="dt3"><b>
+--footer=str   </b></dt>
+<dd class="dd3">
+	Footer text.
+</dd>
+<dt class="dt3"><b>
+--delspan={true|false} </b></dt>
+<dd class="dd3">
+	Delete dummy span tag (default false).
+</dd>
+<dt class="dt3"><b>
+--escape={true|false}  </b></dt>
+<dd class="dd3">
+	Escape (sanitize) (default false).
+</dd>
+<dt class="dt3"><b>
+--jstl={1.2|1.1}       </b></dt>
+<dd class="dd3">
+	JSTL version (default 1.2).
+</dd>
+<dt class="dt3"><b>
+--charset=charset      </b></dt>
+<dd class="dd3">
+	Character-set for JSTL (default none).
+</dd>
+</dl>
 <br>
 
 

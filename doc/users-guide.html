@@ -53,9 +53,9 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
   </ul>
   </li>
-  <li><a href="#Features Detail">Features Detail</a>
+  <li><a href="#detail">Features Detail</a>
   <ul>
-    <li><a href="#RuleSet and Properties">RuleSet and Properties</a>
+    <li><a href="#ruleset">RuleSet and Properties</a>
     </li>
     <li><a href="#directives">Directives</a>
     </li>
@@ -73,7 +73,7 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
     <li><a href="#print-statement">Print Statement</a>
     </li>
-    <li><a href="#Add Code at Beginning/End of Document">Add Code at Beginning/End of Document</a>
+    <li><a href="#begin">Add Code at Beginning/End of Document</a>
     </li>
   </ul>
   </li>
@@ -124,8 +124,8 @@ If you are familiar with CSS, you'll be also familiar with Kwartz.
 </li>
 </ul>
 <div style="text-align: center">
-<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br>
-<img src="img/fig04.png" alter="relation of HTML, CSS, JavaScript, and Kwartz" >
+<span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br />
+<img src="img/fig04.png" alt="relation of HTML, CSS, JavaScript, and Kwartz" />
 </div>
 <p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
 There is a plan to implement Kwartz in PHP or Java.
@@ -533,9 +533,9 @@ This way, you don't need to change presentation logic files even if the tag/attr
 <br>
 
 
-<a name="Features Detail"></a>
+<a name="detail"></a>
 <h2 class="section1">Features Detail</h2>
-<a name="RuleSet and Properties"></a>
+<a name="ruleset"></a>
 <h3 class="section2">RuleSet and Properties</h3>
 <p>Format of presentation logic in Kwartz is similar to CSS (Cascading Style Sheet).
 </p>
@@ -1359,7 +1359,7 @@ print statement because they can escape or unescape exression value.
 <br>
 
 
-<a name="Add Code at Beginning/End of Document"></a>
+<a name="begin"></a>
 <h3 class="section2">Add Code at Beginning/End of Document</h3>
 <p>'#DOCUMENT' is a special selector which represents the document.
 In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beginning/end of document.
@@ -1515,6 +1515,8 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 <a name="makefile"></a>
 <h3 class="section2">Makefile and Rakefile</h3>
+<p>The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
+</p>
 <div class="program_caption">
 example of Makefile</div>
 <pre class="program">.SUFFIXES:  .rhtml .html .plogic
@@ -1531,7 +1533,7 @@ file3.rhtml: file3.html file3.plogic $(LAYOUT)
 	kwartz -p file3.plogic -L $(LAYOUT) file3.html &gt; file3.rhtml
 </pre>
 <div class="program_caption">
-example of Rakefile</div>
+example of Rakefile for <a href="http://rake.rubyforge.org/">Rake</a></div>
 <pre class="program">all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
 
@@ -1548,7 +1550,7 @@ file 'file3.rhtml' =&gt; ["file3.html", "file3.plogic", layout] do |t|
 end
 </pre>
 <div class="program_caption">
-example of Rantfile</div>
+example of Rantfile for <a href="http://make.rubyforge.org/">Rant</a></div>
 <pre class="program">all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
 
@@ -1565,15 +1567,15 @@ file "file3.rhtml" =&gt; ["file3.html", "file3.plogic", layout] do |t|
 end
 </pre>
 <div class="program_caption">
-example of Rookbook</div>
-<pre class="program">variables:
-  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+example of Rookbook for <a href="http://www.rubyforge.org/projects/rook">Rook</a></div>
+<pre class="program">properties:
   - layout  :  layout.html
 
-recipes:
+variables:
+  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+  - rook_product:  $(all)
 
-  - product:	:default
-    ingreds:	$(all)
+recipes:
 
   - product:	*.rhtml
     ingreds:	[ $(1).html, $(1).plogic ]
@@ -1585,7 +1587,7 @@ recipes:
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L #{layout} #{pdata} &gt; #{@product}"
+	sys "kwartz- p #{plogic} -L $(layout) #{pdata} &gt; #{@product}"
 </pre>
 <br>
 

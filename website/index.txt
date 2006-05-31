@@ -6,17 +6,17 @@
 
 .$ News
 
-.* (2006-05-30)  {{<kwartz-ruby_3.0.0|download.cgi>}} beta released. ({{<ChangeLog>}})
-.* (2005-08-11)  {{<kwartz-java_0.0.1 (alpha release)|download.cgi>}} released.
-.* (2005-05-17)  {{<kwartz-ruby_2.0.4|download.cgi>}} released.
-.* (2005-01-10)  {{<kwartz-php_0.3.2|download.cgi>}} released.
+.* (2006-06-01)  {{<kwartz-ruby_3.0.0|#Download>}} beta released. ({{<kwartz3-ruby-ChangeLog>}})
+.* (2005-08-11)  {{<kwartz-java_0.0.1 (alpha release)|#Download>}} released.
+.* (2005-05-17)  {{<kwartz-ruby_2.0.4|#Download>}} released.
+.* (2005-01-10)  {{<kwartz-php_0.3.2|#Download>}} released.
 
 
 .$ Introduction
 
 .+++++
-<p></p>   <!-- escape IE Bug -->
-<table style="float:right; width:424px; margin:0px 0px 10px 10px">
+<p></p>   <!-- avoid IE Bug -->
+<table style="float:right; width:424px; margin:0px 0px 10px 10px" summary="">
  <tr>
   <td style="padding:10px 0px 0px 0px">
   Fig1. Business layer and presentation layer have their own data and logic.
@@ -70,30 +70,34 @@ In addition, Kwartz has more features:
 	.* Handle any text file
 	.* Supports auto-sanitizing and partial-sanitizing
 
-See {{<users' guide|users-guide.html>}} for details.
+See {{<users' guide|kwartz3-users-guide.html>}} for details.
 .#See {{<Brief Overview|overview/index.cgi?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
 
 
 .$ Download
-	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz,}}' to install Kwartz-ruby.
+	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz,}}' to install Kwartz.
 	.* Or download from {{<sourceforge.net|download.cgi>}}
 	   .- kwartz-ruby_3.0.0 (beta)
 	   .#.- kwartz-ruby_2.0.4 (stable)
 	   .- kwartz-java_0.0.1 (alpha) 
 	   .- kwartz-php_0.3.2 (obsolete)
 
-.$ Documents
-	.* {{<README.txt>}}
-	.* {{<Users' guide|users-guide.html>}}
-	.* {{<Reference manual|reference.html>}}
-	.* {{<Presentation pattern catalog|p-pattern.html>}}
+
+.$ Documents  	
+	.* {{<README.txt|kwartz3-ruby-README.txt>}}
+	.* {{<Users' guide|kwartz3-users-guide.html>}}
+	.* {{<Reference manual|kwartz3-reference.html>}}
+	.* {{<Presentation pattern catalog|kwartz3-p-pattern.html>}}
 	.#.* {{<Brief overview|overview/index.cgi?page=1>}}
-	.* {{<Changelog>}}
+	.* {{<Changelog|kwartz3-ChangeLog>}}
+
 
 .$ License
 	.* {{<GNU General Public License ver.2|http://www.gnu.org/copyleft/gpl.html>}}
 	   
 	   If you need looser license, please suggest me.
+	   
+	   Output scripts kwartz command generates are outside of the license.
 
 .$ Author
 	.* Makoto Kuwata <kwa(at)kuwata-lab.com>.^
@@ -112,10 +116,3 @@ See {{<users' guide|users-guide.html>}} for details.
 	.* Andreas Schwarz - He gave me several good advices.
 	.* Wesley J Landaker - He created a Debian package of Kwartz.
 	Very thanks!
-
-
-
-
-.#.% ChangeLog
-.#	See ChangeLog ({{<English|ChangeLog.en.html>}}/{{<Japanese|ChangeLog.ja.html>}}) for detail.
-
