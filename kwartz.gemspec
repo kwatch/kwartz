@@ -12,19 +12,19 @@ require 'rubygems'
 
 spec = Gem::Specification.new do |s|
   ## package information
-  s.name        = 'kwartz-ruby'
+  s.name        = 'kwartz'
   s.author      = 'Makoto Kuwata'
-  s.version     = ("$Release: 3.0.0 $" =~ /[\.\d]+/) && $&
+  s.version     = ("$Release: 1.2.3 $" =~ /[\.\d]+/) && $&
   s.platform    = Gem::Platform::RUBY
   s.homepage    = 'http://www.kuwata-lab.com/kwartz'
   s.summary     = "a template system for Ruby, PHP, and Java"
   s.description = <<-'END'
   Kwartz is a template system which realized the concept
   'Independence of Presentation Logic'(IoPL).
-  It separates presentation logic (loop, branch, etc) from
-  presentation data (typically HTML file), thus HTML design
-  is not breaked at all.
-  In addition, Kwartz supports Ruby, PHP, and Java.
+  It means that Kwartz can separates presentation logics from
+  both business logics (= main program) and presentation data
+  file (= HTML file), thus HTML design is not breaded at all.
+  In addition, Kwartz supports eRuby, PHP, JSP, and ePerl.
   END
   
   ## files
@@ -38,9 +38,10 @@ spec = Gem::Specification.new do |s|
              "doc/reference.html",
              "doc/p-pattern.html",
              "doc/docstyle.css",
-             "doc/design.css", "doc/design.html", ]
+             #"doc/design.css", "doc/design.html",
+           ]
   files += Dir.glob('doc-api/**/*')
-  files += %w[README.en.txt README.ja.txt ChangeLog.txt COPYING setup.rb todo.txt]
+  files += %w[README.txt ChangeLog COPYING setup.rb kwartz.gemspec]
   s.files       = files
   s.executables = ["kwartz"]
   s.bindir      = "bin"

@@ -14,7 +14,7 @@
 
     <div align="left"><h1>Kwartz-ruby 3.0 Reference Guide</h1></div>
     <div align="left">
-      last update: $Date: 2006-05-23 20:45:08 +0900 (Tue, 23 May 2006) $<br>
+      last update: $Date: 2006-05-26 10:29:18 +0900 (Fri, 26 May 2006) $<br>
     </div>
 
 <a name="preface"></a>
@@ -64,8 +64,6 @@ It means that presentation logics are separated from both presentation data (typ
     <li><a href="#property-logic">logic</a>
     </li>
     <li><a href="#property-begin">begin, end</a>
-    </li>
-    <li><a href="#<code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties"><code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties</a>
     </li>
   </ul>
   </li>
@@ -268,7 +266,7 @@ presentation logic (ex-elem.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-elem.plogic ex-elem.pdata
 <b>&lt;?= $user{'name'} !&gt;</b>
-<b>&lt;?= sanitize($user{'name'}) !&gt;</b>
+<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>
 <b>&lt;?= $user{'name'} !&gt;</b>
 </pre>
 <br>
@@ -398,7 +396,7 @@ presentation logic (ex-cont.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-cont.plogic ex-cont.pdata
 &lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= sanitize($user{'name'}) !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>&lt;/p&gt;
 &lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
 </pre>
 <br>
@@ -526,7 +524,7 @@ presentation logic (ex-value.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-value.plogic ex-value.pdata
 &lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= sanitize($user{'name'}) !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>&lt;/p&gt;
 &lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
 </pre>
 <br>
@@ -656,7 +654,7 @@ presentation logic (ex-stag.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
 <b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<b>&lt;?= sanitize(start_link_to('list')) !&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<b>&lt;?= encode_entities(start_link_to('list')) !&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
 <b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
@@ -786,7 +784,7 @@ presentation logic (ex-etag.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-etag.plogic ex-etag.pdata
 &lt;li&gt;foo<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
-&lt;li&gt;bar<b>&lt;?= sanitize($is_xml ? '&lt;/li&gt;' : '') !&gt;</b>
+&lt;li&gt;bar<b>&lt;?= encode_entities($is_xml ? '&lt;/li&gt;' : '') !&gt;</b>
 &lt;li&gt;baz<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
 </pre>
 <br>
@@ -1491,15 +1489,6 @@ compile</div>
 <br>
 
 
-<a name="<code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties"></a>
-<h3 class="section2"><code>#DOCUMENT</code> selector and <code>begin:</code>, <code>end:</code> properties</h3>
-<p>Special selector <code>#DOCUMENT</code> represents entire of document.
-Only the <code>begin:</code> and <code>end:</code> properties are available in <code>#DOCUMENT</code> selector.
-The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
-</p>
-<br>
-
-
 <br>
 
 
@@ -1590,7 +1579,7 @@ presentation data (ex-elem.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-elem.pdata
 <b>&lt;?= $expr !&gt;</b>
-<b>&lt;?= sanitize($expr) !&gt;</b>
+<b>&lt;?= encode_entities($expr) !&gt;</b>
 <b>&lt;?= $expr !&gt;</b>
 </pre>
 <br>
@@ -1669,7 +1658,7 @@ presentation data (ex-stag.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-stag.pdata
 <b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
-<b>&lt;?= sanitize($expr) !&gt;</b>foo&lt;/b&gt;
+<b>&lt;?= encode_entities($expr) !&gt;</b>foo&lt;/b&gt;
 <b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
 </pre>
 <br>
@@ -1748,7 +1737,7 @@ presentation data (ex-etag.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-etag.pdata
 &lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
-&lt;b&gt;foo<b>&lt;?= sanitize($expr) !&gt;</b>
+&lt;b&gt;foo<b>&lt;?= encode_entities($expr) !&gt;</b>
 &lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
 </pre>
 <br>
@@ -1827,7 +1816,7 @@ presentation data (ex-cont.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-cont.pdata
 &lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= sanitize($expr) !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= encode_entities($expr) !&gt;</b>&lt;/b&gt;
 &lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
 </pre>
 <br>
@@ -1903,7 +1892,7 @@ presentation data (ex-value.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-value.pdata
 &lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= sanitize($expr) !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<b>&lt;?= encode_entities($expr) !&gt;</b>&lt;/b&gt;
 &lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
 </pre>
 <br>
@@ -2526,6 +2515,19 @@ compile</div>
 </pre>
 <br>
 
+<a name="directive-while-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-while.pdata)</div>
+<pre class="program">*** not supported ***
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-while.pdata
+*** not supported ***
+</pre>
+<br>
+
 <a name="directive-while-eperl"></a>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
@@ -2815,6 +2817,23 @@ presentation data (ex-mark.pdata)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-mark.pdata
+&lt;ul&gt;
+ &lt;li&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<br>
+
+<a name="directive-mark-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-mark.pdata)</div>
+<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
+ &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-mark.pdata
 &lt;ul&gt;
  &lt;li&gt;foo&lt;/li&gt;
 &lt;/ul&gt;

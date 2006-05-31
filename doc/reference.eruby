@@ -126,11 +126,11 @@ $ kwartz -l [%= lang %] -p ex-[%= name %].plogic ex-[%= name %].pdata
 %]
 
 
-.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
-
-Special selector {{,#DOCUMENT,}} represents entire of document.
-Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
-The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+.#.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
+.#
+.#Special selector {{,#DOCUMENT,}} represents entire of document.
+.#Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
+.#The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
 
 
 .# --------------------------------------------------------------------------------
@@ -201,6 +201,44 @@ $ kwartz -l [%= lang %] ex-[%= name %].pdata
 [%
     end
 %]
+
+
+
+.$ Command-Line Options		| cmdline
+
+Usage:  kwartz [..options..] [-p file.plogic] file.html > file.rhtml
+
+Command-line options:
+
+.[ -h             ]	Show help.
+.[ -v             ]	Show version.
+.[ -e             ]	Escape (sanitize) expression value.
+			This is an alias of '{{,--escape=true,}}'
+.[ -l lang        ]	Target language ('eruby, 'php', 'eperl', 'rails', or 'jstl').
+			Default is 'eruby'.
+.[ -k kanji       ]	Kanji code (euc/sjis/utf8). Default is null.
+.[ -r library,... ]	Require libraries.
+.[ -p plogic,...  ]	Presentation logic files. Suffix '.plogic' is omittable.
+.[ -i pdata,...   ]	Import presentation data files.
+.[ -L layoutfile  ]	Layout file. '-L f1 f2' is equivalent to '-i f2 f1'.
+.[ -x elem-id     ]	Extract content of element marked by elem-id.
+.[ -X elem-id     ]	Extract element marked by elem-id.
+.[ -f yamlfile    ]	YAML file for context values.
+.[ -t             ]	Expand tab character in YAML file.
+.[ -S             ]	Convert mapping key from string to symbol in YAML file.
+	
+Command-line properties:
+
+.[ --dattr=str    ]	Directive attribute name.
+.[ --odd=value    ]	Odd value for FOREACH/LOOP directive (default "'odd'").
+.[ --even=value   ]	Even value for FOREACH/LOOP directive (default "'even'").
+.[ --header=str   ]	Header text.
+.[ --footer=str   ]	Footer text.
+.[ --delspan={true|false} ]	Delete dummy span tag (default false).
+.[ --escape={true|false}  ]	Escape (sanitize) (default false).
+.[ --jstl={1.2|1.1}       ]	JSTL version (default 1.2).
+.[ --charset=charset      ]	Character-set for JSTL (default none).
+
 
 
 [%

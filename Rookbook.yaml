@@ -5,6 +5,12 @@ properties:
   - release    :   0.0.0
 
 variables:
+  - base       :  $(project)_$(release)
+  - base2      :  $(project)-$(release)
+  - packages   :  [ $(base).tar.bz2, $(base).zip, $(base2).gem ]
+  - apidocdir  :  doc-api
+  - copyright  :  copyright(c) 2004-2006 kuwata-lab.com all rights reserved
+  - libfiles*  :  Dir.glob('lib/**/*')
 
 recipes:
   - product:   :test
@@ -13,3 +19,83 @@ recipes:
 	Dir.glob('test/test-*.rb').each do |filename|
           sys "ruby #{filename} 2>&1 | tee -a test.log"
         end
+	chdir 'doc' do sys 'rook :test' end
+
+  - product:   :clear
+    method: |
+	rm_rf '$(project)_*', '$(project)-*.gem'
+
+
+  - product:   :packages
+    ingreds:   [ $(packages) ]
+
+  - product:   $(project)_*.tar.bz2
+    ingreds:   [ $(project)_$(1) ]
+    method: |
+	tar_cjf @product, @ingred
+
+  - product:   $(project)_*.tar.gz
+    ingreds:   [ $(project)_$(1) ]
+    method: |
+	tar_czf @product, @ingred
+
+  - product:   $(project)_*.zip
+    ingreds:   [ $(project)_$(1) ]
+    method: |
+	rm_f @product if test(?f, @product)
+	zip_r @product, @ingred
+
+  - product:   $(project)-*.gem
+    ingreds:   [ $(project)_$(1) ]
+    method: |
+	dir = @ingred
+	cd dir do
+	  Gem.manage_gems
+	  Gem::GemRunner.new.run ['build', '$(project).gemspec']
+	end
+	mv "#{dir}/#{@product}", "."
+
+  - product:   :apidoc
+    ingreds:   [ $(apidocdir)/index.html ]
+
+  - product:   $(apidocdir)/index.html
+    ingreds:   [ $(libfiles) ]
+    method: |
+        rm_rf apidocdir
+        opts = "-o ../#{apidocdir} -S -m ../README.txt"
+	opts << ' -x kwalify/util/assert-text-equal.rb'
+	opts << ' -x kwalify/util/testcase-helper.rb'
+	chdir 'lib' do
+	  sys "rdoc #{opts} ../README.txt *"
+	end
+
+  - product:   $(project)_*
+    ingreds:   [ :apidoc ]
+    method: |
+	dir = @product
+	rm_rf dir
+	mkdir dir
+	#
+	store 'lib/**/*', 'bin/**/*', '$(apidocdir)/**/*', 'test/**/*', dir
+	store %w[README.txt ChangeLog COPYING setup.rb $(project).gemspec], dir
+	#
+	chdir 'doc' do sys 'rook -F :all' done
+	store 'doc/users-guide.html', 'doc/p-pattern.html', 'doc/reference.html', 'doc/docstyle.css', 'doc/img/*.png', dir
+	#
+	Dir.glob('examples/*').each do |dirname|
+	  next unless test(?d, dirname)
+	  chdir dirname do
+	    sys "rook :clean; rook Makefile"
+	  end
+	end
+	store 'examples/**/*', dir do |filename|
+	  filename !~ /Rookbook/ && filename !~ /expected/
+	end
+	#
+	edit "#{dir}/**/*" do |content|
+	  content.gsub!(/\$Release.*?\$/, "$Release: #{@release} $")
+	  content.gsub!(/\$Copyright\$/, copyright)
+	end
+	#
+	chmod 0644, "#{dir}/**/*", :filetype=>'file'
+	chmod 0755, "#{dir}/bin/*"

@@ -14,36 +14,36 @@ module Kwartz
 
 
   ##
-  ## [abstract] translate list of Statement into target code (eRuby, PHP, ...)
+  ## .[abstract] translate list of Statement into target code (eRuby, PHP, ...)
   ##
   class Translator
 
 
-    ## [abstract] translate list of Statement into String and return it
+    ## .[abstract] translate list of Statement into String and return it
     def translate(stmt_list)
       not_implemented
     end
 
 
-    ## [abstract] translate NativeStatement using visitor pattern
+    ## .[abstract] translate NativeStatement using visitor pattern
     def translate_native_stmt(stmt)
       not_implemented
     end
 
 
-    ## [abstract] translate PrintStatement using visitor pattern
+    ## .[abstract] translate PrintStatement using visitor pattern
     def translate_print_stmt(stmt)
       not_implemented
     end
 
 
-    ## [abstract] translate NativeExpression using visitor pattern
+    ## .[abstract] translate NativeExpression using visitor pattern
     def translate_native_expr(expr)
       not_implemented
     end
 
 
-    ## [abstract] translate String using visitor pattern
+    ## .[abstract] translate String using visitor pattern
     def translate_string(str)
       not_implemented
     end

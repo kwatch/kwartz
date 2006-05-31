@@ -119,9 +119,11 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="replace1.expected"></a>
 <div class="output_caption">
 Output Script:</div>
-<pre class="output">Hello &lt;%= username %&gt;!</pre>
+<pre class="output">Hello <b>&lt;%= username %&gt;</b>!
+</pre>
 <br>
 
 <a name="replace-elem-with-value-suppliment"></a>
@@ -130,12 +132,14 @@ Output Script:</div>
 </p>
 <a name="replace1a.plogic"></a>
 <pre class="program">#user {
-  elem: user;
+  elem: username;
 }
 </pre>
-<p>   The output script will be:
+<p>The output script will be:
 </p>
-<pre class="program">Hello &lt;%= user %&gt;!</pre>
+<a name="replace1a.expected"></a>
+<pre class="output">Hello <b>&lt;%= username %&gt;</b>!
+</pre>
 <br>
 
 <br>
@@ -175,6 +179,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="replace2.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
@@ -183,7 +188,7 @@ Output Script:</div>
 
 <a name="replace-cont-with-value-suppliment"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz provides the shorter notation for this pattern.
+<p>Kwartz provides the shorter notation for this pattern.
 </p>
 <a name="replace2a.plogic"></a>
 <pre class="program">#title {
@@ -191,11 +196,12 @@ Output Script:</div>
     /* or value: title; */
 }
 </pre>
-<p>   The output will be:
+<p>The output will be:
 </p>
-<pre class="program">&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+<a name="replace2a.expected"></a>
+<pre class="output">&lt;h1&gt;<b>&lt;%= title %&gt;</b>&lt;/h1&gt;
 </pre>
-<p> Kwartz Directive '<code>title="cont: <i>expr</i>"</code>' or '<code>title="value:<i>expr</i>"</code>' lets you to use this pattern without presentation logic file.
+<p>Kwartz Directive '<code>title="cont: <i>expr</i>"</code>' or '<code>title="value: <i>expr</i>"</code>' lets you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;h1 <b>id="value: title"</b>&gt;Example&lt;/h1&gt;
 </pre>
@@ -239,19 +245,21 @@ Presentation Logic:</div>
 #user {
   logic: {
     if username &amp;&amp; !username.empty?
-      <b>print username</b>   # print expression
+      <b>print username</b>
     else
       <b>_cont</b>            # print content text
     end
   }
 }
 </pre>
+<a name="replace5.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">Hello &lt;%     if username &amp;&amp; !username.empty? %&gt;
 &lt;%= username %&gt;&lt;%     else %&gt;
 World&lt;%     end %&gt;
-!</pre>
+!
+</pre>
 <br>
 
 <a name="default-content-suppliment"></a>
@@ -263,7 +271,9 @@ World&lt;%     end %&gt;
 </pre>
 <p>The output is:
 </p>
-<pre class="output">Hello &lt;span&gt;&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;World&lt;% end %&gt;&lt;/span&gt;!</pre>
+<a name="replace5a.expected"></a>
+<pre class="output">Hello &lt;span&gt;&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;World&lt;% end %&gt;&lt;/span&gt;!
+</pre>
 <br>
 
 <br>
@@ -312,6 +322,7 @@ Presentation Logic:</div>
 </pre>
 <p><code>_element(<i>name</i>)</code> represents the element which is marked with <code>id="mark:<i>name</i>"</code> or <code>id="<i>name</i>"</code>.
 </p>
+<a name="replace3.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;div&gt;
@@ -341,7 +352,7 @@ Presentation Logic:</div>
 
 <a name="replace-elem-with-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Directive '<code>title="replace_element_with: _element(<i>name</i>)"</code>' and '<code>title="replace_element_with: _content(<i>name</i>)"</code>' lets you to use this pattern without presentation logic file.
+<p>Directive '<code>id="replace_element_with_element: <i>name</i>"</code>' and '<code>id="replace_element_with_content: <i>name</i>"</code>' lets you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;div <b>id="mark:links"</b>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
@@ -349,13 +360,13 @@ Presentation Logic:</div>
 
 &lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
 
-&lt;div <b>id="replace_element_with: _element(links)"</b>&gt;
+&lt;div <b>id="replace_element_with_element: links"</b>&gt;
   Home | Document | FAQ
 &lt;/div&gt;
 </pre>
-<p> The command-line option '<code>-i <i>file</i>,<i>file2</i>,...</code>' enables you
-   to use elements which are described in other files.
-   See Kwartz Users' Guide for details.
+<p>The command-line option '<code>-i <i>file</i>,<i>file2</i>,...</code>' enables you
+to use elements described in other files.
+See Kwartz Users' Guide for details.
 </p>
 <br>
 
@@ -503,6 +514,7 @@ which enables to import elements defined in other files.
 </p>
 <pre class="terminal">$ kwartz -l eruby  <b>-i contents.html</b> -p contens.plogic,layout.plogic layout.html
 </pre>
+<a name="layout.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
@@ -551,14 +563,14 @@ Output Script:</div>
 
 <a name="replace-cont-with-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz Directive '<code>title="replace_content_with:_element(<i>name</i>)"</code>' and '<code>title="replace_content_with:_content(<i>name</i>)"</code>' lets you to use this pattern without presentation logic file(layout.plogic).
+<p>Kwartz Directive '<code>id="replace_content_with_element:<i>name</i>"</code>' and '<code>id="replace_content_with_content:<i>name</i>"</code>' lets you to use this pattern without presentation logic file(layout.plogic).
 </p>
 <div class="program_caption">
 Presentation Data(layout.html):</div>
 <pre class="program">             :
         &lt;!-- menu part --&gt;
         &lt;td class="menu" width="100" valign="top"
-            <b>title="replace_content_with: _element(menu)"</b>&gt;
+            <b>id="replace_content_with_element:menu"</b>&gt;
           &lt;ul&gt;
             &lt;li&gt;menu1&lt;/li&gt;
             &lt;li&gt;menu2&lt;/li&gt;
@@ -568,7 +580,7 @@ Presentation Data(layout.html):</div>
         
         &lt;!-- article part --&gt;
         &lt;td class="article" width="400" valign="top"&gt;
-            <b>title="replace_content_with: _content(article)"</b>&gt;
+            <b>id="replace_content_with_content:article"</b>&gt;
           aaa&lt;br&gt;
           bbb&lt;br&gt;
           ccc&lt;br&gt;
@@ -603,7 +615,7 @@ This pattern is named 'Delete Element Pattern' or 'Dummy Element Pattern.'
 
 <a name="delete-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="dummy-elem.pdata"></a>
+<a name="dummy_elem.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;ul&gt;
@@ -611,7 +623,7 @@ Presentation Data:</div>
   &lt;li <b>id="dummy"</b>&gt;bar&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-<a name="dummy-elem.plogic"></a>
+<a name="dummy_elem.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">/* delete dummy element */
@@ -620,6 +632,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="dummy_elem.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;ul&gt;
@@ -662,12 +675,12 @@ This pattern is named 'Delete Tag Pattern' or 'Dummy Tag Pattern.'
 
 <a name="delete-tag-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="dummy-tag.pdata"></a>
+<a name="dummy_tag.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;a href="..." <b>id="mark:next"</b>&gt;Next&lt;/a&gt;
 </pre>
-<a name="dummy-tag.plogic"></a>
+<a name="dummy_tag.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">/* delete tags when url is empty */
@@ -684,6 +697,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="dummy_tag.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;%     if !url || url.empty? %&gt;
@@ -719,7 +733,7 @@ This pattern is very useful for all these situations.
 
 <a name="iterate-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="iterate-elem.pdata"></a>
+<a name="iterate_elem.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;table&gt;
@@ -728,7 +742,7 @@ Presentation Data:</div>
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-<a name="iterate-elem.plogic"></a>
+<a name="iterate_elem.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">/* iterate element */
@@ -742,6 +756,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="iterate_elem.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;table&gt;
@@ -756,7 +771,8 @@ Output Script:</div>
 
 <a name="iterate-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz directive <code>title="for <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+<p>Kwartz directive <code>title="for <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+See reference manual for details.
 </p>
 <pre class="program">&lt;table&gt;
   &lt;tr <b>title="for item in list"</b>&gt;
@@ -786,7 +802,7 @@ This pattern is named 'Iterate Content' pattern.
 
 <a name="iterate-cont-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="iterate-cont.pdata"></a>
+<a name="iterate_cont.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;dl <b>id="mark:list"</b>&gt;
@@ -794,7 +810,7 @@ Presentation Data:</div>
   &lt;dd title="value: item.desc"&gt;description&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
-<a name="iterate-cont.plogic"></a>
+<a name="iterate_cont.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">/* iterate only content */
@@ -808,6 +824,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="iterate_cont.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;dl&gt;
@@ -821,7 +838,8 @@ Output Script:</div>
 
 <a name="iterate-cont-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz directive <code>title="list <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+<p>Kwartz directive <code>title="list <i>item</i> in <i>list</i>"</code> lets you to use this pattern without presentation logic file.
+See reference manual for details.
 </p>
 <pre class="program">&lt;dl <b>title="list item in items"</b>&gt;
   &lt;dt title="value: item.text"&gt;text&lt;/dt&gt;
@@ -855,7 +873,7 @@ This pattern is named 'Select Element Pattern' or 'Select Content Pattern'.
 
 <a name="select-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="select-elem.pdata"></a>
+<a name="select_elem.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;div id="mark:message"&gt;
@@ -864,7 +882,7 @@ Presentation Data:</div>
   &lt;span style="color:black" <b>id="mark:good"</b>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
-<a name="select-elem.plogic"></a>
+<a name="select_elem.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">/* select element according to status */
@@ -880,6 +898,7 @@ Presentation Logic:</div>
   }
 }
 </pre>
+<a name="select_elem.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;%     if status == 'error' %&gt;
@@ -894,8 +913,8 @@ Output Script:</div>
 
 <a name="select-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz directive '<code>title="if <i>condition</i>"</code>', '<code>title="elsif <i>condition</i>"</code>', and '<code>title="else"</code>'
-   let you to use this pattern without presentation logic file.
+<p> Kwartz directive '<code>title="if <i>condition</i>"</code>', '<code>title="elsif <i>condition</i>"</code>',
+ and '<code>title="else"</code>' let you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;div&gt;
   &lt;span style="color:red"   <b>title="if status=='error'"</b>&gt;ERROR!&lt;/span&gt;
@@ -930,7 +949,7 @@ In 'Pick-up Element' pattern, necessary elements are marked and leaved so that d
 
 <a name="pickup-elem-example"></a>
 <h4 class="section3">Example Code</h4>
-<a name="pickup-elem.pdata"></a>
+<a name="pickup_elem.pdata"></a>
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;html&gt;
@@ -946,7 +965,7 @@ Presentation Data:</div>
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<a name="pickup-elem.plogic"></a>
+<a name="pickup_elem.plogic"></a>
 <div class="program_caption">
 Presentation Logic:</div>
 <pre class="program">#breadcrumbs {
@@ -967,6 +986,7 @@ Presentation Logic:</div>
   value: title;
 }
 </pre>
+<a name="pickup_elem.expected"></a>
 <div class="output_caption">
 Output Script:</div>
 <pre class="output">&lt;html&gt;
@@ -1005,7 +1025,7 @@ This pattern is named 'Extract Element Pattern' or 'Extract Content Pattern'.
 </p>
 <a name="design.html"></a>
 <div class="program_caption">
-Presentation Data (<a href="design.html">design.html</a>):</div>
+Presentation Data (<a href="p-pattern/design.html">design.html</a>):</div>
 <pre class="program">&lt;html <b>id="mark:whole"</b>&gt;
   &lt;head&gt;
     &lt;title&gt;Design Examples&lt;/title&gt;
@@ -1128,12 +1148,14 @@ $ kwartz -l eruby -p tablist.plogic   design.pdata &gt; tablist.rhtml
 ### menulist
 $ kwartz -l eruby -p menulist.plogic  design.pdata &gt; menulist.rhtml
 </pre>
+<a name="copyright.expected"></a>
 <div class="output_caption">
 Output Script (copyright.rhtml):</div>
 <pre class="output">    &lt;div align="center" class="copyright"&gt;
       Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
 </pre>
+<a name="tablist.expected"></a>
 <div class="output_caption">
 Output Script (tablist.rhtml):</div>
 <pre class="output">    &lt;div&gt;
@@ -1147,6 +1169,7 @@ Output Script (tablist.rhtml):</div>
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>
+<a name="menulist.expected"></a>
 <div class="output_caption">
 Output Script (menulist.rhtml):</div>
 <pre class="output">    &lt;div&gt;

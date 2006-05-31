@@ -2,6 +2,11 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.117
+	- [enhance] add 'load_yaml_testdata_with_each_lang()' in test/testutil.rb
+	- [change] move 'test/assert-text-equal.rb' and 'test/testcase-helper.rb' to 'lib/kwalify/util/'
+	- [enhance] 'doc/p-pattern.txt' is to '*.eruby' and be testable
+
 : rev.116 (2006-05-26)
 	- [enhance] PhpTranslator replaces '<?xml' with '<<?php ?>?xml'
 	- [enahnce] add 'examples/pagelayout1'

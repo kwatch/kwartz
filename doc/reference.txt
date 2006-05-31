@@ -182,7 +182,7 @@ $ kwartz -l jstl -p ex-elem.plogic ex-elem.pdata
 .====================
 $ kwartz -l eperl -p ex-elem.plogic ex-elem.pdata
 {{*<?= $user{'name'} !>*}}
-{{*<?= sanitize($user{'name'}) !>*}}
+{{*<?= encode_entities($user{'name'}) !>*}}
 {{*<?= $user{'name'} !>*}}
 .====================
 
@@ -318,7 +318,7 @@ $ kwartz -l jstl -p ex-cont.plogic ex-cont.pdata
 .====================
 $ kwartz -l eperl -p ex-cont.plogic ex-cont.pdata
 <p>{{*<?= $user{'name'} !>*}}</p>
-<p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+<p>{{*<?= encode_entities($user{'name'}) !>*}}</p>
 <p>{{*<?= $user{'name'} !>*}}</p>
 .====================
 
@@ -452,7 +452,7 @@ $ kwartz -l jstl -p ex-value.plogic ex-value.pdata
 .====================
 $ kwartz -l eperl -p ex-value.plogic ex-value.pdata
 <p>{{*<?= $user{'name'} !>*}}</p>
-<p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+<p>{{*<?= encode_entities($user{'name'}) !>*}}</p>
 <p>{{*<?= $user{'name'} !>*}}</p>
 .====================
 
@@ -588,7 +588,7 @@ $ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 .====================
 $ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
 {{*<?= start_link_to('list') !>*}}<img src="button1.png"></a>
-{{*<?= sanitize(start_link_to('list')) !>*}}<img src="button2.png"></a>
+{{*<?= encode_entities(start_link_to('list')) !>*}}<img src="button2.png"></a>
 {{*<?= start_link_to('list') !>*}}<img src="button3.png"></a>
 .====================
 
@@ -724,7 +724,7 @@ $ kwartz -l jstl -p ex-etag.plogic ex-etag.pdata
 .====================
 $ kwartz -l eperl -p ex-etag.plogic ex-etag.pdata
 <li>foo{{*<?= $is_xml ? '</li>' : '' !>*}}
-<li>bar{{*<?= sanitize($is_xml ? '</li>' : '') !>*}}
+<li>bar{{*<?= encode_entities($is_xml ? '</li>' : '') !>*}}
 <li>baz{{*<?= $is_xml ? '</li>' : '' !>*}}
 .====================
 
@@ -1442,11 +1442,11 @@ $ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
 
 
 
-.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
-
-Special selector {{,#DOCUMENT,}} represents entire of document.
-Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
-The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+.#.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
+.#
+.#Special selector {{,#DOCUMENT,}} represents entire of document.
+.#Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
+.#The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
 
 
 .# --------------------------------------------------------------------------------
@@ -1549,7 +1549,7 @@ $ kwartz -l jstl ex-elem.pdata
 .====================
 $ kwartz -l eperl ex-elem.pdata
 {{*<?= $expr !>*}}
-{{*<?= sanitize($expr) !>*}}
+{{*<?= encode_entities($expr) !>*}}
 {{*<?= $expr !>*}}
 .====================
 
@@ -1634,7 +1634,7 @@ $ kwartz -l jstl ex-stag.pdata
 .====================
 $ kwartz -l eperl ex-stag.pdata
 {{*<?= $expr !>*}}foo</b>
-{{*<?= sanitize($expr) !>*}}foo</b>
+{{*<?= encode_entities($expr) !>*}}foo</b>
 {{*<?= $expr !>*}}foo</b>
 .====================
 
@@ -1719,7 +1719,7 @@ $ kwartz -l jstl ex-etag.pdata
 .====================
 $ kwartz -l eperl ex-etag.pdata
 <b>foo{{*<?= $expr !>*}}
-<b>foo{{*<?= sanitize($expr) !>*}}
+<b>foo{{*<?= encode_entities($expr) !>*}}
 <b>foo{{*<?= $expr !>*}}
 .====================
 
@@ -1804,7 +1804,7 @@ $ kwartz -l jstl ex-cont.pdata
 .====================
 $ kwartz -l eperl ex-cont.pdata
 <b>{{*<?= $expr !>*}}</b>
-<b>{{*<?= sanitize($expr) !>*}}</b>
+<b>{{*<?= encode_entities($expr) !>*}}</b>
 <b>{{*<?= $expr !>*}}</b>
 .====================
 
@@ -1886,7 +1886,7 @@ $ kwartz -l jstl ex-value.pdata
 .====================
 $ kwartz -l eperl ex-value.pdata
 <b>{{*<?= $expr !>*}}</b>
-<b>{{*<?= sanitize($expr) !>*}}</b>
+<b>{{*<?= encode_entities($expr) !>*}}</b>
 <b>{{*<?= $expr !>*}}</b>
 .====================
 
@@ -2537,6 +2537,20 @@ $ kwartz -l php ex-while.pdata
 .====================
 
 
+.$$$ JSP	| directive-while-jstl
+
+.? presentation data (ex-while.pdata)
+.--------------------
+*** not supported ***
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-while.pdata
+*** not supported ***
+.====================
+
+
 .$$$ Perl	| directive-while-eperl
 
 .? presentation data (ex-while.pdata)
@@ -2843,6 +2857,24 @@ $ kwartz -l eruby ex-mark.pdata
 .? compile
 .====================
 $ kwartz -l php ex-mark.pdata
+<ul>
+ <li>foo</li>
+</ul>
+.====================
+
+
+.$$$ JSP	| directive-mark-jstl
+
+.? presentation data (ex-mark.pdata)
+.--------------------
+<ul {{*id="mark:list"*}}>
+ <li {{*title="id(item)"*}}>foo</li>
+</ul>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-mark.pdata
 <ul>
  <li>foo</li>
 </ul>

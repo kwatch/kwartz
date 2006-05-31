@@ -4,6 +4,8 @@
 #### $Copyright$
 ####
 
+require 'abstract'
+
 
 module Kwartz
 
@@ -15,8 +17,11 @@ module Kwartz
   class Node
 
 
+    ##
+    ## .[abstract] accept visitor
+    ##
     def accept(translator)
-      raise NotImplementedError("#{self.class}#accept() is not implemented.")
+      not_implemented
     end
 
 

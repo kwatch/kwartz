@@ -67,7 +67,7 @@
         {{*<?php echo $user['name']; ?>*}}
     eperl: |
         {{*<?= $user{'name'} !>*}}
-        {{*<?= sanitize($user{'name'}) !>*}}
+        {{*<?= encode_entities($user{'name'}) !>*}}
         {{*<?= $user{'name'} !>*}}
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
@@ -145,7 +145,7 @@
         <p>{{*<?php echo $user['name']; ?>*}}</p>
     eperl: |
         <p>{{*<?= $user{'name'} !>*}}</p>
-        <p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+        <p>{{*<?= encode_entities($user{'name'}) !>*}}</p>
         <p>{{*<?= $user{'name'} !>*}}</p>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
@@ -221,7 +221,7 @@
         <p>{{*<?php echo $user['name']; ?>*}}</p>
     eperl: |
         <p>{{*<?= $user{'name'} !>*}}</p>
-        <p>{{*<?= sanitize($user{'name'}) !>*}}</p>
+        <p>{{*<?= encode_entities($user{'name'}) !>*}}</p>
         <p>{{*<?= $user{'name'} !>*}}</p>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
@@ -299,7 +299,7 @@
 	{{*<?php echo start_link_to('list'); ?>*}}<img src="button3.png"></a>
     eperl: |
 	{{*<?= start_link_to('list') !>*}}<img src="button1.png"></a>
-	{{*<?= sanitize(start_link_to('list')) !>*}}<img src="button2.png"></a>
+	{{*<?= encode_entities(start_link_to('list')) !>*}}<img src="button2.png"></a>
 	{{*<?= start_link_to('list') !>*}}<img src="button3.png"></a>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
@@ -377,7 +377,7 @@
 	<li>baz{{*<?php echo $is_xml ? '</li>' : ''; ?>*}}
     eperl: |
 	<li>foo{{*<?= $is_xml ? '</li>' : '' !>*}}
-	<li>bar{{*<?= sanitize($is_xml ? '</li>' : '') !>*}}
+	<li>bar{{*<?= encode_entities($is_xml ? '</li>' : '') !>*}}
 	<li>baz{{*<?= $is_xml ? '</li>' : '' !>*}}
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>

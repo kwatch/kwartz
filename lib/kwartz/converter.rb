@@ -698,6 +698,7 @@ module Kwartz
     end
 
 
+    ## called from convert() and initialize converter object
     def reset(input, filename)
       @scanner = StringScanner.new(input)
       @filename = filename
@@ -706,7 +707,7 @@ module Kwartz
       @linenum = 1
       @linenum_delta = 0
     end
-    private :reset
+    protected :reset
 
     attr_reader :rest, :linenum
 

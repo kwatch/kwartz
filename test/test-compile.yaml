@@ -1,24 +1,22 @@
 - name:   compile1
   desc:   bordered table
   
-  pdata*:
-    eruby: &compile1_pdata |
-	<table>
-	  <tr id="mark:list" bgcolor="#FFCCCC">
-	    <td id="mark:name">foo</td>
-	    <td id="mark:mail">foo@mail.com</td>
-	  </tr>
-	  <tr id="dummy:d1" bgcolor="#CCCCFF">
-	    <td>bar</td>
-	    <td>bar@mail.org</td>
-	  </tr>
-	</table>
-
-    php: *compile1_pdata
-  
-    jstl: *compile1_pdata
-
-    eperl: *compile1_pdata
+  pdata: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	      <tr bgcolor="#FFCCCC" {{*id="mark:list"*}}>
+	        <td {{*id="mark:name"*}}>foo</td>
+	        <td {{*id="mark:mail"*}}>foo@mail.com</td>
+	      </tr>
+	      <tr {{*id="dummy:d1"*}} bgcolor="#CCCCFF">
+	        <td>bar</td>
+	        <td>bar@mail.org</td>
+	      </tr>
+	    </table>
+	  </body>
+	</html>
 
   
   plogic*:
@@ -110,52 +108,71 @@
   expected*:
   
     eruby: |
-	<table>
-	<%     @list.each_with_index { |user, i| %>
-	<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>
-	  <tr bgcolor="<%= color %>" title="<%= user.name %>">
-	    <td><%=h user.name %></td>
-	    <td><%= user[:mail] %></td>
-	  </tr>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<%     @list.each_with_index { |user, i| %>*}}
+	{{*<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>*}}
+	      <tr bgcolor="{{*<%= color %>*}}" title="{{*<%= user.name %>*}}">
+	        <td>{{*<%=h user.name %>*}}</td>
+	        <td>{{*<%= user[:mail] %>*}}</td>
+	      </tr>
 	<%     } %>
-	</table>
+	    </table>
+	  </body>
+	</html>
   
     php: |
-	<table>
-	<?php     $i = 0; ?>
-	<?php     foreach ($list as $user) { ?>
-	<?php       $i++; ?>
-	<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>
-	  <tr bgcolor="<?php echo $color; ?>" title="<?php echo $user->name; ?>">
-	    <td><?php echo htmlspecialchars($user->name); ?></td>
-	    <td><?php echo $user['mail']; ?></td>
-	  </tr>
-	<?php     } ?>
-	</table>
+	<{{*<?php ?>*}}?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?php     $i = 0; ?>*}}
+	{{*<?php     foreach ($list as $user) { ?>*}}
+	{{*<?php       $i++; ?>*}}
+	{{*<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>*}}
+	      <tr bgcolor="{{*<?php echo $color; ?>*}}" title="{{*<?php echo $user->name; ?>*}}">
+	        <td>{{*<?php echo htmlspecialchars($user->name); ?>*}}</td>
+	        <td>{{*<?php echo $user['mail']; ?>*}}</td>
+	      </tr>
+	{{*<?php     } ?>*}}
+	    </table>
+	  </body>
+	</html>
 
     jstl: |
-	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-	<table>
-	    <c:forEach var="user" items="${list}" varStatus="loop">
-	      <c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>
-	  <tr bgcolor="${color}" title="${user.name}">
-	    <td>${user.name}</td>
-	    <td>${user.mail}</td>
-	  </tr>
-	    </c:forEach>
-	</table>
+	{{*<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>*}}
+	{{*<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>*}}
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	    {{*<c:forEach var="user" items="${list}" varStatus="loop">*}}
+	      {{*<c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>*}}
+	      <tr bgcolor="{{*${color}*}}" title="{{*${user.name}*}}">
+	        <td>{{*${user.name}*}}</td>
+	        <td>{{*${user.mail}*}}</td>
+	      </tr>
+	    {{*</c:forEach>*}}
+	    </table>
+	  </body>
+	</html>
   
     eperl: |
-	<table>
-	<?     my $i = 0; !>
-	<?     foreach my $user (@list) { !>
-	<?       $i++; !>
-	<?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>
-	  <tr bgcolor="<?= $color !>" title="<?= $user->name() !>">
-	    <td><?= sanitize($user->name()) !></td>
-	    <td><?= $user{'mail'} !></td>
-	  </tr>
-	<?     } !>
-	</table>
-  
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?     my $i = 0; !>*}}
+	{{*<?     foreach my $user (@list) { !>*}}
+	{{*<?       $i++; !>*}}
+	{{*<?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>*}}
+	      <tr bgcolor="{{*<?= $color !>*}}" title="{{*<?= $user->name() !>*}}">
+	        <td>{{*<?= encode_entities($user->name()) !>*}}</td>
+	        <td>{{*<?= $user{'mail'} !>*}}</td>
+	      </tr>
+	{{*<?     } !>*}}
+	    </table>
+	  </body>
+	</html>

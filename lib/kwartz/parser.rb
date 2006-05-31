@@ -67,7 +67,8 @@ module Kwartz
     end
 
 
-    def _initialize(input, filename='')
+    ## called from parse() and initialize parser object
+    def reset(input, filename='')
       @input   = input
       @filename = filename
       @linenum = 1       # 1 start
@@ -77,8 +78,10 @@ module Kwartz
       @token   = nil
       @value   = nil
       @error   = nil
+      @ch      = nil
       getch()
     end
+    protected :reset
 
 
     attr_reader :linenum, :column, :pos, :token, :value, :error
@@ -392,7 +395,7 @@ module Kwartz
 
 
     def parse(input, filename='')
-      _initialize(input, filename)
+      reset(input, filename)
       scan()
       nodes = []
       while @token != nil
@@ -590,7 +593,7 @@ module Kwartz
 
 
     def parse(input, filename='')
-      _initialize(input, filename)
+      reset(input, filename)
       scan()
       rulesets = []
       while @token == ?@

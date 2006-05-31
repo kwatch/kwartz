@@ -13,7 +13,6 @@ class ParserTest < Test::Unit::TestCase
   filename = __FILE__.sub(/\.rb$/, '.yaml')
   load_yaml_testdata(filename)
 
-
   def _test
     begin
       eval @setup if @setup
@@ -34,7 +33,7 @@ class ParserTest < Test::Unit::TestCase
     end
     if @name =~ /scan/
       actual = ''
-      parser._initialize(@input)
+      parser.__send__ :reset, @input
       while (ret = parser.scan()) != nil
         actual << "#{parser.linenum}:#{parser.column}:"
         actual << " token=#{parser.token.inspect}, value=#{parser.value.inspect}\n"
@@ -53,5 +52,3 @@ class ParserTest < Test::Unit::TestCase
   end
 
 end
-
-__END__

@@ -1,32 +1,32 @@
 .=title:	Kwartz 3.0 Users' Guide
 .?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?lastupdate:	$Date$
-.?version:	$Rev$
+.?lastupdate:	$Date: 2006-05-22 22:25:43 +0900 (Mon, 22 May 2006) $
+.?version:	$Rev: 112 $
 .?release:	$Release$
 .?stylesheet:	docstyle.css
 .?copyright:	$Copyright$
 
 
+[%
 
+require File.expand_path(File.dirname(__FILE__) + '/../test/test.rb')
 
+class UsersGuideTest < Test::Unit::TestCase
 
+  def _test
+    tmpdir = 'd'
+    @name ||= (caller()[0] =~ /in `test_(.*?)'/) && $1
+    @command  ||= "kwartz -p #{@name}.plogic #{@name}.html"
+    @filename ||= "#{@name}.expected"
+    actual = `cd #{tmpdir}; #{@command}`
+    expected = File.read(tmpdir + '/' + @filename)
+    expected.gsub!(/(\{\{\*|\*\}\})/, '')
+    expected.sub!(/\A\$ kwartz.*\n/, '')
+    expected.chomp! if @chomp
+    assert_text_equal(expected, actual)
+  end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%]
 
 
 .$ Preface | preface*
@@ -231,12 +231,12 @@ Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example1.plogic example1.html)
-
-
-
-
-
-
+[%
+   def test_example1
+     @name = 'example1'
+     _test
+   end
+%]
 
 
 
@@ -324,12 +324,12 @@ $ kwartz -p example2.plogic example2.html > example2.rhtml
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example2.plogic example2.html)
-
-
-
-
-
-
+[%
+   def test_example2
+     @name = 'example2'
+     _test
+   end
+%]
 
 
 
@@ -480,10 +480,10 @@ Kwartz separates presentation logic from presentation data and main program.
 
 
 
-.$ Features Detail
+.$ Features Detail	| detail
 
 
-.$$ RuleSet and Properties
+.$$ RuleSet and Properties	| ruleset
 
 Format of presentation logic in Kwartz is similar to CSS (Cascading Style Sheet).
 .* Presentation logic file is a set of Ruleset.
@@ -579,12 +579,12 @@ $ kwartz -p form1.plogic form1.html
 </form>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p form1.plogic form1.html)
-
-
-
-
-
-
+[%
+  def test_form1
+    @name = 'form1'
+    _test
+  end
+%]
 
 
 
@@ -651,13 +651,13 @@ $ kwartz -l eruby  directive1.html > directive1.rhtml
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby directive1.html)
-
-
-
-
-
-
-
+[%
+  def test_directive1
+    @name = 'directive1'
+    @command = 'kwartz -l eruby directive1.html'
+    _test
+  end
+%]
 
 
 If the first character of target attribute is a space, Kwartz recognize it as non-directive{{(This spec may change in the future if I get have better idea.)}}.
@@ -675,13 +675,13 @@ $ kwartz directive2.html
 <span {{*title="value: expr2"*}}>bar</span>
 .====================
 .#.<<<:! (cd guide.d; kwartz directive2.html)
-
-
-
-
-
-
-
+[%
+  def test_directive2
+    @name = 'directive2'
+    @command = 'kwartz directive2.html'
+    _test
+  end
+%]
 
 Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -730,11 +730,11 @@ $ kwartz -p escape1.plogic escape1.html
 </tr>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p escape1.plogic escape1.html)
-
-
-
-
-
+[%
+  def test_escape1
+    _test
+  end
+%]
 
 .? comple with '{{,-e,}}' option.
 .==================== escape1e.expected
@@ -746,12 +746,12 @@ $ kwartz {{*-e*}} -p escape1.plogic escape1.html
 </tr>
 .====================
 .#.<<<:! (cd guide.d; kwartz -e -p escape1.plogic escape1.html)
-
-
-
-
-
-
+[%
+  def test_escape1e
+    @command = 'kwartz -e -p escape1.plogic escape1.html'
+    _test
+  end
+%]
 
 In the same way, '{{,Stag:,}}', '{{,Etag:,}}', '{{,Elem:,}}',
 '{{,Cont:,}}', '{{,Attrs:,}}', and '{{,Append:,}}' properties are
@@ -923,13 +923,13 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby -p table1.eruby.plogic table1.html)
-
-
-
-
-
-
-
+[%
+  def test_table1_jstl
+    @command = 'kwartz -l eruby -p table1.jstl.plogic table1.html'
+    @filename = 'table1.rhtml'
+    _test
+  end
+%]
 
 
 .? output script (table1.php)
@@ -952,13 +952,13 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l php -p table1.php.plogic table1.html)
-
-
-
-
-
-
-
+[%
+  def test_table1_php
+    @command = 'kwartz -l php -p table1.php.plogic table1.html'
+    @filename = 'table1.php'
+    _test
+  end
+%]
 
 
 .? output script (JSTL 1.2)
@@ -982,13 +982,13 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l jstl -p table1.jstl.plogic table1.html)
-
-
-
-
-
-
-
+[%
+  def test_table1_jstl
+    @command = 'kwartz -l jstl -p table1.jstl.plogic table1.html'
+    @filename = 'table1.jsp'
+    _test
+  end
+%]
 
 
 .? output script (ePerl)
@@ -1011,13 +1011,13 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eperl -p table1.eperl.plogic table1.html)
-
-
-
-
-
-
-
+[%
+  def test_table1_eperl
+    @command = 'kwartz -l eperl -p table1.eperl.plogic table1.html'
+    @filename = 'table1.iphtml'
+    _test
+  end
+%]
 
 
 
@@ -1047,12 +1047,12 @@ $ kwartz -p delspan1.plogic {{*--delspan*}} delspan1.html
 Hello {{*<%= user %>*}}!
 .====================
 .#.<<<:! (cd guide.d; kwartz -p delspan1.plogic --delspan delspan1.html)
-
-
-
-
-
-
+[%
+  def test_delspan1
+    @command = 'kwartz -p delspan1.plogic --delspan delspan1.html'
+    _test
+  end
+%]
 
 
 The span tags are not removed when they have other attributes.
@@ -1080,12 +1080,12 @@ $ kwartz {{*--delspan*}} delspan2.html
 Hello {{*<span style="color:black">*}}<%= user %>{{*</span>*}}!
 .====================
 .#.<<<:! (cd guide.d; kwartz --delspan delspan2.html)
-
-
-
-
-
-
+[%
+  def test_delspan2
+    @command = 'kwartz --delspan delspan2.html'
+    _test
+  end
+%]
 
 
 .$$ Import Presentation Logic File		| import-plogic
@@ -1160,11 +1160,11 @@ $ kwartz -p show.plogic show.html
 <%= start_link_to :action=>'list' %>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p show2.plogic show2.html)
-
-
-
-
-
+[%
+  def test_show2
+    _test
+  end
+%]
 
 
 
@@ -1211,12 +1211,12 @@ $ kwartz {{*-i form.html*}} -p new.plogic new.html
 </form>
 .====================
 .#.<<<:! (cd guide.d; kwartz -i form.html -p new.plogic new.html)
-
-
-
-
-
-
+[%
+  def test_new
+    @command = 'kwartz -i form.html -p new.plogic new.html'
+    _test
+  end
+%]
 
 
 
@@ -1258,13 +1258,13 @@ $ kwartz {{*-X content*}} -p show.plogic show.html
   </div>
 .====================
 .#.<<<:! (cd guide.d; kwartz -X content -p show.plogic show.html)
-
-
-
-
-
-
-
+[%
+  def test_show_elem
+    @command = 'kwartz -X content -p show.plogic show.html'
+    @filename = 'test_show_elem.expected'
+    _test
+  end
+%]
 
 
 .? compile with '-x'
@@ -1275,13 +1275,13 @@ $ kwartz {{*-x content*}} -p show.plogic show.html
    <p>Email: <span><%= user.email %></span></p>
 .====================
 .#.<<<:! (cd guide.d; kwartz -x content -p show.plogic show.html)
-
-
-
-
-
-
-
+[%
+  def test_show_content
+    @command = 'kwartz -x content -p show.plogic show.html'
+    @filename = 'test_show_cont.expected'
+    _test
+  end
+%]
 
 
 .$$ Print Statement		| print-statement
@@ -1318,13 +1318,13 @@ $ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html)
-
-
-
-
-
-
-
+[%
+  def test_print_stmt_eruby
+    @command = 'kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html'
+    @filename = 'print-stmt.eruby.expected'
+    _test
+  end
+%]
 
 
 .? print-stmt.php.plogic
@@ -1350,13 +1350,13 @@ $ kwartz -l php -p print-stmt.php.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l php -p print-stmt.php.plogic print-stmt.html)
-
-
-
-
-
-
-
+[%
+  def test_print_stmt_php
+    @command = 'kwartz -l php -p print-stmt.php.plogic print-stmt.html'
+    @filename = 'print-stmt.php.expected'
+    _test
+  end
+%]
 
 
 .? print-stmt.jstl.plogic
@@ -1384,13 +1384,13 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html)
-
-
-
-
-
-
-
+[%
+  def test_print_stmt_jstl12
+    @command  = 'kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html'
+    @filename = 'print-stmt.jstl12.expected'
+    _test
+  end
+%]
 
 
 .? compile (JSTL 1.1)
@@ -1404,13 +1404,13 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html)
-
-
-
-
-
-
-
+[%
+  def test_print_stmt_jstl11
+    @command  = 'kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html'
+    @filename = 'print-stmt.jstl11.expected'
+    _test
+  end
+%]
 
 
 It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead of
@@ -1418,7 +1418,7 @@ print statement because they can escape or unescape exression value.
 
 
 
-.$$ Add Code at Beginning/End of Document
+.$$ Add Code at Beginning/End of Document  	    | begin
 
 '#DOCUMENT' is a special selector which represents the document.
 In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beginning/end of document.
@@ -1454,14 +1454,14 @@ $ kwartz -p document-test.plogic document-test.html
 {{*<%= "<!--end-->\n" %>*}}
 .====================
 .#.<<<:! (cd guide.d; kwartz -p document-test.plogic document-test.html)
-
-
-
-
-
-
-
-
+[%
+  def test_document_test
+    @command = 'kwartz -p document-test.plogic document-test.html'
+    @filename = 'document-test.expected'
+    @chomp = true
+    _test
+  end
+%]
 
 
 
@@ -1571,6 +1571,8 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 .$$ Makefile and Rakefile		| makefile
 
+The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
+
 .? example of Makefile
 .--------------------
 .SUFFIXES:  .rhtml .html .plogic
@@ -1587,7 +1589,7 @@ file3.rhtml: file3.html file3.plogic $(LAYOUT)
 	kwartz -p file3.plogic -L $(LAYOUT) file3.html > file3.rhtml
 .--------------------
 
-.? example of Rakefile
+.? example of Rakefile for {{<Rake|http://rake.rubyforge.org/>}}
 .--------------------
 all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
@@ -1605,7 +1607,7 @@ file 'file3.rhtml' => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rantfile
+.? example of Rantfile for {{<Rant|http://make.rubyforge.org/>}}
 .--------------------
 all    = ["file1.rhtml", "file2.rhtml", "file3.rhtml"]
 layout = 'layout.html'
@@ -1623,16 +1625,16 @@ file "file3.rhtml" => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rookbook
+.? example of Rookbook for {{<Rook|http://www.rubyforge.org/projects/rook>}}
 .--------------------
-variables:
-  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+properties:
   - layout  :  layout.html
 
-recipes:
+variables:
+  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+  - rook_product:  $(all)
 
-  - product:	:default
-    ingreds:	$(all)
+recipes:
 
   - product:	*.rhtml
     ingreds:	[ $(1).html, $(1).plogic ]
@@ -1644,7 +1646,7 @@ recipes:
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L #{layout} #{pdata} > #{@product}"
+	sys "kwartz- p #{plogic} -L $(layout) #{pdata} > #{@product}"
 .--------------------
 
 
@@ -1841,6 +1843,6 @@ include($view);
 
 
 
-
-
-
+[%
+end
+%]

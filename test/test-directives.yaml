@@ -42,7 +42,7 @@
 
     eperl: |
       {{*<?= $expr !>*}}
-      {{*<?= sanitize($expr) !>*}}
+      {{*<?= encode_entities($expr) !>*}}
       {{*<?= $expr !>*}}
 
     jstl: |
@@ -93,7 +93,7 @@
 
     eperl: |
       {{*<?= $expr !>*}}foo</b>
-      {{*<?= sanitize($expr) !>*}}foo</b>
+      {{*<?= encode_entities($expr) !>*}}foo</b>
       {{*<?= $expr !>*}}foo</b>
 
     jstl: |
@@ -144,7 +144,7 @@
 
     eperl: |
       <b>foo{{*<?= $expr !>*}}
-      <b>foo{{*<?= sanitize($expr) !>*}}
+      <b>foo{{*<?= encode_entities($expr) !>*}}
       <b>foo{{*<?= $expr !>*}}
 
     jstl: |
@@ -196,7 +196,7 @@
 
     eperl: |
       <b>{{*<?= $expr !>*}}</b>
-      <b>{{*<?= sanitize($expr) !>*}}</b>
+      <b>{{*<?= encode_entities($expr) !>*}}</b>
       <b>{{*<?= $expr !>*}}</b>
 
     jstl: |
@@ -246,7 +246,7 @@
 
     eperl: |
       <b>{{*<?= $expr !>*}}</b>
-      <b>{{*<?= sanitize($expr) !>*}}</b>
+      <b>{{*<?= encode_entities($expr) !>*}}</b>
       <b>{{*<?= $expr !>*}}</b>
 
     jstl: |
@@ -737,8 +737,8 @@
         <td title="cont($item->name)">foo</td>
       </tr>
 
-  #  jstl: |
-
+    jstl: |
+      *** not supported ***
 
   expected*:
     eruby: |
@@ -780,7 +780,8 @@
       {{*<? } !>*}}
       </tr>
 
-  #  jstl: |
+    jstl: |
+      *** not supported ***
 
 
 
@@ -978,7 +979,7 @@
        <li {{*title="id(item)"*}}>foo</li>
       </ul>
 
-    eperl: |
+    jstl: |
       <ul {{*id="mark:list"*}}>
        <li {{*title="id(item)"*}}>foo</li>
       </ul>

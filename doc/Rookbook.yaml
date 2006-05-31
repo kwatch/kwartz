@@ -1,40 +1,56 @@
 
 variables:
 
-  - u      :   users-guide
-  - r      :   reference
-  - tagfile :  html-css
-
+  - u       :   users-guide
+  - r       :   reference
+  - p       :   p-pattern
+  - tagfile :   html-css
   - reference_testdata : [ ../test/test-ruleset.yaml, ../test/test-directives.yaml ]
-
+  - tmpdir  :   d
+  - rook_product : :all
+  
 
 recipes:
 
-  - product:	:default
-    ingreds:	[ users-guide.html, p-pattern.html, $(r).html ]
+  - product:	:all
+    ingreds:	[ :test, $(u).html, $(p).html, $(r).html ]
+    method: |
+	  mkdir_p "p-pattern"
+	  cp "#{dir}/design.*", "p-pattern"
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
+    byprods:    [ $(1).toc.html ]
     method: |
-	dir = 'guide.d'
+	dir = '$(tmpdir)'
 	rm_rf dir 
 	mkdir dir
 	sys "retrieve -d #{dir} $(1).txt"
-	sys "kwaser -t html-css -T2 $(1).txt > $(1).toc.html"
-	sys "kwaser -t html-css     $(1).txt > $(1).html"
-
-  - product:    $(r).html
-    ingreds:	[ $(r).txt ]
-    byprods:	[ $(r).toc.html ]
-    method: |
-	dir = 'd'
-	rm_rf dir
-	mkdir dir
-	sys "retrieve -d #{dir} #{@ingred}"
 	sys "kwaser -t $(tagfile) -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"
+	rm_f @byprod
+
+  - product:    *.txt
+    ingreds:    [ $(1).eruby ]
+    method: |
+        sys "erubis -xp '\\[% %\\]' -E NoCode #{@ingred} > #{@product}"
 
   - product:	$(r).txt
     ingreds:    [ $(r).eruby, $(reference_testdata) ]
     method: |
 	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"
+
+  - product:    test-*.rb
+    ingreds:	[ $(1).eruby ]
+    method: |
+        dir = '$(tmpdir)'
+	mkdir dir unless test(?d, dir)
+	sys "retrieve -d #{dir} #{@ingred}"
+	sys "erubis -x -b -p '\\[% %\\]' -E NoText #{@ingred} > #{@product}"
+
+  - product:    :test
+    ingreds:    [ test-$(u).rb, test-$(p).rb ]
+    method: |
+	sys "ruby test-$(u).rb"
+	sys "ruby test-$(p).rb"
+

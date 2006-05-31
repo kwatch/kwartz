@@ -13,10 +13,10 @@ end
 
 require 'test/unit'
 require 'yaml'
-require 'assert-text-equal'
-require 'testutil'
 require 'kwartz'
 require 'kwartz/main'
+require 'kwartz/util/assert-text-equal'
+require 'kwartz/util/testcase-helper'
 
 
 if $0 == __FILE__

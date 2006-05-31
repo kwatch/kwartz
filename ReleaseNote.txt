@@ -1,0 +1,179 @@
+.$ [ANN] Kwartz 3.0.0 released - a template system for web
+
+I have released Kwartz 3.0.0. (beta)
+http://www.kuwata-lab.com/kwartz/
+(Notice that this is beta-release. Spec may change in the future.)
+
+
+$$ What is Kwartz?
+
+Kwartz is a template system which realized the concept
+"Independence of Presentation Logic".
+It means that Kwartz can separate presentation logics
+from both business logics (= main program) and
+presentatin data (= HTML file).
+
+Kwartz generates eRuby/PHP/JSP/ePerl files from presentation
+data file (= HTML file) and presentation logic file.
+
+
+For example:
+
+template.html : presentation data
+--------------------
+<table>
+  <tr id="mark:list" bgcolor="#FFCCCC">
+    <td id="mark:item">foo</td>
+  </tr>
+  <tr id="dummy:d1" bgcolor="#CCCCFF">
+    <td>bar</td>
+  </tr>
+</table>
+--------------------
+
+
+template.plogic :  presentation logic
+--------------------
+#list {
+  attrs: 'bgcolor' color;
+  logic: {
+    @users.each_with_index do |user, i|
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+      _stag    # start-tag
+      _cont    # content
+      _etag    # end-tag
+    end
+  }
+}
+
+#item {
+  value:  user;
+}
+--------------------
+
+
+compile
+====================
+$ kwartz -l eruby -p template.plogic template.html > template.rhtml
+====================
+
+
+template.rhtml : compiled output script
+--------------------
+<table>
+<%     @users.each_with_index do |user, i| %>
+<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>
+  <tr bgcolor="<%= color %>">
+    <td><%= user %></td>
+  </tr>
+<%     end %>
+</table>
+--------------------
+
+
+The main enhancement of release 3.0 is to support Ruby on Rails.
+You can write Ruby code directly in presentaion logic file.
+
+See users' guide for details.
+http://www.kuwata-lab.com/kwartz/users-guide.html
+
+
+$$ Enhancements from 2.0.4
+
+* Presentation logic is described in target language.
+  It means that you can write presentatin logic in Ruby, PHP,
+  and so on.
+
+* New properties 'elem:', 'stag:', 'cont:', 'etag:' are added.
+  They replaces element, start-tag, content, end-tag with
+  expression value. This is useful especially for Rails.
+
+  new.html : presentation data file
+  --------------------
+  <form id="mark:form">
+    Name: <input type="text" id="user_name">
+    <input type="submit" id="mark:submit">
+  </form>
+  --------------------  
+
+  new.plogic : presentation logic file
+  --------------------
+  #form {
+    stag:  start_form_tag :action=>'create';
+  }
+  #user_name {
+    elem:  text_field 'user', 'name';
+  }
+  #submit {
+    elem:  submit_tag 'Create';
+  }
+  --------------------
+
+  compile:
+  ====================
+  $ kwartz -p new.plogic new.html > new.rhtml
+  ====================
+
+  new.rhtml : compiled output script
+  --------------------
+  <%= start_form_tag :action=>'create' %>
+    Name: <%= text_field 'user', 'name' %>
+    <%= submit_tag 'Create' %>
+  </form>
+  --------------------
+
+  See 'examples/rails1' for more details about Rails and Kwartz.
+
+* New keyword '_elem' added. '_elem' means element and
+  it is equivarent to '_stag' + '_cont' + '_etag'.
+
+* New language 'rails' addes. It uses '<% -%>' instead of '<% %>'
+  as embedded pattern.
+
+* New command-line option '-L layout' specifies layout file.
+  ====================
+  $ kwartz -p new.plogic -L layout.html new.html > new.rhtml
+  ## this is equivarent to the following:
+  ## $ kwartz -p new.plogic -i new.html layout.html > new.rhtml
+  ====================
+
+* ...and more
+
+
+$$ Changes from 2.0.4
+
+* Property 'plogic:' is renamed to 'logic:'.
+
+* '@stag', '@cont', '@etag' is changed to
+  '_stag', '_cont', '_etag' respectively.
+
+* Directive format is changed.
+  See reference manual for details.
+
+* Directive attribute is changed from 'kw:d' to 'title'.
+  (this may be change in the future.)
+
+* Directive 'id="replace:xxx"' is renamed to
+  'id="replace_element_with_element:xxx"' and
+  'id="replace_element_with_content:xxx"'.
+
+* Directive 'id="placeholder:xxx" is renamed to
+  'id="relace_content_with_element:xxx"' and
+  'id="relace_content_with_content:xxx"'.
+
+* 'analyze' action is obsolete (because presentation logic
+  is described in Ruby, PHP, and so on).
+
+* 'defun' action is currently not supported
+  (but is planned to be implemented in the future release).
+  
+* Velocity is not supported.
+
+* Project name in RubyForge.org is changed from 'kwartz-ruby'
+  to 'Kwartz', and gem file is also changed.
+
+* ...and more
+
+--
+regards,
+kwatch

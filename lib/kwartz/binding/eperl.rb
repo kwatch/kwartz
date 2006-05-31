@@ -149,7 +149,7 @@ module Kwartz
     EPERL_EMBED_PATTERNS = [
       '<? ',  ' !>',                 # statement
       '<?= ', ' !>',                 # expression
-      '<?= sanitize(', ') !>'        # escaped expression
+      '<?= encode_entities(', ') !>' # escaped expression
     ]
 
 
