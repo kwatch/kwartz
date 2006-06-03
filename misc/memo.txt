@@ -1,3 +1,57 @@
+
+●ElementRulesetとDocumentRuleset
+
+  * 両者をRulesetクラスに統一する？
+    - クラスを分ける必然性があまりない
+    - parserが面倒をみてくれればそれでよい
+    - begin/end をElementRulesetにも加えるなら、統一したほうがよい
+
+
+●分割Ruleset
+
+  * Rulesetを分割して定義できるようにする？
+    - declarationをあとから追加できるようにする
+    - 'logic:' は共通化するけど 'value:' は別々、という場合が考えられる。
+      ----------
+      #list1, #list2 {
+        logic: {
+	  @list.each do |item|
+	    _elem
+	  end
+	}
+      }
+      #list1 {
+        value: item.name;
+      }
+      #list2 {
+        value: item.password;
+      }
+      ----------
+  * 現在の実装は、marked nameごとに1つのRulesetという前提。
+    - name => [ruleset] という関係にするか、
+    - ruleset.merge(other_ruleset) を実装するのか
+  * 'begin:' と 'end:' をElement Rulesetにも追加すると、便利
+    ----------
+    #list1, #list2 {
+      logic: {
+        list.each do |item|
+	  _elem
+	end
+      }
+    }
+    #list1 {
+      begin: {
+        list = @list1
+      }
+    }
+    #list2 {
+      begin: {
+        list = @list2
+      }
+    }
+    ----------
+
+
 ●プレゼンテーションパターン
 
   * 名前を変えるべき？

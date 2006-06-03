@@ -3,6 +3,11 @@
 .?revision:	$Rev$
 
 
+: rev.122 (2006-06-03)
+	- [bugfix] Parser#scan_hook() now returns false when not hooked
+	- [change] 'test/test-parser.yaml' is integrated with kwartz-php
+	- [change] add RuleElement#duplicate()
+
 : rev.121 (2006-06-03)
 	- [enhance] add HandlerArgument class and modified Handler#handle()
 	- [change] remove HandlerHelper

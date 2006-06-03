@@ -25,50 +25,50 @@
   plogic: |
 
   expected: |
-	[ "<p>\n"]
-	[ "  <span id=\"foo\">"]
-	[ "FOO"]
-	[ "</span>\n"]
-	[ ]
-	[ "BAR"]
-	[ ]
-	[ ]
-	[ "BAZ"]
-	[ ]
-	[ "  <span class=\"foo\">"]
-	[ "POO"]
-	[ "</span>\n"]
-	[ "</p>\n"]
-	[ "<p>\n"]
-	[ "  <span class=\"", <%=classname%>, "\">"]
-	[ "ATTR"]
-	[ "</span>\n"]
-	[ "  <span", <%=' checked'%>, ">"]
-	[ "APPEND"]
-	[ "</span>\n"]
-	[ "  <span class=\"foo\"", <%=' checked'%>, ">"]
-	[ "APPEND"]
-	[ "</span>\n"]
-	[ "</p>\n"]
-	[ "<p>\n"]
-	[ <%=expr%>]
-	[ "  <span class=\"foo\">", <%=expr%>, "</span>\n"]
-	[ "</p>\n"]
-	[ "<p>\n"]
-	"if x > 0 then"
-	[ ]
-	[ "positive"]
-	[ ]
-	"elsif x < 0 then"
-	[ ]
-	[ "negative"]
-	[ ]
-	"else"
-	[ ]
-	[ "zero"]
-	[ ]
-	"end"
-	[ "</p>\n"]
+	print("<p>\n")
+	print("  <span id=\"foo\">")
+	print("FOO")
+	print("</span>\n")
+	print()
+	print("BAR")
+	print()
+	print()
+	print("BAZ")
+	print()
+	print("  <span class=\"foo\">")
+	print("POO")
+	print("</span>\n")
+	print("</p>\n")
+	print("<p>\n")
+	print("  <span class=\"", <%=classname%>, "\">")
+	print("ATTR")
+	print("</span>\n")
+	print("  <span", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("  <span class=\"foo\"", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("</p>\n")
+	print("<p>\n")
+	print(<%=expr%>)
+	print("  <span class=\"foo\">", <%=expr%>, "</span>\n")
+	print("</p>\n")
+	print("<p>\n")
+	<%if x > 0 then%>
+	print()
+	print("positive")
+	print()
+	<%elsif x < 0 then%>
+	print()
+	print("negative")
+	print()
+	<%else%>
+	print()
+	print("zero")
+	print()
+	<%end%>
+	print("</p>\n")
 
   output: |
 
@@ -122,6 +122,6 @@
 	baz
   plogic: |
   expected: |
-        [ "foo\nbar\nbaz\n"]
+        print("foo\nbar\nbaz\n")
 
 

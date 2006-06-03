@@ -11,7 +11,7 @@ class ParserTest < Test::Unit::TestCase
 
   ## define test methods
   filename = __FILE__.sub(/\.rb$/, '.yaml')
-  load_yaml_testdata(filename)
+  load_yaml_testdata(filename, :lang=>'ruby')
 
   def _test
     begin
@@ -23,29 +23,27 @@ class ParserTest < Test::Unit::TestCase
   end
 
   def __test
-    case @parser
-    when 'RubyStyleParser'
+    case @style
+    when 'ruby'
       parser = Kwartz::RubyStyleParser.new()
-    when 'CssStyleParser'
+    when 'css'
       parser = Kwartz::CssStyleParser.new()
     else
-      raise "*** invalid parser class: #{@parser}"
+      raise "*** invalid parser style: #{@style}"
     end
     if @name =~ /scan/
       actual = ''
-      parser.__send__ :reset, @input
+      parser.__send__ :reset, @plogic
       while (ret = parser.scan()) != nil
         actual << "#{parser.linenum}:#{parser.column}:"
         actual << " token=#{parser.token.inspect}, value=#{parser.value.inspect}\n"
         break if ret == :error
       end
     else
-      rulesets = parser.parse(@input)
+      rulesets = parser.parse(@plogic)
       actual = ''
       rulesets.each do |ruleset|
-        s = ruleset._inspect(1)
-        s[0] = '-'
-        actual << s
+        actual << ruleset._inspect()
       end if rulesets
     end
     assert_text_equal(@expected, actual)

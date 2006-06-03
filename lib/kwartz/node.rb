@@ -125,7 +125,7 @@ module Kwartz
 
 
     def _inspect(indent=0)
-      return @code.inspect
+      return "<%#{@code}%>\n"
     end
 
 
@@ -154,9 +154,9 @@ module Kwartz
 
     def _inspect(indent=0)
       if @kind == :element || @kind == :content
-        return "_#{@kind}(#{@name.inspect})"
+        return "_#{@kind}(#{@name})\n"
       else
-        return "_#{@kind}"
+        return "_#{@kind}\n"
       end
     end
 
@@ -186,7 +186,7 @@ module Kwartz
       list = @args.collect { |arg|
         arg.is_a?(NativeExpression) ? "<%=#{arg.code}%>" : arg.inspect
       }
-      return "[ " + list.join(', ') + "]"
+      return "print(" + list.join(', ') + ")\n"
     end
 
 
@@ -312,38 +312,49 @@ module Kwartz
     end
 
 
+    def duplicate(name)
+      ruleset = dup()
+      ruleset.name   = name
+      ruleset.attrs  = @attrs.dup()  if @attrs
+      ruleset.append = @append.dup() if @append
+      ruleset.remove = @remove.dup() if @remove
+      ruleset.logic  = @logic.dup()  if @logic
+      return ruleset
+    end
+
+
     def _inspect(indent=0)
       space = '  ' * indent
       sb = []
-      sb << space <<   "name: #{@name.inspect}\n"
-      #sb << space <<   "value: #{@value == nil ? '' : @value.inspect}\n"
-      sb << space <<   "stag: #{@stag.code.inspect}\n" unless @stag.nil?
-      sb << space <<   "cont: #{@cont.code.inspect}\n" unless @cont.nil?
-      sb << space <<   "etag: #{@etag.code.inspect}\n" unless @etag.nil?
-      sb << space <<   "elem: #{@elem.code.inspect}\n" unless @elem.nil?
+      sb << space <<   "- name: #{@name}\n"
+      #sb << space <<   "  value: #{@value == nil ? '' : @value}\n"
+      sb << space <<   "  stag: #{@stag.code}\n" unless @stag.nil?
+      sb << space <<   "  cont: #{@cont.code}\n" unless @cont.nil?
+      sb << space <<   "  etag: #{@etag.code}\n" unless @etag.nil?
+      sb << space <<   "  elem: #{@elem.code}\n" unless @elem.nil?
       #
-      sb << space <<   "attrs:\n" if @attrs
+      sb << space <<   "  attrs:\n" if @attrs
       @attrs.keys.sort.each do |key|
         val = @attrs[key]
-        sb << space << "  - name:  #{key.inspect}\n"
-        sb << space << "    value: #{val.code.inspect}\n"
+        sb << space << "    - name:  #{key}\n"
+        sb << space << "      value: #{val.code}\n"
       end if @attrs
       #
-      sb << space <<   "append:\n" if @append
+      sb << space <<   "  append:\n" if @append
       @append.each do |expr|
-        sb << space << "  - #{expr.code.inspect}\n"
+        sb << space << "    - #{expr.code}\n"
       end if @append
       #
-      sb << space <<   "remove:\n" if @remove
+      sb << space <<   "  remove:\n" if @remove
       @remove.each do |name|
-        sb << space << "  - #{name.inspect}\n"
+        sb << space << "    - #{name}\n"
       end if @remove
       #
-      sb << space <<   "tagname: #{@tagname.inspect}\n" unless @tagname.nil?
+      sb << space <<   "  tagname: #{@tagname}\n" unless @tagname.nil?
       #
-      sb << space <<   "logic:\n" if @logic
+      sb << space <<   "  logic:\n" if @logic
       @logic.each do |stmt|
-        sb << space << "  - " << stmt._inspect() << "\n"
+        sb << space << "    - " << stmt._inspect()
       end if @logic
       #
       return sb.join
@@ -395,7 +406,9 @@ module Kwartz
       @end = stmt_list
     end
 
+
     private
+
 
     def _parse_stmts(str)
       return unless str
@@ -412,34 +425,36 @@ module Kwartz
       return stmt_list
     end
 
+
     public
+
 
     def _inspect(indent=0)
       space = '  ' * indent
       sb = []
-      sb << space <<   "name: #{@name.inspect}\n"
+      sb << space <<   "- name: #{@name}\n"
       if @global
-        sb << space <<   "global:\n"
+        sb << space <<   "  global:\n"
         @global.each do |item|
-          sb << space << "  - #{item}\n"
+          sb << space << "    - #{item}\n"
         end
       end
       if @local
-        sb << space <<   "local:\n"
+        sb << space <<   "  local:\n"
         @local.each do |item|
-          sb << space << "  - #{item}\n"
+          sb << space << "    - #{item}\n"
         end
       end
       if @begin
-        sb << space << "begin:\n"
+        sb << space << "  begin:\n"
         @begin.each do |stmt|
-          sb << space << "  - #{stmt._inspect}\n"
+          sb << space << "    - #{stmt._inspect}"
         end
       end
       if @end
-        sb << space << "end:\n"
+        sb << space << "  end:\n"
         @end.each do |stmt|
-          sb << space << "  - #{stmt._inspect}\n"
+          sb << space << "    - #{stmt._inspect}"
         end
       end
       #
