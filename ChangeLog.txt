@@ -2,6 +2,11 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+
+: rev.121 (2006-06-03)
+	- [enhance] add HandlerArgument class and modified Handler#handle()
+	- [change] remove HandlerHelper
+
 : rev.120 (2006-06-03)
 	- [enhance] several selectors can be specified in ruleset
 	- [refact] add HandlerHelper

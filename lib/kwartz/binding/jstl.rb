@@ -47,33 +47,32 @@ module Kwartz
     end
 
 
-    def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
+    def handle(handler_arg)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      arg = handler_arg
+      d_name = arg.directive_name
+      d_arg  = arg.directive_arg
+      d_str  = arg.directive_str
+      stmt_list = arg.stmt_list
 
-      stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
-      etag_stmt = build_print_stmt(etag_info, nil, nil)
-
-      case directive_name
+      case d_name
 
       when :for, :For, :FOR, :list, :List, :LIST
         is_foreach = d_name == :for || d_name == :For || d_name == :FOR
         unless d_arg =~ /\A(\w+)\s*:\s*(.*)\z/
-          raise convert_error("'#{d_str}': invalid argument.", stag_info.linenum)
+          raise convert_error("'#{d_str}': invalid argument.", arg.stag_info.linenum)
         end
         loopvar = $1 ; looplist = $2
         counter = d_name == :for || d_name == :list ? nil : "#{loopvar}_ctr"
         toggle  = d_name != :FOR && d_name != :LIST ? nil : "#{loopvar}_tgl"
         status  = d_name == :for || d_name == :list ? nil : "#{loopvar}_status"
-        stmt_list << stag_stmt   if !is_foreach
-        sb = "<c:forEach var=\"#{loopvar}\" items=\"${#{looplist}}\""
-        sb << " varStatus=\"#{status}\"" if status
-        sb << ">"
-        stmt_list << NativeStatement.new(sb, :foreach)
+        stmt_list << arg.stag_stmt   if !is_foreach
+        code = "<c:forEach var=\"#{loopvar}\" items=\"${#{looplist}}\""
+        code << " varStatus=\"#{status}\"" if status
+        code << ">"
+        stmt_list << NativeStatement.new(code, :foreach)
         if counter
           stmt_list << NativeStatement.new("<c:set var=\"#{counter}\" value=\"${#{status}.count}\" />")
         end
@@ -85,36 +84,36 @@ module Kwartz
             stmt_list << NativeStatement.new("<c:set var=\"#{toggle}\" value=\"${self.odd}\"/>")
             stmt_list << NativeStatement.new("</c:otherwise></c:choose>")
           else
-            sb = "<c:set var=\"#{toggle}\" value=\"${#{status}.count%2==0 ? #{self.even} : #{self.odd}}\" />"
-            stmt_list << NativeStatement.new(sb)
+            code = "<c:set var=\"#{toggle}\" value=\"${#{status}.count%2==0 ? #{self.even} : #{self.odd}}\" />"
+            stmt_list << NativeStatement.new(code)
           end
         end
-        stmt_list  <<  stag_stmt   if is_foreach
-        stmt_list.concat(cont_stmts)
-        stmt_list  <<  etag_stmt   if is_foreach
+        stmt_list  <<  arg.stag_stmt   if is_foreach
+        stmt_list.concat(arg.cont_stmts)
+        stmt_list  <<  arg.etag_stmt   if is_foreach
         stmt_list  <<  NativeStatement.new("</c:forEach>", :foreach)
-        stmt_list  <<  etag_stmt   if !is_foreach
+        stmt_list  <<  arg.etag_stmt   if !is_foreach
 
       when :while, :loop
-        raise convert_error("'#{d_str}': jstl doesn't support '#{d_arg}' directive.", stag_info.linenum)
+        msg = "'#{d_str}': jstl doesn't support '#{d_arg}' directive."
+        raise convert_error(msg, stag_info.linenum)
 
       when :set
         unless d_arg =~ /\A(\S+)\s*=\s*(.*)\z/
-          raise convert_error("'#{d_str}': invalid argument.", stag_info.linenum)
+          raise convert_error("'#{d_str}': invalid argument.", arg.stag_info.linenum)
         end
         lhs = $1;  rhs = $2
-        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
-                     "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />", nil, :set)
-        #code "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />"
+        code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />"
+        arg.wrap_element_with_native_stmt(code, nil, :set)
+        #code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />"
         #stmt_list << NativeStatement.new(code, :set)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)
         #stmt_list << etag_stmt
 
       when :if
-        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
-                     "<c:choose><c:when test=\"${#{d_arg}}\">", "</c:when></c:choose>", :if)
-        #code = "<c:choose><c:when test=\"${#{d_arg}}\">"
+        code = "<c:choose><c:when test=\"${#{d_arg}}\">"
+        arg.wrap_element_with_native_stmt(code, "</c:when></c:choose>", :if)
         #stmt_list << NativeStatement.new(code, :if)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)
@@ -126,7 +125,7 @@ module Kwartz
                && (st=stmt_list[-1]).is_a?(NativeStatement) \
                && (st.kind == :if || st.kind == :elseif)
           msg = "'#{d_str}': previous statement should be 'if' or 'elseif'."
-          raise convert_error(msg, stag_info.linenum)
+          raise convert_error(msg, arg.stag_info.linenum)
         end
         stmt_list.pop    # delete '</c:when></c:choose>'
         if d_name == :else
@@ -138,8 +137,7 @@ module Kwartz
           code1 = "</c:when><c:when test=\"${#{d_arg}}\">"
           code2 = "</c:when></c:choose>"
         end
-        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
-                     code1, code2, kind)
+        arg.wrap_element_with_native_stmt(code1, code2, kind)
         #stmt_list << NativeStatement.new(code1, kind)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)
@@ -147,31 +145,30 @@ module Kwartz
         #stmt_list << NativeStatement.new(code2, kind)
 
       when :default, :Default, :DEFAULT
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
-        stmt_list << stag_stmt
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
+        stmt_list << arg.stag_stmt
         flag_escape = d_name == :default ? nil : (d_name == :Default)
-        argstr = cont_stmts[0].args[0]
+        argstr = arg.cont_stmts[0].args[0]
         code =  "<c:out value=\"${#{d_arg}}\""
         code << " escapeXml=\"#{flag_escape}\"" unless flag_escape == nil
         code << " default=#{argstr.dump} />"
         stmt_list << NativeStatement.new_without_newline(code)
-        stmt_list << etag_stmt
+        stmt_list << arg.etag_stmt
 
       when :catch
         if d_arg && !d_arg.empty? && d_arg !~ /\A\w+\z/
-          raise convert_error("'#{d_str}': invalid varname.", stag_info.linenum)
+          raise convert_error("'#{d_str}': invalid varname.", arg.stag_info.linenum)
         end
         code = "<c:catch"
         code << " var=\"#{d_arg}\"" if d_arg && !d_arg.empty?
         code << ">"
         stmt_list << NativeStatement.new(code)
-        stmt_list.concat(cont_stmts)
+        stmt_list.concat(arg.cont_stmts)
         stmt_list << NativeStatement.new("</c:catch>")
 
       when :forEach, :forTokens
         stag, etag = eval "handle_jstl_#{d_name}(#{d_arg})"
-        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
-                     stag, etag, nil)
+        arg.wrap_element_with_native_stmt(stag, etag, nil)
         #stmt_list << NativeStatement.new(stag)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)

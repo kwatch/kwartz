@@ -93,16 +93,18 @@ module Kwartz
     ##
     ## everytime return true whenever directive name is unknown.
     ##
-    def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
+    def handle(handler_arg)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      arg = handler_arg
+      d_name = arg.directive_name
+      d_arg  = arg.directive_arg
+      d_str  = arg.directive_str
+      attr_info = arg.attr_info
 
       ## parse 'name="user[name]"' or 'id="user_name"'
-      case directive_name.to_s
+      case d_name.to_s
       when /(_|\A)radio_button\z/
         add_directive_object_and_method_and_value(d_arg, attr_info)
       when /_field\z/, /_area\z/, /_box\z/, /(_|\A)select\z/, 'input'
@@ -110,9 +112,9 @@ module Kwartz
       end
 
       ## replace whole element, or only start tag
-      replace_elem = directive_name.to_s !~ /\Astart_/
+      replace_elem = d_name.to_s !~ /\Astart_/
 
-      case directive_name
+      case d_name
 
       when :text_field, :password_field, :hidden_field
         #add_directive_object_and_method(d_arg, attr_info)
@@ -124,13 +126,13 @@ module Kwartz
         add_directive_integer_option(d_arg, 'size', attr_info['size'])
 
       when :link_to, :link_to_remote, :link_to_unless_current
-        add_directive_content_as_arg(d_arg, cont_stmts)
+        add_directive_content_as_arg(d_arg, arg.cont_stmts)
 
       when :anchor, :anchor_remote
         replace_elem = false
 
       when :mail_to
-        add_directive_content_as_arg(d_arg, cont_stmts)
+        add_directive_content_as_arg(d_arg, arg.cont_stmts)
         add_directive_attr_as_arg(d_arg, attr_info, 'href')
         d_arg.sub!(/\A\'mailto:/, "'")
 
@@ -168,7 +170,7 @@ module Kwartz
       end #case
 
       ##
-      print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list, replace_elem)
+      print_directive(arg, replace_elem)
 
       return true      # everytime return true
 
@@ -249,17 +251,18 @@ module Kwartz
     end
 
 
-    def print_directive(d_name, d_arg, stag_info, etag_info, cont_stmts, attr_info, stmt_list, replace_elem=true)
-      head_space = stag_info.head_space
-      tail_space = (etag_info || stag_info).tail_space
-      args = []
-      args << head_space if head_space
-      args << NativeExpression.new("#{d_name} #{d_arg}")
-      args << tail_space if tail_space
-      stmt_list << PrintStatement.new(args)
+    def print_directive(handler_arg, replace_elem=true)
+      arg = handler_arg
+      head_space = arg.stag_info.head_space
+      tail_space = (arg.etag_info || arg.stag_info).tail_space
+      pargs = []
+      pargs << head_space if head_space
+      pargs << NativeExpression.new("#{arg.directive_name} #{arg.directive_arg}")
+      pargs << tail_space if tail_space
+      arg.stmt_list << PrintStatement.new(pargs)
       unless replace_elem
-        stmt_list.concat(cont_stmts)
-        stmt_list << PrintStatement.new([etag_info.tag_text])
+        arg.stmt_list.concat(arg.cont_stmts)
+        arg.stmt_list << PrintStatement.new([arg.etag_info.tag_text])
       end
     end
 

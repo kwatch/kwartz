@@ -244,6 +244,12 @@ module Kwartz
       end
     end
 
+  end
+
+
+
+  module PrintStatementHelper
+
 
     ## create print statement from text
     def create_text_print_stmt(text)
@@ -437,26 +443,56 @@ module Kwartz
 
 
   ##
+  ## argument data for handler
   ##
-  ##
-  module HandlerHelper
+  class HandlerArgument
+    include PrintStatementHelper
 
 
-    def wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts, start_code, end_code, kind)
-      stmt_list << NativeStatement.new(start_code, kind) if start_code
-      stmt_list << stag_stmt
-      stmt_list.concat(cont_stmts)
-      stmt_list << etag_stmt
-      stmt_list << NativeStatement.new(end_code, kind) if end_code
+    def initialize(directive_name, directive_arg, directive_str,
+                   stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
+      @directive_name = directive_name
+      @directive_arg  = directive_arg
+      @directive_str  = directive_str
+      @stag_info      = stag_info
+      @etag_info      = etag_info
+      @cont_stmts     = cont_stmts
+      @attr_info      = attr_info
+      @append_exprs   = append_exprs
+      @stmt_list      = stmt_list
     end
 
 
-    def wrap_content(stmt_list, stag_stmt, etag_stmt, cont_stmts, start_code, end_code, kind)
-      stmt_list << stag_stmt
-      stmt_list << NativeStatement.new(start_code, kind) if start_code
-      stmt_list.concat(cont_stmts)
-      stmt_list << NativeStatement.new(end_code, kind) if end_code
-      stmt_list << etag_stmt
+    attr_reader :directive_name, :directive_arg, :directive_str
+    attr_reader :stag_info, :etag_info, :cont_stmts, :attr_info, :append_exprs
+    attr_reader :stmt_list
+
+
+    def stag_stmt
+      return build_print_stmt(@stag_info, @attr_info, @append_exprs)
+    end
+
+
+    def etag_stmt
+      return build_print_stmt(@etag_info, nil, nil)
+    end
+
+
+    def wrap_element_with_native_stmt(start_code, end_code, kind=nil)
+      @stmt_list << NativeStatement.new(start_code, kind) if start_code
+      @stmt_list << stag_stmt()
+      @stmt_list.concat(@cont_stmts)
+      @stmt_list << etag_stmt()
+      @stmt_list << NativeStatement.new(end_code, kind) if end_code
+    end
+
+
+    def wrap_content_with_native_stmt(start_code, end_code, kind=nil)
+      @stmt_list << stag_stmt()
+      @stmt_list << NativeStatement.new(start_code, kind) if start_code
+      @stmt_list.concat(@cont_stmts)
+      @stmt_list << NativeStatement.new(end_code, kind) if end_code
+      @stmt_list << etag_stmt()
     end
 
 
@@ -469,8 +505,8 @@ module Kwartz
   ##
   class Handler
     include Assertion
-    include HandlerHelper
     include ConverterHelper
+    include PrintStatementHelper
     include ElementExpander
 
 
@@ -529,81 +565,84 @@ module Kwartz
     ##
     ## return true if directive name is one of 'stag', 'etag', 'elem', 'cont', and 'value',
     ## else return false.
-    def handle(directive_name, directive_arg, directive_str, stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+    def handle(handler_arg)
+      arg = handler_arg
+      d_name = arg.directive_name
+      d_arg  = arg.directive_arg
+      d_str  = arg.directive_str
+      stmt_list = arg.stmt_list
 
-      case directive_name
+      case d_name
 
       when nil
-        assert unless !attr_info.empty? || !append_exprs.empty?
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil) if etag_info   # when empty-tag
+        assert unless !arg.attr_info.empty? || !arg.append_exprs.empty?
+        stmt_list << arg.stag_stmt
+        stmt_list.concat(arg.cont_stmts)
+        stmt_list << arg.etag_stmt if arg.etag_info   # when empty-tag
 
       when :dummy
         # nothing
 
       when :id, :mark
-        unless directive_arg =~ /\A(\w+)\z/ || directive_arg =~ /\A'(\w+)'\z/
-          raise convert_error("'#{d_str}': invalid marking name.", stag_info.linenum)
+        unless d_arg =~ /\A(\w+)\z/ || d_arg =~ /\A'(\w+)'\z/
+          raise convert_error("'#{d_str}': invalid marking name.", arg.stag_info.linenum)
         end
         name = $1
-        elem_info = ElementInfo.new(name, stag_info, etag_info, cont_stmts, attr_info, append_exprs)
+        elem_info = ElementInfo.new(name, arg.stag_info, arg.etag_info, arg.cont_stmts,
+                                    arg.attr_info, arg.append_exprs)
         if @elem_info_table[name]
           #unless Config::ALLOW_DUPLICATE_ID
             previous_linenum = @elem_info_table[name].stag_info.linenum
-            raise convert_error("'#{d_str}': id '#{name}' is already used at line #{previous_linenum}.", stag_info.linenum)
+            msg = "'#{d_str}': id '#{name}' is already used at line #{previous_linenum}."
+            raise convert_error(msg, arg.stag_info.linenum)
           #end
         else
           @elem_info_table[name] = elem_info
         end
         #stmt_list << ExpandStatement.new(:element, name)     # lazy expantion
-        expand_element_info(elem_info, stmt_list)
+        expand_element_info(elem_info, arg.stmt_list)
 
       when :stag, :Stag, :STAG
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
         flag_escape = d_name == :stag ? nil : (d_name == :Stag)
         expr = NativeExpression.new(d_arg, flag_escape)
-        stmt_list << build_print_expr_stmt(expr, stag_info, nil)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil)
+        stmt_list << build_print_expr_stmt(expr, arg.stag_info, nil)
+        stmt_list.concat(arg.cont_stmts)
+        stmt_list << arg.etag_stmt
 
       when :etag, :Etag, :ETAG
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
         flag_escape = d_name == :etag ? nil : (d_name == :Etag)
         expr = NativeExpression.new(d_arg, flag_escape)
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_expr_stmt(expr, nil, etag_info)
+        stmt_list << arg.stag_stmt
+        stmt_list.concat(arg.cont_stmts)
+        stmt_list << build_print_expr_stmt(expr, nil, arg.etag_info)
 
       when :elem, :Elem, :ELEM
         flag_escape = d_name == :elem ? nil : (d_name == :Elem)
         expr = NativeExpression.new(d_arg, flag_escape)
-        stmt_list << build_print_expr_stmt(expr, stag_info, etag_info)
+        stmt_list << build_print_expr_stmt(expr, arg.stag_info, arg.etag_info)
 
       when :cont, :Cont, :CONT, :value, :Value, :VALUE
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
-        stag_info.tail_space = etag_info.head_space = nil    # delete spaces
-        args = build_print_args(stag_info, attr_info, append_exprs)
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
+        arg.stag_info.tail_space = arg.etag_info.head_space = nil    # delete spaces
+        pargs = build_print_args(arg.stag_info, arg.attr_info, arg.append_exprs)
         flag_escape = (d_name == :cont || d_name == :value) ? nil : (d_name == :Cont || d_name == :Value)
-        args << NativeExpression.new(d_arg, flag_escape)
-        #args << etag_info.tag_text
-        args << etag_info.tag_text if etag_info.tagname
-        stmt_list << PrintStatement.new(args)
+        pargs << NativeExpression.new(d_arg, flag_escape)
+        pargs << arg.etag_info.tag_text if arg.etag_info.tagname
+        stmt_list << PrintStatement.new(pargs)
 
       when :attr, :Attr, :ATTR
         unless d_arg =~ self.mapping_pattern()     # ex. /\A'([-:\w]+)'\s+(.*)\z/
-          raise convert_error("'#{d_str}': invalid attr pattern.", stag_info.linenum)
+          raise convert_error("'#{d_str}': invalid attr pattern.", arg.stag_info.linenum)
         end
         aname = $1;  avalue = $2
         flag_escape = d_name == :attr ? nil : (d_name == :Attr)
-        attr_info[aname] = NativeExpression.new(avalue, flag_escape)
+        arg.attr_info[aname] = NativeExpression.new(avalue, flag_escape)
 
       when :append, :Append, :APPEND
         flag_escape = d_name == :append ? nil : (d_name == :Append)
-        append_exprs << NativeExpression.new(d_arg, flag_escape)
+        arg.append_exprs << NativeExpression.new(d_arg, flag_escape)
 
       when :replace_element_with_element, :replace_element_with_content,
            :replace_content_with_element, :replace_content_with_content
@@ -612,15 +651,15 @@ module Kwartz
         with_content = arr[3] == 'content'
         name = d_arg
         #
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if replace_cont
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if replace_cont
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)   if replace_cont
+        stmt_list << arg.stag_stmt if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
-          raise convert_error("'#{d_str}': element '#{name}' not found.", stag_info.linenum)
+          raise convert_error("'#{d_str}': element '#{name}' not found.", arg.stag_info.linenum)
         end
-        expand_element_info(elem_info, stmt_list, with_content)
-        stmt_list << build_print_stmt(etag_info, nil, nil)                if replace_cont
+        expand_element_info(elem_info, arg.stmt_list, with_content)
+        stmt_list << arg.etag_stmt if replace_cont
 
       when :replace_element_with, :replace_content_with, :replace, :placeholder
         unless d_arg =~ /\A_?(element|content)\(["']?(\w+)["']?\)\z/
@@ -631,15 +670,17 @@ module Kwartz
         replace_cont = d_name == :replace_content_with || d_name == :placeholder
         with_content = kind == 'content'
         #
-        error_if_empty_tag(stag_info, etag_info, d_name, d_arg)           if replace_cont
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs) if replace_cont
+        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg) if replace_cont
+        stmt_list << arg.stag_stmt if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
-          raise convert_error("'#{d_str}': element '#{name}' not found.", stag_info.linenum)
+          msg = "'#{d_str}': element '#{name}' not found."
+          raise convert_error(msg, arg.stag_info.linenum)
         end
         expand_element_info(elem_info, stmt_list, with_content)
-        stmt_list << build_print_stmt(etag_info, nil, nil)                if replace_cont
+        stmt_list << arg.etag_stmt if replace_cont
+
       else
         return false
       end #case
@@ -681,6 +722,7 @@ module Kwartz
   ##
   class Converter
     include ConverterHelper
+    include PrintStatementHelper
 
 
     def initialize(handler, properties={})
@@ -861,12 +903,14 @@ module Kwartz
         d_arg  = $2 || ''    # directive arg
         case d_name
         when :attr, :Attr, :ATTR
-          @handler.handle(d_name, d_arg, d_str, stag_info, etag_info,
-                          cont_stmts, attr_info, append_exprs, stmt_list)
+          handler_args = HandlerArgument.new(d_name, d_arg, d_str, stag_info, etag_info,
+                                             cont_stmts, attr_info, append_exprs, stmt_list)
+          @handler.handle(handler_args)
         when :append, :Append, :APPEND
           append_exprs ||= []
-          @handler.handle(d_name, d_arg, d_str, stag_info, etag_info,
-                          cont_stmts, attr_info, append_exprs, stmt_list)
+          handler_args = HandlerArgument.new(d_name, d_arg, d_str, stag_info, etag_info,
+                                             cont_stmts, attr_info, append_exprs, stmt_list)
+          @handler.handle(handler_args)
         else
           if directive_name
             raise convert_error("'#{d_str}': not available with '#{directive_name}' directive.", stag_info.linenum)
@@ -883,8 +927,10 @@ module Kwartz
       end
 
       ## handle other directives
-      ret = @handler.handle(directive_name, directive_arg, directive_str, stag_info, etag_info,
-                            cont_stmts, attr_info, append_exprs, stmt_list)
+      handler_args = HandlerArgument.new(directive_name, directive_arg, directive_str,
+                                         stag_info, etag_info, cont_stmts,
+                                         attr_info, append_exprs, stmt_list)
+      ret = @handler.handle(handler_args)
       if directive_name && !ret
         raise convert_error("'#{directive_str}': unknown directive.", stag_info.linenum)
       end
