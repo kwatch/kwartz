@@ -1,0 +1,11 @@
+.+document:    ChangeLog
+.?version:     $Rev$
+.?lastupdate:  $Date$
+
+
+: rev.60
+	- [enhance] add Kwartz/*.php
+	- [enhance] add text/KwartzParserTest.{php,yaml}
+
+
+.-document:
