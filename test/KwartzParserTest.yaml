@@ -1,18 +1,457 @@
-### $Rev$
-### $Release$
-### $Copyright$
+## $Rev$
+## $Release$
+## $Copyright$
 
-##
-- name:   parser1
+###
+- name:  scanner1_css
+  style: css
   plogic: |
-	#item {
-	  value: $item;
+	/* comment */
+	#list {
+	  value
+	  attrs
+	  append
+	  logic {
+	  }
+	}
+  expected*:
+    ruby: |
+	2:2: token=35, value="#"
+	2:6: token=:ident, value="list"
+	2:8: token=:"{", value="{"
+	3:8: token=:value, value="value"
+	4:8: token=:attrs, value="attrs"
+	5:9: token=:append, value="append"
+	6:8: token=:logic, value="logic"
+	6:10: token=:"{", value="{"
+	7:4: token=:"}", value="}"
+	8:2: token=:"}", value="}"
+    php: |
+	2:2: token=#, value="#"
+	2:6: token=:ident, value="list"
+	2:8: token={, value="{"
+	3:8: token=value, value="value"
+	4:8: token=attrs, value="attrs"
+	5:9: token=append, value="append"
+	6:8: token=logic, value="logic"
+	6:10: token={, value="{"
+	7:4: token=}, value="}"
+	8:2: token=}, value="}"
+
+- name:  scanner1_ruby
+  style: ruby
+  plogic: |
+	# comment
+	element "list" {
+	  value
+	  attrs
+	  append
+	  logic {
+	  }
 	}
   expected: |
-	name: item
-	cont: $item
-##
-- name:   parser2
+	2:8: token=:element, value="element"
+	2:15: token=:string, value="list"
+	2:17: token=:"{", value="{"
+	3:8: token=:value, value="value"
+	4:8: token=:attrs, value="attrs"
+	5:9: token=:append, value="append"
+	6:8: token=:logic, value="logic"
+	6:10: token=:"{", value="{"
+	7:4: token=:"}", value="}"
+	8:2: token=:"}", value="}"
+
+###
+- name:  parse_elem1_css
+  style: css
+  plogic: |
+	#list {
+	}
+  expected: &elem1|
+	- name: list
+
+- name:  parse_elem1_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	}
+  expected: *elem1
+
+###
+- name:  parse_value_part1_css
+  style: css
+  desc:  value part
+  plogic: |
+	#list {
+	  value:  @user['name'];
+	}
+  expected: &value1|
+	- name: list
+	  cont: @user['name']
+
+- name:  parse_value_part1_ruby
+  style: ruby
+  desc:  value part
+  plogic: |
+	element "list" {
+	  value @user['name']
+	}
+  expected: *value1
+
+###
+- name:  parse_attrs_part1_css
+  style: css
+  plogic: |
+	#list {
+	  attrs:  "class" @class,
+	          'color' @prop[:color];
+	}
+  expected: &attrs1|
+	- name: list
+	  attrs:
+	    - name:  class
+	      value: @class
+	    - name:  color
+	      value: @prop[:color]
+
+- name:  parse_attrs_part1_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	  attrs  "class"=>@class, 'color' => @prop[:color]
+	}
+  expected: *attrs1
+
+###
+- name:  parse_append_part1_css
+  style: css
+  plogic: |
+	#list1 {
+	  append:  @name==item['name'] ? " checked='checked'" : '',
+	           chk(@name);
+	}
+	#list2 {
+	  append:  aaa, bbb,ccc;
+	}
+  expected: &append1|
+	- name: list1
+	  append:
+	    - @name==item['name'] ? " checked='checked'" : ''
+	    - chk(@name)
+	- name: list2
+	  append:
+	    - aaa, bbb,ccc
+
+- name:  parse_append_part1_ruby
+  style: ruby
+  plogic: |
+	element "list1" {
+	  append  @name==item['name'] ? " checked='checked'" : '', chk(@name)
+	}
+	element "list2" {
+	  append aaa, bbb,ccc
+	}
+  expected: |
+	- name: list1
+	  append:
+	    - @name==item['name'] ? " checked='checked'" : ''
+	    - chk(@name)
+	- name: list2
+	  append:
+	    - aaa
+	    - bbb,ccc
+
+###
+- name:  parse_remove_part1_css
+  style: css
+  plogic: |
+	#list {
+	  remove: "foo", "bar", 'baz';
+	}
+  expected: &remove1|
+	- name: list
+	  remove:
+	    - foo
+	    - bar
+	    - baz
+
+- name:  parse_remove_part1_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	  remove "foo", "bar", 'baz'
+	}
+  expected: *remove1
+
+###
+- name:  parse_tagname_part1_css
+  style: css
+  plogic: |
+	#list {
+	  tagname:   'html:html';
+	}
+  expected: &tagname1|
+	- name: list
+	  tagname: html:html
+
+- name:  parse_tagname_part1_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	  tagname   'html:html'
+	}
+  expected: *tagname1
+
+###
+- name:  parse_logic_part1_css
+  style: css
+  plogic: |
+	#list {
+	  logic: {
+	    @list.each { |item|
+	      _stag
+	      _cont
+	      _etag
+	    }
+	  }
+	}
+  expected: &logic1|
+	- name: list
+	  logic:
+	    - <%    @list.each { |item|%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%    }%>
+
+- name:  parse_logic_part1_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	  logic {
+	    @list.each { |item|
+	      _stag
+	      _cont
+	      _etag
+	    }
+	  }
+	}
+  expected: *logic1
+
+###
+- name:  parse_logic_part2_css
+  style: css
+  plogic: |
+	#list {
+	  logic: {
+	    @list.each_with_index { |item, i|
+	      if i % 2 == 0
+	        _element("foo")
+	      else
+	        _content('foo')
+	      end
+	    }
+	  }
+	}
+  expected: &logic2|
+	- name: list
+	  logic:
+	    - <%    @list.each_with_index { |item, i|%>
+	    - <%      if i % 2 == 0%>
+	    - _element(foo)
+	    - <%      else%>
+	    - _content(foo)
+	    - <%      end%>
+	    - <%    }%>
+
+- name:  parse_logic_part2_ruby
+  style: ruby
+  plogic: |
+	element "list" {
+	  logic {
+	    @list.each_with_index { |item, i|
+	      if i % 2 == 0
+	        _element("foo")
+	      else
+	        _content('foo')
+	      end
+	    }
+	  }
+	}
+  expected: *logic2
+
+###
+- name:   parse_import_command1_css
+  style: css
+  plogic: |
+	@import 'common.plogic';
+	#item {
+	  value: item;
+	}
+  expected: |
+	- name: page_link
+	  cont: page.label
+	  attrs:
+	    - name:  href
+	      value: page.url
+	  logic:
+	    - <%    if page%>
+	    - _elem
+	    - <%    end%>
+	- name: item
+	  cont: item
+  setup*:
+    ruby: |
+	common_plogic = <<END
+	#page_link {
+	  value: page.label;
+	  attrs: 'href' page.url;
+	  logic: {
+	    if page
+	      _elem
+	    end
+	  }
+	}
+	END
+	File.open('common.plogic', 'w') { |f| f.write(common_plogic) }
+    php: |
+	$common_plogic =
+	'#page_link {
+	  value: page.label;
+	  attrs: \'href\' page.url;
+	  logic: {
+	    if page
+	      _elem
+	    end
+	  }
+	}
+	';
+	file_put_contents('common.plogic', $common_plogic);
+  teardown*:
+    ruby: |
+	filename = 'common.plogic'
+	File.unlink filename if test(?f, filename)
+    php: |
+	$filename = 'common.plogic';
+	if (file_exists($filename)) unlink($filename);
+
+###
+- name:   parse_multi_selector_css
+  style: css
+  plogic: |
+	#item1, #item2, #item3 {
+	  value:  $item;
+	    logic: {
+	      foreach ($list as $item) {
+	        _stag();
+	        _cont();
+	        _etag();
+	      }
+	    }
+	}
+  expected: |
+	- name: item1
+	  cont: $item
+	  logic:
+	    - <%      foreach ($list as $item) {%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%      }%>
+	- name: item2
+	  cont: $item
+	  logic:
+	    - <%      foreach ($list as $item) {%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%      }%>
+	- name: item3
+	  cont: $item
+	  logic:
+	    - <%      foreach ($list as $item) {%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%      }%>
+
+###
+- name:  parse_document
+  style: css
+  plogic: |
+	#DOCUMENT {
+	  local:  i, item, title, list;
+	  global: _context;
+	  begin: {
+	    title = _context[:title]
+	    list = _context[:list]
+	  }
+	  end: {
+	    print "*** debug:\n"
+	    _context.each do |key, value|
+	       print "*** key=#{key}, value=#{value.inspect}"
+	    end
+	  }
+	}
+  expected: |
+	- name: DOCUMENT
+	  global:
+	    - _context
+	  local:
+	    - i
+	    - item
+	    - title
+	    - list
+	  begin:
+	    - <%    title = _context[:title]%>
+	    - <%    list = _context[:list]%>
+	  end:
+	    - print(<%="*** debug:\n"%>)
+	    - <%    _context.each do |key, value|%>
+	    - print(<%="*** key=#{key}, value=#{value.inspect}"%>)
+	    - <%    end%>
+###
+- name:  parse_comment1_css
+  style:  css
+  plogic: |
+	/* 
+	 * region comment
+	 */
+	#foo {
+	  // line comment
+	  value:  foo;
+	}
+	/* tail comment may cause parse error! */
+  expected: |
+	- name: foo
+	  cont: foo
+
+- name:  parse_comment2_css
+  style:  css
+  plogic*:
+    ruby: |
+	#foo {
+	  value: item;   // line comment
+	  logic: {
+	     _elem     ## ruby comment
+	  }
+	}
+    php: |
+	#foo {
+	  value: item;   // line comment
+	  logic: {
+	     _elem     // ruby comment
+	  }
+	}
+  expected: |
+	- name: foo
+	  cont: item
+	  logic:
+	    - _elem
+
+###
+- name:  parse_element_all1_css
+  style: css
   plogic: |
 	#item {
 	  stag:   start_link_to('user', 'name');
@@ -35,31 +474,79 @@
 	    }
 	  }
 	}
+  expected: &all1 |
+	- name: item
+	  stag: start_link_to('user', 'name')
+	  cont: $item
+	  etag: end_link()
+	  elem: link_to_remote('user', 'name')
+	  attrs:
+	    - name:  bgcolor
+	      value: $color
+	    - name:  class
+	      value: $class
+	    - name:  href
+	      value: $href
+	  append:
+	    - $gender == "M" ? " checked=\"checked\"" : ""
+	    - $obsolete ? ' disabled="disabled"' : ''
+	  remove:
+	    - id
+	    - title
+	    - xml:lang
+	  logic:
+	    - <%    $i = 0;%>
+	    - <%    foreach ($list as $item) {%>
+	    - <%      $color = ++$i % 2 == 0 ? "#CCCCFF" : "#FFCCCC";%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%    }%>
+
+- name:  parse_element_all1_ruby
+  style: ruby
+  plogic: |
+	element "item" {
+	  stag    start_link_to('user', 'name')
+	  etag    end_link()
+	  elem    link_to_remote('user', 'name')
+	  value   item
+	  attrs   'href'=>href, 'class'=>class, 'bgcolor'=>color
+	  append  gender == "M" ? " checked=\"checked\"" : "", obsolete ? ' disabled="disabled"' : ''
+	  remove  "id", 'title', 'xml:lang'
+	  logic {
+	    @list.each_with_index do |item, i|
+	      color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC"
+	      _stag
+	      _cont
+	      _etag
+	    end
+	  }
+	}
   expected: |
-	name: item
-	stag: start_link_to('user', 'name')
-	cont: $item
-	etag: end_link()
-	elem: link_to_remote('user', 'name')
-	attrs:
-	  - name:  bgcolor
-	    value: $color
-	  - name:  class
-	    value: $class
-	  - name:  href
-	    value: $href
-	append:
-	  - $gender == "M" ? " checked=\"checked\"" : ""
-	  - $obsolete ? ' disabled="disabled"' : ''
-	remove:
-	  - id
-	  - title
-	  - xml:lang
-	logic:
-	  -     $i = 0;
-	  -     foreach ($list as $item) {
-	  -       $color = ++$i % 2 == 0 ? "#CCCCFF" : "#FFCCCC";
-	  - _stag
-	  - _cont
-	  - _etag
-	  -     }
+	- name: item
+	  stag: start_link_to('user', 'name')
+	  cont: item
+	  etag: end_link()
+	  elem: link_to_remote('user', 'name')
+	  attrs:
+	    - name:  bgcolor
+	      value: color
+	    - name:  class
+	      value: class
+	    - name:  href
+	      value: href
+	  append:
+	    - gender == "M" ? " checked=\"checked\"" : ""
+	    - obsolete ? ' disabled="disabled"' : ''
+	  remove:
+	    - id
+	    - title
+	    - xml:lang
+	  logic:
+	    - <%    @list.each_with_index do |item, i|%>
+	    - <%      color = i % 2 == 0 ? "#CCCCFF" : "#FFCCCC"%>
+	    - _stag
+	    - _cont
+	    - _etag
+	    - <%    end%>

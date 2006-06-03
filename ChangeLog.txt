@@ -3,7 +3,12 @@
 .?lastupdate:  $Date$
 
 
-: rev.60
+: rev.61 (2006-06-03)
+	- [bugfix] Parser#scan_hook() now returns false when not hooked
+	- [change] 'test/KwartzParserTest.yaml' is integrated with kwartz-ruby
+	- [change] add 'examples/table1'
+
+: rev.60 (2006-06-03)
 	- [enhance] add Kwartz/*.php
 	- [enhance] add text/KwartzParserTest.{php,yaml}
 

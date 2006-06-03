@@ -125,9 +125,9 @@ class KwartzExpandStatement extends KwartzStatement {
 
     function _inspect($depth=0) {
         if ($this->kind == 'element' || $this->kind == 'content') {
-            return "_{$this->kind}($this->name)";
+            return "_{$this->kind}($this->name)\n";
         } else {
-            return "_{$this->kind}";
+            return "_{$this->kind}\n";
         }
     }
 
@@ -353,42 +353,43 @@ class KwartzElementRuleset extends KwartzRuleset {
 
     function _inspect($depth=0) {
         $space = str_repeat('  ', $depth);
-        $sb = '';
-        if ($this->name) $sb .= $space . "name: {$this->name}\n";
-        if ($this->stag) $sb .= $space . "stag: {$this->stag->code}\n";
-        if ($this->cont) $sb .= $space . "cont: {$this->cont->code}\n";
-        if ($this->etag) $sb .= $space . "etag: {$this->etag->code}\n";
-        if ($this->elem) $sb .= $space . "elem: {$this->elem->code}\n";
+        $sb = array();
+        $sb[] = '';
+        if ($this->name) $sb[] = $space . "- name: {$this->name}\n";
+        if ($this->stag) $sb[] = $space . "  stag: {$this->stag->code}\n";
+        if ($this->cont) $sb[] = $space . "  cont: {$this->cont->code}\n";
+        if ($this->etag) $sb[] = $space . "  etag: {$this->etag->code}\n";
+        if ($this->elem) $sb[] = $space . "  elem: {$this->elem->code}\n";
         if ($this->attrs) {
-            $sb .= $space . "attrs:\n";
+            $sb[] = $space . "  attrs:\n";
             ksort($this->attrs);
             foreach ($this->attrs as $name => $expr) {
-                $sb .= $space . "  - name:  {$name}\n";
-                $sb .= $space . "    value: {$expr->code}\n";
+                $sb[] = $space . "    - name:  {$name}\n";
+                $sb[] = $space . "      value: {$expr->code}\n";
             }
         }
         if ($this->append) {
-            $sb .= $space . "append:\n";
+            $sb[] = $space . "  append:\n";
             foreach ($this->append as $expr) {
-                $sb .= $space . "  - {$expr->code}\n";
+                $sb[] = $space . "    - {$expr->code}\n";
             }
         }
         if ($this->remove) {
-            $sb .= $space . "remove:\n";
+            $sb[] = $space . "  remove:\n";
             foreach ($this->remove as $name) {
-                $sb .= $space . "  - {$name}\n";
+                $sb[] = $space . "    - {$name}\n";
             }
         }
         if ($this->tagname) {
-            $sb .= $space . "tagname: {$this->tagname}\n";
+            $sb[] = $space . "  tagname: {$this->tagname}\n";
         }
         if ($this->logic) {
-            $sb .= $space . "logic:\n";
+            $sb[] = $space . "  logic:\n";
             foreach ($this->logic as $stmt) {
-                $sb .= $space . "  - " . $stmt->_inspect() . "\n";
+                $sb[] = $space . "    - " . $stmt->_inspect();
             }
         }
-        return $sb;
+        return join($sb);
     }
 
 
@@ -451,6 +452,9 @@ class KwartzDocumentRuleset extends KwartzRuleset {
         if (! $code) return;
         $stmt_list = array();
         $lines = preg_split('/\n/', $code);
+        if (! $lines[count($lines) - 1]) {
+            array_pop($lines);
+        }
         foreach ($lines as $line) {
             if (preg_match('/^\s*print(?:\s+(.*?)|\((.+)\))\s*;?\s*$/', $line, $m)) {
                 $arg = $m[1] ? $m[1] : $m[2];
@@ -466,32 +470,34 @@ class KwartzDocumentRuleset extends KwartzRuleset {
 
     function _inspect($depth=0) {
         $space = str_repeat('  ', $depth);
-        $sb = '';
-        $sb .= $space . "name: {$this->name}\n";
+        $sb = array();
+        $sb[] = '';
+        $sb[] = $space . "- name: {$this->name}\n";
         if ($this->_global) {
-            $sb .= $space . "global:\n";
+            $sb[] = $space . "  global:\n";
             foreach ($this->_global as $item) {
-                $sb .= $space . "  - {$item}\n";
+                $sb[] = $space . "    - {$item}\n";
             }
         }
         if ($this->_local) {
-            $sb .= $space . "local:\n";
+            $sb[] = $space . "  local:\n";
             foreach ($this->_local as $item) {
-                $sb .= $space . "  - {$item}\n";
+                $sb[] = $space . "    - {$item}\n";
             }
         }
         if ($this->begin) {
-            $sb .= $space . "begin:\n";
+            $sb[] = $space . "  begin:\n";
             foreach ($this->begin as $stmt) {
-                $sb .= $space . "  - {$stmt->_inspect()}\n";
+                $sb[] = $space . "    - {$stmt->_inspect()}";
             }
         }
         if ($this->end) {
-            $sb .= $space . "end:\n";
+            $sb[] = $space . "  end:\n";
             foreach ($this->end as $stmt) {
-                $sb .= $space . "  - {$stmt->_inspect()}\n";
+                $sb[] = $space . "    - {$stmt->_inspect()}";
             }
         }
+        return join($sb);
     }
 
 

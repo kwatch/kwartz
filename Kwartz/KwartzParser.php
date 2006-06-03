@@ -68,8 +68,8 @@ abstract class KwartzPresentationLogicParser {
     function _reset($plogic_str, $filename=null) {
         $this->_input   = $plogic_str;
         $this->filename = $filename;
-        $this->_linenum = 1;       // 1 start
-        $this->_column  = 0;       // 1 start
+        $this->linenum = 1;       // 1 start
+        $this->column  = 0;       // 1 start
         $this->_pos     = -1;      // 0 start
         $this->_max_pos = strlen($plogic_str) - 1;
         $this->token    = null;
@@ -117,11 +117,11 @@ abstract class KwartzPresentationLogicParser {
             return $this->_ch = null;
         }
         if ($this->_ch == "\n") {
-            $this->_linenum += 1;
-            $this->_column = 0;
+            $this->linenum += 1;
+            $this->column = 0;
         }
         $this->_pos += 1;
-        $this->_column += 1;
+        $this->column += 1;
         $this->_ch = $this->_input[$this->_pos];
         return $this->_ch;
     }
@@ -211,7 +211,9 @@ abstract class KwartzPresentationLogicParser {
     }
 
 
-    /** called from scan() */
+    /**
+     *  called from scan() , return false when not hooked
+     */
     abstract function scan_hook();
 
 
@@ -241,7 +243,7 @@ abstract class KwartzPresentationLogicParser {
 
         // scan hook
         $ret = $this->scan_hook();  // scan_hook() is overrided in subclass
-        if ($ret !== null) return $ret;
+        if ($ret !== false) return $ret;
 
         // keyword or identifier
         if (ctype_alpha($c) || $c == '_') {
@@ -386,11 +388,11 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
         $rulesets = array();
         while ($this->token == '@') {
             $c = $this->_getch();
-            $this->scan_ident();
-            $name = $this->value();
+            $this->_scan_ident();
+            $name = $this->value;
             if ($name == 'import') {
-                $imported_rulesets == $this->parse_import_command();
-                $rulesets = array_merge($rulesets, $imorted_rulesets);
+                $imported_rulesets = $this->parse_import_command();
+                $rulesets = array_merge($rulesets, $imported_rulesets);
             } else {
                 throw $this->_error("@#{name}: unsupported command.");
             }
@@ -412,13 +414,16 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
     }
 
 
+    /**
+     *  return false when not hooked
+     */
     function scan_hook() {
         // comment
         $c = $this->_ch;
         if ($c == '/') {
             $c = $this->_getch();
             if ($c == '/') {    // line comment
-                $this->scan_line();
+                $this->_scan_line();
                 $this->_getch();
                 return $this->scan();
             }
@@ -464,7 +469,7 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
             return $this->token = '@';
         }
 
-        return null;
+        return false;
     }
 
 
@@ -480,33 +485,28 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
         if ($this->token != '{') {
             throw $this->_error("'{$this->value}': '{' is expected.");
         }
-        $ruleset = new DocumentRuleset($this->filename);
+        $ruleset = new KwartzDocumentRuleset($this->filename);
         while ($this->token !== null) {
             $this->scan();
-            switch ($this->token) {
-            case '}':
+            $t = $this->token;
+            if ($t == '}') {
                 break;
-            case 'global':
+            } elseif ($t == 'global') {
                 $this->_has_colon();
                 $ruleset->set_global($this->_parse_words());
-                break;
-            case 'local':
+            } elseif ($t == 'local') {
                 $this->_has_colon();
                 $ruleset->set_local($this->_parse_words());
-                break;
-            case 'fixture':
+            } elseif ($t == 'fixture') {
                 $this->_has_colon();
                 $ruleset->set_fixture($this->_parse_block());
-                break;
-            case 'begin':
+            } elseif ($t == 'begin') {
                 $this->_has_colon();
                 $ruleset->set_begin($this->_parse_block());
-                break;
-            case 'end':
+            } elseif ($t == 'end') {
                 $this->_has_colon();
                 $ruleset->set_end($this->_parse_block());
-                break;
-            default:
+            } else {
                 if ($this->token === null) {
                     throw $this->_error("'#DOCUMENT': is not closed by '}'.", $start_linenum);
                 } else {
@@ -539,7 +539,7 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
             if ($this->token != '#') {
                 throw $this->_error("'{$this->value}': '#name' is expected.");
             }
-            $this->scan_ident();
+            $this->_scan_ident();
             $names[] = $this->value;
             $this->scan();
         }
@@ -627,7 +627,7 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
         }
         $c = $this->_getch();
         $this->scan();
-        $parser = create_parser($this->properties);
+        $parser = $this->create_parser($this->properties);
         $ruleset_list = $parser->parse(file_get_contents($filename), $filename);
         return $ruleset_list;
     }

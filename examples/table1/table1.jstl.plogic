@@ -1,0 +1,21 @@
+#row {
+  attrs:  "bgcolor" color;
+  logic: {
+    <c:forEach var="item" items="${list}" varStatus="loop">
+      <c:set var="color" value="${loop.index % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>
+      _elem
+    </c:forEach>
+  }
+}
+
+#name {
+  value:  item.name;
+}
+
+#mail {
+  value:  item.mail;
+}
+
+#dummy1 {
+  logic: { }   /* ignore this element */
+}
