@@ -48,9 +48,14 @@ module Kwartz
       d_arg  = directive_arg
       d_str  = directive_str
 
+      #stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+      #etag_stmt = build_print_stmt(etag_info, nil, nil)
+
       case directive_name
 
       when :for, :For, :FOR, :list, :List, :LIST
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
         unless d_arg =~ /\A(\w+)(?:,\s*(\w+))?\s+in\s+(.*)\z/ || d_arg =~ /\A(\w+)(?:,(\w+))?\s*[:=]\s*(.*)\z/
           raise convert_error("#'{d_str}': invalid argument.", stag_info.linenum)
         end
@@ -58,7 +63,7 @@ module Kwartz
         is_foreach = d_name == :for || d_name == :For || d_name == :FOR
         counter = d_name == :for || d_name == :list ? nil : "#{loopvar}_ctr"
         toggle  = d_name != :FOR && d_name != :LIST ? nil : "#{loopvar}_tgl"
-        stmt_list  <<  build_print_stmt(stag_info, attr_info, append_exprs)   if !is_foreach
+        stmt_list  <<  stag_stmt   if !is_foreach
         stmt_list  <<  NativeStatement.new("#{counter} = 0") if counter
         if loopval
           stmt_list << NativeStatement.new("#{looplist}.each do |#{loopvar}, #{loopval}|", :foreach)
@@ -67,51 +72,71 @@ module Kwartz
         end
         stmt_list  <<  NativeStatement.new("  #{counter} += 1") if counter
         stmt_list  <<  NativeStatement.new("  #{toggle} = #{counter}%2==0 ? #{self.even} : #{self.odd}") if toggle
-        stmt_list  <<  build_print_stmt(stag_info, attr_info, append_exprs)   if is_foreach
+        stmt_list  <<  stag_stmt   if is_foreach
         stmt_list.concat(cont_stmts)
-        stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if is_foreach
+        stmt_list  <<  etag_stmt   if is_foreach
         stmt_list  <<  NativeStatement.new("end", :foreach)
-        stmt_list  <<  build_print_stmt(etag_info, nil, nil)                  if !is_foreach
+        stmt_list  <<  etag_stmt   if !is_foreach
 
-      when :while, :loop
-        is_while = d_name == :while
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)   if !is_while
-        stmt_list << NativeStatement.new("while #{d_arg} do", :while)
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)   if is_while
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil)                  if is_while
-        stmt_list << NativeStatement.new("end", :while)
-        stmt_list << build_print_stmt(etag_info, nil, nil)                  if !is_while
+      when :while
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
+        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
+                     "while #{d_arg} do", "end", :while)
+        #stmt_list << NativeStatement.new("while #{d_arg} do", :while)
+        #stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        #stmt_list.concat(cont_stmts)
+        #stmt_list << build_print_stmt(etag_info, nil, nil)
+        #stmt_list << NativeStatement.new("end", :while)
+
+      when :loop
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
+        wrap_content(stmt_list, stag_stmt, etag_stmt, cont_stmts,
+                     "while #{d_arg} do", "end", :while)
+        #stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        #stmt_list << NativeStatement.new("while #{d_arg} do", :while)
+        #stmt_list.concat(cont_stmts)
+        #stmt_list << NativeStatement.new("end", :while)
+        #stmt_list << build_print_stmt(etag_info, nil, nil)
 
       when :set
-        stmt_list << NativeStatement.new(d_arg, :set)
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil)
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
+        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
+                     d_arg, nil, :set)
+        #stmt_list << NativeStatement.new(d_arg, :set)
+        #stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        #stmt_list.concat(cont_stmts)
+        #stmt_list << build_print_stmt(etag_info, nil, nil)
 
       when :if
-        stmt_list << NativeStatement.new("if #{d_arg} then", :if)
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil)
-        stmt_list << NativeStatement.new("end", :if)
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
+        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
+                     "if #{d_arg} then", "end", :if)
+        #stmt_list << NativeStatement.new("if #{d_arg} then", :if)
+        #stmt_list << stag_stmt
+        #stmt_list.concat(cont_stmts)
+        #stmt_list << etag_stmt
+        #stmt_list << NativeStatement.new("end", :if)
 
       when :elsif, :else
         unless !stmt_list.empty? && (st=stmt_list[-1]).is_a?(NativeStatement) && (st.kind == :if || st.kind == :elseif)
           raise convert_error("'#{d_str}': previous statement should be 'if' or 'elsif'.", stag_info.linenum)
         end
         stmt_list.pop    # delete 'end'
-        if d_name == :else
-          kind = :else
-          stmt_list << NativeStatement.new("else", :else)
-        else
-          kind = :elseif
-          stmt_list << NativeStatement.new("elsif #{d_arg} then", :elseif)
-        end
-        stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
-        stmt_list.concat(cont_stmts)
-        stmt_list << build_print_stmt(etag_info, nil, nil)
-        stmt_list << NativeStatement.new("end", kind)
+        kind = d_name == :else ? :else : :elseif
+        code = d_name == :else ? "else" : "elsif #{d_arg} then"
+        stag_stmt = build_print_stmt(stag_info, attr_info, append_exprs)
+        etag_stmt = build_print_stmt(etag_info, nil, nil)
+        wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts,
+                     code, "end", :if)
+        #stmt_list << NativeStatement.new(code, kind)
+        #stmt_list << build_print_stmt(stag_info, attr_info, append_exprs)
+        #stmt_list.concat(cont_stmts)
+        #stmt_list << build_print_stmt(etag_info, nil, nil)
+        #stmt_list << NativeStatement.new("end", kind)
 
       when :default, :Default, :DEFAULT
         error_if_empty_tag(stag_info, etag_info, d_name, d_arg)

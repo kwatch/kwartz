@@ -273,6 +273,13 @@ module Kwartz
         return @token = :'}'
       end
 
+      ## ','
+      if c == ?,
+        @value = ","
+        getch()
+        return @token = :','
+      end
+
       ##
       @value = c.chr
       @error = :invalid_char
@@ -611,11 +618,10 @@ module Kwartz
         scan_ident()
         name = @value
         if name == 'DOCUMENT'
-          ruleset = parse_document_ruleset()
+          rulesets << parse_document_ruleset()
         else
-          ruleset = parse_element_ruleset()
+          rulesets += parse_element_ruleset()
         end
-        rulesets << ruleset
       end
       unless @token == nil
         raise parse_error("'#{@value}': '#name' is expected.")
@@ -731,37 +737,77 @@ module Kwartz
       assert unless @token == :ident
       start_linenum = @linenum
       name = @value
+      names = [name]
       scan()
+      while @token == :','
+        scan()
+        unless @token == ?#
+          raise parse_error("'#{@value}': '#name' is expected.")
+        end
+        scan_ident()
+        names << @value
+        scan()
+      end
       unless @token == :'{'
         raise parse_error("'#{@value}': '{' is expected.")
       end
-      ruleset = ElementRuleset.new(name)
+      # parse properties
+      props = {}
       while true
         scan()
         flag_escape = escape?(@value)
         case @token
         when nil     ;  break
         when :'}'    ;  break
-        when :stag   ;  has_colon?();  ruleset.set_stag   _parse_expr() , flag_escape
-        when :cont   ;  has_colon?();  ruleset.set_cont   _parse_expr() , flag_escape
-        when :etag   ;  has_colon?();  ruleset.set_etag   _parse_expr() , flag_escape
-        when :elem   ;  has_colon?();  ruleset.set_elem   _parse_expr() , flag_escape
-        when :value  ;  has_colon?();  ruleset.set_value  _parse_expr() , flag_escape
-        when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
-        when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
-        when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
-        when :tagname;  has_colon?();  ruleset.set_tagname  _parse_str()
-        when :logic  ;  has_colon?();  ruleset.set_logic  _parse_block()
+        when :stag   ;  has_colon?();  props[@token] = [ _parse_expr() , flag_escape ]
+        when :cont   ;  has_colon?();  props[@token] = [ _parse_expr() , flag_escape ]
+        when :etag   ;  has_colon?();  props[@token] = [ _parse_expr() , flag_escape ]
+        when :elem   ;  has_colon?();  props[@token] = [ _parse_expr() , flag_escape ]
+        when :value  ;  has_colon?();  props[@token] = [ _parse_expr() , flag_escape ]
+        when :attrs  ;  has_colon?();  props[@token] = [ _parse_pairs(), flag_escape ]
+        when :append ;  has_colon?();  props[@token] = [ _parse_exprs(), flag_escape ]
+        when :remove ;  has_colon?();  props[@token] = [ _parse_strs() ]
+        when :tagname;  has_colon?();  props[@token] = [ _parse_str() ]
+        when :logic  ;  has_colon?();  props[@token] = [ _parse_block() ]
         else
           raise parse_error("'#{@value}': unexpected token.")
         end
       end
+      # build rulesets
+      rulesets = []
+      names.collect do |name|
+        rulesets << ruleset = ElementRuleset.new(name)
+        props.each do |key, vals|
+          ruleset.__send__("set_#{key}", *vals)
+        end
+      end
+      #ruleset = ElementRuleset.new(name)
+      #while true
+      #  scan()
+      #  flag_escape = escape?(@value)
+      #  case @token
+      #  when nil     ;  break
+      #  when :'}'    ;  break
+      #  when :stag   ;  has_colon?();  ruleset.set_stag   _parse_expr() , flag_escape
+      #  when :cont   ;  has_colon?();  ruleset.set_cont   _parse_expr() , flag_escape
+      #  when :etag   ;  has_colon?();  ruleset.set_etag   _parse_expr() , flag_escape
+      #  when :elem   ;  has_colon?();  ruleset.set_elem   _parse_expr() , flag_escape
+      #  when :value  ;  has_colon?();  ruleset.set_value  _parse_expr() , flag_escape
+      #  when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
+      #  when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
+      #  when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
+      #  when :tagname;  has_colon?();  ruleset.set_tagname  _parse_str()
+      #  when :logic  ;  has_colon?();  ruleset.set_logic  _parse_block()
+      #  else
+      #    raise parse_error("'#{@value}': unexpected token.")
+      #  end
+      #end
       unless @token
         raise parse_error("'##{name}': is not closed by '}'.", start_linenum)
       end
       assert "@token=#{@token.inspect}" unless @token == :'}'
       scan()
-      return ruleset
+      return rulesets
     end
 
 

@@ -168,7 +168,7 @@ module Kwartz
 
 
     def merged?
-      @merged
+      !@merged.nil?
     end
 
 
@@ -248,7 +248,7 @@ module Kwartz
     ## create print statement from text
     def create_text_print_stmt(text)
       return PrintStatement.new([text])
-      #return new PritnStatement.new([TextExpression.new(text)])
+      #return PritnStatement.new([TextExpression.new(text)])
     end
 
 
@@ -437,10 +437,39 @@ module Kwartz
 
 
   ##
+  ##
+  ##
+  module HandlerHelper
+
+
+    def wrap_element(stmt_list, stag_stmt, etag_stmt, cont_stmts, start_code, end_code, kind)
+      stmt_list << NativeStatement.new(start_code, kind) if start_code
+      stmt_list << stag_stmt
+      stmt_list.concat(cont_stmts)
+      stmt_list << etag_stmt
+      stmt_list << NativeStatement.new(end_code, kind) if end_code
+    end
+
+
+    def wrap_content(stmt_list, stag_stmt, etag_stmt, cont_stmts, start_code, end_code, kind)
+      stmt_list << stag_stmt
+      stmt_list << NativeStatement.new(start_code, kind) if start_code
+      stmt_list.concat(cont_stmts)
+      stmt_list << NativeStatement.new(end_code, kind) if end_code
+      stmt_list << etag_stmt
+    end
+
+
+  end
+
+
+
+  ##
   ## .[abstract] handle directives
   ##
   class Handler
     include Assertion
+    include HandlerHelper
     include ConverterHelper
     include ElementExpander
 
@@ -749,7 +778,7 @@ module Kwartz
       taginfo = TagInfo.new(@scanner)
       @linenum += (@linenum_delta + taginfo.prev_text.count("\n"))
       @linenum_delta = taginfo.tag_text.count("\n")
-      taginfo.linenum = linenum
+      taginfo.linenum = @linenum
       return taginfo
     end
 

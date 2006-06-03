@@ -1,8 +1,9 @@
-.$ [ANN] Kwartz 3.0.0 released - a template system for web
+$ [ANN] Kwartz 3.0.0 released - a template system for web
 
 I have released Kwartz 3.0.0. (beta)
 http://www.kuwata-lab.com/kwartz/
 (Notice that this is beta-release. Spec may change in the future.)
+
 
 
 $$ What is Kwartz?
@@ -74,8 +75,25 @@ template.rhtml : compiled output script
 The main enhancement of release 3.0 is to support Ruby on Rails.
 You can write Ruby code directly in presentaion logic file.
 
-See users' guide for details.
-http://www.kuwata-lab.com/kwartz/users-guide.html
+See users' guide for details in 'doc/' directory or
+http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.html
+
+Notice that Project name in RubyForege.org is changed from
+'kwartz-ruby' to 'kwartz'.
+
+
+
+$$ Installation
+
+* Just type 'gem install -r kwartz' if you have installed RubyGems.
+
+* Or download kwartz-ruby_X.X.X.tar.bz2 and install with setup.rb.
+    $ tar cjf kwartz-ruby_X.X.X.tar.bz2
+    $ cd kartz-ruby_X.X.X/
+    $ sudo ruby setup.rb
+  Kwartz-ruby requires 'abstract.rb'. You have to install it.
+    http://www.rubyforge.org/projects/abstract
+
 
 
 $$ Enhancements from 2.0.4
