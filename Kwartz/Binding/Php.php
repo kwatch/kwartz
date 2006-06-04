@@ -28,77 +28,79 @@ class KwartzPhpHandler extends KwartzHandler {
     }
 
 
-    function handle($directive_name, $directive_arg, $directive_str,
-                    $stag_info, $etag_info, $cont_stmts,
-                    $attr_info, $append_exprs, &$stmt_list) {
+    function handle($handler_arg, &$stmt_list) {
 
-        $ret = parent::handle($directive_name, $directive_arg, $directive_str,
-                              $stag_info, $etag_info, $cont_stmts,
-                              $attr_info, $append_exprs, $stmt_list);
+        $ret = parent::handle($handler_arg, $stmt_list);
         if ($ret) return $ret;
 
-        $d_name = $directive_name;
-        $d_arg  = $directive_arg;
-        $d_str  = $directive_str;
+        $arg = $handler_arg;
+        $d_name = $arg->directive_name;
+        $d_arg  = $arg->directive_arg;
+        $d_str  = $arg->directive_str;
 
-        $b = $this->builder;
-        $stag_stmt = $b->build_print_stmt($stag_info, $attr_info, $append_exprs);
-        $etag_stmt = $b->build_print_stmt($etag_info, null, null);
+        //$b = $this->builder;
+        //$stag_stmt = $b->build_print_stmt($stag_info, $attr_info, $append_exprs);
+        //$etag_stmt = $b->build_print_stmt($etag_info, null, null);
 
         switch ($d_name) {
         case 'foreach':
         case 'Foreach':
         case 'FOREACH':
-        case 'LIST':
+        case 'list':
         case 'List':
         case 'LIST':
             $is_foreach = strlen($d_name) == 7;
             if (! preg_match('/\A.*\s+as\s+(\$\w+)(?:\s*=>\s*\$\w+)?\z/', $d_arg, $m)) {
-                throw $this->_error("'{$d_str}': invalid argument.", $stag_info->linenum);
+                throw $this->_error("'{$d_str}': invalid argument.", $arg->stag_info->linenum);
             }
             $loopvar = $m[1];
             $counter = $d_name == 'foreach' || $d_name == 'list' ? null : "{$loopvar}_ctr";
             $toggle  = $d_name != 'FOREACH' && $d_name != 'LIST' ? null : "{$loopvar}_tgl";
-            if (! $is_foreach) $stmt_list[] = $stag_stmt;
+            if (! $is_foreach) $stmt_list[] = $arg->stag_stmt();
             if ($counter)      $stmt_list[] = new KwartzNativeStatement("{$counter} = 0;");
             if (true)          $stmt_list[] = new KwartzNativeStatement("foreach ({$d_arg}) {", 'foreach');
             if ($counter)      $stmt_list[] = new KwartzNativeStatement("  {$counter}++;");
             if ($toggle)       $stmt_list[] = new KwartzNativeStatement("  {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd};");
-            if ($is_foreach)   $stmt_list[] = $stag_stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            if ($is_foreach)   $stmt_list[] = $etag_stmt;
+            if ($is_foreach)   $stmt_list[] = $arg->stag_stmt();
+            kwartz_array_concat($stmt_list, $arg->cont_stmts);
+            if ($is_foreach)   $stmt_list[] = $arg->etag_stmt();
             if (true)          $stmt_list[] = new KwartzNativeStatement("}", 'foreach');
-            if (! $is_foreach) $stmt_list[] = $etag_stmt;
+            if (! $is_foreach) $stmt_list[] = $arg->etag_stmt();
             break;
 
         case 'while':
-            $stmt_list[] = new KwartzNativeStatement("while ({$_arg}) {", 'while');
-            $stmt_list[] = $stag_stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = $etag_stmt;
-            $stmt_list[] = new KwartzNativeStatement("}", 'while');
+            $arg->wrap_element_with_native_stmt($stmt_list, "while ({$d_arg}) {", "}", 'while');
+            //$stmt_list[] = new KwartzNativeStatement("while ({$_arg}) {", 'while');
+            //$stmt_list[] = $stag_stmt;
+            //kwartz_array_concat($stmt_list, $cont_stmts);
+            //$stmt_list[] = $etag_stmt;
+            //$stmt_list[] = new KwartzNativeStatement("}", 'while');
+            break;
 
         case 'loop':
-            $stmt_list[] = $stag_stmt;
-            $stmt_list[] = new KwartzNativeStatement("while ({$_arg}) {", 'while');
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = new KwartzNativeStatement("}", 'while');
-            $stmt_list[] = $etag_stmt;
+            $arg->wrap_content_with_native_stmt($stmt_list, "while ({$d_arg}) {", "}", 'while');
+            //$stmt_list[] = $stag_stmt;
+            //$stmt_list[] = new KwartzNativeStatement("while ({$_arg}) {", 'while');
+            //kwartz_array_concat($stmt_list, $cont_stmts);
+            //$stmt_list[] = new KwartzNativeStatement("}", 'while');
+            //$stmt_list[] = $etag_stmt;
             break;
 
         case 'set':
-            $stmt_list[] = new KwartzNativeStatement("{$d_arg}", 'set');
-            $stmt_list[] = $stag_stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = $etag_stmt;
+            $arg->wrap_element_with_native_stmt($stmt_list, "{$d_arg};", null, 'set');
+            //$stmt_list[] = new KwartzNativeStatement("{$d_arg}", 'set');
+            //$stmt_list[] = $stag_stmt;
+            //kwartz_array_concat($stmt_list, $cont_stmts);
+            //$stmt_list[] = $etag_stmt;
             break;
 
         case 'if':
-            $stmt_list[] = new KwartzNativeStatement("if ({$d_arg}) {", 'if');
-            $stmt_list[] = $stag_stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = $etag_stmt;
-            $smtt_list[] = new KwartzNativeStatement("}", 'if');
+            $arg->wrap_element_with_native_stmt($stmt_list, "if ({$d_arg}) {", "}", 'if');
+            //$stmt_list[] = new KwartzNativeStatement("if ({$d_arg}) {", 'if');
+            //$stmt_list[] = $stag_stmt;
+            //kwartz_array_concat($stmt_list, $cont_stmts);
+            //$stmt_list[] = $etag_stmt;
+            //$smtt_list[] = new KwartzNativeStatement("}", 'if');
             break;
 
         case 'elseif':
@@ -109,37 +111,38 @@ class KwartzPhpHandler extends KwartzHandler {
                 // ok
             } else {
                 $msg = "'{$d_str}': previous statement should be 'if' or 'elsif'.";
-                throw $this->_error($msg, $stag_info->linenum);
+                throw $this->_error($msg, $arg->stag_info->linenum);
             }
             array_pop($stmt_list);    // delete '}'
             $kind = $d_name;
             $code = $d_name == 'else' ? "} else {" : "} elseif ({$d_arg}) {";
-            $stmt_list[] = new KwartzNativeStatement($code, $kind);
-            $stmt_list[] = $stag_stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = $etag_stmt;
-            $stmt_list[] = new KwartzNativeStatement("}", $kind);
+            $arg->wrap_element_with_native_stmt($stmt_list, $code, "}", $kind);
+            //$stmt_list[] = new KwartzNativeStatement($code, $kind);
+            //$stmt_list[] = $stag_stmt;
+            //kwartz_array_concat($stmt_list, $cont_stmts);
+            //$stmt_list[] = $etag_stmt;
+            //$stmt_list[] = new KwartzNativeStatement("}", $kind);
             break;
 
         case 'default':
         case 'Default':
         case 'DEFAULT':
-            $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
-            $stmt_list[] = $stag_stmt;
+            $this->_error_if_empty_tag($arg->stag_info, $arg->etag_info, $d_name, $d_arg);
+            $stmt_list[] = $arg->stag_stmt();
             $stmt = new KwartzNativeStatement("if ({$d_arg}) {", 'if');
             $stmt->no_newline = true;
             $stmt_list[] = $stmt;
             $flag_escape = $d_name == 'default' ? null : ($d_name == 'Default');
-            $args = array(new KwartzNativeExpression($d_arg, $flag_escape));
-            $stmt_list[] = new KwartzPrintStatement($args);
+            $pargs = array(new KwartzNativeExpression($d_arg, $flag_escape));
+            $stmt_list[] = new KwartzPrintStatement($pargs);
             $stmt = new KwartzNativeStatement("} else {", 'else');
             $stmt->no_newline = true;
             $stmt_list[] = $stmt;
-            kwartz_array_concat($stmt_list, $cont_stmts);
+            kwartz_array_concat($stmt_list, $arg->cont_stmts);
             $stmt = new KwartzNativeStatement("}", 'else');
             $stmt->no_newline = true;
             $stmt_list[] = $stmt;
-            $stmt_list[] = $etag_stmt;
+            $stmt_list[] = $arg->etag_stmt();
             break;
 
         default:

@@ -157,8 +157,6 @@ class KwartzPrintStatement extends KwartzStatement {
 
     function _inspect($depth=0) {
         $list = array();
-        $list[] = str_repeat(' ', $depth);
-        $list[] = 'print(';
         foreach ($this->args as $arg) {
             if (is_string($arg)) {
                 $list[] = kwartz_inspect_str($arg);
@@ -167,20 +165,9 @@ class KwartzPrintStatement extends KwartzStatement {
                 $list[] = $arg->_inspect();
             }
         }
-        $list[] = ")\n";
-        return join($list);
-        //$space = str_repeat(' ', $depth);
-        //$list = array($space . "- print");
-        //foreach ($this->args as $arg) {
-        //    if (is_string($arg)) {
-        //        $list[] = $space . "  - " . kwartz_inspect_str($arg);
-        //    } else {
-        //        assert('$arg instanceof KwartzNativeExpression');
-        //        $list[] = $space . "  - {$arg->code}";
-        //    }
-        //}
-        //$list[] = '';
-        //return join($list, "\n") ;
+        $indent = str_repeat(' ', $depth);
+        $argstr = join($list, ', ');
+        return "{$indent}print({$argstr})\n";
     }
 
 
@@ -234,9 +221,9 @@ class KwartzElementRuleset extends KwartzRuleset {
             $method = 'set_' . $key;
             if (array_key_exists($key, $hash)) $this->$method($hash[$key], null);
             $key = ucfirst($key);
-            if (array_key_exists($key, $hash)) $this->$method($hash[$key], false);
-            $key = strtoupper($key);
             if (array_key_exists($key, $hash)) $this->$method($hash[$key], true);
+            $key = strtoupper($key);
+            if (array_key_exists($key, $hash)) $this->$method($hash[$key], false);
         }
         $keys = array('remove', 'tagname', 'logic');
         foreach ($keys as $key) {

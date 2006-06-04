@@ -31,12 +31,7 @@ class KwartzBaseException extends KwartzException {
 
 
     function __toString() {
-        return "{$this->filename}:{$this->linenum}:" . parent::__toString();
-    }
-
-
-    function __message() {
-        return parent::__toString();
+        return "{$this->filename}:{$this->linenum}: " . $this->getMessage();
     }
 
 

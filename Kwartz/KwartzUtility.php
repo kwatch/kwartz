@@ -15,9 +15,9 @@ function kwartz_inspect_str($str) {
     $str = str_replace('\\', '\\\\', $str);
     $str = str_replace('"',  '\\"',  $str);
     //$str = addcslashes($str, '\\"');
-    $str = str_replace("\n", '\n',	 $str);
-    $str = str_replace("\r", '\r',	 $str);
-    $str = str_replace("\t", '\t',	 $str);
+    $str = str_replace("\n", '\n',   $str);
+    $str = str_replace("\r", '\r',   $str);
+    $str = str_replace("\t", '\t',   $str);
     $str = '"' . $str . '"';
     return $str;
 }
@@ -38,26 +38,45 @@ function kwartz_detect_newline_char(&$str) {
  *  expand tab characters
  */
 function kwartz_untabify($str, $width=8) {
-    if (! preg_match_all('/[^\t]*\t/', $str, $m)) {
-        return $str;
+    $splitted = preg_split('/\t/', $str);
+    $last = array_pop($splitted);
+    $buf = array();
+    foreach ($splitted as $s) {
+        $buf[] = $s;
+        if (($rindex = strrpos($s, "\n")) !== false)
+            $column = strlen($s) - $rindex - 1;
+        else
+            $column = strlen($s);
+        $n = $width - ($column % $width);
+        $buf[] = str_repeat(' ', $n);
     }
-    $sb = array();
-    $pos = 0;
-    $matches = $m[0];
-    foreach ($matches as $s) {
-        $len = strlen($s);
-        $pos += $len;
-        $len -= 1;
-        $sb[] = substr($s, 0, $len);
-        if (($rindex = strrpos($s, "\n")) !== false) {
-            $len -= $rindex + 1;
-        }
-        $n = $width - ($len % $width);
-        $sb[] = str_repeat(' ', $n);
-    }
-    $sb[] = substr($str, $pos);
-    return join($sb, '');
+    $buf[] = $last;
+    return join($buf);
 }
+
+//function kwartz_untabify($str, $width=8) {
+//    //if (! preg_match_all('/[^\t]*\t/', $str, $m)) {
+//    if (! preg_match_all('/.*?\t/s', $str, $m)) {
+//        return $str;
+//    }
+//    $sb = array();
+//    $pos = 0;
+//    $matches = $m[0];
+//    foreach ($matches as $s) {
+//        $len = strlen($s);
+//        $pos += $len;
+//        $len -= 1;
+//        $sb[] = substr($s, 0, $len);
+//        if (($rindex = strrpos($s, "\n")) !== false) {
+//            $len -= $rindex + 1;
+//        }
+//        $n = $width - ($len % $width);
+//        $sb[] = str_repeat(' ', $n);
+//    }
+//    $sb[] = substr($str, $pos);
+//    return join($sb, '');
+//}
+
 
 
 /**

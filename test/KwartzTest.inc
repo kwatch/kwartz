@@ -53,6 +53,44 @@ function kwartz_load_testdata($filename, $untabify=true) {
 }
 
 
+function kwartz_select_testdata($testdata, $lang) {
+    $list = array();
+    foreach ($testdata as $data) {
+        foreach ($data as $key => $val) {
+            if ($key[strlen($key)-1] == '*') {
+                unset($data[$key]);
+                $key = substr($key, 0, strlen($key)-1);
+                $val = $val[$lang];
+                $data[$key] = $val;
+            }
+        }
+        $list[] = $data;
+    }
+    return $list;
+}
+
+
+function kwartz_define_testmethods($testdata, $classname, $parent_classname=null, $flag_defun=true) {
+    if (! $parent_classname)
+        $parent_classname = $classname . '_';
+    $sb = array();
+    $sb[] = "class {$classname} extends {$parent_classname} {\n";
+    foreach ($testdata as $data) {
+        $sb[] =     "  function test_{$data['name']}(){\n";
+        foreach ($data as $key=>$val) {
+            $sb[] = "    \$this->{$key} = " . var_export($val, true) . ";\n";
+        }
+        $sb[] =     "    \$this->_test();\n";
+        $sb[] =     "  }\n";
+    }
+    $sb[] = "}\n";
+    $s = join($sb);
+    if ($flag_defun)
+        eval($s);
+    return $s;
+}
+
+
 error_reporting(E_ALL);
 
 

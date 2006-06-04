@@ -180,7 +180,12 @@ class KwartzElementInfo {
     var $attr_info;         // AttrInfo
     var $append_exprs;      // list of NativeExpression
     var $logic;             // list of Statement
+    //
     var $merged;            // ElementRuleset
+    var $stag_expr;
+    var $cont_expr;
+    var $etag_expr;
+    var $elem_expr;
 
 
     function __construct($name, $stag_info, $etag_info, $cont_stmts, $attr_info, $append_exprs) {
@@ -224,7 +229,7 @@ class KwartzElementInfo {
         }
         if ($elem_ruleset->remove) {
             foreach ($elem_ruleset->remove as $aname) {
-                $this->attr_info->delete($name);
+                $this->attr_info->delete($aname);
             }
         }
         if ($elem_ruleset->attrs) {
@@ -236,7 +241,7 @@ class KwartzElementInfo {
             foreach ($elem_ruleset->append as $expr) {
                 if (! $this->append_exprs)
                     $this->append_exprs = array();
-                $this->append_exprs[] = _to_native_expr($expr);
+                $this->append_exprs[] = $this->_to_native_expr($expr);
             }
         }
         $this->tagname = $elem_ruleset->tagname;
@@ -275,6 +280,9 @@ class KwartzStatementBuilder {
      *  create array of String and NativeExpression for PrintStatement
      */
     function build_print_args($taginfo, $attr_info, $append_exprs) {
+        if ($taginfo === null) {
+            throw new KwartzException("debug: append_exprs=" . var_export($append_exprs, true));
+        }
         if (! $taginfo->tagname) {
             return array();
         }
@@ -301,7 +309,7 @@ class KwartzStatementBuilder {
             }
         }
         if ($append_exprs) {
-            if (! $sb) {
+            if ($sb) {
                 $args[] = $sb;
                 $sb = '';
             }
@@ -337,12 +345,81 @@ class KwartzStatementBuilder {
         $args[] = $native_expr;
         if ($tail_space)
             $args[] = $tail_space;
-        return new PrintStatement($args);
+        return new KwartzPrintStatement($args);
     }
 
 
 }
 
+
+/**
+ *  arguments for handler
+ */
+class KwartzHandlerArgument {
+
+
+    var $directive_name;
+    var $directive_arg;
+    var $directive_str;
+    var $stag_info;
+    var $etag_info;
+    var $cont_stmts;
+    var $attr_info;
+    var $append_exprs;
+    //
+    var $builder;
+
+
+    function __construct($directive_name, $directive_arg, $directive_str,
+                         $stag_info, $etag_info, &$cont_stmts, $attr_info, &$append_exprs) {
+        $this->directive_name = $directive_name;
+        $this->directive_arg  = $directive_arg;
+        $this->directive_str  = $directive_str;
+        $this->stag_info      = $stag_info;
+        $this->etag_info      = $etag_info;
+        $this->cont_stmts     =& $cont_stmts;
+        $this->attr_info      = $attr_info;
+        $this->append_exprs   =& $append_exprs;
+        //
+        $this->builder = new KwartzStatementBuilder();
+    }
+
+
+    function stag_stmt() {
+        return $this->builder->build_print_stmt($this->stag_info, $this->attr_info, $this->append_exprs);
+    }
+
+
+    function etag_stmt() {
+        return $this->builder->build_print_stmt($this->etag_info, null, null);
+    }
+
+
+    function wrap_element_with_native_stmt(&$stmt_list, $start_code, $end_code, $kind=null) {
+        if ($start_code)
+            $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
+        $stmt_list[] = $this->stag_stmt();
+        foreach ($this->cont_stmts as $stmt)
+            $stmt_list[] = $stmt;
+        $stmt_list[] = $this->etag_stmt();
+        if ($end_code)
+            $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
+    }
+
+
+    function wrap_content_with_native_stmt(&$stmt_list, $start_code, $end_code, $kind=null) {
+        $stmt_list[] = $this->stag_stmt();
+        if ($start_code)
+            $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
+        foreach ($this->cont_stmts as $stmt)
+            $stmt_list[] = $stmt;
+        if ($end_code)
+            $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
+        $stmt_list[] = $this->etag_stmt();
+    }
+
+
+}
 
 
 /**
@@ -363,20 +440,16 @@ abstract class KwartzHandler {
 
 
     function __construct($elem_rulesets=array(), $properties=array()) {
-        global $KWARTZ_PROPERTY_DATTR;
-        global $KWARTZ_PROPERTY_DELSPAN;
-        global $KWARTZ_PROPERTY_ODD;
-        global $KWARTZ_PROPERTY_EVEN;
         $this->elem_rulesets = $elem_rulesets;
         $this->_elem_ruleset_table = array(); // hash
         foreach ($elem_rulesets as $ruleset) {
             $this->_elem_ruleset_table[$ruleset->name] = $ruleset;
         }
         $this->_elem_info_table = array();    // hash
-        $this->_dattr   = kwartz_array_get($properties, 'dattr',   $KWARTZ_PROPERTY_DATTR);
-        $this->_delspan = kwartz_array_get($properties, 'delspan', $KWARTZ_PROPERTY_DELSPAN);
-        $this->odd      = kwartz_array_get($properties, 'odd',  $KWARTZ_PROPERTY_ODD);
-        $this->even     = kwartz_array_get($properties, 'even', $KWARTZ_PROPERTY_EVEN);
+        $this->_dattr   = kwartz_array_get($properties, 'dattr',   KWARTZ_PROPERTY_DATTR);
+        $this->_delspan = kwartz_array_get($properties, 'delspan', KWARTZ_PROPERTY_DELSPAN);
+        $this->odd      = kwartz_array_get($properties, 'odd',  KWARTZ_PROPERTY_ODD);
+        $this->even     = kwartz_array_get($properties, 'even', KWARTZ_PROPERTY_EVEN);
         $this->filename = null;
         $this->builder  = new KwartzStatementBuilder();
     }
@@ -431,17 +504,23 @@ abstract class KwartzHandler {
      * return true if directive name is one of 'stag', 'etag', 'elem', 'cont', and 'value',
      * else return false.
      */
-    function handle($directive_name, $directive_arg, $directive_str, $stag_info, $etag_info, $cont_stmts, $attr_info, $append_exprs, &$stmt_list) {
-        $d_name = $directive_name;
-        $d_arg  = $directive_arg;
-        $d_str  = $directive_str;
+    function handle($handler_arg, &$stmt_list) {
+        $arg = $handler_arg;
+        $d_name = $arg->directive_name;
+        $d_arg  = $arg->directive_arg;
+        $d_str  = $arg->directive_str;
+        $stag_info    = $arg->stag_info;
+        $etag_info    = $arg->etag_info;
+        $cont_stmts   =& $arg->cont_stmts;
+        $attr_info    = $arg->attr_info;
+        $append_exprs =& $arg->append_exprs;
 
         switch ($d_name) {
         case NULL:
             assert($attr_info || $append_exprs);
             $stmt_list[] = $this->builder->build_print_stmt($stag_info, $attr_info, $append_exprs);
             kwartz_array_concat($stmt_list, $cont_stmts);
-            if (etag_info) {
+            if ($etag_info) {
                 $stmt_list[] = $this->builder->build_print_stmt($etag_info, null, null);
             }
             break;
@@ -477,7 +556,7 @@ abstract class KwartzHandler {
         case 'STAG':
             $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
             $flag_escape = $d_name == 'stag' ? null : ($d_name == 'Stag');
-            $expr = new NativeExpression($d_arg, $flag_escape);
+            $expr = new KwartzNativeExpression($d_arg, $flag_escape);
             $stmt_list[] = $this->builder->build_print_expr_stmt($expr, $stag_info, null);
             kwartz_array_concat($stmt_list, $cont_stmts);
             $stmt_list[] = $this->builder->build_print_stmt($etag_info, null, null);
@@ -488,17 +567,17 @@ abstract class KwartzHandler {
         case 'ETAG':
             $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
             $flag_escape = $d_name == 'etag' ? null : ($d_name == 'Etag');
-            $expr = new NativeExpression($d_arg, $flag_escape);
+            $expr = new KwartzNativeExpression($d_arg, $flag_escape);
             $stmt_list[] = $this->builder->build_print_stmt($stag_info, $attr_info, $append_exprs);
             kwartz_array_concat($stmt_list, $cont_stmts);
-            $stmt_list[] = $this->builder->build_expr_stmt($expr, null, $etag_info);
+            $stmt_list[] = $this->builder->build_print_expr_stmt($expr, null, $etag_info);
             break;
 
         case 'elem':
         case 'Elem':
         case 'ELEM':
             $flag_escape = $d_name == 'elem' ? null : ($d_name == 'Elem');
-            $expr = new NativeExpression($d_arg, $flag_escape);
+            $expr = new KwartzNativeExpression($d_arg, $flag_escape);
             $stmt_list[] = $this->builder->build_print_expr_stmt($expr, $stag_info, $etag_info);
             break;
 
@@ -512,11 +591,11 @@ abstract class KwartzHandler {
             $stag_info->tail_space = $etag_ifo->head_space = null;   // delete spaces
             $args = $this->builder->build_print_args($stag_info, $attr_info, $append_exprs);
             $flag_escape = ($d_name == 'cont' || $d_name == 'value') ? null : ($d_name == 'Cont' || $d_name == 'Value');
-            $args[] = new NativeExpression($d_arg, $flag_escape);
+            $args[] = new KwartzNativeExpression($d_arg, $flag_escape);
             if ($etag_info->tagname) {
                 $args[] = $etag_info->tag_text;
             }
-            $stmt_list[] = new PrintStatement($args);
+            $stmt_list[] = new KwartzPrintStatement($args);
             break;
 
         case 'attr':
@@ -528,14 +607,14 @@ abstract class KwartzHandler {
             }
             $aname = $m[1];  $avalue = $m[2];
             $flag_escape = $d_name == 'attr' ? null : ($d_name == 'Attr');
-            $attr_info.set_value($aname, new NativeExpression($avalue, $flag_escape));
+            $attr_info->set_value($aname, new KwartzNativeExpression($avalue, $flag_escape));
             break;
 
         case 'append':
         case 'Append':
         case 'APPEND':
             $flag_escape = $d_name == 'append' ? null : ($d_name == 'Append');
-            $append_exprs[] = new NativeExpression($d_arg, $flag_escape);
+            $arg->append_exprs[] = new KwartzNativeExpression($d_arg, $flag_escape);
             break;
 
         case 'replace_element_with_element':
@@ -555,9 +634,37 @@ abstract class KwartzHandler {
                 $msg = "'{$d_str}': element '{$name}' not found.";
                 throw $this->_error($msg, $stag_info->linenum);
             }
-            $this->_expand_element_info($elem_info, $stmt_list, $with_content);
+            $this->expand_element_info($elem_info, $stmt_list, $with_content);
             if ($replace_cont) {
                 $stmt_list[] = $this->builder->build_print_stmt($etag_info, null, null);
+            }
+            break;
+
+        case 'replace_element_with':
+        case 'replace_content_with':
+        case 'replace':
+        case 'placeholder':
+            if (! preg_match('/\A_?(element|content)\(["\']?(\w+)["\']?\)\z/', $d_arg, $m)) {
+                $msg = "'{$d_str}': invalid {$d_name} format.";
+                throw $this->_error($msg, $arg->stag_info->linenum);
+            }
+            $kind = $m[1];
+            $name = $m[2];
+            $replace_cont = $d_name == 'replace_content_with' || $d_name == 'placeholder';
+            $with_content = $kind == 'content';
+            //
+            if ($replace_cont) {
+                $this->_error_if_empty_tag($arg->stag_info, $arg->etag_info, $d_name, $d_arg);
+                $stmt_list[] = $arg->stag_stmt();
+            }
+            $elem_info = kwartz_array_get($this->_elem_info_table, $name);
+            if (! $elem_info) {
+                $msg = "'{$d_str}': element '{$name}' not found.";
+                throw $this->_error($msg, $arg->stag_info->linenum);
+            }
+            $this->expand_element_info($elem_info, $stmt_list, $with_content);
+            if ($replace_cont) {
+                $stmt_list[] = $arg->etag_stmt();
             }
             break;
 
@@ -586,21 +693,17 @@ abstract class KwartzHandler {
      *  expand ElementInfo
      */
     function expand_element_info($elem_info, &$stmt_list, $content_only=false) {
-        if (array_key_exists($elem_info->name, $this->_elem_ruleset_table)) {
-            $elem_ruleset = $this->_elem_ruleset_table[$elem_info->name];
-        } else {
-            throw $this->_error("*** internal error: elem_info->name={$elem_info->name}");
-        }
+        $elem_ruleset = kwartz_array_get($this->_elem_ruleset_table, $elem_info->name);
         if ($elem_ruleset && ! $elem_info->merged) {
             $elem_info->merge($elem_ruleset);
         }
         if ($content_only) {
-            $stmt = new ExpandStatement('cont', $elem_info->name);
+            $stmt = new KwartzExpandStatement('cont', $elem_info->name);
             $this->expand_statement($stmt, $stmt_list, $elem_info);
         } else {
             $logic = $elem_info->logic;
             if ($logic === null) {
-                $logic = array(new ExpandStatement('elem', $elem_info->name));
+                $logic = array(new KwartzExpandStatement('elem', $elem_info->name));
             }
             foreach ($logic as $stmt) {
                 $this->expand_statement($stmt, $stmt_list, $elem_info);
@@ -636,7 +739,7 @@ abstract class KwartzHandler {
             if ($e->etag_expr) {
                 assert('$e->etag_expr instanceof KwartzNativeExpression');
                 $stmt_list[] = $this->builder->build_print_expr_stmt($e->etag_expr, null, $e->etag_info);
-            } else {
+            } elseif ($e->etag_info) { // e.etag_info is null when <br>,<input>,<hr>,<img>,<meta>
                 $stmt_list[] = $this->builder->build_print_stmt($e->etag_info, null, null);
             }
             break;
@@ -677,7 +780,7 @@ abstract class KwartzHandler {
                 $msg = "element '{$stmt->name}' is not found.";
                 throw $this->_error($msg, null);
             }
-            $this->expand_element_info($elem_info, stmt_list, $content_only);
+            $this->expand_element_info($elem_info, $stmt_list, $content_only);
             break;
 
         default:
@@ -783,11 +886,9 @@ class KwartzTextConverter extends KwartzConverter {
 
 
     function __construct($handler, $properties=array()) {
-        global $KWARTZ_PROPERTY_DATTR;
-        global $KWARTZ_PROPERTY_DELSPAN;
         parent::__construct($handler, $properties);
-        $this->_dattr   = kwartz_array_get($properties, 'dattr',   $KWARTZ_PROPERTY_DATTR);
-        $this->_delspan = kwartz_array_get($properties, 'delspan', $KWARTZ_PROPERTY_DELSPAN);
+        $this->_dattr   = kwartz_array_get($properties, 'dattr',   KWARTZ_PROPERTY_DATTR);
+        $this->_delspan = kwartz_array_get($properties, 'delspan', KWARTZ_PROPERTY_DELSPAN);
         $this->_skip_etag_table = array('input'=>true, 'img'=>true, 'br'=>true,
                                         'hr'=>true, 'meta'=>true, 'link'=>true);
         $this->_builder = new KwartzStatementBuilder();
@@ -871,7 +972,7 @@ class KwartzTextConverter extends KwartzConverter {
             // empty tag
             else if ($taginfo->is_empty || $this->_skip_etag_p($taginfo)) {
                 $attr_info = new KwartzAttrInfo($taginfo->attr_str);
-                if ($this->_has_directive($attr_info, $taginfo)) {
+                if ($this->has_directive($attr_info, $taginfo)) {
                     $stag_info  = $taginfo;
                     $cont_stmts = array();
                     $etag_info  = null;
@@ -926,21 +1027,23 @@ class KwartzTextConverter extends KwartzConverter {
                     throw $this->_error($msg, $stag_info->linenum);
                 }
                 $d_name = $m[1];
-                $d_arg  = $m[2];
+                $d_arg  = count($m) > 2 ? $m[2] : null;   // kwartz_array_get($m, 2);
                 switch ($d_name) {
                 case 'attr':
                 case 'Attr':
                 case 'ATTR':
-                    $this->handler->handle($d_name, $d_arg, $d_str, $stag_info, $etag_info,
-                                           $cont_stmts, $attr_info, $append_exprs, $stmt_list);
+                    $handler_arg = new KwartzHandlerArgument($d_name, $d_arg, $d_str,
+                        $stag_info, $etag_info, $cont_stmts, $attr_info, $append_exprs);
+                    $this->handler->handle($handler_arg, $stmt_list);
                     break;
                 case 'append':
                 case 'Append':
                 case 'APPEND':
                     if ($append_exprs === null)
                         $append_exprs = array();
-                    $this->handler->handle($d_name, $d_arg, $d_str, $stag_info, $etag_info,
-                                           $cont_stmts, $attr_info, $append_exprs, $stmt_list);
+                    $handler_arg = new KwartzHandlerArgument($d_name, $d_arg, $d_str,
+                        $stag_info, $etag_info, $cont_stmts, $attr_info, $append_exprs);
+                    $this->handler->handle($handler_arg, $stmt_list);
                     break;
                 default:
                     if ($directive_name) {
@@ -956,15 +1059,15 @@ class KwartzTextConverter extends KwartzConverter {
 
         // remove dummy <span> tag
         if ($this->_delspan && $stag_info->tagname == 'span'
-            && ! $attr_info && ! $append_exprs && $directive_name != 'id') {
+            && $attr_info->is_empty() && ! $append_exprs && $directive_name != 'id') {
             $stag_info->tagname = null;
             $etag_info->tagname = null;
         }
 
         // handle other directives
-        $ret = $this->handler->handle($directive_name, $directive_arg, $directive_str,
-                                      $stag_info, $etag_info, $cont_stmts, $attr_info,
-                                      $append_exprs, $stmt_list);
+        $handler_arg = new KwartzHandlerArgument($directive_name, $directive_arg, $directive_str,
+                        $stag_info, $etag_info, $cont_stmts, $attr_info, $append_exprs);
+        $ret = $this->handler->handle($handler_arg, $stmt_list);
         if ($directive_name && !$ret) {
             $msg = "'{$directive_str}': unknown directive.";
             throw $this->_error($msg, $stag_info->linenum);
@@ -998,7 +1101,8 @@ class KwartzTextConverter extends KwartzConverter {
             if (preg_match('/\A\w+\z/', $val)) {
                 $attr_info->directive = sprintf($this->handler->directive_format(), 'mark', $val);
                 return true;
-            } elseif (preg_match('/\A(mark|dummy):(\w+)\z/', $val, $m)) {
+            } elseif (preg_match('/\A(mark|dummy):(\w+)\z/', $val, $m) ||
+                      preg_match('/\A(replace_(?:element|content)_with_(?:element|content)):(\w+)\z/', $val, $m)) {
                 $attr_info->directive = sprintf($this->handler->directive_format(), $m[1], $m[2]);
                 $attr_info->delete('id');
                 return true;

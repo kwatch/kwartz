@@ -1,0 +1,182 @@
+- name:   compile1
+  desc:   bordered table
+  
+  pdata: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	      <tr bgcolor="#FFCCCC" {{*id="mark:list"*}}>
+	        <td {{*id="mark:name"*}}>foo</td>
+	        <td {{*id="mark:mail"*}}>foo@mail.com</td>
+	      </tr>
+	      <tr {{*id="dummy:d1"*}} bgcolor="#CCCCFF">
+	        <td>bar</td>
+	        <td>bar@mail.org</td>
+	      </tr>
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+  
+  plogic*:
+  
+    eruby: |
+	#list {
+	  attrs: 'bgcolor' color,
+	         'title'   user.name;
+	  logic: {
+	    @list.each_with_index { |user, i|
+	      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+	      _stag
+	      _cont
+	      _etag
+	    }
+	  }
+	}
+	#name {
+	  Value: user.name;
+	}
+	#mail {
+	  cont: user[:mail];
+	}
+  
+    php: |
+	#list {
+	  attrs: 'bgcolor' $color,
+	         'title'   $user->name;
+	  logic: {
+	    $i = 0;
+	    foreach ($list as $user) {
+	      $i++;
+	      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+	      _stag();
+	      _cont();
+	      _etag();
+	    }
+	  }
+	}
+	#name {
+	  Value: $user->name;
+	}
+	#mail {
+	  cont: $user['mail'];
+	}
+
+    jstl: |
+	#list {
+	  attrs: 'bgcolor' color,
+	         'title'   user.name;
+	  logic: {
+	    <c:forEach var="user" items="${list}" varStatus="loop">
+	      <c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>
+	      _stag();
+	      _cont();
+	      _etag();
+	    </c:forEach>
+	  }
+	}
+	#name {
+	  Value: user.name;
+	}
+	#mail {
+	  cont: user.mail;
+	}
+  
+    eperl: |
+	#list {
+	  attrs: 'bgcolor' $color,
+	         'title'   $user->name();
+	  logic: {
+	    my $i = 0;
+	    foreach my $user (@list) {
+	      $i++;
+	      my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+	      _stag();
+	      _cont();
+	      _etag();
+	    }
+	  }
+	}
+	#name {
+	  Value: $user->name();
+	}
+	#mail {
+	  cont: $user{'mail'};
+	}
+  
+  expected*:
+  
+    eruby: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<%     @list.each_with_index { |user, i| %>*}}
+	{{*<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>*}}
+	      <tr bgcolor="{{*<%= color %>*}}" title="{{*<%= user.name %>*}}">
+	        <td>{{*<%=h user.name %>*}}</td>
+	        <td>{{*<%= user[:mail] %>*}}</td>
+	      </tr>
+	<%     } %>
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+  
+    php: |
+	<{{*<?php ?>*}}?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?php     $i = 0; ?>*}}
+	{{*<?php     foreach ($list as $user) { ?>*}}
+	{{*<?php       $i++; ?>*}}
+	{{*<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>*}}
+	      <tr bgcolor="{{*<?php echo $color; ?>*}}" title="{{*<?php echo $user->name; ?>*}}">
+	        <td>{{*<?php echo htmlspecialchars($user->name); ?>*}}</td>
+	        <td>{{*<?php echo $user['mail']; ?>*}}</td>
+	      </tr>
+	{{*<?php     } ?>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    jstl: |
+	{{*<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>*}}
+	{{*<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>*}}
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	    {{*<c:forEach var="user" items="${list}" varStatus="loop">*}}
+	      {{*<c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>*}}
+	      <tr bgcolor="{{*${color}*}}" title="{{*${user.name}*}}">
+	        <td>{{*${user.name}*}}</td>
+	        <td>{{*${user.mail}*}}</td>
+	      </tr>
+	    {{*</c:forEach>*}}
+	    </table>
+	  </body>
+	</html>
+  
+    eperl: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?     my $i = 0; !>*}}
+	{{*<?     foreach my $user (@list) { !>*}}
+	{{*<?       $i++; !>*}}
+	{{*<?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>*}}
+	      <tr bgcolor="{{*<?= $color !>*}}" title="{{*<?= $user->name() !>*}}">
+	        <td>{{*<?= encode_entities($user->name()) !>*}}</td>
+	        <td>{{*<?= $user{'mail'} !>*}}</td>
+	      </tr>
+	{{*<?     } !>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->

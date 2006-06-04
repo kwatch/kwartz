@@ -22,9 +22,16 @@ error_reporting(E_ALL);
 
 class KwartzCommandOptionException extends KwartzException {
 
+
     function __construct($message) {
         parent::__construct($message);
     }
+
+
+    function __toString() {
+        return $this->getMessage();
+    }
+
 
 }
 
@@ -32,15 +39,35 @@ class KwartzCommandOptionException extends KwartzException {
 
 class KwartzMain {
 
+
     var $args;
     var $command;
     var $options;
     var $properties;
     var $filenames;
+    var $_optchars;
+    var $_argnames;
 
 
     function __construct($args) {
         $this->args = $args;
+        $this->_optchars = array(
+            'single'=>'hvet',
+            'argument'=>'pliLXxf',
+            'optional'=>'',
+            );
+        $this->_argnames = array(
+            'l' => 'lang name',
+            //'k' => 'kanji code',
+            'r' => 'library name',
+            'p' => 'file name',
+            //'P' => 'parser style',
+            'x' => 'element id',
+            'X' => 'element id',
+            'i' => 'file name',
+            'L' => 'file name',
+            'f' => 'yaml file',
+            );
     }
 
 
@@ -62,7 +89,10 @@ class KwartzMain {
         global $KWARTZ_PROPERTY_LANG;
 
         // parse command-line options
-        $this->_parse_argv($this->args, 'hve', 'piL');
+        $opts_single   = $this->_optchars['single'];
+        $opts_argument = $this->_optchars['argument'];
+        $argnames      = $this->_argnames;
+        $this->_parse_argv($this->args, $opts_single, $opts_argument, $argnames);
         $options    = $this->options;
         $properties = $this->properties;
         $filenames  = $this->filenames;
@@ -103,17 +133,18 @@ class KwartzMain {
         //    $msg = "-P {$style}: unknown style name (paresr class not registered).";
         //    throw $this->_error($msg);
         //}
-        $lang = kwartz_array_get($options, 'l', $KWARTZ_PROPERTY_LANG);
-        //$handler_class = KwartzHander::get_class($lang);
-        //if (! $handler_class) {
-        //    $msg = "-l {$lang}: unknown lang name (handler class not registered).";
-        //    throw $this->_error($msg);
-        //}
-        //$translator_class = KwartzTranslator::get_class($lang);
-        //if (! $translator_class) {
-        //    $msg = "-l {$lang}: unknown lang name (translator class not registered).";
-        //    throw $this->_error($msg);
-        //}
+        $lang = kwartz_array_get($options, 'l', KWARTZ_PROPERTY_LANG);
+        switch ($lang) {
+        case 'php':
+            // ok
+            break;
+        default:
+            $msg = "-l {$lang}: unknown lang name.";
+            throw $this->_error($msg);
+        }
+        $Lang = ucfirst($lang);
+        $handler_class = "Kwartz{$Lang}Handler";
+        $translator_class = "Kwartz{$Lang}Translator";
 
         // require libraries
         $requires = kwartz_array_get($options, 'r');
@@ -151,7 +182,7 @@ class KwartzMain {
         }
 
         // create converter
-        $handler = new KwartzPhpHandler($ruleset_list, $properties);
+        $handler = new $handler_class($ruleset_list, $properties);
         $converter = new KwartzTextConverter($handler, $properties);
 
         // import-files and layout-file
@@ -207,7 +238,7 @@ class KwartzMain {
         if ($nl == "\r\n" && ! array_key_exists('nl', $properties)) {
             $properties['nl'] = $nl;
         }
-        $translator = new KwartzPhpTranslator($properties);
+        $translator = new $translator_class($properties);
         $output = $translator->translate($stmt_list);
 
         // load YAML file and evaluate eRuby script
@@ -233,10 +264,25 @@ class KwartzMain {
             }
             $php_script = $output;
             $context = syck_load($str);
+            if (! $this->_is_mapping($context)) {
+                $msg = "-f {$yamlfile}: not a mapping.";
+                throw $this->_error($msg);
+            }
             $output = $this->_eval_php_script($php_script, $context);
         }
 
         return $output;
+    }
+
+
+    function _is_mapping(&$obj) {
+        if (! is_array($obj))
+            return false;
+        foreach ($obj as $key => $val) {
+            if (! is_string($key))
+                return false;
+        }
+        return true;
     }
 
 
@@ -249,9 +295,12 @@ class KwartzMain {
         $filename = tempnam($tmpdir, "kwartz.tmpfile");
         $f = fopen($filename, 'w');
         fwrite($f, $php_script);
+        ob_start();
         $this->_include_php_script($filename, $context);
+        $output = ob_get_clean();
         fclose($f);
         unlink($filename);
+        return $output;
     }
 
 
@@ -299,7 +348,7 @@ class KwartzMain {
     }
 
 
-    function _parse_argv($args, $single_optstr, $argument_optstr) {
+    function _parse_argv($args, $opts_single, $opts_argument, $argnames) {
         $this->options    = array();   // hash
         $this->properties = array();   // hash
         $this->command    = array_shift($args);
@@ -329,12 +378,12 @@ class KwartzMain {
             }
             for ($i = 1; $i < $len; $i++) {
                 $optch = $optstr[$i];
-                if (strpos($single_optstr, $optch) !== false) {
+                if (strpos($opts_single, $optch) !== false) {
                     $this->options[$optch] = true;
-                } elseif (strpos($argument_optstr, $optch) !== false) {
+                } elseif (strpos($opts_argument, $optch) !== false) {
                     $optarg = $i + 1 < $len ? substr($optstr, $i+1) : array_shift($args);
                     if ($optarg === null) {
-                        $msg = "-{$optch}: argument required.";
+                        $msg = "-{$optch}: {$argnames[$optch]} required.";
                         throw $this->_error($msg);
                     }
                     $this->options[$optch] = $optarg;

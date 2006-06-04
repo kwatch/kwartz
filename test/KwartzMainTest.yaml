@@ -1,0 +1,127 @@
+pdata: |
+      <html>
+       <body>
+        <h1 id="doctitle">hoge</h1>
+        <table id="content">
+         <tr id="mark:list">
+          <td id="mark:item">item</td>
+         </tr>
+        </table>
+       </body>
+      </html>
+
+plogic*:
+  eruby: |
+      #doctitle {
+        value: @title;
+        remove: "id";
+      }
+      #list {
+        logic: {
+          for item in @list
+            _elem
+          end
+        }
+      }
+      #item {
+        Value: item;
+      }
+  php: |
+      #doctitle {
+        value: $title;
+        remove: "id";
+      }
+      #list {
+        logic: {
+          foreach ($list as $item) {
+            _elem();
+          }
+        }
+      }
+      #item {
+        Value: $item;
+      }
+
+expected*:
+  eruby: |
+      <html>
+       <body>
+        <h1><%= @title %></h1>
+        <table id="content">
+      <%     for item in @list %>
+         <tr>
+          <td><%=h item %></td>
+         </tr>
+      <%     end %>
+        </table>
+       </body>
+      </html>
+  php: |
+      <html>
+       <body>
+        <h1><?php echo $title; ?></h1>
+        <table id="content">
+      <?php     foreach ($list as $item) { ?>
+         <tr>
+          <td><?php echo htmlspecialchars($item); ?></td>
+         </tr>
+      <?php     } ?>
+        </table>
+       </body>
+      </html>
+
+import_pdata: |
+      <div>
+      <span id="mark:sectitle">foo</span>
+      </div>
+
+import_plogic*:
+  eruby: |
+      #sectitle{
+        elem: sectitle;
+      }
+  php: |
+      #sectitle{
+        elem: $sectitle;
+      }
+
+layout: |
+      <?xml version="1.0" charset="utf8"?>
+      <html>
+       <head>
+        <title id="replace_content_with_content:doctitle">layout file</title>
+       </head>
+       <body>
+      
+        <div id="replace_element_with_element:content">
+          foo
+          bar
+        </div>
+      
+       </body>
+      </html>
+
+yamldata: |
+      title:	kwartz example
+      list:
+      	- <aaa>
+      	- b&b
+      	- '"ccc"'
+
+yamloutput: |
+      <html>
+       <body>
+        <h1>kwartz example</h1>
+        <table id="content">
+         <tr>
+          <td>&lt;aaa&gt;</td>
+         </tr>
+         <tr>
+          <td>b&amp;b</td>
+         </tr>
+         <tr>
+          <td>&quot;ccc&quot;</td>
+         </tr>
+        </table>
+       </body>
+      </html>

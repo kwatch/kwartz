@@ -26,12 +26,16 @@ class KwartzParserTest_ extends PHPUnit2_Framework_TestCase {
     function _test() {
         if ($this->setup) eval($this->setup);
         $parser = new KwartzCssStyleParser();
+        $pattern = '/\{\{\*|\*\}\}/';
+        $plogic   = preg_replace($pattern, '', $this->plogic);
+        $expected = preg_replace($pattern, '', $this->expected);
         try {
             if (preg_match('/scanner/', $this->name)) {
-                $this->_test_scanner($parser);
+                $actual = $this->_do_scan($parser, $plogic);
             } else {
-                $this->_test_parser($parser);
+                $actual = $this->_do_parse($parser, $plogic);
             }
+            kwartz_assert_text_equals($expected, $actual, $this->name);
             if ($this->teardown) eval($this->teardown);
         } catch (Exception $ex) {
             if ($this->teardown) eval($this->teardown);
@@ -39,8 +43,8 @@ class KwartzParserTest_ extends PHPUnit2_Framework_TestCase {
         }
     }
 
-    function _test_scanner($parser) {
-        $parser->_reset($this->plogic);
+    function _do_scan($parser, $plogic) {
+        $parser->_reset($plogic);
         $sb = array();
         while (($ret = $parser->scan()) !== null) {
             $sb[] = "{$parser->linenum}:{$parser->column}:";
@@ -49,55 +53,36 @@ class KwartzParserTest_ extends PHPUnit2_Framework_TestCase {
             if ($ret == 'error' || $ret == ':error') break;
         }
         $actual = join($sb);
-        kwartz_assert_text_equals($this->expected, $actual, $this->name);
+        return $actual;
     }
 
-    function _test_parser($parser) {
-        $ruleset_list = $parser->parse($this->plogic);
+    function _do_parse($parser, $plogic) {
+        $ruleset_list = $parser->parse($plogic);
         //var_export($ruleset_list);
         $sb = array();
         foreach ($ruleset_list as $ruleset) {
             $sb[] = $ruleset->_inspect();
         }
         $actual = join($sb);
-        kwartz_assert_text_equals($this->expected, $actual, $this->name);
+        return $actual;
     }
 
 }
 
 
-$data_list = kwartz_load_testdata(__FILE__);
+$testdata = kwartz_load_testdata(__FILE__);
+$testdata = kwartz_select_testdata($testdata, 'php');
 $list = array();
-foreach ($data_list as $data) {
-    if ($data['style'] != 'css')
-        continue;
-    foreach ($data as $key => $val) {
-        if ($key[strlen($key)-1] == '*') {
-            unset($data[$key]);
-            $key = substr($key, 0, strlen($key)-1);
-            $val = $val['php'];
-            $data[$key] = $val;
-        }
+foreach ($testdata as $data) {
+    if ($data['style'] == 'css') {
+        $list[] = $data;
     }
-    $list[] = $data;
 }
-$data_list = $list;
+$testdata = $list;
 
-//var_export($data_list);  //exit(0);
+//var_export($testdata);  //exit(0);
 
-$sb = array();
-$sb[] = "class KwartzParserTest extends KwartzParserTest_ {\n";
-foreach ($data_list as $data) {
-    $sb[] =     "  function test_{$data['name']}(){\n";
-    foreach ($data as $key=>$val) {
-        $sb[] = "    \$this->{$key} = " . var_export($val, true) . ";\n";
-    }
-    $sb[] =     "    \$this->_test();\n";
-    $sb[] =     "  }\n";
-}
-$sb[] = "}\n";
-//echo "---\n", join($sb), "---\n";
-eval(join($sb));
+kwartz_define_testmethods($testdata, 'KwartzParserTest');
 
 
 ?>

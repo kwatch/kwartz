@@ -24,7 +24,7 @@ class KwartzParseException extends KwartzBaseException {
 
 
     function __toString() {
-        $mesg = $this->__message();
+        $mesg = $this->getMessage();
         return "{$this->filename}:{$this->linenum}:{$this->column}: {$mesg}";
     }
 
@@ -91,7 +91,7 @@ abstract class KwartzPresentationLogicParser {
                 'document', 'global', 'local', 'fixture', 'before', 'after'
                 );
             foreach ($list as $keyword) {
-                self::$_keyword_table[$keyword] = $keyword;
+                self::$_keyword_table[$keyword] = strtolower($keyword);
             }
         }
         return self::$_keyword_table;
@@ -552,7 +552,7 @@ class KwartzCssStyleParser extends KwartzPresentationLogicParser {
             $this->scan();
             $t = $this->token;
             $v = $this->value;
-            $flag_escape = array_key_exists($v, $this->_escapes);
+            $flag_escape = kwartz_array_get($this->_escapes, $v);
             if ($t === null || $t == '}') break;
             switch ($t) {
             case 'stag':
