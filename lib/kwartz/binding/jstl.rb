@@ -22,7 +22,7 @@ module Kwartz
 
     def initialize(elem_rulesets=[], properties={})
       super
-      @jstl_ver = properties[:jstl] || 1.2
+      @jstl_ver = properties[:jstl] || Config::PROPERTY_JSTL
     end
 
 
@@ -47,7 +47,7 @@ module Kwartz
     end
 
 
-    def handle(handler_arg)
+    def handle(stmt_list, handler_arg)
       ret = super
       return ret if ret
 
@@ -55,12 +55,12 @@ module Kwartz
       d_name = arg.directive_name
       d_arg  = arg.directive_arg
       d_str  = arg.directive_str
-      stmt_list = arg.stmt_list
 
       case d_name
 
       when :for, :For, :FOR, :list, :List, :LIST
         is_foreach = d_name == :for || d_name == :For || d_name == :FOR
+        error_if_empty_tag(arg) unless is_foreach
         unless d_arg =~ /\A(\w+)\s*:\s*(.*)\z/
           raise convert_error("'#{d_str}': invalid argument.", arg.stag_info.linenum)
         end
@@ -68,92 +68,86 @@ module Kwartz
         counter = d_name == :for || d_name == :list ? nil : "#{loopvar}_ctr"
         toggle  = d_name != :FOR && d_name != :LIST ? nil : "#{loopvar}_tgl"
         status  = d_name == :for || d_name == :list ? nil : "#{loopvar}_status"
-        stmt_list << arg.stag_stmt   if !is_foreach
-        code = "<c:forEach var=\"#{loopvar}\" items=\"${#{looplist}}\""
-        code << " varStatus=\"#{status}\"" if status
-        code << ">"
-        stmt_list << NativeStatement.new(code, :foreach)
-        if counter
-          stmt_list << NativeStatement.new("<c:set var=\"#{counter}\" value=\"${#{status}.count}\" />")
-        end
+        foreach_code = "<c:forEach var=\"#{loopvar}\" items=\"${#{looplist}}\""
+        foreach_code << " varStatus=\"#{status}\"" if status
+        foreach_code << ">"
+        code = []
+        code << foreach_code
+        code << "<c:set var=\"#{counter}\" value=\"${#{status}.count}\"/>" if counter
         if toggle
           if @jstl_ver < 1.2
-            stmt_list << NativeStatement.new("<c:choose><c:when test=\"${#{status}.count%2==0}\">")
-            stmt_list << NativeStatement.new("<c:set var=\"#{toggle}\" value=\"${self.even}\"/>")
-            stmt_list << NativeStatement.new("</c:when><c:otherwise>")
-            stmt_list << NativeStatement.new("<c:set var=\"#{toggle}\" value=\"${self.odd}\"/>")
-            stmt_list << NativeStatement.new("</c:otherwise></c:choose>")
+            code << "<c:choose><c:when test=\"${#{status}.count%2==0}\">"
+            code << "<c:set var=\"#{toggle}\" value=\"${self.even}\"/>"
+            code << "</c:when><c:otherwise>"
+            code << "<c:set var=\"#{toggle}\" value=\"${self.odd}\"/>"
+            code << "</c:otherwise></c:choose>"
           else
-            code = "<c:set var=\"#{toggle}\" value=\"${#{status}.count%2==0 ? #{self.even} : #{self.odd}}\" />"
-            stmt_list << NativeStatement.new(code)
+            code << "<c:set var=\"#{toggle}\" value=\"${#{status}.count%2==0 ? #{self.even} : #{self.odd}}\"/>"
           end
         end
-        stmt_list  <<  arg.stag_stmt   if is_foreach
-        stmt_list.concat(arg.cont_stmts)
-        stmt_list  <<  arg.etag_stmt   if is_foreach
-        stmt_list  <<  NativeStatement.new("</c:forEach>", :foreach)
-        stmt_list  <<  arg.etag_stmt   if !is_foreach
+        end_code = "</c:forEach>"
+        if is_foreach
+          wrap_element_with_native_stmt(stmt_list, arg, code, end_code, :set)
+        else
+          wrap_content_with_native_stmt(stmt_list, arg, code, end_code, :set)
+        end
 
       when :while, :loop
         msg = "'#{d_str}': jstl doesn't support '#{d_arg}' directive."
-        raise convert_error(msg, stag_info.linenum)
+        raise convert_error(msg, arg.stag_info.linenum)
 
       when :set
         unless d_arg =~ /\A(\S+)\s*=\s*(.*)\z/
           raise convert_error("'#{d_str}': invalid argument.", arg.stag_info.linenum)
         end
         lhs = $1;  rhs = $2
-        code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />"
-        arg.wrap_element_with_native_stmt(code, nil, :set)
-        #code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\" />"
+        code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\"/>"
+        wrap_element_with_native_stmt(stmt_list, arg, code, nil, :set)
+        #code = "<c:set var=\"#{lhs}\" value=\"${#{rhs}}\"/>"
         #stmt_list << NativeStatement.new(code, :set)
-        #stmt_list << stag_stmt
+        #stmt_list << stag_stmt(arg)
         #stmt_list.concat(cont_stmts)
-        #stmt_list << etag_stmt
+        #stmt_list << etag_stmt(arg)
 
       when :if
-        code = "<c:choose><c:when test=\"${#{d_arg}}\">"
-        arg.wrap_element_with_native_stmt(code, "</c:when></c:choose>", :if)
-        #stmt_list << NativeStatement.new(code, :if)
-        #stmt_list << stag_stmt
+        start_code = "<c:choose><c:when test=\"${#{d_arg}}\">"
+        end_code   = "</c:when></c:choose>"
+        wrap_element_with_native_stmt(stmt_list, arg, start_code, end_code, :if)
+        #stmt_list << NativeStatement.new(start_code, :if)
+        #stmt_list << stag_stmt(arg)
         #stmt_list.concat(cont_stmts)
-        #stmt_list << etag_stmt
-        #stmt_list << NativeStatement.new("</c:when></c:choose>", :if)
+        #stmt_list << etag_stmt(arg)
+        #stmt_list << NativeStatement.new(end, :if)
 
       when :elseif, :else
-        unless ! stmt_list.empty? \
-               && (st=stmt_list[-1]).is_a?(NativeStatement) \
-               && (st.kind == :if || st.kind == :elseif)
-          msg = "'#{d_str}': previous statement should be 'if' or 'elseif'."
-          raise convert_error(msg, arg.stag_info.linenum)
-        end
+        error_when_last_stmt_is_not_if(stmt_list, arg)
         stmt_list.pop    # delete '</c:when></c:choose>'
         if d_name == :else
           kind = :else
-          code1 = "</c:when><c:otherwise>"
-          code2 = "</c:otherwise></c:choose>"
+          start_code = "</c:when><c:otherwise>"
+          end_code   = "</c:otherwise></c:choose>"
         else
           kind = :elseif
-          code1 = "</c:when><c:when test=\"${#{d_arg}}\">"
-          code2 = "</c:when></c:choose>"
+          start_code = "</c:when><c:when test=\"${#{d_arg}}\">"
+          end_code   = "</c:when></c:choose>"
         end
-        arg.wrap_element_with_native_stmt(code1, code2, kind)
-        #stmt_list << NativeStatement.new(code1, kind)
+        wrap_element_with_native_stmt(stmt_list, arg, start_code, end_code, kind)
+        #stmt_list << NativeStatement.new(start_code, kind)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)
         #stmt_list << etag_stmt
-        #stmt_list << NativeStatement.new(code2, kind)
+        #stmt_list << NativeStatement.new(end_code, kind)
 
       when :default, :Default, :DEFAULT
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
-        stmt_list << arg.stag_stmt
+        error_if_empty_tag(arg)
+        stmt_list << stag_stmt(arg)
         flag_escape = d_name == :default ? nil : (d_name == :Default)
         argstr = arg.cont_stmts[0].args[0]
         code =  "<c:out value=\"${#{d_arg}}\""
         code << " escapeXml=\"#{flag_escape}\"" unless flag_escape == nil
-        code << " default=#{argstr.dump} />"
+        code << " default=\"#{argstr}\"/>"
         stmt_list << NativeStatement.new_without_newline(code)
-        stmt_list << arg.etag_stmt
+        stmt_list << etag_stmt(arg)
 
       when :catch
         if d_arg && !d_arg.empty? && d_arg !~ /\A\w+\z/
@@ -167,8 +161,9 @@ module Kwartz
         stmt_list << NativeStatement.new("</c:catch>")
 
       when :forEach, :forTokens
-        stag, etag = eval "handle_jstl_#{d_name}(#{d_arg})"
-        arg.wrap_element_with_native_stmt(stag, etag, nil)
+        options = eval "{ #{d_arg} }"
+        stag, etag = self.__send__ "handle_jstl_#{d_name}", options
+        wrap_element_with_native_stmt(stmt_list, arg, stag, etag, nil)
         #stmt_list << NativeStatement.new(stag)
         #stmt_list << stag_stmt
         #stmt_list.concat(cont_stmts)
@@ -176,9 +171,10 @@ module Kwartz
         #stmt_list << NativeStatement.new(etag)
 
       when :redirect, :import, :url, :remove
-        lines = eval "handle_jstl_#{d_name}(#{d_arg})"
+        options = eval "{ #{d_arg} }"
+        lines = self.__send__ "handle_jstl_#{d_name}", options
         lines.each do |line|
-          stmt_list << NativeStatement.new(line)
+          stmt_list << NativeStatement.new(line.chomp)
         end
 
       else
@@ -226,39 +222,48 @@ module Kwartz
 
 
     def _handle_jstl_params(tagname, param_list, options)
-      stag, etag = _handle_jstl_tag(tagname, param_list, options)
-      lines = [stag]
+      stag, etag = _handle_jstl_tag(tagname, param_list, options, true)
       i = 0
-      options.each do |name, value|
-        i += 1
-        if value.is_a?(Symbol)
-          lines << " <c:param name=\"#{name}\" value=\"${#{value}}\"/>"
-        else
-          #lines << " <c:param name=\"#{name}\" value=\"#{value}\"/>"
-        end
-      end
-      if i == 0
-        stag.sub!(/>\z/, '/>')
+      unknown_param_names = options.keys - param_list
+      lines = []
+      if unknown_param_names.empty?
+        lines << stag.sub(/>\z/, '/>')
       else
+        lines << stag
+        unknown_param_names.each do |name|
+          value = options[name]
+          if value.is_a?(Symbol)
+            lines << " <c:param name=\"#{name}\" value=\"${#{value}}\"/>"
+          else
+            lines << " <c:param name=\"#{name}\" value=\"#{value}\"/>"
+          end
+        end
         lines << etag
       end
-      return lines
+      return lines.join("\n")
     end
 
 
-    def _handle_jstl_tag(tagname, param_list, options)
-      sb = "<c:#{tagname}"
-      param_list.each do |param|
-        key = nil
-        if options.key?(param.intern) ; key = param.intern
-        elsif options.key?(param)     ; key = param
+    def _handle_jstl_tag(tagname, param_list, options, ignore_unknown_option=false)
+      options.each do |name, value|
+        next if name.is_a?(String)
+        options[name.to_s] = options.delete(name)
+      end
+      option_names = options.keys
+      unless ignore_unknown_option
+        unkown_option_names = option_names - param_list
+        unless unkown_option_names.empty?
+          msg = "'#{unkown_option_names[0]}': unknown option for '#{tagname}' directive."
+          raise convert_error(msg, nil)   # TODO
         end
-        next if key == nil
-        value = options.delete(key)
+      end
+      sb = "<c:#{tagname}"
+      (param_list & option_names).each do |name|
+        value = options[name]
         if value.is_a?(Symbol)
-          sb << " #{param}=\"${#{value}}\""
+          sb << " #{name}=\"${#{value}}\""
         else
-          sb << " #{param}=\"#{value}\""
+          sb << " #{name}=\"#{value}\""
         end
       end
       sb << ">"
@@ -299,7 +304,7 @@ module Kwartz
 
 
     def initialize(properties={})
-      jstl_ver = properties[:jstl] || 1.2
+      jstl_ver = properties[:jstl] || Config::PROPERTY_JSTL
       super(jstl_ver < 1.2 ? JSTL11_EMBED_PATTERNS : JSTL12_EMBED_PATTERNS, properties)
       @jstl_ver = jstl_ver
       unless self.header

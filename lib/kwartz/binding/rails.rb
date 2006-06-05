@@ -93,7 +93,7 @@ module Kwartz
     ##
     ## everytime return true whenever directive name is unknown.
     ##
-    def handle(handler_arg)
+    def handle(stmt_list, handler_arg)
       ret = super
       return ret if ret
 
@@ -170,7 +170,7 @@ module Kwartz
       end #case
 
       ##
-      print_directive(arg, replace_elem)
+      print_directive(stmt_list, arg, replace_elem)
 
       return true      # everytime return true
 
@@ -251,7 +251,7 @@ module Kwartz
     end
 
 
-    def print_directive(handler_arg, replace_elem=true)
+    def print_directive(stmt_list, handler_arg, replace_elem=true)
       arg = handler_arg
       head_space = arg.stag_info.head_space
       tail_space = (arg.etag_info || arg.stag_info).tail_space
@@ -259,10 +259,10 @@ module Kwartz
       pargs << head_space if head_space
       pargs << NativeExpression.new("#{arg.directive_name} #{arg.directive_arg}")
       pargs << tail_space if tail_space
-      arg.stmt_list << PrintStatement.new(pargs)
+      stmt_list << PrintStatement.new(pargs)
       unless replace_elem
-        arg.stmt_list.concat(arg.cont_stmts)
-        arg.stmt_list << PrintStatement.new([arg.etag_info.tag_text])
+        stmt_list.concat(arg.cont_stmts)
+        stmt_list << PrintStatement.new([arg.etag_info.tag_text])
       end
     end
 

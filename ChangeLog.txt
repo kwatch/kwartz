@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.123 (2006-06-05)
+	- [refact] refactored around StatementHelper class
+	- [refact] integrate testdata files with kwartz-php
 
 : rev.122 (2006-06-03)
 	- [bugfix] Parser#scan_hook() now returns false when not hooked

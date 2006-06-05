@@ -6,115 +6,19 @@
 
 require "#{File.dirname(__FILE__)}/test.rb"
 
+filename = __FILE__.sub(/\.\w+$/, '.yaml')
+ydoc = YAML.load_file(filename)
 
-PDATA = <<END
-<html>
- <body>
-  <h1 id="doctitle">hoge</h1>
-  <table id="content">
-   <tr id="mark:list">
-    <td id="mark:item">item</td>
-   </tr>
-  </table>
- </body>
-</html>
-END
-
-
-ERUBY_PLOGIC = <<END
-#doctitle {
-  value: @title;
-  remove: "id";
-}
-#list {
-  logic: {
-    for item in @list
-      _elem
-    end
-  }
-}
-#item {
-  Value: item;
-}
-END
-
-
-ERUBY_OUTPUT = <<END
-<html>
- <body>
-  <h1><%= @title %></h1>
-  <table id="content">
-<%     for item in @list %>
-   <tr>
-    <td><%=h item %></td>
-   </tr>
-<%     end %>
-  </table>
- </body>
-</html>
-END
-
-
-PHP_PLOGIC = <<END
-#doctitle {
-  value: $title;
-  remove: "id";
-}
-#list {
-  logic: {
-    foreach ($list as $item) {
-      _elem();
-    }
-  }
-}
-#item {
-  Value: $item;
-}
-END
-
-
-PHP_OUTPUT = <<END
-<html>
- <body>
-  <h1><?php echo $title; ?></h1>
-  <table id="content">
-<?php     foreach ($list as $item) { ?>
-   <tr>
-    <td><?php echo htmlspecialchars($item); ?></td>
-   </tr>
-<?php     } ?>
-  </table>
- </body>
-</html>
-END
-
-
-YAML_DATA = <<END
-title:	kwartz example
-list:
-	- <aaa>
-	- b&b
-	- '"ccc"'
-END
-
-YAML_OUTPUT = <<END
-<html>
- <body>
-  <h1>kwartz example</h1>
-  <table id="content">
-   <tr>
-    <td>&lt;aaa&gt;</td>
-   </tr>
-   <tr>
-    <td>b&amp;b</td>
-   </tr>
-   <tr>
-    <td>&quot;ccc&quot;</td>
-   </tr>
-  </table>
- </body>
-</html>
-END
+PDATA = ydoc['pdata']
+ERUBY_PLOGIC = ydoc['plogic*']['eruby']
+ERUBY_OUTPUT = ydoc['expected*']['eruby']
+PHP_PLOGIC = ydoc['plogic*']['php']
+PHP_OUTPUT = ydoc['expected*']['php']
+IMPORT_PDATA = ydoc['import_pdata']
+IMPORT_PLOGIC = ydoc['import_plogic*']['eruby']
+LAYOUT = ydoc['layout']
+YAML_DATA = ydoc['yamldata']
+YAML_OUTPUT = ydoc['yamloutput']
 
 
 class File
@@ -261,18 +165,8 @@ class MainTest < Test::Unit::TestCase
     @pdata = PDATA
     @plogic = ERUBY_PLOGIC.sub(/^\#doctitle.*?\}/m, "#doctitle{logic:{\n_element(sectitle)\n}\n}")
     @expected = ERUBY_OUTPUT.sub(/^\s*<h1>.*?<\/h1>/, '<%= sectitle %>')
-    s = <<END
-<div>
-<span id="mark:sectitle">foo</span>
-</div>
-END
-    File.write('import1a.pdata', s)
-    s = <<END
-#sectitle {
-  elem: sectitle;
-}
-END
-    File.write('import1a.plogic', s)
+    File.write('import1a.pdata', IMPORT_PDATA)
+    File.write('import1a.plogic', IMPORT_PLOGIC)
     @argv = %w[-p import1,import1a -i import1a.pdata import1.pdata]
     begin
       _test
@@ -293,25 +187,9 @@ END
     # OK
     @pdata = PDATA
     @plogic = ERUBY_PLOGIC
-    s = <<END
-<?xml version="1.0" charset="utf8"?>
-<html>
- <head>
-  <title title="replace_content_with: content(doctitle)">layout file</title>
- </head>
- <body>
-
-  <div title="replace_element_with: element(content)">
-    foo
-    bar
-  </div>
-
- </body>
-</html>
-END
-    File.write('layout.html', s)
+    File.write('layout.html', LAYOUT)
     content_str = (ERUBY_OUTPUT =~ /^\s*<table.*?<\/table>/m) && $&
-    @expected = s.sub(/^(\s*)<title.*?<\/title>/, '\1<title><%= @title %></title>')
+    @expected = LAYOUT.sub(/^(\s*)<title.*?<\/title>/, '\1<title><%= @title %></title>')
     @expected.sub!(/^( *)<div .*?<\/div>/m, content_str)
     @argv = %w[-p layout1 -L layout.html layout1.pdata]
     begin
@@ -398,6 +276,7 @@ END
     # NG
     @argv = %w[-f untabify1.yaml -p untabify1 untabify1.pdata]
     @exception = ArgumentError   # yaml syntax error
+    _test
   end
 
 

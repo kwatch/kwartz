@@ -17,10 +17,10 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->
 
-  
   plogic*:
-  
+
     eruby: |
 	#list {
 	  attrs: 'bgcolor' color,
@@ -122,6 +122,7 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->
   
     php: |
 	<{{*<?php ?>*}}?xml version="1.0" encoding="UTF-8"?>
@@ -140,6 +141,7 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->
 
     jstl: |
 	{{*<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>*}}
@@ -158,6 +160,7 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->
   
     eperl: |
 	<?xml version="1.0" encoding="UTF-8"?>
@@ -176,3 +179,4 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->

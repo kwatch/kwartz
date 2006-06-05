@@ -69,6 +69,7 @@ module Kwartz
 
     ## called from parse() and initialize parser object
     def reset(input, filename='')
+      input  or raise ArgumentError.new("#{self.class.name}#reset() requires string argument.")
       @input   = input
       @filename = filename
       @linenum = 1       # 1 start
@@ -356,8 +357,8 @@ module Kwartz
           assert("@error=#{@error}")
         end
       end
-      @value.sub!(/\A\s*\n/, '')
-      @value.sub!(/^\s+\z/, '')
+      @value.sub!(/\A[ \t]*\n/, '')
+      @value.sub!(/^[ \t]+\z/, '')
       return @value
     end
 

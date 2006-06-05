@@ -238,17 +238,44 @@ module Kwartz
 
 
     ## raise errror if etag_info is null
-    def error_if_empty_tag(stag_info, etag_info, d_name, d_arg)
-      unless etag_info
-        raise convert_error("'#{d_name}:#{d_arg}': #{d_name} directive is not available with empty tag.", stag_info.linenum)
+    def error_if_empty_tag(handler_arg)
+      arg = handler_arg
+      unless arg.etag_info
+        d_name  = arg.directive_name
+        d_str   = arg.directive_str
+        msg = "'#{d_str}': #{d_name} directive is not available with empty tag."
+        raise convert_error(msg, arg.stag_info.linenum)
       end
     end
+
+
+    def error_when_last_stmt_is_not_if(stmt_list, handler_arg)
+      kind = _last_stmt_kind(stmt_list)
+      unless kind == :if || kind == :elseif
+        d_str = handler_arg.directive_str
+        linenum = handler_arg.stag_info.linenum
+        msg = "'#{d_str}': previous statement should be 'if' or 'elsif'."
+        raise convert_error(msg, linenum)
+      end
+    end
+
+
+    #private
+
+
+    def _last_stmt_kind(stmt_list)
+      return nil if stmt_list.nil? || stmt_list.empty?
+      stmt = stmt_list.last
+      return nil unless stmt.is_a?(NativeStatement)
+      return stmt.kind
+    end
+
 
   end
 
 
 
-  module PrintStatementHelper
+  module StatementHelper
 
 
     ## create print statement from text
@@ -314,6 +341,78 @@ module Kwartz
       args << native_expr
       args << tail_space if tail_space    # TextExpression.new(tail_space)
       return PrintStatement.new(args)
+    end
+
+
+    ## build print statement of start-tag
+    def stag_stmt(handler_arg)
+      arg = handler_arg
+      return build_print_stmt(arg.stag_info, arg.attr_info, arg.append_exprs)
+    end
+
+
+    ## build print statemetn of end-tag
+    def etag_stmt(handler_arg)
+      arg = handler_arg
+      return build_print_stmt(arg.etag_info, nil, nil)
+    end
+
+
+    def add_native_code(stmt_list, code, kind)
+      if code.is_a?(String)
+        stmt_list << NativeStatement.new(code, kind)
+      elsif code.is_a?(Array)
+        stmt_list.concat(code.collect {|line| NativeStatement.new(line, kind)})
+      end
+    end
+
+
+    def wrap_element_with_native_stmt(stmt_list, handler_arg, start_code, end_code, kind=nil)
+      add_native_code(stmt_list, start_code, kind)
+      stmt_list << stag_stmt(handler_arg)
+      stmt_list.concat(handler_arg.cont_stmts)
+      stmt_list << etag_stmt(handler_arg)
+      add_native_code(stmt_list, end_code, kind)
+    end
+
+
+    def wrap_content_with_native_stmt(stmt_list, handler_arg, start_code, end_code, kind=nil)
+      stmt_list << stag_stmt(handler_arg)
+      add_native_code(stmt_list, start_code, kind)
+      stmt_list.concat(handler_arg.cont_stmts)
+      add_native_code(stmt_list, end_code, kind)
+      stmt_list << etag_stmt(handler_arg)
+    end
+
+
+    def add_foreach_stmts(stmt_list, handler_arg, foreach_code, endforeach_code,
+                          content_only, counter, toggle, init_code, incr_code, toggle_code)
+      arg = handler_arg
+      stmt_list << stag_stmt(arg)                   if content_only
+      start_code.split(/\n/).each do |code|
+        stmt_list << NativeStatement.new(code, kind)
+      end if start_code
+      stmt_list << stag_stmt(arg)                   if !content_only
+      stmt_list.concat(arg.cont_stmts)
+      stmt_list << etag_stmt(arg)                   if !content_only
+      end_code.split(/\n/).each do |code|
+        stmt_list << NativeStatement.new(code, kind)
+      end
+      stmt_list << etag_stmt(arg)                   if content_only
+    end
+
+
+    def add_native_expr_with_default(stmt_list, handler_arg,
+                                     expr_code, flag_escape,
+                                     if_code, else_code, endif_code)
+      arg = handler_arg
+      stmt_list << stag_stmt(arg)
+      stmt_list << NativeStatement.new_without_newline(if_code, :if)
+      stmt_list << PrintStatement.new([ NativeExpression.new(expr_code, flag_escape) ])
+      stmt_list << NativeStatement.new_without_newline(else_code, :else)
+      stmt_list.concat(arg.cont_stmts)
+      stmt_list << NativeStatement.new_without_newline(endif_code, :else)
+      stmt_list << etag_stmt(arg)
     end
 
 
@@ -446,11 +545,11 @@ module Kwartz
   ## argument data for handler
   ##
   class HandlerArgument
-    include PrintStatementHelper
+    include StatementHelper
 
 
     def initialize(directive_name, directive_arg, directive_str,
-                   stag_info, etag_info, cont_stmts, attr_info, append_exprs, stmt_list)
+                   stag_info, etag_info, cont_stmts, attr_info, append_exprs)
       @directive_name = directive_name
       @directive_arg  = directive_arg
       @directive_str  = directive_str
@@ -459,41 +558,11 @@ module Kwartz
       @cont_stmts     = cont_stmts
       @attr_info      = attr_info
       @append_exprs   = append_exprs
-      @stmt_list      = stmt_list
     end
 
 
     attr_reader :directive_name, :directive_arg, :directive_str
     attr_reader :stag_info, :etag_info, :cont_stmts, :attr_info, :append_exprs
-    attr_reader :stmt_list
-
-
-    def stag_stmt
-      return build_print_stmt(@stag_info, @attr_info, @append_exprs)
-    end
-
-
-    def etag_stmt
-      return build_print_stmt(@etag_info, nil, nil)
-    end
-
-
-    def wrap_element_with_native_stmt(start_code, end_code, kind=nil)
-      @stmt_list << NativeStatement.new(start_code, kind) if start_code
-      @stmt_list << stag_stmt()
-      @stmt_list.concat(@cont_stmts)
-      @stmt_list << etag_stmt()
-      @stmt_list << NativeStatement.new(end_code, kind) if end_code
-    end
-
-
-    def wrap_content_with_native_stmt(start_code, end_code, kind=nil)
-      @stmt_list << stag_stmt()
-      @stmt_list << NativeStatement.new(start_code, kind) if start_code
-      @stmt_list.concat(@cont_stmts)
-      @stmt_list << NativeStatement.new(end_code, kind) if end_code
-      @stmt_list << etag_stmt()
-    end
 
 
   end
@@ -506,7 +575,7 @@ module Kwartz
   class Handler
     include Assertion
     include ConverterHelper
-    include PrintStatementHelper
+    include StatementHelper
     include ElementExpander
 
 
@@ -565,12 +634,11 @@ module Kwartz
     ##
     ## return true if directive name is one of 'stag', 'etag', 'elem', 'cont', and 'value',
     ## else return false.
-    def handle(handler_arg)
+    def handle(stmt_list, handler_arg)
       arg = handler_arg
       d_name = arg.directive_name
       d_arg  = arg.directive_arg
       d_str  = arg.directive_str
-      stmt_list = arg.stmt_list
 
       case d_name
 
@@ -600,10 +668,10 @@ module Kwartz
           @elem_info_table[name] = elem_info
         end
         #stmt_list << ExpandStatement.new(:element, name)     # lazy expantion
-        expand_element_info(elem_info, arg.stmt_list)
+        expand_element_info(elem_info, stmt_list)
 
       when :stag, :Stag, :STAG
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
+        error_if_empty_tag(arg)
         flag_escape = d_name == :stag ? nil : (d_name == :Stag)
         expr = NativeExpression.new(d_arg, flag_escape)
         stmt_list << build_print_expr_stmt(expr, arg.stag_info, nil)
@@ -611,7 +679,7 @@ module Kwartz
         stmt_list << arg.etag_stmt
 
       when :etag, :Etag, :ETAG
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
+        error_if_empty_tag(arg)
         flag_escape = d_name == :etag ? nil : (d_name == :Etag)
         expr = NativeExpression.new(d_arg, flag_escape)
         stmt_list << arg.stag_stmt
@@ -624,7 +692,7 @@ module Kwartz
         stmt_list << build_print_expr_stmt(expr, arg.stag_info, arg.etag_info)
 
       when :cont, :Cont, :CONT, :value, :Value, :VALUE
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)
+        error_if_empty_tag(arg)
         arg.stag_info.tail_space = arg.etag_info.head_space = nil    # delete spaces
         pargs = build_print_args(arg.stag_info, arg.attr_info, arg.append_exprs)
         flag_escape = (d_name == :cont || d_name == :value) ? nil : (d_name == :Cont || d_name == :Value)
@@ -651,14 +719,14 @@ module Kwartz
         with_content = arr[3] == 'content'
         name = d_arg
         #
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg)   if replace_cont
+        error_if_empty_tag(arg)   if replace_cont
         stmt_list << arg.stag_stmt if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
           raise convert_error("'#{d_str}': element '#{name}' not found.", arg.stag_info.linenum)
         end
-        expand_element_info(elem_info, arg.stmt_list, with_content)
+        expand_element_info(elem_info, stmt_list, with_content)
         stmt_list << arg.etag_stmt if replace_cont
 
       when :replace_element_with, :replace_content_with, :replace, :placeholder
@@ -670,7 +738,7 @@ module Kwartz
         replace_cont = d_name == :replace_content_with || d_name == :placeholder
         with_content = kind == 'content'
         #
-        error_if_empty_tag(arg.stag_info, arg.etag_info, d_name, d_arg) if replace_cont
+        error_if_empty_tag(arg) if replace_cont
         stmt_list << arg.stag_stmt if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
@@ -722,7 +790,7 @@ module Kwartz
   ##
   class Converter
     include ConverterHelper
-    include PrintStatementHelper
+    include StatementHelper
 
 
     def initialize(handler, properties={})
@@ -904,13 +972,13 @@ module Kwartz
         case d_name
         when :attr, :Attr, :ATTR
           handler_args = HandlerArgument.new(d_name, d_arg, d_str, stag_info, etag_info,
-                                             cont_stmts, attr_info, append_exprs, stmt_list)
-          @handler.handle(handler_args)
+                                             cont_stmts, attr_info, append_exprs)
+          @handler.handle(stmt_list, handler_args)
         when :append, :Append, :APPEND
           append_exprs ||= []
           handler_args = HandlerArgument.new(d_name, d_arg, d_str, stag_info, etag_info,
-                                             cont_stmts, attr_info, append_exprs, stmt_list)
-          @handler.handle(handler_args)
+                                             cont_stmts, attr_info, append_exprs)
+          @handler.handle(stmt_list, handler_args)
         else
           if directive_name
             raise convert_error("'#{d_str}': not available with '#{directive_name}' directive.", stag_info.linenum)
@@ -929,8 +997,8 @@ module Kwartz
       ## handle other directives
       handler_args = HandlerArgument.new(directive_name, directive_arg, directive_str,
                                          stag_info, etag_info, cont_stmts,
-                                         attr_info, append_exprs, stmt_list)
-      ret = @handler.handle(handler_args)
+                                         attr_info, append_exprs)
+      ret = @handler.handle(stmt_list, handler_args)
       if directive_name && !ret
         raise convert_error("'#{directive_str}': unknown directive.", stag_info.linenum)
       end

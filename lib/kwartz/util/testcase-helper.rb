@@ -12,13 +12,23 @@ class Test::Unit::TestCase   # :nodoc:
 
 
   def self._untabify(str, width=8)         # :nodoc:
-    sb = []
-    str.scan(/(.*?)\t/m) do |s, |
-      len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
-      sb << s << (" " * (width - len % width))
+    list = str.split(/\t/)
+    last = list.pop
+    buf = []
+    list.each do |s|
+      column = (pos = s.rindex(?\n)) ? s.length - pos - 1 : s.length
+      n = width - (column % width)
+      buf << s << (" " * n)
     end
-    str = (sb << $').join if $'
-    return str
+    buf << last
+    return buf.join
+    #sb = []
+    #str.scan(/(.*?)\t/m) do |s, |
+    #  len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+    #  sb << s << (" " * (width - len % width))
+    #end
+    #str = (sb << $').join if $'
+    #return str
   end
 
 

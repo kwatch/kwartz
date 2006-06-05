@@ -420,13 +420,27 @@ module Kwartz
 
 
     def untabify(str, width=8)
-      sb = ''
-      str.scan(/(.*?)\t/m) do |s, |
-        len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
-        sb << s << (" " * (width - len % width))
+      list = str.split(/\t/)
+      last = list.pop
+      buf = []
+      list.each do |s|
+        column = (pos = s.rindex(?\n)) ? s.length - pos - 1 : s.length
+        n = width - (column % width)
+        buf << s << (" " * n)
       end
-      return $' ? (sb << $') : str
+      buf << last
+      return buf.join
     end
+    #--
+    #def untabify(str, width=8)
+    #  sb = ''
+    #  str.scan(/(.*?)\t/m) do |s, |
+    #    len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+    #    sb << s << (" " * (width - len % width))
+    #  end
+    #  return $' ? (sb << $') : str
+    #end
+    #++
 
 
     def intern_hash_keys(obj, done={})
