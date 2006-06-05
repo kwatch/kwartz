@@ -15,6 +15,9 @@ require_once('Kwartz/KwartzConverter.php');
 require_once('Kwartz/KwartzTranslator.php');
 
 require_once('Kwartz/Binding/Php.php');
+require_once('Kwartz/Binding/Eruby.php');
+require_once('Kwartz/Binding/Jstl.php');
+require_once('Kwartz/Binding/Eperl.php');
 
 error_reporting(E_ALL);
 
@@ -105,8 +108,10 @@ class KwartzMain {
         $version = kwartz_array_get($options, 'v');
         if ($help || $version) {
             $s = '';
-            if ($options['v']) $s .= $this->_version() . "\n";
-            if ($options['h']) $s .= $this->_help();
+            if (kwartz_array_get($options, 'v'))
+                $s .= $this->_version() . "\n";
+            if (kwartz_array_get($options, 'h'))
+                $s .= $this->_help();
             file_put_contents('php://stderr', $s);
             return null;
         }
@@ -136,6 +141,9 @@ class KwartzMain {
         $lang = kwartz_array_get($options, 'l', KWARTZ_PROPERTY_LANG);
         switch ($lang) {
         case 'php':
+        case 'eruby':
+        case 'jstl':
+        case 'eperl':
             // ok
             break;
         default:
@@ -143,8 +151,8 @@ class KwartzMain {
             throw $this->_error($msg);
         }
         $Lang = ucfirst($lang);
-        $handler_class = "Kwartz{$Lang}Handler";
-        $translator_class = "Kwartz{$Lang}Translator";
+        $handler_klass = "Kwartz{$Lang}Handler";
+        $translator_klass = "Kwartz{$Lang}Translator";
 
         // require libraries
         $requires = kwartz_array_get($options, 'r');
@@ -182,7 +190,7 @@ class KwartzMain {
         }
 
         // create converter
-        $handler = new $handler_class($ruleset_list, $properties);
+        $handler = new $handler_klass($ruleset_list, $properties);
         $converter = new KwartzTextConverter($handler, $properties);
 
         // import-files and layout-file
@@ -238,7 +246,7 @@ class KwartzMain {
         if ($nl == "\r\n" && ! array_key_exists('nl', $properties)) {
             $properties['nl'] = $nl;
         }
-        $translator = new $translator_class($properties);
+        $translator = new $translator_klass($properties);
         $output = $translator->translate($stmt_list);
 
         // load YAML file and evaluate eRuby script
@@ -319,32 +327,33 @@ class KwartzMain {
     function _help() {
         $command = basename($this->command);
         $sb = array();
-        $sb[] = "kwartz-php - a template system realized 'Independence of Presentation Logic'\n";
-        $sb[] = "Usage: {$command} [..options..] [-p plogic] file.html [file2.html ...]\n";
-        $sb[] = "  -h             : help\n";
-        $sb[] = "  -v             : version\n";
-        $sb[] = "  -e             : alias of '--escape=true'\n";
-        $sb[] = "  -l lang        : eruby/php/eperl/rails/jstl (default 'eruby')\n";
-        #$sb[] = "  -k kanji       : euc/sjis/utf8 (default nil)\n";
-        $sb[] = "  -r library,... : require libraries\n";
-        $sb[] = "  -p plogic,...  : presentation logic files\n";
-        $sb[] = "  -i pdata,...   : import presentation data files\n";
-        $sb[] = "  -L layoutfile  : layout file ('-L f1 f2' is equivalent to '-i f2 f1')\n";
-        $sb[] = "  -x elem-id     : extract content of element marked by elem-id\n";
-        $sb[] = "  -X elem-id     : extract element marked by elem-id\n";
-        $sb[] = "  -f yamlfile    : YAML file for context values\n";
-        $sb[] = "  -t             : expand tab character in YAML file\n";
-        #$sb[] = "  -S             : convert mapping key from string to symbol in YAML file\n";
-        $sb[] = "  --dattr=str    : directive attribute name\n";
-        $sb[] = "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n";
-        $sb[] = "  --even=value   : even value for FOREACH/LOOP directive (default \"'even'\")\n";
-        $sb[] = "  --header=str   : header text\n";
-        $sb[] = "  --footer=str   : footer text\n";
-        $sb[] = "  --delspan={true|false} : delete dummy span tag (default false)\n";
-        $sb[] = "  --escape={true|false}  : escape (sanitize) (default false)\n";
-        $sb[] = "  --jstl={1.2|1.1}       : JSTL version (default 1.2)\n";
-        $sb[] = "  --charset=charset      : character set for JSTL (default none)\n";
-        return join($sb);
+        $sb[] = "kwartz-php - a template system realized 'Independence of Presentation Logic'";
+        $sb[] = "Usage: {$command} [..options..] [-p plogic] file.html [file2.html ...]";
+        $sb[] = "  -h             : help";
+        $sb[] = "  -v             : version";
+        $sb[] = "  -e             : alias of '--escape=true'";
+        $sb[] = "  -l lang        : php/eruby/jstl/eperl (default 'php')";
+        #$sb[] = "  -k kanji       : euc/sjis/utf8 (default nil)";
+        #$sb[] = "  -r library,... : require libraries";
+        $sb[] = "  -p plogic,...  : presentation logic files";
+        $sb[] = "  -i pdata,...   : import presentation data files";
+        $sb[] = "  -L layoutfile  : layout file ('-L f1 f2' is equivalent to '-i f2 f1')";
+        $sb[] = "  -x elem-id     : extract content of element marked by elem-id";
+        $sb[] = "  -X elem-id     : extract element marked by elem-id";
+        $sb[] = "  -f yamlfile    : YAML file for context values";
+        $sb[] = "  -t             : expand tab character in YAML file";
+        #$sb[] = "  -S             : convert mapping key from string to symbol in YAML file";
+        $sb[] = "  --dattr=str    : directive attribute name";
+        $sb[] = "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")";
+        $sb[] = "  --even=value   : even value for FOREACH/LOOP directive (default \"'even'\")";
+        $sb[] = "  --header=str   : header text";
+        $sb[] = "  --footer=str   : footer text";
+        $sb[] = "  --delspan={true|false} : delete dummy span tag (default false)";
+        $sb[] = "  --escape={true|false}  : escape (sanitize) (default false)";
+        $sb[] = "  --jstl={1.2|1.1}       : JSTL version (default 1.2)";
+        $sb[] = "  --charset=charset      : character set for JSTL (default none)";
+        $sb[] = '';
+        return join($sb, "\n");
     }
 
 

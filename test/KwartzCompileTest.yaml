@@ -19,9 +19,8 @@
 	</html>
 	<!-- end -->
 
-  
   plogic*:
-  
+
     eruby: |
 	#list {
 	  attrs: 'bgcolor' color,
@@ -161,6 +160,7 @@
 	    </table>
 	  </body>
 	</html>
+	<!-- end -->
   
     eperl: |
 	<?xml version="1.0" encoding="UTF-8"?>

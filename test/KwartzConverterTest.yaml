@@ -10,13 +10,19 @@
 	  <span title="id: baz">BAZ</span>
 	  <span title="mark:poo" class="foo">POO</span>
 	</p>
-    php: |
+
+    php: &delspan1_pdata |
 	<p>
 	  <span id="foo">FOO</span>
 	  <span id="mark:bar">BAR</span>
 	  <span title="id(baz)">BAZ</span>
 	  <span title="mark(poo)" class="foo">POO</span>
 	</p>
+
+    jstl: *delspan1_pdata
+    
+    eperl: *delspan1_pdata
+
   expected*:
     eruby: &delspan2_expected |
 	print("<p>\n")
@@ -33,7 +39,12 @@
 	print("POO")
 	print("</span>\n")
 	print("</p>\n")
+
     php: *delspan2_expected
+
+    jstl: *delspan2_expected
+
+    eperl: *delspan2_expected
 
 ###
 - name:    delspan2
@@ -46,12 +57,28 @@
 	  <span title="append: ' checked'">APPEND</span>
 	  <span title="append: ' checked'" class="foo">APPEND</span>
 	</p>
-    php: |
+
+    php: &delspan2_pdata |
 	<p>
 	  <span title="attr('class', $classname)">ATTR</span>
 	  <span title="append(' checked')">APPEND</span>
 	  <span title="append(' checked')" class="foo">APPEND</span>
 	</p>
+
+    jstl: |
+	<p>
+	  <span title="attr('class', classname)">ATTR</span>
+	  <span title="append(' checked')">APPEND</span>
+	  <span title="append(' checked')" class="foo">APPEND</span>
+	</p>
+
+    eperl: |
+	<p>
+	  <span title="attr('class', $classname)">ATTR</span>
+	  <span title="append(' checked')">APPEND</span>
+	  <span title="append(' checked')" class="foo">APPEND</span>
+	</p>
+
   expected*:
     eruby: |
 	print("<p>\n")
@@ -65,7 +92,34 @@
 	print("APPEND")
 	print("</span>\n")
 	print("</p>\n")
+
     php: |
+	print("<p>\n")
+	print("  <span class=\"", <%=$classname%>, "\">")
+	print("ATTR")
+	print("</span>\n")
+	print("  <span", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("  <span class=\"foo\"", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("</p>\n")
+
+    jstl: |
+	print("<p>\n")
+	print("  <span class=\"", <%=classname%>, "\">")
+	print("ATTR")
+	print("</span>\n")
+	print("  <span", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("  <span class=\"foo\"", <%=' checked'%>, ">")
+	print("APPEND")
+	print("</span>\n")
+	print("</p>\n")
+
+    eperl: |
 	print("<p>\n")
 	print("  <span class=\"", <%=$classname%>, "\">")
 	print("ATTR")
@@ -88,18 +142,45 @@
 	  <span title="value: expr">EXPR</span>
 	  <span title="value: expr" class="foo">EXPR</span>
 	</p>
+
     php: |
 	<p>
 	  <span title="value($expr)">EXPR</span>
 	  <span title="value($expr)" class="foo">EXPR</span>
 	</p>
+
+    jstl: |
+	<p>
+	  <span title="value(expr)">EXPR</span>
+	  <span title="value(expr)" class="foo">EXPR</span>
+	</p>
+
+    eperl: |
+	<p>
+	  <span title="value($expr)">EXPR</span>
+	  <span title="value($expr)" class="foo">EXPR</span>
+	</p>
+
   expected*:
     eruby: |
 	print("<p>\n")
 	print(<%=expr%>)
 	print("  <span class=\"foo\">", <%=expr%>, "</span>\n")
 	print("</p>\n")
+
     php: |
+	print("<p>\n")
+	print(<%=$expr%>)
+	print("  <span class=\"foo\">", <%=$expr%>, "</span>\n")
+	print("</p>\n")
+
+    jstl: |
+	print("<p>\n")
+	print(<%=expr%>)
+	print("  <span class=\"foo\">", <%=expr%>, "</span>\n")
+	print("</p>\n")
+
+    eperl: |
 	print("<p>\n")
 	print(<%=$expr%>)
 	print("  <span class=\"foo\">", <%=$expr%>, "</span>\n")
@@ -116,12 +197,28 @@
 	  <span title="elsif x < 0">negative</span>
 	  <span title="else">zero</span>
 	</p>
+
     php: |
 	<p>
 	  <span title="if($x > 0)">positive</span>
 	  <span title="elseif($x < 0)">negative</span>
 	  <span title="else">zero</span>
 	</p>
+
+    jstl: |
+	<p>
+	  <span title="if(x > 0)">positive</span>
+	  <span title="elseif(x < 0)">negative</span>
+	  <span title="else">zero</span>
+	</p>
+
+    eperl: |
+	<p>
+	  <span title="if($x > 0)">positive</span>
+	  <span title="elsif($x < 0)">negative</span>
+	  <span title="else">zero</span>
+	</p>
+
   plogic: |
   expected*:
     eruby: |
@@ -140,6 +237,7 @@
 	print()
 	<%end%>
 	print("</p>\n")
+
     php: |
 	print("<p>\n")
 	<%if ($x > 0) {%>
@@ -156,6 +254,41 @@
 	print()
 	<%}%>
 	print("</p>\n")
+
+    jstl: |
+	print("<p>\n")
+	<%<c:choose><c:when test="${x > 0}">%>
+	print()
+	print("positive")
+	print()
+	<%</c:when><c:when test="${x < 0}">%>
+	print()
+	print("negative")
+	print()
+	<%</c:when><c:otherwise>%>
+	print()
+	print("zero")
+	print()
+	<%</c:otherwise></c:choose>%>
+	print("</p>\n")
+
+    eperl: |
+	print("<p>\n")
+	<%if ($x > 0) {%>
+	print()
+	print("positive")
+	print()
+	<%} elsif ($x < 0) {%>
+	print()
+	print("negative")
+	print()
+	<%} else {%>
+	print()
+	print("zero")
+	print()
+	<%}%>
+	print("</p>\n")
+
 
 ###
 #- name:    span2
@@ -207,11 +340,19 @@
 	bar
 	baz
     php: *unmatched_pdata
+    jstl: *unmatched_pdata
+    eperl: *unmatched_pdata
+
   plogic*:
     eruby: |
     php: |
+    jstl: |
+    eperl: |
+
   expected*:
     eruby: &unmatched_expected |
         print("foo\nbar\nbaz\n")
-    php: *unmatched_expected
+    php:  *unmatched_expected
+    jstl: *unmatched_expected
+    eperl: *unmatched_expected
 

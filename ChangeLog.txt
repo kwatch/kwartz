@@ -3,6 +3,12 @@
 .?lastupdate:  $Date$
 
 
+: rev.63 (2006-06-05)
+	- [enhance] add Binding/Eruby.php
+	- [enhance] add Binding/Jstl.php
+	- [enhance] add Binding/Eperl.php
+	- [change] add KwartzHandlerHelper class
+
 : rev.62 (2006-06-04)
 	- [enhance] test/*.{php,yaml} add
 

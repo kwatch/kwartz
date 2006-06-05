@@ -326,7 +326,8 @@ class KwartzStatementBuilder {
      *  create PrintStatement for TagInfo
      */
     function build_print_stmt($taginfo, $attr_info, $append_exprs) {
-        $args = $this->build_print_args($taginfo, $attr_info, $append_exprs);
+        //$args = $this->build_print_args($taginfo, $attr_info, $append_exprs);
+        $args = KwartzStatementBuilder::build_print_args($taginfo, $attr_info, $append_exprs);
         return new KwartzPrintStatement($args);
     }
 
@@ -352,6 +353,7 @@ class KwartzStatementBuilder {
 }
 
 
+
 /**
  *  arguments for handler
  */
@@ -366,8 +368,6 @@ class KwartzHandlerArgument {
     var $cont_stmts;
     var $attr_info;
     var $append_exprs;
-    //
-    var $builder;
 
 
     function __construct($directive_name, $directive_arg, $directive_str,
@@ -385,41 +385,140 @@ class KwartzHandlerArgument {
     }
 
 
-    function stag_stmt() {
-        return $this->builder->build_print_stmt($this->stag_info, $this->attr_info, $this->append_exprs);
+}
+
+
+
+/**
+ *  helper methods for Handler
+ */
+class KwartzHandlerHelper {
+
+
+    var $hander;
+
+
+    function __construct($handler) {
+        $this->handler = $handler;
     }
 
 
-    function etag_stmt() {
-        return $this->builder->build_print_stmt($this->etag_info, null, null);
+    function _error($message, $linenum=null) {
+        $filename = $this->handler->filename;
+        return new KwartzConvertionException($message, $filename, $linenum);
     }
 
 
-    function wrap_element_with_native_stmt(&$stmt_list, $start_code, $end_code, $kind=null) {
+    function error_if_empty_tag($handler_arg) {
+        if (! $handler_arg->etag_info) {
+            $d_name = $handler_arg->directive_name;
+            $d_str  = $handler_arg->directive_str;
+            $msg = "'{$d_str}': {$d_name} directive is not available with empty tag.";
+            throw $this->_error($msg, $handler_arg->stag_info->linenum);
+        }
+    }
+
+
+    function last_stmt_kind(&$stmt_list) {
+        $n = count($stmt_list);
+        if (! $n)
+            return null;
+        $stmt = $stmt_list[$n - 1];
+        if (! ($stmt instanceof KwartzNativeStatement))
+            return null;
+        return $stmt->kind;
+    }
+
+
+    function error_when_last_stmt_is_not_if(&$stmt_list) {
+        $last_stmt_kind = $this->last_stmt_kind($stmt_list);
+        if ($last_stmt_kind != 'if' && $last_stmt_kind != 'elseif') {
+            $msg = "'{$d_str}': previous statement must be 'if' or 'else if'.";
+            throw $this->_error($msg, $arg->stag_info->linenum);
+        }
+    }
+
+
+    function stag_stmt($handler_arg) {
+        return KwartzStatementBuilder::build_print_stmt($handler_arg->stag_info,
+                                                        $handler_arg->attr_info,
+                                                        $handler_arg->append_exprs);
+    }
+
+
+    function etag_stmt($handler_arg) {
+        return KwartzStatementBuilder::build_print_stmt($handler_arg->etag_info,
+                                                        null, null);
+    }
+
+
+    function wrap_element_with_native_stmt(&$stmt_list, $handler_arg,
+                                           $start_code, $end_code, $kind=null) {
         if ($start_code)
             $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
-        $stmt_list[] = $this->stag_stmt();
-        foreach ($this->cont_stmts as $stmt)
+        $stmt_list[] = $this->stag_stmt($handler_arg);
+        foreach ($handler_arg->cont_stmts as $stmt)
             $stmt_list[] = $stmt;
-        $stmt_list[] = $this->etag_stmt();
+        $stmt_list[] = $this->etag_stmt($handler_arg);
         if ($end_code)
             $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
     }
 
 
-    function wrap_content_with_native_stmt(&$stmt_list, $start_code, $end_code, $kind=null) {
-        $stmt_list[] = $this->stag_stmt();
+    function wrap_content_with_native_stmt(&$stmt_list, $handler_arg,
+                                           $start_code, $end_code, $kind=null) {
+        $stmt_list[] = $this->stag_stmt($handler_arg);
         if ($start_code)
             $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
-        foreach ($this->cont_stmts as $stmt)
+        foreach ($handler_arg->cont_stmts as $stmt)
             $stmt_list[] = $stmt;
         if ($end_code)
             $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
-        $stmt_list[] = $this->etag_stmt();
+        $stmt_list[] = $this->etag_stmt($handler_arg);
+    }
+
+
+    function add_foreach_stmts(&$stmt_list, $handler_arg,
+                               $foreach_code, $endforeach_code,
+                               $content_only, $counter, $toggle,
+                               $init_code, $incr_code, $toggle_code) {
+        $arg = $handler_arg;
+        $c_only = $content_only;
+        if ($c_only)   $stmt_list[] = $this->stag_stmt($arg);
+        if ($counter)  $stmt_list[] = new KwartzNativeStatement($init_code);
+        if (true)      $stmt_list[] = new KwartzNativeStatement($foreach_code, 'foreach');
+        if ($counter)  $stmt_list[] = new KwartzNativeStatement($incr_code);
+        if ($toggle)   $stmt_list[] = new KwartzNativeStatement($toggle_code);
+        if (! $c_only) $stmt_list[] = $this->stag_stmt($arg);
+        if (true)      kwartz_array_concat($stmt_list, $arg->cont_stmts);
+        if (! $c_only) $stmt_list[] = $this->etag_stmt($arg);
+        if (true)      $stmt_list[] = new KwartzNativeStatement($endforeach_code, 'foreach');
+        if ($c_only)   $stmt_list[] = $this->etag_stmt($arg);
+    }
+
+
+    function add_native_expr_with_default(&$stmt_list, $handler_arg,
+                                          $expr_code, $flag_escape,
+                                          $if_code, $else_code, $endif_code) {
+        $stmt_list[] = $this->stag_stmt($handler_arg);
+        $stmt = new KwartzNativeStatement($if_code, 'if');
+        $stmt->no_newline = true;
+        $stmt_list[] = $stmt;
+        $pargs = array(new KwartzNativeExpression($expr_code, $flag_escape));
+        $stmt_list[] = new KwartzPrintStatement($pargs);
+        $stmt = new KwartzNativeStatement($else_code, 'else');
+        $stmt->no_newline = true;
+        $stmt_list[] = $stmt;
+        kwartz_array_concat($stmt_list, $handler_arg->cont_stmts);
+        $stmt = new KwartzNativeStatement($endif_code, 'else');
+        $stmt->no_newline = true;
+        $stmt_list[] = $stmt;
+        $stmt_list[] = $this->etag_stmt($handler_arg);
     }
 
 
 }
+
 
 
 /**
@@ -437,6 +536,7 @@ abstract class KwartzHandler {
     var $even;      // string ("'even'")
     var $filename;
     var $builder;   // KwartzStatementBuilder
+    var $helper;    // KwartzHandlerHelper
 
 
     function __construct($elem_rulesets=array(), $properties=array()) {
@@ -452,6 +552,7 @@ abstract class KwartzHandler {
         $this->even     = kwartz_array_get($properties, 'even', KWARTZ_PROPERTY_EVEN);
         $this->filename = null;
         $this->builder  = new KwartzStatementBuilder();
+        $this->helper   = new KwartzHandlerHelper($this);
     }
 
 
@@ -490,13 +591,6 @@ abstract class KwartzHandler {
         return new KwartzConvertionException($message, $this->filename, $linenum);
     }
 
-
-    function _error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg) {
-        if (! $etag_info) {
-            $msg = "'{$d_name}':{$d_name}': {$d_name} directive is not available with empty tag.";
-            throw _error($msg, $linenum);
-        }
-    }
 
 
     /**
@@ -554,7 +648,7 @@ abstract class KwartzHandler {
         case 'stag':
         case 'Stag':
         case 'STAG':
-            $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
+            $this->helper->error_if_empty_tag($arg);
             $flag_escape = $d_name == 'stag' ? null : ($d_name == 'Stag');
             $expr = new KwartzNativeExpression($d_arg, $flag_escape);
             $stmt_list[] = $this->builder->build_print_expr_stmt($expr, $stag_info, null);
@@ -565,7 +659,7 @@ abstract class KwartzHandler {
         case 'etag':
         case 'Etag':
         case 'ETAG':
-            $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
+            $this->helper->error_if_empty_tag($arg);
             $flag_escape = $d_name == 'etag' ? null : ($d_name == 'Etag');
             $expr = new KwartzNativeExpression($d_arg, $flag_escape);
             $stmt_list[] = $this->builder->build_print_stmt($stag_info, $attr_info, $append_exprs);
@@ -587,7 +681,7 @@ abstract class KwartzHandler {
         case 'value':
         case 'Value':
         case 'VALUE':
-            $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
+            $this->helper->error_if_empty_tag($arg);
             $stag_info->tail_space = $etag_ifo->head_space = null;   // delete spaces
             $args = $this->builder->build_print_args($stag_info, $attr_info, $append_exprs);
             $flag_escape = ($d_name == 'cont' || $d_name == 'value') ? null : ($d_name == 'Cont' || $d_name == 'Value');
@@ -625,8 +719,8 @@ abstract class KwartzHandler {
             $with_content = preg_match('/_content$/', $d_name);
             $name = $d_arg;
             if ($replace_cont) {
-                $this->_error_if_empty_tag($stag_info, $etag_info, $d_name, $d_arg);
-                $stmt_list[] = $this->builder->build_print_stmt($stag_info, $attr_info, $append_exprs);
+                $this->helper->error_if_empty_tag($arg);
+                $stmt_list[] = $this->helper->stag_stmt($arg);
             }
             if (array_key_exists($name, $this->_elem_info_table)) {
                 $elem_info = $this->_elem_info_table[$name];
@@ -636,7 +730,7 @@ abstract class KwartzHandler {
             }
             $this->expand_element_info($elem_info, $stmt_list, $with_content);
             if ($replace_cont) {
-                $stmt_list[] = $this->builder->build_print_stmt($etag_info, null, null);
+                $stmt_list[] = $this->helper->etag_stmt($arg);
             }
             break;
 
@@ -654,8 +748,8 @@ abstract class KwartzHandler {
             $with_content = $kind == 'content';
             //
             if ($replace_cont) {
-                $this->_error_if_empty_tag($arg->stag_info, $arg->etag_info, $d_name, $d_arg);
-                $stmt_list[] = $arg->stag_stmt();
+                $this->helper->error_if_empty_tag($arg);
+                $stmt_list[] = $this->helper->stag_stmt($arg);
             }
             $elem_info = kwartz_array_get($this->_elem_info_table, $name);
             if (! $elem_info) {
@@ -664,7 +758,7 @@ abstract class KwartzHandler {
             }
             $this->expand_element_info($elem_info, $stmt_list, $with_content);
             if ($replace_cont) {
-                $stmt_list[] = $arg->etag_stmt();
+                $stmt_list[] = $this->helper->etag_stmt($arg);
             }
             break;
 
@@ -788,6 +882,7 @@ abstract class KwartzHandler {
         }
     }
 
+
 }
 
 
@@ -824,6 +919,7 @@ class KwartzTestHandler extends KwartzHandler {
         return '%s: %s';
     }
 
+
 }
 
 
@@ -851,16 +947,6 @@ abstract class KwartzConverter {
      */
     abstract function convert($input, $filename='');
 
-
-    static $class_table = array();
-
-    static function register_class($style, $class) {
-        self::$class_table[$style] = $class;
-    }
-
-    static function get_class($style) {
-        return kwartz_array_get(self::$class_table, $style, null);
-    }
 
 }
 
@@ -932,7 +1018,6 @@ class KwartzTextConverter extends KwartzConverter {
         }
         return $stmt_list;
     }
-
 
 
     function _fetch() {

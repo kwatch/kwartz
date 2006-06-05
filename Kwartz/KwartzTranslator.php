@@ -73,11 +73,10 @@ class KwartzBaseTranslator extends KwartzTranslator {
     var $buf;
 
     function __construct($marks, $properties=array()) {
-        global $KWARTZ_PROPERTY_ESCAPE;
         list($this->stmt_l, $this->stmt_r, $this->expr_l, $this->expr_r,
              $this->escape_l, $this->escape_r) = $marks;
         $this->nl = kwartz_array_get($properties, 'nl', "\n");
-        $this->escape = kwartz_array_get($properties, 'escape', $KWARTZ_PROPERTY_ESCAPE);
+        $this->escape = kwartz_array_get($properties, 'escape', KWARTZ_PROPERTY_ESCAPE);
         $this->header = kwartz_array_get($properties, 'header', null);
         $this->footer = kwartz_array_get($properties, 'footer', null);
     }

@@ -14,6 +14,9 @@ require_once 'Kwartz/KwartzParser.php';
 require_once 'Kwartz/KwartzConverter.php';
 require_once 'Kwartz/KwartzTranslator.php';
 require_once 'Kwartz/Binding/Php.php';
+require_once 'Kwartz/Binding/Eruby.php';
+require_once 'Kwartz/Binding/Jstl.php';
+require_once 'Kwartz/Binding/Eperl.php';
 
 
 class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
@@ -29,10 +32,9 @@ class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
     var $message;
 
     function _test() {
-        $pattern = '/\{\{\*|\*\}\}/';
-        $pdata    = preg_replace($pattern, '', $this->pdata);
-        $plogic   = preg_replace($pattern, '', $this->plogic);
-        $expected = preg_replace($pattern, '', $this->expected);
+        $pdata    = $this->pdata;
+        $plogic   = $this->plogic;
+        $expected = $this->expected;
         $properties = array();
         if ($this->properties) {
             foreach ($this->properties as $key => $val) {
@@ -43,9 +45,11 @@ class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
             $properties = array();
         }
         //
+        $Lang = ucfirst($this->lang);
+        $handler_klass = "Kwartz{$Lang}Handler";
         $parser = new KwartzCssStyleParser();
         $rulesets = $parser->parse($plogic);
-        $handler = new KwartzPhpHandler($rulesets, $properties);
+        $handler = new $handler_klass($rulesets, $properties);
         $converter = new KwartzTextConverter($handler, $properties);
         $stmt_list = $converter->convert($pdata);
         //
@@ -61,11 +65,9 @@ class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
 
 
 $testdata = kwartz_load_testdata(__FILE__);
-$testdata = kwartz_select_testdata($testdata, 'php');
-
-//var_export($testdata);  //exit(0);
-
-kwartz_define_testmethods($testdata, 'KwartzConverterTest');
+$code = kwartz_build_testmethods_with_each_lang($testdata, 'KwartzConverterTest');
+//echo '<'."?php \n", $code, '?'.'>';
+eval($code);
 
 
 ?>

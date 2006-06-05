@@ -17,6 +17,9 @@ require_once 'Kwartz/KwartzConfig.php';
 require_once 'Kwartz/KwartzConverter.php';
 require_once 'Kwartz/KwartzTranslator.php';
 require_once 'Kwartz/Binding/Php.php';
+require_once 'Kwartz/Binding/Eruby.php';
+require_once 'Kwartz/Binding/Jstl.php';
+require_once 'Kwartz/Binding/Eperl.php';
 
 
 class KwartzDirectiveTest_ extends PHPUnit2_Framework_TestCase {
@@ -30,15 +33,20 @@ class KwartzDirectiveTest_ extends PHPUnit2_Framework_TestCase {
     var $message;
 
     function _test() {
-        $pattern  = '/\{\{\*|\*\}\}/';
-        $pdata    = preg_replace($pattern, '', $this->pdata);
-        $expected = preg_replace($pattern, '', $this->expected);
+        $pdata = $this->pdata;
+        $expected = $this->expected;
+        $Lang = ucfirst($this->lang);
+        $handler_klass = "Kwartz{$Lang}Handler";
+        $translator_klass = "Kwartz{$Lang}Translator";
+        //$parser = new KwartzCssStyleParser();
+        //$rulesets = $parser->parse($plogic);
+        $properties = array('header'=>'');
         $rulesets = array();
-        $handler   = new KwartzPhpHandler($rulesets);
+        $handler = new $handler_klass($rulesets, $properties);
         $converter = new KwartzTextConverter($handler);
         $stmt_list = $converter->convert($pdata);
         //echo "*** debug: stmt_list="; var_export($stmt_list); echo "\n";
-        $translator = new KwartzPhpTranslator();
+        $translator = new $translator_klass($properties);
         $actual = $translator->translate($stmt_list);
         kwartz_assert_text_equals($expected, $actual, $this->name);
     }
@@ -47,9 +55,9 @@ class KwartzDirectiveTest_ extends PHPUnit2_Framework_TestCase {
 
 
 $testdata = kwartz_load_testdata(__FILE__);
-$testdata = kwartz_select_testdata($testdata, 'php');
-//var_export($testdata);  exit(0);
-kwartz_define_testmethods($testdata, 'KwartzDirectiveTest');
+$code = kwartz_build_testmethods_with_each_lang($testdata, 'KwartzDirectiveTest');
+//echo '<'."?php \n", $code, '?'.'>';
+eval($code);
 
 
 ?>

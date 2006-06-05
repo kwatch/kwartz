@@ -70,7 +70,7 @@ function kwartz_select_testdata($testdata, $lang) {
 }
 
 
-function kwartz_define_testmethods($testdata, $classname, $parent_classname=null, $flag_defun=true) {
+function kwartz_build_testmethods($testdata, $classname, $parent_classname=null) {
     if (! $parent_classname)
         $parent_classname = $classname . '_';
     $sb = array();
@@ -78,16 +78,59 @@ function kwartz_define_testmethods($testdata, $classname, $parent_classname=null
     foreach ($testdata as $data) {
         $sb[] =     "  function test_{$data['name']}(){\n";
         foreach ($data as $key=>$val) {
-            $sb[] = "    \$this->{$key} = " . var_export($val, true) . ";\n";
+            $val = preg_replace('/\{\{\*|\*\}\}/', '', $val);
+            $expr = var_export($val, true);
+            $sb[] = "    \$this->{$key} = {$expr};\n";
         }
         $sb[] =     "    \$this->_test();\n";
         $sb[] =     "  }\n";
     }
     $sb[] = "}\n";
-    $s = join($sb);
-    if ($flag_defun)
-        eval($s);
-    return $s;
+    return join($sb);
+}
+
+
+function kwartz_define_testmethods($testdata, $classname) {
+    $code = kwartz_build_testmethods($testdata, $classname);
+    eval($code);
+}
+
+
+function kwartz_build_testmethods_with_each_lang($testdata, $classname, $langs=null, $parent_classname=null) {
+    if (! $langs)
+        $langs = array('php', 'eruby', 'jstl', 'eperl');
+    if (! $parent_classname)
+        $parent_classname = $classname . '_';
+    $sb = array();
+    $sb[] = "class {$classname} extends {$parent_classname} {\n\n\n";
+    foreach ($langs as $lang) {
+        foreach ($testdata as $data) {
+            $sb[] =     "  function test_{$data['name']}_{$lang}(){\n";
+            $sb[] =     "    \$this->lang = '{$lang}';\n";
+            foreach ($data as $key=>$val) {
+                if ($key[strlen($key)-1] == '*') {
+                    $key = substr($key, 0, strlen($key)-1);
+                    $val = $val[$lang];
+                }
+                $val = preg_replace('/\{\{\*|\*\}\}/', '', $val);
+                $expr = var_export($val, true);
+                $sb[] = "    \$this->{$key} = {$expr};\n";
+            }
+            $sb[] =     "    \$this->_test();\n";
+            $sb[] =     "  }\n";
+            $sb[] =     "\n\n";
+        }
+    }
+    $sb[] = "}\n";
+    return join($sb);
+}
+
+
+function kwartz_define_testmethods_with_each_lang($testdata, $classname, $langs=null) {
+    if (! $langs)
+        $langs = array('php', 'eruby', 'jstl');
+    $code = kwartz_build_testmethods_with_each_lang($testdata, $classname, $langs);
+    eval($code);
 }
 
 

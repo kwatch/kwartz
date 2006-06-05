@@ -296,12 +296,12 @@
 	  <td title="cont(item)">foo</td>
 	</tr>
 
-	<tr {{*title="forEach(:var=>'v', :items=>:'params.list', :varStatus=>'status')"*}}>
+	<tr {{*title="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
 	  <td title="cont(status.index)">1</td>
 	  <td title="cont(v)"></td>
 	</tr>
 
-	<tr {{*title="forEach(:var=>'n', :begin=>1, :end=>10, :step=>2)"*}}>
+	<tr {{*title="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
 	  <td title="cont(n)">key</td>
 	</tr>
 
@@ -341,8 +341,8 @@
 	</tr>
 	{{*<? } !>*}}
 
-	{{*<? foreach my $key (keys %hash) { !>*}}
-	{{*<?   my $value = $hash{$key}; !>*}}
+	{{*<? foreach my $key (keys %hash) {*}}
+	{{*     my $value = $hash{$key}; !>*}}
 	<tr>
 	  <td><?= $key !></td>
 	  <td><?= $value !></td>
@@ -448,8 +448,8 @@
 	</tr>
 
 	<tr>
-	{{*<? foreach my $key (keys %hash) { !>*}}
-	{{*<?   my $value = $hash{$key}; !>*}}
+	{{*<? foreach my $key (keys %hash) {*}}
+	{{*     my $value = $hash{$key}; !>*}}
 	  <td><?= $key !></td>
 	  <td><?= $value !></td>
 	{{*<? } !>*}}
@@ -894,7 +894,7 @@
 	</div>
 	{{*</c:otherwise></c:choose>*}}
 
-##
+###
 - name:      set
   subject:   set
   desc:  |
@@ -946,7 +946,7 @@
 	 <td>${color}</td>
 	</tr>
 
-##
+###
 - name:      mark
   subject:   mark
   desc:  |
