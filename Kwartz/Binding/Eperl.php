@@ -54,19 +54,22 @@ class KwartzEperlHandler extends KwartzHandler {
             list($dummy, $loopvar, $loopval, $looplist) = $m;
             $counter = $d_name == 'foreach' || $d_name == 'list' ? null : "{$loopvar}_ctr";
             $toggle  = $d_name != 'FOREACH' && $d_name != 'LIST' ? null : "{$loopvar}_tgl";
-            if ($loopval) {
-                $looplist2 = preg_replace('/\A%/', '$', $looplist);
-                $foreach_code = "foreach my {$loopvar} (keys {$looplist}) {\n"
-                              . "     my {$loopval} = {$looplist2}{{$loopvar}};";
-            } else {
-                $foreach_code = "foreach my {$loopvar} ({$looplist}) {";
+            $code = array();
+            if ($counter)   $code[] = "my {$counter} = 0;";
+            if ($loopval) { $looplist2 = preg_replace('/\A%/', '$', $looplist);
+                            $code[] = "foreach my {$loopvar} (keys {$looplist}) {";
+                            $code[] = "  my {$loopval} = {$looplist2}{{$loopvar}};";
+            } else {        $code[] = "foreach my {$loopvar} ({$looplist}) {";
             }
-            $init_code   = "my {$counter} = 0;";
-            $incr_code   = "  {$counter}++;";
-            $toggle_code = "  my {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd};";
-            $this->helper->add_foreach_stmts($stmt_list, $arg, $foreach_code, "}",
-                                             $content_only, $counter, $toggle,
-                                             $init_code, $incr_code, $toggle_code);
+            if ($counter)   $code[] = "  {$counter}++;";
+            if ($toggle)    $code[] = "  my {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd};";
+            if ($content_only) {
+                $this->helper->wrap_content_with_native_stmt($stmt_list, $arg,
+                                                             $code, "}", 'foreach');
+            } else {
+                $this->helper->wrap_element_with_native_stmt($stmt_list, $arg,
+                                                             $code, "}", 'foreach');
+            }
             break;
 
         case 'while':
@@ -77,7 +80,7 @@ class KwartzEperlHandler extends KwartzHandler {
         case 'loop':
             $this->helper->error_if_empty_tag($arg);
             $this->helper->wrap_content_with_native_stmt($stmt_list, $arg,
-                                                     "while ({$d_arg}) {", "}", 'while');
+                                                   "while ({$d_arg}) {", "}", 'while');
             break;
 
         case 'set':
@@ -92,11 +95,7 @@ class KwartzEperlHandler extends KwartzHandler {
 
         case 'elsif':
         case 'else':
-            $last_stmt_kind = $this->helper->last_stmt_kind($stmt_list);
-            if ($last_stmt_kind != 'if' && $last_stmt_kind != 'elseif') {
-                $msg = "'{$d_str}': previous statement should be 'if' or 'else if'.";
-                throw $this->_error($msg, $arg->stag_info->linenum);
-            }
+            $this->helper->error_when_last_stmt_is_not_if($stmt_list, $arg);
             array_pop($stmt_list);    // delete '}'
             $kind = $d_name == 'else' ? 'else' : 'elseif';
             $code = $d_name == 'else' ? "} else {" : "} elsif ({$d_arg}) {";

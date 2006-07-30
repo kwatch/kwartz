@@ -58,13 +58,19 @@ class KwartzPhpHandler extends KwartzHandler {
             $loopvar = $m[1];
             $counter = $d_name == 'foreach' || $d_name == 'list' ? null : "{$loopvar}_ctr";
             $toggle  = $d_name != 'FOREACH' && $d_name != 'LIST' ? null : "{$loopvar}_tgl";
-            $foreach_code = "foreach ({$d_arg}) {";
-            $init_code   = "{$counter} = 0;";
-            $incr_code   = "  {$counter}++;";
-            $toggle_code = "  {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd};";
-            $this->helper->add_foreach_stmts($stmt_list, $arg, $foreach_code, "}",
-                                             $content_only, $counter, $toggle,
-                                             $init_code, $incr_code, $toggle_code);
+
+            $code = array();
+            if ($counter)  $code[] = "{$counter} = 0;";
+            if (true)      $code[] = "foreach ({$d_arg}) {";
+            if ($counter)  $code[] = "  {$counter}++;";
+            if ($toggle)   $code[] = "  {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd};";
+            if ($content_only) {
+                $this->helper->wrap_content_with_native_stmt($stmt_list, $arg,
+                                                             $code, "}", 'foreach');
+            } else {
+                $this->helper->wrap_element_with_native_stmt($stmt_list, $arg,
+                                                             $code, "}", 'foreach');
+            }
             //$c_only = $conent_only;
             //if ($c_only)   $stmt_list[] = $arg->stag_stmt();
             //if ($counter)  $stmt_list[] = new KwartzNativeStatement("{$counter} = 0;");
@@ -120,11 +126,7 @@ class KwartzPhpHandler extends KwartzHandler {
 
         case 'elseif':
         case 'else':
-            $last_stmt_kind = $this->helper->last_stmt_kind($stmt_list);
-            if ($last_stmt_kind != 'if' && $last_stmt_kind != 'elseif') {
-                $msg = "'{$d_str}': previous statement should be 'if' or 'elesif'.";
-                throw $this->_error($msg, $arg->stag_info->linenum);
-            }
+            $this->helper->error_when_last_stmt_is_not_if($stmt_list, $arg);
             array_pop($stmt_list);    // delete '}'
             $kind = $d_name;
             $code = $d_name == 'else' ? "} else {" : "} elseif ({$d_arg}) {";

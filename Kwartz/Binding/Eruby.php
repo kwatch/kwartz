@@ -55,14 +55,22 @@ class KwartzErubyHandler extends KwartzHandler {
             list($dummy, $loopvar, $loopval, $looplist) = $m;
             $counter = $d_name == 'for' || $d_name == 'list' ? null : "{$loopvar}_ctr";
             $toggle  = $d_name != 'FOR' && $d_name != 'LIST' ? null : "{$loopvar}_tgl";
+
             $foreach_code = $loopval ? "{$looplist}.each do |{$loopvar}, {$loopval}|"
                                      : "for {$loopvar} in {$looplist} do";
-            $init_code = "{$counter} = 0";
-            $incr_code = "  {$counter} += 1";
             $toggle_code = "  {$toggle} = {$counter}%2==0 ? {$this->even} : {$this->odd}";
-            $this->helper->add_foreach_stmts($stmt_list, $arg, $foreach_code, "end",
-                                             $content_only, $counter, $toggle,
-                                             $init_code, $incr_code, $toggle_code);
+            $code = array();
+            if ($counter)  $code[] = "{$counter} = 0";
+            if (true)      $code[] = $foreach_code;
+            if ($counter)  $code[] = "  {$counter} += 1";
+            if ($toggle)   $code[] = $toggle_code;
+            if ($content_only) {
+                $this->helper->wrap_content_with_native_stmt($stmt_list, $arg,
+                                                             $code, "end", 'foreach');
+            } else {
+                $this->helper->wrap_element_with_native_stmt($stmt_list, $arg,
+                                                             $code, "end", 'foreach');
+            }
             break;
 
         case 'while':
@@ -87,11 +95,7 @@ class KwartzErubyHandler extends KwartzHandler {
 
         case 'elsif':
         case 'else':
-            $last_stmt_kind = $this->helper->last_stmt_kind($stmt_list);
-            if ($last_stmt_kind != 'if' && $last_stmt_kind != 'elseif') {
-                $msg = "'{$d_str}': previous statement should be 'if' or 'elsif'.";
-                throw $this->_error($msg, $arg->stag_info->linenum);
-            }
+            $this->helper->error_when_last_stmt_is_not_if($stmt_list, $arg);
             array_pop($stmt_list);    // delete 'end'
             $kind = $d_name == 'else' ? 'else' : 'elseif';
             $code = $d_name == 'else' ? "else" : "elsif {$d_arg} then";

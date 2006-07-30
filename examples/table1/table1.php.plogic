@@ -17,3 +17,6 @@
   value:  $item['mail'];
 }
 
+#dummy1 {
+  logic: { }   /* ignore this element */
+}

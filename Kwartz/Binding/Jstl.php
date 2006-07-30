@@ -66,44 +66,33 @@ class KwartzJstlHandler extends KwartzHandler {
             $counter = $d_name == 'for' || $d_name == 'list' ? null : "{$loopvar}_ctr";
             $toggle  = $d_name != 'FOR' && $d_name != 'LIST' ? null : "{$loopvar}_tgl";
             $status  = $d_name == 'for' || $d_name == 'list' ? null : "{$loopvar}_status";
-
-            $foreach_code = "<c:forEach var=\"{$loopvar}\" items=\"\${{$looplist}}\"";
-            if ($status) $foreach_code .= " varStatus=\"{$status}\"";
-            $foreach_code .= ">";
-
-            if ($content_only)
-                $stmt_list[] = $this->helper->stag_stmt($arg);
-
-            $stmt_list[] = new KwartzNativeStatement($foreach_code, 'foreach');
-            if ($counter) {
-                $code = "<c:set var=\"{$counter}\" value=\"\${{$status}.count}\" />";
-                $stmt_list[] = new KwartzNativeStatement($code);
-            }
+            //
+            $code = array();
+            $s = "<c:forEach var=\"{$loopvar}\" items=\"\${{$looplist}}\"";
+            if ($status) $s .= " varStatus=\"{$status}\"";
+            $s .= ">";
+            $code[] = $s;
+            if ($counter)
+                $code[] = "<c:set var=\"{$counter}\" value=\"\${{$status}.count}\"/>";
             if ($toggle) {
                 if ($this->jstl_version < 1.2) {
-                    $codelist = array(
-                        "<c:choose><c:when test=\"\${{$status}.count%2==0}\">",
-                        "<c:set var=\"{$toggle}\" value=\"\${{$this->even}}\"/>",
-                        "</c:when><c:otherwise>",
-                        "<c:set var=\"{$toggle}\" value=\"\${{$this->odd}}\"/>",
-                        "</c:otherwise></c:choose>",
-                        );
+                    $code[] = "<c:choose><c:when test=\"\${{$status}.count%2==0}\">";
+                    $code[] = "<c:set var=\"{$toggle}\" value=\"\${{$this->even}}\"/>";
+                    $code[] = "</c:when><c:otherwise>";
+                    $code[] = "<c:set var=\"{$toggle}\" value=\"\${{$this->odd}}\"/>";
+                    $code[] = "</c:otherwise></c:choose>";
                 } else {
-                    $codelist = array(
-                        "<c:set var=\"{$toggle}\" value=\"\${{$status}.count%2==0 ? {$this->even} : {$this->odd}}\" />",
-                        );
+                    $code[] = "<c:set var=\"{$toggle}\" value=\"\${{$status}.count%2==0 ?"
+                            . " {$this->even} : {$this->odd}}\"/>";
                 }
-                foreach ($codelist as $code)
-                    $stmt_list[] = new KwartzNativeStatement($code);
             }
-            if (! $content_only)
-                $stmt_list[] = $this->helper->stag_stmt($arg);
-            kwartz_array_concat($stmt_list, $arg->cont_stmts);
-            if (! $content_only)
-                $stmt_list[] = $this->helper->etag_stmt($arg);
-            $stmt_list[] = new KwartzNativeStatement("</c:forEach>", 'foreach');
-            if ($content_only)
-                $stmt_list[] = $this->helper->etag_stmt($arg);
+            if ($content_only) {
+                $this->helper->wrap_content_with_native_stmt($stmt_list, $arg,
+                                                      $code, "</c:forEach>", 'foreach');
+            } else {
+                $this->helper->wrap_element_with_native_stmt($stmt_list, $arg,
+                                                      $code, "</c:forEach>", 'foreach');
+            }
             break;
 
         case 'while':
@@ -118,7 +107,7 @@ class KwartzJstlHandler extends KwartzHandler {
                 throw $this->_error($msg, $arg->stag_info->linenum);
             }
             $lhs = $m[1];  $rhs = $m[2];
-            $code = "<c:set var=\"{$lhs}\" value=\"\${{$rhs}}\" />";
+            $code = "<c:set var=\"{$lhs}\" value=\"\${{$rhs}}\"/>";
             $this->helper->wrap_element_with_native_stmt($stmt_list, $arg,
                                                          $code, null, 'set');
             break;
@@ -131,7 +120,7 @@ class KwartzJstlHandler extends KwartzHandler {
 
         case 'elseif':
         case 'else':
-            $this->helper->error_when_last_stmt_is_not_if($stmt_list);
+            $this->helper->error_when_last_stmt_is_not_if($stmt_list, $arg);
             array_pop($stmt_list);  // delete '</c:when></c:choose>'
             if ($d_name == 'else') {
                 $kind = 'else';
@@ -156,7 +145,7 @@ class KwartzJstlHandler extends KwartzHandler {
             $code = "<c:out value=\"\${{$d_arg}}\"";
             if ($flag_escape !== null)
                 $code .= " escapeXml=\"{$flag_escape}\"";
-            $code .= " default=\"{$argstr}\" />";
+            $code .= " default=\"{$argstr}\"/>";
             $stmt = new KwartzNativeStatement($code);
             $stmt->no_newline = true;
             $stmt_list[] = $stmt;

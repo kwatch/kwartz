@@ -341,8 +341,8 @@
 	</tr>
 	{{*<? } !>*}}
 
-	{{*<? foreach my $key (keys %hash) {*}}
-	{{*     my $value = $hash{$key}; !>*}}
+	{{*<? foreach my $key (keys %hash) { !>*}}
+	{{*<?   my $value = $hash{$key}; !>*}}
 	<tr>
 	  <td><?= $key !></td>
 	  <td><?= $value !></td>
@@ -448,8 +448,8 @@
 	</tr>
 
 	<tr>
-	{{*<? foreach my $key (keys %hash) {*}}
-	{{*     my $value = $hash{$key}; !>*}}
+	{{*<? foreach my $key (keys %hash) { !>*}}
+	{{*<?   my $value = $hash{$key}; !>*}}
 	  <td><?= $key !></td>
 	  <td><?= $value !></td>
 	{{*<? } !>*}}
@@ -560,7 +560,7 @@
 
     jstl: |
 	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-	{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
 	<tr>
 	  <td>${item}</td>
 	</tr>
@@ -568,7 +568,7 @@
 
 	<tr>
 	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-	{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
 	  <td>${item}</td>
 	{{*</c:forEach>*}}
 	</tr>
@@ -680,8 +680,8 @@
 
     jstl: |
 	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-	{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
-	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
 	<tr>
 	  <td>${item}</td>
 	</tr>
@@ -689,8 +689,8 @@
 
 	<tr>
 	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-	{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
-	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
 	  <td>${item}</td>
 	{{*</c:forEach>*}}
 	</tr>
@@ -941,7 +941,7 @@
 	</tr>
 
     jstl: |
-	{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" />*}}
+	{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}"/>*}}
 	<tr>
 	 <td>${color}</td>
 	</tr>
@@ -1068,8 +1068,8 @@
 
     jstl: |
 	<c:forEach var="v" items="${list}" varStatus="v_status">
-	<c:set var="v_ctr" value="${v_status.count}" />
-	<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" />
+	<c:set var="v_ctr" value="${v_status.count}"/>
+	<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}"/>
 	<tr {{*class="${v_tgl}"*}} {{*style="${style}"*}}>
 	 <td>${v.name}</td>
 	</tr>
@@ -1223,7 +1223,7 @@
 	name: <em>{{*<? if ($user) { !><?= $user !><? } else { !>Guest<? } !>*}}</em>
 
     jstl: |
-	name: <em>{{*<c:out value="${user}" default="Guest" />*}}</em>
+	name: <em>{{*<c:out value="${user}" default="Guest"/>*}}</em>
 
 ###
 - name:     replace

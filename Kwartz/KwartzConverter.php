@@ -430,11 +430,13 @@ class KwartzHandlerHelper {
     }
 
 
-    function error_when_last_stmt_is_not_if(&$stmt_list) {
+    function error_when_last_stmt_is_not_if(&$stmt_list, $arg) {
         $last_stmt_kind = $this->last_stmt_kind($stmt_list);
         if ($last_stmt_kind != 'if' && $last_stmt_kind != 'elseif') {
+            $d_str = $handler_arg->directive_str;
+            $linenum = $handler_arg->stag_info->linenum;
             $msg = "'{$d_str}': previous statement must be 'if' or 'else if'.";
-            throw $this->_error($msg, $arg->stag_info->linenum);
+            throw $this->_error($msg, $linenum);
         }
     }
 
@@ -452,48 +454,36 @@ class KwartzHandlerHelper {
     }
 
 
+    function add_native_stmt(&$stmt_list, $code, $kind) {
+        if (is_string($code)) {
+            $stmt_list[] = new KwartzNativeStatement($code, $kind);
+        } elseif (is_array($code)) {
+            foreach ($code as $line) {
+                $stmt_list[] = new KwartzNativeStatement($line, $kind);
+            }
+        }
+    }
+
+
     function wrap_element_with_native_stmt(&$stmt_list, $handler_arg,
                                            $start_code, $end_code, $kind=null) {
-        if ($start_code)
-            $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
+        $this->add_native_stmt($stmt_list, $start_code, $kind);
         $stmt_list[] = $this->stag_stmt($handler_arg);
         foreach ($handler_arg->cont_stmts as $stmt)
             $stmt_list[] = $stmt;
         $stmt_list[] = $this->etag_stmt($handler_arg);
-        if ($end_code)
-            $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
+        $this->add_native_stmt($stmt_list, $end_code, $kind);
     }
 
 
     function wrap_content_with_native_stmt(&$stmt_list, $handler_arg,
                                            $start_code, $end_code, $kind=null) {
         $stmt_list[] = $this->stag_stmt($handler_arg);
-        if ($start_code)
-            $stmt_list[] = new KwartzNativeStatement($start_code, $kind);
+        $this->add_native_stmt($stmt_list, $start_code, $kind);
         foreach ($handler_arg->cont_stmts as $stmt)
             $stmt_list[] = $stmt;
-        if ($end_code)
-            $stmt_list[] = new KwartzNativeStatement($end_code, $kind);
+        $this->add_native_stmt($stmt_list, $end_code, $kind);
         $stmt_list[] = $this->etag_stmt($handler_arg);
-    }
-
-
-    function add_foreach_stmts(&$stmt_list, $handler_arg,
-                               $foreach_code, $endforeach_code,
-                               $content_only, $counter, $toggle,
-                               $init_code, $incr_code, $toggle_code) {
-        $arg = $handler_arg;
-        $c_only = $content_only;
-        if ($c_only)   $stmt_list[] = $this->stag_stmt($arg);
-        if ($counter)  $stmt_list[] = new KwartzNativeStatement($init_code);
-        if (true)      $stmt_list[] = new KwartzNativeStatement($foreach_code, 'foreach');
-        if ($counter)  $stmt_list[] = new KwartzNativeStatement($incr_code);
-        if ($toggle)   $stmt_list[] = new KwartzNativeStatement($toggle_code);
-        if (! $c_only) $stmt_list[] = $this->stag_stmt($arg);
-        if (true)      kwartz_array_concat($stmt_list, $arg->cont_stmts);
-        if (! $c_only) $stmt_list[] = $this->etag_stmt($arg);
-        if (true)      $stmt_list[] = new KwartzNativeStatement($endforeach_code, 'foreach');
-        if ($c_only)   $stmt_list[] = $this->etag_stmt($arg);
     }
 
 
