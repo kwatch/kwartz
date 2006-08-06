@@ -1,6 +1,5 @@
 
-variables:
-
+parameters:
   - u       :   users-guide
   - r       :   reference
   - p       :   p-pattern
@@ -14,22 +13,22 @@ recipes:
 
   - product:	:all
     ingreds:	[ :test, $(u).html, $(p).html, $(r).html ]
-    method: |
+    method*: |
 	  mkdir_p "p-pattern"
 	  cp "#{tmpdir}/design.*", "p-pattern"
 
   - product:    :clean
-    method: |
+    method*: |
 	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt'
 
   - product:	:clear
-    method: |
+    method*: |
 	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.html', 'test-*', 'p-pattern'
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
     byprods:    [ $(1).toc.html ]
-    method: |
+    method*: |
 	dir = '$(tmpdir)'
 	#rm_rf dir 
 	mkdir_p dir
@@ -39,18 +38,19 @@ recipes:
 	rm_f @byprod
 
   - product:    *.txt
+    desc:	create *.txt from *.eruby
     ingreds:    [ $(1).eruby ]
-    method: |
+    method*: |
         sys "erubis -xp '\\[% %\\]' -E NoCode #{@ingred} > #{@product}"
 
   - product:	$(r).txt
     ingreds:    [ $(r).eruby, $(reference_testdata) ]
-    method: |
+    method*: |
 	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"
 
   - product:    test-*.rb
     ingreds:	[ $(1).eruby ]
-    method: |
+    method*: |
         dir = '$(tmpdir)'
 	mkdir dir unless test(?d, dir)
 	sys "retrieve -d #{dir} #{@ingred}"
@@ -58,7 +58,7 @@ recipes:
 
   - product:    :test
     ingreds:    [ test-$(u).rb, test-$(p).rb ]
-    method: |
+    method*: |
 	sys "ruby test-$(u).rb"
 	sys "ruby test-$(p).rb"
 

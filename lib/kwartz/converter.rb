@@ -10,6 +10,7 @@ require 'kwartz/assert'
 require 'kwartz/error'
 require 'kwartz/node'
 require 'kwartz/config'
+require 'kwartz/util'
 
 require 'abstract'
 
@@ -594,12 +595,31 @@ module Kwartz
 
 
     def get_element_ruleset(name)  # for ElementExpander module and Converter class
-      @elem_ruleset_table[name]
+      return @elem_ruleset_table[name]
     end
 
 
     def get_element_info(name)  # for ElementExpander module
-      @elem_info_table[name]
+      return @elem_info_table[name]
+    end
+
+
+    def _elem_info_table    # :nodoc:
+      return @elem_info_table
+    end
+
+
+    def _import_element_info_from_handler(handler, names=nil) # :nodoc:
+      if names
+        regexp_list = names.collect { |name| Kwartz::Util.pattern_to_regexp(name) }
+        handler._elem_info_table.each do |name, elem_info|
+          if regexp_list.any? { |regexp| regexp =~ name }
+            @elem_info_table[name] = elem_info
+          end
+        end
+      else
+        @elem_info_table.update(handler._elem_info_table)
+      end
     end
 
 
@@ -644,9 +664,9 @@ module Kwartz
 
       when nil
         assert unless !arg.attr_info.empty? || !arg.append_exprs.empty?
-        stmt_list << arg.stag_stmt
+        stmt_list << stag_stmt(arg)
         stmt_list.concat(arg.cont_stmts)
-        stmt_list << arg.etag_stmt if arg.etag_info   # when empty-tag
+        stmt_list << etag_stmt(arg) if arg.etag_info   # when empty-tag
 
       when :dummy
         # nothing
@@ -676,13 +696,13 @@ module Kwartz
         expr = NativeExpression.new(d_arg, flag_escape)
         stmt_list << build_print_expr_stmt(expr, arg.stag_info, nil)
         stmt_list.concat(arg.cont_stmts)
-        stmt_list << arg.etag_stmt
+        stmt_list << etag_stmt(arg)
 
       when :etag, :Etag, :ETAG
         error_if_empty_tag(arg)
         flag_escape = d_name == :etag ? nil : (d_name == :Etag)
         expr = NativeExpression.new(d_arg, flag_escape)
-        stmt_list << arg.stag_stmt
+        stmt_list << stag_stmt(arg)
         stmt_list.concat(arg.cont_stmts)
         stmt_list << build_print_expr_stmt(expr, nil, arg.etag_info)
 
@@ -720,14 +740,14 @@ module Kwartz
         name = d_arg
         #
         error_if_empty_tag(arg)   if replace_cont
-        stmt_list << arg.stag_stmt if replace_cont
+        stmt_list << stag_stmt(arg) if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
           raise convert_error("'#{d_str}': element '#{name}' not found.", arg.stag_info.linenum)
         end
         expand_element_info(elem_info, stmt_list, with_content)
-        stmt_list << arg.etag_stmt if replace_cont
+        stmt_list << etag_stmt(arg) if replace_cont
 
       when :replace_element_with, :replace_content_with, :replace, :placeholder
         unless d_arg =~ /\A_?(element|content)\(["']?(\w+)["']?\)\z/
@@ -739,7 +759,7 @@ module Kwartz
         with_content = kind == 'content'
         #
         error_if_empty_tag(arg) if replace_cont
-        stmt_list << arg.stag_stmt if replace_cont
+        stmt_list << stag_stmt(arg) if replace_cont
         #stmt_list << ExpandStatement.new(:element, name)
         elem_info = @elem_info_table[name]
         unless elem_info
@@ -747,7 +767,7 @@ module Kwartz
           raise convert_error(msg, arg.stag_info.linenum)
         end
         expand_element_info(elem_info, stmt_list, with_content)
-        stmt_list << arg.etag_stmt if replace_cont
+        stmt_list << etag_stmt(arg) if replace_cont
 
       else
         return false

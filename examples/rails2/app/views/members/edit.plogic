@@ -1,0 +1,9 @@
+@import 'link_to.plogic';
+
+#form_for_update {
+  stag:  start_form_tag :action=>'update', :id=>@member.id;
+}
+
+#submit {
+  elem:  submit_tag 'Edit';
+}

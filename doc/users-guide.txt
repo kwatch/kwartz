@@ -775,16 +775,16 @@ If this is true then Kwartz will escape values in default.
 .$$ Multi-language      | langs
 
 Kwartz-ruby now supports the following programming language.
-.* Ruby (eRuby)
+.* Ruby, eRuby
 .* PHP
 .* JSP (JSTL 1.1 and 1.2)
-.* Perl (ePerl) [experimental]
+.* ePerl [experimental]
 
 Presentation logics must be described in each target language.
 It means that if you have wrote presentation logics in Ruby, they were not reusable
 for PHP project (but you can get full-power of Ruby in presentation logic).
 
-The followings are examples of Ruby, PHP, JSP, and Perl.
+The followings are examples of Ruby, eRuby, PHP, JSP, and ePerl.
 
 .? table1.html
 .-------------------- table1.html
@@ -810,15 +810,15 @@ The followings are examples of Ruby, PHP, JSP, and Perl.
 </html>
 .--------------------
 
-.? table1.eruby.plogic
-.-------------------- table1.eruby.plogic
+.? table1.ruby.plogic
+.-------------------- table1.ruby.plogic
 #row {
   attrs:  "bgcolor" color;
   logic: {
     @list.each_with_index do |user, i|
       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';
       _elem
-    }
+    end
   }
 }
 
@@ -898,7 +898,8 @@ The followings are examples of Ruby, PHP, JSP, and Perl.
 
 .? compile
 .==================== 
-$ kwartz -l eruby -p table1.eruby.plogic table1.html > table1.rhtml
+$ kwartz -l eruby -p table1.ruby.plogic table1.html  > table1.rhtml
+$ kwartz -l ruby  -p table1.eruby.plogic table1.html > table1.rb
 $ kwartz -l php   -p table1.php.plogic   table1.html > table1.php
 $ kwartz -l jstl  -p table1.jstl.plogic  table1.html > table1.jsp
 $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
@@ -923,6 +924,35 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby -p table1.eruby.plogic table1.html)
+
+
+
+
+
+
+
+
+
+.? output script (table1.rb)
+.-------------------- table1.rb
+_buf = ""; _buf << '<html>
+'; _buf << '  <body>
+'; _buf << '  
+'; _buf << '    <table>
+';     {{*@list.each_with_index do |user, i|*}}
+      {{*color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';*}}
+_buf << '      <tr bgcolor="'; _buf << (color).to_s; _buf << '">
+'; _buf << '        <td>'; {{*_buf << ERB::Util.h(user[:name]);*}} _buf << '</td>
+'; _buf << '        <td>'; {{*_buf << (user[:mail]).to_s;*}} _buf << '</td>
+'; _buf << '      </tr>
+';     {{*end*}}
+_buf << '    </table>
+'; _buf << '
+'; _buf << ' </body>
+'; _buf << '</html>
+'; ; _buf
+.--------------------
+.#.<<<:! (cd d; kwartz -l ruby -p table1.ruby.plogic table1.html)
 
 
 

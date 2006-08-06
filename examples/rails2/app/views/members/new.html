@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="scaffold.css">
+</head>
+<body>
+
+
+  <h1 id="page_title">New member</h1>
+
+  <div id="page_content">
+
+
+    <form action="create" id="form_for_create">
+     <div id="mark:form_content">
+
+      <div id="mark:error_messages"></div>
+
+      <!--[form:member]-->
+      <p><label for="member_name">Name</label><br>
+      <input type="text" id="member_name"></p>
+
+      <p><label for="member_email">Email</label><br>
+      <input type="text" id="member_email"></p>
+
+      <p><label for="member_birth">Birth</label><br>
+      <select id="member_birth">
+        <option value=""> - <option>
+      </select>
+      </p>
+
+      <p><label for="member_gender">Gender</label><br>
+      <input type="radio" id="member_gender_m"><label for="member_gender_m">Man</label>
+      <input type="radio" id="member_gender_w"><label for="member_gender_w">Woman</label>
+      </p>
+
+      <p><label for="member_group_id">Group</label><br>
+      <select id="member_group_id">
+        <option value=""> - </option>
+        <option value="1">group1</option>
+        <option value="2">group2</option>
+      </select>
+      </p>
+      <!--[eoform:member]-->
+
+     </div>
+      <input type="submit" id="submit">
+    </form>
+
+    <a href="#" id="link_to_list">Back</a>
+
+  </div>
+
+</body>
+</html>

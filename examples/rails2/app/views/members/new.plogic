@@ -1,0 +1,51 @@
+@import 'link_to.plogic';
+/* @import 'writer.plogic'; */
+
+#form_for_create {
+  stag:  start_form_tag :action=>'create';
+}
+
+#form_content {
+  logic: {
+      _cont
+  }
+}
+
+#submit {
+  elem:  submit_tag 'Create';
+}
+
+
+/******** form.plogic ********/
+
+#error_messages {
+  elem:  error_messages_for 'member';
+}
+
+#member_name {
+  elem:  text_field 'member', 'name';
+}
+
+#member_email {
+  elem:  text_field 'member', 'email';
+}
+
+#member_birth {
+  elem:  date_select 'member', 'birth';
+}
+
+#member_gender_m {
+  elem:  radio_button 'member', 'gender', 'M';
+}
+#member_gender_w {
+  elem:  radio_button 'member', 'gender', 'W';
+}
+
+#member_group_id {
+  elem:  select 'member', 'group_id', group_options, :include_blank=>true;
+  logic: {
+    group_options = Group.find_all().collect {|g| [g.name, g.id]}
+    _elem
+  }
+}
+

@@ -21,7 +21,7 @@
 
   plogic*:
 
-    eruby: |
+    eruby: &plogic1_ruby|
 	#list {
 	  attrs: 'bgcolor' color,
 	         'title'   user.name;
@@ -40,6 +40,8 @@
 	#mail {
 	  cont: user[:mail];
 	}
+
+    ruby: *plogic1_ruby
   
     php: |
 	#list {
@@ -123,6 +125,24 @@
 	  </body>
 	</html>
 	<!-- end -->
+
+    ruby: |
+	_buf = ""; _buf << '<?xml version="1.0" encoding="UTF-8"?>
+	'; _buf << '<html>
+	'; _buf << '  <body>
+	'; _buf << '    <table>
+	';     @list.each_with_index { |user, i|
+	      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+	_buf << '      <tr bgcolor="'; _buf << (color).to_s; _buf << '" title="'; _buf << (user.name).to_s; _buf << '">
+	'; _buf << '        <td>'; _buf << ERB::Util.h(user.name); _buf << '</td>
+	'; _buf << '        <td>'; _buf << (user[:mail]).to_s; _buf << '</td>
+	'; _buf << '      </tr>
+	';     }
+	_buf << '    </table>
+	'; _buf << '  </body>
+	'; _buf << '</html>
+	'; _buf << '<!-- end -->
+	'; ; _buf
   
     php: |
 	<{{*<?php ?>*}}?xml version="1.0" encoding="UTF-8"?>

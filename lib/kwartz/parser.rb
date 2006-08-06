@@ -795,6 +795,10 @@ module Kwartz
       t = scan_string()
       t == :string  or raise parse_error("@import: requires filename.")
       filename = @value
+      if @filename && !@filename.empty?
+        dir = File.dirname(@filename)
+        filename = dir + '/' + filename if dir != '.'
+      end
       test(?f, filename)  or raise parse_error("'#{filename}': import file not found.")
       c = @ch
       c = getch() while is_whitespace(c)

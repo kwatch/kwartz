@@ -2,6 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.124 (2006-08-06)
+	- [enhance] ActionView support
+	- [enhance] new command-line option '-N' (notext)
+	- [enhance] '-l ruby' support
+	- [change] update 'examples/rails1'
+
 : rev.123 (2006-06-05)
 	- [refact] refactored around StatementHelper class
 	- [refact] integrate testdata files with kwartz-php

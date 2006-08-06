@@ -7,12 +7,14 @@
 
 require 'kwartz'
 require 'kwartz/binding/eruby'
+require 'kwartz/binding/ruby'
 require 'kwartz/binding/php'
 require 'kwartz/binding/eperl'
 require 'kwartz/binding/rails'
 require 'kwartz/binding/jstl'
 require 'kwartz/binding/struts'
 require 'kwartz/binding/erubis'
+require 'kwartz/util'
 
 
 
@@ -190,6 +192,7 @@ module Kwartz
       [ ?D, :debug,        nil ],
       [ ?t, :untabify,     nil ],
       [ ?S, :intern,       nil ],
+      [ ?N, :notext,       nil ],
       [ ?l, :lang,         'lang name' ],
       [ ?k, :kanji,        'kanji code' ],
       [ ?r, :requires,     'library name' ],
@@ -327,6 +330,9 @@ module Kwartz
         properties[:nl] ||= "\r\n"
       end
       translator = translator_class.new(properties)
+      if options.notext
+        translator.extend(Kwartz::NoTextEnhancer)
+      end
       output = translator.translate(stmt_list)
 
       ## load YAML file and evaluate eRuby script
@@ -351,14 +357,14 @@ module Kwartz
           raise option_error("#{s}: file not found.")
         end
         str = File.read(options.yamlfile)
-        str = untabify(str) if options.untabify
+        str = Kwartz::Util.untabify(str) if options.untabify
         require 'yaml'
         ydoc = YAML.load(str)
         unless ydoc.is_a?(Hash)
           s = "-#{options.chr(:yamlfile)} #{options.yamlfile}"
           raise option_error("#{s}: not a mapping.")
         end
-        intern_hash_keys(ydoc) if options.intern
+        Kwartz::Util.intern_hash_keys(ydoc) if options.intern
         context = Object.new
         ydoc.each do |key, val|
           context.instance_variable_set("@#{key}", val)
@@ -383,7 +389,7 @@ module Kwartz
       sb << "  -v             : version\n"
       #sb << "  -D             : debug mode\n"
       sb << "  -e             : alias of '--escape=true'\n"
-      sb << "  -l lang        : eruby/php/eperl/rails/jstl (default 'eruby')\n"
+      sb << "  -l lang        : eruby/ruby/php/eperl/rails/jstl (default 'eruby')\n"
       sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
       sb << "  -r library,... : require libraries\n"
       sb << "  -p plogic,...  : presentation logic files\n"
@@ -394,6 +400,7 @@ module Kwartz
       sb << "  -f yamlfile    : YAML file for context values\n"
       sb << "  -t             : expand tab character in YAML file\n"
       sb << "  -S             : convert mapping key from string to symbol in YAML file\n"
+      sb << "  -N             : print only program code (text is ignored)\n"
       #sb << "  -P style       : style of presentation logic (css/ruby/yaml)\n"
       sb << "  --dattr=str    : directive attribute name\n"
       sb << "  --odd=value    : odd value for FOREACH/LOOP directive (default \"'odd'\")\n"
@@ -416,50 +423,6 @@ module Kwartz
 
     def option_error(message)
       return CommandOptionError.new(message)
-    end
-
-
-    def untabify(str, width=8)
-      list = str.split(/\t/)
-      last = list.pop
-      buf = []
-      list.each do |s|
-        column = (pos = s.rindex(?\n)) ? s.length - pos - 1 : s.length
-        n = width - (column % width)
-        buf << s << (" " * n)
-      end
-      buf << last
-      return buf.join
-    end
-    #--
-    #def untabify(str, width=8)
-    #  sb = ''
-    #  str.scan(/(.*?)\t/m) do |s, |
-    #    len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
-    #    sb << s << (" " * (width - len % width))
-    #  end
-    #  return $' ? (sb << $') : str
-    #end
-    #++
-
-
-    def intern_hash_keys(obj, done={})
-      return if done.key?(obj.__id__)
-      case obj
-      when Hash
-        done[obj.__id__] = obj
-        obj.keys.each do |key|
-          obj[key.intern] = obj.delete(key) if key.is_a?(String)
-        end
-        obj.values.each do |val|
-          intern_hash_keys(val, done) if val.is_a?(Hash) || val.is_a?(Array)
-        end
-      when Array
-        done[obj.__id__] = obj
-        obj.each do |val|
-          intern_hash_keys(val, done) if val.is_a?(Hash) || val.is_a?(Array)
-        end
-      end
     end
 
 

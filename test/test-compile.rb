@@ -13,7 +13,7 @@ class CompileTest < Test::Unit::TestCase
 
   ## define test methods
   filename = __FILE__.sub(/\.rb$/, '.yaml')
-  load_yaml_testdata_with_each_lang(filename, :langs=>%w[eruby php jstl eperl])
+  load_yaml_testdata_with_each_lang(filename, :langs=>%w[eruby ruby php jstl eperl])
 
 
   def _test

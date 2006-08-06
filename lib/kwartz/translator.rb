@@ -150,4 +150,19 @@ module Kwartz
 
 
 
+  module NoTextEnhancer  # :nodoc:
+
+
+    def translate_string(str)
+      @sb << (@nl * str.count("\n"))
+      pos = str.rindex("\n")
+      len = pos ? str.length - pos - 1 : str.length
+      @sb << (' ' * len)
+    end
+
+
+  end
+
+
+
 end #module

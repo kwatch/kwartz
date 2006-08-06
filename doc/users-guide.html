@@ -16,7 +16,7 @@
     <div align="left"><h1>Kwartz 3.0 Users' Guide</h1></div>
     <div align="left">
       Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
-      last update: $Date: 2006-05-22 22:25:43 +0900 (Mon, 22 May 2006) $<br>
+      last update: $Date$<br>
     </div>
 
 <a name="preface"></a>
@@ -103,7 +103,7 @@ a template system which realized the concept of 'Independence of Presentation Lo
 <a name="whatis"></a>
 <h3 class="section2">What's Kwartz?</h3>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system
-which realized the concept of <b>'Independence of Presentation Logic'(IoPL)</b>.
+which realized the concept of <strong>'Independence of Presentation Logic'(IoPL)</strong>.
 It means that Kwartz separates presentaion logics from both presentation data (typically HTML document) and business logics.
 </p>
 <p>You know CSS (Cascading Style Sheet). CSS separates design from HTML file.
@@ -220,9 +220,9 @@ They may be described in separate files.
 <p>This is an example of a presentation data file.
 </p>
 <ul type="disc">
-<li>'<b><code>id="list1"</code></b>' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
+<li>'<strong><code>id="list1"</code></strong>' means "I'll operate this element in presentation logic" (called 'marking' in Kwartz).
 </li>
-<li>'<b><code>id="mark:item1"</code></b>' is also an marking.
+<li>'<strong><code>id="mark:item1"</code></strong>' is also an marking.
    Difference between <code>id="mark:item1"</code> and <code>id="item1"</code> is that id attribute in the former format is removed automatically and the latter format is leaved.
 </li>
 </ul>
@@ -230,8 +230,8 @@ They may be described in separate files.
 </p>
 <a name="example1.html"></a>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>id="list1"</b>&gt;
-    &lt;td <b>id="mark:item1"</b>&gt;foo&lt;/td&gt;
+  &lt;tr <strong>id="list1"</strong>&gt;
+    &lt;td <strong>id="mark:item1"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -239,24 +239,24 @@ They may be described in separate files.
 In presentation logic, you can operate on elements which are marked in presentation data.
 </p>
 <ul type="disc">
-<li>'<b><code>#list1 { ... }</code></b>' represents an element marked with name 'list1' (= '&lt;tr&gt;...&lt;/tr&gt;')
+<li>'<strong><code>#list1 { ... }</code></strong>' represents an element marked with name 'list1' (= '&lt;tr&gt;...&lt;/tr&gt;')
     <ul type="circle">
-    <li>'<b><code>logic: { ... }</code></b>' represents presentation logic of the element.
+    <li>'<strong><code>logic: { ... }</code></strong>' represents presentation logic of the element.
     </li>
-    <li>'<b><code>_stag</code></b>' represents a start tag (= '&lt;tr&gt;').
+    <li>'<strong><code>_stag</code></strong>' represents a start tag (= '&lt;tr&gt;').
     </li>
-    <li>'<b><code>_cont</code></b>' represents content(= '&lt;td id="mark:item1"&gt;foo&lt;/td&gt;').
+    <li>'<strong><code>_cont</code></strong>' represents content(= '&lt;td id="mark:item1"&gt;foo&lt;/td&gt;').
     </li>
-    <li>'<b><code>_etag</code></b>' represents an end tag(= '&lt;/tr&gt;').
+    <li>'<strong><code>_etag</code></strong>' represents an end tag(= '&lt;/tr&gt;').
     </li>
-    <li>'<b><code>for <i>var</i> in <i>list</i> ...</code></b>' is a Ruby code to loop.
+    <li>'<strong><code>for <em>var</em> in <em>list</em> ...</code></strong>' is a Ruby code to loop.
        In this case, the element(= start-tag + content + end-tag) is looped.
     </li>
     </ul>
 </li>
-<li>'<b><code>#item1 { ... }</code></b>' represents an element marked with name 'item1' (= '&lt;td&gt;...&lt;/td&gt;').
+<li>'<strong><code>#item1 { ... }</code></strong>' represents an element marked with name 'item1' (= '&lt;td&gt;...&lt;/td&gt;').
     <ul type="circle">
-    <li>'<b><code>value: <i>expression</i>;</code></b>' represents that the content of the element is replaced by value of <code><i>expression</i></code>, which is value of a variable <code>member</code> in this case.
+    <li>'<strong><code>value: <em>expression</em>;</code></strong>' represents that the content of the element is replaced by value of <code><em>expression</em></code>, which is value of a variable <code>member</code> in this case.
     </li>
     </ul>
 </li>
@@ -265,18 +265,18 @@ In presentation logic, you can operate on elements which are marked in presentat
 <div class="program_caption">
 Presentation logic file(example1.plogic):</div>
 <pre class="program">/* The element which is marked by 'id="list1"' */
-<b>#list1</b> {
+<strong>#list1</strong> {
   logic: {
     for member in @members
-      <b>_stag</b>           # start tag
-      <b>_cont</b>           # content
-      <b>_etag</b>           # end tag
+      <strong>_stag</strong>           # start tag
+      <strong>_cont</strong>           # content
+      <strong>_etag</strong>           # end tag
     end
   }
 }
 
 /* The element which is marked by 'id="mark:item1"' */
-<b>#item1</b> {
+<strong>#item1</strong> {
   /* replace the content with value of a variable 'member' */
   value: member;
 }
@@ -314,10 +314,10 @@ generated eRuby script</div>
 <div class="program_caption">
 Presentation Data (example2.html):</div>
 <pre class="program">&lt;table&gt;
- &lt;tr bgcolor="#CCCCFF" <b>id="mark:list"</b>&gt;
-  &lt;td <b>id="mark:name"</b>&gt;foo&lt;/td&gt;
+ &lt;tr bgcolor="#CCCCFF" <strong>id="mark:list"</strong>&gt;
+  &lt;td <strong>id="mark:name"</strong>&gt;foo&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="mailto:foo@mail.com" <b>id="mark:email"</b>&gt;foo@mail.com&lt;/a&gt;
+   &lt;a href="mailto:foo@mail.com" <strong>id="mark:email"</strong>&gt;foo@mail.com&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
@@ -332,7 +332,7 @@ In the presentation logic, you should detect whether odd or even line in the ite
  * an element which is marked by 'id="mark:list"'
  *  - print value of a variable 'color' as bgcolor attribute value.
  */
-<b>#list</b> {
+<strong>#list</strong> {
   attrs:  "bgcolor" color;
   logic: {
     @members.each_with_index do |member, i|
@@ -348,7 +348,7 @@ In the presentation logic, you should detect whether odd or even line in the ite
  * an element which is marked by 'id="mark:name"':
  *  - print value of member[:name] as content of the element.
  */
-<b>#name</b> {
+<strong>#name</strong> {
   value: member[:name];
 }
 
@@ -357,7 +357,7 @@ In the presentation logic, you should detect whether odd or even line in the ite
  *  - print value of member[:email] as contentn of the element. 
  *  - print "mailto:" and member[:email] as href attribute value.
  */
-<b>#email</b> {
+<strong>#email</strong> {
   value: member[:email];
   attrs: "href" "mailto:#{member[:email]}";
 }
@@ -375,15 +375,15 @@ compilation</div>
 <div class="program_caption">
 output script</div>
 <pre class="program">&lt;table&gt;
-<b>&lt;%     @members.each_with_index do |member, i| %&gt;</b>
-<b>&lt;%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; %&gt;</b>
- &lt;tr bgcolor="<b>&lt;%= color %&gt;</b>"&gt;
-  &lt;td&gt;<b>&lt;%= member[:name] %&gt;</b>&lt;/td&gt;
+<strong>&lt;%     @members.each_with_index do |member, i| %&gt;</strong>
+<strong>&lt;%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; %&gt;</strong>
+ &lt;tr bgcolor="<strong>&lt;%= color %&gt;</strong>"&gt;
+  &lt;td&gt;<strong>&lt;%= member[:name] %&gt;</strong>&lt;/td&gt;
   &lt;td&gt;
-   &lt;a href="<b>&lt;%= "mailto:#{member[:email]}" %&gt;</b>"&gt;<b>&lt;%= member[:email] %&gt;</b>&lt;/a&gt;
+   &lt;a href="<strong>&lt;%= "mailto:#{member[:email]}" %&gt;</strong>"&gt;<strong>&lt;%= member[:email] %&gt;</strong>&lt;/a&gt;
   &lt;/td&gt;
  &lt;/tr&gt;
-<b>&lt;%     end %&gt;</b>
+<strong>&lt;%     end %&gt;</strong>
 &lt;/table&gt;
 </pre>
 <br>
@@ -552,42 +552,42 @@ These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz
 </p>
 <dl class="dl3">
 <dt class="dt3"><b>
-stag: <i>expr</i>; </b></dt>
+stag: <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Replace start-tag by expression value.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-etag: <i>expr</i>; </b></dt>
+etag: <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Replace end-tag by expression value.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-elem: <i>expr</i>; </b></dt>
+elem: <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Replace elemnt by expression value.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-cont: <i>expr</i>; </b></dt>
+cont: <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Replace content of element by expressin value.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-value: <i>expr</i>; </b></dt>
+value: <em>expr</em>; </b></dt>
 <dd class="dd3">
-	Equivarent to <code>cont: <i>expr</i></code>.
+	Equivarent to <code>cont: <em>expr</em></code>.
 </dd>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-attrs: 'attrname' <i>expr</i>; </b></dt>
+attrs: 'attrname' <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Replace attribute value by expression.
 	The following is an example to specify some attributes.
@@ -601,7 +601,7 @@ attrs: 'attrname' <i>expr</i>; </b></dt>
 </dl>
 <dl class="dl3">
 <dt class="dt3"><b>
-append: <i>expr</i>; </b></dt>
+append: <em>expr</em>; </b></dt>
 <dd class="dd3">
 	Append expression value to tail of tag.
 	This is used especially to add 'checked="checked"', 'selected="selected"'
@@ -635,38 +635,38 @@ The following is an examle to use Kwartz in Ruby on Rails.
 <a name="form1.html"></a>
 <div class="program_caption">
 presentation data (form1.html)</div>
-<pre class="program">&lt;form <b>id="form"</b>&gt;
-  Name: &lt;input type="text" <b>id="member_name"</b>&gt;&lt;br&gt;
-  Birthday: &lt;select <b>id="member_birth"</b>&gt;
+<pre class="program">&lt;form <strong>id="form"</strong>&gt;
+  Name: &lt;input type="text" <strong>id="member_name"</strong>&gt;&lt;br&gt;
+  Birthday: &lt;select <strong>id="member_birth"</strong>&gt;
               &lt;option&gt; - &lt;/option&gt;
             &lt;/select&gt;&lt;br&gt;
- &lt;input type="submit" <b>id="submit"</b>&gt;
+ &lt;input type="submit" <strong>id="submit"</strong>&gt;
 &lt;/form&gt;
 </pre>
 <a name="form1.plogic"></a>
 <div class="program_caption">
 presentation logic (form1.plogic)</div>
-<pre class="program"><b>#form</b> {
-  <b>stag:</b>  start_form_tag :action=&gt;'new';
+<pre class="program"><strong>#form</strong> {
+  <strong>stag:</strong>  start_form_tag :action=&gt;'new';
 }
-<b>#member_name</b> {
-  <b>elem:</b>  text_field 'member', 'name';
+<strong>#member_name</strong> {
+  <strong>elem:</strong>  text_field 'member', 'name';
 }
-<b>#member_birth</b> {
-  <b>elem:</b>  date_select 'member', birth';
+<strong>#member_birth</strong> {
+  <strong>elem:</strong>  date_select 'member', birth';
 }
-<b>#submit</b> {
-  <b>elem:</b>  submit_to 'Submit';
+<strong>#submit</strong> {
+  <strong>elem:</strong>  submit_to 'Submit';
 }
 </pre>
 <a name="form1.expected"></a>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -p form1.plogic form1.html
-<b>&lt;%= start_form_tag :action=&gt;'new' %&gt;</b>
-  Name: <b>&lt;%= text_field 'member', 'name' %&gt;</b>&lt;br&gt;
-  Birthday: <b>&lt;%= date_select 'member', birth' %&gt;</b>&lt;br&gt;
- <b>&lt;%= submit_to 'Submit' %&gt;</b>
+<strong>&lt;%= start_form_tag :action=&gt;'new' %&gt;</strong>
+  Name: <strong>&lt;%= text_field 'member', 'name' %&gt;</strong>&lt;br&gt;
+  Birthday: <strong>&lt;%= date_select 'member', birth' %&gt;</strong>&lt;br&gt;
+ <strong>&lt;%= submit_to 'Submit' %&gt;</strong>
 &lt;/form&gt;
 </pre>
 <br>
@@ -677,7 +677,7 @@ compile</div>
 <p>Presentation logic may be embedded into presentation data in Kwartz.
 You can choose to separate or not to sepearate presentation logic from presentation data.
 </p>
-<p>The reason to provide both solutions (separate or not) is <b>choosability</b>.
+<p>The reason to provide both solutions (separate or not) is <strong>choosability</strong>.
 Some preferes to separate presentation logic from presentaion data, and others may
 prefere to mix them.
 Both approaches have own advantages and disadvantages.
@@ -692,9 +692,9 @@ In Kwartz, 'title' attributes<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</s
 <p>The following is an example to use directives.
 </p>
 <ul type="disc">
-<li>Directive <code>title="for <i>var</i> in <i>list</i>"</code> means to iterate the element.
+<li>Directive <code>title="for <em>var</em> in <em>list</em>"</code> means to iterate the element.
 </li>
-<li>Directive <code>title="value: <i>expression</i>"</code> means to print value of expression as content of the element.
+<li>Directive <code>title="value: <em>expression</em>"</code> means to print value of expression as content of the element.
 </li>
 <li>Directive <code>title="dummy:"</code> means that the element is a dummy and is not printed out.
 </li>
@@ -703,18 +703,18 @@ In Kwartz, 'title' attributes<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</s
 <div class="program_caption">
 Presentation Data(directive1.html):</div>
 <pre class="program">&lt;table&gt;
-  &lt;tr <b>title="for member in @members"</b>&gt;
-    &lt;td <b>title="value: member.name"</b>&gt;foo&lt;/td&gt;
+  &lt;tr <strong>title="for member in @members"</strong>&gt;
+    &lt;td <strong>title="value: member.name"</strong>&gt;foo&lt;/td&gt;
     &lt;td&gt;
       &lt;a href="mailto:&lt;%= member.email %&gt;"
-         title="<b>value: member.email</b>"&gt;foo@mai.com&lt;/a&gt;
+         title="<strong>value: member.email</strong>"&gt;foo@mai.com&lt;/a&gt;
     &lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>title="dummy:"</b>&gt;
+  &lt;tr <strong>title="dummy:"</strong>&gt;
     &lt;td&gt;bar&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <b>title="dummy:"</b>&gt;
+  &lt;tr <strong>title="dummy:"</strong>&gt;
     &lt;td&gt;baz&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
@@ -728,14 +728,14 @@ Compile:</div>
 <div class="program_caption">
 Output script:</div>
 <pre class="program">&lt;table&gt;
-<b>&lt;% for member in @members do %&gt;</b>
+<strong>&lt;% for member in @members do %&gt;</strong>
   &lt;tr&gt;
-    &lt;td&gt;<b>&lt;%= member.name %&gt;</b>&lt;/td&gt;
+    &lt;td&gt;<strong>&lt;%= member.name %&gt;</strong>&lt;/td&gt;
     &lt;td&gt;
-      &lt;a href="mailto:<b>&lt;%= member.email %&gt;</b>"&gt;<b>&lt;%= member.email %&gt;</b>&lt;/a&gt;
+      &lt;a href="mailto:<strong>&lt;%= member.email %&gt;</strong>"&gt;<strong>&lt;%= member.email %&gt;</strong>&lt;/a&gt;
     &lt;/td&gt;
   &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/table&gt;
 </pre>
 <p>If the first character of target attribute is a space, Kwartz recognize it as non-directive<sup>(<a href="#fnref:5" name="fnlink:5">*5</a>)</sup>.
@@ -743,15 +743,15 @@ Output script:</div>
 <a name="directive2.html"></a>
 <div class="program_caption">
 presentation data (directive2.html)</div>
-<pre class="program">&lt;span <b>title="value: expr1"</b>&gt;foo&lt;/span&gt;
-&lt;span <b>title=" value: expr2"</b>&gt;bar&lt;/span&gt;
+<pre class="program">&lt;span <strong>title="value: expr1"</strong>&gt;foo&lt;/span&gt;
+&lt;span <strong>title=" value: expr2"</strong>&gt;bar&lt;/span&gt;
 </pre>
 <a name="directive2.expected"></a>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz directive2.html
-&lt;span&gt;<b>&lt;%= expr1 %&gt;</b>&lt;/span&gt;
-&lt;span <b>title="value: expr2"</b>&gt;bar&lt;/span&gt;
+&lt;span&gt;<strong>&lt;%= expr1 %&gt;</strong>&lt;/span&gt;
+&lt;span <strong>title="value: expr2"</strong>&gt;bar&lt;/span&gt;
 </pre>
 <p>Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -773,12 +773,12 @@ See reference manual for details about directives.
 <p>Kwartz supports Automatic-escape and Partial-escape/unescape.
 </p>
 <ul type="disc">
-<li>If command-line option '<code>-e</code>' is specified,  values of '<code>value: <i>expr</i></code>'
+<li>If command-line option '<code>-e</code>' is specified,  values of '<code>value: <em>expr</em></code>'
    are escaped. (Automatic-escape)
 </li>
-<li>'<code>Value: <i>expr</i></code>' always escapes value even when '<code>-e</code>' is not specified. (Partial-escape)
+<li>'<code>Value: <em>expr</em></code>' always escapes value even when '<code>-e</code>' is not specified. (Partial-escape)
 </li>
-<li>'<code>VALUE: <i>expr</i></code>' always doesn't escapes value even when '<code>-e</code>' is specified. (Partial-unescape)
+<li>'<code>VALUE: <em>expr</em></code>' always doesn't escapes value even when '<code>-e</code>' is specified. (Partial-unescape)
 </li>
 </ul>
 <a name="escape1.html"></a>
@@ -794,13 +794,13 @@ presentation Data (escape1.html):</div>
 <div class="program_caption">
 presentation logic (escape1.plogic)</div>
 <pre class="program">#val1 {
-  <b>value:</b> expr;
+  <strong>value:</strong> expr;
 }
 #val2 {
-  <b>Value:</b> expr;
+  <strong>Value:</strong> expr;
 }
 #val3 {
-  <b>VALUE:</b> expr;
+  <strong>VALUE:</strong> expr;
 }
 </pre>
 <a name="escape1.expected"></a>
@@ -816,11 +816,11 @@ compile without '<code>-e</code>' option.</div>
 <a name="escape1e.expected"></a>
 <div class="terminal_caption">
 comple with '<code>-e</code>' option.</div>
-<pre class="terminal">$ kwartz <b>-e</b> -p escape1.plogic escape1.html
+<pre class="terminal">$ kwartz <strong>-e</strong> -p escape1.plogic escape1.html
 &lt;tr&gt;
-  &lt;td&gt;<b>&lt;%=h expr %&gt;</b>&lt;/td&gt;
-  &lt;td&gt;<b>&lt;%=h expr %&gt;</b>&lt;/td&gt;
-  &lt;td&gt;<b>&lt;%= expr %&gt;</b>&lt;/td&gt;
+  &lt;td&gt;<strong>&lt;%=h expr %&gt;</strong>&lt;/td&gt;
+  &lt;td&gt;<strong>&lt;%=h expr %&gt;</strong>&lt;/td&gt;
+  &lt;td&gt;<strong>&lt;%= expr %&gt;</strong>&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <p>In the same way, '<code>Stag:</code>', '<code>Etag:</code>', '<code>Elem:</code>',
@@ -833,9 +833,9 @@ never escaped.
 'h()' is used in eRuby and 'htmlspecialchars()' in PHP.
 JSTL prints escaped value in default.
 </p>
-<p>Directives <code>title="Value: <i>expr</i>"</code>, <code>title="Attr: '<i>name</i>' <i>expr</i>"</code>, and <code>title="Append: <i>expr</i>"</code> always escape expression value even when the command-line option '<code>-e</code>' is not specified.
+<p>Directives <code>title="Value: <em>expr</em>"</code>, <code>title="Attr: '<em>name</em>' <em>expr</em>"</code>, and <code>title="Append: <em>expr</em>"</code> always escape expression value even when the command-line option '<code>-e</code>' is not specified.
 </p>
-<p>Directives <code>title="VALUE: <i>expr</i>:"</code>, <code>title="ATTR: '<i>name</i>' <i>expr</i>"</code>, and <code>title="APPEND: <i>expr</i>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
+<p>Directives <code>title="VALUE: <em>expr</em>:"</code>, <code>title="ATTR: '<em>name</em>' <em>expr</em>"</code>, and <code>title="APPEND: <em>expr</em>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
 </p>
 <p>Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
@@ -848,20 +848,20 @@ If this is true then Kwartz will escape values in default.
 <p>Kwartz-ruby now supports the following programming language.
 </p>
 <ul type="disc">
-<li>Ruby (eRuby)
+<li>Ruby, eRuby
 </li>
 <li>PHP
 </li>
 <li>JSP (JSTL 1.1 and 1.2)
 </li>
-<li>Perl (ePerl) [experimental]
+<li>ePerl [experimental]
 </li>
 </ul>
 <p>Presentation logics must be described in each target language.
 It means that if you have wrote presentation logics in Ruby, they were not reusable
 for PHP project (but you can get full-power of Ruby in presentation logic).
 </p>
-<p>The followings are examples of Ruby, PHP, JSP, and Perl.
+<p>The followings are examples of Ruby, eRuby, PHP, JSP, and ePerl.
 </p>
 <a name="table1.html"></a>
 <div class="program_caption">
@@ -870,15 +870,15 @@ table1.html</div>
   &lt;body&gt;
   
     &lt;table&gt;
-      &lt;tr bgcolor="#CCCCFF" <b>id="mark:row"</b>&gt;
-        &lt;td <b>id="mark:name"</b>&gt;Foo&lt;/td&gt;
-        &lt;td <b>id="mark:mail"</b>&gt;foo@mail.com&lt;/td&gt;
+      &lt;tr bgcolor="#CCCCFF" <strong>id="mark:row"</strong>&gt;
+        &lt;td <strong>id="mark:name"</strong>&gt;Foo&lt;/td&gt;
+        &lt;td <strong>id="mark:mail"</strong>&gt;foo@mail.com&lt;/td&gt;
       &lt;/tr&gt;
-      &lt;tr bgcolor="#FFCCCC" <b>id="dummy:row1"</b>&gt;
+      &lt;tr bgcolor="#FFCCCC" <strong>id="dummy:row1"</strong>&gt;
         &lt;td&gt;Bar&lt;/td&gt;
         &lt;td&gt;bar@mail.net&lt;/td&gt;
       &lt;/tr&gt;
-      &lt;tr bgcolor="#CCCCFF" <b>id="dummy:row2"</b>&gt;
+      &lt;tr bgcolor="#CCCCFF" <strong>id="dummy:row2"</strong>&gt;
         &lt;td&gt;Baz&lt;/td&gt;
         &lt;td&gt;baz@mail.org&lt;/td&gt;
       &lt;/tr&gt;
@@ -887,16 +887,16 @@ table1.html</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<a name="table1.eruby.plogic"></a>
+<a name="table1.ruby.plogic"></a>
 <div class="program_caption">
-table1.eruby.plogic</div>
+table1.ruby.plogic</div>
 <pre class="program">#row {
   attrs:  "bgcolor" color;
   logic: {
     @list.each_with_index do |user, i|
       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';
       _elem
-    }
+    end
   }
 }
 
@@ -975,7 +975,8 @@ table1.eperl.plogic</div>
 </pre>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz -l eruby -p table1.eruby.plogic table1.html &gt; table1.rhtml
+<pre class="terminal">$ kwartz -l eruby -p table1.ruby.plogic table1.html  &gt; table1.rhtml
+$ kwartz -l ruby  -p table1.eruby.plogic table1.html &gt; table1.rb
 $ kwartz -l php   -p table1.php.plogic   table1.html &gt; table1.php
 $ kwartz -l jstl  -p table1.jstl.plogic  table1.html &gt; table1.jsp
 $ kwartz -l eperl -p table1.eperl.plogic table1.html &gt; table1.iphtml
@@ -987,17 +988,37 @@ output script (table1.rhtml)</div>
   &lt;body&gt;
   
     &lt;table&gt;
-<b>&lt;%       @list.each_with_index do |user, i| %&gt;</b>
-<b>&lt;%          color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %&gt;</b>
-      &lt;tr bgcolor="<b>&lt;%= color %&gt;</b>"&gt;
-        &lt;td&gt;<b>&lt;%=h user[:name] %&gt;</b>&lt;/td&gt;
-        &lt;td&gt;<b>&lt;%= user[:mail] %&gt;</b>&lt;/td&gt;
+<strong>&lt;%       @list.each_with_index do |user, i| %&gt;</strong>
+<strong>&lt;%          color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %&gt;</strong>
+      &lt;tr bgcolor="<strong>&lt;%= color %&gt;</strong>"&gt;
+        &lt;td&gt;<strong>&lt;%=h user[:name] %&gt;</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>&lt;%= user[:mail] %&gt;</strong>&lt;/td&gt;
       &lt;/tr&gt;
-<b>&lt;%       end %&gt;</b>
+<strong>&lt;%       end %&gt;</strong>
     &lt;/table&gt;
 
  &lt;/body&gt;
 &lt;/html&gt;
+</pre>
+<a name="table1.rb"></a>
+<div class="program_caption">
+output script (table1.rb)</div>
+<pre class="program">_buf = ""; _buf &lt;&lt; '&lt;html&gt;
+'; _buf &lt;&lt; '  &lt;body&gt;
+'; _buf &lt;&lt; '  
+'; _buf &lt;&lt; '    &lt;table&gt;
+';     <strong>@list.each_with_index do |user, i|</strong>
+      <strong>color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';</strong>
+_buf &lt;&lt; '      &lt;tr bgcolor="'; _buf &lt;&lt; (color).to_s; _buf &lt;&lt; '"&gt;
+'; _buf &lt;&lt; '        &lt;td&gt;'; <strong>_buf &lt;&lt; ERB::Util.h(user[:name]);</strong> _buf &lt;&lt; '&lt;/td&gt;
+'; _buf &lt;&lt; '        &lt;td&gt;'; <strong>_buf &lt;&lt; (user[:mail]).to_s;</strong> _buf &lt;&lt; '&lt;/td&gt;
+'; _buf &lt;&lt; '      &lt;/tr&gt;
+';     <strong>end</strong>
+_buf &lt;&lt; '    &lt;/table&gt;
+'; _buf &lt;&lt; '
+'; _buf &lt;&lt; ' &lt;/body&gt;
+'; _buf &lt;&lt; '&lt;/html&gt;
+'; ; _buf
 </pre>
 <a name="table1.php"></a>
 <div class="program_caption">
@@ -1006,14 +1027,14 @@ output script (table1.php)</div>
   &lt;body&gt;
   
     &lt;table&gt;
-<b>&lt;?php     $i = 0; ?&gt;</b>
-<b>&lt;?php     foreach ($list as $user) { ?&gt;</b>
-<b>&lt;?php       $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?&gt;</b>
-      &lt;tr bgcolor="<b>&lt;?php echo $color; ?&gt;</b>"&gt;
-        &lt;td&gt;<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>&lt;/td&gt;
-        &lt;td&gt;<b>&lt;?php echo $user['mail']; ?&gt;</b>&lt;/td&gt;
+<strong>&lt;?php     $i = 0; ?&gt;</strong>
+<strong>&lt;?php     foreach ($list as $user) { ?&gt;</strong>
+<strong>&lt;?php       $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?&gt;</strong>
+      &lt;tr bgcolor="<strong>&lt;?php echo $color; ?&gt;</strong>"&gt;
+        &lt;td&gt;<strong>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>&lt;?php echo $user['mail']; ?&gt;</strong>&lt;/td&gt;
       &lt;/tr&gt;
-<b>&lt;?php     } ?&gt;</b>
+<strong>&lt;?php     } ?&gt;</strong>
     &lt;/table&gt;
 
  &lt;/body&gt;
@@ -1028,13 +1049,13 @@ output script (JSTL 1.2)</div>
   &lt;body&gt;
   
     &lt;table&gt;
-    <b>&lt;c:forEach var="user" items="${list}" varStatus="loop"&gt;</b>
-      <b>&lt;c:set var="color" value="${loop.index % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;</b>
-      &lt;tr bgcolor="<b>${color}</b>"&gt;
-        &lt;td&gt;<b>${user.name}</b>&lt;/td&gt;
-        &lt;td&gt;<b>${user.mail}</b>&lt;/td&gt;
+    <strong>&lt;c:forEach var="user" items="${list}" varStatus="loop"&gt;</strong>
+      <strong>&lt;c:set var="color" value="${loop.index % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/&gt;</strong>
+      &lt;tr bgcolor="<strong>${color}</strong>"&gt;
+        &lt;td&gt;<strong>${user.name}</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>${user.mail}</strong>&lt;/td&gt;
       &lt;/tr&gt;
-    <b>&lt;/c:forEach&gt;</b>
+    <strong>&lt;/c:forEach&gt;</strong>
     &lt;/table&gt;
 
  &lt;/body&gt;
@@ -1047,14 +1068,14 @@ output script (ePerl)</div>
   &lt;body&gt;
   
     &lt;table&gt;
-<b>&lt;?     $i = 0; !&gt;</b>
-<b>&lt;?     foreach ($user in @list) { !&gt;</b>
-<b>&lt;?       $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !&gt;</b>
-      &lt;tr bgcolor="<b>&lt;?= $color !&gt;</b>"&gt;
-        &lt;td&gt;<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>&lt;/td&gt;
-        &lt;td&gt;<b>&lt;?= $user{'mail'} !&gt;</b>&lt;/td&gt;
+<strong>&lt;?     $i = 0; !&gt;</strong>
+<strong>&lt;?     foreach ($user in @list) { !&gt;</strong>
+<strong>&lt;?       $color = ++$i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !&gt;</strong>
+      &lt;tr bgcolor="<strong>&lt;?= $color !&gt;</strong>"&gt;
+        &lt;td&gt;<strong>&lt;?= encode_entities($user{'name'}) !&gt;</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>&lt;?= $user{'mail'} !&gt;</strong>&lt;/td&gt;
       &lt;/tr&gt;
-<b>&lt;?     } !&gt;</b>
+<strong>&lt;?     } !&gt;</strong>
     &lt;/table&gt;
 
  &lt;/body&gt;
@@ -1070,9 +1091,9 @@ output script (ePerl)</div>
 <a name="delspan1.html"></a>
 <div class="program_caption">
 presentation data (delspan1.html)</div>
-<pre class="program">&lt;h1&gt;&lt;span <b>id="mark:title"</b>&gt;title&lt;/span&gt;&lt;/h1&gt;
+<pre class="program">&lt;h1&gt;&lt;span <strong>id="mark:title"</strong>&gt;title&lt;/span&gt;&lt;/h1&gt;
 
-Hello &lt;span <b>title="value: user"</b>&gt;World&lt;/span&gt;!
+Hello &lt;span <strong>title="value: user"</strong>&gt;World&lt;/span&gt;!
 </pre>
 <a name="delspan1.plogic"></a>
 <div class="program_caption">
@@ -1084,23 +1105,23 @@ presentation logic (delspan1.plogic)</div>
 <a name="delspan1.expected"></a>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz -p delspan1.plogic <b>--delspan</b> delspan1.html
-&lt;h1&gt;<b>&lt;%= title %&gt;</b>&lt;/h1&gt;
+<pre class="terminal">$ kwartz -p delspan1.plogic <strong>--delspan</strong> delspan1.html
+&lt;h1&gt;<strong>&lt;%= title %&gt;</strong>&lt;/h1&gt;
 
-Hello <b>&lt;%= user %&gt;</b>!
+Hello <strong>&lt;%= user %&gt;</strong>!
 </pre>
 <p>The span tags are not removed when they have other attributes.
 </p>
 <a name="delspan2.html"></a>
 <div class="program_caption">
 presentation data (delspan2.html)</div>
-<pre class="program">Hello &lt;span <b>title="value: user" style="color:black"</b>&gt;World&lt;/span&gt;!
+<pre class="program">Hello &lt;span <strong>title="value: user" style="color:black"</strong>&gt;World&lt;/span&gt;!
 </pre>
 <a name="delspan2.expected"></a>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz <b>--delspan</b> delspan2.html
-Hello <b>&lt;span style="color:black"&gt;</b>&lt;%= user %&gt;<b>&lt;/span&gt;</b>!
+<pre class="terminal">$ kwartz <strong>--delspan</strong> delspan2.html
+Hello <strong>&lt;span style="color:black"&gt;</strong>&lt;%= user %&gt;<strong>&lt;/span&gt;</strong>!
 </pre>
 <br>
 
@@ -1113,19 +1134,19 @@ This is useful to share common presentation logic in many files.
 <a name="link_to2.plogic"></a>
 <div class="program_caption">
 link_to.plogic</div>
-<pre class="program"><b>#link_to_new</b> {
+<pre class="program"><strong>#link_to_new</strong> {
   elem:  start_link_to :action=&gt;'new';
 }
-<b>#link_to_show</b> {
+<strong>#link_to_show</strong> {
   elem:  start_link_to :action=&gt;'show', :id=&gt;@member;
 }
-<b>#link_to_edit</b> {
+<strong>#link_to_edit</strong> {
   elem:  start_link_to :action=&gt;'edit', :id=&gt;@member;
 }
-<b>#link_to_list</b> {
+<strong>#link_to_list</strong> {
   elem:  start_link_to :action=&gt;'list';
 }
-<b>#link_to_destroy</b> {
+<strong>#link_to_destroy</strong> {
   stag:  start_link_to({:action=&gt;'destroy', :id=&gt;@member}, :confirm=&gt;'Are you sure?');
 }
 </pre>
@@ -1136,13 +1157,13 @@ show.html</div>
  Name: &lt;span id="mark:name"&gt;foo&lt;/span&gt; &lt;br&gt;
  Email: &lt;span id="mark:email"&gt;foo@mail.com&lt;/span&gt; &lt;br&gt;
 &lt;/p&gt;
-&lt;a href="#" <b>id="link_to_edit"</b>&gt;Edit this member&lt;/a&gt; |
-&lt;a href="#" <b>id="link_to_new"</b>&gt;Create new member&lt;/a&gt; |
-&lt;a href="#" <b>id="link_to_list"</b>&gt;Return to list&lt;/a&gt;
+&lt;a href="#" <strong>id="link_to_edit"</strong>&gt;Edit this member&lt;/a&gt; |
+&lt;a href="#" <strong>id="link_to_new"</strong>&gt;Create new member&lt;/a&gt; |
+&lt;a href="#" <strong>id="link_to_list"</strong>&gt;Return to list&lt;/a&gt;
 </pre>
 <div class="program_caption">
 show.plogic</div>
-<pre class="program"><b>@import 'link_to.plogic';</b>
+<pre class="program"><strong>@import 'link_to.plogic';</strong>
 
 #name {
   Value: @member.name;
@@ -1168,15 +1189,15 @@ compile</div>
 
 <a name="import-elem"></a>
 <h3 class="section2">Import Elements in Other Files</h3>
-<p>Command-line option '-i <i>filename,...</i>' imports element definitions form other files.
+<p>Command-line option '-i <em>filename,...</em>' imports element definitions form other files.
 </p>
 <a name="form.html"></a>
 <div class="program_caption">
 form.html</div>
 <pre class="program">&lt;form&gt;
- &lt;div <b>id="mark:form_content"</b>&gt;
-  <b>Name: &lt;input type="text"&gt;&lt;br&gt;</b>
-  <b>Password: &lt;input type="password"&gt;&lt;br&gt;</b>
+ &lt;div <strong>id="mark:form_content"</strong>&gt;
+  <strong>Name: &lt;input type="text"&gt;&lt;br&gt;</strong>
+  <strong>Password: &lt;input type="password"&gt;&lt;br&gt;</strong>
  &lt;/div&gt;
  &lt;input type="submit"&gt;
 &lt;/form&gt;
@@ -1185,7 +1206,7 @@ form.html</div>
 <div class="program_caption">
 new.html</div>
 <pre class="program">&lt;form action="/new"&gt;
-  &lt;div <b>id="mark:placeholder"</b>&gt;&lt;/div&gt;
+  &lt;div <strong>id="mark:placeholder"</strong>&gt;&lt;/div&gt;
   &lt;input type="submit" value="Create"&gt;
 &lt;/form&gt;
 </pre>
@@ -1193,19 +1214,19 @@ new.html</div>
 <div class="program_caption">
 new.plogic</div>
 <pre class="program">/* use element which is defined other file */
-<b>#placeholder</b> {
+<strong>#placeholder</strong> {
   logic: {
-    <b>_content(form_content)</b>
+    <strong>_content(form_content)</strong>
   }
 }
 </pre>
 <a name="new.expected"></a>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz <b>-i form.html</b> -p new.plogic new.html
+<pre class="terminal">$ kwartz <strong>-i form.html</strong> -p new.plogic new.html
 &lt;form action="/new"&gt;
-  <b>Name: &lt;input type="text"&gt;&lt;br&gt;</b>
-  <b>Password: &lt;input type="password"&gt;&lt;br&gt;</b>
+  <strong>Name: &lt;input type="text"&gt;&lt;br&gt;</strong>
+  <strong>Password: &lt;input type="password"&gt;&lt;br&gt;</strong>
   &lt;input type="submit" value="Create"&gt;
 &lt;/form&gt;
 </pre>
@@ -1214,15 +1235,15 @@ compile</div>
 
 <a name="extract"></a>
 <h3 class="section2">Extract Element</h3>
-<p>Command option '-X <i>name</i>' extracts element marked as <i>name</i>
-and command option '-x <i>name</i>' extracts content of element.
+<p>Command option '-X <em>name</em>' extracts element marked as <em>name</em>
+and command option '-x <em>name</em>' extracts content of element.
 </p>
 <a name="show.html"></a>
 <div class="program_caption">
 show.html</div>
 <pre class="program">&lt;html&gt;
  &lt;body&gt;
-  &lt;div <b>id="mark:content"</b>&gt;
+  &lt;div <strong>id="mark:content"</strong>&gt;
    &lt;h1&gt;Show&lt;/h1&gt;
    &lt;p&gt;Name: &lt;span id="mark:name"&gt;foo&lt;/span&gt;&lt;/p&gt;
    &lt;p&gt;Email: &lt;span id="mark:email"&gt;foo@mail.com&lt;/span&gt;&lt;/p&gt;
@@ -1242,7 +1263,7 @@ show.plogic</div>
 </pre>
 <div class="terminal_caption">
 compile with '-X'</div>
-<pre class="terminal">$ kwartz <b>-X content</b> -p show.plogic show.html
+<pre class="terminal">$ kwartz <strong>-X content</strong> -p show.plogic show.html
   &lt;div&gt;
    &lt;h1&gt;Show&lt;/h1&gt;
    &lt;p&gt;Name: &lt;span&gt;&lt;%= user.name %&gt;&lt;/span&gt;&lt;/p&gt;
@@ -1252,7 +1273,7 @@ compile with '-X'</div>
 <a name="test_show_cont.expected"></a>
 <div class="terminal_caption">
 compile with '-x'</div>
-<pre class="terminal">$ kwartz <b>-x content</b> -p show.plogic show.html
+<pre class="terminal">$ kwartz <strong>-x content</strong> -p show.plogic show.html
    &lt;h1&gt;Show&lt;/h1&gt;
    &lt;p&gt;Name: &lt;span&gt;&lt;%= user.name %&gt;&lt;/span&gt;&lt;/p&gt;
    &lt;p&gt;Email: &lt;span&gt;&lt;%= user.email %&gt;&lt;/span&gt;&lt;/p&gt;
@@ -1278,7 +1299,7 @@ print-stmt.eruby.plogic</div>
   logic: {
     for item in list
       _stag
-      <b>print item</b>
+      <strong>print item</strong>
       _etag
     end
   }
@@ -1290,7 +1311,7 @@ compile</div>
 <pre class="terminal">$ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
 &lt;ul&gt;
 &lt;%     for item in list %&gt;
-  &lt;li id="items"&gt;<b>&lt;%= item %&gt;</b>&lt;/li&gt;
+  &lt;li id="items"&gt;<strong>&lt;%= item %&gt;</strong>&lt;/li&gt;
 &lt;%     end %&gt;
 &lt;/ul&gt;
 </pre>
@@ -1301,7 +1322,7 @@ print-stmt.php.plogic</div>
   logic: {
     foreach ($list as $item) {
       _stag();
-      <b>print($item);</b>
+      <strong>print($item);</strong>
       _etag();
     }
   }
@@ -1313,7 +1334,7 @@ compile</div>
 <pre class="terminal">$ kwartz -l php -p print-stmt.php.plogic print-stmt.html
 &lt;ul&gt;
 &lt;?php     foreach ($list as $item) { ?&gt;
-  &lt;li id="items"&gt;<b>&lt;?php echo $item; ?&gt;</b>&lt;/li&gt;
+  &lt;li id="items"&gt;<strong>&lt;?php echo $item; ?&gt;</strong>&lt;/li&gt;
 &lt;?php     } ?&gt;
 &lt;/ul&gt;
 </pre>
@@ -1324,7 +1345,7 @@ print-stmt.jstl.plogic</div>
   logic: {
     &lt;c:forEach var="item" items="${list}"&gt;
       _stag
-      <b>print item</b>
+      <strong>print item</strong>
       _etag
     &lt;/c:forEach&gt;
   }
@@ -1338,7 +1359,7 @@ compile (JSTL 1.2)</div>
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
 &lt;ul&gt;
     &lt;c:forEach var="item" items="${list}"&gt;
-  &lt;li id="items"&gt;<b>${item}</b>&lt;/li&gt;
+  &lt;li id="items"&gt;<strong>${item}</strong>&lt;/li&gt;
     &lt;/c:forEach&gt;
 &lt;/ul&gt;
 </pre>
@@ -1349,7 +1370,7 @@ compile (JSTL 1.1)</div>
 &lt;%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %&gt;
 &lt;ul&gt;
     &lt;c:forEach var="item" items="${list}"&gt;
-  &lt;li id="items"&gt;<b>&lt;c:out value="${item}"/&gt;</b>&lt;/li&gt;
+  &lt;li id="items"&gt;<strong>&lt;c:out value="${item}"/&gt;</strong>&lt;/li&gt;
     &lt;/c:forEach&gt;
 &lt;/ul&gt;
 </pre>
@@ -1374,12 +1395,12 @@ document-test.html</div>
 <a name="document-test.plogic"></a>
 <div class="program_caption">
 document-test.plogic</div>
-<pre class="program"><b>#DOCUMENT</b> {
-  <b>begin:</b> {
+<pre class="program"><strong>#DOCUMENT</strong> {
+  <strong>begin:</strong> {
     title = _context[:title]
     user  = _context[:user]
   }
-  <b>end:</b> {
+  <strong>end:</strong> {
     print "&lt;!--end--&gt;\n"
   }
 }
@@ -1388,12 +1409,12 @@ document-test.plogic</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -p document-test.plogic document-test.html
-<b>&lt;%     title = _context[:title] %&gt;</b>
-<b>&lt;%     user  = _context[:user] %&gt;</b>
+<strong>&lt;%     title = _context[:title] %&gt;</strong>
+<strong>&lt;%     user  = _context[:user] %&gt;</strong>
 &lt;html&gt;
  &lt;body&gt;hello&lt;/body&gt;
 &lt;/html&gt;
-<b>&lt;%= "&lt;!--end--&gt;\n" %&gt;</b>
+<strong>&lt;%= "&lt;!--end--&gt;\n" %&gt;</strong>
 </pre>
 <br>
 
@@ -1598,12 +1619,12 @@ recipes:
 </p>
 <div class="program_caption">
 usage of Kwartz::Main class</div>
-<pre class="program"><b>require 'kwartz'</b>
-<b>require 'kwartz/main'</b>
+<pre class="program"><strong>require 'kwartz'</strong>
+<strong>require 'kwartz/main'</strong>
 
 argv = %w[-p hello.plogic -L layout.html hello.html]
-<b>main = Kwartz::Main.new(argv)</b>
-<b>output = main.execute()</b>
+<strong>main = Kwartz::Main.new(argv)</strong>
+<strong>output = main.execute()</strong>
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
 </pre>
 <br>
@@ -1617,12 +1638,12 @@ It's not DRY.
 </p>
 <div class="program_caption">
 presentation data</div>
-<pre class="program">&lt;a href="#" id="mark:link_to_new"&gt;<b>Create new recipe</b>&lt;/a&gt;
+<pre class="program">&lt;a href="#" id="mark:link_to_new"&gt;<strong>Create new recipe</strong>&lt;/a&gt;
 </pre>
 <div class="program_caption">
 presentation logic</div>
 <pre class="program">#link_to_new {
-  elem:  link_to <b>'Create new recipe'</b>, :action=&gt;'new';
+  elem:  link_to <strong>'Create new recipe'</strong>, :action=&gt;'new';
 }
 </pre>
 <p>It is recommended to include the following helper method
@@ -1653,7 +1674,7 @@ presentation data</div>
 <div class="program_caption">
 presentation logic</div>
 <pre class="program">#link_to_new {
-  stag:  <b>start_link_to</b> :action=&gt;'new';
+  stag:  <strong>start_link_to</strong> :action=&gt;'new';
 }
 </pre>
 <br>

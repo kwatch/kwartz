@@ -6,7 +6,7 @@
 
 require 'kwartz/converter'
 require 'kwartz/translator'
-require 'kwartz/binding/eruby'
+require 'kwartz/binding/ruby'
 
 
 
@@ -14,10 +14,8 @@ module Kwartz
 
 
 
-  class ErubisHandler < ErubyHandler
-
-
-  end #class
+  class ErubisHandler < RubyHandler
+  end
   Handler.register_class('erubis', ErubisHandler)
 
 
@@ -37,7 +35,7 @@ module Kwartz
 
     def initialize(properties={})
       super(ERUBIS_EMBED_PATTERNS, properties)
-      @escape = true if @escape == nil
+      #@escape = true if @escape == nil
     end
 
 

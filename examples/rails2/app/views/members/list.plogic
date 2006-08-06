@@ -1,0 +1,28 @@
+@import 'link_to.plogic';
+@import 'reader.plogic';
+
+#members {
+  logic: {
+    for @member in @members
+      _elem
+    end
+  }
+}
+
+#prev_page {
+  elem:  start_link_to({:page=>@member_pages.current.previous});
+  logic: {
+    if @member_pages.current.previous
+      _elem
+    end
+  }
+}
+
+#next_page {
+  elem:  start_link_to({:page=>@member_pages.current.next});
+  logic: {
+    if @member_pages.current.next
+      _elem
+    end
+  }
+}

@@ -10,15 +10,17 @@ filename = __FILE__.sub(/\.\w+$/, '.yaml')
 ydoc = YAML.load_file(filename)
 
 PDATA = ydoc['pdata']
-ERUBY_PLOGIC = ydoc['plogic*']['eruby']
-ERUBY_OUTPUT = ydoc['expected*']['eruby']
-PHP_PLOGIC = ydoc['plogic*']['php']
-PHP_OUTPUT = ydoc['expected*']['php']
-IMPORT_PDATA = ydoc['import_pdata']
+ERUBY_PLOGIC  = ydoc['plogic*']['eruby']
+ERUBY_OUTPUT  = ydoc['expected*']['eruby']
+PHP_PLOGIC    = ydoc['plogic*']['php']
+PHP_OUTPUT    = ydoc['expected*']['php']
+IMPORT_PDATA  = ydoc['import_pdata']
 IMPORT_PLOGIC = ydoc['import_plogic*']['eruby']
-LAYOUT = ydoc['layout']
-YAML_DATA = ydoc['yamldata']
-YAML_OUTPUT = ydoc['yamloutput']
+LAYOUT        = ydoc['layout']
+YAML_DATA     = ydoc['yamldata']
+YAML_OUTPUT   = ydoc['yamloutput']
+NOTEXT_ERUBY  = ydoc['notext*']['eruby']
+NOTEXT_RUBY   = ydoc['notext*']['ruby']
 
 
 class File
@@ -37,6 +39,7 @@ class MainTest < Test::Unit::TestCase
 
   def _test
     @name = (caller()[0] =~ /in `test_(.*?)'/) && $1
+    return if ENV['TEST'] && ENV['TEST'] != @name
     begin
       File.write("#{@name}.pdata",  @pdata)  if @pdata
       File.write("#{@name}.plogic", @plogic) if @plogic
@@ -309,6 +312,17 @@ END
     _test
   end
 
+
+  def test_notext  # -N
+    @argv = %w[-N -p notext notext.pdata]
+    @pdata = PDATA
+    @plogic = ERUBY_PLOGIC
+    @expected = NOTEXT_ERUBY
+    _test
+    @argv = %w[-lruby -N -p notext notext.pdata]
+    @expected = NOTEXT_RUBY
+    _test
+  end
 
   def test_no_args
     @exception = Kwartz::CommandOptionError

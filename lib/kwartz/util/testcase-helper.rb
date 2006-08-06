@@ -12,7 +12,8 @@ class Test::Unit::TestCase   # :nodoc:
 
 
   def self._untabify(str, width=8)         # :nodoc:
-    list = str.split(/\t/)
+    list = str.split(/\t/, -1)
+    return list.first if list.length == 1
     last = list.pop
     buf = []
     list.each do |s|
@@ -58,8 +59,15 @@ class Test::Unit::TestCase   # :nodoc:
       ident         or  raise "*** #{identkey} is not found."
       table[ident]  and raise "*** #{identkey} '#{ident}' is duplicated."
       table[ident] = ydoc
-      yield(ydoc) if block_given?
     end
+    #
+    target = $target || ENV['TEST']
+    if target
+       table[target] or raise "*** target '#{target}' not found."
+       list = [ table[target] ]
+    end
+    #
+    list.each do |ydoc| yield(ydoc) end if block_given?
     #
     return list
   end

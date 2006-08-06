@@ -1,7 +1,7 @@
 .=title:	Kwartz 3.0 Users' Guide
 .?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?lastupdate:	$Date: 2006-05-22 22:25:43 +0900 (Mon, 22 May 2006) $
-.?version:	$Rev: 112 $
+.?lastupdate:	$Date$
+.?version:	$Rev$
 .?release:	$Release$
 .?stylesheet:	docstyle.css
 .?copyright:	$Copyright$
@@ -775,16 +775,16 @@ If this is true then Kwartz will escape values in default.
 .$$ Multi-language      | langs
 
 Kwartz-ruby now supports the following programming language.
-.* Ruby (eRuby)
+.* Ruby, eRuby
 .* PHP
 .* JSP (JSTL 1.1 and 1.2)
-.* Perl (ePerl) [experimental]
+.* ePerl [experimental]
 
 Presentation logics must be described in each target language.
 It means that if you have wrote presentation logics in Ruby, they were not reusable
 for PHP project (but you can get full-power of Ruby in presentation logic).
 
-The followings are examples of Ruby, PHP, JSP, and Perl.
+The followings are examples of Ruby, eRuby, PHP, JSP, and ePerl.
 
 .? table1.html
 .-------------------- table1.html
@@ -810,15 +810,15 @@ The followings are examples of Ruby, PHP, JSP, and Perl.
 </html>
 .--------------------
 
-.? table1.eruby.plogic
-.-------------------- table1.eruby.plogic
+.? table1.ruby.plogic
+.-------------------- table1.ruby.plogic
 #row {
   attrs:  "bgcolor" color;
   logic: {
     @list.each_with_index do |user, i|
-      color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';
+      color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF'
       _elem
-    }
+    end
   }
 }
 
@@ -898,7 +898,8 @@ The followings are examples of Ruby, PHP, JSP, and Perl.
 
 .? compile
 .==================== 
-$ kwartz -l eruby -p table1.eruby.plogic table1.html > table1.rhtml
+$ kwartz -l eruby -p table1.ruby.plogic table1.html  > table1.rhtml
+$ kwartz -l ruby  -p table1.eruby.plogic table1.html > table1.rb
 $ kwartz -l php   -p table1.php.plogic   table1.html > table1.php
 $ kwartz -l jstl  -p table1.jstl.plogic  table1.html > table1.jsp
 $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
@@ -910,13 +911,13 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
   <body>
   
     <table>
-{{*<%       @list.each_with_index do |user, i| %>*}}
-{{*<%          color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %>*}}
+{{*<%     @list.each_with_index do |user, i| %>*}}
+{{*<%       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %>*}}
       <tr bgcolor="{{*<%= color %>*}}">
         <td>{{*<%=h user[:name] %>*}}</td>
         <td>{{*<%= user[:mail] %>*}}</td>
       </tr>
-{{*<%       end %>*}}
+{{*<%     end %>*}}
     </table>
 
  </body>
@@ -924,9 +925,38 @@ $ kwartz -l eperl -p table1.eperl.plogic table1.html > table1.iphtml
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby -p table1.eruby.plogic table1.html)
 [%
-  def test_table1_jstl
-    @command = 'kwartz -l eruby -p table1.jstl.plogic table1.html'
+  def test_table1_eruby
+    @command = 'kwartz -l eruby -p table1.ruby.plogic table1.html'
     @filename = 'table1.rhtml'
+    _test
+  end
+%]
+
+
+.? output script (table1.rb)
+.-------------------- table1.rb
+_buf = ""; _buf << '<html>
+'; _buf << '  <body>
+'; _buf << '  
+'; _buf << '    <table>
+';     {{*@list.each_with_index do |user, i|*}}
+      {{*color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF'*}}
+_buf << '      <tr bgcolor="'; _buf << (color).to_s; _buf << '">
+'; _buf << '        <td>'; {{*_buf << ERB::Util.h(user[:name]);*}} _buf << '</td>
+'; _buf << '        <td>'; {{*_buf << (user[:mail]).to_s;*}} _buf << '</td>
+'; _buf << '      </tr>
+';     {{*end*}}
+_buf << '    </table>
+'; _buf << '
+'; _buf << ' </body>
+'; _buf << '</html>
+'; ; _buf
+.--------------------
+.#.<<<:! (cd d; kwartz -l ruby -p table1.ruby.plogic table1.html)
+[%
+  def test_table1_ruby
+    @command = 'kwartz -l ruby -p table1.ruby.plogic table1.html'
+    @filename = 'table1.rb'
     _test
   end
 %]
@@ -1630,7 +1660,7 @@ end
 properties:
   - layout  :  layout.html
 
-variables:
+parameters:
   - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
   - rook_product:  $(all)
 
@@ -1638,13 +1668,13 @@ recipes:
 
   - product:	*.rhtml
     ingreds:	[ $(1).html, $(1).plogic ]
-    method: |
+    method*: |
         pdata, plogic = @ingreds
 	sys "kwartz -p #{plogic} #{pdata} > #{@product}"
 
   - product:	file3.rhtml
     ingres:	[ file3.html, file3.plogic, $(layout) ]
-    method: |
+    method*: |
         pdata, plogic, layout = @ingreds
 	sys "kwartz- p #{plogic} -L $(layout) #{pdata} > #{@product}"
 .--------------------
@@ -1664,6 +1694,45 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 {{*main = Kwartz::Main.new(argv)*}}
 {{*output = main.execute()*}}
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
+.--------------------
+
+
+.$$ Support of Ruby on Rails	| helper_rails
+
+If you want to use Kwartz with Ruby on Rails, add the following code in your 'app/controllers/application.rb' and restart web server.
+
+.--------------------
+require 'kwartz/helper/rails'
+ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
+#Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
+#Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
+#Kwartz::Helper::RailsTemplate.default_properties = { :escape=>true }
+#Kwartz::Helper::RailsTemplate.debug = false
+.--------------------
+
+Layout files ('app/views/layouts/xxx.{html,plogic}') are also available.
+The following is an example to use layout files.
+
+.? app/views/xxx/list.html
+.--------------------
+<html>
+  <body>
+    <div id="mark:main_content">
+      <ul id="mark:">
+        <li id="mark:item"></li>
+      </ul>
+    </div>
+  </body>
+</html>
+.--------------------
+
+.? app/views/xxx/index.plogic
+.--------------------
+#list {
+  logic: {
+    @list.each
+  }
+}
 .--------------------
 
 
