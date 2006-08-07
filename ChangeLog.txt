@@ -2,6 +2,11 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.126 (2006-08-07)
+	- [enhance] add Helper::RailsTemplate.lang
+	- [change] default lang of Helper::RailsTemplate is changed from 'ruby' to 'eruby'
+	- [retry] add lib/kwartz/util.rb
+
 : rev.125 (2006-08-07)
 	- [enhance] update 'examples/rails2' to support groups
 	- [bugfix] untabify *.cfg.yaml in Helper::RailsTemplate

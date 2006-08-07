@@ -7,6 +7,8 @@
 
 require 'kwartz'
 require 'kwartz/binding/ruby'
+require 'kwartz/binding/eruby'
+require 'kwartz/binding/erubis'
 require 'kwartz/util'
 require 'erb'
 
@@ -65,6 +67,22 @@ module Kwartz
 
       def self.plogic_suffix=(suffix)
         @@plogic_suffix = suffix
+      end
+
+
+      @@lang = 'eruby'
+
+      def self.lang
+        return @@lang
+      end
+
+      def self.lang=(lang)
+        case lang
+        when 'ruby', 'eruby', 'erubis'
+          @@lang = lang
+        else
+          raise "'#{lang}': invalid language name."
+        end
       end
 
 
@@ -253,7 +271,7 @@ module Kwartz
         end
 
         ## converter
-        handler = Kwartz::RubyHandler.new(rulesets, properties)
+        handler = Kwartz::Handler.get_class(@@lang).new(rulesets, properties)
         converter = Kwartz::TextConverter.new(handler, properties)
 
         ## presentation data files
@@ -261,7 +279,7 @@ module Kwartz
         config[:import_pdata].each do |hash|
           filename = hash[:filename]
           patterns = hash[:patterns]
-          tmp_handler = Kwartz::RubyHandler.new(rulesets, properties)
+          tmp_handler   = Kwartz::Handler.get_class(@@lang).new(rulesets, properties)
           tmp_converter = Kwartz::TextConverter.new(tmp_handler, properties)
           tmp_converter.convert(File.read(filename), filename)
           handler._import_element_info_from_handler(tmp_handler, patterns)
@@ -275,11 +293,24 @@ module Kwartz
         end
 
         ## translate statements into ruby code
-        translator = Kwartz::RubyTranslator.new(properties)
-        ruby_code = translator.translate(stmts)
+        translator = Kwartz::Translator.get_class(@@lang).new(properties)
+        code = translator.translate(stmts)
 
         ## write cache
         cache_filename = template_basename + '.cache'
+        case @@lang
+        when 'ruby'
+          ruby_code = code
+        when 'eruby'
+          require 'erb'
+          trim_mode = 1
+          ruby_code = ERB.new(code, nil, trim_mode).src
+        when 'erubis'
+          require 'erubis'
+          ruby_code = Erubis::Eruby.new().convert(code)
+        else
+          internal_error
+        end
         File.open(cache_filename, 'w') { |f| f.write(ruby_code) }
 
         ## debug code
