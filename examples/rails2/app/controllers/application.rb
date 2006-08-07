@@ -8,5 +8,9 @@ ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate
 #Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
 #Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
 #Kwartz::Helper::RailsTemplate.default_properties = { :escape=>true }
+#Kwartz::Helper::RailsTemplate.use_cache = true
 #Kwartz::Helper::RailsTemplate.debug = false
+require 'logger'
+logger = Logger.new($stdout)
+Kwartz::Helper::RailsTemplate.logger = logger
 

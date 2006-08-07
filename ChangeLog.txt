@@ -2,11 +2,16 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.125 (2006-08-07)
+	- [enhance] update 'examples/rails2' to support groups
+	- [bugfix] untabify *.cfg.yaml in Helper::RailsTemplate
+	- [enhance] add Helper::RailsTemplate.use_cache to specify use cache or not
+
 : rev.124 (2006-08-06)
 	- [enhance] ActionView support
 	- [enhance] new command-line option '-N' (notext)
 	- [enhance] '-l ruby' support
-	- [change] update 'examples/rails1'
+	- [enhance] add 'examples/rails2'
 
 : rev.123 (2006-06-05)
 	- [refact] refactored around StatementHelper class

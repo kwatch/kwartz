@@ -1,0 +1,51 @@
+
+columns:
+    - name:		id
+      type:		integer
+      required:		yes
+      serial:		yes
+      ident:		yes
+    - name:		name
+      type:		string
+      width:		63
+      required:		yes
+      unique:		yes
+    - name:		desc
+      type:		text
+    - name:		created_at
+      type:		timestamp
+      required:		yes
+    - name:		modified_at
+      type:		timestamp
+      required:		yes
+
+tables:
+
+  - name:	groups
+    desc:	group master table
+    class:	Group
+    columns:
+      - name:		id
+      - name:		name
+      - name:		desc
+
+  - name:	members
+    desc:	member master table
+    class:	Member
+    columns:
+      - name:		id
+      - name:		name
+      - name:		desc
+      - name:		email
+        type:		str
+        width:		63
+      - name:		gender
+        type:		str
+        enum:		[ M, W, X ]
+      - name:		birth
+	type:		date
+      - name:		group_id
+        ref:		groups.id
+        required:	yes
+      - name:		created_at
+      - name:		modified_at

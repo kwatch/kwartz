@@ -1,0 +1,19 @@
+
+parameters:
+  - all:	[ create-tables.mysql.sql, create-tables.pgsql.sql ]
+
+recipes:
+
+  - product:	:all
+    ingreds:	[ $(all) ]
+
+  - product:	create-tables.mysql.sql
+    ingreds:	[ create-tables.yaml ]
+    method*: |
+	sys "kwatable -f ddl-mysql.eruby #{@ingred} > #{@product}"
+
+  - product:	create-tables.pgsql.sql
+    ingreds:	[ create-tables.yaml ]
+    method*: |
+	sys "kwatable -f ddl-postgresql.eruby #{@ingred} > #{@product}"
+

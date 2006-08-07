@@ -1,6 +1,6 @@
-@import 'link_to.plogic';
+@import '_link.plogic';
 
-#form_for_update {
+#start_form {
   stag:  start_form_tag :action=>'update', :id=>@member.id;
 }
 

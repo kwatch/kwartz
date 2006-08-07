@@ -1,7 +1,7 @@
-@import 'link_to.plogic';
-/* @import 'writer.plogic'; */
+@import '_link.plogic';
+/* @import '_form.plogic'; */
 
-#form_for_create {
+#start_form {
   stag:  start_form_tag :action=>'create';
 }
 

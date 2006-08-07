@@ -1,0 +1,11 @@
+#error_messages {
+  elem:   error_messages_for 'group';
+}
+
+#group_name {
+  elem:   text_field 'group', 'name';
+}
+
+#group_desc {
+  elem:   text_field 'group', 'desc';
+}

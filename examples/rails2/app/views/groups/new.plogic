@@ -1,0 +1,9 @@
+@import '_link.plogic';
+
+#start_form {
+  stag:   start_form_tag :action=>'create';
+}
+
+#submit {
+  elem:   submit_tag "Create";
+}

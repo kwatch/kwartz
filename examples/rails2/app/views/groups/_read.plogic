@@ -1,0 +1,7 @@
+#group_name {
+  Value:  @group.name;
+}
+
+#group_desc {
+  Value:  @group.desc;
+}

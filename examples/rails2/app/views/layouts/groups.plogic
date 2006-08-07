@@ -1,0 +1,11 @@
+#header_title {
+  cont:  'Group: ' + controller.action_name;
+}
+
+#stylesheet {
+  elem:  stylesheet_link_tag 'scaffold';
+}
+
+#flash_notice {
+  cont:  flash[:notice];
+}

@@ -1,0 +1,19 @@
+#link_to_list {
+  stag:   start_link_to :action=>'list';
+}
+
+#link_to_new {
+  stag:   start_link_to :action=>'new';
+}
+
+#link_to_show {
+  stag:   start_link_to :action=>'show', :id=>@group;
+}
+
+#link_to_edit {
+  stag:   start_link_to :action=>'edit', :id=>@group;
+}
+
+#link_to_destroy {
+  stag:   start_link_to({:action=>'destroy', :id=>@group}, :confirm=>'Are you sure?');
+}

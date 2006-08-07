@@ -1,0 +1,32 @@
+@import '_link.plogic';
+@import '_read.plogic';
+
+#groups {
+  logic: {
+    for @group in @groups
+      _elem
+    end
+  }
+}
+
+#link_to_prev_page {
+  stag:   start_link_to :page=>@group_pages.current.previous;
+  logic:  {
+    if @group_pages.current.previous
+      _elem
+    end
+  }
+}
+
+#link_to_next_page {
+  stag:   start_link_to :page=>@group_pages.current.next;
+  logic:  {
+    if @group_pages.current.next
+      _elem
+    end
+  }
+}
+
+#link_to_members {
+  stag:   start_link_to :action=>'list', :controller=>'members';
+}

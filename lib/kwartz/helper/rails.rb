@@ -68,6 +68,17 @@ module Kwartz
       end
 
 
+      @@use_cache = nil
+
+      def self.use_cache
+        return @@use_cache
+      end
+
+      def self.use_cache=(flag)
+        @@use_cache = flag
+      end
+
+
       @@cache_table = {}
 
       def self.add_cache(_ruby_code, _filename)
@@ -118,7 +129,7 @@ module Kwartz
         ## check timestamps
         convert_flag = true
         cache_filename = template_basename + '.cache'
-        if test(?f, cache_filename)
+        if use_cache? && test(?f, cache_filename)
           filenames = [
             template_basename + @@pdata_suffix,
             template_basename + @@plogic_suffix,
@@ -166,10 +177,20 @@ module Kwartz
       private
 
 
+      def use_cache?
+        if @@use_cache.nil?
+          return ENV['RAILS_ENV'] == 'production'
+        else
+          return @@use_cache;
+        end
+      end
+
+
       def parse_config_file(config_filename)
         config = {}
         return config unless test(?f, config_filename)
-        ydoc = YAML.load_file(config_filename)
+        str = File.read(config_filename)
+        ydoc = YAML.load(Kwartz::Util.untabify(str))
         template_dir = File.dirname(config_filename)
         ['import_pdata', 'import_plogic'].each do |key|
           val = ydoc[key]
@@ -180,7 +201,7 @@ module Kwartz
             if item.is_a?(Hash)
               hash = {}
               item.each do |k, v| hash[k.intern] = v end
-            elsif item =~ /\(([\w,]*)\)\z/
+            elsif item =~ /<([\w,]*)>\z/
               filename = $`
               names = $1.split(/,/)
               hash = { :filename=>filename, :patterns=>(names.empty? ? nil : names) }
