@@ -422,7 +422,7 @@ module Kwartz
 
 
   ##
-  ## .[abstract] expand ExpandStatement and ElementInfo
+  ## (abstract) expand ExpandStatement and ElementInfo
   ##
   ## Handler class includes this module.
   ##
@@ -430,13 +430,13 @@ module Kwartz
     include Assertion
 
 
-    ## .[abstract] get ElementRuleset
+    ## (abstract) get ElementRuleset
     def get_element_ruleset(name)
       not_implemented
     end
 
 
-    ## .[abstract] get ElementInfo
+    ## (abstract) get ElementInfo
     def get_element_info(name)
       not_implemented
     end
@@ -571,7 +571,7 @@ module Kwartz
 
 
   ##
-  ## .[abstract] handle directives
+  ## (abstract) handle directives
   ##
   class Handler
     include Assertion
@@ -626,21 +626,21 @@ module Kwartz
     protected
 
 
-    ## .[abstract] directive pattern, which is used to detect directives.
+    ## (abstract) directive pattern, which is used to detect directives.
     def directive_pattern
       not_implemented
       #return /\A(\w+):\s*(.*)/
     end
 
 
-    ## .[abstract] mapping pattern, which is used to parse 'attr' directive.
+    ## (abstract) mapping pattern, which is used to parse 'attr' directive.
     def mapping_pattern
       not_implemented
       #return /\A'([-:\w]+)'\s+(.*)/
     end
 
 
-    ## .[abstract] directive format, which is used at has_directive?() method
+    ## (abstract) directive format, which is used at has_directive?() method
     def directive_format
       not_implemented
       #return '%s: %s'
@@ -806,7 +806,7 @@ module Kwartz
 
 
   ##
-  ## .[abstract] covnert presentation data into list of Statement.
+  ## (abstract) covnert presentation data into list of Statement.
   ##
   class Converter
     include ConverterHelper
@@ -821,7 +821,7 @@ module Kwartz
     attr_reader :handler   #, :dattr, :input
 
 
-    ## .[abstract] convert string into list of Statement.
+    ## (abstract) convert string into list of Statement.
     def convert(input, filename='')
       not_implemented
     end

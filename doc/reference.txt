@@ -1261,7 +1261,6 @@ These properties takes target code block and are available only with
   }
   {{*end:*}} {
     print "<!-- document end -->\n"
-
   }
 }
 #username {
@@ -1310,7 +1309,6 @@ $ kwartz -l eruby -p ex-begin.plogic ex-begin.pdata
   }
   {{*end:*}} {
     print("<!-- document end -->\n");
-
   }
 }
 #username {
@@ -1409,7 +1407,6 @@ $ kwartz -l jstl -p ex-begin.plogic ex-begin.pdata
   }
   {{*end:*}} {
     print("<!-- document end -->\n");
-
   }
 }
 #username {
@@ -1972,12 +1969,12 @@ $ kwartz -l php ex-foreach.pdata
   <td title="cont(item)">foo</td>
 </tr>
 
-<tr {{*title="forEach(:var=>'v', :items=>:'params.list', :varStatus=>'status')"*}}>
+<tr {{*title="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
   <td title="cont(status.index)">1</td>
   <td title="cont(v)"></td>
 </tr>
 
-<tr {{*title="forEach(:var=>'n', :begin=>1, :end=>10, :step=>2)"*}}>
+<tr {{*title="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
   <td title="cont(n)">key</td>
 </tr>
 .--------------------
@@ -2260,7 +2257,7 @@ $ kwartz -l php ex-foreach_ctr.pdata
 .====================
 $ kwartz -l jstl ex-foreach_ctr.pdata
 {{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
 <tr>
   <td>${item}</td>
 </tr>
@@ -2268,7 +2265,7 @@ $ kwartz -l jstl ex-foreach_ctr.pdata
 
 <tr>
 {{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
+{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
   <td>${item}</td>
 {{*</c:forEach>*}}
 </tr>
@@ -2411,8 +2408,8 @@ $ kwartz -l php ex-foreach_tgl.pdata
 .====================
 $ kwartz -l jstl ex-foreach_tgl.pdata
 {{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
-{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
 <tr>
   <td>${item}</td>
 </tr>
@@ -2420,8 +2417,8 @@ $ kwartz -l jstl ex-foreach_tgl.pdata
 
 <tr>
 {{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
-{{*<c:set var="item_ctr" value="${item_status.count}" />*}}
-{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" />*}}
+{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
   <td>${item}</td>
 {{*</c:forEach>*}}
 </tr>
@@ -2788,7 +2785,7 @@ $ kwartz -l php ex-set.pdata
 .? compile
 .====================
 $ kwartz -l jstl ex-set.pdata
-{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" />*}}
+{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}"/>*}}
 <tr>
  <td>${color}</td>
 </tr>
@@ -2976,8 +2973,8 @@ $ kwartz -l php ex-attr.pdata
 .====================
 $ kwartz -l jstl ex-attr.pdata
 <c:forEach var="v" items="${list}" varStatus="v_status">
-<c:set var="v_ctr" value="${v_status.count}" />
-<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" />
+<c:set var="v_ctr" value="${v_status.count}"/>
+<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}"/>
 <tr {{*class="${v_tgl}"*}} {{*style="${style}"*}}>
  <td>${v.name}</td>
 </tr>
@@ -3228,7 +3225,7 @@ name: <em {{*title="default(user)"*}}>Guest</em>
 .? compile
 .====================
 $ kwartz -l jstl ex-default.pdata
-name: <em>{{*<c:out value="${user}" default="Guest" />*}}</em>
+name: <em>{{*<c:out value="${user}" default="Guest"/>*}}</em>
 .====================
 
 
@@ -3291,6 +3288,248 @@ These directives are language-independent when used with id attribute.
 .? compile
 .====================
 $ kwartz -l eruby ex-replace.pdata
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other content-->
+  back to <a href="/">home</a>.
+
+<!-- replace content with other element -->
+<p>
+<div>
+  back to <a href="/">home</a>.
+</div>
+</p>
+
+<!-- replace content with other content -->
+<p>
+  back to <a href="/">home</a>.
+</p>
+.====================
+
+
+
+
+
+.$$ replace_element_with, replace_content_with	| directive-replace2
+
+'replace_element_with' and 'replace_content_with' directives replace element
+or content with other element or content.
+
+
+
+.$$$ Ruby	| directive-replace2-eruby
+
+.? presentation data (ex-replace2.pdata)
+.--------------------
+<div {{*id="mark:link"*}}>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<p {{*title="replace_element_with: element(link)"*}}>
+  back to home
+</p>
+
+<!-- replace element with other content-->
+<p {{*title="replace_element_with: content(link)"*}}>
+  back to home
+</p>
+
+<!-- replace content with other element -->
+<p {{*title="replace_content_with: element(link)"*}}>
+  back to home
+</p>
+
+<!-- replace content with other content -->
+<p {{*title="replace_content_with: content(link)"*}}>
+  back to home
+</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-replace2.pdata
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other content-->
+  back to <a href="/">home</a>.
+
+<!-- replace content with other element -->
+<p>
+<div>
+  back to <a href="/">home</a>.
+</div>
+</p>
+
+<!-- replace content with other content -->
+<p>
+  back to <a href="/">home</a>.
+</p>
+.====================
+
+
+.$$$ PHP	| directive-replace2-php
+
+.? presentation data (ex-replace2.pdata)
+.--------------------
+<div title="id(link)">
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<p title="replace_element_with(element(link))">
+  back to home
+</p>
+
+<!-- replace element with other content-->
+<p title="replace_element_with(content(link))">
+  back to home
+</p>
+
+<!-- replace content with other element -->
+<p title="replace_content_with(element(link))">
+  back to home
+</p>
+
+<!-- replace content with other content -->
+<p title="replace_content_with(content(link))">
+  back to home
+</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-replace2.pdata
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other content-->
+  back to <a href="/">home</a>.
+
+<!-- replace content with other element -->
+<p>
+<div>
+  back to <a href="/">home</a>.
+</div>
+</p>
+
+<!-- replace content with other content -->
+<p>
+  back to <a href="/">home</a>.
+</p>
+.====================
+
+
+.$$$ JSP	| directive-replace2-jstl
+
+.? presentation data (ex-replace2.pdata)
+.--------------------
+<div title="id(link)">
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<p title="replace_element_with(element(link))">
+  back to home
+</p>
+
+<!-- replace element with other content-->
+<p title="replace_element_with(content(link))">
+  back to home
+</p>
+
+<!-- replace content with other element -->
+<p title="replace_content_with(element(link))">
+  back to home
+</p>
+
+<!-- replace content with other content -->
+<p title="replace_content_with(content(link))">
+  back to home
+</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-replace2.pdata
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<div>
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other content-->
+  back to <a href="/">home</a>.
+
+<!-- replace content with other element -->
+<p>
+<div>
+  back to <a href="/">home</a>.
+</div>
+</p>
+
+<!-- replace content with other content -->
+<p>
+  back to <a href="/">home</a>.
+</p>
+.====================
+
+
+.$$$ Perl	| directive-replace2-eperl
+
+.? presentation data (ex-replace2.pdata)
+.--------------------
+<div title="id(link)">
+  back to <a href="/">home</a>.
+</div>
+
+<!-- replace element with other element -->
+<p title="replace_element_with(element(link))">
+  back to home
+</p>
+
+<!-- replace element with other content-->
+<p title="replace_element_with(content(link))">
+  back to home
+</p>
+
+<!-- replace content with other element -->
+<p title="replace_content_with(element(link))">
+  back to home
+</p>
+
+<!-- replace content with other content -->
+<p title="replace_content_with(content(link))">
+  back to home
+</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-replace2.pdata
 <div>
   back to <a href="/">home</a>.
 </div>

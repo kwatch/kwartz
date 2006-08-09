@@ -7,17 +7,17 @@ clean:
 
 ##
 
-result1.eruby.html:  main.rb content1.rhtml
+result1.eruby.html:  main.rb result1.rhtml
 	ruby main.rb > result1.eruby.html
 
-result2.eruby.html:  main.rb content2.rhtml
+result2.eruby.html:  main.rb result2.rhtml
 	ruby main.rb AAPL > result2.eruby.html
 
-result1.php.html:  main.php content1.php
-	php main.php > result1.php.html
+result1.php.html:  main.php result1.rhtml
+	ruby main.php > result1.php.html
 
-result2.php.html:  main.php content2.php
-	php main.php AAPL > result2.php.html
+result2.php.html:  main.php result2.rhtml
+	ruby main.php AAPL > result2.php.html
 
 ##
 

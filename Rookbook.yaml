@@ -4,7 +4,7 @@ properties:
   - project    :   kwartz
   - release    :   0.0.0
 
-variables:
+parameters:
   - base       :  $(project)_$(release)
   - base2      :  $(project)-$(release)
   - packages   :  [ $(base).tar.bz2, $(base).zip, $(base2).gem ]
@@ -14,7 +14,7 @@ variables:
 
 recipes:
   - product:   :test
-    method: |
+    method*: |
         rm_rf 'test.log'
 	Dir.glob('test/test-*.rb').each do |filename|
           sys "ruby #{filename} 2>&1 | tee -a test.log"
@@ -22,7 +22,7 @@ recipes:
 	chdir 'doc' do sys 'rook :test' end
 
   - product:   :clear
-    method: |
+    method*: |
 	rm_rf '$(project)_*', '$(project)-*.gem'
 
 
@@ -31,23 +31,23 @@ recipes:
 
   - product:   $(project)_*.tar.bz2
     ingreds:   [ $(project)_$(1) ]
-    method: |
+    method*: |
 	tar_cjf @product, @ingred
 
   - product:   $(project)_*.tar.gz
     ingreds:   [ $(project)_$(1) ]
-    method: |
+    method*: |
 	tar_czf @product, @ingred
 
   - product:   $(project)_*.zip
     ingreds:   [ $(project)_$(1) ]
-    method: |
+    method*: |
 	rm_f @product if test(?f, @product)
 	zip_r @product, @ingred
 
   - product:   $(project)-*.gem
     ingreds:   [ $(project)_$(1) ]
-    method: |
+    method*: |
 	dir = @ingred
 	cd dir do
 	  Gem.manage_gems
@@ -60,7 +60,7 @@ recipes:
 
   - product:   $(apidocdir)/index.html
     ingreds:   [ $(libfiles) ]
-    method: |
+    method*: |
         rm_rf apidocdir
         opts = "-o ../#{apidocdir} -S -m ../README.txt"
 	opts << ' -x kwalify/util/assert-text-equal.rb'
@@ -71,7 +71,7 @@ recipes:
 
   - product:   $(project)_*
     ingreds:   [ :apidoc ]
-    method: |
+    method*: |
 	dir = @product
 	rm_rf dir
 	mkdir dir

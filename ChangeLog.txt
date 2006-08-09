@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.129 (2006-08-09)
+	- [update] document update
+	- [retry] add 'lib/kwartz/binding/pierubis.rb'
 
 : rev.128 (2006-08-09)
 	- [enhance] @{...}@ and @!{...}@ support

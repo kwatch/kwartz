@@ -5,14 +5,14 @@ end
 
 require 'kwartz/helper/rails'
 ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
-#Kwartz::Helper::RailsTemplate.lang = 'ruby'  #'pierubis'
-Kwartz::Helper::RailsTemplate.lang = 'pierubis'
+#Kwartz::Helper::RailsTemplate.lang = 'eruby'  # or 'ruby', 'erubis', 'pierubis'
 #Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
 #Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
 #Kwartz::Helper::RailsTemplate.default_properties = { :escape=>true }
 #Kwartz::Helper::RailsTemplate.use_cache = true
 #Kwartz::Helper::RailsTemplate.debug = false
-require 'logger'
-logger = Logger.new($stdout)
-Kwartz::Helper::RailsTemplate.logger = logger
+
+#require 'logger'
+#logger = Logger.new($stdout)
+#Kwartz::Helper::RailsTemplate.logger = logger
 

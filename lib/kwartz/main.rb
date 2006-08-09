@@ -390,7 +390,7 @@ module Kwartz
       sb << "  -v             : version\n"
       #sb << "  -D             : debug mode\n"
       sb << "  -e             : alias of '--escape=true'\n"
-      sb << "  -l lang        : eruby/ruby/php/eperl/rails/jstl (default 'eruby')\n"
+      sb << "  -l lang        : eruby/ruby/php/jstl/eperl/erubis/pierubis (default 'eruby')\n"
       sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
       sb << "  -r library,... : require libraries\n"
       sb << "  -p plogic,...  : presentation logic files\n"

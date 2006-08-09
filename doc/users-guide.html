@@ -87,6 +87,8 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
     <li><a href="#kwartz-lib">Use Kwartz as Library</a>
     </li>
+    <li><a href="#helper_rails">Support of Ruby on Rails</a>
+    </li>
     <li><a href="#start_link_to"><code>link_to()</code> method in Ruby on Rails</a>
     </li>
   </ul>
@@ -848,7 +850,7 @@ If this is true then Kwartz will escape values in default.
 <p>Kwartz-ruby now supports the following programming language.
 </p>
 <ul type="disc">
-<li>Ruby, eRuby
+<li>Ruby, eRuby(ERB, Erubis)
 </li>
 <li>PHP
 </li>
@@ -894,7 +896,7 @@ table1.ruby.plogic</div>
   attrs:  "bgcolor" color;
   logic: {
     @list.each_with_index do |user, i|
-      color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';
+      color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF'
       _elem
     end
   }
@@ -975,11 +977,12 @@ table1.eperl.plogic</div>
 </pre>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz -l eruby -p table1.ruby.plogic table1.html  &gt; table1.rhtml
-$ kwartz -l ruby  -p table1.eruby.plogic table1.html &gt; table1.rb
-$ kwartz -l php   -p table1.php.plogic   table1.html &gt; table1.php
-$ kwartz -l jstl  -p table1.jstl.plogic  table1.html &gt; table1.jsp
-$ kwartz -l eperl -p table1.eperl.plogic table1.html &gt; table1.iphtml
+<pre class="terminal">$ kwartz -l eruby    -p table1.ruby.plogic  table1.html  &gt; table1.rhtml
+$ kwartz -l ruby     -p table1.ruby.plogic  table1.html &gt; table1.rb
+$ kwartz -l pierubis -p table1.ruby.plogic  table1.html &gt; table1.pierubis
+$ kwartz -l php      -p table1.php.plogic   table1.html &gt; table1.php
+$ kwartz -l jstl     -p table1.jstl.plogic  table1.html &gt; table1.jsp
+$ kwartz -l eperl    -p table1.eperl.plogic table1.html &gt; table1.iphtml
 </pre>
 <a name="table1.rhtml"></a>
 <div class="program_caption">
@@ -988,13 +991,13 @@ output script (table1.rhtml)</div>
   &lt;body&gt;
   
     &lt;table&gt;
-<strong>&lt;%       @list.each_with_index do |user, i| %&gt;</strong>
-<strong>&lt;%          color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %&gt;</strong>
+<strong>&lt;%     @list.each_with_index do |user, i| %&gt;</strong>
+<strong>&lt;%       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' %&gt;</strong>
       &lt;tr bgcolor="<strong>&lt;%= color %&gt;</strong>"&gt;
         &lt;td&gt;<strong>&lt;%=h user[:name] %&gt;</strong>&lt;/td&gt;
         &lt;td&gt;<strong>&lt;%= user[:mail] %&gt;</strong>&lt;/td&gt;
       &lt;/tr&gt;
-<strong>&lt;%       end %&gt;</strong>
+<strong>&lt;%     end %&gt;</strong>
     &lt;/table&gt;
 
  &lt;/body&gt;
@@ -1003,22 +1006,41 @@ output script (table1.rhtml)</div>
 <a name="table1.rb"></a>
 <div class="program_caption">
 output script (table1.rb)</div>
-<pre class="program">_buf = ""; _buf &lt;&lt; '&lt;html&gt;
-'; _buf &lt;&lt; '  &lt;body&gt;
-'; _buf &lt;&lt; '  
-'; _buf &lt;&lt; '    &lt;table&gt;
-';     <strong>@list.each_with_index do |user, i|</strong>
-      <strong>color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';</strong>
-_buf &lt;&lt; '      &lt;tr bgcolor="'; _buf &lt;&lt; (color).to_s; _buf &lt;&lt; '"&gt;
-'; _buf &lt;&lt; '        &lt;td&gt;'; <strong>_buf &lt;&lt; ERB::Util.h(user[:name]);</strong> _buf &lt;&lt; '&lt;/td&gt;
-'; _buf &lt;&lt; '        &lt;td&gt;'; <strong>_buf &lt;&lt; (user[:mail]).to_s;</strong> _buf &lt;&lt; '&lt;/td&gt;
-'; _buf &lt;&lt; '      &lt;/tr&gt;
-';     <strong>end</strong>
-_buf &lt;&lt; '    &lt;/table&gt;
-'; _buf &lt;&lt; '
-'; _buf &lt;&lt; ' &lt;/body&gt;
-'; _buf &lt;&lt; '&lt;/html&gt;
-'; ; _buf
+<pre class="program">_buf = ""; _buf &lt;&lt; "&lt;html&gt;
+  &lt;body&gt;
+  
+    &lt;table&gt;\n";
+    <strong>@list.each_with_index do |user, i|</strong>
+      <strong>color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF'</strong>
+_buf &lt;&lt; "      &lt;tr bgcolor=\""; _buf &lt;&lt; (color).to_s; _buf &lt;&lt; "\"&gt;
+        &lt;td&gt;"; <strong>_buf &lt;&lt; ERB::Util.h(user[:name]);</strong> _buf &lt;&lt; "&lt;/td&gt;
+        &lt;td&gt;"; <strong>_buf &lt;&lt; (user[:mail]).to_s;</strong> _buf &lt;&lt; "&lt;/td&gt;
+      &lt;/tr&gt;\n";
+    <strong>end</strong>
+_buf &lt;&lt; "    &lt;/table&gt;
+
+ &lt;/body&gt;
+&lt;/html&gt;\n";
+; _buf
+</pre>
+<a name="table1.pierubis"></a>
+<div class="program_caption">
+output script (table1.pierubis)</div>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+  
+    &lt;table&gt;
+<strong>&lt;?rb     @list.each_with_index do |user, i| ?&gt;</strong>
+<strong>&lt;?rb       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' ?&gt;</strong>
+      &lt;tr bgcolor="<strong>$!{color}</strong>"&gt;
+        &lt;td&gt;<strong>${user[:name]}</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>$!{user[:mail]}</strong>&lt;/td&gt;
+      &lt;/tr&gt;
+<strong>&lt;?rb     end ?&gt;</strong>
+    &lt;/table&gt;
+
+ &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <a name="table1.php"></a>
 <div class="program_caption">
@@ -1592,7 +1614,7 @@ example of Rookbook for <a href="http://www.rubyforge.org/projects/rook">Rook</a
 <pre class="program">properties:
   - layout  :  layout.html
 
-variables:
+parameters:
   - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
   - rook_product:  $(all)
 
@@ -1600,13 +1622,13 @@ recipes:
 
   - product:	*.rhtml
     ingreds:	[ $(1).html, $(1).plogic ]
-    method: |
+    method*: |
         pdata, plogic = @ingreds
 	sys "kwartz -p #{plogic} #{pdata} &gt; #{@product}"
 
   - product:	file3.rhtml
     ingres:	[ file3.html, file3.plogic, $(layout) ]
-    method: |
+    method*: |
         pdata, plogic, layout = @ingreds
 	sys "kwartz- p #{plogic} -L $(layout) #{pdata} &gt; #{@product}"
 </pre>
@@ -1627,6 +1649,80 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 <strong>output = main.execute()</strong>
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
 </pre>
+<br>
+
+
+<a name="helper_rails"></a>
+<h3 class="section2">Support of Ruby on Rails</h3>
+<p>If you want to use Kwartz with Ruby on Rails, add the following code in your 'app/controllers/application.rb' and restart web server.
+</p>
+<pre class="program">require 'kwartz/helper/rails'
+ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
+#Kwartz::Helper::RailsTemplate.lang = 'eruby'  # or 'ruby', 'erubis', 'pierubis'
+#Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
+#Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
+#Kwartz::Helper::RailsTemplate.default_properties = { :escape=&gt;true }
+#Kwartz::Helper::RailsTemplate.use_cache = true
+#Kwartz::Helper::RailsTemplate.debug = false
+</pre>
+<p>Layout files ('app/views/layouts/xxx.{html,plogic}') are also available.
+The following is an example to use layout files.
+</p>
+<div class="program_caption">
+app/views/member/list.html</div>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1 <strong>id="page_title"</strong>&gt;&lt;/h1&gt;
+    &lt;div <strong>id="page_content"</strong>&gt;
+      &lt;ul id="mark:list"&gt;
+        &lt;li id="mark:item"&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="program_caption">
+app/views/xxx/index.plogic</div>
+<pre class="program">#list {
+  logic: {
+    @list.each do |item|
+      _elem
+    end
+  }
+}
+
+#item {
+  value:  item;
+}
+</pre>
+<div class="program_caption">
+app/views/layouts/xxx.html</div>
+<pre class="program">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title id="mark:header_title"&gt;&lt;/title&gt;
+  &lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;h1 class="title" <strong>id="replace_content_with_content:page_title"</strong>&gt;...page title...&lt;/h1&gt;
+  &lt;div <strong>id="replace_element_with_content:page_content"</strong>&gt;
+    ...page content...
+  &lt;/div&gt;
+
+  &lt;p&gt;copyright&amp;copy; 2006 kuwata-lab.com all rights reserved.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<div class="program_caption">
+app/views/layouts/xxx.plogic</div>
+<pre class="program">#header_title {
+  cont:  'Member: ' + controller.action_name;
+}
+</pre>
+<p>See the 'examples/rails2' directory for example of using Kwartz with Ruby on Rails.
+</p>
 <br>
 
 

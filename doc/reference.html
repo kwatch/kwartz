@@ -105,6 +105,8 @@ It means that presentation logics are separated from both presentation data (typ
     </li>
     <li><a href="#directive-replace">replace_element/content_with_element/content</a>
     </li>
+    <li><a href="#directive-replace2">replace_element_with, replace_content_with</a>
+    </li>
   </ul>
   </li>
   <li><a href="#cmdline">Command-Line Options</a>
@@ -166,21 +168,21 @@ presentation data (ex-elem.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-elem.plogic)</div>
 <pre class="program">#name1 {
-  <b>elem:</b> user[:name];
+  <strong>elem:</strong> user[:name];
 }
 #name2 {
-  <b>Elem:</b> user[:name];
+  <strong>Elem:</strong> user[:name];
 }
 #name3 {
-  <b>ELEM:</b> user[:name];
+  <strong>ELEM:</strong> user[:name];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-elem.plogic ex-elem.pdata
-<b>&lt;%= user[:name] %&gt;</b>
-<b>&lt;%=h user[:name] %&gt;</b>
-<b>&lt;%= user[:name] %&gt;</b>
+<strong>&lt;%= user[:name] %&gt;</strong>
+<strong>&lt;%=h user[:name] %&gt;</strong>
+<strong>&lt;%= user[:name] %&gt;</strong>
 </pre>
 <br>
 
@@ -195,21 +197,21 @@ presentation data (ex-elem.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-elem.plogic)</div>
 <pre class="program">#name1 {
-  <b>elem:</b> $user['name'];
+  <strong>elem:</strong> $user['name'];
 }
 #name2 {
-  <b>Elem:</b> $user['name'];
+  <strong>Elem:</strong> $user['name'];
 }
 #name3 {
-  <b>ELEM:</b> $user['name'];
+  <strong>ELEM:</strong> $user['name'];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-elem.plogic ex-elem.pdata
-<b>&lt;?php echo $user['name']; ?&gt;</b>
-<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>
-<b>&lt;?php echo $user['name']; ?&gt;</b>
+<strong>&lt;?php echo $user['name']; ?&gt;</strong>
+<strong>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</strong>
+<strong>&lt;?php echo $user['name']; ?&gt;</strong>
 </pre>
 <br>
 
@@ -224,13 +226,13 @@ presentation data (ex-elem.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-elem.plogic)</div>
 <pre class="program">#name1 {
-  <b>elem:</b> user.name;
+  <strong>elem:</strong> user.name;
 }
 #name2 {
-  <b>Elem:</b> user.name;
+  <strong>Elem:</strong> user.name;
 }
 #name3 {
-  <b>ELEM:</b> user.name;
+  <strong>ELEM:</strong> user.name;
 }
 </pre>
 <div class="terminal_caption">
@@ -238,9 +240,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-elem.plogic ex-elem.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-<b>${user.name}</b>
-<b>${user.name}</b>
-<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>
+<strong>${user.name}</strong>
+<strong>${user.name}</strong>
+<strong>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</strong>
 </pre>
 <br>
 
@@ -255,21 +257,21 @@ presentation data (ex-elem.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-elem.plogic)</div>
 <pre class="program">#name1 {
-  <b>elem:</b> $user{'name'};
+  <strong>elem:</strong> $user{'name'};
 }
 #name2 {
-  <b>Elem:</b> $user{'name'};
+  <strong>Elem:</strong> $user{'name'};
 }
 #name3 {
-  <b>ELEM:</b> $user{'name'};
+  <strong>ELEM:</strong> $user{'name'};
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-elem.plogic ex-elem.pdata
-<b>&lt;?= $user{'name'} !&gt;</b>
-<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>
-<b>&lt;?= $user{'name'} !&gt;</b>
+<strong>&lt;?= $user{'name'} !&gt;</strong>
+<strong>&lt;?= encode_entities($user{'name'}) !&gt;</strong>
+<strong>&lt;?= $user{'name'} !&gt;</strong>
 </pre>
 <br>
 
@@ -296,21 +298,21 @@ presentation data (ex-cont.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-cont.plogic)</div>
 <pre class="program">#name1 {
-  <b>cont:</b> user[:name];
+  <strong>cont:</strong> user[:name];
 }
 #name2 {
-  <b>Cont:</b> user[:name];
+  <strong>Cont:</strong> user[:name];
 }
 #name3 {
-  <b>CONT:</b> user[:name];
+  <strong>CONT:</strong> user[:name];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-cont.plogic ex-cont.pdata
-&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;%=h user[:name] %&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%= user[:name] %&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%=h user[:name] %&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%= user[:name] %&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -325,21 +327,21 @@ presentation data (ex-cont.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-cont.plogic)</div>
 <pre class="program">#name1 {
-  <b>cont:</b> $user['name'];
+  <strong>cont:</strong> $user['name'];
 }
 #name2 {
-  <b>Cont:</b> $user['name'];
+  <strong>Cont:</strong> $user['name'];
 }
 #name3 {
-  <b>CONT:</b> $user['name'];
+  <strong>CONT:</strong> $user['name'];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-cont.plogic ex-cont.pdata
-&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo $user['name']; ?&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo $user['name']; ?&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -354,13 +356,13 @@ presentation data (ex-cont.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-cont.plogic)</div>
 <pre class="program">#name1 {
-  <b>cont:</b> user.name;
+  <strong>cont:</strong> user.name;
 }
 #name2 {
-  <b>Cont:</b> user.name;
+  <strong>Cont:</strong> user.name;
 }
 #name3 {
-  <b>CONT:</b> user.name;
+  <strong>CONT:</strong> user.name;
 }
 </pre>
 <div class="terminal_caption">
@@ -368,9 +370,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-cont.plogic ex-cont.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
-&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>${user.name}</strong>&lt;/p&gt;
+&lt;p&gt;<strong>${user.name}</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -385,21 +387,21 @@ presentation data (ex-cont.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-cont.plogic)</div>
 <pre class="program">#name1 {
-  <b>cont:</b> $user{'name'};
+  <strong>cont:</strong> $user{'name'};
 }
 #name2 {
-  <b>Cont:</b> $user{'name'};
+  <strong>Cont:</strong> $user{'name'};
 }
 #name3 {
-  <b>CONT:</b> $user{'name'};
+  <strong>CONT:</strong> $user{'name'};
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-cont.plogic ex-cont.pdata
-&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= $user{'name'} !&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= encode_entities($user{'name'}) !&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= $user{'name'} !&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -424,21 +426,21 @@ presentation data (ex-value.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-value.plogic)</div>
 <pre class="program">#name1 {
-  <b>value:</b> user[:name];
+  <strong>value:</strong> user[:name];
 }
 #name2 {
-  <b>Value:</b> user[:name];
+  <strong>Value:</strong> user[:name];
 }
 #name3 {
-  <b>VALUE:</b> user[:name];
+  <strong>VALUE:</strong> user[:name];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-value.plogic ex-value.pdata
-&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;%=h user[:name] %&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;%= user[:name] %&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%= user[:name] %&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%=h user[:name] %&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;%= user[:name] %&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -453,21 +455,21 @@ presentation data (ex-value.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-value.plogic)</div>
 <pre class="program">#name1 {
-  <b>value:</b> $user['name'];
+  <strong>value:</strong> $user['name'];
 }
 #name2 {
-  <b>Value:</b> $user['name'];
+  <strong>Value:</strong> $user['name'];
 }
 #name3 {
-  <b>VALUE:</b> $user['name'];
+  <strong>VALUE:</strong> $user['name'];
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-value.plogic ex-value.pdata
-&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?php echo $user['name']; ?&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo $user['name']; ?&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo htmlspecialchars($user['name']); ?&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?php echo $user['name']; ?&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -482,13 +484,13 @@ presentation data (ex-value.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-value.plogic)</div>
 <pre class="program">#name1 {
-  <b>value:</b> user.name;
+  <strong>value:</strong> user.name;
 }
 #name2 {
-  <b>Value:</b> user.name;
+  <strong>Value:</strong> user.name;
 }
 #name3 {
-  <b>VALUE:</b> user.name;
+  <strong>VALUE:</strong> user.name;
 }
 </pre>
 <div class="terminal_caption">
@@ -496,9 +498,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-value.plogic ex-value.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
-&lt;p&gt;<b>${user.name}</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>${user.name}</strong>&lt;/p&gt;
+&lt;p&gt;<strong>${user.name}</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;c:out value="${user.name}" escapeXml="false"/&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -513,21 +515,21 @@ presentation data (ex-value.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-value.plogic)</div>
 <pre class="program">#name1 {
-  <b>value:</b> $user{'name'};
+  <strong>value:</strong> $user{'name'};
 }
 #name2 {
-  <b>Value:</b> $user{'name'};
+  <strong>Value:</strong> $user{'name'};
 }
 #name3 {
-  <b>VALUE:</b> $user{'name'};
+  <strong>VALUE:</strong> $user{'name'};
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-value.plogic ex-value.pdata
-&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= encode_entities($user{'name'}) !&gt;</b>&lt;/p&gt;
-&lt;p&gt;<b>&lt;?= $user{'name'} !&gt;</b>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= $user{'name'} !&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= encode_entities($user{'name'}) !&gt;</strong>&lt;/p&gt;
+&lt;p&gt;<strong>&lt;?= $user{'name'} !&gt;</strong>&lt;/p&gt;
 </pre>
 <br>
 
@@ -554,21 +556,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <b>stag:</b> start_link_to :action=&gt;'list';
+  <strong>stag:</strong> start_link_to :action=&gt;'list';
 }
 #link2 {
-  <b>Stag:</b> start_link_to :action=&gt;'list';
+  <strong>Stag:</strong> start_link_to :action=&gt;'list';
 }
 #link3 {
-  <b>STAG:</b> start_link_to :action=&gt;'list';
+  <strong>STAG:</strong> start_link_to :action=&gt;'list';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
-<b>&lt;%= start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<b>&lt;%=h start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<b>&lt;%= start_link_to :action=&gt;'list' %&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;%= start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;%=h start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;%= start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -583,21 +585,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <b>stag:</b> start_link_to('list');
+  <strong>stag:</strong> start_link_to('list');
 }
 #link2 {
-  <b>Stag:</b> start_link_to('list');
+  <strong>Stag:</strong> start_link_to('list');
 }
 #link3 {
-  <b>STAG:</b> start_link_to('list');
+  <strong>STAG:</strong> start_link_to('list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-stag.plogic ex-stag.pdata
-<b>&lt;?php echo start_link_to('list'); ?&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<b>&lt;?php echo htmlspecialchars(start_link_to('list')); ?&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<b>&lt;?php echo start_link_to('list'); ?&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_to('list'); ?&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo htmlspecialchars(start_link_to('list')); ?&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_to('list'); ?&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -612,13 +614,13 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <b>stag:</b> fn:start_link_to('list');
+  <strong>stag:</strong> fn:start_link_to('list');
 }
 #link2 {
-  <b>Stag:</b> fn:start_link_to('list');
+  <strong>Stag:</strong> fn:start_link_to('list');
 }
 #link3 {
-  <b>STAG:</b> fn:start_link_to('list');
+  <strong>STAG:</strong> fn:start_link_to('list');
 }
 </pre>
 <div class="terminal_caption">
@@ -626,9 +628,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-<b>${fn:start_link_to('list')}</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<b>${fn:start_link_to('list')}</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<b>&lt;c:out value="${fn:start_link_to('list')}" escapeXml="false"/&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_to('list')}</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_to('list')}</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;c:out value="${fn:start_link_to('list')}" escapeXml="false"/&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -643,21 +645,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <b>stag:</b> start_link_to('list');
+  <strong>stag:</strong> start_link_to('list');
 }
 #link2 {
-  <b>Stag:</b> start_link_to('list');
+  <strong>Stag:</strong> start_link_to('list');
 }
 #link3 {
-  <b>STAG:</b> start_link_to('list');
+  <strong>STAG:</strong> start_link_to('list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
-<b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<b>&lt;?= encode_entities(start_link_to('list')) !&gt;</b>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<b>&lt;?= start_link_to('list') !&gt;</b>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_to('list') !&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?= encode_entities(start_link_to('list')) !&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_to('list') !&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -684,21 +686,21 @@ presentation data (ex-etag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-etag.plogic)</div>
 <pre class="program">#item1 {
-  <b>etag:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>etag:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 #item2 {
-  <b>Etag:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>Etag:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 #item3 {
-  <b>ETAG:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>ETAG:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-etag.plogic ex-etag.pdata
-&lt;li&gt;foo<b>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
-&lt;li&gt;bar<b>&lt;%=h is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
-&lt;li&gt;baz<b>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</b>
+&lt;li&gt;foo<strong>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</strong>
+&lt;li&gt;bar<strong>&lt;%=h is_xml ? '&lt;/li&gt;' : '' %&gt;</strong>
+&lt;li&gt;baz<strong>&lt;%= is_xml ? '&lt;/li&gt;' : '' %&gt;</strong>
 </pre>
 <br>
 
@@ -713,21 +715,21 @@ presentation data (ex-etag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-etag.plogic)</div>
 <pre class="program">#item1 {
-  <b>etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>etag:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 #item2 {
-  <b>Etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>Etag:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 #item3 {
-  <b>ETAG:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>ETAG:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-etag.plogic ex-etag.pdata
-&lt;li&gt;foo<b>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</b>
-&lt;li&gt;bar<b>&lt;?php echo htmlspecialchars($is_xml ? '&lt;/li&gt;' : ''); ?&gt;</b>
-&lt;li&gt;baz<b>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</b>
+&lt;li&gt;foo<strong>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</strong>
+&lt;li&gt;bar<strong>&lt;?php echo htmlspecialchars($is_xml ? '&lt;/li&gt;' : ''); ?&gt;</strong>
+&lt;li&gt;baz<strong>&lt;?php echo $is_xml ? '&lt;/li&gt;' : ''; ?&gt;</strong>
 </pre>
 <br>
 
@@ -742,13 +744,13 @@ presentation data (ex-etag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-etag.plogic)</div>
 <pre class="program">#item1 {
-  <b>etag:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>etag:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 #item2 {
-  <b>Etag:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>Etag:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 #item3 {
-  <b>ETAG:</b> is_xml ? '&lt;/li&gt;' : '';
+  <strong>ETAG:</strong> is_xml ? '&lt;/li&gt;' : '';
 }
 </pre>
 <div class="terminal_caption">
@@ -756,9 +758,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-etag.plogic ex-etag.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;li&gt;foo<b>${is_xml ? '&lt;/li&gt;' : ''}</b>
-&lt;li&gt;bar<b>${is_xml ? '&lt;/li&gt;' : ''}</b>
-&lt;li&gt;baz<b>&lt;c:out value="${is_xml ? '&lt;/li&gt;' : ''}" escapeXml="false"/&gt;</b>
+&lt;li&gt;foo<strong>${is_xml ? '&lt;/li&gt;' : ''}</strong>
+&lt;li&gt;bar<strong>${is_xml ? '&lt;/li&gt;' : ''}</strong>
+&lt;li&gt;baz<strong>&lt;c:out value="${is_xml ? '&lt;/li&gt;' : ''}" escapeXml="false"/&gt;</strong>
 </pre>
 <br>
 
@@ -773,21 +775,21 @@ presentation data (ex-etag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-etag.plogic)</div>
 <pre class="program">#item1 {
-  <b>etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>etag:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 #item2 {
-  <b>Etag:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>Etag:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 #item3 {
-  <b>ETAG:</b> $is_xml ? '&lt;/li&gt;' : '';
+  <strong>ETAG:</strong> $is_xml ? '&lt;/li&gt;' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-etag.plogic ex-etag.pdata
-&lt;li&gt;foo<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
-&lt;li&gt;bar<b>&lt;?= encode_entities($is_xml ? '&lt;/li&gt;' : '') !&gt;</b>
-&lt;li&gt;baz<b>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</b>
+&lt;li&gt;foo<strong>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</strong>
+&lt;li&gt;bar<strong>&lt;?= encode_entities($is_xml ? '&lt;/li&gt;' : '') !&gt;</strong>
+&lt;li&gt;baz<strong>&lt;?= $is_xml ? '&lt;/li&gt;' : '' !&gt;</strong>
 </pre>
 <br>
 
@@ -820,14 +822,14 @@ presentation data (ex-attrs.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-attrs.plogic)</div>
 <pre class="program">#item {
-  <b>attrs:</b> 'class' klass,
+  <strong>attrs:</strong> 'class' klass,
          'style' style;
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-attrs.plogic ex-attrs.pdata
-&lt;p <b>class="&lt;%= klass %&gt;"</b> <b>style="&lt;%= style %&gt;"</b>&gt;
+&lt;p <strong>class="&lt;%= klass %&gt;"</strong> <strong>style="&lt;%= style %&gt;"</strong>&gt;
   AAA
 &lt;/p&gt;
 </pre>
@@ -844,14 +846,14 @@ presentation data (ex-attrs.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-attrs.plogic)</div>
 <pre class="program">#item {
-  <b>attrs:</b> 'class' $class,
+  <strong>attrs:</strong> 'class' $class,
          'style' $style;
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-attrs.plogic ex-attrs.pdata
-&lt;p <b>class="&lt;?php echo $class; ?&gt;"</b> <b>style="&lt;?php echo $style; ?&gt;"</b>&gt;
+&lt;p <strong>class="&lt;?php echo $class; ?&gt;"</strong> <strong>style="&lt;?php echo $style; ?&gt;"</strong>&gt;
   AAA
 &lt;/p&gt;
 </pre>
@@ -868,7 +870,7 @@ presentation data (ex-attrs.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-attrs.plogic)</div>
 <pre class="program">#item {
-  <b>attrs:</b> 'class' klass,
+  <strong>attrs:</strong> 'class' klass,
          'style' style;
 }
 </pre>
@@ -877,7 +879,7 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-attrs.plogic ex-attrs.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;p <b>class="${klass}"</b> <b>style="${style}"</b>&gt;
+&lt;p <strong>class="${klass}"</strong> <strong>style="${style}"</strong>&gt;
   AAA
 &lt;/p&gt;
 </pre>
@@ -894,14 +896,14 @@ presentation data (ex-attrs.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-attrs.plogic)</div>
 <pre class="program">#item {
-  <b>attrs:</b> 'class' $class,
+  <strong>attrs:</strong> 'class' $class,
          'style' $style;
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-attrs.plogic ex-attrs.pdata
-&lt;p <b>class="&lt;?= $class !&gt;"</b> <b>style="&lt;?= $style !&gt;"</b>&gt;
+&lt;p <strong>class="&lt;?= $class !&gt;"</strong> <strong>style="&lt;?= $style !&gt;"</strong>&gt;
   AAA
 &lt;/p&gt;
 </pre>
@@ -942,13 +944,13 @@ presentation data (ex-append.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-append.plogic)</div>
 <pre class="program">#remember {
-  <b>append:</b> flag ? ' checked' : '';
+  <strong>append:</strong> flag ? ' checked' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-append.plogic ex-append.pdata
-&lt;input type="checkboxk" value="y"<b>&lt;%= flag ? ' checked' : '' %&gt;</b>&gt;Remeber me
+&lt;input type="checkboxk" value="y"<strong>&lt;%= flag ? ' checked' : '' %&gt;</strong>&gt;Remeber me
 </pre>
 <br>
 
@@ -961,13 +963,13 @@ presentation data (ex-append.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-append.plogic)</div>
 <pre class="program">#remember {
-  <b>append:</b> $flag ? ' checked' : '';
+  <strong>append:</strong> $flag ? ' checked' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-append.plogic ex-append.pdata
-&lt;input type="checkboxk" value="y"<b>&lt;?php echo $flag ? ' checked' : ''; ?&gt;</b>&gt;Remeber me
+&lt;input type="checkboxk" value="y"<strong>&lt;?php echo $flag ? ' checked' : ''; ?&gt;</strong>&gt;Remeber me
 </pre>
 <br>
 
@@ -980,7 +982,7 @@ presentation data (ex-append.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-append.plogic)</div>
 <pre class="program">#remember {
-  <b>append:</b> flag ? ' checked' : '';
+  <strong>append:</strong> flag ? ' checked' : '';
 }
 </pre>
 <div class="terminal_caption">
@@ -988,7 +990,7 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-append.plogic ex-append.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-&lt;input type="checkboxk" value="y"<b>${flag ? ' checked' : ''}</b>&gt;Remeber me
+&lt;input type="checkboxk" value="y"<strong>${flag ? ' checked' : ''}</strong>&gt;Remeber me
 </pre>
 <br>
 
@@ -1001,13 +1003,13 @@ presentation data (ex-append.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-append.plogic)</div>
 <pre class="program">#remember {
-  <b>append:</b> $flag ? ' checked' : '';
+  <strong>append:</strong> $flag ? ' checked' : '';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-append.plogic ex-append.pdata
-&lt;input type="checkboxk" value="y"<b>&lt;?= $flag ? ' checked' : '' !&gt;</b>&gt;Remeber me
+&lt;input type="checkboxk" value="y"<strong>&lt;?= $flag ? ' checked' : '' !&gt;</strong>&gt;Remeber me
 </pre>
 <br>
 
@@ -1029,7 +1031,7 @@ presentation data (ex-remove.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-remove.plogic)</div>
 <pre class="program">#foo {
-  <b>remove:</b> 'id', 'style';
+  <strong>remove:</strong> 'id', 'style';
 }
 </pre>
 <div class="terminal_caption">
@@ -1052,7 +1054,7 @@ presentation data (ex-remove.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-remove.plogic)</div>
 <pre class="program">#foo {
-  <b>remove:</b> 'id', 'style';
+  <strong>remove:</strong> 'id', 'style';
 }
 </pre>
 <div class="terminal_caption">
@@ -1075,7 +1077,7 @@ presentation data (ex-remove.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-remove.plogic)</div>
 <pre class="program">#foo {
-  <b>remove:</b> 'id', 'style';
+  <strong>remove:</strong> 'id', 'style';
 }
 </pre>
 <div class="terminal_caption">
@@ -1100,7 +1102,7 @@ presentation data (ex-remove.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-remove.plogic)</div>
 <pre class="program">#foo {
-  <b>remove:</b> 'id', 'style';
+  <strong>remove:</strong> 'id', 'style';
 }
 </pre>
 <div class="terminal_caption">
@@ -1142,14 +1144,14 @@ In the <code>logic:</code> property, the folllowings are available.
         represents end-tag of the element
 </dd>
 <dt class="dt3"><b>
-<code>_element(<i>name</i>)</code> </b></dt>
+<code>_element(<em>name</em>)</code> </b></dt>
 <dd class="dd3">
-        represents the other element marked as <i>name</i>.
+        represents the other element marked as <em>name</em>.
 </dd>
 <dt class="dt3"><b>
-<code>_content(<i>name</i>)</code> </b></dt>
+<code>_content(<em>name</em>)</code> </b></dt>
 <dd class="dd3">
-        represents the content of other element marked as <i>name</i>.
+        represents the content of other element marked as <em>name</em>.
 </dd>
 </dl>
 <p>In the <code>logic:</code> property, it is able to write statements in target language
@@ -1167,11 +1169,11 @@ presentation data (ex-logic.pdata)</div>
 presentation logic (ex-logic.plogic)</div>
 <pre class="program">#items {
   value: item;
-  <b>logic:</b> {
+  <strong>logic:</strong> {
     @list.each do |item|
-      <b>_stag</b>
-      <b>_cont</b>
-      <b>_etag</b>
+      <strong>_stag</strong>
+      <strong>_cont</strong>
+      <strong>_etag</strong>
     end
   }
 }
@@ -1180,9 +1182,9 @@ presentation logic (ex-logic.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-logic.plogic ex-logic.pdata
 &lt;ul&gt;
-<b>&lt;%     @list.each do |item| %&gt;</b>
+<strong>&lt;%     @list.each do |item| %&gt;</strong>
   &lt;li&gt;&lt;%= item %&gt;&lt;/li&gt;
-<b>&lt;%     end %&gt;</b>
+<strong>&lt;%     end %&gt;</strong>
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1199,11 +1201,11 @@ presentation data (ex-logic.pdata)</div>
 presentation logic (ex-logic.plogic)</div>
 <pre class="program">#items {
   value: $item;
-  <b>logic:</b> {
+  <strong>logic:</strong> {
     foreach ($list as $item) {
-      <b>_stag();</b>
-      <b>_cont();</b>
-      <b>_etag();</b>
+      <strong>_stag();</strong>
+      <strong>_cont();</strong>
+      <strong>_etag();</strong>
     }
   }
 }
@@ -1212,9 +1214,9 @@ presentation logic (ex-logic.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-logic.plogic ex-logic.pdata
 &lt;ul&gt;
-<b>&lt;?php     foreach ($list as $item) { ?&gt;</b>
+<strong>&lt;?php     foreach ($list as $item) { ?&gt;</strong>
   &lt;li&gt;&lt;?php echo $item; ?&gt;&lt;/li&gt;
-<b>&lt;?php     } ?&gt;</b>
+<strong>&lt;?php     } ?&gt;</strong>
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1231,11 +1233,11 @@ presentation data (ex-logic.pdata)</div>
 presentation logic (ex-logic.plogic)</div>
 <pre class="program">#items {
   value: item;
-  <b>logic:</b> {
+  <strong>logic:</strong> {
     &lt;c:forEach var="item" items="${list}"&gt;
-      <b>_stag();</b>
-      <b>_cont();</b>
-      <b>_etag();</b>
+      <strong>_stag();</strong>
+      <strong>_cont();</strong>
+      <strong>_etag();</strong>
     &lt;/c:forEach&gt;
   }
 }
@@ -1246,9 +1248,9 @@ compile</div>
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
 &lt;ul&gt;
-    <b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+    <strong>&lt;c:forEach var="item" items="${list}"&gt;</strong>
   &lt;li&gt;${item}&lt;/li&gt;
-    <b>&lt;/c:forEach&gt;</b>
+    <strong>&lt;/c:forEach&gt;</strong>
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1265,11 +1267,11 @@ presentation data (ex-logic.pdata)</div>
 presentation logic (ex-logic.plogic)</div>
 <pre class="program">#items {
   value: $item;
-  <b>logic:</b> {
+  <strong>logic:</strong> {
     foreach ($item in @list) {
-      <b>_stag();</b>
-      <b>_cont();</b>
-      <b>_etag();</b>
+      <strong>_stag();</strong>
+      <strong>_cont();</strong>
+      <strong>_etag();</strong>
     }
   }
 }
@@ -1278,9 +1280,9 @@ presentation logic (ex-logic.plogic)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-logic.plogic ex-logic.pdata
 &lt;ul&gt;
-<b>&lt;?     foreach ($item in @list) { !&gt;</b>
+<strong>&lt;?     foreach ($item in @list) { !&gt;</strong>
   &lt;li&gt;&lt;?= $item !&gt;&lt;/li&gt;
-<b>&lt;?     } !&gt;</b>
+<strong>&lt;?     } !&gt;</strong>
 &lt;/ul&gt;
 </pre>
 <br>
@@ -1307,13 +1309,12 @@ presentation data (ex-begin.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-begin.plogic)</div>
 <pre class="program">#DOCUMENT {
-  <b>begin:</b> {
+  <strong>begin:</strong> {
     username = @context[:username]
     menulist = @context[:menulist]
   }
-  <b>end:</b> {
+  <strong>end:</strong> {
     print "&lt;!-- document end --&gt;\n"
-
   }
 }
 #username {
@@ -1331,15 +1332,15 @@ presentation logic (ex-begin.plogic)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-begin.plogic ex-begin.pdata
-<b>&lt;%     username = @context[:username] %&gt;</b>
-<b>&lt;%     menulist = @context[:menulist] %&gt;</b>
+<strong>&lt;%     username = @context[:username] %&gt;</strong>
+<strong>&lt;%     menulist = @context[:menulist] %&gt;</strong>
 &lt;p&gt;Hello &lt;span&gt;&lt;%= username %&gt;&lt;/span&gt;!&lt;/p&gt;
 &lt;ul&gt;
 &lt;%     for menu in menulist %&gt;
  &lt;li&gt;&lt;%= menu %&gt;&lt;/li&gt;
 &lt;%     end %&gt;
 &lt;/ul&gt;
-<b>&lt;%= "&lt;!-- document end --&gt;\n" %&gt;</b>
+<strong>&lt;%= "&lt;!-- document end --&gt;\n" %&gt;</strong>
 </pre>
 <br>
 
@@ -1355,13 +1356,12 @@ presentation data (ex-begin.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-begin.plogic)</div>
 <pre class="program">#DOCUMENT {
-  <b>begin:</b> {
+  <strong>begin:</strong> {
     $username = $context['username'];
     $menulist = $context['menulist'];
   }
-  <b>end:</b> {
+  <strong>end:</strong> {
     print("&lt;!-- document end --&gt;\n");
-
   }
 }
 #username {
@@ -1379,15 +1379,15 @@ presentation logic (ex-begin.plogic)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-begin.plogic ex-begin.pdata
-<b>&lt;?php     $username = $context['username']; ?&gt;</b>
-<b>&lt;?php     $menulist = $context['menulist']; ?&gt;</b>
+<strong>&lt;?php     $username = $context['username']; ?&gt;</strong>
+<strong>&lt;?php     $menulist = $context['menulist']; ?&gt;</strong>
 &lt;p&gt;Hello &lt;span&gt;&lt;?php echo $username; ?&gt;&lt;/span&gt;!&lt;/p&gt;
 &lt;ul&gt;
 &lt;?php     foreach ($menulist as $menu) { ?&gt;
  &lt;li&gt;&lt;?php echo $menu; ?&gt;&lt;/li&gt;
 &lt;?php     } ?&gt;
 &lt;/ul&gt;
-<b>&lt;?php echo "&lt;!-- document end --&gt;\n"; ?&gt;</b>
+<strong>&lt;?php echo "&lt;!-- document end --&gt;\n"; ?&gt;</strong>
 </pre>
 <br>
 
@@ -1403,11 +1403,11 @@ presentation data (ex-begin.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-begin.plogic)</div>
 <pre class="program">#DOCUMENT {
-  <b>begin:</b> {
+  <strong>begin:</strong> {
     &lt;c:set var="username" value="${context.username}"/&gt;
     &lt;c:set var="menulist" value="${context.menulist}"/&gt;
   }
-  <b>end:</b> {
+  <strong>end:</strong> {
     &lt;c:out value="&lt;!-- document end --&gt;\n"/&gt;
   }
 }
@@ -1428,15 +1428,15 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-begin.plogic ex-begin.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-    <b>&lt;c:set var="username" value="${context.username}"/&gt;</b>
-    <b>&lt;c:set var="menulist" value="${context.menulist}"/&gt;</b>
+    <strong>&lt;c:set var="username" value="${context.username}"/&gt;</strong>
+    <strong>&lt;c:set var="menulist" value="${context.menulist}"/&gt;</strong>
 &lt;p&gt;Hello &lt;span&gt;${username}&lt;/span&gt;!&lt;/p&gt;
 &lt;ul&gt;
     &lt;c:forEach var="menu" items="${menulist}"&gt;
  &lt;li&gt;${menu}&lt;/li&gt;
     &lt;/c:forEach&gt;
 &lt;/ul&gt;
-    <b>&lt;c:out value="&lt;!-- document end --&gt;\n"/&gt;</b>
+    <strong>&lt;c:out value="&lt;!-- document end --&gt;\n"/&gt;</strong>
 </pre>
 <br>
 
@@ -1452,13 +1452,12 @@ presentation data (ex-begin.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-begin.plogic)</div>
 <pre class="program">#DOCUMENT {
-  <b>begin:</b> {
+  <strong>begin:</strong> {
     $username = $context{'username'};
     @menulist = $context{'menulist'};
   }
-  <b>end:</b> {
+  <strong>end:</strong> {
     print("&lt;!-- document end --&gt;\n");
-
   }
 }
 #username {
@@ -1476,15 +1475,15 @@ presentation logic (ex-begin.plogic)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
-<b>&lt;?     $username = $context{'username'}; !&gt;</b>
-<b>&lt;?     @menulist = $context{'menulist'}; !&gt;</b>
+<strong>&lt;?     $username = $context{'username'}; !&gt;</strong>
+<strong>&lt;?     @menulist = $context{'menulist'}; !&gt;</strong>
 &lt;p&gt;Hello &lt;span&gt;&lt;?= $username !&gt;&lt;/span&gt;!&lt;/p&gt;
 &lt;ul&gt;
 &lt;?     foreach ($menu in @menulist) { !&gt;
  &lt;li&gt;&lt;?= $menu !&gt;&lt;/li&gt;
 &lt;?     } !&gt;
 &lt;/ul&gt;
-<b>&lt;?= "&lt;!-- document end --&gt;\n" !&gt;</b>
+<strong>&lt;?= "&lt;!-- document end --&gt;\n" !&gt;</strong>
 </pre>
 <br>
 
@@ -1499,7 +1498,7 @@ compile</div>
 <p>Directives are commands to embed presentation logics into presentation data.
 For example, <code>title="for item in @list"</code> directive represents iteration of the element.
 </p>
-<p>Directives are provided for '<b>choosability</b>'.
+<p>Directives are provided for '<strong>choosability</strong>'.
 This is very important concept for Kwartz (and other products by kuwata-lab).
 In Kwartz, you can separate presentation logics from presentation data, or 'mix' them.
 It is the user or customer of Kwartz and not developer who determine which solution to adopt.
@@ -1522,16 +1521,16 @@ or PROPERTY_ESCAPE is true in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-elem.pdata)</div>
-<pre class="program">&lt;b <b>title="elem: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Elem: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ELEM: expr"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="elem: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Elem: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ELEM: expr"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-elem.pdata
-<b>&lt;%= expr %&gt;</b>
-<b>&lt;%=h expr %&gt;</b>
-<b>&lt;%= expr %&gt;</b>
+<strong>&lt;%= expr %&gt;</strong>
+<strong>&lt;%=h expr %&gt;</strong>
+<strong>&lt;%= expr %&gt;</strong>
 </pre>
 <br>
 
@@ -1539,16 +1538,16 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-elem.pdata)</div>
-<pre class="program">&lt;b <b>title="elem($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Elem($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ELEM($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="elem($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Elem($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ELEM($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-elem.pdata
-<b>&lt;?php echo $expr; ?&gt;</b>
-<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>
-<b>&lt;?php echo $expr; ?&gt;</b>
+<strong>&lt;?php echo $expr; ?&gt;</strong>
+<strong>&lt;?php echo htmlspecialchars($expr); ?&gt;</strong>
+<strong>&lt;?php echo $expr; ?&gt;</strong>
 </pre>
 <br>
 
@@ -1556,16 +1555,16 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-elem.pdata)</div>
-<pre class="program">&lt;b <b>title="elem(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Elem(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ELEM(expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="elem(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Elem(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ELEM(expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-elem.pdata
-<b>${expr}</b>
-<b>${expr}</b>
-<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>
+<strong>${expr}</strong>
+<strong>${expr}</strong>
+<strong>&lt;c:out value="${expr}" escapeXml="false"/&gt;</strong>
 </pre>
 <br>
 
@@ -1573,16 +1572,16 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-elem.pdata)</div>
-<pre class="program">&lt;b <b>title="elem($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Elem($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ELEM($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="elem($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Elem($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ELEM($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-elem.pdata
-<b>&lt;?= $expr !&gt;</b>
-<b>&lt;?= encode_entities($expr) !&gt;</b>
-<b>&lt;?= $expr !&gt;</b>
+<strong>&lt;?= $expr !&gt;</strong>
+<strong>&lt;?= encode_entities($expr) !&gt;</strong>
+<strong>&lt;?= $expr !&gt;</strong>
 </pre>
 <br>
 
@@ -1601,16 +1600,16 @@ or PROPERTY_ESCAPE is true in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-stag.pdata)</div>
-<pre class="program">&lt;b <b>title="stag: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Stag: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="STAG: expr"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="stag: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Stag: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="STAG: expr"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-stag.pdata
-<b>&lt;%= expr %&gt;</b>foo&lt;/b&gt;
-<b>&lt;%=h expr %&gt;</b>foo&lt;/b&gt;
-<b>&lt;%= expr %&gt;</b>foo&lt;/b&gt;
+<strong>&lt;%= expr %&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;%=h expr %&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;%= expr %&gt;</strong>foo&lt;/b&gt;
 </pre>
 <br>
 
@@ -1618,16 +1617,16 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-stag.pdata)</div>
-<pre class="program">&lt;b <b>title="stag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Stag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="STAG($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="stag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Stag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="STAG($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-stag.pdata
-<b>&lt;?php echo $expr; ?&gt;</b>foo&lt;/b&gt;
-<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>foo&lt;/b&gt;
-<b>&lt;?php echo $expr; ?&gt;</b>foo&lt;/b&gt;
+<strong>&lt;?php echo $expr; ?&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;?php echo htmlspecialchars($expr); ?&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;?php echo $expr; ?&gt;</strong>foo&lt;/b&gt;
 </pre>
 <br>
 
@@ -1635,16 +1634,16 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-stag.pdata)</div>
-<pre class="program">&lt;b <b>title="stag(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Stag(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="STAG(expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="stag(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Stag(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="STAG(expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-stag.pdata
-<b>${expr}</b>foo&lt;/b&gt;
-<b>${expr}</b>foo&lt;/b&gt;
-<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>foo&lt;/b&gt;
+<strong>${expr}</strong>foo&lt;/b&gt;
+<strong>${expr}</strong>foo&lt;/b&gt;
+<strong>&lt;c:out value="${expr}" escapeXml="false"/&gt;</strong>foo&lt;/b&gt;
 </pre>
 <br>
 
@@ -1652,16 +1651,16 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-stag.pdata)</div>
-<pre class="program">&lt;b <b>title="stag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Stag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="STAG($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="stag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Stag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="STAG($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-stag.pdata
-<b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
-<b>&lt;?= encode_entities($expr) !&gt;</b>foo&lt;/b&gt;
-<b>&lt;?= $expr !&gt;</b>foo&lt;/b&gt;
+<strong>&lt;?= $expr !&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;?= encode_entities($expr) !&gt;</strong>foo&lt;/b&gt;
+<strong>&lt;?= $expr !&gt;</strong>foo&lt;/b&gt;
 </pre>
 <br>
 
@@ -1680,16 +1679,16 @@ or PROPERTY_ESCAPE is true in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-etag.pdata)</div>
-<pre class="program">&lt;b <b>title="etag: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Etag: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ETAG: expr"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="etag: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Etag: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ETAG: expr"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-etag.pdata
-&lt;b&gt;foo<b>&lt;%= expr %&gt;</b>
-&lt;b&gt;foo<b>&lt;%=h expr %&gt;</b>
-&lt;b&gt;foo<b>&lt;%= expr %&gt;</b>
+&lt;b&gt;foo<strong>&lt;%= expr %&gt;</strong>
+&lt;b&gt;foo<strong>&lt;%=h expr %&gt;</strong>
+&lt;b&gt;foo<strong>&lt;%= expr %&gt;</strong>
 </pre>
 <br>
 
@@ -1697,16 +1696,16 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-etag.pdata)</div>
-<pre class="program">&lt;b <b>title="etag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Etag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ETAG($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="etag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Etag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ETAG($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-etag.pdata
-&lt;b&gt;foo<b>&lt;?php echo $expr; ?&gt;</b>
-&lt;b&gt;foo<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>
-&lt;b&gt;foo<b>&lt;?php echo $expr; ?&gt;</b>
+&lt;b&gt;foo<strong>&lt;?php echo $expr; ?&gt;</strong>
+&lt;b&gt;foo<strong>&lt;?php echo htmlspecialchars($expr); ?&gt;</strong>
+&lt;b&gt;foo<strong>&lt;?php echo $expr; ?&gt;</strong>
 </pre>
 <br>
 
@@ -1714,16 +1713,16 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-etag.pdata)</div>
-<pre class="program">&lt;b <b>title="etag(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Etag(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ETAG(expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="etag(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Etag(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ETAG(expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-etag.pdata
-&lt;b&gt;foo<b>${expr}</b>
-&lt;b&gt;foo<b>${expr}</b>
-&lt;b&gt;foo<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>
+&lt;b&gt;foo<strong>${expr}</strong>
+&lt;b&gt;foo<strong>${expr}</strong>
+&lt;b&gt;foo<strong>&lt;c:out value="${expr}" escapeXml="false"/&gt;</strong>
 </pre>
 <br>
 
@@ -1731,16 +1730,16 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-etag.pdata)</div>
-<pre class="program">&lt;b <b>title="etag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Etag($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="ETAG($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="etag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Etag($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="ETAG($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-etag.pdata
-&lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
-&lt;b&gt;foo<b>&lt;?= encode_entities($expr) !&gt;</b>
-&lt;b&gt;foo<b>&lt;?= $expr !&gt;</b>
+&lt;b&gt;foo<strong>&lt;?= $expr !&gt;</strong>
+&lt;b&gt;foo<strong>&lt;?= encode_entities($expr) !&gt;</strong>
+&lt;b&gt;foo<strong>&lt;?= $expr !&gt;</strong>
 </pre>
 <br>
 
@@ -1759,16 +1758,16 @@ or PROPERTY_ESCAPE is true in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-cont.pdata)</div>
-<pre class="program">&lt;b <b>title="cont: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Cont: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="CONT: expr"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="cont: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Cont: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="CONT: expr"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-cont.pdata
-&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;%=h expr %&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%= expr %&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%=h expr %&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%= expr %&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1776,16 +1775,16 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-cont.pdata)</div>
-<pre class="program">&lt;b <b>title="cont($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Cont($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="CONT($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="cont($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Cont($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="CONT($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-cont.pdata
-&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo $expr; ?&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo htmlspecialchars($expr); ?&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo $expr; ?&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1793,16 +1792,16 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-cont.pdata)</div>
-<pre class="program">&lt;b <b>title="cont(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Cont(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="CONT(expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="cont(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Cont(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="CONT(expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-cont.pdata
-&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
-&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>${expr}</strong>&lt;/b&gt;
+&lt;b&gt;<strong>${expr}</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;c:out value="${expr}" escapeXml="false"/&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1810,16 +1809,16 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-cont.pdata)</div>
-<pre class="program">&lt;b <b>title="cont($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Cont($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="CONT($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="cont($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Cont($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="CONT($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-cont.pdata
-&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= encode_entities($expr) !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= $expr !&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= encode_entities($expr) !&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= $expr !&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1835,16 +1834,16 @@ compile</div>
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-value.pdata)</div>
-<pre class="program">&lt;b <b>title="value: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Value: expr"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="VALUE: expr"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="value: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Value: expr"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="VALUE: expr"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-value.pdata
-&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;%=h expr %&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;%= expr %&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%= expr %&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%=h expr %&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;%= expr %&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1852,16 +1851,16 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-value.pdata)</div>
-<pre class="program">&lt;b <b>title="value($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Value($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="VALUE($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="value($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Value($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="VALUE($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-value.pdata
-&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?php echo htmlspecialchars($expr); ?&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?php echo $expr; ?&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo $expr; ?&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo htmlspecialchars($expr); ?&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?php echo $expr; ?&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1869,16 +1868,16 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-value.pdata)</div>
-<pre class="program">&lt;b <b>title="value(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Value(expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="VALUE(expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="value(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Value(expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="VALUE(expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-value.pdata
-&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
-&lt;b&gt;<b>${expr}</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;c:out value="${expr}" escapeXml="false"/&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>${expr}</strong>&lt;/b&gt;
+&lt;b&gt;<strong>${expr}</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;c:out value="${expr}" escapeXml="false"/&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1886,16 +1885,16 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-value.pdata)</div>
-<pre class="program">&lt;b <b>title="value($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="Value($expr)"</b>&gt;foo&lt;/b&gt;
-&lt;b <b>title="VALUE($expr)"</b>&gt;foo&lt;/b&gt;
+<pre class="program">&lt;b <strong>title="value($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="Value($expr)"</strong>&gt;foo&lt;/b&gt;
+&lt;b <strong>title="VALUE($expr)"</strong>&gt;foo&lt;/b&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-value.pdata
-&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= encode_entities($expr) !&gt;</b>&lt;/b&gt;
-&lt;b&gt;<b>&lt;?= $expr !&gt;</b>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= $expr !&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= encode_entities($expr) !&gt;</strong>&lt;/b&gt;
+&lt;b&gt;<strong>&lt;?= $expr !&gt;</strong>&lt;/b&gt;
 </pre>
 <br>
 
@@ -1910,11 +1909,11 @@ compile</div>
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-foreach.pdata)</div>
-<pre class="program">&lt;tr <b>title="for item in list"</b>&gt;
+<pre class="program">&lt;tr <strong>title="for item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="for key,value in hash"</b>&gt;
+&lt;tr <strong>title="for key,value in hash"</strong>&gt;
   &lt;td title="cont key"&gt;key&lt;/td&gt;
   &lt;td title="cont value"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -1922,18 +1921,18 @@ presentation data (ex-foreach.pdata)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-foreach.pdata
-<b>&lt;% for item in list do %&gt;</b>
+<strong>&lt;% for item in list do %&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 
-<b>&lt;% hash.each do |key, value| %&gt;</b>
+<strong>&lt;% hash.each do |key, value| %&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;%= key %&gt;&lt;/td&gt;
   &lt;td&gt;&lt;%= value %&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 </pre>
 <br>
 
@@ -1941,11 +1940,11 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-foreach.pdata)</div>
-<pre class="program">&lt;tr <b>title="foreach($list as $item)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="foreach($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="foreach($hash as $key=&gt;$value)"</b>&gt;
+&lt;tr <strong>title="foreach($hash as $key=&gt;$value)"</strong>&gt;
   &lt;td title="cont($key)"&gt;key&lt;/td&gt;
   &lt;td title="cont($value)"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -1953,18 +1952,18 @@ presentation data (ex-foreach.pdata)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-foreach.pdata
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 
-<b>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</b>
+<strong>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?php echo $key; ?&gt;&lt;/td&gt;
   &lt;td&gt;&lt;?php echo $value; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 </pre>
 <br>
 
@@ -1972,40 +1971,40 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-foreach.pdata)</div>
-<pre class="program">&lt;tr <b>title="for(item: list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="for(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="forEach(:var=&gt;'v', :items=&gt;:'params.list', :varStatus=&gt;'status')"</b>&gt;
+&lt;tr <strong>title="forEach('var'=&gt;'v', 'items'=&gt;'${params.list}', 'varStatus'=&gt;'status')"</strong>&gt;
   &lt;td title="cont(status.index)"&gt;1&lt;/td&gt;
   &lt;td title="cont(v)"&gt;&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="forEach(:var=&gt;'n', :begin=&gt;1, :end=&gt;10, :step=&gt;2)"</b>&gt;
+&lt;tr <strong>title="forEach('var'=&gt;'n', 'begin'=&gt;1, 'end'=&gt;10, 'step'=&gt;2)"</strong>&gt;
   &lt;td title="cont(n)"&gt;key&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-foreach.pdata
-<b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}"&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;${item}&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 
-<b>&lt;c:forEach var="v" items="${params.list}" varStatus="status"&gt;</b>
+<strong>&lt;c:forEach var="v" items="${params.list}" varStatus="status"&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;${status.index}&lt;/td&gt;
   &lt;td&gt;${v}&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 
-<b>&lt;c:forEach var="n" begin="1" end="10" step="2"&gt;</b>
+<strong>&lt;c:forEach var="n" begin="1" end="10" step="2"&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;${n}&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 </pre>
 <br>
 
@@ -2013,11 +2012,11 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-foreach.pdata)</div>
-<pre class="program">&lt;tr <b>title="foreach($item in @list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="foreach($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="foreach($key,$value in %hash)"</b>&gt;
+&lt;tr <strong>title="foreach($key,$value in %hash)"</strong>&gt;
   &lt;td title="cont($key)"&gt;key&lt;/td&gt;
   &lt;td title="cont($value)"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -2025,19 +2024,19 @@ presentation data (ex-foreach.pdata)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-foreach.pdata
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 
-<b>&lt;? foreach my $key (keys %hash) { !&gt;</b>
-<b>&lt;?   my $value = $hash{$key}; !&gt;</b>
+<strong>&lt;? foreach my $key (keys %hash) { !&gt;</strong>
+<strong>&lt;?   my $value = $hash{$key}; !&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?= $key !&gt;&lt;/td&gt;
   &lt;td&gt;&lt;?= $value !&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 </pre>
 <br>
 
@@ -2052,11 +2051,11 @@ compile</div>
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-list.pdata)</div>
-<pre class="program">&lt;tr <b>title="list item in list"</b>&gt;
+<pre class="program">&lt;tr <strong>title="list item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="list key,value in hash"</b>&gt;
+&lt;tr <strong>title="list key,value in hash"</strong>&gt;
   &lt;td title="cont key"&gt;key&lt;/td&gt;
   &lt;td title="cont value"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -2065,16 +2064,16 @@ presentation data (ex-list.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-list.pdata
 &lt;tr&gt;
-<b>&lt;% for item in list do %&gt;</b>
+<strong>&lt;% for item in list do %&gt;</strong>
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/tr&gt;
 
 &lt;tr&gt;
-<b>&lt;% hash.each do |key, value| %&gt;</b>
+<strong>&lt;% hash.each do |key, value| %&gt;</strong>
   &lt;td&gt;&lt;%= key %&gt;&lt;/td&gt;
   &lt;td&gt;&lt;%= value %&gt;&lt;/td&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2083,11 +2082,11 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-list.pdata)</div>
-<pre class="program">&lt;tr <b>title="list($list as $item)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="list($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="list($hash as $key=&gt;$value)"</b>&gt;
+&lt;tr <strong>title="list($hash as $key=&gt;$value)"</strong>&gt;
   &lt;td title="cont($key)"&gt;key&lt;/td&gt;
   &lt;td title="cont($value)"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -2096,16 +2095,16 @@ presentation data (ex-list.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-list.pdata
 &lt;tr&gt;
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 &lt;/tr&gt;
 
 &lt;tr&gt;
-<b>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</b>
+<strong>&lt;?php foreach ($hash as $key=&gt;$value) { ?&gt;</strong>
   &lt;td&gt;&lt;?php echo $key; ?&gt;&lt;/td&gt;
   &lt;td&gt;&lt;?php echo $value; ?&gt;&lt;/td&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2114,7 +2113,7 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-list.pdata)</div>
-<pre class="program">&lt;tr <b>title="list(item: list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="list(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2122,9 +2121,9 @@ presentation data (ex-list.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-list.pdata
 &lt;tr&gt;
-<b>&lt;c:forEach var="item" items="${list}"&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}"&gt;</strong>
   &lt;td&gt;${item}&lt;/td&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2133,11 +2132,11 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-list.pdata)</div>
-<pre class="program">&lt;tr <b>title="list($item in @list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="list($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="list($key,$value in %hash)"</b>&gt;
+&lt;tr <strong>title="list($key,$value in %hash)"</strong>&gt;
   &lt;td title="cont($key)"&gt;key&lt;/td&gt;
   &lt;td title="cont($value)"&gt;value&lt;/td&gt;
 &lt;/tr&gt;
@@ -2146,17 +2145,17 @@ presentation data (ex-list.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-list.pdata
 &lt;tr&gt;
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 &lt;/tr&gt;
 
 &lt;tr&gt;
-<b>&lt;? foreach my $key (keys %hash) { !&gt;</b>
-<b>&lt;?   my $value = $hash{$key}; !&gt;</b>
+<strong>&lt;? foreach my $key (keys %hash) { !&gt;</strong>
+<strong>&lt;?   my $value = $hash{$key}; !&gt;</strong>
   &lt;td&gt;&lt;?= $key !&gt;&lt;/td&gt;
   &lt;td&gt;&lt;?= $value !&gt;&lt;/td&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2173,31 +2172,31 @@ compile</div>
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-foreach_ctr.pdata)</div>
-<pre class="program">&lt;tr <b>title="For item in list"</b>&gt;
+<pre class="program">&lt;tr <strong>title="For item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="List item in list"</b>&gt;
+&lt;tr <strong>title="List item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-foreach_ctr.pdata
-<b>&lt;% item_ctr = 0 %&gt;</b>
-<b>&lt;% for item in list do %&gt;</b>
-<b>&lt;%   item_ctr += 1 %&gt;</b>
+<strong>&lt;% item_ctr = 0 %&gt;</strong>
+<strong>&lt;% for item in list do %&gt;</strong>
+<strong>&lt;%   item_ctr += 1 %&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;% item_ctr = 0 %&gt;</b>
-<b>&lt;% for item in list do %&gt;</b>
-<b>&lt;%   item_ctr += 1 %&gt;</b>
+<strong>&lt;% item_ctr = 0 %&gt;</strong>
+<strong>&lt;% for item in list do %&gt;</strong>
+<strong>&lt;%   item_ctr += 1 %&gt;</strong>
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2206,31 +2205,31 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-foreach_ctr.pdata)</div>
-<pre class="program">&lt;tr <b>title="Foreach($list as $item)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="Foreach($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="List($list as $item)"</b>&gt;
+&lt;tr <strong>title="List($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-foreach_ctr.pdata
-<b>&lt;?php $item_ctr = 0; ?&gt;</b>
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
-<b>&lt;?php   $item_ctr++; ?&gt;</b>
+<strong>&lt;?php $item_ctr = 0; ?&gt;</strong>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
+<strong>&lt;?php   $item_ctr++; ?&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;?php $item_ctr = 0; ?&gt;</b>
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
-<b>&lt;?php   $item_ctr++; ?&gt;</b>
+<strong>&lt;?php $item_ctr = 0; ?&gt;</strong>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
+<strong>&lt;?php   $item_ctr++; ?&gt;</strong>
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2239,29 +2238,29 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-foreach_ctr.pdata)</div>
-<pre class="program">&lt;tr <b>title="For(item: list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="For(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="List(item: list)"</b>&gt;
+&lt;tr <strong>title="List(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-foreach_ctr.pdata
-<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
-<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</strong>
+<strong>&lt;c:set var="item_ctr" value="${item_status.count}"/&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;${item}&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
-<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</strong>
+<strong>&lt;c:set var="item_ctr" value="${item_status.count}"/&gt;</strong>
   &lt;td&gt;${item}&lt;/td&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2270,31 +2269,31 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-foreach_ctr.pdata)</div>
-<pre class="program">&lt;tr <b>title="Foreach($item in @list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="Foreach($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="List($item in @list)"</b>&gt;
+&lt;tr <strong>title="List($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-foreach_ctr.pdata
-<b>&lt;? my $item_ctr = 0; !&gt;</b>
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
-<b>&lt;?   $item_ctr++; !&gt;</b>
+<strong>&lt;? my $item_ctr = 0; !&gt;</strong>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
+<strong>&lt;?   $item_ctr++; !&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;? my $item_ctr = 0; !&gt;</b>
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
-<b>&lt;?   $item_ctr++; !&gt;</b>
+<strong>&lt;? my $item_ctr = 0; !&gt;</strong>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
+<strong>&lt;?   $item_ctr++; !&gt;</strong>
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2314,33 +2313,33 @@ or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-foreach_tgl.pdata)</div>
-<pre class="program">&lt;tr <b>title="FOR item in list"</b>&gt;
+<pre class="program">&lt;tr <strong>title="FOR item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="LIST item in list"</b>&gt;
+&lt;tr <strong>title="LIST item in list"</strong>&gt;
   &lt;td title="cont item"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-foreach_tgl.pdata
-<b>&lt;% item_ctr = 0 %&gt;</b>
-<b>&lt;% for item in list do %&gt;</b>
-<b>&lt;%   item_ctr += 1 %&gt;</b>
-<b>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</b>
+<strong>&lt;% item_ctr = 0 %&gt;</strong>
+<strong>&lt;% for item in list do %&gt;</strong>
+<strong>&lt;%   item_ctr += 1 %&gt;</strong>
+<strong>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;% item_ctr = 0 %&gt;</b>
-<b>&lt;% for item in list do %&gt;</b>
-<b>&lt;%   item_ctr += 1 %&gt;</b>
-<b>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</b>
+<strong>&lt;% item_ctr = 0 %&gt;</strong>
+<strong>&lt;% for item in list do %&gt;</strong>
+<strong>&lt;%   item_ctr += 1 %&gt;</strong>
+<strong>&lt;%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %&gt;</strong>
   &lt;td&gt;&lt;%= item %&gt;&lt;/td&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2349,33 +2348,33 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-foreach_tgl.pdata)</div>
-<pre class="program">&lt;tr <b>title="FOREACH($list as $item)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="FOREACH($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="LIST($list as $item)"</b>&gt;
+&lt;tr <strong>title="LIST($list as $item)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-foreach_tgl.pdata
-<b>&lt;?php $item_ctr = 0; ?&gt;</b>
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
-<b>&lt;?php   $item_ctr++; ?&gt;</b>
-<b>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</b>
+<strong>&lt;?php $item_ctr = 0; ?&gt;</strong>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
+<strong>&lt;?php   $item_ctr++; ?&gt;</strong>
+<strong>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;?php $item_ctr = 0; ?&gt;</b>
-<b>&lt;?php foreach ($list as $item) { ?&gt;</b>
-<b>&lt;?php   $item_ctr++; ?&gt;</b>
-<b>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</b>
+<strong>&lt;?php $item_ctr = 0; ?&gt;</strong>
+<strong>&lt;?php foreach ($list as $item) { ?&gt;</strong>
+<strong>&lt;?php   $item_ctr++; ?&gt;</strong>
+<strong>&lt;?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?&gt;</strong>
   &lt;td&gt;&lt;?php echo $item; ?&gt;&lt;/td&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2384,31 +2383,31 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-foreach_tgl.pdata)</div>
-<pre class="program">&lt;tr <b>title="FOR(item: list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="FOR(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="LIST(item: list)"</b>&gt;
+&lt;tr <strong>title="LIST(item: list)"</strong>&gt;
   &lt;td title="cont(item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-foreach_tgl.pdata
-<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
-<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
-<b>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" /&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</strong>
+<strong>&lt;c:set var="item_ctr" value="${item_status.count}"/&gt;</strong>
+<strong>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;${item}&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</b>
-<b>&lt;c:set var="item_ctr" value="${item_status.count}" /&gt;</b>
-<b>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}" /&gt;</b>
+<strong>&lt;c:forEach var="item" items="${list}" varStatus="item_status"&gt;</strong>
+<strong>&lt;c:set var="item_ctr" value="${item_status.count}"/&gt;</strong>
+<strong>&lt;c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/&gt;</strong>
   &lt;td&gt;${item}&lt;/td&gt;
-<b>&lt;/c:forEach&gt;</b>
+<strong>&lt;/c:forEach&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2417,33 +2416,33 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-foreach_tgl.pdata)</div>
-<pre class="program">&lt;tr <b>title="FOREACH($item in @list)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="FOREACH($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="LIST($item in @list)"</b>&gt;
+&lt;tr <strong>title="LIST($item in @list)"</strong>&gt;
   &lt;td title="cont($item)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-foreach_tgl.pdata
-<b>&lt;? my $item_ctr = 0; !&gt;</b>
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
-<b>&lt;?   $item_ctr++; !&gt;</b>
-<b>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</b>
+<strong>&lt;? my $item_ctr = 0; !&gt;</strong>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
+<strong>&lt;?   $item_ctr++; !&gt;</strong>
+<strong>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;? my $item_ctr = 0; !&gt;</b>
-<b>&lt;? foreach my $item (@list) { !&gt;</b>
-<b>&lt;?   $item_ctr++; !&gt;</b>
-<b>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</b>
+<strong>&lt;? my $item_ctr = 0; !&gt;</strong>
+<strong>&lt;? foreach my $item (@list) { !&gt;</strong>
+<strong>&lt;?   $item_ctr++; !&gt;</strong>
+<strong>&lt;?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !&gt;</strong>
   &lt;td&gt;&lt;?= $item !&gt;&lt;/td&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2463,27 +2462,27 @@ until conditional expression is false.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-while.pdata)</div>
-<pre class="program">&lt;tr <b>title="while (item = dbh.fetch) != nil"</b>&gt;
+<pre class="program">&lt;tr <strong>title="while (item = dbh.fetch) != nil"</strong>&gt;
   &lt;td title="cont item.name"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="loop (item = dbh.fetch) != nil"</b>&gt;
+&lt;tr <strong>title="loop (item = dbh.fetch) != nil"</strong>&gt;
   &lt;td title="cont item.name"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-while.pdata
-<b>&lt;% while (item = dbh.fetch) != nil do %&gt;</b>
+<strong>&lt;% while (item = dbh.fetch) != nil do %&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;%= item.name %&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;% while (item = dbh.fetch) != nil do %&gt;</b>
+<strong>&lt;% while (item = dbh.fetch) != nil do %&gt;</strong>
   &lt;td&gt;&lt;%= item.name %&gt;&lt;/td&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2492,27 +2491,27 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-while.pdata)</div>
-<pre class="program">&lt;tr <b>title="while(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="while(($item = $dbh-&gt;fetch()) != null)"</strong>&gt;
   &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="loop(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+&lt;tr <strong>title="loop(($item = $dbh-&gt;fetch()) != null)"</strong>&gt;
   &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-while.pdata
-<b>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</b>
+<strong>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</b>
+<strong>&lt;?php while (($item = $dbh-&gt;fetch()) != null) { ?&gt;</strong>
   &lt;td&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/td&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2534,27 +2533,27 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-while.pdata)</div>
-<pre class="program">&lt;tr <b>title="while(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+<pre class="program">&lt;tr <strong>title="while(($item = $dbh-&gt;fetch()) != null)"</strong>&gt;
   &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 
-&lt;tr <b>title="loop(($item = $dbh-&gt;fetch()) != null)"</b>&gt;
+&lt;tr <strong>title="loop(($item = $dbh-&gt;fetch()) != null)"</strong>&gt;
   &lt;td title="cont($item-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-while.pdata
-<b>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</b>
+<strong>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</strong>
 &lt;tr&gt;
   &lt;td&gt;&lt;?= $item-&gt;name !&gt;&lt;/td&gt;
 &lt;/tr&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 
 &lt;tr&gt;
-<b>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</b>
+<strong>&lt;? while (($item = $dbh-&gt;fetch()) != null) { !&gt;</strong>
   &lt;td&gt;&lt;?= $item-&gt;name !&gt;&lt;/td&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 &lt;/tr&gt;
 </pre>
 <br>
@@ -2573,32 +2572,32 @@ start-tag of 'elseif'/'else' directive.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-if.pdata)</div>
-<pre class="program">&lt;div <b>title="if status=='error'"</b>&gt;
+<pre class="program">&lt;div <strong>title="if status=='error'"</strong>&gt;
   &lt;p class="error" title="cont mesg"&gt;error&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="elsif status=='warning'"</b>&gt;
+&lt;div <strong>title="elsif status=='warning'"</strong>&gt;
   &lt;p class="warning" title="cont mesg"&gt;waring&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="else"</b>&gt;
+&lt;div <strong>title="else"</strong>&gt;
   &lt;p title="cont mesg"&gt;mesg&lt;/p&gt;
 &lt;/div&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-if.pdata
-<b>&lt;% if status=='error' then %&gt;</b>
+<strong>&lt;% if status=='error' then %&gt;</strong>
 &lt;div&gt;
   &lt;p class="error"&gt;&lt;%= mesg %&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;% elsif status=='warning' then %&gt;</b>
+<strong>&lt;% elsif status=='warning' then %&gt;</strong>
 &lt;div&gt;
   &lt;p class="warning"&gt;&lt;%= mesg %&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;% else %&gt;</b>
+<strong>&lt;% else %&gt;</strong>
 &lt;div&gt;
   &lt;p&gt;&lt;%= mesg %&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;% end %&gt;</b>
+<strong>&lt;% end %&gt;</strong>
 </pre>
 <br>
 
@@ -2606,32 +2605,32 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-if.pdata)</div>
-<pre class="program">&lt;div <b>title="if($status=='error')"</b>&gt;
+<pre class="program">&lt;div <strong>title="if($status=='error')"</strong>&gt;
   &lt;p class="error" title="cont($mesg)"&gt;error&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="elseif($status=='warning')"</b>&gt;
+&lt;div <strong>title="elseif($status=='warning')"</strong>&gt;
   &lt;p class="warning" title="cont($mesg)"&gt;waring&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="else"</b>&gt;
+&lt;div <strong>title="else"</strong>&gt;
   &lt;p title="cont($mesg)"&gt;mesg&lt;/p&gt;
 &lt;/div&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-if.pdata
-<b>&lt;?php if ($status=='error') { ?&gt;</b>
+<strong>&lt;?php if ($status=='error') { ?&gt;</strong>
 &lt;div&gt;
   &lt;p class="error"&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;?php } elseif ($status=='warning') { ?&gt;</b>
+<strong>&lt;?php } elseif ($status=='warning') { ?&gt;</strong>
 &lt;div&gt;
   &lt;p class="warning"&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;?php } else { ?&gt;</b>
+<strong>&lt;?php } else { ?&gt;</strong>
 &lt;div&gt;
   &lt;p&gt;&lt;?php echo $mesg; ?&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;?php } ?&gt;</b>
+<strong>&lt;?php } ?&gt;</strong>
 </pre>
 <br>
 
@@ -2639,32 +2638,32 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-if.pdata)</div>
-<pre class="program">&lt;div <b>title="if(status=='error')"</b>&gt;
+<pre class="program">&lt;div <strong>title="if(status=='error')"</strong>&gt;
   &lt;p class="error" title="cont(mesg)"&gt;error&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="elseif(status=='warning')"</b>&gt;
+&lt;div <strong>title="elseif(status=='warning')"</strong>&gt;
   &lt;p class="warning" title="cont(mesg)"&gt;waring&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="else"</b>&gt;
+&lt;div <strong>title="else"</strong>&gt;
   &lt;p title="cont(mesg)"&gt;mesg&lt;/p&gt;
 &lt;/div&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-if.pdata
-<b>&lt;c:choose&gt;&lt;c:when test="${status=='error'}"&gt;</b>
+<strong>&lt;c:choose&gt;&lt;c:when test="${status=='error'}"&gt;</strong>
 &lt;div&gt;
   &lt;p class="error"&gt;${mesg}&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;/c:when&gt;&lt;c:when test="${status=='warning'}"&gt;</b>
+<strong>&lt;/c:when&gt;&lt;c:when test="${status=='warning'}"&gt;</strong>
 &lt;div&gt;
   &lt;p class="warning"&gt;${mesg}&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;/c:when&gt;&lt;c:otherwise&gt;</b>
+<strong>&lt;/c:when&gt;&lt;c:otherwise&gt;</strong>
 &lt;div&gt;
   &lt;p&gt;${mesg}&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;/c:otherwise&gt;&lt;/c:choose&gt;</b>
+<strong>&lt;/c:otherwise&gt;&lt;/c:choose&gt;</strong>
 </pre>
 <br>
 
@@ -2672,32 +2671,32 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-if.pdata)</div>
-<pre class="program">&lt;div <b>title="if($status=='error')"</b>&gt;
+<pre class="program">&lt;div <strong>title="if($status=='error')"</strong>&gt;
   &lt;p class="error" title="cont($mesg)"&gt;error&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="elsif($status=='warning')"</b>&gt;
+&lt;div <strong>title="elsif($status=='warning')"</strong>&gt;
   &lt;p class="warning" title="cont($mesg)"&gt;waring&lt;/p&gt;
 &lt;/div&gt;
-&lt;div <b>title="else"</b>&gt;
+&lt;div <strong>title="else"</strong>&gt;
   &lt;p title="cont($mesg)"&gt;mesg&lt;/p&gt;
 &lt;/div&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-if.pdata
-<b>&lt;? if ($status=='error') { !&gt;</b>
+<strong>&lt;? if ($status=='error') { !&gt;</strong>
 &lt;div&gt;
   &lt;p class="error"&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;? } elsif ($status=='warning') { !&gt;</b>
+<strong>&lt;? } elsif ($status=='warning') { !&gt;</strong>
 &lt;div&gt;
   &lt;p class="warning"&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;? } else { !&gt;</b>
+<strong>&lt;? } else { !&gt;</strong>
 &lt;div&gt;
   &lt;p&gt;&lt;?= $mesg !&gt;&lt;/p&gt;
 &lt;/div&gt;
-<b>&lt;? } !&gt;</b>
+<strong>&lt;? } !&gt;</strong>
 </pre>
 <br>
 
@@ -2712,14 +2711,14 @@ compile</div>
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-set.pdata)</div>
-<pre class="program">&lt;tr <b>title="set color=i%2==0 ? 'red' : 'blue'"</b>&gt;
+<pre class="program">&lt;tr <strong>title="set color=i%2==0 ? 'red' : 'blue'"</strong>&gt;
  &lt;td title="cont: color"&gt;red&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-set.pdata
-<b>&lt;% color=i%2==0 ? 'red' : 'blue' %&gt;</b>
+<strong>&lt;% color=i%2==0 ? 'red' : 'blue' %&gt;</strong>
 &lt;tr&gt;
  &lt;td&gt;&lt;%= color %&gt;&lt;/td&gt;
 &lt;/tr&gt;
@@ -2730,14 +2729,14 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-set.pdata)</div>
-<pre class="program">&lt;tr <b>title="set($color=$i%2==0 ? 'red' : 'blue')"</b>&gt;
+<pre class="program">&lt;tr <strong>title="set($color=$i%2==0 ? 'red' : 'blue')"</strong>&gt;
  &lt;td title="cont($color)"&gt;red&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-set.pdata
-<b>&lt;?php $color=$i%2==0 ? 'red' : 'blue'; ?&gt;</b>
+<strong>&lt;?php $color=$i%2==0 ? 'red' : 'blue'; ?&gt;</strong>
 &lt;tr&gt;
  &lt;td&gt;&lt;?php echo $color; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
@@ -2748,14 +2747,14 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-set.pdata)</div>
-<pre class="program">&lt;tr <b>title="set(color=i%2==0 ? 'red' : 'blue')"</b>&gt;
+<pre class="program">&lt;tr <strong>title="set(color=i%2==0 ? 'red' : 'blue')"</strong>&gt;
  &lt;td title="cont(color)"&gt;red&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-set.pdata
-<b>&lt;c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}" /&gt;</b>
+<strong>&lt;c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}"/&gt;</strong>
 &lt;tr&gt;
  &lt;td&gt;${color}&lt;/td&gt;
 &lt;/tr&gt;
@@ -2766,14 +2765,14 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-set.pdata)</div>
-<pre class="program">&lt;tr <b>title="set($color=i%2==0 ? 'red' : 'blue')"</b>&gt;
+<pre class="program">&lt;tr <strong>title="set($color=i%2==0 ? 'red' : 'blue')"</strong>&gt;
  &lt;td title="cont($color)"&gt;red&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-set.pdata
-<b>&lt;? $color=i%2==0 ? 'red' : 'blue'; !&gt;</b>
+<strong>&lt;? $color=i%2==0 ? 'red' : 'blue'; !&gt;</strong>
 &lt;tr&gt;
  &lt;td&gt;&lt;?= $color !&gt;&lt;/td&gt;
 &lt;/tr&gt;
@@ -2795,8 +2794,8 @@ Id attribute is equivalent to 'mark' directive if other direcitve is not specifi
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-mark.pdata)</div>
-<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
- &lt;li <b>title="id: item"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;ul <strong>id="mark:list"</strong>&gt;
+ &lt;li <strong>title="id: item"</strong>&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -2812,8 +2811,8 @@ compile</div>
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-mark.pdata)</div>
-<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
- &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;ul <strong>id="mark:list"</strong>&gt;
+ &lt;li <strong>title="id(item)"</strong>&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -2829,8 +2828,8 @@ compile</div>
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-mark.pdata)</div>
-<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
- &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;ul <strong>id="mark:list"</strong>&gt;
+ &lt;li <strong>title="id(item)"</strong>&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -2846,8 +2845,8 @@ compile</div>
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-mark.pdata)</div>
-<pre class="program">&lt;ul <b>id="mark:list"</b>&gt;
- &lt;li <b>title="id(item)"</b>&gt;foo&lt;/li&gt;
+<pre class="program">&lt;ul <strong>id="mark:list"</strong>&gt;
+ &lt;li <strong>title="id(item)"</strong>&gt;foo&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -2877,7 +2876,7 @@ and available with other directive.
 <div class="program_caption">
 presentation data (ex-attr.pdata)</div>
 <pre class="program">&lt;tr class="odd"
-    title="FOR v in list; <b>attr: 'class' v_tgl; attr: 'style' style</b>"&gt;
+    title="FOR v in list; <strong>attr: 'class' v_tgl; attr: 'style' style</strong>"&gt;
  &lt;td title="cont v.name"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2888,7 +2887,7 @@ compile</div>
 &lt;% for v in list do %&gt;
 &lt;%   v_ctr += 1 %&gt;
 &lt;%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %&gt;
-&lt;tr <b>class="&lt;%= v_tgl %&gt;"</b> <b>style="&lt;%= style %&gt;"&gt;</b>
+&lt;tr <strong>class="&lt;%= v_tgl %&gt;"</strong> <strong>style="&lt;%= style %&gt;"&gt;</strong>
  &lt;td&gt;&lt;%= v.name %&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;% end %&gt;
@@ -2900,7 +2899,7 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-attr.pdata)</div>
 <pre class="program">&lt;tr class="odd"
-    title="FOREACH($list as $v); <b>attr('class',$v_tgl); attr('style',$style)</b>"&gt;
+    title="FOREACH($list as $v); <strong>attr('class',$v_tgl); attr('style',$style)</strong>"&gt;
  &lt;td title="cont($v-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2911,7 +2910,7 @@ compile</div>
 &lt;?php foreach ($list as $v) { ?&gt;
 &lt;?php   $v_ctr++; ?&gt;
 &lt;?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?&gt;
-&lt;tr <b>class="&lt;?php echo $v_tgl; ?&gt;"</b> <b>style="&lt;?php echo $style; ?&gt;"</b>&gt;
+&lt;tr <strong>class="&lt;?php echo $v_tgl; ?&gt;"</strong> <strong>style="&lt;?php echo $style; ?&gt;"</strong>&gt;
  &lt;td&gt;&lt;?php echo $v-&gt;name; ?&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;?php } ?&gt;
@@ -2923,7 +2922,7 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-attr.pdata)</div>
 <pre class="program">&lt;tr class="odd"
-    title="FOR(v: list); <b>attr('class',v_tgl); attr('style',style)</b>"&gt;
+    title="FOR(v: list); <strong>attr('class',v_tgl); attr('style',style)</strong>"&gt;
  &lt;td title="cont(v.name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2931,9 +2930,9 @@ presentation data (ex-attr.pdata)</div>
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-attr.pdata
 &lt;c:forEach var="v" items="${list}" varStatus="v_status"&gt;
-&lt;c:set var="v_ctr" value="${v_status.count}" /&gt;
-&lt;c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}" /&gt;
-&lt;tr <b>class="${v_tgl}"</b> <b>style="${style}"</b>&gt;
+&lt;c:set var="v_ctr" value="${v_status.count}"/&gt;
+&lt;c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}"/&gt;
+&lt;tr <strong>class="${v_tgl}"</strong> <strong>style="${style}"</strong>&gt;
  &lt;td&gt;${v.name}&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/c:forEach&gt;
@@ -2945,7 +2944,7 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-attr.pdata)</div>
 <pre class="program">&lt;tr class="odd"
-    title="FOREACH($v in @list); <b>attr('class',$v_tgl); attr('style',$style)</b>"&gt;
+    title="FOREACH($v in @list); <strong>attr('class',$v_tgl); attr('style',$style)</strong>"&gt;
  &lt;td title="cont($v-&gt;name)"&gt;foo&lt;/td&gt;
 &lt;/tr&gt;
 </pre>
@@ -2956,7 +2955,7 @@ compile</div>
 &lt;? foreach my $v (@list) { !&gt;
 &lt;?   $v_ctr++; !&gt;
 &lt;?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !&gt;
-&lt;tr <b>class="&lt;?= $v_tgl !&gt;"</b> <b>style="&lt;?= $style !&gt;"</b>&gt;
+&lt;tr <strong>class="&lt;?= $v_tgl !&gt;"</strong> <strong>style="&lt;?= $style !&gt;"</strong>&gt;
  &lt;td&gt;&lt;?= $v-&gt;name !&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;? } !&gt;
@@ -2981,12 +2980,12 @@ and available with other directive.
 <div class="program_caption">
 presentation data (ex-append.pdata)</div>
 <pre class="program">&lt;input type="checkbox"
-   <b>title="append: flag1 ? ' checked=\'checked\'' : ''"</b>&gt;
+   <strong>title="append: flag1 ? ' checked=\'checked\'' : ''"</strong>&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-append.pdata
-&lt;input type="checkbox"<b>&lt;%= flag1 ? ' checked=\'checked\'' : '' %&gt;</b>&gt;
+&lt;input type="checkbox"<strong>&lt;%= flag1 ? ' checked=\'checked\'' : '' %&gt;</strong>&gt;
 </pre>
 <br>
 
@@ -2995,12 +2994,12 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-append.pdata)</div>
 <pre class="program">&lt;input type="checkbox"
-   <b>title="append($flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+   <strong>title="append($flag1 ? ' checked=\'checked\'' : '')"</strong>&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-append.pdata
-&lt;input type="checkbox"<b>&lt;?php echo $flag1 ? ' checked=\'checked\'' : ''; ?&gt;</b>&gt;
+&lt;input type="checkbox"<strong>&lt;?php echo $flag1 ? ' checked=\'checked\'' : ''; ?&gt;</strong>&gt;
 </pre>
 <br>
 
@@ -3009,12 +3008,12 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-append.pdata)</div>
 <pre class="program">&lt;input type="checkbox"
-   <b>title="append(flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+   <strong>title="append(flag1 ? ' checked=\'checked\'' : '')"</strong>&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-append.pdata
-&lt;input type="checkbox"<b>${flag1 ? ' checked=\'checked\'' : ''}</b>&gt;
+&lt;input type="checkbox"<strong>${flag1 ? ' checked=\'checked\'' : ''}</strong>&gt;
 </pre>
 <br>
 
@@ -3023,12 +3022,12 @@ compile</div>
 <div class="program_caption">
 presentation data (ex-append.pdata)</div>
 <pre class="program">&lt;input type="checkbox"
-   <b>title="append($flag1 ? ' checked=\'checked\'' : '')"</b>&gt;
+   <strong>title="append($flag1 ? ' checked=\'checked\'' : '')"</strong>&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-append.pdata
-&lt;input type="checkbox"<b>&lt;?= $flag1 ? ' checked=\'checked\'' : '' !&gt;</b>&gt;
+&lt;input type="checkbox"<strong>&lt;?= $flag1 ? ' checked=\'checked\'' : '' !&gt;</strong>&gt;
 </pre>
 <br>
 
@@ -3048,8 +3047,8 @@ It is very useful when preview the HTML design in browser.
 presentation data (ex-dummy.pdata)</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
-  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
-  &lt;li <b>title="dummy:"</b>&gt;baz&lt;/li&gt;
+  &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
+  &lt;li <strong>title="dummy:"</strong>&gt;baz&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -3067,8 +3066,8 @@ compile</div>
 presentation data (ex-dummy.pdata)</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
-  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
-  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+  &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
+  &lt;li <strong>title="dummy()"</strong>&gt;baz&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -3086,8 +3085,8 @@ compile</div>
 presentation data (ex-dummy.pdata)</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
-  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
-  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+  &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
+  &lt;li <strong>title="dummy()"</strong>&gt;baz&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -3105,8 +3104,8 @@ compile</div>
 presentation data (ex-dummy.pdata)</div>
 <pre class="program">&lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
-  &lt;li <b>id="dummy:d1"</b>&gt;bar&lt;/li&gt;
-  &lt;li <b>title="dummy()"</b>&gt;baz&lt;/li&gt;
+  &lt;li <strong>id="dummy:d1"</strong>&gt;bar&lt;/li&gt;
+  &lt;li <strong>title="dummy()"</strong>&gt;baz&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
 <div class="terminal_caption">
@@ -3134,12 +3133,12 @@ or PROPERTY_ESCAPE is true in configuration file.
 <h4 class="section3">Ruby</h4>
 <div class="program_caption">
 presentation data (ex-default.pdata)</div>
-<pre class="program">name: &lt;em <b>title="default: user"</b>&gt;Guest&lt;/em&gt;
+<pre class="program">name: &lt;em <strong>title="default: user"</strong>&gt;Guest&lt;/em&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-default.pdata
-name: &lt;em&gt;<b>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;Guest&lt;% end %&gt;</b>&lt;/em&gt;
+name: &lt;em&gt;<strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;%= user %&gt;&lt;% else %&gt;Guest&lt;% end %&gt;</strong>&lt;/em&gt;
 </pre>
 <br>
 
@@ -3147,12 +3146,12 @@ name: &lt;em&gt;<b>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;&lt;
 <h4 class="section3">PHP</h4>
 <div class="program_caption">
 presentation data (ex-default.pdata)</div>
-<pre class="program">name: &lt;em <b>title="default($user)"</b>&gt;Guest&lt;/em&gt;
+<pre class="program">name: &lt;em <strong>title="default($user)"</strong>&gt;Guest&lt;/em&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php ex-default.pdata
-name: &lt;em&gt;<b>&lt;?php if ($user) { ?&gt;&lt;?php echo $user; ?&gt;&lt;?php } else { ?&gt;Guest&lt;?php } ?&gt;</b>&lt;/em&gt;
+name: &lt;em&gt;<strong>&lt;?php if ($user) { ?&gt;&lt;?php echo $user; ?&gt;&lt;?php } else { ?&gt;Guest&lt;?php } ?&gt;</strong>&lt;/em&gt;
 </pre>
 <br>
 
@@ -3160,12 +3159,12 @@ name: &lt;em&gt;<b>&lt;?php if ($user) { ?&gt;&lt;?php echo $user; ?&gt;&lt;?php
 <h4 class="section3">JSP</h4>
 <div class="program_caption">
 presentation data (ex-default.pdata)</div>
-<pre class="program">name: &lt;em <b>title="default(user)"</b>&gt;Guest&lt;/em&gt;
+<pre class="program">name: &lt;em <strong>title="default(user)"</strong>&gt;Guest&lt;/em&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l jstl ex-default.pdata
-name: &lt;em&gt;<b>&lt;c:out value="${user}" default="Guest" /&gt;</b>&lt;/em&gt;
+name: &lt;em&gt;<strong>&lt;c:out value="${user}" default="Guest"/&gt;</strong>&lt;/em&gt;
 </pre>
 <br>
 
@@ -3173,12 +3172,12 @@ name: &lt;em&gt;<b>&lt;c:out value="${user}" default="Guest" /&gt;</b>&lt;/em&gt
 <h4 class="section3">Perl</h4>
 <div class="program_caption">
 presentation data (ex-default.pdata)</div>
-<pre class="program">name: &lt;em <b>title="default($user)"</b>&gt;Guest&lt;/em&gt;
+<pre class="program">name: &lt;em <strong>title="default($user)"</strong>&gt;Guest&lt;/em&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl ex-default.pdata
-name: &lt;em&gt;<b>&lt;? if ($user) { !&gt;&lt;?= $user !&gt;&lt;? } else { !&gt;Guest&lt;? } !&gt;</b>&lt;/em&gt;
+name: &lt;em&gt;<strong>&lt;? if ($user) { !&gt;&lt;?= $user !&gt;&lt;? } else { !&gt;Guest&lt;? } !&gt;</strong>&lt;/em&gt;
 </pre>
 <br>
 
@@ -3197,33 +3196,269 @@ directives replace element or content with other element or content.
 <h4 class="section3">Ruby, PHP, JSP, Perl</h4>
 <div class="program_caption">
 presentation data (ex-replace.pdata)</div>
-<pre class="program">&lt;div <b>id="mark:link"</b>&gt;
+<pre class="program">&lt;div <strong>id="mark:link"</strong>&gt;
   back to &lt;a href="/"&gt;home&lt;/a&gt;.
 &lt;/div&gt;
 
 &lt;!-- replace element with other element --&gt;
-&lt;p <b>id="replace_element_with_element:link"</b>&gt;
+&lt;p <strong>id="replace_element_with_element:link"</strong>&gt;
   back to home
 &lt;/p&gt;
 
 &lt;!-- replace element with other content--&gt;
-&lt;p <b>id="replace_element_with_content:link"</b>&gt;
+&lt;p <strong>id="replace_element_with_content:link"</strong>&gt;
   back to home
 &lt;/p&gt;
 
 &lt;!-- replace content with other element --&gt;
-&lt;p <b>id="replace_content_with_element:link"</b>&gt;
+&lt;p <strong>id="replace_content_with_element:link"</strong>&gt;
   back to home
 &lt;/p&gt;
 
 &lt;!-- replace content with other content --&gt;
-&lt;p <b>id="replace_content_with_content:link"</b>&gt;
+&lt;p <strong>id="replace_content_with_content:link"</strong>&gt;
   back to home
 &lt;/p&gt;
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-replace.pdata
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other content--&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+
+&lt;!-- replace content with other element --&gt;
+&lt;p&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-replace2"></a>
+<h3 class="section2">replace_element_with, replace_content_with</h3>
+<p>'replace_element_with' and 'replace_content_with' directives replace element
+or content with other element or content.
+</p>
+<a name="directive-replace2-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-replace2.pdata)</div>
+<pre class="program">&lt;div <strong>id="mark:link"</strong>&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;p <strong>title="replace_element_with: element(link)"</strong>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace element with other content--&gt;
+&lt;p <strong>title="replace_element_with: content(link)"</strong>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other element --&gt;
+&lt;p <strong>title="replace_content_with: element(link)"</strong>&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p <strong>title="replace_content_with: content(link)"</strong>&gt;
+  back to home
+&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-replace2.pdata
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other content--&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+
+&lt;!-- replace content with other element --&gt;
+&lt;p&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-replace2-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-replace2.pdata)</div>
+<pre class="program">&lt;div title="id(link)"&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;p title="replace_element_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace element with other content--&gt;
+&lt;p title="replace_element_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other element --&gt;
+&lt;p title="replace_content_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p title="replace_content_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-replace2.pdata
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other content--&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+
+&lt;!-- replace content with other element --&gt;
+&lt;p&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-replace2-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-replace2.pdata)</div>
+<pre class="program">&lt;div title="id(link)"&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;p title="replace_element_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace element with other content--&gt;
+&lt;p title="replace_element_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other element --&gt;
+&lt;p title="replace_content_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p title="replace_content_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-replace2.pdata
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other content--&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+
+&lt;!-- replace content with other element --&gt;
+&lt;p&gt;
+&lt;div&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-replace2-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-replace2.pdata)</div>
+<pre class="program">&lt;div title="id(link)"&gt;
+  back to &lt;a href="/"&gt;home&lt;/a&gt;.
+&lt;/div&gt;
+
+&lt;!-- replace element with other element --&gt;
+&lt;p title="replace_element_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace element with other content--&gt;
+&lt;p title="replace_element_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other element --&gt;
+&lt;p title="replace_content_with(element(link))"&gt;
+  back to home
+&lt;/p&gt;
+
+&lt;!-- replace content with other content --&gt;
+&lt;p title="replace_content_with(content(link))"&gt;
+  back to home
+&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-replace2.pdata
 &lt;div&gt;
   back to &lt;a href="/"&gt;home&lt;/a&gt;.
 &lt;/div&gt;
