@@ -180,56 +180,8 @@ module Kwartz
 
 
     def translate(stmt_list)
-      @sb = ''
-      @sb << @header if @header
-      stmt_list.each do |stmt|
-        stmt.accept(self)
-      end
-      @sb << @footer if @footer
-      return @sb
-    end
-
-
-    def translate(stmt_list)
-      stmt_list2 = []
-      args = []
-      stmt_list.each do |stmt|
-        if stmt.is_a?(PrintStatement)
-          args += stmt.args
-        else
-          if !args.empty?
-            args = _compact_args(args)
-            stmt_list2 << PrintStatement.new(args)
-            args = []
-          end
-          stmt_list2 << stmt
-        end
-      end
-      if !args.empty?
-        args = _compact_args(args)
-        stmt_list2 << PrintStatement.new(args)
-      end
+      stmt_list2 = optimize_print_stmts(stmt_list)
       return super(stmt_list2)
-    end
-
-
-    private
-
-
-    def _compact_args(args)
-      args2 = []
-      s = ''
-      args.each do |arg|
-        if arg.is_a?(NativeExpression)
-          args2 << s unless s.empty?
-          s = ''
-          args2 << arg
-        else
-          s << arg
-        end
-      end
-      args2 << s unless s.empty?
-      return args2
     end
 
 

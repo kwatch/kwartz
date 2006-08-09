@@ -114,7 +114,8 @@ module Kwartz
       stmt.args.each do |arg|
         #arg.accept(self)
         if arg.is_a?(String)
-          translate_string(arg)
+          #translate_string(arg)
+          parse_embedded_expr(arg)
         elsif arg.is_a?(NativeExpression)
           translate_native_expr(arg)
         else
@@ -129,9 +130,9 @@ module Kwartz
       flag_escape = expr.escape?
       flag_escape = @escape if flag_escape == nil
       if flag_escape
-        @sb << @escape_l << expr.code << @escape_r     # ex. <%=h expr.code %>
+        add_escaped_expr(expr.code)
       else
-        @sb << @expr_l << expr.code << @expr_r         # ex. <%= expr.code %>
+        add_plain_expr(expr.code)
       end
     end
 
@@ -144,6 +145,88 @@ module Kwartz
 #    def translate_text_expr(expr)
 #      @sb << expr.text
 #    end
+
+
+    protected
+
+
+    def parse_embedded_expr(text)
+      pos = 0
+      text.scan(/@(!*)\{(.*?)\}@/) do |indicator, expr_code|
+        m = Regexp.last_match
+        s = text[pos, m.begin(0) - pos]
+        pos = m.end(0)
+        translate_string(s) unless s.empty?
+        case indicator
+        when nil, ''  ;  add_escaped_expr(expr_code)
+        when '!'      ;  add_plain_expr(expr_code)
+        when '!!'     ;  add_debug_expr(expr_code)
+        else          ;  # do nothing
+        end
+      end
+      rest = pos == 0 ? text : $'
+      translate_string(rest) unless rest.empty?
+    end
+
+
+    def add_plain_expr(expr_code)
+      @sb << @expr_l << expr_code << @expr_r       # ex. <%= expr_code %>
+    end
+
+
+    def add_escaped_expr(expr_code)
+      @sb << @escape_l << expr_code << @escape_r   # ex. <%=h expr_code %>
+    end
+
+
+    def add_debug_expr(expr_code)
+      not_implemented
+    end
+
+
+    ## concat several print statements into a statement
+    def optimize_print_stmts(stmt_list)
+      stmt_list2 = []
+      args = []
+      stmt_list.each do |stmt|
+        if stmt.is_a?(PrintStatement)
+          args += stmt.args
+        else
+          if !args.empty?
+            args = _compact_args(args)
+            stmt_list2 << PrintStatement.new(args)
+            args = []
+          end
+          stmt_list2 << stmt
+        end
+      end
+      if !args.empty?
+        args = _compact_args(args)
+        stmt_list2 << PrintStatement.new(args)
+      end
+      return stmt_list2
+    end
+
+
+    private
+
+
+    ## concat several string arguments into a string in arguments
+    def _compact_args(args)
+      args2 = []
+      s = ''
+      args.each do |arg|
+        if arg.is_a?(NativeExpression)
+          args2 << s unless s.empty?
+          s = ''
+          args2 << arg
+        else
+          s << arg
+        end
+      end
+      args2 << s unless s.empty?
+      return args2
+    end
 
 
   end #class
