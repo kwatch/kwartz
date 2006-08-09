@@ -9,6 +9,7 @@ require 'kwartz'
 require 'kwartz/binding/ruby'
 require 'kwartz/binding/eruby'
 require 'kwartz/binding/erubis'
+require 'kwartz/binding/pierubis'
 require 'kwartz/util'
 require 'erb'
 
@@ -78,7 +79,7 @@ module Kwartz
 
       def self.lang=(lang)
         case lang
-        when 'ruby', 'eruby', 'erubis'
+        when 'ruby', 'eruby', 'erubis', 'pierubis'
           @@lang = lang
         else
           raise "'#{lang}': invalid language name."
@@ -197,7 +198,7 @@ module Kwartz
 
       def use_cache?
         if @@use_cache.nil?
-          return ENV['RAILS_ENV'] == 'production'
+          return ENV['RAILS_ENV'] != 'development' # or == 'production'
         else
           return @@use_cache;
         end
@@ -308,6 +309,9 @@ module Kwartz
         when 'erubis'
           require 'erubis'
           ruby_code = Erubis::Eruby.new().convert(code)
+        when 'pierubis'
+          require 'erubis'
+          ruby_code = Erubis::PI::Eruby.new().convert(code)
         else
           internal_error
         end

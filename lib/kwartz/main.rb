@@ -14,6 +14,7 @@ require 'kwartz/binding/rails'
 require 'kwartz/binding/jstl'
 require 'kwartz/binding/struts'
 require 'kwartz/binding/erubis'
+require 'kwartz/binding/pierubis'
 require 'kwartz/util'
 
 

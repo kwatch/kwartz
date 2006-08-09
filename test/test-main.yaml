@@ -61,19 +61,19 @@ expected*:
       </html>
 
   ruby: |
-      _buf = ""; _buf << '<html>
-      '; _buf << ' <body>
-      '; _buf << '  <h1>'; _buf << (@title).to_s; _buf << '</h1>
-      '; _buf << '  <table id="content">
-      ';     for item in @list
-      '; _buf << '   <tr>
-      '; _buf << '    <td>'; _buf << ERB::Util.h(item); _buf << '</td>
-      '; _buf << '   </tr>
-      ';     end
-      _buf << '  </table>
-      '; _buf << ' </body>
-      '; _buf << '</html>
-      '; ; _buf
+      _buf = ""; _buf << "<html>
+       <body>
+        <h1>"; _buf << (@title).to_s; _buf << "</h1>
+        <table id=\"content\">\n";
+          for item in @list
+      _buf << "   <tr>
+          <td>"; _buf << ERB::Util.h(item); _buf << "</td>
+         </tr>\n";
+          end
+      _buf << "  </table>
+       </body>
+      </html>\n";
+      ; _buf
 
   php: |
       <html>

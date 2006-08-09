@@ -5,6 +5,8 @@ end
 
 require 'kwartz/helper/rails'
 ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
+#Kwartz::Helper::RailsTemplate.lang = 'ruby'  #'pierubis'
+Kwartz::Helper::RailsTemplate.lang = 'pierubis'
 #Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
 #Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
 #Kwartz::Helper::RailsTemplate.default_properties = { :escape=>true }

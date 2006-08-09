@@ -93,7 +93,7 @@ module Kwartz
     attr_accessor :escape, :header, :footer
 
 
-    def translate(stmt_list=[])
+    def translate(stmt_list)
       @sb = ''
       @sb << @header if @header
       stmt_list.each do |stmt|
