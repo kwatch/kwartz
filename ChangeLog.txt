@@ -2,6 +2,10 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.130 (2006-09-03)
+	- [enhance] layout changing support in rails.rb (ex. render :layout=>false)
+	- [bugfix] return if @content_for_layout is set in rails.rb
+
 : rev.129 (2006-08-09)
 	- [update] document update
 	- [retry] add 'lib/kwartz/binding/pierubis.rb'

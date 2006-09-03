@@ -122,28 +122,44 @@ module Kwartz
       end
 
 
-      @@logger = nil
-
-      def self.logger
-        return @@logger
-      end
-
-      def self.logger=(logger)
-        @@logger = logger
-      end
-
-
-
       def initialize(view)
         @view = view
       end
 
 
       def render(template, assigns)
+
+        #$stderr.puts "*** debug: render() called."
+        #
+        #$stderr.puts "*** debug: instance_variables=#{instance_variables.inspect}" #=> [@views]
+        #c = @view.controller
+        #$stderr.puts "*** debug: @view.controller.instance_variables=#{c.instance_variables.inspect}"
+        #$stderr.puts "*** debug: @view.controller.action_name=#{c.action_name.inspect}"
+        #$stderr.puts "*** debug: @view.controller.render_layout_basename=#{c.render_layout_basename.inspect}"
+        #$stderr.puts "*** debug: @view.controller.render_template_basename=#{c.render_template_basename.inspect}"
+        #require 'pp'
+        #c = @view.controller
+        #$stderr.puts "*** debug: @view.controller.instance_variable_get('@template')="
+        #PP.pp(c.instance_variable_get('@template'), $stderr)
+        #$stderr.puts "*** debug: @view.controller.methods="
+        #PP.pp((c.methods - Object.new.methods).sort, $stderr)
+        #$stderr.puts "*** debug: @view.controller.class.methods="
+        #PP.pp((c.class.methods - Class.methods).sort, $stderr)
+
+        ## return if @content_for_layout is set
+        template_ = @view.controller.instance_variable_get("@template")
+        content_for_layout_ = template_.instance_variable_get("@content_for_layout")
+        if content_for_layout_
+          return content_for_layout_
+        end
+
         ## template basename and layout basename
         c = @view.controller
-        template_basename = "#{c.template_root}/#{c.controller_name}/#{c.action_name}"
-        layout_basename   = "#{c.template_root}/layouts/#{c.controller_name}"
+        template_root = c.template_root
+        #template_basename = "#{template_root}/#{c.controller_name}/#{c.action_name}"
+        #layout_basename   = "#{template_root}/layouts/#{c.controller_name}"
+        template_basename = "#{template_root}/#{c.render_template_basename}"
+        layout_basename   = "#{template_root}/#{c.render_layout_basename}"
 
         ## check timestamps
         convert_flag = true
@@ -162,19 +178,20 @@ module Kwartz
         end
 
         ## convert templates into ruby code, or get cached object
-        msgstr  = "template='#{template_basename}#{@@pdata_suffix}'"      if @@logger
-        logname = "*** #{self.class.name}"                                if @@logger
+        logger = @view.controller.logger
+        msgstr  = "template='#{template_basename}#{@@pdata_suffix}'"    if logger
+        logname = "*** #{self.class.name}"                              if logger
         if convert_flag
-          @@logger.info "#{logname}: convert template file: #{msgstr}"    if @@logger
+          logger.info "#{logname}: convert template file: #{msgstr}"    if logger
           ruby_code = convert(template, template_basename, layout_basename)
           File.open(cache_filename, 'w') { |f| f.write(ruby_code) }  # write cache
           proc_obj = self.class.add_cache(ruby_code, cache_filename)
         elsif (proc_obj = self.class.get_cache(cache_filename)).nil?
-          @@logger.info "#{logname}: read cache file: #{msgstr}"          if @@logger
+          logger.info "#{logname}: read cache file: #{msgstr}"          if logger
           ruby_code = File.read(cache_filename)
           proc_obj = self.class.add_cache(ruby_code, cache_filename)
         else
-          @@logger.info "#{logname}: reuse cached proc object: #{msgstr}" if @@logger
+          logger.info "#{logname}: reuse cached proc object: #{msgstr}" if logger
         end
 
         ## use @view as context object
@@ -343,3 +360,34 @@ module Kwartz
   end #module
 
 end #module
+
+
+# override ActionController::Base::render
+
+module ActionController #:nodoc:
+
+  class Base  #:nodoc:
+
+    attr_reader :render_layout_basename, :render_template_basename
+
+    alias _render_orig render
+    alias _render_file_orig render_file
+
+    protected
+
+    def render(options=nil, deprecated_status=nil, deprecated_layout=nil, &block) #:nodoc:
+      template_with_options = options.is_a?(Hash)
+      if apply_layout?(template_with_options, options)
+        @render_layout_basename = pick_layout(template_with_options, options, deprecated_layout)
+      end
+      _render_orig(options, deprecated_status, &block)
+    end
+
+    def render_file(template_path, status=nil, use_full_path=false, locals={}) #:nodoc:
+      @render_template_basename = template_path
+      _render_file_orig(template_path, status, use_full_path, locals)
+    end
+
+  end
+
+end
