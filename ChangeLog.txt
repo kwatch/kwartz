@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.131 (2006-09-14)
+	- [enhance] helper/rails.rb: lang='rails' support
+
 : rev.130 (2006-09-03)
 	- [enhance] layout changing support in rails.rb (ex. render :layout=>false)
 	- [bugfix] return if @content_for_layout is set in rails.rb

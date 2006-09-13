@@ -8,6 +8,7 @@
 require 'kwartz'
 require 'kwartz/binding/ruby'
 require 'kwartz/binding/eruby'
+require 'kwartz/binding/rails'
 require 'kwartz/binding/erubis'
 require 'kwartz/binding/pierubis'
 require 'kwartz/util'
@@ -71,7 +72,7 @@ module Kwartz
       end
 
 
-      @@lang = 'eruby'
+      @@lang = 'rails'  # or 'eruby', 'ruby', 'erubis', 'pierubis'
 
       def self.lang
         return @@lang
@@ -149,9 +150,7 @@ module Kwartz
         ## return if @content_for_layout is set
         template_ = @view.controller.instance_variable_get("@template")
         content_for_layout_ = template_.instance_variable_get("@content_for_layout")
-        if content_for_layout_
-          return content_for_layout_
-        end
+        return content_for_layout_ if content_for_layout_
 
         ## template basename and layout basename
         c = @view.controller
@@ -254,6 +253,7 @@ module Kwartz
 
 
       def convert(template, template_basename, layout_basename)
+
         ## filenames
         template_pdata_filename  = template_basename + @@pdata_suffix
         template_plogic_filename = template_basename + @@plogic_suffix
@@ -317,12 +317,14 @@ module Kwartz
         ## write cache
         cache_filename = template_basename + '.cache'
         case @@lang
-        when 'ruby'
-          ruby_code = code
+        when 'rails'
+          trim_mode = ActionView::Base.erb_trim_mode
+          ruby_code = ERB.new(code, nil, trim_mode).src
         when 'eruby'
-          require 'erb'
           trim_mode = 1
           ruby_code = ERB.new(code, nil, trim_mode).src
+        when 'ruby'
+          ruby_code = code
         when 'erubis'
           require 'erubis'
           ruby_code = Erubis::Eruby.new().convert(code)

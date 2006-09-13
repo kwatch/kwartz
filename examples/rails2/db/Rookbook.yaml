@@ -1,6 +1,8 @@
 
 parameters:
   - all:	[ create-tables.mysql.sql, create-tables.pgsql.sql ]
+    datafile:   tabledef.yaml
+    opts:       --droptable
 
 recipes:
 
@@ -8,12 +10,12 @@ recipes:
     ingreds:	[ $(all) ]
 
   - product:	create-tables.mysql.sql
-    ingreds:	[ create-tables.yaml ]
+    ingreds:	[ $(datafile) ]
     method*: |
-	sys "kwatable -f ddl-mysql.eruby #{@ingred} > #{@product}"
+	sys "kwatable -f ddl-mysql $(opts) #{@ingred} > #{@product}"
 
   - product:	create-tables.pgsql.sql
-    ingreds:	[ create-tables.yaml ]
+    ingreds:	[ $(datafile) ]
     method*: |
-	sys "kwatable -f ddl-postgresql.eruby #{@ingred} > #{@product}"
+	sys "kwatable -f ddl-postgresql $(opts) #{@ingred} > #{@product}"
 
