@@ -454,7 +454,7 @@
   style: css
   plogic: |
 	#item {
-	  stag:   start_link_to('user', 'name');
+	  stag:   start_link_tag('user', 'name');
 	  etag:   end_link();
 	  elem:   link_to_remote('user', 'name');
 	  value:  $item;
@@ -476,7 +476,7 @@
 	}
   expected: &all1 |
 	- name: item
-	  stag: start_link_to('user', 'name')
+	  stag: start_link_tag('user', 'name')
 	  cont: $item
 	  etag: end_link()
 	  elem: link_to_remote('user', 'name')
@@ -507,7 +507,7 @@
   style: ruby
   plogic: |
 	element "item" {
-	  stag    start_link_to('user', 'name')
+	  stag    start_link_tag('user', 'name')
 	  etag    end_link()
 	  elem    link_to_remote('user', 'name')
 	  value   item
@@ -525,7 +525,7 @@
 	}
   expected: |
 	- name: item
-	  stag: start_link_to('user', 'name')
+	  stag: start_link_tag('user', 'name')
 	  cont: item
 	  etag: end_link()
 	  elem: link_to_remote('user', 'name')

@@ -556,21 +556,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> start_link_to :action=&gt;'list';
+  <strong>stag:</strong> start_link_tag :action=&gt;'list';
 }
 #link2 {
-  <strong>Stag:</strong> start_link_to :action=&gt;'list';
+  <strong>Stag:</strong> start_link_tag :action=&gt;'list';
 }
 #link3 {
-  <strong>STAG:</strong> start_link_to :action=&gt;'list';
+  <strong>STAG:</strong> start_link_tag :action=&gt;'list';
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
-<strong>&lt;%= start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>&lt;%=h start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;%= start_link_to :action=&gt;'list' %&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;%= start_link_tag :action=&gt;'list' %&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;%=h start_link_tag :action=&gt;'list' %&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;%= start_link_tag :action=&gt;'list' %&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -585,21 +585,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> start_link_to('list');
+  <strong>stag:</strong> start_link_tag('list');
 }
 #link2 {
-  <strong>Stag:</strong> start_link_to('list');
+  <strong>Stag:</strong> start_link_tag('list');
 }
 #link3 {
-  <strong>STAG:</strong> start_link_to('list');
+  <strong>STAG:</strong> start_link_tag('list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-stag.plogic ex-stag.pdata
-<strong>&lt;?php echo start_link_to('list'); ?&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>&lt;?php echo htmlspecialchars(start_link_to('list')); ?&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;?php echo start_link_to('list'); ?&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_tag('list'); ?&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo htmlspecialchars(start_link_tag('list')); ?&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_tag('list'); ?&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -614,13 +614,13 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> fn:start_link_to('list');
+  <strong>stag:</strong> fn:start_link_tag('list');
 }
 #link2 {
-  <strong>Stag:</strong> fn:start_link_to('list');
+  <strong>Stag:</strong> fn:start_link_tag('list');
 }
 #link3 {
-  <strong>STAG:</strong> fn:start_link_to('list');
+  <strong>STAG:</strong> fn:start_link_tag('list');
 }
 </pre>
 <div class="terminal_caption">
@@ -628,9 +628,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-<strong>${fn:start_link_to('list')}</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>${fn:start_link_to('list')}</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;c:out value="${fn:start_link_to('list')}" escapeXml="false"/&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_tag('list')}</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_tag('list')}</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;c:out value="${fn:start_link_tag('list')}" escapeXml="false"/&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -645,21 +645,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> start_link_to('list');
+  <strong>stag:</strong> start_link_tag('list');
 }
 #link2 {
-  <strong>Stag:</strong> start_link_to('list');
+  <strong>Stag:</strong> start_link_tag('list');
 }
 #link3 {
-  <strong>STAG:</strong> start_link_to('list');
+  <strong>STAG:</strong> start_link_tag('list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
-<strong>&lt;?= start_link_to('list') !&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>&lt;?= encode_entities(start_link_to('list')) !&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;?= start_link_to('list') !&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_tag('list') !&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?= encode_entities(start_link_tag('list')) !&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_tag('list') !&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 

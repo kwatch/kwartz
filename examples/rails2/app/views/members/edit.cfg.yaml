@@ -1,6 +1,6 @@
 import_pdata:
   - filename:   new.html
     patterns:   [ form_content ]
-import_plogic:
-  - filename:   new.plogic
-    patterns:   [ member_*, error_message ]
+#import_plogic:
+#  - filename:   new.plogic
+#    patterns:   [ member_*, error_message ]

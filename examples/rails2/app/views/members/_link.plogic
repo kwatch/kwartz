@@ -1,19 +1,19 @@
 #link_to_list {
-  stag:  start_link_to :action=>'list';
+  stag:  start_link_tag :action=>'list';
 }
 
 #link_to_new {
-  stag:  start_link_to :action=>'new';
+  stag:  start_link_tag :action=>'new';
 }
 
 #link_to_show {
-  stag:  start_link_to :action=>'show', :id=>@member.id;
+  stag:  start_link_tag :action=>'show', :id=>@member.id;
 }
 
 #link_to_edit {
-  stag:  start_link_to :action=>'edit', :id=>@member.id;
+  stag:  start_link_tag :action=>'edit', :id=>@member.id;
 }
 
 #link_to_destroy {
-  stag:  start_link_to({:action=>'destroy', :id=>@member.id}, :confirm=>'Are you sure?');
+  stag:  start_link_tag({:action=>'destroy', :id=>@member.id}, :confirm=>'Are you sure?');
 }

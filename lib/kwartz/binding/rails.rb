@@ -34,9 +34,9 @@ module Kwartz
   ##  <a href="#" title="link_to :action=>'list'">Show list</a>
   ##   => <%= link_to 'Show list', :action=>'list' %>
   ##
-  ##  ## start_link_to, start_link_to_remote
-  ##  <a href="#" title="start_link_to :action=>'list'">Show list</a>
-  ##   => <%= start_link_to 'action'=>'list' %>Show list</a>
+  ##  ## start_link_tag, start_remote_link_tag
+  ##  <a href="#" title="start_link_tag :action=>'list'">Show list</a>
+  ##   => <%= start_link_tag 'action'=>'list' %>Show list</a>
   ##
   ##  ## mail_to
   ##  <a href="mail:www@example.com" title="mail_to">admin</a>

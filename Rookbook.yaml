@@ -92,6 +92,7 @@ recipes:
 	store 'examples/**/*', dir do |filename|
 	  filename !~ /Rookbook/ && filename !~ /expected/
 	end
+	rm_f Dir.glob("#{dir}/**/*.{debug,cache}")
 	#
 	edit "#{dir}/**/*" do |content|
 	  content.gsub!(/\$Release.*?\$/, "$Release: #{@release} $")

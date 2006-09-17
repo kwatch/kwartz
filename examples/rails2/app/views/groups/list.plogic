@@ -10,7 +10,7 @@
 }
 
 #link_to_prev_page {
-  stag:   start_link_to :page=>@group_pages.current.previous;
+  stag:   start_link_tag :page=>@group_pages.current.previous;
   logic:  {
     if @group_pages.current.previous
       _elem
@@ -19,7 +19,7 @@
 }
 
 #link_to_next_page {
-  stag:   start_link_to :page=>@group_pages.current.next;
+  stag:   start_link_tag :page=>@group_pages.current.next;
   logic:  {
     if @group_pages.current.next
       _elem
@@ -28,5 +28,5 @@
 }
 
 #link_to_members {
-  stag:   start_link_to :action=>'list', :controller=>'members';
+  stag:   start_link_tag :action=>'list', :controller=>'members';
 }

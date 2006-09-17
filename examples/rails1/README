@@ -9,8 +9,8 @@ Manifest:
   * reader.plogic           -  common presentation logic for show.rhtml and list.rhtml
   * writer.plogic           -  common presentation logic for new.rhtml and edit.rhtml
   * layout.plogic           -  presentation logic for layout.rhtml
-  * link_to.plogic          -  presentation logic for 'start_link_to' helper
-  * application_helper.rb   -  helper module in which 'start_link_to' is defined
+  * link_to.plogic          -  presentation logic for 'start_link_tag' helper
+  * application_helper.rb   -  helper module in which 'start_link_tag' is defined
 
   * edit.html, edit.plogic  -  presentation data/logic file for edit.rhtml
   * new.html,  new.plogic   -  presentation data/logic file for new.rhtml

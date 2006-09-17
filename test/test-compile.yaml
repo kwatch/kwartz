@@ -272,7 +272,7 @@
     erubis: |
     pierubis: |
       #link_to_destroy {
-        stag: start_link_to {:action=>'destroy', :id=>@member.id},
+        stag: start_link_tag {:action=>'destroy', :id=>@member.id},
 	                    :confirm=>"Are you OK?";
       }
     php: |
@@ -293,7 +293,7 @@
     pierubis: |
       <a href="mailto:$!{email}">${name}</a>
       <a href="mailto:$!{email}">${name}</a>
-      <%=start_link_to {:action=>'destroy', :id=>@member.id},
+      <%=start_link_tag {:action=>'destroy', :id=>@member.id},
                             :confirm=>"Are you OK?"%>Destroy</a>
     php: |
       <a href="mailto:<?php echo $email; ?>"><?php echo htmlspecialchars($name); ?></a>

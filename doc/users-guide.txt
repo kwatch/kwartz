@@ -1155,19 +1155,19 @@ This is useful to share common presentation logic in many files.
 .? link_to.plogic
 .-------------------- link_to2.plogic
 {{*#link_to_new*}} {
-  elem:  start_link_to :action=>'new';
+  elem:  start_link_tag :action=>'new';
 }
 {{*#link_to_show*}} {
-  elem:  start_link_to :action=>'show', :id=>@member;
+  elem:  start_link_tag :action=>'show', :id=>@member;
 }
 {{*#link_to_edit*}} {
-  elem:  start_link_to :action=>'edit', :id=>@member;
+  elem:  start_link_tag :action=>'edit', :id=>@member;
 }
 {{*#link_to_list*}} {
-  elem:  start_link_to :action=>'list';
+  elem:  start_link_tag :action=>'list';
 }
 {{*#link_to_destroy*}} {
-  stag:  start_link_to({:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
+  stag:  start_link_tag({:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
 }
 .--------------------
 
@@ -1214,9 +1214,9 @@ $ kwartz -p show.plogic show.html
  Name: <span><%=h @member.name %></span> <br>
  Email: <span><%=h @member.email %></span> <br>
 </p>
-<%= start_link_to :action=>'edit', :id=>@member %> |
-<%= start_link_to :action=>'new' %> |
-<%= start_link_to :action=>'list' %>
+<%= start_link_tag :action=>'edit', :id=>@member %> |
+<%= start_link_tag :action=>'new' %> |
+<%= start_link_tag :action=>'list' %>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p show2.plogic show2.html)
 
@@ -1805,7 +1805,7 @@ See the 'examples/rails2' directory for example of using Kwartz with Ruby on Rai
 
 
 
-.$$ {{,link_to(),}} method in Ruby on Rails		| start_link_to
+.$$ {{,link_to(),}} method in Ruby on Rails		| start_link_tag
 
 {{,link_to(),}} method in Ruby on Rails is a little incompatible with Kwartz
 because you must specify link label in both presentation data and presentation logic.
@@ -1829,17 +1829,17 @@ in your 'app/helpers/application_helper.rb'.
 .--------------------
 module ApplicationHelper
 
-  def start_link_to(options = {}, html_options = nil, *parameters_for_method_reference)
+  def start_link_tag(options = {}, html_options = nil, *parameters_for_method_reference)
     s = link_to('', options, html_options, *parameters_for_method_reference)
     s.sub!(/<\/a>\z/, '')
   end
-  alias anchor start_link_to
+  alias anchor start_link_tag
 
-  def start_link_to_remote(options = {}, html_options = {})
+  def start_link_remote_tag(options = {}, html_options = {})
     s = link_to_remote(options, html_options)
     s.sub!(/<\/a>\z/, '')
   end
-  alias anchor_remote start_link_to_remote
+  alias anchor_remote start_link_remote_tag
 
 end
 .--------------------
@@ -1854,7 +1854,7 @@ The above methods prints only start tag. You don't need to write label twice.
 .? presentation logic
 .--------------------
 #link_to_new {
-  stag:  {{*start_link_to*}} :action=>'new';
+  stag:  {{*start_link_tag*}} :action=>'new';
 }
 .--------------------
 

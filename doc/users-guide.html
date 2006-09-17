@@ -89,7 +89,7 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
     <li><a href="#helper_rails">Support of Ruby on Rails</a>
     </li>
-    <li><a href="#start_link_to"><code>link_to()</code> method in Ruby on Rails</a>
+    <li><a href="#start_link_tag"><code>link_to()</code> method in Ruby on Rails</a>
     </li>
   </ul>
   </li>
@@ -1157,19 +1157,19 @@ This is useful to share common presentation logic in many files.
 <div class="program_caption">
 link_to.plogic</div>
 <pre class="program"><strong>#link_to_new</strong> {
-  elem:  start_link_to :action=&gt;'new';
+  elem:  start_link_tag :action=&gt;'new';
 }
 <strong>#link_to_show</strong> {
-  elem:  start_link_to :action=&gt;'show', :id=&gt;@member;
+  elem:  start_link_tag :action=&gt;'show', :id=&gt;@member;
 }
 <strong>#link_to_edit</strong> {
-  elem:  start_link_to :action=&gt;'edit', :id=&gt;@member;
+  elem:  start_link_tag :action=&gt;'edit', :id=&gt;@member;
 }
 <strong>#link_to_list</strong> {
-  elem:  start_link_to :action=&gt;'list';
+  elem:  start_link_tag :action=&gt;'list';
 }
 <strong>#link_to_destroy</strong> {
-  stag:  start_link_to({:action=&gt;'destroy', :id=&gt;@member}, :confirm=&gt;'Are you sure?');
+  stag:  start_link_tag({:action=&gt;'destroy', :id=&gt;@member}, :confirm=&gt;'Are you sure?');
 }
 </pre>
 <a name="show2.html"></a>
@@ -1202,9 +1202,9 @@ compile</div>
  Name: &lt;span&gt;&lt;%=h @member.name %&gt;&lt;/span&gt; &lt;br&gt;
  Email: &lt;span&gt;&lt;%=h @member.email %&gt;&lt;/span&gt; &lt;br&gt;
 &lt;/p&gt;
-&lt;%= start_link_to :action=&gt;'edit', :id=&gt;@member %&gt; |
-&lt;%= start_link_to :action=&gt;'new' %&gt; |
-&lt;%= start_link_to :action=&gt;'list' %&gt;
+&lt;%= start_link_tag :action=&gt;'edit', :id=&gt;@member %&gt; |
+&lt;%= start_link_tag :action=&gt;'new' %&gt; |
+&lt;%= start_link_tag :action=&gt;'list' %&gt;
 </pre>
 <br>
 
@@ -1726,7 +1726,7 @@ app/views/layouts/xxx.plogic</div>
 <br>
 
 
-<a name="start_link_to"></a>
+<a name="start_link_tag"></a>
 <h3 class="section2"><code>link_to()</code> method in Ruby on Rails</h3>
 <p><code>link_to()</code> method in Ruby on Rails is a little incompatible with Kwartz
 because you must specify link label in both presentation data and presentation logic.
@@ -1747,17 +1747,17 @@ in your 'app/helpers/application_helper.rb'.
 </p>
 <pre class="program">module ApplicationHelper
 
-  def start_link_to(options = {}, html_options = nil, *parameters_for_method_reference)
+  def start_link_tag(options = {}, html_options = nil, *parameters_for_method_reference)
     s = link_to('', options, html_options, *parameters_for_method_reference)
     s.sub!(/&lt;\/a&gt;\z/, '')
   end
-  alias anchor start_link_to
+  alias anchor start_link_tag
 
-  def start_link_to_remote(options = {}, html_options = {})
+  def start_link_remote_tag(options = {}, html_options = {})
     s = link_to_remote(options, html_options)
     s.sub!(/&lt;\/a&gt;\z/, '')
   end
-  alias anchor_remote start_link_to_remote
+  alias anchor_remote start_link_remote_tag
 
 end
 </pre>
@@ -1770,7 +1770,7 @@ presentation data</div>
 <div class="program_caption">
 presentation logic</div>
 <pre class="program">#link_to_new {
-  stag:  <strong>start_link_to</strong> :action=&gt;'new';
+  stag:  <strong>start_link_tag</strong> :action=&gt;'new';
 }
 </pre>
 <br>

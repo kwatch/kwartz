@@ -14,6 +14,7 @@ class MembersController < ApplicationController
 
   def new
     @member = Member.new
+    @group_select_options = group_select_options()
   end
 
   def create
@@ -28,6 +29,7 @@ class MembersController < ApplicationController
 
   def edit
     @member = Member.find(params[:id])
+    @group_select_options = group_select_options()
   end
 
   def update
@@ -44,4 +46,11 @@ class MembersController < ApplicationController
     Member.find(params[:id]).destroy
     redirect_to :action => 'list'
   end
+
+  private
+
+  def group_select_options
+    Group.find_all().collect {|g| [g.name, g.id]}
+  end
+
 end

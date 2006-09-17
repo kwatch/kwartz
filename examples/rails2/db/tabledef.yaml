@@ -15,7 +15,7 @@ columns:
     - name:		created_at
       type:		timestamp
       required:		yes
-    - name:		modified_at
+    - name:		updated_at
       type:		timestamp
       required:		yes
 
@@ -48,4 +48,4 @@ tables:
         ref:		groups.id
         required:	yes
       - name:		created_at
-      - name:		modified_at
+      - name:		updated_at

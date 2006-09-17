@@ -482,22 +482,22 @@ configuration option 'PROPERTY_ESCAPE' is ture.
 .? presentation logic (ex-stag.plogic)
 .--------------------
 #link1 {
-  {{*stag:*}} start_link_to :action=>'list';
+  {{*stag:*}} start_link_tag :action=>'list';
 }
 #link2 {
-  {{*Stag:*}} start_link_to :action=>'list';
+  {{*Stag:*}} start_link_tag :action=>'list';
 }
 #link3 {
-  {{*STAG:*}} start_link_to :action=>'list';
+  {{*STAG:*}} start_link_tag :action=>'list';
 }
 .--------------------
 
 .? compile
 .====================
 $ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
-{{*<%= start_link_to :action=>'list' %>*}}<img src="button1.png"></a>
-{{*<%=h start_link_to :action=>'list' %>*}}<img src="button2.png"></a>
-{{*<%= start_link_to :action=>'list' %>*}}<img src="button3.png"></a>
+{{*<%= start_link_tag :action=>'list' %>*}}<img src="button1.png"></a>
+{{*<%=h start_link_tag :action=>'list' %>*}}<img src="button2.png"></a>
+{{*<%= start_link_tag :action=>'list' %>*}}<img src="button3.png"></a>
 .====================
 
 .$$$ PHP	| property-stag-php
@@ -512,22 +512,22 @@ $ kwartz -l eruby -p ex-stag.plogic ex-stag.pdata
 .? presentation logic (ex-stag.plogic)
 .--------------------
 #link1 {
-  {{*stag:*}} start_link_to('list');
+  {{*stag:*}} start_link_tag('list');
 }
 #link2 {
-  {{*Stag:*}} start_link_to('list');
+  {{*Stag:*}} start_link_tag('list');
 }
 #link3 {
-  {{*STAG:*}} start_link_to('list');
+  {{*STAG:*}} start_link_tag('list');
 }
 .--------------------
 
 .? compile
 .====================
 $ kwartz -l php -p ex-stag.plogic ex-stag.pdata
-{{*<?php echo start_link_to('list'); ?>*}}<img src="button1.png"></a>
-{{*<?php echo htmlspecialchars(start_link_to('list')); ?>*}}<img src="button2.png"></a>
-{{*<?php echo start_link_to('list'); ?>*}}<img src="button3.png"></a>
+{{*<?php echo start_link_tag('list'); ?>*}}<img src="button1.png"></a>
+{{*<?php echo htmlspecialchars(start_link_tag('list')); ?>*}}<img src="button2.png"></a>
+{{*<?php echo start_link_tag('list'); ?>*}}<img src="button3.png"></a>
 .====================
 
 .$$$ JSP	| property-stag-jstl
@@ -542,13 +542,13 @@ $ kwartz -l php -p ex-stag.plogic ex-stag.pdata
 .? presentation logic (ex-stag.plogic)
 .--------------------
 #link1 {
-  {{*stag:*}} fn:start_link_to('list');
+  {{*stag:*}} fn:start_link_tag('list');
 }
 #link2 {
-  {{*Stag:*}} fn:start_link_to('list');
+  {{*Stag:*}} fn:start_link_tag('list');
 }
 #link3 {
-  {{*STAG:*}} fn:start_link_to('list');
+  {{*STAG:*}} fn:start_link_tag('list');
 }
 .--------------------
 
@@ -557,9 +557,9 @@ $ kwartz -l php -p ex-stag.plogic ex-stag.pdata
 $ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-{{*${fn:start_link_to('list')}*}}<img src="button1.png"></a>
-{{*${fn:start_link_to('list')}*}}<img src="button2.png"></a>
-{{*<c:out value="${fn:start_link_to('list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
+{{*${fn:start_link_tag('list')}*}}<img src="button1.png"></a>
+{{*${fn:start_link_tag('list')}*}}<img src="button2.png"></a>
+{{*<c:out value="${fn:start_link_tag('list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
 .====================
 
 .$$$ Perl	| property-stag-eperl
@@ -574,22 +574,22 @@ $ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 .? presentation logic (ex-stag.plogic)
 .--------------------
 #link1 {
-  {{*stag:*}} start_link_to('list');
+  {{*stag:*}} start_link_tag('list');
 }
 #link2 {
-  {{*Stag:*}} start_link_to('list');
+  {{*Stag:*}} start_link_tag('list');
 }
 #link3 {
-  {{*STAG:*}} start_link_to('list');
+  {{*STAG:*}} start_link_tag('list');
 }
 .--------------------
 
 .? compile
 .====================
 $ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
-{{*<?= start_link_to('list') !>*}}<img src="button1.png"></a>
-{{*<?= encode_entities(start_link_to('list')) !>*}}<img src="button2.png"></a>
-{{*<?= start_link_to('list') !>*}}<img src="button3.png"></a>
+{{*<?= start_link_tag('list') !>*}}<img src="button1.png"></a>
+{{*<?= encode_entities(start_link_tag('list')) !>*}}<img src="button2.png"></a>
+{{*<?= start_link_tag('list') !>*}}<img src="button3.png"></a>
 .====================
 
 

@@ -357,11 +357,46 @@ module Kwartz
       end
 
 
-    end #class
+    end
 
-  end #module
 
-end #module
+    ##
+    ## helper module to add helper methods 'start_link_tag()' and 'start_remote_link_tag()'.
+    ##
+    module ActionViewHelper
+
+      ##
+      ## return '<a href="...">' start tag.
+      ##
+      ## ex.
+      ##   start_link_tag :action=>'show', :controller=>'user', :id=>1
+      ##   #=> "<a href=\"/user/show/1\">"
+      ##
+      def start_link_tag(options={}, html_options=nil, *parameters)
+        s = link_to('', options, html_options, *parameters)
+        s.sub!(/<\/a>\z/, '')
+        s
+      end
+
+      ##
+      ## ajax version of start_link_tag()
+      ##
+      def start_remote_link_tag(options={}, html_options={})
+        s = link_to_remote(options, html_options)
+        s.sub!(/<\/a>\z/, '')
+        s
+      end
+
+      alias anchor start_link_tag
+      alias anchor_remote start_remote_link_tag
+
+    end
+
+
+  end #module Helper
+
+end #module Kwartz
+
 
 
 # override ActionController::Base::render
