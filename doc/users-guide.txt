@@ -1524,6 +1524,245 @@ $ kwartz -p document-test.plogic document-test.html
 
 
 
+.$ Ruby on Rails Support  | rails
+
+This section shows how to use Kwartz with Ruby on Rails.
+See 'examples/rails1' and 'examples/rails2' for examples.
+
+
+.$$ Support of Ruby on Rails	| helper_rails
+
+If you want to use Kwartz with Ruby on Rails, add the following code in your 'app/controllers/application.rb' and restart web server.
+
+.--------------------
+require 'kwartz/helper/rails'
+ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
+#Kwartz::Helper::RailsTemplate.lang = 'rails'    # or eruby/ruby/erubis/pierubis
+#Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
+#Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
+#Kwartz::Helper::RailsTemplate.default_properties = { :escape=>false }
+#Kwartz::Helper::RailsTemplate.use_cache = true
+#Kwartz::Helper::RailsTemplate.debug = true
+.--------------------
+
+Layout files ('app/views/layouts/xxx.{html,plogic}') are also available.
+The following is an example to use layout files.
+
+.? app/views/member/list.html
+.--------------------
+<html>
+  <body>
+    <h1 {{*id="page_title"*}}></h1>
+    <div {{*id="page_content"*}}>
+      <ul id="mark:list">
+        <li id="mark:item"></li>
+      </ul>
+    </div>
+  </body>
+</html>
+.--------------------
+
+.? app/views/xxx/index.plogic
+.--------------------
+#list {
+  logic: {
+    @list.each do |item|
+      _elem
+    end
+  }
+}
+
+#item {
+  value:  item;
+}
+.--------------------
+
+.? app/views/layouts/xxx.html
+.--------------------
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title id="mark:header_title"></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+  <h1 class="title" {{*id="replace_content_with_content:page_title"*}}>...page title...</h1>
+  <div {{*id="replace_element_with_content:page_content"*}}>
+    ...page content...
+  </div>
+
+  <p>copyright&copy; 2006 kuwata-lab.com all rights reserved.</p>
+
+</body>
+</html>
+.--------------------
+
+.? app/views/layouts/xxx.plogic
+.--------------------
+#header_title {
+  cont:  'Member: ' + controller.action_name;
+}
+.--------------------
+
+See the 'examples/rails2' directory for example of using Kwartz with Ruby on Rails.
+
+
+.$$ {{,link_to(),}} method in Ruby on Rails		| start_link_tag
+
+{{,link_to(),}} method in Ruby on Rails is a little incompatible with Kwartz
+because you must specify link label in both presentation data and presentation logic.
+It's not DRY.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">{{*Create new recipe*}}</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  elem:  link_to {{*'Create new recipe'*}}, :action=>'new';
+}
+.--------------------
+
+It is recommended to use start_link_tag() and start_remote_link_tag() instead of link_to() and link_to_remote() because they print only start tag of anchors.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">Create new recipe</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  stag:  {{*start_link_tag*}} :action=>'new';
+}
+.--------------------
+
+The following is the definition of start_link_tag() and start_remote_link_tag().
+They are defined in Kwartz::Helper::ActionViewHelper module which is defined in
+'kwartz/helper/rails.rb'.
+
+.? definition of start_link_tag() and start_remote_link_tag()
+.--------------------
+module Kwartz::Helper::ActionViewHelper
+
+  def start_link_tag(options = {}, html_options = nil, *parameters_for_method_reference)
+    s = link_to('', options, html_options, *parameters_for_method_reference)
+    s.sub!(/<\/a>\z/, '')
+    s
+  end
+  alias anchor start_link_tag
+
+  def start_link_remote_tag(options = {}, html_options = {})
+    s = link_to_remote(options, html_options)
+    s.sub!(/<\/a>\z/, '')
+    s
+  end
+  alias anchor_remote start_link_remote_tag
+
+end
+.--------------------
+
+You can use these helper methods if you include Kwartz::Helper::ActionViewHelper
+in your ApplicationHelper module.
+
+.? app/helpers/application_helper.rb
+.--------------------
+{{*require 'kwartz/helper/rails'*}}
+module ApplicationHelper
+  {{*include Kwartz::Helper::ActionViewHelper*}}
+end
+.--------------------
+
+
+.$$ Scaffold Kwartz Template		| rails-scaffold
+
+There is no 'generate scaffold' script for Kwartz.
+Instead, use {{<Kwatable|http://kwatable.rubyforge.net>}}.
+
+{{<Kwatable|http://kwatable.rubyforge.net}} is a script to generate severail files (SQL, DTO, Kwartz template, and so on) from table definition file.
+It's more sophisticated than Rails' scaffold generating script.
+
+
+.$$ Rails Helper Methods	| rails-helper-methods
+
+(Notice: this is experimental feature.)
+
+It is able to embed Rails' helper method in title attribute.
+
+.--------------------
+## text_field, password_field
+<input type="text" size="10" maxsize="20" {{*title="text_field 'user', 'name'"*}}>
+ => <%= text_field 'user', 'name', :size=>10, :maxsize=>20 %>
+<input type="text" name="user[name]" {{*title="text_field :size=>10"*}}>
+ => <%= text_field "user", "name", :size=>10 %>
+<input type="text" id="user_name" size="10" {{*title="text_field"*}}>
+ => <%= text_field "user", "name", :size=>10 %>
+
+## link_to, link_to_remote
+<a href="#" {{*title="link_to :action=>'list'"*}}>Show list</a>
+ => <%= link_to 'Show list', :action=>'list' %>
+
+## start_link_tag, start_remote_link_tag
+<a href="#" {{*title="start_link_tag :action=>'list'"*}}>Show list</a>
+ => <%= start_link_tag 'action'=>'list' %>Show list</a>
+
+## mail_to
+<a href="mail:www@example.com" {{*title="mail_to"*}}>admin</a>
+ => <%= mail_to "www@example.com", "admin" %>
+
+## form_tag
+<form action="show" {{*title="form_tag :id=>2"*}}> ... </form>
+ => <%= form_tag :action=>"show", :id=>2 %> ... </form>
+
+## submit_tag
+<input type="submit" value="OK" {{*title="submit_tag"*}}>
+ => <%= submit_tag "OK" %>
+
+## text_area
+<textarea cols="30" rows="3" id="user_desc" {{*title="text_area"*}}></textarea>
+ => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
+<textarea cols="30" rows="3" name="user[desc]" {{*title="text_area"*}}></textarea>
+ => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
+
+## hidden_field
+<input type="hidden" id="user_id" {{*title="hidden_field"*}}>
+ => <%= hidden_field "user", "id" %>
+<input type="hidden" name="user[id]" {{*title="hidden_field"*}}>
+ => <%= hidden_field "user", "id" %>
+
+## check_box
+<input type="checkbox" id="user_chk1" {{*title="check_box"*}}>
+ => <%= check_box "user", "chk1" %>
+<input type="checkbox" name="user[chk2]" {{*title="check_box"*}}>
+ => <%= check_box "user", "chk2" %>
+
+## radio_button
+<input type="radio" id="user_radio" value="val1" {{*title="radio_button"*}}>
+ => <%= radio_button "user", "radio", "val1" %>
+<input type="radio" name="user[radio]" value="val2" {{*title="radio_button"*}}>
+ => <%= radio_button "user", "radio", "val2" %>
+
+## select, collection_select, country_select, time_zone_select, date_select, datetime_select
+<select name="user[birth]" {{*title="date_select :start_year=>1970"*}}>
+  <option value="2000">2000</option>
+</select>
+ => <% date_select "user", "birth", :start_year=>1970 %>
+
+## image_tag, link_image_to, link_to_image
+<img src="foo.gif" alt="text" width="20" heigth="10" {{*title="image_tag :size=>'30x40'"*}}>
+ => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
+.--------------------
+
+
+
+.#.$$ Limitation
+
+
+
+
 .$ Other Topics		| topics
 
 
@@ -1724,141 +1963,6 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 {{*output = main.execute()*}}
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
 .--------------------
-
-
-.$$ Support of Ruby on Rails	| helper_rails
-
-If you want to use Kwartz with Ruby on Rails, add the following code in your 'app/controllers/application.rb' and restart web server.
-
-.--------------------
-require 'kwartz/helper/rails'
-ActionView::Base.register_template_handler('html', Kwartz::Helper::RailsTemplate)
-#Kwartz::Helper::RailsTemplate.lang = 'eruby'  # or 'ruby', 'erubis', 'pierubis'
-#Kwartz::Helper::RailsTemplate.pdata_suffix  = '.html'
-#Kwartz::Helper::RailsTemplate.plogic_suffix = '.plogic'
-#Kwartz::Helper::RailsTemplate.default_properties = { :escape=>true }
-#Kwartz::Helper::RailsTemplate.use_cache = true
-#Kwartz::Helper::RailsTemplate.debug = false
-.--------------------
-
-Layout files ('app/views/layouts/xxx.{html,plogic}') are also available.
-The following is an example to use layout files.
-
-.? app/views/member/list.html
-.--------------------
-<html>
-  <body>
-    <h1 {{*id="page_title"*}}></h1>
-    <div {{*id="page_content"*}}>
-      <ul id="mark:list">
-        <li id="mark:item"></li>
-      </ul>
-    </div>
-  </body>
-</html>
-.--------------------
-
-.? app/views/xxx/index.plogic
-.--------------------
-#list {
-  logic: {
-    @list.each do |item|
-      _elem
-    end
-  }
-}
-
-#item {
-  value:  item;
-}
-.--------------------
-
-.? app/views/layouts/xxx.html
-.--------------------
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <title id="mark:header_title"></title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-</head>
-<body>
-
-  <h1 class="title" {{*id="replace_content_with_content:page_title"*}}>...page title...</h1>
-  <div {{*id="replace_element_with_content:page_content"*}}>
-    ...page content...
-  </div>
-
-  <p>copyright&copy; 2006 kuwata-lab.com all rights reserved.</p>
-
-</body>
-</html>
-.--------------------
-
-.? app/views/layouts/xxx.plogic
-.--------------------
-#header_title {
-  cont:  'Member: ' + controller.action_name;
-}
-.--------------------
-
-See the 'examples/rails2' directory for example of using Kwartz with Ruby on Rails.
-
-
-
-.$$ {{,link_to(),}} method in Ruby on Rails		| start_link_tag
-
-{{,link_to(),}} method in Ruby on Rails is a little incompatible with Kwartz
-because you must specify link label in both presentation data and presentation logic.
-It's not DRY.
-
-.? presentation data
-.--------------------
-<a href="#" id="mark:link_to_new">{{*Create new recipe*}}</a>
-.--------------------
-
-.? presentation logic
-.--------------------
-#link_to_new {
-  elem:  link_to {{*'Create new recipe'*}}, :action=>'new';
-}
-.--------------------
-
-It is recommended to include the following helper method
-in your 'app/helpers/application_helper.rb'.
-
-.--------------------
-module ApplicationHelper
-
-  def start_link_tag(options = {}, html_options = nil, *parameters_for_method_reference)
-    s = link_to('', options, html_options, *parameters_for_method_reference)
-    s.sub!(/<\/a>\z/, '')
-  end
-  alias anchor start_link_tag
-
-  def start_link_remote_tag(options = {}, html_options = {})
-    s = link_to_remote(options, html_options)
-    s.sub!(/<\/a>\z/, '')
-  end
-  alias anchor_remote start_link_remote_tag
-
-end
-.--------------------
-
-The above methods prints only start tag. You don't need to write label twice.
-
-.? presentation data
-.--------------------
-<a href="#" id="mark:link_to_new">Create new recipe</a>
-.--------------------
-
-.? presentation logic
-.--------------------
-#link_to_new {
-  stag:  {{*start_link_tag*}} :action=>'new';
-}
-.--------------------
-
-
 
 
 

@@ -2,11 +2,16 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.131 (2006-09-17)
-	- [enhance] helper/rails.rb: lang='rails' support
+: rev.133 (2006-09-17)
+	- [update] document update
+
+: rev.132 (2006-09-17)
 	- [enhance] helper/rails.rb: add new module ActionViewHelper
 	- [change] 'start_link_to' and 'start_link_to_remote' are renamed to 'start_link_tag' and 'start_remote_link_tag'
 	- [change] examples/rails2/app/views/members: _form.plogic is splitted from new.plogic
+
+: rev.131 (2006-09-15)
+	- [enhance] helper/rails.rb: lang='rails' support
 
 : rev.130 (2006-09-03)
 	- [enhance] layout changing support in rails.rb (ex. render :layout=>false)
