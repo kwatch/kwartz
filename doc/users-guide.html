@@ -79,9 +79,11 @@ a template system which realized the concept of 'Independence of Presentation Lo
   </li>
   <li><a href="#rails">Ruby on Rails Support</a>
   <ul>
-    <li><a href="#helper_rails">Support of Ruby on Rails</a>
+    <li><a href="#rails_template">Support of Ruby on Rails</a>
     </li>
-    <li><a href="#start_link_tag"><code>link_to()</code> method in Ruby on Rails</a>
+    <li><a href="#rails_start_link_tag"><code>link_to()</code> method in Ruby on Rails</a>
+    </li>
+    <li><a href="#rails-layout">Layout Option in Controller</a>
     </li>
     <li><a href="#rails-scaffold">Scaffold Kwartz Template</a>
     </li>
@@ -985,16 +987,16 @@ table1.eperl.plogic</div>
 </pre>
 <div class="terminal_caption">
 compile</div>
-<pre class="terminal">$ kwartz -l eruby    -p table1.ruby.plogic  table1.html  &gt; table1.rhtml
+<pre class="terminal">$ kwartz -l eruby    -p table1.ruby.plogic  table1.html &gt; table1.eruby
 $ kwartz -l ruby     -p table1.ruby.plogic  table1.html &gt; table1.rb
 $ kwartz -l pierubis -p table1.ruby.plogic  table1.html &gt; table1.pierubis
 $ kwartz -l php      -p table1.php.plogic   table1.html &gt; table1.php
 $ kwartz -l jstl     -p table1.jstl.plogic  table1.html &gt; table1.jsp
-$ kwartz -l eperl    -p table1.eperl.plogic table1.html &gt; table1.iphtml
+$ kwartz -l eperl    -p table1.eperl.plogic table1.html &gt; table1.eperl
 </pre>
-<a name="table1.rhtml"></a>
+<a name="table1.eruby"></a>
 <div class="program_caption">
-output script (table1.rhtml)</div>
+output script (table1.eruby)</div>
 <pre class="program">&lt;html&gt;
   &lt;body&gt;
   
@@ -1030,6 +1032,25 @@ _buf &lt;&lt; "    &lt;/table&gt;
  &lt;/body&gt;
 &lt;/html&gt;\n";
 ; _buf
+</pre>
+<a name="table1.rails"></a>
+<div class="program_caption">
+output script (table1.rails)</div>
+<pre class="program">&lt;html&gt;
+  &lt;body&gt;
+  
+    &lt;table&gt;
+<strong>&lt;%     @list.each_with_index do |user, i| -%&gt;</strong>
+<strong>&lt;%       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' -%&gt;</strong>
+      &lt;tr bgcolor="<strong>&lt;%= color %&gt;</strong>"&gt;
+        &lt;td&gt;<strong>&lt;%=h user[:name] %&gt;</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>&lt;%= user[:mail] %&gt;</strong>&lt;/td&gt;
+      &lt;/tr&gt;
+<strong>&lt;%     end -%&gt;</strong>
+    &lt;/table&gt;
+
+ &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <a name="table1.pierubis"></a>
 <div class="program_caption">
@@ -1091,7 +1112,7 @@ output script (JSTL 1.2)</div>
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-<a name="table1.iphtml"></a>
+<a name="table1.eperl"></a>
 <div class="program_caption">
 output script (ePerl)</div>
 <pre class="program">&lt;html&gt;
@@ -1457,7 +1478,7 @@ compile</div>
 <p>This section shows how to use Kwartz with Ruby on Rails.
 See 'examples/rails1' and 'examples/rails2' for examples.
 </p>
-<a name="helper_rails"></a>
+<a name="rails_template"></a>
 <h3 class="section2">Support of Ruby on Rails</h3>
 <p>If you want to use Kwartz with Ruby on Rails, add the following code in your 'app/controllers/application.rb' and restart web server.
 </p>
@@ -1490,7 +1511,7 @@ app/views/member/list.html</div>
 app/views/xxx/index.plogic</div>
 <pre class="program">#list {
   logic: {
-    @list.each do |item|
+    for item in @list
       _elem
     end
   }
@@ -1531,7 +1552,7 @@ app/views/layouts/xxx.plogic</div>
 <br>
 
 
-<a name="start_link_tag"></a>
+<a name="rails_start_link_tag"></a>
 <h3 class="section2"><code>link_to()</code> method in Ruby on Rails</h3>
 <p><code>link_to()</code> method in Ruby on Rails is a little incompatible with Kwartz
 because you must specify link label in both presentation data and presentation logic.
@@ -1547,7 +1568,7 @@ presentation logic</div>
   elem:  link_to <strong>'Create new recipe'</strong>, :action=&gt;'new';
 }
 </pre>
-<p>It is recommended to use start_link_tag() and start_remote_link_tag() instead of link_to() and link_to_remote() because they print only start tag of anchors.
+<p>It is recommended to use start_link_tag() and start_remote_link_tag() instead of link_to() and link_to_remote() because the formers print only start tag of anchor.
 </p>
 <div class="program_caption">
 presentation data</div>
@@ -1556,8 +1577,21 @@ presentation data</div>
 <div class="program_caption">
 presentation logic</div>
 <pre class="program">#link_to_new {
-  stag:  <strong>start_link_tag</strong> :action=&gt;'new';
+  stag:  <strong>start_link_tag</strong> :action=&gt;'new', :controller=&gt;'recipes';
 }
+</pre>
+<div class="program_caption">
+expected result</div>
+<pre class="program">&lt;a href="/recipes/new"&gt;Create new recipe&lt;/a&gt;
+</pre>
+<p>To use start_link_tag() and start_remote_link_tag(), include Kwartz::Helper::ActionViewHelper to ApplicationHelper module in 'app/helpers/application_helper.rb'.
+</p>
+<div class="program_caption">
+app/helpers/application_helper.rb</div>
+<pre class="program"><strong>require 'kwartz/helper/rails'</strong>
+module ApplicationHelper
+  <strong>include Kwartz::Helper::ActionViewHelper</strong>
+end
 </pre>
 <p>The following is the definition of start_link_tag() and start_remote_link_tag().
 They are defined in Kwartz::Helper::ActionViewHelper module which is defined in
@@ -1574,34 +1608,50 @@ definition of start_link_tag() and start_remote_link_tag()</div>
   end
   alias anchor start_link_tag
 
-  def start_link_remote_tag(options = {}, html_options = {})
+  def start_remote_link_tag(options = {}, html_options = {})
     s = link_to_remote(options, html_options)
     s.sub!(/&lt;\/a&gt;\z/, '')
     s
   end
-  alias anchor_remote start_link_remote_tag
+  alias anchor_remote start_remote_link_tag
 
-end
-</pre>
-<p>You can use these helper methods if you include Kwartz::Helper::ActionViewHelper
-in your ApplicationHelper module.
-</p>
-<div class="program_caption">
-app/helpers/application_helper.rb</div>
-<pre class="program"><strong>require 'kwartz/helper/rails'</strong>
-module ApplicationHelper
-  <strong>include Kwartz::Helper::ActionViewHelper</strong>
 end
 </pre>
 <br>
 
 
+<a name="rails-layout"></a>
+<h3 class="section2">Layout Option in Controller</h3>
+<ul type="disc">
+<li><code>layout()</code> is available.
+<pre class="program">class MemberController &lt; ApplicationController
+  <strong>layout 'members2', :except=&gt;['show', 'edit']</strong>
+  ...
+end
+</pre>
+</li>
+</ul>
+<ul type="disc">
+<li><code>render()</code> with <code>:layout</code> parameter is available.
+<pre class="program">class MemberController &lt; ApplicationController
+  def list
+    @member_pages, @members = paginate :members, :per_page =&gt; 10
+    <strong>render :layout =&gt; 'members2'</strong>
+  end
+  ...
+end
+</pre>
+</li>
+</ul>
+<br>
+
+
 <a name="rails-scaffold"></a>
 <h3 class="section2">Scaffold Kwartz Template</h3>
-<p>There is no 'generate scaffold' script for Kwartz.
+<p>There is no 'generate scaffold' script for Kwartz template.
 Instead, use <a href="http://kwatable.rubyforge.net">Kwatable</a>.
 </p>
-<p><a href=""></a>Kwatable|http://kwatable.rubyforge.net}} is a script to generate severail files (SQL, DTO, Kwartz template, and so on) from table definition file.
+<p><a href="http://kwatable.rubyforge.net">Kwatable</a> is a script to generate severail files (SQL, DTO, Kwartz template, and so on) from table definition file.
 It's more sophisticated than Rails' scaffold generating script.
 </p>
 <br>
@@ -1609,7 +1659,7 @@ It's more sophisticated than Rails' scaffold generating script.
 
 <a name="rails-helper-methods"></a>
 <h3 class="section2">Rails Helper Methods</h3>
-<p>(Notice: this is experimental feature.)
+<p>(Notice: this is experimental feature. The spec may be changed in the future.)
 </p>
 <p>It is able to embed Rails' helper method in title attribute.
 </p>

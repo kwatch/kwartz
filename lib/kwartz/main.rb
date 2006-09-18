@@ -386,11 +386,11 @@ module Kwartz
       sb = []
       sb << "kwartz - a template system which realized 'Independence of Presentation Logic'\n"
       sb << "Usage: #{@command} [..options..] [-p plogic] file.html [file2.html ...]\n"
-      sb << "  -h             : help\n"
+      sb << "  -h, --help     : help\n"
       sb << "  -v             : version\n"
       #sb << "  -D             : debug mode\n"
       sb << "  -e             : alias of '--escape=true'\n"
-      sb << "  -l lang        : eruby/ruby/php/jstl/eperl/erubis/pierubis (default 'eruby')\n"
+      sb << "  -l lang        : eruby/ruby/rails/php/jstl/eperl/erubis/pierubis (default 'eruby')\n"
       sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
       sb << "  -r library,... : require libraries\n"
       sb << "  -p plogic,...  : presentation logic files\n"
@@ -417,8 +417,7 @@ module Kwartz
 
 
     def version
-      v = ('$Release: 0.0.0$' =~ /[.\d]+/) && $&
-      return v
+      return RELEASE
     end
 
 

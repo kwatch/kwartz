@@ -80,7 +80,7 @@ module Kwartz
 
       def self.lang=(lang)
         case lang
-        when 'ruby', 'eruby', 'erubis', 'pierubis'
+        when 'rails', 'ruby', 'eruby', 'erubis', 'pierubis'
           @@lang = lang
         else
           raise "'#{lang}': invalid language name."
@@ -130,7 +130,14 @@ module Kwartz
 
       def render(template, assigns)
 
+        ## reverse engineering
         #$stderr.puts "*** debug: render() called."
+        #$stderr.puts "*** debug: RAILS_ENV=#{RAILS_ENV.inspect}"
+        #$stderr.puts "*** debug: self.class=#{self.class}"
+        #$stderr.puts "*** debug: @view.class=#{@view.class}"
+        #$stderr.puts "*** debug: self.__id__=#{self.__id__.inspect}"
+        #$stderr.puts "*** debug: @view.class.methods=#{(@view.class.methods - Class.methods).sort.inspect}"
+        #$stderr.puts "*** debug: @view.controller.class.methods=#{(@view.controller.class.methods - Class.methods).sort.inspect}"
         #
         #$stderr.puts "*** debug: instance_variables=#{instance_variables.inspect}" #=> [@views]
         #c = @view.controller
@@ -154,7 +161,7 @@ module Kwartz
 
         ## template basename and layout basename
         c = @view.controller
-        template_root = c.template_root
+        template_root = c.template_root   # or c.class.template_root
         #template_basename = "#{template_root}/#{c.controller_name}/#{c.action_name}"
         #layout_basename   = "#{template_root}/layouts/#{c.controller_name}"
         template_basename = "#{template_root}/#{c.render_template_basename}"
@@ -318,7 +325,7 @@ module Kwartz
         cache_filename = template_basename + '.cache'
         case @@lang
         when 'rails'
-          trim_mode = ActionView::Base.erb_trim_mode
+          trim_mode = ActionView::Base.erb_trim_mode  # or '-'
           ruby_code = ERB.new(code, nil, trim_mode).src
         when 'eruby'
           trim_mode = 1

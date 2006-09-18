@@ -4,6 +4,13 @@
 ### $Copyright$
 ###
 
+
+module Kwartz
+
+  RELEASE = ('$Release: 0.0.0-beta $' =~ /\$Release: (\S+)\s*\$/) && $1
+
+end
+
 require 'kwartz/config'
 require 'kwartz/error'
 require 'kwartz/assert'
