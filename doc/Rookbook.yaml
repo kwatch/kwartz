@@ -37,6 +37,12 @@ recipes:
 	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"
 	rm_f @byprod
 
+  - product:	:retrieve
+    method*: |
+	dir = '$(tmpdir)'
+	mkdir_p dir
+	sys "retrieve -d #{dir} users-guide.eruby"
+
   - product:    *.txt
     desc:	create *.txt from *.eruby
     ingreds:    [ $(1).eruby ]

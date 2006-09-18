@@ -2,7 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.135
+: rev.136 (2006-09-18)
+	- [enhance] main.rb: support '-a action'
+	- [enhance] defun.rb: added
+	- [update] users-guide.eruby: add document about '@{...}@'
+
+: rev.135 (2006-09-18)
 	- [change] direcitve attr is changed from 'title' to 'kw:d'
 
 : rev.134 (2006-09-18)

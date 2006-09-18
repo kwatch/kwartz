@@ -59,6 +59,8 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
     <li><a href="#directives">Directives</a>
     </li>
+    <li><a href="#embed_expr">Embed Expression in Presentation Data</a>
+    </li>
     <li><a href="#escape">Escape</a>
     </li>
     <li><a href="#langs">Multi-language</a>
@@ -74,6 +76,8 @@ a template system which realized the concept of 'Independence of Presentation Lo
     <li><a href="#print-statement">Print Statement</a>
     </li>
     <li><a href="#begin">Add Code at Beginning/End of Document</a>
+    </li>
+    <li><a href="#detail-defun">Compile Template into a Function of Ruby or PHP</a>
     </li>
   </ul>
   </li>
@@ -193,7 +197,7 @@ Doesn't break HTML design at all</dt>
 	<code>{foreach ...}{/foreach}</code> in <a href="http://smarty.php.net/">Smarty</a> or
 	<code>#foreach(...)</code> in <a href="http://jakarta.apache.org/velocity/">Jakarta Velocity</a>.
 	These directives break the HTML design of template.
-	Kwartz doesn't break HTML design because Kwartz uses id or title attributes for marking in an HTML template.
+	Kwartz doesn't break HTML design because Kwartz uses id or kw:d attributes for marking in an HTML template.
 </p>
 </dd>
 <dt class="dt2">
@@ -699,34 +703,34 @@ Kwartz doesn't enforce you to adopt a solution.
 </p>
 <p>To embed presentation logic into presentation data, use directives.
 Directive is a command to embed presentation logic into presentation data.
-In Kwartz, 'title' attributes<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> are used to describe directives.
+In Kwartz, 'kw:d' attributes<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</sup> are used to describe directives.
 </p>
 <p>The following is an example to use directives.
 </p>
 <ul type="disc">
-<li>Directive <code>title="for <em>var</em> in <em>list</em>"</code> means to iterate the element.
+<li>Directive <code>kw:d="for <em>var</em> in <em>list</em>"</code> means to iterate the element.
 </li>
-<li>Directive <code>title="value: <em>expression</em>"</code> means to print value of expression as content of the element.
+<li>Directive <code>kw:d="value: <em>expression</em>"</code> means to print value of expression as content of the element.
 </li>
-<li>Directive <code>title="dummy:"</code> means that the element is a dummy and is not printed out.
+<li>Directive <code>kw:d="dummy:"</code> means that the element is a dummy and is not printed out.
 </li>
 </ul>
 <a name="directive1.html"></a>
 <div class="program_caption">
 Presentation Data(directive1.html):</div>
 <pre class="program">&lt;table&gt;
-  &lt;tr <strong>title="for member in @members"</strong>&gt;
-    &lt;td <strong>title="value: member.name"</strong>&gt;foo&lt;/td&gt;
+  &lt;tr <strong>kw:d="for member in @members"</strong>&gt;
+    &lt;td <strong>kw:d="value: member.name"</strong>&gt;foo&lt;/td&gt;
     &lt;td&gt;
       &lt;a href="mailto:&lt;%= member.email %&gt;"
-         title="<strong>value: member.email</strong>"&gt;foo@mai.com&lt;/a&gt;
+         kw:d="<strong>value: member.email</strong>"&gt;foo@mai.com&lt;/a&gt;
     &lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <strong>title="dummy:"</strong>&gt;
+  &lt;tr <strong>kw:d="dummy:"</strong>&gt;
     &lt;td&gt;bar&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:bar@mail.org"&gt;bar@mail.org&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
-  &lt;tr <strong>title="dummy:"</strong>&gt;
+  &lt;tr <strong>kw:d="dummy:"</strong>&gt;
     &lt;td&gt;baz&lt;/td&gt;
     &lt;td&gt;&lt;a href="mailto:baz@mail.net"&gt;baz@mail.net&lt;/a&gt;&lt;/td&gt;
   &lt;/tr&gt;
@@ -755,15 +759,15 @@ Output script:</div>
 <a name="directive2.html"></a>
 <div class="program_caption">
 presentation data (directive2.html)</div>
-<pre class="program">&lt;span <strong>title="value: expr1"</strong>&gt;foo&lt;/span&gt;
-&lt;span <strong>title=" value: expr2"</strong>&gt;bar&lt;/span&gt;
+<pre class="program">&lt;span <strong>kw:d="value: expr1"</strong>&gt;foo&lt;/span&gt;
+&lt;span <strong>kw:d=" value: expr2"</strong>&gt;bar&lt;/span&gt;
 </pre>
 <a name="directive2.expected"></a>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz directive2.html
 &lt;span&gt;<strong>&lt;%= expr1 %&gt;</strong>&lt;/span&gt;
-&lt;span <strong>title="value: expr2"</strong>&gt;bar&lt;/span&gt;
+&lt;span <strong>kw:d="value: expr2"</strong>&gt;bar&lt;/span&gt;
 </pre>
 <p>Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -777,6 +781,57 @@ See reference manual for details about directives.
   <dd>This spec may change in the future if I get have better idea.</dd>
  </dl>
 </div>
+<br>
+
+
+<a name="embed_expr"></a>
+<h3 class="section2">Embed Expression in Presentation Data</h3>
+<p>It is able to embed expressions in presentation data file in each language format.
+For example, you can use '&lt;%= ... %&gt;' with eRuby, '#{...}' with Ruby, '&lt;?php echo ... ?&gt;' with PHP, and so on.
+</p>
+<p>(Experimental) '@{...}@' and '@!{...}@' are also available as embedded expression notation in all languages.
+The former escapes expression and the latter does not escape expression.
+</p>
+<a name="embed1_eruby.html"></a>
+<div class="program_caption">
+presentation data (embed1_eruby.html)</div>
+<pre class="program">&lt;p class="<strong>&lt;%= klass %&gt;</strong>"&gt;Hello <strong>&lt;%=h user %&gt;</strong>&lt;/p&gt;
+&lt;p class="<strong>@!{klass}@</strong>"&gt;Hello <strong>@{user}@</strong>&lt;/p&gt;
+</pre>
+<a name="embed1_eruby.expected"></a>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby embed1_eruby.html
+&lt;p class="<strong>&lt;%= klass %&gt;</strong>"&gt;Hello <strong>&lt;%=h user %&gt;</strong>&lt;/p&gt;
+&lt;p class="<strong>&lt;%= klass %&gt;</strong>"&gt;Hello <strong>&lt;%=h user %&gt;</strong>&lt;/p&gt;
+</pre>
+<a name="embed1_ruby.html"></a>
+<div class="program_caption">
+presentation data (embed1_ruby.html)</div>
+<pre class="program">&lt;p class="<strong>#{klass}</strong>"&gt;Hello <strong>#{ERB::Util.h user}</strong>&lt;/p&gt;
+&lt;p class="<strong>@!{klass}@</strong>"&gt;Hello <strong>@{user}@</strong>&lt;/p&gt;
+</pre>
+<a name="embed1_ruby.expected"></a>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby embed1_ruby.html
+_buf = ""; _buf &lt;&lt; "&lt;p class=\"<strong>#{klass}</strong>\"&gt;Hello <strong>#{ERB::Util.h user}</strong>&lt;/p&gt;
+&lt;p class=\""; _buf &lt;&lt; <strong>(klass).to_s</strong>; _buf &lt;&lt; "\"&gt;Hello "; _buf &lt;&lt; <strong>ERB::Util.h(user)</strong>; _buf &lt;&lt; "&lt;/p&gt;\n";
+; _buf
+</pre>
+<a name="embed1_php.html"></a>
+<div class="program_caption">
+presentation data (embed1_php.html)</div>
+<pre class="program">&lt;p class="<strong>&lt;?php echo $klass; ?&gt;</strong>"&gt;Hello <strong>&lt;?php echo htmlspecialchars($user); ?&gt;</strong>&lt;/p&gt;
+&lt;p class="<strong>@!{$klass}@</strong>"&gt;Hello <strong>@{$user}@</strong>&lt;/p&gt;
+</pre>
+<a name="embed1_php.expected"></a>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby embed1_php.html
+&lt;p class="<strong>&lt;?php echo $klass; ?&gt;</strong>"&gt;Hello <strong>&lt;?php echo htmlspecialchars($user); ?&gt;</strong>&lt;/p&gt;
+&lt;p class="<strong>&lt;?php echo $klass; ?&gt;</strong>"&gt;Hello <strong>&lt;?php echo htmlspecialchars($user); ?&gt;</strong>&lt;/p&gt;
+</pre>
 <br>
 
 
@@ -795,7 +850,7 @@ See reference manual for details about directives.
 </ul>
 <a name="escape1.html"></a>
 <div class="program_caption">
-presentation Data (escape1.html):</div>
+presentation data (escape1.html):</div>
 <pre class="program">&lt;tr&gt;
   &lt;td id="mark:val1"&gt;foo&lt;/td&gt;
   &lt;td id="mark:val2"&gt;bar&lt;/td&gt;
@@ -845,9 +900,9 @@ never escaped.
 'h()' is used in eRuby and 'htmlspecialchars()' in PHP.
 JSTL prints escaped value in default.
 </p>
-<p>Directives <code>title="Value: <em>expr</em>"</code>, <code>title="Attr: '<em>name</em>' <em>expr</em>"</code>, and <code>title="Append: <em>expr</em>"</code> always escape expression value even when the command-line option '<code>-e</code>' is not specified.
+<p>Directives <code>kw:d="Value: <em>expr</em>"</code>, <code>kw:d="Attr: '<em>name</em>' <em>expr</em>"</code>, and <code>kw:d="Append: <em>expr</em>"</code> always escape expression value even when the command-line option '<code>-e</code>' is not specified.
 </p>
-<p>Directives <code>title="VALUE: <em>expr</em>:"</code>, <code>title="ATTR: '<em>name</em>' <em>expr</em>"</code>, and <code>title="APPEND: <em>expr</em>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
+<p>Directives <code>kw:d="VALUE: <em>expr</em>:"</code>, <code>kw:d="ATTR: '<em>name</em>' <em>expr</em>"</code>, and <code>kw:d="APPEND: <em>expr</em>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
 </p>
 <p>Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
@@ -1144,7 +1199,7 @@ output script (ePerl)</div>
 presentation data (delspan1.html)</div>
 <pre class="program">&lt;h1&gt;&lt;span <strong>id="mark:title"</strong>&gt;title&lt;/span&gt;&lt;/h1&gt;
 
-Hello &lt;span <strong>title="value: user"</strong>&gt;World&lt;/span&gt;!
+Hello &lt;span <strong>kw:d="value: user"</strong>&gt;World&lt;/span&gt;!
 </pre>
 <a name="delspan1.plogic"></a>
 <div class="program_caption">
@@ -1166,7 +1221,7 @@ Hello <strong>&lt;%= user %&gt;</strong>!
 <a name="delspan2.html"></a>
 <div class="program_caption">
 presentation data (delspan2.html)</div>
-<pre class="program">Hello &lt;span <strong>title="value: user" style="color:black"</strong>&gt;World&lt;/span&gt;!
+<pre class="program">Hello &lt;span <strong>kw:d="value: user" style="color:black"</strong>&gt;World&lt;/span&gt;!
 </pre>
 <a name="delspan2.expected"></a>
 <div class="terminal_caption">
@@ -1470,6 +1525,104 @@ compile</div>
 <br>
 
 
+<a name="detail-defun"></a>
+<h3 class="section2">Compile Template into a Function of Ruby or PHP</h3>
+<p>Using the command-line option '<code>-a defun</code>', you can compile templates into a function of Ruby or PHP.
+</p>
+<a name="defun1.html"></a>
+<div class="program_caption">
+defun1.html : presentation data</div>
+<pre class="program">Hello &lt;span id="user"&gt;user&lt;/span&gt; !
+&lt;ul id="mark:list"&gt;
+  &lt;li id="mark:item"&gt;xxx&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+<a name="defun1.plogic"></a>
+<div class="program_caption">
+defun1.plogic : presentation logic</div>
+<pre class="program">#user {
+  elem:  @user;
+}
+
+#list {
+  logic: {
+    _stag
+    for item in @list
+      _cont
+    end
+    _etag
+  }
+}
+
+#item {
+  value: item;
+}
+</pre>
+<a name="defun1.expected"></a>
+<div class="terminal_caption">
+Compile</div>
+<pre class="terminal">$ kwartz -l eruby <strong>-a defun</strong> -p defun1.plogic defun1.html | tee defun1.rb
+<strong>module View</strong>
+
+  (@@proc_table ||= {})['defun1'] = proc do
+_erbout = ''; _erbout.concat "Hello "; _erbout.concat(( @user ).to_s); _erbout.concat " !\n"
+_erbout.concat "&lt;ul&gt;\n"
+     for item in @list 
+_erbout.concat "  &lt;li&gt;"; _erbout.concat(( item ).to_s); _erbout.concat "&lt;/li&gt;\n"
+     end 
+_erbout.concat "&lt;/ul&gt;\n"
+_erbout
+  end#proc
+
+  <strong>module_function</strong>
+  <strong>def expand_defun1(context={})</strong>
+    if context.is_a?(Hash)
+      hash = context
+      context = Object.new
+      hash.each { |key, val| context.instance_variable_set("@#{key}", val) }
+    end
+    proc_obj = @@proc_table['defun1']
+    context.instance_eval(&amp;proc_obj)
+  <strong>end</strong>
+
+<strong>end</strong>
+</pre>
+<p>The following command-line properties are available with '-a defun'.
+</p>
+<dl class="dl1">
+<dt class="dt1">
+--module=<em>name</em></dt>
+<dd class="dd1">
+	Module name. If false or null then no module is used. Default is 'View'.
+</dd>
+<dt class="dt1">
+--verb=<em>name</em></dt>
+<dd class="dd1">
+	Verb. Default is 'expand'.
+</dd>
+<dt class="dt1">
+--method=<em>name</em></dt>
+<dd class="dd1">
+	Method name. Default is "#{verb}_#{basename}".
+</dd>
+</dl>
+<p>The following languages are available with '-a defun'.
+</p>
+<ul type="disc">
+<li>-l eruby
+</li>
+<li>-l ruby
+</li>
+<li>-l erubis
+</li>
+<li>-l pierubis
+</li>
+<li>-l php
+</li>
+</ul>
+<br>
+
+
 <br>
 
 
@@ -1661,68 +1814,68 @@ It's more sophisticated than Rails' scaffold generating script.
 <h3 class="section2">Rails Helper Methods</h3>
 <p>(Notice: this is experimental feature. The spec may be changed in the future.)
 </p>
-<p>It is able to embed Rails' helper method in title attribute.
+<p>It is able to embed Rails' helper method in kw:d attribute.
 </p>
 <pre class="program">## text_field, password_field
-&lt;input type="text" size="10" maxsize="20" <strong>title="text_field 'user', 'name'"</strong>&gt;
+&lt;input type="text" size="10" maxsize="20" <strong>kw:d="text_field 'user', 'name'"</strong>&gt;
  =&gt; &lt;%= text_field 'user', 'name', :size=&gt;10, :maxsize=&gt;20 %&gt;
-&lt;input type="text" name="user[name]" <strong>title="text_field :size=&gt;10"</strong>&gt;
+&lt;input type="text" name="user[name]" <strong>kw:d="text_field :size=&gt;10"</strong>&gt;
  =&gt; &lt;%= text_field "user", "name", :size=&gt;10 %&gt;
-&lt;input type="text" id="user_name" size="10" <strong>title="text_field"</strong>&gt;
+&lt;input type="text" id="user_name" size="10" <strong>kw:d="text_field"</strong>&gt;
  =&gt; &lt;%= text_field "user", "name", :size=&gt;10 %&gt;
 
 ## link_to, link_to_remote
-&lt;a href="#" <strong>title="link_to :action=&gt;'list'"</strong>&gt;Show list&lt;/a&gt;
+&lt;a href="#" <strong>kw:d="link_to :action=&gt;'list'"</strong>&gt;Show list&lt;/a&gt;
  =&gt; &lt;%= link_to 'Show list', :action=&gt;'list' %&gt;
 
 ## start_link_tag, start_remote_link_tag
-&lt;a href="#" <strong>title="start_link_tag :action=&gt;'list'"</strong>&gt;Show list&lt;/a&gt;
+&lt;a href="#" <strong>kw:d="start_link_tag :action=&gt;'list'"</strong>&gt;Show list&lt;/a&gt;
  =&gt; &lt;%= start_link_tag 'action'=&gt;'list' %&gt;Show list&lt;/a&gt;
 
 ## mail_to
-&lt;a href="mail:www@example.com" <strong>title="mail_to"</strong>&gt;admin&lt;/a&gt;
+&lt;a href="mail:www@example.com" <strong>kw:d="mail_to"</strong>&gt;admin&lt;/a&gt;
  =&gt; &lt;%= mail_to "www@example.com", "admin" %&gt;
 
 ## form_tag
-&lt;form action="show" <strong>title="form_tag :id=&gt;2"</strong>&gt; ... &lt;/form&gt;
+&lt;form action="show" <strong>kw:d="form_tag :id=&gt;2"</strong>&gt; ... &lt;/form&gt;
  =&gt; &lt;%= form_tag :action=&gt;"show", :id=&gt;2 %&gt; ... &lt;/form&gt;
 
 ## submit_tag
-&lt;input type="submit" value="OK" <strong>title="submit_tag"</strong>&gt;
+&lt;input type="submit" value="OK" <strong>kw:d="submit_tag"</strong>&gt;
  =&gt; &lt;%= submit_tag "OK" %&gt;
 
 ## text_area
-&lt;textarea cols="30" rows="3" id="user_desc" <strong>title="text_area"</strong>&gt;&lt;/textarea&gt;
+&lt;textarea cols="30" rows="3" id="user_desc" <strong>kw:d="text_area"</strong>&gt;&lt;/textarea&gt;
  =&gt; &lt;%= text_area "user", "desc", :cols=&gt;30, :rows=&gt;3 %&gt;
-&lt;textarea cols="30" rows="3" name="user[desc]" <strong>title="text_area"</strong>&gt;&lt;/textarea&gt;
+&lt;textarea cols="30" rows="3" name="user[desc]" <strong>kw:d="text_area"</strong>&gt;&lt;/textarea&gt;
  =&gt; &lt;%= text_area "user", "desc", :cols=&gt;30, :rows=&gt;3 %&gt;
 
 ## hidden_field
-&lt;input type="hidden" id="user_id" <strong>title="hidden_field"</strong>&gt;
+&lt;input type="hidden" id="user_id" <strong>kw:d="hidden_field"</strong>&gt;
  =&gt; &lt;%= hidden_field "user", "id" %&gt;
-&lt;input type="hidden" name="user[id]" <strong>title="hidden_field"</strong>&gt;
+&lt;input type="hidden" name="user[id]" <strong>kw:d="hidden_field"</strong>&gt;
  =&gt; &lt;%= hidden_field "user", "id" %&gt;
 
 ## check_box
-&lt;input type="checkbox" id="user_chk1" <strong>title="check_box"</strong>&gt;
+&lt;input type="checkbox" id="user_chk1" <strong>kw:d="check_box"</strong>&gt;
  =&gt; &lt;%= check_box "user", "chk1" %&gt;
-&lt;input type="checkbox" name="user[chk2]" <strong>title="check_box"</strong>&gt;
+&lt;input type="checkbox" name="user[chk2]" <strong>kw:d="check_box"</strong>&gt;
  =&gt; &lt;%= check_box "user", "chk2" %&gt;
 
 ## radio_button
-&lt;input type="radio" id="user_radio" value="val1" <strong>title="radio_button"</strong>&gt;
+&lt;input type="radio" id="user_radio" value="val1" <strong>kw:d="radio_button"</strong>&gt;
  =&gt; &lt;%= radio_button "user", "radio", "val1" %&gt;
-&lt;input type="radio" name="user[radio]" value="val2" <strong>title="radio_button"</strong>&gt;
+&lt;input type="radio" name="user[radio]" value="val2" <strong>kw:d="radio_button"</strong>&gt;
  =&gt; &lt;%= radio_button "user", "radio", "val2" %&gt;
 
 ## select, collection_select, country_select, time_zone_select, date_select, datetime_select
-&lt;select name="user[birth]" <strong>title="date_select :start_year=&gt;1970"</strong>&gt;
+&lt;select name="user[birth]" <strong>kw:d="date_select :start_year=&gt;1970"</strong>&gt;
   &lt;option value="2000"&gt;2000&lt;/option&gt;
 &lt;/select&gt;
  =&gt; &lt;% date_select "user", "birth", :start_year=&gt;1970 %&gt;
 
 ## image_tag, link_image_to, link_to_image
-&lt;img src="foo.gif" alt="text" width="20" heigth="10" <strong>title="image_tag :size=&gt;'30x40'"</strong>&gt;
+&lt;img src="foo.gif" alt="text" width="20" heigth="10" <strong>kw:d="image_tag :size=&gt;'30x40'"</strong>&gt;
  =&gt; &lt;%= image_tag "foo.gif", :alt=&gt;"text", :size=&gt;'30x40' %&gt;
 </pre>
 <br>
@@ -1836,7 +1989,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <ul type="disc">
 <li>Attribute values should be surrounded with '<code>"</code>'.
 <pre class="program">&lt;!-- Kwartz fails parsing because attribute value is not surrounded with '"'. --&gt;
-&lt;h1 id="value:title" class=title&gt;title&lt;/h1&gt;
+&lt;h1 id='id:title' class=title&gt;title&lt;/h1&gt;
 </pre>
 </li>
 </ul>

@@ -133,7 +133,7 @@ Kwartz has the following features:
 	{{,{foreach ...}{/foreach},}} in {{<Smarty|http://smarty.php.net/>}} or
 	{{,#foreach(...),}} in {{<Jakarta Velocity|http://jakarta.apache.org/velocity/>}}.
 	These directives break the HTML design of template.
-	Kwartz doesn't break HTML design because Kwartz uses id or title attributes for marking in an HTML template.
+	Kwartz doesn't break HTML design because Kwartz uses id or kw:d attributes for marking in an HTML template.
 	
 	
 .%  Able to handle any text file
@@ -604,28 +604,28 @@ Kwartz doesn't enforce you to adopt a solution.
 
 To embed presentation logic into presentation data, use directives.
 Directive is a command to embed presentation logic into presentation data.
-In Kwartz, 'title' attributes{{(It is able to change attribute name by command-line option '--dattr=name' or configuration option PROPRERTY_DATTR.)}} are used to describe directives.
+In Kwartz, 'kw:d' attributes{{(It is able to change attribute name by command-line option '--dattr=name' or configuration option PROPRERTY_DATTR.)}} are used to describe directives.
 
 The following is an example to use directives.
-.* Directive {{,title="for {{/var/}} in {{/list/}}",}} means to iterate the element.
-.* Directive {{,title="value: {{/expression/}}",}} means to print value of expression as content of the element.
-.* Directive {{,title="dummy:",}} means that the element is a dummy and is not printed out.
+.* Directive {{,kw:d="for {{/var/}} in {{/list/}}",}} means to iterate the element.
+.* Directive {{,kw:d="value: {{/expression/}}",}} means to print value of expression as content of the element.
+.* Directive {{,kw:d="dummy:",}} means that the element is a dummy and is not printed out.
 
 .? Presentation Data(directive1.html):
 .-------------------- directive1.html
 <table>
-  <tr {{*title="for member in @members"*}}>
-    <td {{*title="value: member.name"*}}>foo</td>
+  <tr {{*kw:d="for member in @members"*}}>
+    <td {{*kw:d="value: member.name"*}}>foo</td>
     <td>
       <a href="mailto:<%= member.email %>"
-         title="{{*value: member.email*}}">foo@mai.com</a>
+         kw:d="{{*value: member.email*}}">foo@mai.com</a>
     </td>
   </tr>
-  <tr {{*title="dummy:"*}}>
+  <tr {{*kw:d="dummy:"*}}>
     <td>bar</td>
     <td><a href="mailto:bar@mail.org">bar@mail.org</a></td>
   </tr>
-  <tr {{*title="dummy:"*}}>
+  <tr {{*kw:d="dummy:"*}}>
     <td>baz</td>
     <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
   </tr>
@@ -664,15 +664,15 @@ If the first character of target attribute is a space, Kwartz recognize it as no
 
 .? presentation data (directive2.html)
 .-------------------- directive2.html
-<span {{*title="value: expr1"*}}>foo</span>
-<span {{*title=" value: expr2"*}}>bar</span>
+<span {{*kw:d="value: expr1"*}}>foo</span>
+<span {{*kw:d=" value: expr2"*}}>bar</span>
 .--------------------
 
 .? compile
 .==================== directive2.expected
 $ kwartz directive2.html
 <span>{{*<%= expr1 %>*}}</span>
-<span {{*title="value: expr2"*}}>bar</span>
+<span {{*kw:d="value: expr2"*}}>bar</span>
 .====================
 .#.<<<:! (cd guide.d; kwartz directive2.html)
 
@@ -688,6 +688,75 @@ For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $ite
 See reference manual for details about directives.
 
 
+.$$ Embed Expression in Presentation Data  | embed_expr
+
+It is able to embed expressions in presentation data file in each language format.
+For example, you can use '<%= ... %>' with eRuby, '#{...}' with Ruby, '<?php echo ... ?>' with PHP, and so on.
+
+(Experimental) '@{...}@' and '@!{...}@' are also available as embedded expression notation in all languages.
+The former escapes expression and the latter does not escape expression.
+
+.? presentation data (embed1_eruby.html)
+.-------------------- embed1_eruby.html
+<p class="{{*<%= klass %>*}}">Hello {{*<%=h user %>*}}</p>
+<p class="{{*@!{klass}@*}}">Hello {{*@{user}@*}}</p>
+.--------------------
+
+.? compile
+.==================== embed1_eruby.expected
+$ kwartz -l eruby embed1_eruby.html
+<p class="{{*<%= klass %>*}}">Hello {{*<%=h user %>*}}</p>
+<p class="{{*<%= klass %>*}}">Hello {{*<%=h user %>*}}</p>
+.====================
+
+
+
+
+
+
+
+
+.? presentation data (embed1_ruby.html)
+.-------------------- embed1_ruby.html
+<p class="{{*#{klass}*}}">Hello {{*#{ERB::Util.h user}*}}</p>
+<p class="{{*@!{klass}@*}}">Hello {{*@{user}@*}}</p>
+.--------------------
+
+.? compile
+.==================== embed1_ruby.expected
+$ kwartz -l eruby embed1_ruby.html
+_buf = ""; _buf << "<p class=\"{{*#{klass}*}}\">Hello {{*#{ERB::Util.h user}*}}</p>
+<p class=\""; _buf << {{*(klass).to_s*}}; _buf << "\">Hello "; _buf << {{*ERB::Util.h(user)*}}; _buf << "</p>\n";
+; _buf
+.====================
+
+
+
+
+
+
+
+
+.? presentation data (embed1_php.html)
+.-------------------- embed1_php.html
+<p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
+<p class="{{*@!{$klass}@*}}">Hello {{*@{$user}@*}}</p>
+.--------------------
+
+.? compile
+.==================== embed1_php.expected
+$ kwartz -l eruby embed1_php.html
+<p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
+<p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
+.====================
+
+
+
+
+
+
+
+
 
 .$$ Escape 	| escape
 
@@ -698,7 +767,7 @@ Kwartz supports Automatic-escape and Partial-escape/unescape.
 .* '{{,Value: {{/expr/}},}}' always escapes value even when '{{,-e,}}' is not specified. (Partial-escape)
 .* '{{,VALUE: {{/expr/}},}}' always doesn't escapes value even when '{{,-e,}}' is specified. (Partial-unescape)
 
-.? presentation Data (escape1.html):
+.? presentation data (escape1.html):
 .-------------------- escape1.html
 <tr>
   <td id="mark:val1">foo</td>
@@ -763,9 +832,9 @@ Escape function or method is different for each tareget language.
 'h()' is used in eRuby and 'htmlspecialchars()' in PHP.
 JSTL prints escaped value in default.
 
-Directives {{,title="Value: {{/expr/}}",}}, {{,title="Attr: '{{/name/}}' {{/expr/}}",}}, and {{,title="Append: {{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
+Directives {{,kw:d="Value: {{/expr/}}",}}, {{,kw:d="Attr: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="Append: {{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
 
-Directives {{,title="VALUE: {{/expr/}}:",}}, {{,title="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,title="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+Directives {{,kw:d="VALUE: {{/expr/}}:",}}, {{,kw:d="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
 
 Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
@@ -1116,7 +1185,7 @@ Kwartz regards span tags which contain only directives as dummy tags and delete 
 .-------------------- delspan1.html
 <h1><span {{*id="mark:title"*}}>title</span></h1>
 
-Hello <span {{*title="value: user"*}}>World</span>!
+Hello <span {{*kw:d="value: user"*}}>World</span>!
 .--------------------
 
 .? presentation logic (delspan1.plogic)
@@ -1148,7 +1217,7 @@ The span tags are not removed when they have other attributes.
 .-------------------- delspan2.html
 .#<h1><span {{*id="mark:title"*}}>title</span></h1>
 .#
-Hello <span {{*title="value: user" style="color:black"*}}>World</span>!
+Hello <span {{*kw:d="value: user" style="color:black"*}}>World</span>!
 .--------------------
 
 .#.? presentation logic (delspan2.plogic)
@@ -1552,6 +1621,94 @@ $ kwartz -p document-test.plogic document-test.html
 
 
 
+.$$ Compile Template into a Function of Ruby or PHP	| detail-defun
+
+Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
+
+.? defun1.html : presentation data
+.-------------------- defun1.html
+Hello <span id="user">user</span> !
+<ul id="mark:list">
+  <li id="mark:item">xxx</li>
+</ul>
+.--------------------
+
+.? defun1.plogic : presentation logic
+.-------------------- defun1.plogic
+#user {
+  elem:  @user;
+}
+
+#list {
+  logic: {
+    _stag
+    for item in @list
+      _cont
+    end
+    _etag
+  }
+}
+
+#item {
+  value: item;
+}
+.--------------------
+
+.? Compile
+.==================== defun1.expected
+$ kwartz -l eruby {{*-a defun*}} -p defun1.plogic defun1.html | tee defun1.rb
+{{*module View*}}
+
+  (@@proc_table ||= {})['defun1'] = proc do
+_erbout = ''; _erbout.concat "Hello "; _erbout.concat(( @user ).to_s); _erbout.concat " !\n"
+_erbout.concat "<ul>\n"
+     for item in @list 
+_erbout.concat "  <li>"; _erbout.concat(( item ).to_s); _erbout.concat "</li>\n"
+     end 
+_erbout.concat "</ul>\n"
+_erbout
+  end#proc
+
+  {{*module_function*}}
+  {{*def expand_defun1(context={})*}}
+    if context.is_a?(Hash)
+      hash = context
+      context = Object.new
+      hash.each { |key, val| context.instance_variable_set("@#{key}", val) }
+    end
+    proc_obj = @@proc_table['defun1']
+    context.instance_eval(&proc_obj)
+  {{*end*}}
+
+{{*end*}}
+.====================
+
+
+
+
+
+
+
+
+
+
+The following command-line properties are available with '-a defun'.
+.: --module={{/name/}}
+	Module name. If false or null then no module is used. Default is 'View'.
+.: --verb={{/name/}}
+	Verb. Default is 'expand'.
+.: --method={{/name/}}
+	Method name. Default is "#{verb}_#{basename}".
+
+The following languages are available with '-a defun'.
+.* -l eruby
+.* -l ruby
+.* -l erubis
+.* -l pierubis
+.* -l php
+
+
+
 .$ Ruby on Rails Support  | rails
 
 This section shows how to use Kwartz with Ruby on Rails.
@@ -1745,69 +1902,69 @@ It's more sophisticated than Rails' scaffold generating script.
 
 (Notice: this is experimental feature. The spec may be changed in the future.)
 
-It is able to embed Rails' helper method in title attribute.
+It is able to embed Rails' helper method in kw:d attribute.
 
 .--------------------
 ## text_field, password_field
-<input type="text" size="10" maxsize="20" {{*title="text_field 'user', 'name'"*}}>
+<input type="text" size="10" maxsize="20" {{*kw:d="text_field 'user', 'name'"*}}>
  => <%= text_field 'user', 'name', :size=>10, :maxsize=>20 %>
-<input type="text" name="user[name]" {{*title="text_field :size=>10"*}}>
+<input type="text" name="user[name]" {{*kw:d="text_field :size=>10"*}}>
  => <%= text_field "user", "name", :size=>10 %>
-<input type="text" id="user_name" size="10" {{*title="text_field"*}}>
+<input type="text" id="user_name" size="10" {{*kw:d="text_field"*}}>
  => <%= text_field "user", "name", :size=>10 %>
 
 ## link_to, link_to_remote
-<a href="#" {{*title="link_to :action=>'list'"*}}>Show list</a>
+<a href="#" {{*kw:d="link_to :action=>'list'"*}}>Show list</a>
  => <%= link_to 'Show list', :action=>'list' %>
 
 ## start_link_tag, start_remote_link_tag
-<a href="#" {{*title="start_link_tag :action=>'list'"*}}>Show list</a>
+<a href="#" {{*kw:d="start_link_tag :action=>'list'"*}}>Show list</a>
  => <%= start_link_tag 'action'=>'list' %>Show list</a>
 
 ## mail_to
-<a href="mail:www@example.com" {{*title="mail_to"*}}>admin</a>
+<a href="mail:www@example.com" {{*kw:d="mail_to"*}}>admin</a>
  => <%= mail_to "www@example.com", "admin" %>
 
 ## form_tag
-<form action="show" {{*title="form_tag :id=>2"*}}> ... </form>
+<form action="show" {{*kw:d="form_tag :id=>2"*}}> ... </form>
  => <%= form_tag :action=>"show", :id=>2 %> ... </form>
 
 ## submit_tag
-<input type="submit" value="OK" {{*title="submit_tag"*}}>
+<input type="submit" value="OK" {{*kw:d="submit_tag"*}}>
  => <%= submit_tag "OK" %>
 
 ## text_area
-<textarea cols="30" rows="3" id="user_desc" {{*title="text_area"*}}></textarea>
+<textarea cols="30" rows="3" id="user_desc" {{*kw:d="text_area"*}}></textarea>
  => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
-<textarea cols="30" rows="3" name="user[desc]" {{*title="text_area"*}}></textarea>
+<textarea cols="30" rows="3" name="user[desc]" {{*kw:d="text_area"*}}></textarea>
  => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
 
 ## hidden_field
-<input type="hidden" id="user_id" {{*title="hidden_field"*}}>
+<input type="hidden" id="user_id" {{*kw:d="hidden_field"*}}>
  => <%= hidden_field "user", "id" %>
-<input type="hidden" name="user[id]" {{*title="hidden_field"*}}>
+<input type="hidden" name="user[id]" {{*kw:d="hidden_field"*}}>
  => <%= hidden_field "user", "id" %>
 
 ## check_box
-<input type="checkbox" id="user_chk1" {{*title="check_box"*}}>
+<input type="checkbox" id="user_chk1" {{*kw:d="check_box"*}}>
  => <%= check_box "user", "chk1" %>
-<input type="checkbox" name="user[chk2]" {{*title="check_box"*}}>
+<input type="checkbox" name="user[chk2]" {{*kw:d="check_box"*}}>
  => <%= check_box "user", "chk2" %>
 
 ## radio_button
-<input type="radio" id="user_radio" value="val1" {{*title="radio_button"*}}>
+<input type="radio" id="user_radio" value="val1" {{*kw:d="radio_button"*}}>
  => <%= radio_button "user", "radio", "val1" %>
-<input type="radio" name="user[radio]" value="val2" {{*title="radio_button"*}}>
+<input type="radio" name="user[radio]" value="val2" {{*kw:d="radio_button"*}}>
  => <%= radio_button "user", "radio", "val2" %>
 
 ## select, collection_select, country_select, time_zone_select, date_select, datetime_select
-<select name="user[birth]" {{*title="date_select :start_year=>1970"*}}>
+<select name="user[birth]" {{*kw:d="date_select :start_year=>1970"*}}>
   <option value="2000">2000</option>
 </select>
  => <% date_select "user", "birth", :start_year=>1970 %>
 
 ## image_tag, link_image_to, link_to_image
-<img src="foo.gif" alt="text" width="20" heigth="10" {{*title="image_tag :size=>'30x40'"*}}>
+<img src="foo.gif" alt="text" width="20" heigth="10" {{*kw:d="image_tag :size=>'30x40'"*}}>
  => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
 .--------------------
 
@@ -1913,7 +2070,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 .* Attribute values should be surrounded with '{{,",}}'.
    .--------------------
    <!-- Kwartz fails parsing because attribute value is not surrounded with '"'. -->
-   <h1 id="value:title" class=title>title</h1>
+   <h1 id='id:title' class=title>title</h1>
    .--------------------
 
 
@@ -2015,75 +2172,6 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
 .--------------------
 
-
-
-.#@EOF
-
-
-.$$ Compile Template into a Function of Ruby or PHP	| topic-defun
-
-
-Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
-
-
-Presentation Data (hoge1.html)
-.-------------------- hoge1.html
-Hello @{user}@ !
-<ul id="mark:list">
-  <li id="value:item">xxx</li>
-</ul>
-.--------------------
-
-Presentation Logic (hoge1.plogic)
-.-------------------- hoge1.plogic
-#list {
-  plogic: {
-    @stag;
-    foreach (item in list) {
-      @cont;
-    }
-    @stag;
-  }
-}
-.--------------------
-
-Compile:
-.====================
-$ kwartz -l eruby {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.rb
-$ kwartz -l php   {{*-a defun*}} -p hoge1.plogic hoge1.html > hoge1.php
-.====================
-
-
-Output Script:
-.--------------------
-.<<<:! ./output.rb -l eruby,php -a defun -p guide.d/hoge1.plogic guide.d/hoge1.html
-.--------------------
-
-
-Two functions are defined by '-a defun' option. You can use whichever you prefer.
-.* {{,view_{{/filename/}}(),}} - a function which takes arguments by a hash object.
-.* {{,_view_{{/filename/}}(),}} - a function which takes arguments explicitly.
-
-
-.#Main Program:
-.#.-------------------- hoge-main.php
-.#<?php
-.#// set $args
-.#$user = "Kwartz";
-.#$list = array('Foo', 'Bar', 'Baz');
-.#{{*$args*}} = array('user'=>$user, 'list'=>$list);
-.#
-.#// output
-.#include('hoge.php');
-.#echo {{*expand_hoge1($args)*}};
-.#?>
-.#.--------------------
-
-
-You can specify funtion or method name with the command-line option '{{,-F {{/name/}},}}',
-class or module name with '{{,-C {{/name/}},}}', and arguments with '{{,-A {{/arg1,arg2,.../}},}}'.
-The constant DEFUN_CLASS and DEFUN_FUNCTION in configuration file also enables you to set
-default class/module name and default function/method name.
 
 
 .#@EOF

@@ -196,6 +196,7 @@ module Kwartz
       [ ?N, :notext,       nil ],
       [ ?l, :lang,         'lang name' ],
       [ ?k, :kanji,        'kanji code' ],
+      [ ?a, :action,       'action name' ],
       [ ?r, :requires,     'library name' ],
       [ ?p, :plogics,      'file name' ],
       [ ?P, :pstyle,       'parser style' ],
@@ -336,6 +337,19 @@ module Kwartz
       end
       output = translator.translate(stmt_list)
 
+      ## action
+      if options.action
+        case options.action
+        when 'compile'
+          # nothing
+        when 'defun'
+          basename = File.basename(pdata_filenames.first).sub(/\.\w+/, '')
+          output = Kwartz::Defun.defun(basename, output, lang, properties)
+        else
+          option_error("-#{options.chr(:action)} #{options.aciton}: invalid action.")
+        end
+      end
+
       ## load YAML file and evaluate eRuby script
       if options.yamlfile
         eruby_script = output
@@ -392,6 +406,7 @@ module Kwartz
       sb << "  -e             : alias of '--escape=true'\n"
       sb << "  -l lang        : eruby/ruby/rails/php/jstl/eperl/erubis/pierubis (default 'eruby')\n"
       sb << "  -k kanji       : euc/sjis/utf8 (default nil)\n"
+      sb << "  -a action      : compile/defun (default 'compile')\n"
       sb << "  -r library,... : require libraries\n"
       sb << "  -p plogic,...  : presentation logic files\n"
       sb << "  -i pdata,...   : import presentation data files\n"

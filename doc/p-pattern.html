@@ -201,7 +201,7 @@ Output Script:</div>
 <a name="replace2a.expected"></a>
 <pre class="output">&lt;h1&gt;<strong>&lt;%= title %&gt;</strong>&lt;/h1&gt;
 </pre>
-<p>Kwartz Directive '<code>title="cont: <em>expr</em>"</code>' or '<code>title="value: <em>expr</em>"</code>' lets you to use this pattern without presentation logic file.
+<p>Kwartz Directive '<code>kw:d="cont: <em>expr</em>"</code>' or '<code>kw:d="value: <em>expr</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;h1 <strong>id="value: title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
@@ -264,10 +264,10 @@ World&lt;%     end %&gt;
 
 <a name="default-content-suppliment"></a>
 <h4 class="section3">Suppliement</h4>
-<p>Directive 'title="default: <em>expr</em>"' is for Default Content Pattern.
+<p>Directive 'kw:d="default: <em>expr</em>"' is for Default Content Pattern.
 </p>
 <a name="replace5a.pdata"></a>
-<pre class="program">Hello &lt;span <strong>title="default: user"</strong>&gt;World&lt;/span&gt;!
+<pre class="program">Hello &lt;span <strong>kw:d="default: user"</strong>&gt;World&lt;/span&gt;!
 </pre>
 <p>The output is:
 </p>
@@ -738,7 +738,7 @@ This pattern is very useful for all these situations.
 Presentation Data:</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="mark:list"</strong>&gt;
-   &lt;td title="value: item"&gt;item&lt;/td&gt;
+   &lt;td kw:d="value: item"&gt;item&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -771,12 +771,12 @@ Output Script:</div>
 
 <a name="iterate-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p>Kwartz directive <code>title="for <em>item</em> in <em>list</em>"</code> lets you to use this pattern without presentation logic file.
+<p>Kwartz directive <code>kw:d="for <em>item</em> in <em>list</em>"</code> lets you to use this pattern without presentation logic file.
 See reference manual for details.
 </p>
 <pre class="program">&lt;table&gt;
-  &lt;tr <strong>title="for item in list"</strong>&gt;
-    &lt;td title="value: item"&gt;item&lt;/td&gt;
+  &lt;tr <strong>kw:d="for item in list"</strong>&gt;
+    &lt;td kw:d="value: item"&gt;item&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -806,8 +806,8 @@ This pattern is named 'Iterate Content' pattern.
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;dl <strong>id="mark:list"</strong>&gt;
-  &lt;dt title="value: item.text"&gt;text&lt;/dt&gt;
-  &lt;dd title="value: item.desc"&gt;description&lt;/dd&gt;
+  &lt;dt kw:d="value: item.text"&gt;text&lt;/dt&gt;
+  &lt;dd kw:d="value: item.desc"&gt;description&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <a name="iterate_cont.plogic"></a>
@@ -838,12 +838,12 @@ Output Script:</div>
 
 <a name="iterate-cont-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p>Kwartz directive <code>title="list <em>item</em> in <em>list</em>"</code> lets you to use this pattern without presentation logic file.
+<p>Kwartz directive <code>kw:d="list <em>item</em> in <em>list</em>"</code> lets you to use this pattern without presentation logic file.
 See reference manual for details.
 </p>
-<pre class="program">&lt;dl <strong>title="list item in items"</strong>&gt;
-  &lt;dt title="value: item.text"&gt;text&lt;/dt&gt;
-  &lt;dd title="value: item.desc"&gt;description&lt;/dd&gt;
+<pre class="program">&lt;dl <strong>kw:d="list item in items"</strong>&gt;
+  &lt;dt kw:d="value: item.text"&gt;text&lt;/dt&gt;
+  &lt;dd kw:d="value: item.desc"&gt;description&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <br>
@@ -913,13 +913,13 @@ Output Script:</div>
 
 <a name="select-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p> Kwartz directive '<code>title="if <em>condition</em>"</code>', '<code>title="elsif <em>condition</em>"</code>',
- and '<code>title="else"</code>' let you to use this pattern without presentation logic file.
+<p> Kwartz directive '<code>kw:d="if <em>condition</em>"</code>', '<code>kw:d="elsif <em>condition</em>"</code>',
+ and '<code>kw:d="else"</code>' let you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;div&gt;
-  &lt;span style="color:red"   <strong>title="if status=='error'"</strong>&gt;ERROR!&lt;/span&gt;
-  &lt;span style="color:blue"  <strong>title="elsif status=='warning'"</strong>&gt;Warning:&lt;/span&gt;
-  &lt;span style="color:black" <strong>title="else"</strong>&gt;No error.&lt;/span&gt;
+  &lt;span style="color:red"   <strong>kw:d="if status=='error'"</strong>&gt;ERROR!&lt;/span&gt;
+  &lt;span style="color:blue"  <strong>kw:d="elsif status=='warning'"</strong>&gt;Warning:&lt;/span&gt;
+  &lt;span style="color:black" <strong>kw:d="else"</strong>&gt;No error.&lt;/span&gt;
 &lt;/div&gt;
 </pre>
 <br>

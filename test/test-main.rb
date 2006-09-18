@@ -21,7 +21,8 @@ YAML_DATA     = ydoc['yamldata']
 YAML_OUTPUT   = ydoc['yamloutput']
 NOTEXT_ERUBY  = ydoc['notext*']['eruby']
 NOTEXT_RUBY   = ydoc['notext*']['ruby']
-
+DEFUN_ERUBY   = ydoc['defun*']['eruby']
+DEFUN_PHP     = ydoc['defun*']['php']
 
 class File
   def self.write(filename, content)
@@ -313,6 +314,26 @@ END
   end
 
 
+  def test_defun1   # -a defun
+    @argv = %w[-a defun -p defun1 defun1.pdata]
+    @pdata = PDATA
+    @plogic = ERUBY_PLOGIC
+    @lang = 'eruby'
+    @expected = DEFUN_ERUBY
+    _test
+  end
+
+
+  def test_defun2   # -a defun -l php
+    @argv = %w[-a defun -l php -p defun2 defun2.pdata]
+    @pdata = PDATA
+    @plogic = PHP_PLOGIC
+    @lang = 'php'
+    @expected = DEFUN_PHP
+    _test
+  end
+
+
   def test_notext  # -N
     @argv = %w[-N -p notext notext.pdata]
     @pdata = PDATA
@@ -329,6 +350,7 @@ END
     tuples = [
       [?l, 'lang name'],
       [?k, 'kanji code'],
+      [?a, 'action name'],
       [?r, 'library name'],
       [?p, 'file name'],
       [?P, 'parser style'],

@@ -1483,9 +1483,9 @@ or PROPERTY_ESCAPE is true in configuration file.
 
 .? presentation data (ex-elem.pdata)
 .--------------------
-<b {{*title="elem: expr"*}}>foo</b>
-<b {{*title="Elem: expr"*}}>foo</b>
-<b {{*title="ELEM: expr"*}}>foo</b>
+<b {{*kw:d="elem: expr"*}}>foo</b>
+<b {{*kw:d="Elem: expr"*}}>foo</b>
+<b {{*kw:d="ELEM: expr"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1501,9 +1501,9 @@ $ kwartz -l eruby ex-elem.pdata
 
 .? presentation data (ex-elem.pdata)
 .--------------------
-<b {{*title="elem($expr)"*}}>foo</b>
-<b {{*title="Elem($expr)"*}}>foo</b>
-<b {{*title="ELEM($expr)"*}}>foo</b>
+<b {{*kw:d="elem($expr)"*}}>foo</b>
+<b {{*kw:d="Elem($expr)"*}}>foo</b>
+<b {{*kw:d="ELEM($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1519,9 +1519,9 @@ $ kwartz -l php ex-elem.pdata
 
 .? presentation data (ex-elem.pdata)
 .--------------------
-<b {{*title="elem(expr)"*}}>foo</b>
-<b {{*title="Elem(expr)"*}}>foo</b>
-<b {{*title="ELEM(expr)"*}}>foo</b>
+<b {{*kw:d="elem(expr)"*}}>foo</b>
+<b {{*kw:d="Elem(expr)"*}}>foo</b>
+<b {{*kw:d="ELEM(expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1537,9 +1537,9 @@ $ kwartz -l jstl ex-elem.pdata
 
 .? presentation data (ex-elem.pdata)
 .--------------------
-<b {{*title="elem($expr)"*}}>foo</b>
-<b {{*title="Elem($expr)"*}}>foo</b>
-<b {{*title="ELEM($expr)"*}}>foo</b>
+<b {{*kw:d="elem($expr)"*}}>foo</b>
+<b {{*kw:d="Elem($expr)"*}}>foo</b>
+<b {{*kw:d="ELEM($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1568,9 +1568,9 @@ or PROPERTY_ESCAPE is true in configuration file.
 
 .? presentation data (ex-stag.pdata)
 .--------------------
-<b {{*title="stag: expr"*}}>foo</b>
-<b {{*title="Stag: expr"*}}>foo</b>
-<b {{*title="STAG: expr"*}}>foo</b>
+<b {{*kw:d="stag: expr"*}}>foo</b>
+<b {{*kw:d="Stag: expr"*}}>foo</b>
+<b {{*kw:d="STAG: expr"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1586,9 +1586,9 @@ $ kwartz -l eruby ex-stag.pdata
 
 .? presentation data (ex-stag.pdata)
 .--------------------
-<b {{*title="stag($expr)"*}}>foo</b>
-<b {{*title="Stag($expr)"*}}>foo</b>
-<b {{*title="STAG($expr)"*}}>foo</b>
+<b {{*kw:d="stag($expr)"*}}>foo</b>
+<b {{*kw:d="Stag($expr)"*}}>foo</b>
+<b {{*kw:d="STAG($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1604,9 +1604,9 @@ $ kwartz -l php ex-stag.pdata
 
 .? presentation data (ex-stag.pdata)
 .--------------------
-<b {{*title="stag(expr)"*}}>foo</b>
-<b {{*title="Stag(expr)"*}}>foo</b>
-<b {{*title="STAG(expr)"*}}>foo</b>
+<b {{*kw:d="stag(expr)"*}}>foo</b>
+<b {{*kw:d="Stag(expr)"*}}>foo</b>
+<b {{*kw:d="STAG(expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1622,9 +1622,9 @@ $ kwartz -l jstl ex-stag.pdata
 
 .? presentation data (ex-stag.pdata)
 .--------------------
-<b {{*title="stag($expr)"*}}>foo</b>
-<b {{*title="Stag($expr)"*}}>foo</b>
-<b {{*title="STAG($expr)"*}}>foo</b>
+<b {{*kw:d="stag($expr)"*}}>foo</b>
+<b {{*kw:d="Stag($expr)"*}}>foo</b>
+<b {{*kw:d="STAG($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1653,9 +1653,9 @@ or PROPERTY_ESCAPE is true in configuration file.
 
 .? presentation data (ex-etag.pdata)
 .--------------------
-<b {{*title="etag: expr"*}}>foo</b>
-<b {{*title="Etag: expr"*}}>foo</b>
-<b {{*title="ETAG: expr"*}}>foo</b>
+<b {{*kw:d="etag: expr"*}}>foo</b>
+<b {{*kw:d="Etag: expr"*}}>foo</b>
+<b {{*kw:d="ETAG: expr"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1671,9 +1671,9 @@ $ kwartz -l eruby ex-etag.pdata
 
 .? presentation data (ex-etag.pdata)
 .--------------------
-<b {{*title="etag($expr)"*}}>foo</b>
-<b {{*title="Etag($expr)"*}}>foo</b>
-<b {{*title="ETAG($expr)"*}}>foo</b>
+<b {{*kw:d="etag($expr)"*}}>foo</b>
+<b {{*kw:d="Etag($expr)"*}}>foo</b>
+<b {{*kw:d="ETAG($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1689,9 +1689,9 @@ $ kwartz -l php ex-etag.pdata
 
 .? presentation data (ex-etag.pdata)
 .--------------------
-<b {{*title="etag(expr)"*}}>foo</b>
-<b {{*title="Etag(expr)"*}}>foo</b>
-<b {{*title="ETAG(expr)"*}}>foo</b>
+<b {{*kw:d="etag(expr)"*}}>foo</b>
+<b {{*kw:d="Etag(expr)"*}}>foo</b>
+<b {{*kw:d="ETAG(expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1707,9 +1707,9 @@ $ kwartz -l jstl ex-etag.pdata
 
 .? presentation data (ex-etag.pdata)
 .--------------------
-<b {{*title="etag($expr)"*}}>foo</b>
-<b {{*title="Etag($expr)"*}}>foo</b>
-<b {{*title="ETAG($expr)"*}}>foo</b>
+<b {{*kw:d="etag($expr)"*}}>foo</b>
+<b {{*kw:d="Etag($expr)"*}}>foo</b>
+<b {{*kw:d="ETAG($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1738,9 +1738,9 @@ or PROPERTY_ESCAPE is true in configuration file.
 
 .? presentation data (ex-cont.pdata)
 .--------------------
-<b {{*title="cont: expr"*}}>foo</b>
-<b {{*title="Cont: expr"*}}>foo</b>
-<b {{*title="CONT: expr"*}}>foo</b>
+<b {{*kw:d="cont: expr"*}}>foo</b>
+<b {{*kw:d="Cont: expr"*}}>foo</b>
+<b {{*kw:d="CONT: expr"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1756,9 +1756,9 @@ $ kwartz -l eruby ex-cont.pdata
 
 .? presentation data (ex-cont.pdata)
 .--------------------
-<b {{*title="cont($expr)"*}}>foo</b>
-<b {{*title="Cont($expr)"*}}>foo</b>
-<b {{*title="CONT($expr)"*}}>foo</b>
+<b {{*kw:d="cont($expr)"*}}>foo</b>
+<b {{*kw:d="Cont($expr)"*}}>foo</b>
+<b {{*kw:d="CONT($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1774,9 +1774,9 @@ $ kwartz -l php ex-cont.pdata
 
 .? presentation data (ex-cont.pdata)
 .--------------------
-<b {{*title="cont(expr)"*}}>foo</b>
-<b {{*title="Cont(expr)"*}}>foo</b>
-<b {{*title="CONT(expr)"*}}>foo</b>
+<b {{*kw:d="cont(expr)"*}}>foo</b>
+<b {{*kw:d="Cont(expr)"*}}>foo</b>
+<b {{*kw:d="CONT(expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1792,9 +1792,9 @@ $ kwartz -l jstl ex-cont.pdata
 
 .? presentation data (ex-cont.pdata)
 .--------------------
-<b {{*title="cont($expr)"*}}>foo</b>
-<b {{*title="Cont($expr)"*}}>foo</b>
-<b {{*title="CONT($expr)"*}}>foo</b>
+<b {{*kw:d="cont($expr)"*}}>foo</b>
+<b {{*kw:d="Cont($expr)"*}}>foo</b>
+<b {{*kw:d="CONT($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1820,9 +1820,9 @@ $ kwartz -l eperl ex-cont.pdata
 
 .? presentation data (ex-value.pdata)
 .--------------------
-<b {{*title="value: expr"*}}>foo</b>
-<b {{*title="Value: expr"*}}>foo</b>
-<b {{*title="VALUE: expr"*}}>foo</b>
+<b {{*kw:d="value: expr"*}}>foo</b>
+<b {{*kw:d="Value: expr"*}}>foo</b>
+<b {{*kw:d="VALUE: expr"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1838,9 +1838,9 @@ $ kwartz -l eruby ex-value.pdata
 
 .? presentation data (ex-value.pdata)
 .--------------------
-<b {{*title="value($expr)"*}}>foo</b>
-<b {{*title="Value($expr)"*}}>foo</b>
-<b {{*title="VALUE($expr)"*}}>foo</b>
+<b {{*kw:d="value($expr)"*}}>foo</b>
+<b {{*kw:d="Value($expr)"*}}>foo</b>
+<b {{*kw:d="VALUE($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1856,9 +1856,9 @@ $ kwartz -l php ex-value.pdata
 
 .? presentation data (ex-value.pdata)
 .--------------------
-<b {{*title="value(expr)"*}}>foo</b>
-<b {{*title="Value(expr)"*}}>foo</b>
-<b {{*title="VALUE(expr)"*}}>foo</b>
+<b {{*kw:d="value(expr)"*}}>foo</b>
+<b {{*kw:d="Value(expr)"*}}>foo</b>
+<b {{*kw:d="VALUE(expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1874,9 +1874,9 @@ $ kwartz -l jstl ex-value.pdata
 
 .? presentation data (ex-value.pdata)
 .--------------------
-<b {{*title="value($expr)"*}}>foo</b>
-<b {{*title="Value($expr)"*}}>foo</b>
-<b {{*title="VALUE($expr)"*}}>foo</b>
+<b {{*kw:d="value($expr)"*}}>foo</b>
+<b {{*kw:d="Value($expr)"*}}>foo</b>
+<b {{*kw:d="VALUE($expr)"*}}>foo</b>
 .--------------------
 
 .? compile
@@ -1901,13 +1901,13 @@ $ kwartz -l eperl ex-value.pdata
 
 .? presentation data (ex-foreach.pdata)
 .--------------------
-<tr {{*title="for item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="for item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 
-<tr {{*title="for key,value in hash"*}}>
-  <td title="cont key">key</td>
-  <td title="cont value">value</td>
+<tr {{*kw:d="for key,value in hash"*}}>
+  <td kw:d="cont key">key</td>
+  <td kw:d="cont value">value</td>
 </tr>
 .--------------------
 
@@ -1933,13 +1933,13 @@ $ kwartz -l eruby ex-foreach.pdata
 
 .? presentation data (ex-foreach.pdata)
 .--------------------
-<tr {{*title="foreach($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="foreach($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="foreach($hash as $key=>$value)"*}}>
-  <td title="cont($key)">key</td>
-  <td title="cont($value)">value</td>
+<tr {{*kw:d="foreach($hash as $key=>$value)"*}}>
+  <td kw:d="cont($key)">key</td>
+  <td kw:d="cont($value)">value</td>
 </tr>
 .--------------------
 
@@ -1965,17 +1965,17 @@ $ kwartz -l php ex-foreach.pdata
 
 .? presentation data (ex-foreach.pdata)
 .--------------------
-<tr {{*title="for(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="for(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 
-<tr {{*title="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
-  <td title="cont(status.index)">1</td>
-  <td title="cont(v)"></td>
+<tr {{*kw:d="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
+  <td kw:d="cont(status.index)">1</td>
+  <td kw:d="cont(v)"></td>
 </tr>
 
-<tr {{*title="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
-  <td title="cont(n)">key</td>
+<tr {{*kw:d="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
+  <td kw:d="cont(n)">key</td>
 </tr>
 .--------------------
 
@@ -2007,13 +2007,13 @@ $ kwartz -l jstl ex-foreach.pdata
 
 .? presentation data (ex-foreach.pdata)
 .--------------------
-<tr {{*title="foreach($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="foreach($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="foreach($key,$value in %hash)"*}}>
-  <td title="cont($key)">key</td>
-  <td title="cont($value)">value</td>
+<tr {{*kw:d="foreach($key,$value in %hash)"*}}>
+  <td kw:d="cont($key)">key</td>
+  <td kw:d="cont($value)">value</td>
 </tr>
 .--------------------
 
@@ -2049,13 +2049,13 @@ $ kwartz -l eperl ex-foreach.pdata
 
 .? presentation data (ex-list.pdata)
 .--------------------
-<tr {{*title="list item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="list item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 
-<tr {{*title="list key,value in hash"*}}>
-  <td title="cont key">key</td>
-  <td title="cont value">value</td>
+<tr {{*kw:d="list key,value in hash"*}}>
+  <td kw:d="cont key">key</td>
+  <td kw:d="cont value">value</td>
 </tr>
 .--------------------
 
@@ -2081,13 +2081,13 @@ $ kwartz -l eruby ex-list.pdata
 
 .? presentation data (ex-list.pdata)
 .--------------------
-<tr {{*title="list($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="list($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="list($hash as $key=>$value)"*}}>
-  <td title="cont($key)">key</td>
-  <td title="cont($value)">value</td>
+<tr {{*kw:d="list($hash as $key=>$value)"*}}>
+  <td kw:d="cont($key)">key</td>
+  <td kw:d="cont($value)">value</td>
 </tr>
 .--------------------
 
@@ -2113,8 +2113,8 @@ $ kwartz -l php ex-list.pdata
 
 .? presentation data (ex-list.pdata)
 .--------------------
-<tr {{*title="list(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="list(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 .--------------------
 
@@ -2133,13 +2133,13 @@ $ kwartz -l jstl ex-list.pdata
 
 .? presentation data (ex-list.pdata)
 .--------------------
-<tr {{*title="list($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="list($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="list($key,$value in %hash)"*}}>
-  <td title="cont($key)">key</td>
-  <td title="cont($value)">value</td>
+<tr {{*kw:d="list($key,$value in %hash)"*}}>
+  <td kw:d="cont($key)">key</td>
+  <td kw:d="cont($value)">value</td>
 </tr>
 .--------------------
 
@@ -2176,12 +2176,12 @@ $ kwartz -l eperl ex-list.pdata
 
 .? presentation data (ex-foreach_ctr.pdata)
 .--------------------
-<tr {{*title="For item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="For item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 
-<tr {{*title="List item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="List item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 .--------------------
 
@@ -2210,12 +2210,12 @@ $ kwartz -l eruby ex-foreach_ctr.pdata
 
 .? presentation data (ex-foreach_ctr.pdata)
 .--------------------
-<tr {{*title="Foreach($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="Foreach($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="List($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="List($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 .--------------------
 
@@ -2244,12 +2244,12 @@ $ kwartz -l php ex-foreach_ctr.pdata
 
 .? presentation data (ex-foreach_ctr.pdata)
 .--------------------
-<tr {{*title="For(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="For(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 
-<tr {{*title="List(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="List(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 .--------------------
 
@@ -2276,12 +2276,12 @@ $ kwartz -l jstl ex-foreach_ctr.pdata
 
 .? presentation data (ex-foreach_ctr.pdata)
 .--------------------
-<tr {{*title="Foreach($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="Foreach($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="List($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="List($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 .--------------------
 
@@ -2323,12 +2323,12 @@ or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
 
 .? presentation data (ex-foreach_tgl.pdata)
 .--------------------
-<tr {{*title="FOR item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="FOR item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 
-<tr {{*title="LIST item in list"*}}>
-  <td title="cont item">foo</td>
+<tr {{*kw:d="LIST item in list"*}}>
+  <td kw:d="cont item">foo</td>
 </tr>
 .--------------------
 
@@ -2359,12 +2359,12 @@ $ kwartz -l eruby ex-foreach_tgl.pdata
 
 .? presentation data (ex-foreach_tgl.pdata)
 .--------------------
-<tr {{*title="FOREACH($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="FOREACH($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="LIST($list as $item)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="LIST($list as $item)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 .--------------------
 
@@ -2395,12 +2395,12 @@ $ kwartz -l php ex-foreach_tgl.pdata
 
 .? presentation data (ex-foreach_tgl.pdata)
 .--------------------
-<tr {{*title="FOR(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="FOR(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 
-<tr {{*title="LIST(item: list)"*}}>
-  <td title="cont(item)">foo</td>
+<tr {{*kw:d="LIST(item: list)"*}}>
+  <td kw:d="cont(item)">foo</td>
 </tr>
 .--------------------
 
@@ -2429,12 +2429,12 @@ $ kwartz -l jstl ex-foreach_tgl.pdata
 
 .? presentation data (ex-foreach_tgl.pdata)
 .--------------------
-<tr {{*title="FOREACH($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="FOREACH($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 
-<tr {{*title="LIST($item in @list)"*}}>
-  <td title="cont($item)">foo</td>
+<tr {{*kw:d="LIST($item in @list)"*}}>
+  <td kw:d="cont($item)">foo</td>
 </tr>
 .--------------------
 
@@ -2478,12 +2478,12 @@ JSTL doesn't support these directives because JSTL doesn't have
 
 .? presentation data (ex-while.pdata)
 .--------------------
-<tr {{*title="while (item = dbh.fetch) != nil"*}}>
-  <td title="cont item.name">foo</td>
+<tr {{*kw:d="while (item = dbh.fetch) != nil"*}}>
+  <td kw:d="cont item.name">foo</td>
 </tr>
 
-<tr {{*title="loop (item = dbh.fetch) != nil"*}}>
-  <td title="cont item.name">foo</td>
+<tr {{*kw:d="loop (item = dbh.fetch) != nil"*}}>
+  <td kw:d="cont item.name">foo</td>
 </tr>
 .--------------------
 
@@ -2508,12 +2508,12 @@ $ kwartz -l eruby ex-while.pdata
 
 .? presentation data (ex-while.pdata)
 .--------------------
-<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
-  <td title="cont($item->name)">foo</td>
+<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+  <td kw:d="cont($item->name)">foo</td>
 </tr>
 
-<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
-  <td title="cont($item->name)">foo</td>
+<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+  <td kw:d="cont($item->name)">foo</td>
 </tr>
 .--------------------
 
@@ -2552,12 +2552,12 @@ $ kwartz -l jstl ex-while.pdata
 
 .? presentation data (ex-while.pdata)
 .--------------------
-<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
-  <td title="cont($item->name)">foo</td>
+<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+  <td kw:d="cont($item->name)">foo</td>
 </tr>
 
-<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
-  <td title="cont($item->name)">foo</td>
+<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+  <td kw:d="cont($item->name)">foo</td>
 </tr>
 .--------------------
 
@@ -2594,14 +2594,14 @@ start-tag of 'elseif'/'else' directive.
 
 .? presentation data (ex-if.pdata)
 .--------------------
-<div {{*title="if status=='error'"*}}>
-  <p class="error" title="cont mesg">error</p>
+<div {{*kw:d="if status=='error'"*}}>
+  <p class="error" kw:d="cont mesg">error</p>
 </div>
-<div {{*title="elsif status=='warning'"*}}>
-  <p class="warning" title="cont mesg">waring</p>
+<div {{*kw:d="elsif status=='warning'"*}}>
+  <p class="warning" kw:d="cont mesg">waring</p>
 </div>
-<div {{*title="else"*}}>
-  <p title="cont mesg">mesg</p>
+<div {{*kw:d="else"*}}>
+  <p kw:d="cont mesg">mesg</p>
 </div>
 .--------------------
 
@@ -2628,14 +2628,14 @@ $ kwartz -l eruby ex-if.pdata
 
 .? presentation data (ex-if.pdata)
 .--------------------
-<div {{*title="if($status=='error')"*}}>
-  <p class="error" title="cont($mesg)">error</p>
+<div {{*kw:d="if($status=='error')"*}}>
+  <p class="error" kw:d="cont($mesg)">error</p>
 </div>
-<div {{*title="elseif($status=='warning')"*}}>
-  <p class="warning" title="cont($mesg)">waring</p>
+<div {{*kw:d="elseif($status=='warning')"*}}>
+  <p class="warning" kw:d="cont($mesg)">waring</p>
 </div>
-<div {{*title="else"*}}>
-  <p title="cont($mesg)">mesg</p>
+<div {{*kw:d="else"*}}>
+  <p kw:d="cont($mesg)">mesg</p>
 </div>
 .--------------------
 
@@ -2662,14 +2662,14 @@ $ kwartz -l php ex-if.pdata
 
 .? presentation data (ex-if.pdata)
 .--------------------
-<div {{*title="if(status=='error')"*}}>
-  <p class="error" title="cont(mesg)">error</p>
+<div {{*kw:d="if(status=='error')"*}}>
+  <p class="error" kw:d="cont(mesg)">error</p>
 </div>
-<div {{*title="elseif(status=='warning')"*}}>
-  <p class="warning" title="cont(mesg)">waring</p>
+<div {{*kw:d="elseif(status=='warning')"*}}>
+  <p class="warning" kw:d="cont(mesg)">waring</p>
 </div>
-<div {{*title="else"*}}>
-  <p title="cont(mesg)">mesg</p>
+<div {{*kw:d="else"*}}>
+  <p kw:d="cont(mesg)">mesg</p>
 </div>
 .--------------------
 
@@ -2696,14 +2696,14 @@ $ kwartz -l jstl ex-if.pdata
 
 .? presentation data (ex-if.pdata)
 .--------------------
-<div {{*title="if($status=='error')"*}}>
-  <p class="error" title="cont($mesg)">error</p>
+<div {{*kw:d="if($status=='error')"*}}>
+  <p class="error" kw:d="cont($mesg)">error</p>
 </div>
-<div {{*title="elsif($status=='warning')"*}}>
-  <p class="warning" title="cont($mesg)">waring</p>
+<div {{*kw:d="elsif($status=='warning')"*}}>
+  <p class="warning" kw:d="cont($mesg)">waring</p>
 </div>
-<div {{*title="else"*}}>
-  <p title="cont($mesg)">mesg</p>
+<div {{*kw:d="else"*}}>
+  <p kw:d="cont($mesg)">mesg</p>
 </div>
 .--------------------
 
@@ -2739,8 +2739,8 @@ $ kwartz -l eperl ex-if.pdata
 
 .? presentation data (ex-set.pdata)
 .--------------------
-<tr {{*title="set color=i%2==0 ? 'red' : 'blue'"*}}>
- <td title="cont: color">red</td>
+<tr {{*kw:d="set color=i%2==0 ? 'red' : 'blue'"*}}>
+ <td kw:d="cont: color">red</td>
 </tr>
 .--------------------
 
@@ -2758,8 +2758,8 @@ $ kwartz -l eruby ex-set.pdata
 
 .? presentation data (ex-set.pdata)
 .--------------------
-<tr {{*title="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
- <td title="cont($color)">red</td>
+<tr {{*kw:d="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
+ <td kw:d="cont($color)">red</td>
 </tr>
 .--------------------
 
@@ -2777,8 +2777,8 @@ $ kwartz -l php ex-set.pdata
 
 .? presentation data (ex-set.pdata)
 .--------------------
-<tr {{*title="set(color=i%2==0 ? 'red' : 'blue')"*}}>
- <td title="cont(color)">red</td>
+<tr {{*kw:d="set(color=i%2==0 ? 'red' : 'blue')"*}}>
+ <td kw:d="cont(color)">red</td>
 </tr>
 .--------------------
 
@@ -2796,8 +2796,8 @@ $ kwartz -l jstl ex-set.pdata
 
 .? presentation data (ex-set.pdata)
 .--------------------
-<tr {{*title="set($color=i%2==0 ? 'red' : 'blue')"*}}>
- <td title="cont($color)">red</td>
+<tr {{*kw:d="set($color=i%2==0 ? 'red' : 'blue')"*}}>
+ <td kw:d="cont($color)">red</td>
 </tr>
 .--------------------
 
@@ -2829,7 +2829,7 @@ Id attribute is equivalent to 'mark' directive if other direcitve is not specifi
 .? presentation data (ex-mark.pdata)
 .--------------------
 <ul {{*id="mark:list"*}}>
- <li {{*title="id: item"*}}>foo</li>
+ <li {{*kw:d="id: item"*}}>foo</li>
 </ul>
 .--------------------
 
@@ -2847,7 +2847,7 @@ $ kwartz -l eruby ex-mark.pdata
 .? presentation data (ex-mark.pdata)
 .--------------------
 <ul {{*id="mark:list"*}}>
- <li {{*title="id(item)"*}}>foo</li>
+ <li {{*kw:d="id(item)"*}}>foo</li>
 </ul>
 .--------------------
 
@@ -2865,7 +2865,7 @@ $ kwartz -l php ex-mark.pdata
 .? presentation data (ex-mark.pdata)
 .--------------------
 <ul {{*id="mark:list"*}}>
- <li {{*title="id(item)"*}}>foo</li>
+ <li {{*kw:d="id(item)"*}}>foo</li>
 </ul>
 .--------------------
 
@@ -2883,7 +2883,7 @@ $ kwartz -l jstl ex-mark.pdata
 .? presentation data (ex-mark.pdata)
 .--------------------
 <ul {{*id="mark:list"*}}>
- <li {{*title="id(item)"*}}>foo</li>
+ <li {{*kw:d="id(item)"*}}>foo</li>
 </ul>
 .--------------------
 
@@ -2916,8 +2916,8 @@ and available with other directive.
 .? presentation data (ex-attr.pdata)
 .--------------------
 <tr class="odd"
-    title="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
- <td title="cont v.name">foo</td>
+    kw:d="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
+ <td kw:d="cont v.name">foo</td>
 </tr>
 .--------------------
 
@@ -2940,8 +2940,8 @@ $ kwartz -l eruby ex-attr.pdata
 .? presentation data (ex-attr.pdata)
 .--------------------
 <tr class="odd"
-    title="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
- <td title="cont($v->name)">foo</td>
+    kw:d="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+ <td kw:d="cont($v->name)">foo</td>
 </tr>
 .--------------------
 
@@ -2964,8 +2964,8 @@ $ kwartz -l php ex-attr.pdata
 .? presentation data (ex-attr.pdata)
 .--------------------
 <tr class="odd"
-    title="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
- <td title="cont(v.name)">foo</td>
+    kw:d="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
+ <td kw:d="cont(v.name)">foo</td>
 </tr>
 .--------------------
 
@@ -2987,8 +2987,8 @@ $ kwartz -l jstl ex-attr.pdata
 .? presentation data (ex-attr.pdata)
 .--------------------
 <tr class="odd"
-    title="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
- <td title="cont($v->name)">foo</td>
+    kw:d="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+ <td kw:d="cont($v->name)">foo</td>
 </tr>
 .--------------------
 
@@ -3026,7 +3026,7 @@ and available with other directive.
 .? presentation data (ex-append.pdata)
 .--------------------
 <input type="checkbox"
-   {{*title="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
+   {{*kw:d="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
 .--------------------
 
 .? compile
@@ -3041,7 +3041,7 @@ $ kwartz -l eruby ex-append.pdata
 .? presentation data (ex-append.pdata)
 .--------------------
 <input type="checkbox"
-   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
 .--------------------
 
 .? compile
@@ -3056,7 +3056,7 @@ $ kwartz -l php ex-append.pdata
 .? presentation data (ex-append.pdata)
 .--------------------
 <input type="checkbox"
-   {{*title="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
+   {{*kw:d="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
 .--------------------
 
 .? compile
@@ -3071,7 +3071,7 @@ $ kwartz -l jstl ex-append.pdata
 .? presentation data (ex-append.pdata)
 .--------------------
 <input type="checkbox"
-   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
 .--------------------
 
 .? compile
@@ -3100,7 +3100,7 @@ It is very useful when preview the HTML design in browser.
 <ul>
   <li>foo</li>
   <li {{*id="dummy:d1"*}}>bar</li>
-  <li {{*title="dummy:"*}}>baz</li>
+  <li {{*kw:d="dummy:"*}}>baz</li>
 </ul>
 .--------------------
 
@@ -3120,7 +3120,7 @@ $ kwartz -l eruby ex-dummy.pdata
 <ul>
   <li>foo</li>
   <li {{*id="dummy:d1"*}}>bar</li>
-  <li {{*title="dummy()"*}}>baz</li>
+  <li {{*kw:d="dummy()"*}}>baz</li>
 </ul>
 .--------------------
 
@@ -3140,7 +3140,7 @@ $ kwartz -l php ex-dummy.pdata
 <ul>
   <li>foo</li>
   <li {{*id="dummy:d1"*}}>bar</li>
-  <li {{*title="dummy()"*}}>baz</li>
+  <li {{*kw:d="dummy()"*}}>baz</li>
 </ul>
 .--------------------
 
@@ -3160,7 +3160,7 @@ $ kwartz -l jstl ex-dummy.pdata
 <ul>
   <li>foo</li>
   <li {{*id="dummy:d1"*}}>bar</li>
-  <li {{*title="dummy()"*}}>baz</li>
+  <li {{*kw:d="dummy()"*}}>baz</li>
 </ul>
 .--------------------
 
@@ -3191,7 +3191,7 @@ or PROPERTY_ESCAPE is true in configuration file.
 
 .? presentation data (ex-default.pdata)
 .--------------------
-name: <em {{*title="default: user"*}}>Guest</em>
+name: <em {{*kw:d="default: user"*}}>Guest</em>
 .--------------------
 
 .? compile
@@ -3205,7 +3205,7 @@ name: <em>{{*<% if (user) && !(user).to_s.empty? then %><%= user %><% else %>Gue
 
 .? presentation data (ex-default.pdata)
 .--------------------
-name: <em {{*title="default($user)"*}}>Guest</em>
+name: <em {{*kw:d="default($user)"*}}>Guest</em>
 .--------------------
 
 .? compile
@@ -3219,7 +3219,7 @@ name: <em>{{*<?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?ph
 
 .? presentation data (ex-default.pdata)
 .--------------------
-name: <em {{*title="default(user)"*}}>Guest</em>
+name: <em {{*kw:d="default(user)"*}}>Guest</em>
 .--------------------
 
 .? compile
@@ -3233,7 +3233,7 @@ name: <em>{{*<c:out value="${user}" default="Guest"/>*}}</em>
 
 .? presentation data (ex-default.pdata)
 .--------------------
-name: <em {{*title="default($user)"*}}>Guest</em>
+name: <em {{*kw:d="default($user)"*}}>Guest</em>
 .--------------------
 
 .? compile
@@ -3333,22 +3333,22 @@ or content with other element or content.
 </div>
 
 <!-- replace element with other element -->
-<p {{*title="replace_element_with: element(link)"*}}>
+<p {{*kw:d="replace_element_with: element(link)"*}}>
   back to home
 </p>
 
 <!-- replace element with other content-->
-<p {{*title="replace_element_with: content(link)"*}}>
+<p {{*kw:d="replace_element_with: content(link)"*}}>
   back to home
 </p>
 
 <!-- replace content with other element -->
-<p {{*title="replace_content_with: element(link)"*}}>
+<p {{*kw:d="replace_content_with: element(link)"*}}>
   back to home
 </p>
 
 <!-- replace content with other content -->
-<p {{*title="replace_content_with: content(link)"*}}>
+<p {{*kw:d="replace_content_with: content(link)"*}}>
   back to home
 </p>
 .--------------------
@@ -3386,27 +3386,27 @@ $ kwartz -l eruby ex-replace2.pdata
 
 .? presentation data (ex-replace2.pdata)
 .--------------------
-<div title="id(link)">
+<div kw:d="id(link)">
   back to <a href="/">home</a>.
 </div>
 
 <!-- replace element with other element -->
-<p title="replace_element_with(element(link))">
+<p kw:d="replace_element_with(element(link))">
   back to home
 </p>
 
 <!-- replace element with other content-->
-<p title="replace_element_with(content(link))">
+<p kw:d="replace_element_with(content(link))">
   back to home
 </p>
 
 <!-- replace content with other element -->
-<p title="replace_content_with(element(link))">
+<p kw:d="replace_content_with(element(link))">
   back to home
 </p>
 
 <!-- replace content with other content -->
-<p title="replace_content_with(content(link))">
+<p kw:d="replace_content_with(content(link))">
   back to home
 </p>
 .--------------------
@@ -3444,27 +3444,27 @@ $ kwartz -l php ex-replace2.pdata
 
 .? presentation data (ex-replace2.pdata)
 .--------------------
-<div title="id(link)">
+<div kw:d="id(link)">
   back to <a href="/">home</a>.
 </div>
 
 <!-- replace element with other element -->
-<p title="replace_element_with(element(link))">
+<p kw:d="replace_element_with(element(link))">
   back to home
 </p>
 
 <!-- replace element with other content-->
-<p title="replace_element_with(content(link))">
+<p kw:d="replace_element_with(content(link))">
   back to home
 </p>
 
 <!-- replace content with other element -->
-<p title="replace_content_with(element(link))">
+<p kw:d="replace_content_with(element(link))">
   back to home
 </p>
 
 <!-- replace content with other content -->
-<p title="replace_content_with(content(link))">
+<p kw:d="replace_content_with(content(link))">
   back to home
 </p>
 .--------------------
@@ -3502,27 +3502,27 @@ $ kwartz -l jstl ex-replace2.pdata
 
 .? presentation data (ex-replace2.pdata)
 .--------------------
-<div title="id(link)">
+<div kw:d="id(link)">
   back to <a href="/">home</a>.
 </div>
 
 <!-- replace element with other element -->
-<p title="replace_element_with(element(link))">
+<p kw:d="replace_element_with(element(link))">
   back to home
 </p>
 
 <!-- replace element with other content-->
-<p title="replace_element_with(content(link))">
+<p kw:d="replace_element_with(content(link))">
   back to home
 </p>
 
 <!-- replace content with other element -->
-<p title="replace_content_with(element(link))">
+<p kw:d="replace_content_with(element(link))">
   back to home
 </p>
 
 <!-- replace content with other content -->
-<p title="replace_content_with(content(link))">
+<p kw:d="replace_content_with(content(link))">
   back to home
 </p>
 .--------------------
