@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.135
+	- [change] direcitve attr is changed from 'title' to 'kw:d'
+
 : rev.134 (2006-09-18)
 	- [update] users-guide.eruby: document update
 

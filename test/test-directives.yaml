@@ -10,24 +10,24 @@
 
   pdata*:
     eruby: |
-	<b {{*title="elem: expr"*}}>foo</b>
-	<b {{*title="Elem: expr"*}}>foo</b>
-	<b {{*title="ELEM: expr"*}}>foo</b>
+	<b {{*kw:d="elem: expr"*}}>foo</b>
+	<b {{*kw:d="Elem: expr"*}}>foo</b>
+	<b {{*kw:d="ELEM: expr"*}}>foo</b>
 
     php: |
-	<b {{*title="elem($expr)"*}}>foo</b>
-	<b {{*title="Elem($expr)"*}}>foo</b>
-	<b {{*title="ELEM($expr)"*}}>foo</b>
+	<b {{*kw:d="elem($expr)"*}}>foo</b>
+	<b {{*kw:d="Elem($expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM($expr)"*}}>foo</b>
 
     eperl: |
-	<b {{*title="elem($expr)"*}}>foo</b>
-	<b {{*title="Elem($expr)"*}}>foo</b>
-	<b {{*title="ELEM($expr)"*}}>foo</b>
+	<b {{*kw:d="elem($expr)"*}}>foo</b>
+	<b {{*kw:d="Elem($expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM($expr)"*}}>foo</b>
 
     jstl: |
-	<b {{*title="elem(expr)"*}}>foo</b>
-	<b {{*title="Elem(expr)"*}}>foo</b>
-	<b {{*title="ELEM(expr)"*}}>foo</b>
+	<b {{*kw:d="elem(expr)"*}}>foo</b>
+	<b {{*kw:d="Elem(expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM(expr)"*}}>foo</b>
 
   expected*:
     eruby: |
@@ -62,24 +62,24 @@
 
   pdata*:
     eruby: |
-	<b {{*title="stag: expr"*}}>foo</b>
-	<b {{*title="Stag: expr"*}}>foo</b>
-	<b {{*title="STAG: expr"*}}>foo</b>
+	<b {{*kw:d="stag: expr"*}}>foo</b>
+	<b {{*kw:d="Stag: expr"*}}>foo</b>
+	<b {{*kw:d="STAG: expr"*}}>foo</b>
 
     php: |
-	<b {{*title="stag($expr)"*}}>foo</b>
-	<b {{*title="Stag($expr)"*}}>foo</b>
-	<b {{*title="STAG($expr)"*}}>foo</b>
+	<b {{*kw:d="stag($expr)"*}}>foo</b>
+	<b {{*kw:d="Stag($expr)"*}}>foo</b>
+	<b {{*kw:d="STAG($expr)"*}}>foo</b>
 
     eperl: |
-	<b {{*title="stag($expr)"*}}>foo</b>
-	<b {{*title="Stag($expr)"*}}>foo</b>
-	<b {{*title="STAG($expr)"*}}>foo</b>
+	<b {{*kw:d="stag($expr)"*}}>foo</b>
+	<b {{*kw:d="Stag($expr)"*}}>foo</b>
+	<b {{*kw:d="STAG($expr)"*}}>foo</b>
 
     jstl: |
-	<b {{*title="stag(expr)"*}}>foo</b>
-	<b {{*title="Stag(expr)"*}}>foo</b>
-	<b {{*title="STAG(expr)"*}}>foo</b>
+	<b {{*kw:d="stag(expr)"*}}>foo</b>
+	<b {{*kw:d="Stag(expr)"*}}>foo</b>
+	<b {{*kw:d="STAG(expr)"*}}>foo</b>
 
   expected*:
     eruby: |
@@ -113,24 +113,24 @@
 
   pdata*:
     eruby: |
-	<b {{*title="etag: expr"*}}>foo</b>
-	<b {{*title="Etag: expr"*}}>foo</b>
-	<b {{*title="ETAG: expr"*}}>foo</b>
+	<b {{*kw:d="etag: expr"*}}>foo</b>
+	<b {{*kw:d="Etag: expr"*}}>foo</b>
+	<b {{*kw:d="ETAG: expr"*}}>foo</b>
 
     php: |
-	<b {{*title="etag($expr)"*}}>foo</b>
-	<b {{*title="Etag($expr)"*}}>foo</b>
-	<b {{*title="ETAG($expr)"*}}>foo</b>
+	<b {{*kw:d="etag($expr)"*}}>foo</b>
+	<b {{*kw:d="Etag($expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG($expr)"*}}>foo</b>
 
     eperl: |
-	<b {{*title="etag($expr)"*}}>foo</b>
-	<b {{*title="Etag($expr)"*}}>foo</b>
-	<b {{*title="ETAG($expr)"*}}>foo</b>
+	<b {{*kw:d="etag($expr)"*}}>foo</b>
+	<b {{*kw:d="Etag($expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG($expr)"*}}>foo</b>
 
     jstl: |
-	<b {{*title="etag(expr)"*}}>foo</b>
-	<b {{*title="Etag(expr)"*}}>foo</b>
-	<b {{*title="ETAG(expr)"*}}>foo</b>
+	<b {{*kw:d="etag(expr)"*}}>foo</b>
+	<b {{*kw:d="Etag(expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG(expr)"*}}>foo</b>
 
   expected*:
     eruby: |
@@ -165,24 +165,24 @@
 
   pdata*:
     eruby: |
-	<b {{*title="cont: expr"*}}>foo</b>
-	<b {{*title="Cont: expr"*}}>foo</b>
-	<b {{*title="CONT: expr"*}}>foo</b>
+	<b {{*kw:d="cont: expr"*}}>foo</b>
+	<b {{*kw:d="Cont: expr"*}}>foo</b>
+	<b {{*kw:d="CONT: expr"*}}>foo</b>
 
     php: |
-	<b {{*title="cont($expr)"*}}>foo</b>
-	<b {{*title="Cont($expr)"*}}>foo</b>
-	<b {{*title="CONT($expr)"*}}>foo</b>
+	<b {{*kw:d="cont($expr)"*}}>foo</b>
+	<b {{*kw:d="Cont($expr)"*}}>foo</b>
+	<b {{*kw:d="CONT($expr)"*}}>foo</b>
 
     eperl: |
-	<b {{*title="cont($expr)"*}}>foo</b>
-	<b {{*title="Cont($expr)"*}}>foo</b>
-	<b {{*title="CONT($expr)"*}}>foo</b>
+	<b {{*kw:d="cont($expr)"*}}>foo</b>
+	<b {{*kw:d="Cont($expr)"*}}>foo</b>
+	<b {{*kw:d="CONT($expr)"*}}>foo</b>
 
     jstl: |
-	<b {{*title="cont(expr)"*}}>foo</b>
-	<b {{*title="Cont(expr)"*}}>foo</b>
-	<b {{*title="CONT(expr)"*}}>foo</b>
+	<b {{*kw:d="cont(expr)"*}}>foo</b>
+	<b {{*kw:d="Cont(expr)"*}}>foo</b>
+	<b {{*kw:d="CONT(expr)"*}}>foo</b>
 
   expected*:
     eruby: |
@@ -214,24 +214,24 @@
 
   pdata*:
     eruby: |
-	<b {{*title="value: expr"*}}>foo</b>
-	<b {{*title="Value: expr"*}}>foo</b>
-	<b {{*title="VALUE: expr"*}}>foo</b>
+	<b {{*kw:d="value: expr"*}}>foo</b>
+	<b {{*kw:d="Value: expr"*}}>foo</b>
+	<b {{*kw:d="VALUE: expr"*}}>foo</b>
 
     php: |
-	<b {{*title="value($expr)"*}}>foo</b>
-	<b {{*title="Value($expr)"*}}>foo</b>
-	<b {{*title="VALUE($expr)"*}}>foo</b>
+	<b {{*kw:d="value($expr)"*}}>foo</b>
+	<b {{*kw:d="Value($expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE($expr)"*}}>foo</b>
 
     eperl: |
-	<b {{*title="value($expr)"*}}>foo</b>
-	<b {{*title="Value($expr)"*}}>foo</b>
-	<b {{*title="VALUE($expr)"*}}>foo</b>
+	<b {{*kw:d="value($expr)"*}}>foo</b>
+	<b {{*kw:d="Value($expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE($expr)"*}}>foo</b>
 
     jstl: |
-	<b {{*title="value(expr)"*}}>foo</b>
-	<b {{*title="Value(expr)"*}}>foo</b>
-	<b {{*title="VALUE(expr)"*}}>foo</b>
+	<b {{*kw:d="value(expr)"*}}>foo</b>
+	<b {{*kw:d="Value(expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE(expr)"*}}>foo</b>
 
   expected*:
     eruby: |
@@ -262,47 +262,47 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="for item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="for item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
-	<tr {{*title="for key,value in hash"*}}>
-	  <td title="cont key">key</td>
-	  <td title="cont value">value</td>
+	<tr {{*kw:d="for key,value in hash"*}}>
+	  <td kw:d="cont key">key</td>
+	  <td kw:d="cont value">value</td>
 	</tr>
 
     php: |
-	<tr {{*title="foreach($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="foreach($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="foreach($hash as $key=>$value)"*}}>
-	  <td title="cont($key)">key</td>
-	  <td title="cont($value)">value</td>
+	<tr {{*kw:d="foreach($hash as $key=>$value)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="foreach($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="foreach($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="foreach($key,$value in %hash)"*}}>
-	  <td title="cont($key)">key</td>
-	  <td title="cont($value)">value</td>
+	<tr {{*kw:d="foreach($key,$value in %hash)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
 	</tr>
 
     jstl: |
-	<tr {{*title="for(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="for(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
-	<tr {{*title="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
-	  <td title="cont(status.index)">1</td>
-	  <td title="cont(v)"></td>
+	<tr {{*kw:d="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
+	  <td kw:d="cont(status.index)">1</td>
+	  <td kw:d="cont(v)"></td>
 	</tr>
 
-	<tr {{*title="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
-	  <td title="cont(n)">key</td>
+	<tr {{*kw:d="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
+	  <td kw:d="cont(n)">key</td>
 	</tr>
 
   expected*:
@@ -377,38 +377,38 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="list item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="list item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
-	<tr {{*title="list key,value in hash"*}}>
-	  <td title="cont key">key</td>
-	  <td title="cont value">value</td>
+	<tr {{*kw:d="list key,value in hash"*}}>
+	  <td kw:d="cont key">key</td>
+	  <td kw:d="cont value">value</td>
 	</tr>
 
     php: |
-	<tr {{*title="list($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="list($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="list($hash as $key=>$value)"*}}>
-	  <td title="cont($key)">key</td>
-	  <td title="cont($value)">value</td>
+	<tr {{*kw:d="list($hash as $key=>$value)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="list($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="list($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="list($key,$value in %hash)"*}}>
-	  <td title="cont($key)">key</td>
-	  <td title="cont($value)">value</td>
+	<tr {{*kw:d="list($key,$value in %hash)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
 	</tr>
 
     jstl: |
-	<tr {{*title="list(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="list(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
   expected*:
@@ -471,39 +471,39 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="For item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="For item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
-	<tr {{*title="List item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="List item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
     php: |
-	<tr {{*title="Foreach($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="Foreach($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="List($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="List($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="Foreach($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="Foreach($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="List($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="List($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
     jstl: |
-	<tr {{*title="For(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="For(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
-	<tr {{*title="List(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="List(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
   expected*:
@@ -585,39 +585,39 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="FOR item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="FOR item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
-	<tr {{*title="LIST item in list"*}}>
-	  <td title="cont item">foo</td>
+	<tr {{*kw:d="LIST item in list"*}}>
+	  <td kw:d="cont item">foo</td>
 	</tr>
 
     php: |
-	<tr {{*title="FOREACH($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="FOREACH($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="LIST($list as $item)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="LIST($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="FOREACH($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="FOREACH($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
-	<tr {{*title="LIST($item in @list)"*}}>
-	  <td title="cont($item)">foo</td>
+	<tr {{*kw:d="LIST($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
 	</tr>
 
     jstl: |
-	<tr {{*title="FOR(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="FOR(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
-	<tr {{*title="LIST(item: list)"*}}>
-	  <td title="cont(item)">foo</td>
+	<tr {{*kw:d="LIST(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
 	</tr>
 
   expected*:
@@ -707,30 +707,30 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="while (item = dbh.fetch) != nil"*}}>
-	  <td title="cont item.name">foo</td>
+	<tr {{*kw:d="while (item = dbh.fetch) != nil"*}}>
+	  <td kw:d="cont item.name">foo</td>
 	</tr>
 
-	<tr {{*title="loop (item = dbh.fetch) != nil"*}}>
-	  <td title="cont item.name">foo</td>
+	<tr {{*kw:d="loop (item = dbh.fetch) != nil"*}}>
+	  <td kw:d="cont item.name">foo</td>
 	</tr>
 
     php: |
-	<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
-	  <td title="cont($item->name)">foo</td>
+	<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
 	</tr>
 
-	<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
-	  <td title="cont($item->name)">foo</td>
+	<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="while(($item = $dbh->fetch()) != null)"*}}>
-	  <td title="cont($item->name)">foo</td>
+	<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
 	</tr>
 
-	<tr {{*title="loop(($item = $dbh->fetch()) != null)"*}}>
-	  <td title="cont($item->name)">foo</td>
+	<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
 	</tr>
 
     jstl: |
@@ -790,47 +790,47 @@
 
   pdata*:
     eruby: |
-	<div {{*title="if status=='error'"*}}>
-	  <p class="error" title="cont mesg">error</p>
+	<div {{*kw:d="if status=='error'"*}}>
+	  <p class="error" kw:d="cont mesg">error</p>
 	</div>
-	<div {{*title="elsif status=='warning'"*}}>
-	  <p class="warning" title="cont mesg">waring</p>
+	<div {{*kw:d="elsif status=='warning'"*}}>
+	  <p class="warning" kw:d="cont mesg">waring</p>
 	</div>
-	<div {{*title="else"*}}>
-	  <p title="cont mesg">mesg</p>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont mesg">mesg</p>
 	</div>
 
     php: |
-	<div {{*title="if($status=='error')"*}}>
-	  <p class="error" title="cont($mesg)">error</p>
+	<div {{*kw:d="if($status=='error')"*}}>
+	  <p class="error" kw:d="cont($mesg)">error</p>
 	</div>
-	<div {{*title="elseif($status=='warning')"*}}>
-	  <p class="warning" title="cont($mesg)">waring</p>
+	<div {{*kw:d="elseif($status=='warning')"*}}>
+	  <p class="warning" kw:d="cont($mesg)">waring</p>
 	</div>
-	<div {{*title="else"*}}>
-	  <p title="cont($mesg)">mesg</p>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont($mesg)">mesg</p>
 	</div>
 
     eperl: |
-	<div {{*title="if($status=='error')"*}}>
-	  <p class="error" title="cont($mesg)">error</p>
+	<div {{*kw:d="if($status=='error')"*}}>
+	  <p class="error" kw:d="cont($mesg)">error</p>
 	</div>
-	<div {{*title="elsif($status=='warning')"*}}>
-	  <p class="warning" title="cont($mesg)">waring</p>
+	<div {{*kw:d="elsif($status=='warning')"*}}>
+	  <p class="warning" kw:d="cont($mesg)">waring</p>
 	</div>
-	<div {{*title="else"*}}>
-	  <p title="cont($mesg)">mesg</p>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont($mesg)">mesg</p>
 	</div>
 
     jstl: |
-	<div {{*title="if(status=='error')"*}}>
-	  <p class="error" title="cont(mesg)">error</p>
+	<div {{*kw:d="if(status=='error')"*}}>
+	  <p class="error" kw:d="cont(mesg)">error</p>
 	</div>
-	<div {{*title="elseif(status=='warning')"*}}>
-	  <p class="warning" title="cont(mesg)">waring</p>
+	<div {{*kw:d="elseif(status=='warning')"*}}>
+	  <p class="warning" kw:d="cont(mesg)">waring</p>
 	</div>
-	<div {{*title="else"*}}>
-	  <p title="cont(mesg)">mesg</p>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont(mesg)">mesg</p>
 	</div>
 
   expected*:
@@ -902,23 +902,23 @@
 
   pdata*:
     eruby: |
-	<tr {{*title="set color=i%2==0 ? 'red' : 'blue'"*}}>
-	 <td title="cont: color">red</td>
+	<tr {{*kw:d="set color=i%2==0 ? 'red' : 'blue'"*}}>
+	 <td kw:d="cont: color">red</td>
 	</tr>
 
     php: |
-	<tr {{*title="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
-	 <td title="cont($color)">red</td>
+	<tr {{*kw:d="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont($color)">red</td>
 	</tr>
 
     eperl: |
-	<tr {{*title="set($color=i%2==0 ? 'red' : 'blue')"*}}>
-	 <td title="cont($color)">red</td>
+	<tr {{*kw:d="set($color=i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont($color)">red</td>
 	</tr>
 
     jstl: |
-	<tr {{*title="set(color=i%2==0 ? 'red' : 'blue')"*}}>
-	 <td title="cont(color)">red</td>
+	<tr {{*kw:d="set(color=i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont(color)">red</td>
 	</tr>
 
   expected*:
@@ -959,22 +959,22 @@
   pdata*:
     eruby: |
 	<ul {{*id="mark:list"*}}>
-	 <li {{*title="id: item"*}}>foo</li>
+	 <li {{*kw:d="id: item"*}}>foo</li>
 	</ul>
 
     php: |
 	<ul {{*id="mark:list"*}}>
-	 <li {{*title="id(item)"*}}>foo</li>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
 	</ul>
 
     eperl: |
 	<ul {{*id="mark:list"*}}>
-	 <li {{*title="id(item)"*}}>foo</li>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
 	</ul>
 
     jstl: |
 	<ul {{*id="mark:list"*}}>
-	 <li {{*title="id(item)"*}}>foo</li>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
 	</ul>
 
   expected*:
@@ -1013,26 +1013,26 @@
   pdata*:
     eruby: |
 	<tr class="odd"
-	    title="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
-	 <td title="cont v.name">foo</td>
+	    kw:d="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
+	 <td kw:d="cont v.name">foo</td>
 	</tr>
 
     php: |
 	<tr class="odd"
-	    title="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
-	 <td title="cont($v->name)">foo</td>
+	    kw:d="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+	 <td kw:d="cont($v->name)">foo</td>
 	</tr>
 
     eperl: |
 	<tr class="odd"
-	    title="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
-	 <td title="cont($v->name)">foo</td>
+	    kw:d="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+	 <td kw:d="cont($v->name)">foo</td>
 	</tr>
 
     jstl: |
 	<tr class="odd"
-	    title="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
-	 <td title="cont(v.name)">foo</td>
+	    kw:d="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
+	 <td kw:d="cont(v.name)">foo</td>
 	</tr>
 
   expected*:
@@ -1090,27 +1090,27 @@
   pdata*:
     eruby: |
 	<input type="checkbox"
-	   {{*title="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
+	   {{*kw:d="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
   #    <input type="checkbox" name="flag" value="y"
-  #        title="append: flag1 ? ' checked=\'checked\'' : ''">
+  #        kw:d="append: flag1 ? ' checked=\'checked\'' : ''">
 
     php: |
 	<input type="checkbox"
-	   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+	   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
   #    <input type="checkbox" name="flag" value="y"
-  #       title="append($flag1 ? ' checked=\'checked\'' : '')">
+  #       kw:d="append($flag1 ? ' checked=\'checked\'' : '')">
 
     eperl: |
 	<input type="checkbox"
-	   {{*title="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+	   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
   #    <input type="checkbox" name="flag" value="y"
-  #       title="append($flag1 ? ' checked=\'checked\'' : '')">
+  #       kw:d="append($flag1 ? ' checked=\'checked\'' : '')">
 
     jstl: |
 	<input type="checkbox"
-	   {{*title="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
+	   {{*kw:d="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
   #    <input type="checkbox" name="flag" value="y"
-  #       title="append(flag1 ? ' checked=\'checked\'' : '')">
+  #       kw:d="append(flag1 ? ' checked=\'checked\'' : '')">
 
   expected*:
     eruby: |
@@ -1143,28 +1143,28 @@
 	<ul>
 	  <li>foo</li>
 	  <li {{*id="dummy:d1"*}}>bar</li>
-	  <li {{*title="dummy:"*}}>baz</li>
+	  <li {{*kw:d="dummy:"*}}>baz</li>
 	</ul>
 
     php: |
 	<ul>
 	  <li>foo</li>
 	  <li {{*id="dummy:d1"*}}>bar</li>
-	  <li {{*title="dummy()"*}}>baz</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
 	</ul>
 
     eperl: |
 	<ul>
 	  <li>foo</li>
 	  <li {{*id="dummy:d1"*}}>bar</li>
-	  <li {{*title="dummy()"*}}>baz</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
 	</ul>
 
     jstl: |
 	<ul>
 	  <li>foo</li>
 	  <li {{*id="dummy:d1"*}}>bar</li>
-	  <li {{*title="dummy()"*}}>baz</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
 	</ul>
 
   expected*:
@@ -1201,16 +1201,16 @@
 
   pdata*:
     eruby: |
-	name: <em {{*title="default: user"*}}>Guest</em>
+	name: <em {{*kw:d="default: user"*}}>Guest</em>
 
     php: |
-	name: <em {{*title="default($user)"*}}>Guest</em>
+	name: <em {{*kw:d="default($user)"*}}>Guest</em>
 
     eperl: |
-	name: <em {{*title="default($user)"*}}>Guest</em>
+	name: <em {{*kw:d="default($user)"*}}>Guest</em>
 
     jstl: |
-	name: <em {{*title="default(user)"*}}>Guest</em>
+	name: <em {{*kw:d="default(user)"*}}>Guest</em>
 
   expected*:
     eruby: |
@@ -1315,47 +1315,47 @@
 	</div>
 	
 	<!-- replace element with other element -->
-	<p {{*title="replace_element_with: element(link)"*}}>
+	<p {{*kw:d="replace_element_with: element(link)"*}}>
 	  back to home
 	</p>
 	
 	<!-- replace element with other content-->
-	<p {{*title="replace_element_with: content(link)"*}}>
+	<p {{*kw:d="replace_element_with: content(link)"*}}>
 	  back to home
 	</p>
 	
 	<!-- replace content with other element -->
-	<p {{*title="replace_content_with: element(link)"*}}>
+	<p {{*kw:d="replace_content_with: element(link)"*}}>
 	  back to home
 	</p>
 	
 	<!-- replace content with other content -->
-	<p {{*title="replace_content_with: content(link)"*}}>
+	<p {{*kw:d="replace_content_with: content(link)"*}}>
 	  back to home
 	</p>
 
     php: &replace_pdata |
-	<div title="id(link)">
+	<div kw:d="id(link)">
 	  back to <a href="/">home</a>.
 	</div>
 	
 	<!-- replace element with other element -->
-	<p title="replace_element_with(element(link))">
+	<p kw:d="replace_element_with(element(link))">
 	  back to home
 	</p>
 	
 	<!-- replace element with other content-->
-	<p title="replace_element_with(content(link))">
+	<p kw:d="replace_element_with(content(link))">
 	  back to home
 	</p>
 	
 	<!-- replace content with other element -->
-	<p title="replace_content_with(element(link))">
+	<p kw:d="replace_content_with(element(link))">
 	  back to home
 	</p>
 	
 	<!-- replace content with other content -->
-	<p title="replace_content_with(content(link))">
+	<p kw:d="replace_content_with(content(link))">
 	  back to home
 	</p>
 

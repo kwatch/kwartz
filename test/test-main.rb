@@ -286,8 +286,8 @@ END
   def test_intern1 # -S
     # OK
     @pdata = <<END
-<span title="value: @aaa[:bb1][:cc1][:dd1]">xxx</span>
-<span title="value: @aaa[:bb1][:cc1][:dd2][:bb2]">xxx</span>
+<span kw:d="value: @aaa[:bb1][:cc1][:dd1]">xxx</span>
+<span kw:d="value: @aaa[:bb1][:cc1][:dd2][:bb2]">xxx</span>
 END
     @yamldata = <<END
 aaa: &anchor1
@@ -305,8 +305,8 @@ END
     _test
     # OK
     @pdata = <<END
-<span title="value: @aaa['bb1']['cc1']['dd1']">xxx</span>
-<span title="value: @aaa['bb1']['cc1']['dd2']['bb2']">xxx</span>
+<span kw:d="value: @aaa['bb1']['cc1']['dd1']">xxx</span>
+<span kw:d="value: @aaa['bb1']['cc1']['dd2']['bb2']">xxx</span>
 END
     @argv = %w[-tf intern1.yaml intern1.pdata]
     _test

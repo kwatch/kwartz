@@ -23,65 +23,65 @@ module Kwartz
   ## directive examples.
   ##
   ##  ## text_field, password_field
-  ##  <input type="text" size="10" maxsize="20" title="text_field 'user', 'name'">
+  ##  <input type="text" size="10" maxsize="20" kw:d="text_field 'user', 'name'">
   ##   => <%= text_field 'user', 'name', :size=>10, :maxsize=>20 %>
-  ##  <input type="text" name="user[name]" title="text_field :size=>10">
+  ##  <input type="text" name="user[name]" kw:d="text_field :size=>10">
   ##   => <%= text_field "user", "name", :size=>10 %>
-  ##  <input type="text" id="user_name" size="10" title="text_field">
+  ##  <input type="text" id="user_name" size="10" kw:d="text_field">
   ##   => <%= text_field "user", "name", :size=>10 %>
   ##
   ##  ## link_to, link_to_remote
-  ##  <a href="#" title="link_to :action=>'list'">Show list</a>
+  ##  <a href="#" kw:d="link_to :action=>'list'">Show list</a>
   ##   => <%= link_to 'Show list', :action=>'list' %>
   ##
   ##  ## start_link_tag, start_remote_link_tag
-  ##  <a href="#" title="start_link_tag :action=>'list'">Show list</a>
+  ##  <a href="#" kw:d="start_link_tag :action=>'list'">Show list</a>
   ##   => <%= start_link_tag 'action'=>'list' %>Show list</a>
   ##
   ##  ## mail_to
-  ##  <a href="mail:www@example.com" title="mail_to">admin</a>
+  ##  <a href="mail:www@example.com" kw:d="mail_to">admin</a>
   ##   => <%= mail_to "www@example.com", "admin" %>
   ##
   ##  ## form_tag
-  ##  <form action="show" title="form_tag :id=>2"> ... </form>
+  ##  <form action="show" kw:d="form_tag :id=>2"> ... </form>
   ##   => <%= form_tag :action=>"show", :id=>2 %> ... </form>
   ##
   ##  ## submit_tag
-  ##  <input type="submit" value="OK" title="submit_tag">
+  ##  <input type="submit" value="OK" kw:d="submit_tag">
   ##   => <%= submit_tag "OK" %>
   ##
   ##  ## text_area
-  ##  <textarea cols="30" rows="3" id="user_desc" title="text_area"></textarea>
+  ##  <textarea cols="30" rows="3" id="user_desc" kw:d="text_area"></textarea>
   ##   => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
-  ##  <textarea cols="30" rows="3" name="user[desc]" title="text_area"></textarea>
+  ##  <textarea cols="30" rows="3" name="user[desc]" kw:d="text_area"></textarea>
   ##   => <%= text_area "user", "desc", :cols=>30, :rows=>3 %>
   ##
   ##  ## hidden_field
-  ##  <input type="hidden" id="user_id" title="hidden_field">
+  ##  <input type="hidden" id="user_id" kw:d="hidden_field">
   ##   => <%= hidden_field "user", "id" %>
-  ##  <input type="hidden" name="user[id]" title="hidden_field">
+  ##  <input type="hidden" name="user[id]" kw:d="hidden_field">
   ##   => <%= hidden_field "user", "id" %>
   ##
   ##  ## check_box
-  ##  <input type="checkbox" id="user_chk1" title="check_box">
+  ##  <input type="checkbox" id="user_chk1" kw:d="check_box">
   ##   => <%= check_box "user", "chk1" %>
-  ##  <input type="checkbox" name="user[chk2]" title="check_box">
+  ##  <input type="checkbox" name="user[chk2]" kw:d="check_box">
   ##   => <%= check_box "user", "chk2" %>
   ##
   ##  ## radio_button
-  ##  <input type="radio" id="user_radio" value="val1" title="radio_button">
+  ##  <input type="radio" id="user_radio" value="val1" kw:d="radio_button">
   ##   => <%= radio_button "user", "radio", "val1" %>
-  ##  <input type="radio" name="user[radio]" value="val2" title="radio_button">
+  ##  <input type="radio" name="user[radio]" value="val2" kw:d="radio_button">
   ##   => <%= radio_button "user", "radio", "val2" %>
   ##
   ##  ## select, collection_select, country_select, time_zone_select, date_select, datetime_select
-  ##  <select name="user[birth]" title="date_select :start_year=>1970">
+  ##  <select name="user[birth]" kw:d="date_select :start_year=>1970">
   ##    <option value="2000">2000</option>
   ##  </select>
   ##   => <% date_select "user", "birth", :start_year=>1970 %>
   ##
   ##  ## image_tag, link_image_to, link_to_image
-  ##  <img src="foo.gif" alt="text" width="20" heigth="10" title="image_tag :size=>'30x40'">
+  ##  <img src="foo.gif" alt="text" width="20" heigth="10" kw:d="image_tag :size=>'30x40'">
   ##   => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
   ##
 

@@ -15,7 +15,7 @@ module Kwartz
     PROPERTY_ODD        = "'odd'"
     PROPERTY_EVEN       = "'even'"
     PROPERTY_LANG       = 'eruby'
-    PROPERTY_DATTR      = 'title'   # or 'kw:d'
+    PROPERTY_DATTR      = 'kw:d'    # or 'title'
     PROPERTY_DELSPAN    = false     # delete dummy <span> tag or not
     PROPERTY_JSTL       = 1.2       # jstl version (1.2 or 1.1)
     #

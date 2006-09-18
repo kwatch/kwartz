@@ -199,7 +199,7 @@ The output will be:
   end
 %]
 
-Kwartz Directive '{{,title="cont: {{/expr/}}",}}' or '{{,title="value: {{/expr/}}",}}' lets you to use this pattern without presentation logic file.
+Kwartz Directive '{{,kw:d="cont: {{/expr/}}",}}' or '{{,kw:d="value: {{/expr/}}",}}' lets you to use this pattern without presentation logic file.
 .--------------------
 <h1 {{*id="value: title"*}}>Example</h1>
 .--------------------
@@ -264,10 +264,10 @@ World<%     end %>
 
 .$$$ Suppliement			| default-content-suppliment
 
-Directive 'title="default: {{/expr/}}"' is for Default Content Pattern.
+Directive 'kw:d="default: {{/expr/}}"' is for Default Content Pattern.
 
 .-------------------- replace5a.pdata
-Hello <span {{*title="default: user"*}}>World</span>!
+Hello <span {{*kw:d="default: user"*}}>World</span>!
 .--------------------
 
 The output is:
@@ -787,7 +787,7 @@ This pattern is very useful for all these situations.
 .-------------------- iterate_elem.pdata
 <table>
   <tr {{*id="mark:list"*}}>
-   <td title="value: item">item</td>
+   <td kw:d="value: item">item</td>
   </tr>
 </table>
 .--------------------
@@ -825,13 +825,13 @@ This pattern is very useful for all these situations.
 
 .$$$ Supplement				| iterate-elem-supplement
 
-Kwartz directive {{,title="for {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
+Kwartz directive {{,kw:d="for {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
 
 .--------------------
 <table>
-  <tr {{*title="for item in list"*}}>
-    <td title="value: item">item</td>
+  <tr {{*kw:d="for item in list"*}}>
+    <td kw:d="value: item">item</td>
   </tr>
 </table>
 .--------------------
@@ -857,8 +857,8 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 .? Presentation Data:
 .-------------------- iterate_cont.pdata
 <dl {{*id="mark:list"*}}>
-  <dt title="value: item.text">text</dt>
-  <dd title="value: item.desc">description</dd>
+  <dt kw:d="value: item.text">text</dt>
+  <dd kw:d="value: item.desc">description</dd>
 </dl>
 .--------------------
 
@@ -894,13 +894,13 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 
 .$$$ Supplement				| iterate-cont-supplement
 
-Kwartz directive {{,title="list {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
+Kwartz directive {{,kw:d="list {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
 
 .--------------------
-<dl {{*title="list item in items"*}}>
-  <dt title="value: item.text">text</dt>
-  <dd title="value: item.desc">description</dd>
+<dl {{*kw:d="list item in items"*}}>
+  <dt kw:d="value: item.text">text</dt>
+  <dd kw:d="value: item.desc">description</dd>
 </dl>
 .--------------------
 
@@ -969,13 +969,13 @@ This pattern is very useful when you want to change data according to conditions
 
 .$$$ Supplement				| select-elem-supplement
 
- Kwartz directive '{{,title="if {{/condition/}}",}}', '{{,title="elsif {{/condition/}}",}}',
- and '{{,title="else",}}' let you to use this pattern without presentation logic file.
+ Kwartz directive '{{,kw:d="if {{/condition/}}",}}', '{{,kw:d="elsif {{/condition/}}",}}',
+ and '{{,kw:d="else",}}' let you to use this pattern without presentation logic file.
 .--------------------
 <div>
-  <span style="color:red"   {{*title="if status=='error'"*}}>ERROR!</span>
-  <span style="color:blue"  {{*title="elsif status=='warning'"*}}>Warning:</span>
-  <span style="color:black" {{*title="else"*}}>No error.</span>
+  <span style="color:red"   {{*kw:d="if status=='error'"*}}>ERROR!</span>
+  <span style="color:blue"  {{*kw:d="elsif status=='warning'"*}}>Warning:</span>
+  <span style="color:black" {{*kw:d="else"*}}>No error.</span>
 </div>
 .--------------------
 

@@ -7,16 +7,16 @@
 	<p>
 	  <span id="foo">FOO</span>
 	  <span id="mark:bar">BAR</span>
-	  <span title="id: baz">BAZ</span>
-	  <span title="mark:poo" class="foo">POO</span>
+	  <span kw:d="id: baz">BAZ</span>
+	  <span kw:d="mark:poo" class="foo">POO</span>
 	</p>
 
     php: &delspan1_pdata |
 	<p>
 	  <span id="foo">FOO</span>
 	  <span id="mark:bar">BAR</span>
-	  <span title="id(baz)">BAZ</span>
-	  <span title="mark(poo)" class="foo">POO</span>
+	  <span kw:d="id(baz)">BAZ</span>
+	  <span kw:d="mark(poo)" class="foo">POO</span>
 	</p>
 
     jstl: *delspan1_pdata
@@ -53,30 +53,30 @@
   pdata*:
     eruby: |
 	<p>
-	  <span title="attr: 'class' classname">ATTR</span>
-	  <span title="append: ' checked'">APPEND</span>
-	  <span title="append: ' checked'" class="foo">APPEND</span>
+	  <span kw:d="attr: 'class' classname">ATTR</span>
+	  <span kw:d="append: ' checked'">APPEND</span>
+	  <span kw:d="append: ' checked'" class="foo">APPEND</span>
 	</p>
 
     php: &delspan2_pdata |
 	<p>
-	  <span title="attr('class', $classname)">ATTR</span>
-	  <span title="append(' checked')">APPEND</span>
-	  <span title="append(' checked')" class="foo">APPEND</span>
+	  <span kw:d="attr('class', $classname)">ATTR</span>
+	  <span kw:d="append(' checked')">APPEND</span>
+	  <span kw:d="append(' checked')" class="foo">APPEND</span>
 	</p>
 
     jstl: |
 	<p>
-	  <span title="attr('class', classname)">ATTR</span>
-	  <span title="append(' checked')">APPEND</span>
-	  <span title="append(' checked')" class="foo">APPEND</span>
+	  <span kw:d="attr('class', classname)">ATTR</span>
+	  <span kw:d="append(' checked')">APPEND</span>
+	  <span kw:d="append(' checked')" class="foo">APPEND</span>
 	</p>
 
     eperl: |
 	<p>
-	  <span title="attr('class', $classname)">ATTR</span>
-	  <span title="append(' checked')">APPEND</span>
-	  <span title="append(' checked')" class="foo">APPEND</span>
+	  <span kw:d="attr('class', $classname)">ATTR</span>
+	  <span kw:d="append(' checked')">APPEND</span>
+	  <span kw:d="append(' checked')" class="foo">APPEND</span>
 	</p>
 
   expected*:
@@ -139,26 +139,26 @@
   pdata*:
     eruby: |
 	<p>
-	  <span title="value: expr">EXPR</span>
-	  <span title="value: expr" class="foo">EXPR</span>
+	  <span kw:d="value: expr">EXPR</span>
+	  <span kw:d="value: expr" class="foo">EXPR</span>
 	</p>
 
     php: |
 	<p>
-	  <span title="value($expr)">EXPR</span>
-	  <span title="value($expr)" class="foo">EXPR</span>
+	  <span kw:d="value($expr)">EXPR</span>
+	  <span kw:d="value($expr)" class="foo">EXPR</span>
 	</p>
 
     jstl: |
 	<p>
-	  <span title="value(expr)">EXPR</span>
-	  <span title="value(expr)" class="foo">EXPR</span>
+	  <span kw:d="value(expr)">EXPR</span>
+	  <span kw:d="value(expr)" class="foo">EXPR</span>
 	</p>
 
     eperl: |
 	<p>
-	  <span title="value($expr)">EXPR</span>
-	  <span title="value($expr)" class="foo">EXPR</span>
+	  <span kw:d="value($expr)">EXPR</span>
+	  <span kw:d="value($expr)" class="foo">EXPR</span>
 	</p>
 
   expected*:
@@ -193,30 +193,30 @@
   pdata*:
     eruby: |
 	<p>
-	  <span title="if x > 0">positive</span>
-	  <span title="elsif x < 0">negative</span>
-	  <span title="else">zero</span>
+	  <span kw:d="if x > 0">positive</span>
+	  <span kw:d="elsif x < 0">negative</span>
+	  <span kw:d="else">zero</span>
 	</p>
 
     php: |
 	<p>
-	  <span title="if($x > 0)">positive</span>
-	  <span title="elseif($x < 0)">negative</span>
-	  <span title="else">zero</span>
+	  <span kw:d="if($x > 0)">positive</span>
+	  <span kw:d="elseif($x < 0)">negative</span>
+	  <span kw:d="else">zero</span>
 	</p>
 
     jstl: |
 	<p>
-	  <span title="if(x > 0)">positive</span>
-	  <span title="elseif(x < 0)">negative</span>
-	  <span title="else">zero</span>
+	  <span kw:d="if(x > 0)">positive</span>
+	  <span kw:d="elseif(x < 0)">negative</span>
+	  <span kw:d="else">zero</span>
 	</p>
 
     eperl: |
 	<p>
-	  <span title="if($x > 0)">positive</span>
-	  <span title="elsif($x < 0)">negative</span>
-	  <span title="else">zero</span>
+	  <span kw:d="if($x > 0)">positive</span>
+	  <span kw:d="elsif($x < 0)">negative</span>
+	  <span kw:d="else">zero</span>
 	</p>
 
   plogic: |

@@ -14,8 +14,8 @@
 - name:     check_box1
   binding:  rails
   pdata: |
-      <input type="checkbox" id="user_chk1" title="check_box">
-      <input type="checkbox" name="user[chk2]" title="check_box">
+      <input type="checkbox" id="user_chk1" kw:d="check_box">
+      <input type="checkbox" name="user[chk2]" kw:d="check_box">
   expected: |
       <%= check_box 'user', 'chk1' %>
       <%= check_box 'user', 'chk2' %>
@@ -24,8 +24,8 @@
 - name:     file_field1
   binding:  rails
   pdata: |
-      <input type="file" id="user_attach" title="file_field">
-      <input type="file" name="user[attach]" title="file_field">
+      <input type="file" id="user_attach" kw:d="file_field">
+      <input type="file" name="user[attach]" kw:d="file_field">
   expected: |
       <%= file_field 'user', 'attach' %>
       <%= file_field 'user', 'attach' %>
@@ -34,8 +34,8 @@
 - name:     hidden_field1
   binding:  rails
   pdata: |
-      <input type="hidden" id="user_id" title="hidden_field">
-      <input type="hidden" name="user[id]" title="hidden_field">
+      <input type="hidden" id="user_id" kw:d="hidden_field">
+      <input type="hidden" name="user[id]" kw:d="hidden_field">
   expected: |
       <%= hidden_field 'user', 'id' %>
       <%= hidden_field 'user', 'id' %>
@@ -44,9 +44,9 @@
 - name:     password_field1
   binding:  rails
   pdata: |
-      <input type="password" size="10" maxsize="20" title="password_field 'user1', 'name1'">
-      <input type="password" size="10" maxsize="20" id="user2_name2" title="password_field">
-      <input type="password" size="10" maxsize="20" name="user3[name3]" title="password_field">
+      <input type="password" size="10" maxsize="20" kw:d="password_field 'user1', 'name1'">
+      <input type="password" size="10" maxsize="20" id="user2_name2" kw:d="password_field">
+      <input type="password" size="10" maxsize="20" name="user3[name3]" kw:d="password_field">
   expected: |
       <%= password_field 'user1', 'name1', :size=>10, :maxsize=>20 %>
       <%= password_field 'user2', 'name2', :size=>10, :maxsize=>20 %>
@@ -56,8 +56,8 @@
 - name:     radio_button1
   binding:  rails
   pdata: |
-      <input type="radio" id="user_radio_button1" value="button1" title="radio_button">
-      <input type="radio" name="user[radio]" value="button2" title="radio_button">
+      <input type="radio" id="user_radio_button1" value="button1" kw:d="radio_button">
+      <input type="radio" name="user[radio]" value="button2" kw:d="radio_button">
   expected: |
       <%= radio_button 'user', 'radio', 'button1' %>
       <%= radio_button 'user', 'radio', 'button2' %>
@@ -66,9 +66,9 @@
 - name:     text_area1
   binding:  rails
   pdata: |
-      <textarea cols="3" rows="10" title="text_area 'user1', 'desc1'">...</textarea>
-      <textarea cols="2" rows="20" id="user2_desc2" title="text_area">...</textarea>
-      <textarea cols="1" rows="30" name="user3[desc3]" title="text_area">...</textarea>
+      <textarea cols="3" rows="10" kw:d="text_area 'user1', 'desc1'">...</textarea>
+      <textarea cols="2" rows="20" id="user2_desc2" kw:d="text_area">...</textarea>
+      <textarea cols="1" rows="30" name="user3[desc3]" kw:d="text_area">...</textarea>
   expected: |
       <%= text_area 'user1', 'desc1', :cols=>3, :rows=>10 %>
       <%= text_area 'user2', 'desc2', :cols=>2, :rows=>20 %>
@@ -78,9 +78,9 @@
 - name:     text_field1
   binding:  rails
   pdata: |
-      <input type="text" size="10" maxsize="20" title="text_field 'user1', 'name1'">
-      <input type="text" size="10" maxsize="20" id="user2_name2" title="text_field">
-      <input type="text" size="10" maxsize="20" name="user3[name3]" title="text_field">
+      <input type="text" size="10" maxsize="20" kw:d="text_field 'user1', 'name1'">
+      <input type="text" size="10" maxsize="20" id="user2_name2" kw:d="text_field">
+      <input type="text" size="10" maxsize="20" name="user3[name3]" kw:d="text_field">
   expected: |
       <%= text_field 'user1', 'name1', :size=>10, :maxsize=>20 %>
       <%= text_field 'user2', 'name2', :size=>10, :maxsize=>20 %>
@@ -108,9 +108,9 @@
 - name:     form_tag1
   binding:  rails
   pdata: |
-      <form action="show" method="get" multipart="" title="form_tag">
+      <form action="show" method="get" multipart="" kw:d="form_tag">
       </form>
-      <form title="form_tag ( {:action=>'show', :id=>2}, {:method=>'get', :multipart=>true} )">
+      <form kw:d="form_tag ( {:action=>'show', :id=>2}, {:method=>'get', :multipart=>true} )">
       </form>
   expected: |
       <%= form_tag 'action'=>'show' %>
@@ -122,9 +122,9 @@
 - name:     submit_tag1
   binding:  rails
   pdata: |
-      <input type="submit" value="OK" title="submit_tag:">
-      <input type="submit" value="OK" title="submit_tag">
-      <input type="submit"            title="submit_tag">
+      <input type="submit" value="OK" kw:d="submit_tag:">
+      <input type="submit" value="OK" kw:d="submit_tag">
+      <input type="submit"            kw:d="submit_tag">
   expected: |
       <%= submit_tag 'OK' %>
       <%= submit_tag 'OK' %>
@@ -148,16 +148,16 @@
 - name:     select1
   binding:  rails
   pdata: |
-      <select name="user[id]" title="select %[foo bar baz]">
+      <select name="user[id]" kw:d="select %[foo bar baz]">
         <option value="1">aaa</option>
       </select>
-      <select name="user[id]" title="collection_select @users">
+      <select name="user[id]" kw:d="collection_select @users">
         <option value="1">aaa</option>
       </select>
-      <select name="user[country]" title="country_select">
+      <select name="user[country]" kw:d="country_select">
         <option value="us">United States</option>
       </select>
-      <select name="user[timezone]" title="time_zone_select">
+      <select name="user[timezone]" kw:d="time_zone_select">
         <option value="1">timezone</option>
       </select>
   expected: |
@@ -185,8 +185,8 @@
 - name:     link_to1
   binding:  rails
   pdata: |
-      <a href="#" title="link_to :action=>'show', :id=>@user.id">Show user</a>
-      <a href="#" title="link_to text, :action=>'list'">All</a>
+      <a href="#" kw:d="link_to :action=>'show', :id=>@user.id">Show user</a>
+      <a href="#" kw:d="link_to text, :action=>'list'">All</a>
   expected: |
       <%= link_to 'Show user', :action=>'show', :id=>@user.id %>
       <%= link_to text, :action=>'list' %>
@@ -195,8 +195,8 @@
 - name:     link_image_to1
   binding:  rails
   pdata: |
-      <img src="foo.jpg" title="link_image_to :action=>'new', :id=>10">
-      <img src="foo.jpg" title="link_to_image :action=>'new', :id=>10">
+      <img src="foo.jpg" kw:d="link_image_to :action=>'new', :id=>10">
+      <img src="foo.jpg" kw:d="link_to_image :action=>'new', :id=>10">
   expected: |
       <%= link_image_to 'foo.jpg', :action=>'new', :id=>10 %>
       <%= link_to_image 'foo.jpg', :action=>'new', :id=>10 %>
@@ -205,7 +205,7 @@
 - name:     mail_to1
   binding:  rails
   pdata: |
-      <a href="mailto:admin@example.com" title="mail_to">contact</a>
+      <a href="mailto:admin@example.com" kw:d="mail_to">contact</a>
   expected: |
       <%= mail_to 'admin@example.com', 'contact' %>
 
@@ -235,8 +235,8 @@
 - name:     link_remote_to1
   binding:  rails
   pdata: |
-      <a href="#" title="link_to_remote :action=>'show', :id=>@user.id">Show user</a>
-      <a href="#" title="link_to_remote @text, :action=>'list'">All</a>
+      <a href="#" kw:d="link_to_remote :action=>'show', :id=>@user.id">Show user</a>
+      <a href="#" kw:d="link_to_remote @text, :action=>'list'">All</a>
   expected: |
       <%= link_to_remote 'Show user', :action=>'show', :id=>@user.id %>
       <%= link_to_remote @text, :action=>'list' %>
@@ -245,7 +245,7 @@
 - name:     submit_to_remote1
   binding:  rails
   pdata: |
-      <input type="submit" name="NAME" value="SUBMIT" title="submit_to_remote">
+      <input type="submit" name="NAME" value="SUBMIT" kw:d="submit_to_remote">
   expected: |
       <%= submit_to_remote 'NAME', 'SUBMIT' %>
 
@@ -267,7 +267,7 @@
 - name:     image_tag1
   binding:  rails
   pdata: |
-      <img src="/image/foo.gif" alt="text" title="image_tag">
+      <img src="/image/foo.gif" alt="text" kw:d="image_tag">
   expected: |
       <%= image_tag '/image/foo.gif', :alt=>'text' %>
 
@@ -292,9 +292,9 @@
 - name:     date_select1
   binding:  rails
   pdata: |
-      <select id="user_birth" title="date_select :start_year=>2000, :include_blank=>true">
+      <select id="user_birth" kw:d="date_select :start_year=>2000, :include_blank=>true">
       </select>
-      <select id="user_time" title="datetime_select :start_year=>1900">
+      <select id="user_time" kw:d="datetime_select :start_year=>1900">
       </select>
   expected: |
       <%= date_select 'user', 'birth', :start_year=>2000, :include_blank=>true %>

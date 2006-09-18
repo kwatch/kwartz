@@ -227,7 +227,7 @@ module Kwartz
 
     ## set @despan and @dattr
     def include_properties(properties)
-      @dattr = properties[:dattr]   || Config::PROPERTY_DATTR    # default: 'title'
+      @dattr = properties[:dattr]   || Config::PROPERTY_DATTR    # default: 'kw:d'
       @delspan = properties.key?(:delspan) ? properties[:delspan] : Config::PROPERTY_DELSPAN  # delete dummy <span> tag or not
     end
 
@@ -1028,8 +1028,8 @@ module Kwartz
 
     ## detect whether directive is exist or not
     def has_directive?(attr_info, taginfo)
-      ## title attribute
-      val = attr_info[@dattr]     # ex. @dattr == 'title'
+      ## kw:d attribute
+      val = attr_info[@dattr]     # ex. @dattr == 'kw:d'
       if val && val.is_a?(String) && !val.empty?
         if val[0] == ?\  ;
           val[0,1] = ''     # delete a space
