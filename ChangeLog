@@ -1,5 +1,40 @@
 .+document:  ChangeLog
 .?release:   $Release$
+.?updated:   $Date$
+
+
+* Release 3.1.0
+
+  [enhancements from 3.0.0]
+
+    - Support of Ruby on Rails improved.
+      Kwartz now provides template class for RoR.
+      You don't have to convert *.html and *.plogic into *.rhtml.
+      Kwartz directly render HTML page from *.html and *.plogic.
+      See Kwartz Users' Guide for detail.
+      http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.03.html
+
+    - New example 'example/rails2' added.
+      It is a good example to use Kwartz with Ruby on Rails.
+
+    - Command-line option '-l rails' support.  This option extends
+      directives in *.html to support Rails helper methods.
+      See Kwartz Users' Guide for detail.
+      http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.03.html#rails-helper-methods
+
+    - (experimental) Embedded pattern '@{...}@' and  '@!{...}@' supported.
+      They are equivarent to '<%=h ... %>' and '<%= ... %>' of ERB,
+      but they are available for PHP and JSP as well as eRuby.
+
+    - New command line optin '-a defun' support. It generates
+      Ruby/PHP function to generate view page from *.html and *.plogic.
+
+  [changes from 3.0.0]
+
+    - Directive attribute name is changed from 'title' to 'kw:d'.
+      You can change it in configuration file ('kwartz/config.rb').
+
+
 
 
 * Release 3.0.0

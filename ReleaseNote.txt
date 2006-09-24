@@ -1,3 +1,136 @@
+$ [ANN] Kwartz 3.1.0 released - a template system for web
+
+I have released Kwartz 3.0.0. (beta)
+http://www.kuwata-lab.com/kwartz/
+(Notice that this is beta-release. Spec may change in the future.)
+
+
+$$ What is Kwartz?
+
+Kwartz is a template system which realized the concept
+"Independence of Presentation Logic".
+It means that Kwartz can separate presentation logics
+from both business logics (= main program) and
+presentatin data (= HTML file).
+
+Kwartz generates eRuby/PHP/JSP/ePerl files from presentation
+data file (= HTML file) and presentation logic file.
+
+
+For example:
+
+template.html : presentation data
+--------------------
+<table>
+  <tr id="mark:list" bgcolor="#FFCCCC">
+    <td id="mark:item">foo</td>
+  </tr>
+  <tr id="dummy:d1" bgcolor="#CCCCFF">
+    <td>bar</td>
+  </tr>
+</table>
+--------------------
+
+
+template.plogic :  presentation logic
+--------------------
+#list {
+  attrs: 'bgcolor' color;
+  logic: {
+    @users.each_with_index do |user, i|
+      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+      _stag    # start-tag
+      _cont    # content
+      _etag    # end-tag
+    end
+  }
+}
+
+#item {
+  value:  user;
+}
+--------------------
+
+
+compile
+====================
+$ kwartz -l eruby -p template.plogic template.html > template.rhtml
+====================
+
+
+template.rhtml : compiled output script
+--------------------
+<table>
+<%     @users.each_with_index do |user, i| %>
+<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>
+  <tr bgcolor="<%= color %>">
+    <td><%= user %></td>
+  </tr>
+<%     end %>
+</table>
+--------------------
+
+
+See users' guide for details in 'doc/' directory or
+http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.html
+
+Notice that Project name in RubyForege.org is changed from
+'kwartz-ruby' to 'kwartz'.
+
+
+
+$$ Installation
+
+* Just type 'gem install -r kwartz' if you have installed RubyGems.
+
+* Or download kwartz-ruby_X.X.X.tar.bz2 and install with setup.rb.
+    $ tar cjf kwartz-ruby_X.X.X.tar.bz2
+    $ cd kartz-ruby_X.X.X/
+    $ sudo ruby setup.rb
+  Kwartz-ruby requires 'abstract.rb'. You have to install it.
+    http://www.rubyforge.org/projects/abstract
+
+
+
+$$ Enhancements from 3.0.0
+
+* Support of Ruby on Rails improved.
+  Kwartz now provides template class for RoR.
+  You don't have to convert *.html and *.plogic into *.rhtml.
+  Kwartz directly render HTML page from *.html and *.plogic.
+  See Kwartz Users' Guide for detail.
+  http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.03.html
+
+* New example 'example/rails2' added.
+  It is a good example to use Kwartz with Ruby on Rails.
+
+* Command-line option '-l rails' support.  This option extends
+  directives in *.html to support Rails helper methods.
+  See Kwartz Users' Guide for detail.
+  http://www.kuwata-lab.com/kwartz/kwartz3-users-guide.03.html#rails-helper-methods
+
+* (experimental) Embedded pattern '@{...}@' and  '@!{...}@' supported.
+  They are equivarent to '<%=h ... %>' and '<%= ... %>' of ERB,
+  but they are available for PHP and JSP as well as eRuby.
+
+* New command line optin '-a defun' support. It generates
+  Ruby/PHP function to generate view page from *.html and *.plogic.
+
+  
+
+$$ Changes from 3.0.0
+
+* Directive attribute name is changed from 'title' to 'kw:d'.
+  You can change it in configuration file ('kwartz/config.rb').
+
+
+
+--
+kwatch
+
+
+#--------------------------------------------------------------------------------
+
 $ [ANN] Kwartz 3.0.0 released - a template system for web
 
 I have released Kwartz 3.0.0. (beta)

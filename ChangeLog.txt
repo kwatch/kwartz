@@ -2,10 +2,13 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.138 (2006-09-24)
+	- [update] ChangeLog and ReleaseNote.txt
 
-: rev.137 (2006-09-19)
+: rev.137 (2006-09-24)
 	- [change] converter.rb: pierubis embedded expression pattern is changed to '@{...}@'
 	- [change] license is changed from GPL to LGPL
+	- [update] website updated
 
 : rev.136 (2006-09-18)
 	- [enhance] main.rb: support '-a action'
