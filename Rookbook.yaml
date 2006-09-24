@@ -85,6 +85,7 @@ recipes:
 	#
 	Dir.glob('examples/*').each do |dirname|
 	  next unless test(?d, dirname)
+	  next if dirname =~ /rails2$/
 	  chdir dirname do
 	    sys "rook :clean; rook Makefile"
 	  end
@@ -95,7 +96,7 @@ recipes:
 	rm_f Dir.glob("#{dir}/**/*.{debug,cache}")
 	#
 	edit "#{dir}/**/*" do |content|
-	  content.gsub!(/\$Release.*?\$/, "$Release: #{@release} $")
+	  content.gsub!(/\$Release(:[- .\w]+)?\$/, "$Release: #{@release} $")
 	  content.gsub!(/\$Copyright\$/, copyright)
 	  content
 	end

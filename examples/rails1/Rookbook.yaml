@@ -1,8 +1,8 @@
 recipes:
   - product:	:default
-    method: |
+    method*: |
 	sys "make all"
 
   - product:    :clean
-    method: |
+    method*: |
 	sys "make clean"

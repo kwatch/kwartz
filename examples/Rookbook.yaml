@@ -1,7 +1,7 @@
 properties:
   - target    :    xxx
 
-variables:
+parameters:
   - t         :   $(target)
   - all       :   [ $(t).rhtml, $(t).php, $(t).jsp ]
 
@@ -9,7 +9,7 @@ recipes:
 
   - product:	:default
     ingreds:	[ Makefile ]
-    method: |
+    method*: |
 	sys "make clean"
 	sys "make"
 
@@ -17,26 +17,26 @@ recipes:
     ingreds:	[ $(all) ]
 
   - product:	:clean
-    method: |
+    method*: |
 	rm_f all, 'Makefile'
 
   - product:	$(target).rhtml
     ingreds:	[ $(target).eruby.plogic, $(target).html ]
-    method: |
+    method*: |
 	sys "kwartz -l eruby -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
 
   - product:	$(target).php
     ingreds:	[ $(target).php.plogic, $(target).html ]
-    method: |
+    method*: |
 	sys "kwartz -l php -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
 
   - product:	$(target).jsp
     ingreds:	[ $(target).jstl.plogic, $(target).html ]
-    method: |
+    method*: |
 	sys "kwartz -l jstl -p #{@ingreds[0]} #{@ingreds[1]} > #{@product}"
 
   - product:	Makefile
-    method: |
+    method*: |
 	s = <<END
 	ALL = $(target).rhtml $(target).php $(target).jsp
 	

@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.139 (2006-09-24)
+	- [bugfix] examples/**/Rookbook.yaml updated for new version of Rook
+
 : rev.138 (2006-09-24)
 	- [update] ChangeLog and ReleaseNote.txt
 
