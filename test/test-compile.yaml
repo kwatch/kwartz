@@ -172,9 +172,9 @@
 	    <table>
 	{{*<?rb     @list.each_with_index { |user, i| ?>*}}
 	{{*<?rb       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' ?>*}}
-	      <tr bgcolor="{{*$!{color}*}}" title="{{*$!{user.name}*}}">
-	        <td>{{*${user.name}*}}</td>
-	        <td>{{*$!{user[:mail]}*}}</td>
+	      <tr bgcolor="{{*@!{color}@*}}" title="{{*@!{user.name}@*}}">
+	        <td>{{*@{user.name}@*}}</td>
+	        <td>{{*@!{user[:mail]}@*}}</td>
 	      </tr>
 	{{*<?rb     } ?>*}}
 	    </table>
@@ -254,7 +254,7 @@
       <a href="mailto:<%= email %>"><%== name %></a>
     pierubis: |
       <a href="mailto:@!{email}@">@{name}@</a>
-      <a href="mailto:$!{email}">${name}</a>
+      <a href="mailto:@!{email}@">@{name}@</a>
       <a href="#" id="mark:link_to_destroy">Destroy</a>
     php: |
       <a href="mailto:@!{$email}@">@{$name}@</a>
@@ -291,8 +291,8 @@
       <a href="mailto:<%= email %>"><%== name %></a>
       <a href="mailto:<%= email %>"><%== name %></a>
     pierubis: |
-      <a href="mailto:$!{email}">${name}</a>
-      <a href="mailto:$!{email}">${name}</a>
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:@!{email}@">@{name}@</a>
       <%=start_link_tag {:action=>'destroy', :id=>@member.id},
                             :confirm=>"Are you OK?"%>Destroy</a>
     php: |

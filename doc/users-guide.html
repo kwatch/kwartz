@@ -97,13 +97,15 @@ a template system which realized the concept of 'Independence of Presentation Lo
   </li>
   <li><a href="#topics">Other Topics</a>
   <ul>
-    <li><a href="#restriction1">Restrictions around presentation logic</a>
+    <li><a href="#topics-restriction1">Restrictions around presentation logic</a>
     </li>
-    <li><a href="#restriction2">Restrictions around presentation data</a>
+    <li><a href="#topics-restriction2">Restrictions around presentation data</a>
     </li>
-    <li><a href="#makefile">Makefile and Rakefile</a>
+    <li><a href="#topics-makefile">Makefile and Rakefile</a>
     </li>
-    <li><a href="#kwartz-lib">Use Kwartz as Library</a>
+    <li><a href="#topics-kwartz-lib">Use Kwartz as Library</a>
+    </li>
+    <li><a href="#topics-erubis">Use Kwartz with Non-Supported Language</a>
     </li>
   </ul>
   </li>
@@ -1116,9 +1118,9 @@ output script (table1.pierubis)</div>
     &lt;table&gt;
 <strong>&lt;?rb     @list.each_with_index do |user, i| ?&gt;</strong>
 <strong>&lt;?rb       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' ?&gt;</strong>
-      &lt;tr bgcolor="<strong>$!{color}</strong>"&gt;
-        &lt;td&gt;<strong>${user[:name]}</strong>&lt;/td&gt;
-        &lt;td&gt;<strong>$!{user[:mail]}</strong>&lt;/td&gt;
+      &lt;tr bgcolor="<strong>@!{color}@</strong>"&gt;
+        &lt;td&gt;<strong>@{user[:name]}@</strong>&lt;/td&gt;
+        &lt;td&gt;<strong>@!{user[:mail]}@</strong>&lt;/td&gt;
       &lt;/tr&gt;
 <strong>&lt;?rb     end ?&gt;</strong>
     &lt;/table&gt;
@@ -1886,7 +1888,7 @@ It's more sophisticated than Rails' scaffold generating script.
 
 <a name="topics"></a>
 <h2 class="section1">Other Topics</h2>
-<a name="restriction1"></a>
+<a name="topics-restriction1"></a>
 <h3 class="section2">Restrictions around presentation logic</h3>
 <p>There are several restrictions in presentation logic file.
 </p>
@@ -1960,7 +1962,7 @@ It's more sophisticated than Rails' scaffold generating script.
 <br>
 
 
-<a name="restriction2"></a>
+<a name="topics-restriction2"></a>
 <h3 class="section2">Restrictions around presentation data</h3>
 <p>Kwartz parses presentation data file by regular expression pattern matching.
 It means that Kwartz doesn't use HTML parser nor XML parser for parsing presentation data.
@@ -1996,7 +1998,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <br>
 
 
-<a name="makefile"></a>
+<a name="topics-makefile"></a>
 <h3 class="section2">Makefile and Rakefile</h3>
 <p>The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
 </p>
@@ -2050,12 +2052,12 @@ file "file3.rhtml" =&gt; ["file3.html", "file3.plogic", layout] do |t|
 end
 </pre>
 <div class="program_caption">
-example of Rookbook for <a href="http://www.rubyforge.org/projects/rook">Rook</a></div>
+example of Rookbook.yaml for <a href="http://www.rubyforge.org/projects/rook">Rook</a></div>
 <pre class="program">properties:
   - layout  :  layout.html
 
 parameters:
-  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+  - all     :  [ file1.rhtml, file2.rhtml, file3.rhtml ]
   - rook_product:  $(all)
 
 recipes:
@@ -2075,7 +2077,7 @@ recipes:
 <br>
 
 
-<a name="kwartz-lib"></a>
+<a name="topics-kwartz-lib"></a>
 <h3 class="section2">Use Kwartz as Library</h3>
 <p>If you want to use Kwartz library in your Ruby script, use Kwartz::Main class.
 </p>
@@ -2088,6 +2090,74 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 <strong>main = Kwartz::Main.new(argv)</strong>
 <strong>output = main.execute()</strong>
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
+</pre>
+<br>
+
+
+<a name="topics-erubis"></a>
+<h3 class="section2">Use Kwartz with Non-Supported Language</h3>
+<p>Using <a href="http://www.kuwata-lab.com/erubis">Erubis</a>, it is able to use Kwartz with Java, JavaScript, Scheme, and so on.
+Erubis is an implementation of eRuby which supports not only Ruby but also other languages.
+</p>
+<p>The followings are examples of using JavaScript with Kwartz and Erubis.
+</p>
+<a name="js-example.html"></a>
+<div class="program_caption">
+presentation data (js-example.html)</div>
+<pre class="program">&lt;table&gt;
+  &lt;tr class="odd" <strong>id="mark:list"</strong>&gt;
+    &lt;td&gt;<strong>@!{item}@</strong>&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr class="even" <strong>id="dummy:d1"</strong>&gt;
+    &lt;td&gt;foo&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+<a name="js-example.plogic"></a>
+<div class="program_caption">
+presentation logic (js-example.plogic)</div>
+<pre class="program">#list {
+  attrs:  'class' klass;
+  logic: {
+    for (var i=0, len=list.length; i &lt; len; i++) {
+      klass = i % 1 == 0 ? 'even' : 'odd';
+      item = list[i];
+      _elem;
+    }
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz <strong>-l erubis</strong> -p js-example.plogic js-example.html  &gt; js-example.jshtml
+</pre>
+<a name="js-example.jshtml"></a>
+<div class="program_caption">
+output script (js-example.jshtml)</div>
+<pre class="program">&lt;table&gt;
+<strong>&lt;%     for (var i=0, len=list.length; i &lt; len; i++) { %&gt;</strong>
+<strong>&lt;%       klass = i % 1 == 0 ? 'even' : 'odd'; %&gt;</strong>
+<strong>&lt;%       item = list[i]; %&gt;</strong>
+  &lt;tr class="<strong>&lt;%= klass %&gt;</strong>"&gt;
+    &lt;td&gt;<strong>&lt;%= item %&gt;</strong>&lt;/td&gt;
+  &lt;/tr&gt;
+<strong>&lt;%     } %&gt;</strong>
+&lt;/table&gt;
+</pre>
+<a name="js-example.expected"></a>
+<div class="terminal_caption">
+convert into JavaScript code with erubis</div>
+<pre class="terminal">$ erubis -l javascript -x js-example.jshtml
+var _buf = []; _buf.push("&lt;table&gt;\n");
+     <strong>for (var i=0, len=list.length; i &lt; len; i++) {</strong> 
+       <strong>klass = i % 1 == 0 ? 'even' : 'odd';</strong> 
+       <strong>item = list[i];</strong> 
+_buf.push("  &lt;tr class=\""); _buf.push(<strong>klass</strong>); _buf.push("\"&gt;\n\
+    &lt;td&gt;"); _buf.push(<strong>item</strong>); _buf.push("&lt;/td&gt;\n\
+  &lt;/tr&gt;\n");
+     <strong>}</strong> 
+_buf.push("&lt;/table&gt;\n");
+document.write(_buf.join(""));
 </pre>
 <br>
 

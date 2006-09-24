@@ -5,7 +5,7 @@ R = 'reference'   unless defined?(R)
 P = 'p-pattern'   unless defined?(P)
 
 docdir = '../doc'
-tagfile = 'xhtml-css'
+tagfile = 'site-design'
 tmpdir = 'd'
 
 
@@ -34,10 +34,10 @@ recipe	'kwartz3-*.xhtml'	, 'kwartz3-$(1).txt', :byprods=>['$(1).toc.html']  do |
 	sys "kwaser -t #{tagfile} -bsn -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t #{tagfile} -bsn     #{@ingred}"
 	rm_f @byprod
-	m = @matches
-	files = Dir.glob("kwartz3-#{m[1]}*.html")
+	files = Dir.glob("kwartz3-#{@m[1]}*.html")
 	edit files do |content|
 	  content.gsub!(/"(p-pattern|reference|users-guide).html"/, '"kwartz3-\1.html"')
+	  content.sub!(/"docstyle\.css"/, '"site-design.css"')
 	end
 	files.each do |old|
 	  new = old.sub(/\.html$/, '.xhtml')
@@ -57,7 +57,7 @@ recipe 'kwartz3-*.txt'	, '../doc/$(1).txt'			do |r|
 
 
 recipe '../doc/*.txt'	, '../doc/$(1).eruby'				do |r|
-	chdir '../doc' do sys "rook #{@matches[1]}.txt" end
+	chdir '../doc' do sys "rook #{@m[1]}.txt" end
     end
 
 

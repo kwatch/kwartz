@@ -1068,9 +1068,9 @@ _buf << "    </table>
     <table>
 {{*<?rb     @list.each_with_index do |user, i| ?>*}}
 {{*<?rb       color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF' ?>*}}
-      <tr bgcolor="{{*$!{color}*}}">
-        <td>{{*${user[:name]}*}}</td>
-        <td>{{*$!{user[:mail]}*}}</td>
+      <tr bgcolor="{{*@!{color}@*}}">
+        <td>{{*@{user[:name]}@*}}</td>
+        <td>{{*@!{user[:mail]}@*}}</td>
       </tr>
 {{*<?rb     end ?>*}}
     </table>
@@ -1974,7 +1974,7 @@ It is able to embed Rails' helper method in kw:d attribute.
 .$ Other Topics		| topics
 
 
-.$$ Restrictions around presentation logic	| restriction1
+.$$ Restrictions around presentation logic	| topics-restriction1
 
 There are several restrictions in presentation logic file.
 
@@ -2043,7 +2043,7 @@ There are several restrictions in presentation logic file.
 
 
 
-.$$ Restrictions around presentation data	| restriction2
+.$$ Restrictions around presentation data	| topics-restriction2
 
 Kwartz parses presentation data file by regular expression pattern matching.
 It means that Kwartz doesn't use HTML parser nor XML parser for parsing presentation data.
@@ -2075,7 +2075,7 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 
 
-.$$ Makefile and Rakefile		| makefile
+.$$ Makefile and Rakefile		| topics-makefile
 
 The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
 
@@ -2131,13 +2131,13 @@ file "file3.rhtml" => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rookbook for {{<Rook|http://www.rubyforge.org/projects/rook>}}
+.? example of Rookbook.yaml for {{<Rook|http://www.rubyforge.org/projects/rook>}}
 .--------------------
 properties:
   - layout  :  layout.html
 
 parameters:
-  - all     :  [ file1.rhtml, 'file2.rhtml', file3.rhtml ]
+  - all     :  [ file1.rhtml, file2.rhtml, file3.rhtml ]
   - rook_product:  $(all)
 
 recipes:
@@ -2157,7 +2157,7 @@ recipes:
 
 
 
-.$$ Use Kwartz as Library		| kwartz-lib
+.$$ Use Kwartz as Library		| topics-kwartz-lib
 
 If you want to use Kwartz library in your Ruby script, use Kwartz::Main class.
 
@@ -2171,6 +2171,89 @@ argv = %w[-p hello.plogic -L layout.html hello.html]
 {{*output = main.execute()*}}
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
 .--------------------
+
+
+.$$ Use Kwartz with Non-Supported Language	| topics-erubis
+
+Using {{<Erubis|http://www.kuwata-lab.com/erubis>}}, it is able to use Kwartz with Java, JavaScript, Scheme, and so on.
+Erubis is an implementation of eRuby which supports not only Ruby but also other languages.
+
+The followings are examples of using JavaScript with Kwartz and Erubis.
+
+.? presentation data (js-example.html)
+.-------------------- js-example.html
+<table>
+  <tr class="odd" {{*id="mark:list"*}}>
+    <td>{{*@!{item}@*}}</td>
+  </tr>
+  <tr class="even" {{*id="dummy:d1"*}}>
+    <td>foo</td>
+  </tr>
+</table>
+.--------------------
+
+.? presentation logic (js-example.plogic)
+.-------------------- js-example.plogic
+#list {
+  attrs:  'class' klass;
+  logic: {
+    for (var i=0, len=list.length; i < len; i++) {
+      klass = i % 1 == 0 ? 'even' : 'odd';
+      item = list[i];
+      _elem;
+    }
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz {{*-l erubis*}} -p js-example.plogic js-example.html  > js-example.jshtml
+.====================
+
+.? output script (js-example.jshtml)
+.-------------------- js-example.jshtml
+<table>
+{{*<%     for (var i=0, len=list.length; i < len; i++) { %>*}}
+{{*<%       klass = i % 1 == 0 ? 'even' : 'odd'; %>*}}
+{{*<%       item = list[i]; %>*}}
+  <tr class="{{*<%= klass %>*}}">
+    <td>{{*<%= item %>*}}</td>
+  </tr>
+{{*<%     } %>*}}
+</table>
+.--------------------
+
+
+
+
+
+
+
+
+
+.? convert into JavaScript code with erubis
+.==================== js-example.expected
+$ erubis -l javascript -x js-example.jshtml
+var _buf = []; _buf.push("<table>\n");
+     {{*for (var i=0, len=list.length; i < len; i++) {*}} 
+       {{*klass = i % 1 == 0 ? 'even' : 'odd';*}} 
+       {{*item = list[i];*}} 
+_buf.push("  <tr class=\""); _buf.push({{*klass*}}); _buf.push("\">\n\
+    <td>"); _buf.push({{*item*}}); _buf.push("</td>\n\
+  </tr>\n");
+     {{*}*}} 
+_buf.push("</table>\n");
+document.write(_buf.join(""));
+.====================
+
+
+
+
+
+
+
+
 
 
 

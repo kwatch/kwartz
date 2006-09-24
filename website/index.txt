@@ -1,15 +1,16 @@
 .=title:	Kwartz
 .#.?author:	kwa(at)kuwata-lab.com
 .#.?keywords:	kwartz,html,xml,template,Ruby,PHP,JSP,Velocity,eRuby,ERB,erbscan
-.?stylesheet:	docstyle.css
+.#.?stylesheet:	docstyle.css
 
 
 .$ News
 
-.* (2006-06-01)  {{<kwartz-ruby_3.0.0|#Download>}} beta released. ({{<kwartz3-ruby-ChangeLog>}})
-.* (2005-08-11)  {{<kwartz-java_0.0.1 (alpha release)|#Download>}} released.
-.* (2005-05-17)  {{<kwartz-ruby_2.0.4|#Download>}} released.
-.* (2005-01-10)  {{<kwartz-php_0.3.2|#Download>}} released.
+.* (2006-09-24)  {{<kwartz-ruby_3.1.0|#Download>}} released
+.* (2006-06-01)  {{<kwartz-ruby_3.0.0|#Download>}} released
+.* (2005-08-11)  {{<kwartz-java_0.0.1 (alpha release)|#Download>}} released
+.* (2005-05-17)  {{<kwartz-ruby_2.0.4|#Download>}} released
+.* (2005-01-10)  {{<kwartz-php_0.3.2|#Download>}} released
 
 
 .$ Introduction
@@ -18,22 +19,22 @@
 <p></p>   <!-- avoid IE Bug -->
 <table style="float:right; width:424px; margin:0px 0px 10px 10px" summary="">
  <tr>
-  <td style="padding:10px 0px 0px 0px">
+  <td class="fig-capture">
   Fig1. Business layer and presentation layer have their own data and logic.
   </td>
  </tr>
  <tr>
-  <td style="border-width:1px; border-style:solid; border-color:#999999">
+  <td class="fig-body">
    <img src="img/fig02.png" alt="figure of kwartz"/>
   </td>
  </tr>
  <tr>
-  <td style="padding:20px 0px 0px 0px">
+  <td class="fig-capture">
   Fig2. Kwartz vs. Other template system: Kwartz separates presentation logic from presentaion data(=HTML).
   </td>
  </tr>
  <tr>
-  <td style="border-width:1px; border-style:solid; border-color:#999999">
+  <td class="fig-body">
    <img src="img/fig03.png" alt="figure of kwartz"/>
   </td>
  </tr>
@@ -77,7 +78,7 @@ See {{<users' guide|kwartz3-users-guide.html>}} for details.
 .$ Download
 	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz,}}' to install Kwartz.
 	.* Or download from {{<sourceforge.net|download.cgi>}}
-	   .- kwartz-ruby_3.0.0 (beta)
+	   .- kwartz-ruby_3.1.0 (beta)
 	   .#.- kwartz-ruby_2.0.4 (stable)
 	   .- kwartz-java_0.0.1 (alpha) 
 	   .- kwartz-php_0.3.2 (obsolete)
@@ -93,14 +94,14 @@ See {{<users' guide|kwartz3-users-guide.html>}} for details.
 
 
 .$ License
-	.* {{<GNU General Public License ver.2|http://www.gnu.org/copyleft/gpl.html>}}
+	.* LGPL 2.1
 	   
 	   If you need looser license, please suggest me.
 	   
 	   Output scripts kwartz command generates are outside of the license.
 
 .$ Author
-	.* Makoto Kuwata <kwa(at)kuwata-lab.com>.^
+	.* makoto kuwata <kwa(at)kuwata-lab.com>.^
 	   (If you send me a mail, please make it's subject starting with '[Kwartz]'.
 	    Otherwise, I may miss your mail.)
 
@@ -111,8 +112,8 @@ See {{<users' guide|kwartz3-users-guide.html>}} for details.
 	   {{<IPA|http://www.ipa.go.jp/about/english/index.html>}}
 	   (Information-Technology Promotion Agency Japan).
 
-.$ Special Thanks
-	.* Shu-yu Guo - He corrected my English of documents.
-	.* Andreas Schwarz - He gave me several good advices.
-	.* Wesley J Landaker - He created a Debian package of Kwartz.
-	Very thanks!
+.#.$ Special Thanks
+.#	.* Shu-yu Guo - He corrected my English of documents.
+.#	.* Andreas Schwarz - He gave me several good advices.
+.#	.* Wesley J Landaker - He created a Debian package of Kwartz.
+.#	Very thanks!

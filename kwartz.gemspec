@@ -41,7 +41,7 @@ spec = Gem::Specification.new do |s|
              #"doc/design.css", "doc/design.html",
            ]
   files += Dir.glob('doc-api/**/*')
-  files += %w[README.txt ChangeLog COPYING setup.rb kwartz.gemspec]
+  files += %w[README.txt ChangeLog LGPL setup.rb kwartz.gemspec]
   s.files       = files
   s.executables = ["kwartz"]
   s.bindir      = "bin"

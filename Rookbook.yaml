@@ -77,7 +77,7 @@ recipes:
 	mkdir dir
 	#
 	store 'lib/**/*', 'bin/**/*', '$(apidocdir)/**/*', 'test/**/*', dir
-	store %w[README.txt ChangeLog COPYING setup.rb $(project).gemspec], dir
+	store %w[README.txt ChangeLog LGPL setup.rb $(project).gemspec], dir
 	#
 	chdir 'doc' do sys 'rook -F :all' end
 	store 'doc/users-guide.html', 'doc/p-pattern.html', 'doc/reference.html', 'doc/docstyle.css', 'doc/img/*.png', dir
@@ -97,6 +97,7 @@ recipes:
 	edit "#{dir}/**/*" do |content|
 	  content.gsub!(/\$Release.*?\$/, "$Release: #{@release} $")
 	  content.gsub!(/\$Copyright\$/, copyright)
+	  content
 	end
 	#
 	chmod 0644, "#{dir}/**/*", :filetype=>'file'
