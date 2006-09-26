@@ -1,0 +1,37 @@
+
+recipes:
+
+  - product:	:copy_examples
+    desc:	copy examples from kwartz-ruby
+    howto: |
+	$home = getenv('HOME');
+	$base = "{$home}/src/kwartz-ruby/trunk/examples";
+	$list = array(
+		"table1",
+		"breadcrumbs1",
+		"breadcrumbs2",
+		"pagelayout",
+		);
+	foreach ($list as $name) {
+		//if (file_exists("examples/{$name}"))
+		//	k_delete("examples/{$name}");
+		//k_mkdir("examples/{$name}");
+		//k_copy("{$base}/{$name}/*", "examples/{$name}");
+		//k_copy("{$base}/{$name}", "examples");
+		//k_delete("examples/{$name}/.svn");
+		$dest = "examples/{$name}";
+		if (file_exists($dest)) {
+			k_delete("{$dest}/*");
+		} else {
+			k_mkdir($dest);
+		}
+		$currdir = getcwd();
+		k_mkdir($dest);
+		k_chdir("{$base}/{$name}");
+		k_store("*", "{$currdir}/{$dest}");
+		k_backdir($currdir);
+		$makefile = "examples/{$name}/Makefile";
+		$s = file_get_contents($makefile);
+		$s = preg_replace('/^(\tkwartz) /m', '${1}-php ', $s);
+		file_put_contents($makefile, $s);
+	}

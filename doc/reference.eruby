@@ -1,0 +1,246 @@
+.=title:	Kwartz-ruby 3.0 Reference Guide
+.?lastupdate:	$Date: 2006-06-01 08:44:37 +0900 (Thu, 01 Jun 2006) $
+.?version:	$Release$
+.?stylesheet:	docstyle.css
+
+
+.$ Preface	| preface*
+
+This document{{(This document is generated automatically from unit-test data. Knuth had propsed integration of code and document.  I propose integration of test and document :-))}} is the reference manual of Kwartz-ruby 3.0.
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept 'Independence of Presentation Logic'.
+It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
+
+If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
+
+
+
+.$$ Table of Contents	      | toc*
+
+.<<< reference.toc
+
+
+[%
+
+  def untabify(str, width=8)
+    sb = ''
+    str.scan(/(.*?)\t/m) do |s, |
+      len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+      sb << s << (" " * (width - len % width))
+    end
+    return $' ? (sb << $') : str
+  end
+
+  require 'yaml'
+
+%]
+
+.# --------------------------------------------------------------------------------
+
+
+.$ Pesentation Logic	| plogic
+
+Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
+.* Presentation logic file is a set of ruleset.
+.* Ruleset is a pair of selector and declarations.
+.* Declaration is a pair of property and value.
+
+.? Pseudo-EBNF syntax of presentation logic
+.____________________
+plogic       ::=  ruleset*
+ruleset      ::=  selector '{' [ declaration ';' ]* '}'
+selector     ::=  '#' name
+declaration  ::=  property ':' value
+property     ::=  'elem'   | 'Elem'   | 'ELEM'
+               |  'stag'   | 'Stag'   | 'STAG'
+	       |  'etag'   | 'Etag'   | 'ETAG'
+	       |  'cont'   | 'Cont'   | 'CONT'
+	       |  'value'  | 'Value'  | 'VALUE'
+	       |  'attrs'  | 'Attrs'  | 'ATTRS'
+	       |  'append' | 'Append' | 'APPEND'
+	       |  'remove'
+	       |  'logic'
+.____________________
+
+Notice that the tail semicolon of declaration is not omittable.
+
+
+[%
+
+  yamlfile = '../test/test-ruleset.yaml'
+  
+  str = File.read(yamlfile)
+  str = untabify(str)
+  context = YAML.load(str)
+
+  context.each do |data|
+    name     = data['name']
+    title    = data['title']
+    desc     = data['desc']
+    pdata    = data['pdata']
+    plogic   = data['plogic*']
+    expected = data['expected*']
+    postscript = data['postscript'] || ''
+
+%]
+
+.$$ [%= title %]	| property-[%= name %]
+
+[%= desc %]
+
+[%= postscript %]
+
+[%
+    #if data['common']
+    #  list = [ ['Ruby, PHP, JSP, Perl'], 'eruby' ]
+    #else
+      list = [ ['Ruby', 'eruby'], ['PHP', 'php'], ['JSP', 'jstl'], ['Perl', 'eperl'] ]
+    #end
+    list.each do |title, lang|
+      next unless plogic[lang]
+ %]
+.$$$ [%= title %]	| property-[%= name %]-[%= lang %]
+
+.? presentation data (ex-[%= name %].pdata)
+.--------------------
+[%= pdata.chomp %]
+.--------------------
+
+.? presentation logic (ex-[%= name %].plogic)
+.--------------------
+[%= plogic[lang].chomp %]
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l [%= lang %] -p ex-[%= name %].plogic ex-[%= name %].pdata
+[%= expected[lang].chomp %]
+.====================
+
+[%
+    end
+%]
+
+[%
+  end
+%]
+
+
+.#.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
+.#
+.#Special selector {{,#DOCUMENT,}} represents entire of document.
+.#Only the {{,begin:,}} and {{,end:,}} properties are available in {{,#DOCUMENT,}} selector.
+.#The former adds statements in the beginning of the document and the latter adds statements in the end of the document.
+
+
+.# --------------------------------------------------------------------------------
+
+
+.$ Directives		| directives
+
+Directives are commands to embed presentation logics into presentation data.
+For example, {{,title="for item in @list",}} directive represents iteration of the element.
+
+Directives are provided for '{{*choosability*}}'.
+This is very important concept for Kwartz (and other products by kuwata-lab).
+In Kwartz, you can separate presentation logics from presentation data, or 'mix' them.
+It is the user or customer of Kwartz and not developer who determine which solution to adopt.
+All Kwartz can do is to provide the both solution to users.
+
+Notice that the notation of directives are different for each target language.
+For example, iteration directive is {{,title="for item in list",}} in Ruby,
+{{,title="foreach($list as $item)",}} in PHP.
+See the {{,directive notation table,}} for PHP, Java, and Perl user.
+
+
+
+[%
+
+  yamlfile = '../test/test-directives.yaml'
+  
+  str = File.read(yamlfile)
+  str = untabify(str)
+  context = YAML.load(str)
+
+  context.each do |data|
+    name     = data['name']
+    subject  = data['subject']
+    desc     = data['desc']
+    pdata    = data['pdata*']
+    expected = data['expected*']
+%]
+
+
+.$$ [%= subject %]	| directive-[%= name %]
+
+[%= desc %]
+
+[%
+    if data['common']
+      list = [ ['Ruby, PHP, JSP, Perl', 'eruby'] ]
+    else
+      list = [ ['Ruby', 'eruby'], ['PHP', 'php'], ['JSP', 'jstl'], ['Perl', 'eperl'] ]
+    end
+    list.each do |title, lang|
+      next unless pdata[lang]
+ %]
+
+.$$$ [%= title %]	| directive-[%= name %]-[%= lang %]
+
+.? presentation data (ex-[%= name %].pdata)
+.--------------------
+[%= pdata[lang].chomp %]
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l [%= lang %] ex-[%= name %].pdata
+[%= expected[lang].chomp %]
+.====================
+
+[%
+    end
+%]
+
+
+[%
+  end
+%]
+
+
+
+.$ Command-Line Options		| cmdline
+
+Usage:  kwartz [..options..] [-p file.plogic] file.html > file.rhtml
+
+Command-line options:
+
+.[ -h             ]	Show help.
+.[ -v             ]	Show version.
+.[ -e             ]	Escape (sanitize) expression value.
+			This is an alias of '{{,--escape=true,}}'
+.[ -l lang        ]	Target language ('eruby, 'php', 'eperl', 'rails', or 'jstl').
+			Default is 'eruby'.
+.[ -k kanji       ]	Kanji code (euc/sjis/utf8). Default is null.
+.[ -r library,... ]	Require libraries.
+.[ -p plogic,...  ]	Presentation logic files. Suffix '.plogic' is omittable.
+.[ -i pdata,...   ]	Import presentation data files.
+.[ -L layoutfile  ]	Layout file. '-L f1 f2' is equivalent to '-i f2 f1'.
+.[ -x elem-id     ]	Extract content of element marked by elem-id.
+.[ -X elem-id     ]	Extract element marked by elem-id.
+.[ -f yamlfile    ]	YAML file for context values.
+.[ -t             ]	Expand tab character in YAML file.
+.[ -S             ]	Convert mapping key from string to symbol in YAML file.
+	
+Command-line properties:
+
+.[ --dattr=str    ]	Directive attribute name.
+.[ --odd=value    ]	Odd value for FOREACH/LOOP directive (default "'odd'").
+.[ --even=value   ]	Even value for FOREACH/LOOP directive (default "'even'").
+.[ --header=str   ]	Header text.
+.[ --footer=str   ]	Footer text.
+.[ --delspan={true|false} ]	Delete dummy span tag (default false).
+.[ --escape={true|false}  ]	Escape (sanitize) (default false).
+.[ --jstl={1.2|1.1}       ]	JSTL version (default 1.2).
+.[ --charset=charset      ]	Character-set for JSTL (default none).
+

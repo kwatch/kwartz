@@ -2,6 +2,9 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.67 (2006-09-26)
+	- [enhance] add 'doc/*.eruby'
+
 : rev.66 (2006-09-26)
 	- [change] direcitve attr is changed from 'title' to 'kw:d'
 	- [enhance] add LGPL

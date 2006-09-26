@@ -1,0 +1,14 @@
+
+parameters:
+  - doc_files:  [ reference.eruby, users-guide.eruby, p-pattern.eruby ]
+
+recipes:
+
+  - product:	:link
+    desc:	create hard-link of files
+    method*: |
+	k_delete($doc_files);
+	$dir = '../../../kwartz-ruby/trunk/doc';
+	foreach ($doc_files as $file) {
+	    k_sys("ln $dir/$file .");
+	}
