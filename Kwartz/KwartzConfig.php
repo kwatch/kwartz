@@ -5,7 +5,7 @@
 // $Release$
 // $Copyright$
 
-define('KWARTZ_PROPERTY_DATTR'   , 'title');  // attribute name for directive
+define('KWARTZ_PROPERTY_DATTR'   , 'kw:d');   // attribute name for directive
 define('KWARTZ_PROPERTY_DELSPAN' , false);    // delete dummy <span> tag
 define('KWARTZ_PROPERTY_ESCAPE'  , null);     // escape expression when true
 define('KWARTZ_PROPERTY_LANG'    , 'php');    // 'php', 'eruby', 'jstl'

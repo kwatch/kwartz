@@ -948,7 +948,7 @@ abstract class KwartzConverter {
  */
 class KwartzTextConverter extends KwartzConverter {
 
-    var $_dattr;      // string ('title')
+    var $_dattr;      // string ('kw:d')
     var $_delspan;    // boolean (false)
     var $filename;    // string
     var $_linenum;    // integer
@@ -1154,8 +1154,8 @@ class KwartzTextConverter extends KwartzConverter {
      *  detect whether directive is exist or not
      */
     function has_directive($attr_info, $taginfo) {
-        // title attribute
-        $val = $attr_info->get_value($this->_dattr);    // ex. _dattr == 'title'
+        // kw:d attribute
+        $val = $attr_info->get_value($this->_dattr);    // ex. _dattr == 'kw:d'
         if ($val && is_string($val)) {
             if ($val[0] == ' ') {
                 $val = substr($val, 1);  // delete a space

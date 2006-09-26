@@ -1,6 +1,10 @@
 .+document:    ChangeLog
-.?version:     $Rev$
+.?release:     $Rev$
 .?lastupdate:  $Date$
+
+: rev.66 (2006-09-26)
+	- [change] direcitve attr is changed from 'title' to 'kw:d'
+	- [enhance] add LGPL
 
 : rev.65 (2006-09-26)
 	- [enhance] @{...}@ and @!{...}@ support

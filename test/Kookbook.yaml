@@ -19,5 +19,21 @@ recipes:
     desc:	copy *.yaml from 'kwartz-ruby/trunk/test'
     method*: |
 	$dir = '../../../kwartz-ruby/trunk/test';
-	k_copy("$dir/test-compile.yaml",   "KwartzCompileTest.yaml");
-	k_copy("$dir/test-converter.yaml", "KwartzConverterTest.yaml");
+	k_copy("$dir/test-compile.yaml",    "KwartzCompileTest.yaml");
+	k_copy("$dir/test-converter.yaml",  "KwartzConverterTest.yaml");
+	k_copy("$dir/test-directives.yaml", "KwartzDirectiveTest.yaml");
+	k_copy("$dir/test-main.yaml",       "KwartzMainTest.yaml");
+	k_copy("$dir/test-parser.yaml",     "KwartzParserTest.yaml");
+	k_copy("$dir/test-ruleset.yaml",    "KwartzRulesetTest.yaml");
+	
+  - product:	:link
+    desc:	hard link *.yaml from 'kwartz-ruby/trunk/test'
+    method*: |
+	k_delete('*Test.yaml');
+	$dir = '../../../kwartz-ruby/trunk/test';
+	k_sys("ln $dir/test-compile.yaml    KwartzCompileTest.yaml");
+	k_sys("ln $dir/test-converter.yaml  KwartzConverterTest.yaml");
+	k_sys("ln $dir/test-directives.yaml KwartzDirectiveTest.yaml");
+	k_sys("ln $dir/test-main.yaml       KwartzMainTest.yaml");
+	k_sys("ln $dir/test-parser.yaml     KwartzParserTest.yaml");
+	k_sys("ln $dir/test-ruleset.yaml    KwartzRulesetTest.yaml");

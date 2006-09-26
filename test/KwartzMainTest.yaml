@@ -173,3 +173,63 @@ yamloutput: |
         </table>
        </body>
       </html>
+
+defun*:
+  eruby: |
+        module View
+        
+          (@@proc_table ||= {})['defun1'] = proc do
+        _erbout = ''; _erbout.concat "<html>\n"
+        _erbout.concat " <body>\n"
+        _erbout.concat "  <h1>"; _erbout.concat(( @title ).to_s); _erbout.concat "</h1>\n"
+        _erbout.concat "  <table id=\"content\">\n"
+             for item in @list 
+        _erbout.concat "   <tr>\n"
+        _erbout.concat "    <td>"; _erbout.concat((h item ).to_s); _erbout.concat "</td>\n"
+        _erbout.concat "   </tr>\n"
+             end 
+        _erbout.concat "  </table>\n"
+        _erbout.concat " </body>\n"
+        _erbout.concat "</html>\n"
+        _erbout
+          end#proc
+
+          module_function
+          def expand_defun1(context={})
+            if context.is_a?(Hash)
+              hash = context
+              context = Object.new
+              hash.each { |key, val| context.instance_variable_set("@#{key}", val) }
+            end
+            proc_obj = @@proc_table['defun1']
+            context.instance_eval(&proc_obj)
+          end
+
+        end
+
+  php: |
+        <?php
+        function print_view_defun2($context) {
+            explode($context);
+        ?><html>
+         <body>
+          <h1><?php echo $title; ?></h1>
+          <table id="content">
+        <?php     foreach ($list as $item) { ?>
+           <tr>
+            <td><?php echo htmlspecialchars($item); ?></td>
+           </tr>
+        <?php     } ?>
+          </table>
+         </body>
+        </html>
+        <?php
+        }
+        function expand_view_defun2($context) {
+            ob_start();
+            print_view_defun2($context);
+            $output = ob_get_clean();
+            ob_end_clean();
+            return $output;
+        }
+        ?>
