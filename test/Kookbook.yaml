@@ -1,0 +1,23 @@
+
+recipes:
+
+  - product:	:test
+    method*: |
+	$filenames = array(
+		"KwartzCompileTest.php",
+		"KwartzParserTest.php",
+		"KwartzConverterTest.php",
+		"KwartzRulesetTest.php",
+		"KwartzDirectiveTest.php",
+		"KwartzMainTest.php",
+		);
+	foreach ($filenames as $filename) {
+		k_sys("phpunit {$filename}");
+	}
+
+  - product:	:copy
+    desc:	copy *.yaml from 'kwartz-ruby/trunk/test'
+    method*: |
+	$dir = '../../../kwartz-ruby/trunk/test';
+	k_copy("$dir/test-compile.yaml",   "KwartzCompileTest.yaml");
+	k_copy("$dir/test-converter.yaml", "KwartzConverterTest.yaml");

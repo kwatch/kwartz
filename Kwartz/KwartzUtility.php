@@ -78,6 +78,42 @@ function kwartz_untabify($str, $width=8) {
 //}
 
 
+/**
+ *  scan text with preg-expression, saving previous text.
+ *
+ *  ex.
+ *    $input = "foo@{a}@bar@!{b}@baz";
+ *    $pattern = '/@(!*)\{(.*?)\}@/';
+ *    scan_text($pattern, $input, $matched, $rest);
+ *    var_export($matched); #=> array(array('foo', '', 'a'), array('bar', '!', 'b'))
+ *    var_export($rest);    #=> 'baz'
+ *
+ */
+function kwartz_scan_text($pregex, $input, &$matches, &$rest) {
+    $matches = array();
+    $flag = PREG_SET_ORDER | PREG_OFFSET_CAPTURE;
+    if (! preg_match_all($pregex, $input, $matched_list, $flag)) {
+        $rest = $input;
+        return false;
+    }
+    $index = 0;
+    foreach ($matched_list as $matched) {
+        $a = array();
+        foreach ($matched as $m) {
+            $a[] = $m[0];
+        }
+        $matched_str = $matched[0][0];
+        $start_pos = $matched[0][1];
+        $prev_text = substr($input, $index, $start_pos - $index);
+        $index = $start_pos + strlen($matched_str);
+        $a[0] = $prev_text;
+        $matches[] = $a;
+    }
+    $rest = substr($input, $index);
+    return true;
+}
+
+
 
 /**
  *  get array item

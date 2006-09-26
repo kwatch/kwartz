@@ -11,7 +11,7 @@ pdata: |
       </html>
 
 plogic*:
-  eruby: |
+  eruby: &plogic_ruby |
       #doctitle {
         value: @title;
         remove: "id";
@@ -26,6 +26,9 @@ plogic*:
       #item {
         Value: item;
       }
+
+  ruby: *plogic_ruby
+ 
   php: |
       #doctitle {
         value: $title;
@@ -56,6 +59,22 @@ expected*:
         </table>
        </body>
       </html>
+
+  ruby: |
+      _buf = ""; _buf << "<html>
+       <body>
+        <h1>"; _buf << (@title).to_s; _buf << "</h1>
+        <table id=\"content\">\n";
+          for item in @list
+      _buf << "   <tr>
+          <td>"; _buf << ERB::Util.h(item); _buf << "</td>
+         </tr>\n";
+          end
+      _buf << "  </table>
+       </body>
+      </html>\n";
+      ; _buf
+
   php: |
       <html>
        <body>
@@ -69,6 +88,35 @@ expected*:
         </table>
        </body>
       </html>
+
+notext*:
+  eruby: |4+
+      
+     
+            <%= @title %>
+      
+      <%     for item in @list %>
+      
+              <%=h item %>
+      
+      <%     end %>
+      
+      
+      
+  ruby: |
+      _buf = ""; 
+      
+            _buf << (@title).to_s; 
+      
+          for item in @list
+      
+              _buf << ERB::Util.h(item); 
+      
+          end
+      
+      
+      
+      ; _buf
 
 import_pdata: |
       <div>

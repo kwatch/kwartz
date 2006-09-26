@@ -120,20 +120,38 @@ class KwartzBaseTranslator extends KwartzTranslator {
         assert('$expr instanceof KwartzNativeExpression');
         $flag_escape = $expr->escape;
         if ($flag_escape === null) $flag_escape = $this->escape;
+        $this->_add_native_expr_str($expr->code, $flag_escape);
+    }
+
+
+    function _add_native_expr_str($expr_str, $flag_escape) {
         if ($flag_escape) {   // ex. "<\?php echo htmlspecialchars(".$expr->code)."; ?\>"
             $this->buf[] = $this->escape_l;
-            $this->buf[] = $expr->code;
+            $this->buf[] = $expr_str;
             $this->buf[] = $this->escape_r;
         } else {              // ex. "<\?php echo " . $expr->code . "; ?\>"
             $this->buf[] = $this->expr_l;
-            $this->buf[] = $expr->code;
+            $this->buf[] = $expr_str;
             $this->buf[] = $this->expr_r;
         }
     }
 
 
     function translate_string($str) {
-        $this->buf[] = $str;
+        //$this->buf[] = $str;
+        kwartz_scan_text('/@(!*)\{(.*?)\}@/', $str, $matched, $rest);
+        foreach ($matched as $m) {
+            $prev_text = $m[0];
+            $indicator = $m[1];
+            $expr_str  = $m[2];
+            $this->buf[] = $prev_text;
+            $len = strlen($indicator);
+            if ($len >= 2)
+                continue;
+            $flag_escape = $len == 0;
+            $this->_add_native_expr_str($expr_str, $flag_escape);
+        }
+        $this->buf[] = $rest;
     }
 
 }

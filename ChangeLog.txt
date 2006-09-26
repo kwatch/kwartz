@@ -2,6 +2,9 @@
 .?version:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.65 (2006-09-26)
+	- [enhance] @{...}@ and @!{...}@ support
+	- [enhance] add test/KwartzTest.php
 
 : rev.64 (2006-07-31)
 	- [refact] move methods on HandlerArg class into HandlerHelpr
