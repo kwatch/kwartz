@@ -1,14 +1,101 @@
+preparation*: |
+    function retrieve($basename) {
+	$file = $basename . '.txt';
+	$dir  = $basename . '.d';
+	if (file_exists($dir)) k_delete($dir);
+	k_mkdir($dir);
+	k_sys("retrieve -d $dir $file");
+    }
+
 
 parameters:
-  - doc_files:  [ reference.eruby, users-guide.eruby, p-pattern.eruby ]
+  - tagfile:       html-css
+  - basenames:     [ users-guide, reference, pattern-catalog ]
+  - doc_files*:    kook_array_suffix($basenames, '.eruby')
+  - text_files*:   kook_array_suffix($basenames, '.txt')
+  - html_files*:   kook_array_suffix($basenames, '.html')
+  - basedir:       '../../../kwartz-ruby/trunk/doc';
+
 
 recipes:
+
+  - product:	*.html
+    desc:	generate *.html from *.txt
+    ingreds:	[ $(1).txt ]
+    byprods:	[ $(1).toc.html ]
+    method*: |
+	k_sys("kwaser -t $(tagfile) -T $ingred > $byprod"); 
+	k_sys("kwaser -t $(tagfile)    $ingred > $product"); 
+
+  - product:	*.txt
+    desc:	create *.txt and Kwartz*Test.php from *.eruby
+    ingreds:	[ $(1).eruby ]
+    #coprods:	[ $(1).yaml ]
+    #coprods:	[ KwartzUsersGuideTest.php ]
+    method*: |
+	//k_sys("erubis -E PercentLine -p '\\[% %\\]' $ingred > $product 2> $coprod");
+	k_sys("erubis -E PercentLine -p '\\[% %\\]' $ingred > $product");
+
+
+#  - product:	KwartzUsersGuideTest.php
+#    ingreds:	[ KwartzUsersGuideTest.eruby, users-guide.yaml, users-guide.txt ]
+#    method*: |
+#	k_sys("erubis -f $ingreds[1] $ingreds[0] > $product");
+
+  - product:	KwartzUsersGuideTest.php
+    ingreds:	[ users-guide.txt, KwartzUsersGuideTest.php.eruby ]
+
+  - product:	KwartzPatternCatalogTest.php
+    ingreds:	[ pattern-catalog.txt, KwartzPatternCatalogTest.php.eruby ]
+  
+  - product:	KwartzReferenceTest.php
+    ingreds:	[ reference.txt, KwartzReferenceTest.php.eruby ]
+
+  - product:	:test_users_guide
+    desc:	test KwartzUsersGuideTest.php
+    ingreds:	[ KwartzUsersGuideTest.php ]
+    method*: |
+	retrieve('users-guide');
+	k_sys("phpunit $ingred");
+
+  - product:	:test_pattern_catalog
+    desc:	test KwartzPatternCatalogTest.php
+    ingreds:	[ KwartzPatternCatalogTest.php ]
+    method*: |
+	retrieve('pattern-catalog');
+	k_sys("phpunit $ingred");
+
+  - product:	:test_reference
+    desc:	test KwartzReferenceTest.php
+    ingreds:	[ KwartzReferenceTest.php ]
+    method*: |
+	retrieve('reference');
+	k_sys("phpunit $ingred");
+
+  - product:	:test
+    ingreds:	[ :test_users_guide, :test_pattern_catalog, :test_reference ]
+
+  - product:	:clean
+    method*: |
+	k_delete('*.toc.html', '*.txt', '*.php', '*.d');
+
+  - product:	:clear
+    method*: |
+	k_delete('*.html'); 
 
   - product:	:link
     desc:	create hard-link of files
     method*: |
 	k_delete($doc_files);
-	$dir = '../../../kwartz-ruby/trunk/doc';
 	foreach ($doc_files as $file) {
-	    k_sys("ln $dir/$file .");
+	    k_sys("ln $basedir/$file .");
 	}
+
+  - product:	:copy
+    desc:	copy files
+    method*: |
+	k_delete($doc_files);
+	foreach ($doc_files as $file) {
+	    k_copy("$basedir/$file", $file);
+	}
+	

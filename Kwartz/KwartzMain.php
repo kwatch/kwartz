@@ -16,6 +16,9 @@ require_once('Kwartz/KwartzTranslator.php');
 
 require_once('Kwartz/Binding/Php.php');
 require_once('Kwartz/Binding/Eruby.php');
+require_once('Kwartz/Binding/Ruby.php');
+require_once('Kwartz/Binding/Erubis.php');
+require_once('Kwartz/Binding/Pierubis.php');
 require_once('Kwartz/Binding/Jstl.php');
 require_once('Kwartz/Binding/Eperl.php');
 
@@ -141,9 +144,12 @@ class KwartzMain {
         $lang = kwartz_array_get($options, 'l', KWARTZ_PROPERTY_LANG);
         switch ($lang) {
         case 'php':
+        case 'ruby':
         case 'eruby':
         case 'jstl':
         case 'eperl':
+        case 'erubis':
+        case 'pierubis':
             // ok
             break;
         default:
@@ -249,7 +255,7 @@ class KwartzMain {
         $translator = new $translator_klass($properties);
         $output = $translator->translate($stmt_list);
 
-        // load YAML file and evaluate eRuby script
+        // load YAML file and evaluate PHP script
         $yamlfile = kwartz_array_get($options, 'f');
         if ($yamlfile) {
             if ($lang != 'php') {
@@ -332,7 +338,7 @@ class KwartzMain {
         $sb[] = "  -h             : help";
         $sb[] = "  -v             : version";
         $sb[] = "  -e             : alias of '--escape=true'";
-        $sb[] = "  -l lang        : php/eruby/jstl/eperl (default 'php')";
+        $sb[] = "  -l lang        : php/eruby/ruby/jstl/eperl/erubis/pierubis (default 'php')";
         #$sb[] = "  -k kanji       : euc/sjis/utf8 (default nil)";
         #$sb[] = "  -r library,... : require libraries";
         $sb[] = "  -p plogic,...  : presentation logic files";
@@ -370,7 +376,7 @@ class KwartzMain {
                     $this->_error($msg);
                 }
                 $name = $m[1];
-                $value = $m[3];
+                $value = kwartz_array_get($m, 3);
                 if ($value === null) {
                     $value = true;
                 } elseif (preg_match('/^\d+$/', $value)) {

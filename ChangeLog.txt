@@ -2,6 +2,14 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.68 (2006-09-27)
+	- [refactor] 'KwartzUsersGuideTest.php' is automatically generated from 'doc/users-guide.eruby' 
+	- [bugfix] 'kw:d=" value:$foo"' is handled correctly
+	- [enhance] '-l ruby' support
+	- [enhance] '-l erubis' support
+	- [enhance] '-l pierubis' support
+	- [refactor] KwartzErubyHandler is now subclass of KwartzRubyHandler
+
 : rev.67 (2006-09-26)
 	- [enhance] add 'doc/*.eruby'
 

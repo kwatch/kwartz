@@ -11,9 +11,9 @@ require_once 'Kwartz/Binding/Ruby.php';
 
 
 /**
- *  directive handler for eRuby
+ *  directive handler for PIEruby
  */
-class KwartzErubyHandler extends KwartzRubyHandler {
+class KwartzPierubisHandler extends KwartzRubyHandler {
 }
 
 
@@ -21,16 +21,18 @@ class KwartzErubyHandler extends KwartzRubyHandler {
 /**
  *  translator for eRuby
  */
-class KwartzErubyTranslator extends KwartzBaseTranslator {
+class KwartzPierubisTranslator extends KwartzBaseTranslator {
 
 
     function __construct($properties=array()) {
         $marks = array(
-            '<% ',   ' %>',    // statement
-            '<%= ',  ' %>',    // expression
-            '<%=h ', ' %>',    // escaped expression
+            '<?rb ',  ' ?>',    // statement
+            '@!{',    '}@',     // expression
+            '@{',     '}@',     // escaped expression
             );
         parent::__construct($marks, $properties);
+        //if ($this->escape === null)
+        //    $this->escape = true;
     }
 
 

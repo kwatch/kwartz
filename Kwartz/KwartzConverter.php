@@ -69,11 +69,15 @@ class KwartzTagInfo {
 
     function rebuild_tag_text($attr_info=null) {
         if ($attr_info) {
-            $sb = '';
-            foreach ($attr_info as $attr) {
-                $sb .= "{$attr->space}{$attr->name}{$attr->value}";
+            $buf = array();
+            $n = count($attr_info->names);
+            for ($i = 0; $i < $n; $i++) {
+                $name  = $attr_info->names[$i];
+                $space = $attr_info->spaces[$name];
+                $value = $attr_info->values[$name];
+                $buf[] = "$space$name=\"$value\"";
             }
-            $this->attr_str = $sb;
+            $this->attr_str = join($buf);
         }
         $slash1 = $this->is_etag ? '/' : '';
         $slash2 = $this->is_empty ? '/' : '';
@@ -1159,7 +1163,8 @@ class KwartzTextConverter extends KwartzConverter {
         if ($val && is_string($val)) {
             if ($val[0] == ' ') {
                 $val = substr($val, 1);  // delete a space
-                $taginfo->rebuild_tag_text(attr_info);
+                $attr_info->set_value($this->_dattr, $val);
+                $taginfo->rebuild_tag_text($attr_info);
                 //return false;
             } elseif (preg_match($this->handler->directive_pattern(), $val)) {
                 $attr_info->delete($this->_dattr);

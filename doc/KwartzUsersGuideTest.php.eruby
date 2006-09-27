@@ -1,0 +1,56 @@
+<?php
+
+/// $Rev$
+/// $Release$
+/// $Copyright$
+
+
+// you need to install PHPUnit2 by 'sudo pear install --alldeps PHPUnit2'
+// see http://www.phpunit.de/pocket_guide/2.3/en/installation.html
+
+require_once '../test/KwartzTest.inc';
+
+
+class KwartzUsersGuideTest extends PHPUnit2_Framework_TestCase {
+
+    var $name;
+    var $desc;
+    var $command;
+    var $chomp;
+    var $filename;
+
+    function _test() {
+        $retrieve_dir = 'users-guide.d';
+        $name = $this->name;
+	$testname = getenv('TEST');
+	if ($testname && $testname != $name) break;
+	$desc = $this->desc;
+	$command = $this->command ? $this->command : "kwartz-php -p $name.plogic $name.html";
+	$filename = $this->filename ? $this->filename : "$name.expected";
+	//fprintf(STDERR, "*** debug: command=$command\n");
+	ob_start();
+	system("cd $retrieve_dir; $command");
+	$actual = ob_get_clean();
+	$expected = file_get_contents("$retrieve_dir/$filename");
+	$expected = preg_replace('/\{\{\*|\*\}\}/', '', $expected);
+	$expected = preg_replace('/\A\$ (kwartz|erubis).*\n/', '', $expected, 1);
+	if ($this->chomp) {
+            $expected = preg_replace('/\n\z/', '', $expected);
+	}
+	kwartz_assert_text_equals($expected, $actual);
+    }
+
+
+<% for hash in @testdata do %>
+    function test_<%= hash['name'] %>() {
+<%   hash.each do |key, val| %>
+        $this-><%= key %> = <%= val.inspect %>;
+<%   end %>
+        $this->_test();
+    }
+
+<% end %>
+
+}
+
+?>

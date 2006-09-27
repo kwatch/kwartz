@@ -13,7 +13,7 @@ require_once 'Kwartz/Binding/Ruby.php';
 /**
  *  directive handler for eRuby
  */
-class KwartzErubyHandler extends KwartzRubyHandler {
+class KwartzErubisHandler extends KwartzRubyHandler {
 }
 
 
@@ -21,14 +21,14 @@ class KwartzErubyHandler extends KwartzRubyHandler {
 /**
  *  translator for eRuby
  */
-class KwartzErubyTranslator extends KwartzBaseTranslator {
+class KwartzErubisTranslator extends KwartzBaseTranslator {
 
 
     function __construct($properties=array()) {
         $marks = array(
             '<% ',   ' %>',    // statement
             '<%= ',  ' %>',    // expression
-            '<%=h ', ' %>',    // escaped expression
+            '<%== ', ' %>',    // escaped expression
             );
         parent::__construct($marks, $properties);
     }
