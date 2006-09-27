@@ -1,11 +1,3 @@
-.=title:	Kwartz 3.0 Users' Guide
-.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?lastupdate:	$Date: 2006-09-24 19:37:59 +0900 (Sun, 24 Sep 2006) $
-.?version:	$Rev: 137 $
-.?release:	$Release$
-.?stylesheet:	docstyle.css
-.?copyright:	$Copyright$
-
 %
 % lang = ENV['lang']
 % if lang
@@ -37,6 +29,16 @@
 %   raise ex
 % end
 %
+.=title:	Kwartz-[%= @Lang %] Users' Guide
+.#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.#.?lastupdate:	$Date: 2006-09-24 19:37:59 +0900 (Sun, 24 Sep 2006) $
+.?version:	$Rev: 137 $
+.?release:	$Release$
+.?stylesheet:	docstyle.css
+.?copyright:	$Copyright$
+
+$Release$.^
+$Date$
 
 
 .$ Preface | preface*
@@ -132,9 +134,15 @@ Kwartz has the following features:
 .%  Multi-languages support
 	
 	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 & 1.1).
-	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.)}}.
+	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From version 3.0, it is required to write presentation logic in target language.)}}.
 	This approach gives you the power of the target language fully.
-	For example, you can write Ruby on Rails helper method (such as {{,link_to,}}, {{,field_tag,}}, and so on) directly in your template file.
+% if @lang == 'ruby'
+	For example, you can write Ruby on Rails helper methods (such as {{,link_to,}}, {{,form_tag,}}, and so on) directly as a part of presentation logic.
+% elsif @lang == 'php'
+	For example, you can write Symfony helper functions (such as {{,link_to(),}}, {{,form_tag,}}, and so on) directly as a part of presentation logic.
+% elsif @lang == 'java'
+	For example, you can write JSP custom tag (such as {{,<html:anchor>,}}, {{,<html:form>,}}, and so on) directly as a part of presentation logic.
+% else error end
 	
 	
 .%  Doesn't break HTML design at all
@@ -1686,19 +1694,19 @@ This is useful to share common presentation logic in many files.
 }
 % elsif @lang == 'php'
 {{*#link_to_new*}} {
-  elem:  link_to('New', "action='new'");
+  elem:  link_to('New', "member/new");
 }
 {{*#link_to_show*}} {
-  elem:  link_to('Show', "action='show', id=".$member->id);
+  elem:  link_to('Show', "member/show?id=".$member->getId());
 }
 {{*#link_to_edit*}} {
-  elem:  link_to('Edit', "action='edit', id=".$member->id);
+  elem:  link_to('Edit', "member/edit?id=".$member->getId());
 }
 {{*#link_to_list*}} {
-  elem:  link_to('List', "action='list'");
+  elem:  link_to('List', "member/list");
 }
 {{*#link_to_destroy*}} {
-  stag:  link_to('Destroy', "action='destroy', id=".$member", "confirm='Are you sure?'");
+  stag:  link_to('Destroy', "member/destroy?id=".$member->getId());
 }
 % elsif @lang == 'java'
 {{*#link_to_new*}} {
@@ -1817,9 +1825,9 @@ $ [%= @command %] -p show.plogic show.html
  Name: <span><?php echo htmlspecialchars($member->name); ?></span> <br>
  Email: <span><?php echo htmlspecialchars($member->email); ?></span> <br>
 </p>
-<?php echo link_to('Edit', "action='edit', id=".$member->id); ?> |
-<?php echo link_to('New', "action='new'"); ?> |
-<?php echo link_to('List', "action='list'"); ?>
+<?php echo link_to('Edit', "member/edit?id=".$member->getId()); ?> |
+<?php echo link_to('New', "member/new"); ?> |
+<?php echo link_to('List', "member/list"); ?>
 % elsif @lang == 'java'
 <p>
  Name: <span>${member.name}</span> <br>
@@ -2297,7 +2305,7 @@ The following languages are available with '-a defun'.
 % end  #if @support_defun
 
 
-% if @support_rails
+% if @lang == 'ruby'
 .$ Ruby on Rails Support  | rails
 
 This section shows how to use Kwartz with Ruby on Rails.
@@ -2557,7 +2565,7 @@ It is able to embed Rails' helper method in kw:d attribute.
  => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
 .--------------------
 
-% end #if @support_rails
+% end #if @lang == 'ruby'
 
 
 
@@ -2709,6 +2717,68 @@ This approach enables Kwartz to handle any type of text file, and also brings th
    <h1 id='id:title' class=title>title</h1>
    .--------------------
 
+
+% if @lang == 'php'
+
+.$$ {{,link_to(),}} function in Symphony		| topics_symphony
+
+{{,link_to(),}} function in Symphony is a little incompatible with Kwartz
+because you must specify link label in both presentation data and presentation logic.
+It's not DRY.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">{{*Show member*}}</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  elem:  link_to({{*'Show member'*}}, "member/show?id=".$member->getId());
+}
+.--------------------
+
+It is recommended to use {{,start_link_tag(),}}, {{,start_remote_link_tag(),}}, and {{,start_function_link_tag(),}} instead of {{,link_to(),}}, {{,link_to_remote(),}}, and {{,link_to_function(),}} because the formers print only start tag of anchor.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">Show member</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  stag:  {{*start_link_tag*}}("member/show?id=".$member->getId());
+}
+.--------------------
+
+.? expected result
+.--------------------
+<a href="/member/show?id=123">Show member</a>
+.--------------------
+
+To use {{,start_link_tag(),}}, {{,start_remote_link_tag(),}}, and {{,start_function_link_tag(),}}, require 'Kwartz/Helper/Symfony.php'.
+The following is the definition of 'Kwartz/Helper/Symfony.php'.
+
+.? Kwartz/Helper/Symfony.php
+.--------------------
+function start_link_tag($options = '', $html_options = array()) {
+   $s = link_to('', $options, $html_options);
+   return preg_replace('/<\/a>\z/', '', $s);
+}
+
+function start_remote_link_tag($options = array(), $html_options = array()) {
+   $s = link_to_remote('', $options, $html_options);
+   return preg_replace('/<\a>\z/', '', $s);
+}
+
+function start_function_link_tag($function, $html_options = array()) {
+   $s = link_to_function('', $function, $html_options);
+   return preg_replace('/<\a>\z/', '', $s);
+}
+.--------------------
+
+% end #if @lang == 'php'
 
 
 .$$ Makefile and Rakefile		| topics-makefile
