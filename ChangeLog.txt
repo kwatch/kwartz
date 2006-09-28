@@ -2,6 +2,13 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.141 (2006-09-28)
+	- [update] users-guide, reference, and pattern-catalog are shared with kwartz-php
+	- [change] 'p-pattern.*' is renamed to 'pattern-catalog.*'
+
+: rev.140 (2006-09-24)
+	- [release] 3.1.0
+
 : rev.139 (2006-09-24)
 	- [bugfix] examples/**/Rookbook.yaml updated for new version of Rook
 

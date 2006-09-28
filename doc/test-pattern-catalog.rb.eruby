@@ -1,0 +1,32 @@
+testdir = File.expand_path(File.dirname(__FILE__) + '/../test')
+require testdir + '/test.rb'
+
+class PresentationPatternTest < Test::Unit::TestCase
+
+  def _test
+    return if ENV['TEST'] && ENV['TEST'] != @name
+    #dir = 'd'
+    dir = 'pattern-catalog.d'
+    @name ||= (caller()[0] =~ /in `test_(.*?)'/) && $1
+    @pdata ||= @name + '.pdata'
+    @plogic ||= @name + '.plogic'
+    @command ||= "kwartz -p #{@plogic} #{@pdata}"
+    @expected ||= "#{@name}.expected"
+    rexp = /(\{\{\*|\*\}\})/
+    expected = File.read("#{dir}/#{@expected}").gsub(rexp, '')
+    actual = `cd #{dir}; #{@command}`
+    assert_text_equal(expected, actual)
+  end
+
+
+<% for test in @testdata %>
+  def test_<%= test[:name] %>
+<%   test.each do |key, val| %>
+    @<%= key.to_s %> = <%= val.inspect %>
+<%   end %>
+    _test()
+  end
+
+<% end %>
+
+end

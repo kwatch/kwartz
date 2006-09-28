@@ -1,31 +1,12 @@
 .=title:	Presentation Pattern Catalog
-.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?version:	$Rev$
+.#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.#.?version:	$Rev$
 .?release:	$Release$
-.?lastupdate:	$Date$
+.#.?lastupdate:	$Date$
 .?stylesheet:	docstyle.css
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+$Release$.^
+$Date$
 
 
 
@@ -43,7 +24,7 @@ This document shows Presentation Patterns.
 .$$ Table of Contents	| toc*
 
 .#.+toc:
-.<<< p-pattern.toc
+.<<< pattern-catalog.toc
 .#.-toc:
 
 
@@ -105,11 +86,6 @@ Hello {{*<%= username %>*}}!
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace1.plogic replace1.pdata)
 
 
-
-
-
-
-
 .$$$ Supplement				| replace-elem-with-value-suppliment
 
 Kwartz supports the short-notation of this pattern.
@@ -124,12 +100,6 @@ The output script will be:
 Hello {{*<%= username %>*}}!
 .____________________
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace1a.plogic replace1.pdata)
-
-
-
-
-
-
 
 
 .$$ Replace Content with Value Pattern	| replace-cont-with-value
@@ -172,12 +142,6 @@ This pattern is used frequently because the situation to replace the content wit
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace2.plogic replace2.pdata)
 
 
-
-
-
-
-
-
 .$$$ Supplement				| replace-cont-with-value-suppliment
 
 Kwartz provides the shorter notation for this pattern.
@@ -194,14 +158,9 @@ The output will be:
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace2a.plogic replace2.pdata)
 
 
-
-
-
-
-
-Kwartz Directive '{{,kw:d="cont: {{/expr/}}",}}' or '{{,kw:d="value: {{/expr/}}",}}' lets you to use this pattern without presentation logic file.
+Kwartz Directive '{{,kw:d="cont: {{/expr/}}",}}' or '{{,kw:d="kw:d="value: {{/expr/}}",}}' lets you to use this pattern without presentation logic file.
 .--------------------
-<h1 {{*id="value: title"*}}>Example</h1>
+<h1 {{*kw:d="value: title"*}}>Example</h1>
 .--------------------
 
 
@@ -257,15 +216,9 @@ World<%     end %>
 .#.<<<:! (cd guide.d; kwartz -p replace5.plogic replace5.pdata)
 
 
-
-
-
-
-
 .$$$ Suppliement			| default-content-suppliment
 
 Directive 'kw:d="default: {{/expr/}}"' is for Default Content Pattern.
-
 .-------------------- replace5a.pdata
 Hello <span {{*kw:d="default: user"*}}>World</span>!
 .--------------------
@@ -275,13 +228,6 @@ The output is:
 Hello <span><% if (user) && !(user).to_s.empty? then %><%= user %><% else %>World<% end %></span>!
 .____________________
 .#.<<<:! (cd guide.d; kwartz replace5a.pdata)
-
-
-
-
-
-
-
 
 
 
@@ -344,11 +290,6 @@ This pattern is very useful to reuse the element in other place.
 .____________________
 .#.<<<:! (cd guide.d; kwartz -p replace3.plogic replace3.pdata)
 
-
-
-
-
-
 Use '_content({{/name/}})' instead of '_element({{/name/}})'
 if you want to reuse content of other element.
 
@@ -363,10 +304,9 @@ if you want to reuse content of other element.
 .--------------------
 
 
-
 .$$$ Supplement				| replace-elem-with-elem-supplement
 
-Directive '{{,id="replace_element_with_element: {{/name/}}",}}' and '{{,id="replace_element_with_content: {{/name/}}",}}' lets you to use this pattern without presentation logic file.
+Directive '{{,id="replace_element_with_element:{{/name/}}",}}' and '{{,id="replace_element_with_content:{{/name/}}",}}' lets you to use this pattern without presentation logic file.
 .--------------------
 <div {{*id="mark:links"*}}>
  <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
@@ -374,7 +314,7 @@ Directive '{{,id="replace_element_with_element: {{/name/}}",}}' and '{{,id="repl
 
 <p>Welcome to my Home Page!</p>
 
-<div {{*id="replace_element_with_element: links"*}}>
+<div {{*id="replace_element_with_element:links"*}}>
   Home | Document | FAQ
 </div>
 .--------------------
@@ -610,12 +550,6 @@ $ kwartz -l eruby  {{*-i contents.html*}} -p contens.plogic,layout.plogic layout
 .____________________
 
 
-
-
-
-
-
-
 .$$$ Supplement				| replace-cont-with-elem-supplement
 
 Kwartz Directive '{{,id="replace_content_with_element:{{/name/}}",}}' and '{{,id="replace_content_with_content:{{/name/}}",}}' lets you to use this pattern without presentation logic file(layout.plogic).
@@ -690,11 +624,6 @@ This pattern enables you to delete dummy element in presentation data.
 .____________________
 
 
-
-
-
-
-
 .$$$ Supplement				| delete-elem-supplement
 
 Kwartz directive '{{,id="dummy:{{/str/}}",}}' lets you to use this pattern without presentation logic file.
@@ -758,11 +687,6 @@ Next<%     else %>
 .____________________
 
 
-
-
-
-
-
 .$ Iteration	| iteration
 
 
@@ -787,7 +711,7 @@ This pattern is very useful for all these situations.
 .-------------------- iterate_elem.pdata
 <table>
   <tr {{*id="mark:list"*}}>
-   <td kw:d="value: item">item</td>
+   <td id="mark:item">item</td>
   </tr>
 </table>
 .--------------------
@@ -804,6 +728,10 @@ This pattern is very useful for all these situations.
     {{*end*}}
   }
 }
+
+#item {
+  value: item;
+}
 .--------------------
 
 .? Output Script:
@@ -818,12 +746,8 @@ This pattern is very useful for all these situations.
 .____________________
 
 
-
-
-
-
-
 .$$$ Supplement				| iterate-elem-supplement
+
 
 Kwartz directive {{,kw:d="for {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
@@ -857,8 +781,8 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 .? Presentation Data:
 .-------------------- iterate_cont.pdata
 <dl {{*id="mark:list"*}}>
-  <dt kw:d="value: item.text">text</dt>
-  <dd kw:d="value: item.desc">description</dd>
+  <dt id="mark:text">text</dt>
+  <dd id="mark:desc">description</dd>
 </dl>
 .--------------------
 
@@ -874,6 +798,13 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
     _etag
   }
 }
+
+#text {
+  value:  item.text;
+}
+#desc {
+  value:  item.desc;
+}
 .--------------------
 
 .? Output Script:
@@ -887,14 +818,10 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 .____________________
 
 
-
-
-
-
-
 .$$$ Supplement				| iterate-cont-supplement
 
-Kwartz directive {{,kw:d="list {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
+
+Kwartz directive {{,kw:d=list {{/item/}} in {{/list/}},}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
 
 .--------------------
@@ -962,12 +889,9 @@ This pattern is very useful when you want to change data according to conditions
 .____________________
 
 
-
-
-
-
-
 .$$$ Supplement				| select-elem-supplement
+
+
 
  Kwartz directive '{{,kw:d="if {{/condition/}}",}}', '{{,kw:d="elsif {{/condition/}}",}}',
  and '{{,kw:d="else",}}' let you to use this pattern without presentation logic file.
@@ -1065,11 +989,6 @@ This pattern is useful when many dummy datas are exist.
   </body>
 </html>
 .____________________
-
-
-
-
-
 
 
 .#The above example should be described as following.
@@ -1188,7 +1107,7 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 .--------------------
 .#------
 
-.? Presentation Data ({{<design.html|p-pattern/design.html>}}):
+.? Presentation Data ({{<design.html|pattern-catalog/design.html>}}):
 .-------------------- design.html
 <html {{*id="mark:whole"*}}>
   <head>
@@ -1227,7 +1146,7 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
     <p> ..... </p>
     
     <div align="center" class="copyright" {{*id="mark:copyright"*}}>
-      Copyright&copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&copy; 2004-2006 kuwata-lab. All Rights Reserved.
     </div>
     
   </body>
@@ -1286,10 +1205,10 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 #menus {
   logic: {
     _stag
-    foreach (menu in menulist) {
+    for menu in menulist
       _element(menu)
       _element(menu_separator)
-    }
+    end
     _etag
   }
 }
@@ -1322,15 +1241,9 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
 .? Output Script (copyright.rhtml):
 .____________________ copyright.expected
     <div align="center" class="copyright">
-      Copyright&copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&copy; 2004-2006 kuwata-lab. All Rights Reserved.
     </div>
 .____________________
-
-
-
-
-
-
 
 
 .? Output Script (tablist.rhtml):
@@ -1348,31 +1261,19 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
 .____________________
 
 
-
-
-
-
-
-
 .? Output Script (menulist.rhtml):
 .____________________ menulist.expected
     <div>
       <span class="menu_title" id="value:menu_title">MenuList</span>
       <div class="menus">
-<%     foreach (menu in menulist) { %>
+<%     for menu in menulist %>
 <%     klass = current_menu == menu['name'] ? 'selected' : '' %>
         <a href="<%= menu['cgipath'] %>" class="<%= klass %>"><%= menu['name'] %></a>
         <span><br></span>
-<%     } %>
+<%     end %>
       </div>
     </div>
 .____________________
-
-
-
-
-
-
 
 
 .$$$ Supplement				| extract-elem-supplement
@@ -1380,8 +1281,5 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
  The command-line option '{{,-X {{/name/}},}}' extracts the element marked with {{,{{/name/}},}} in kwartz-ruby.
 
  The command-line option '{{,-x {{/name/}},}}' extracts the content of the element marked with {{,{{/name/}},}} in kwartz-ruby.
-
-
-
 
 

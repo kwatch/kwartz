@@ -73,17 +73,21 @@ class Test::Unit::TestCase   # :nodoc:
   end
 
 
+  SPECIAL_KEYS = %[exception errormsg]
+
   def self.load_yaml_testdata(filename, options={})   # :nodoc:
     identkey   = options[:identkey]   || 'name'
     testmethod = options[:testmethod] || '_test'
     lang       = options[:lang]
+    special_keys = options[:special_keys] || SPECIAL_KEYS
     load_yaml_documents(filename, options) do |ydoc|
       ident = ydoc[identkey]
       s  =   "def test_#{ident}\n"
       ydoc.each do |key, val|
         if key[-1] == ?*
           key = key[0, key.length-1]
-          val = val[lang]
+          k = special_names.include?(key) ? 'ruby' : lang
+          val = val[k]
         end
         s << "  @#{key} = #{val.inspect}\n"
       end
@@ -103,9 +107,10 @@ class Test::Unit::TestCase   # :nodoc:
   def self.load_yaml_testdata_with_each_lang(filename, options={})   # :nodoc:
     identkey   = options[:identkey]   || 'name'
     testmethod = options[:testmethod] || '_test'
+    special_keys = options[:special_keys] || SPECIAL_KEYS
     langs = defined?($lang) && $lang ? [ $lang ] : options[:langs]
     langs or raise "*** #{method_name()}(): option ':langs' is required."
-    #
+
     load_yaml_documents(filename, options) do |ydoc|
       ident = ydoc[identkey]
       langs.each do |lang|
@@ -114,7 +119,8 @@ class Test::Unit::TestCase   # :nodoc:
         ydoc.each do |key, val|
           if key[-1] == ?*
             key = key[0, key.length-1]
-            val = val[lang]
+            k = special_keys.include?(key) ? 'ruby' : lang
+            val = val[k]
           end
           s << "  @#{key} = #{val.inspect}\n"
         end

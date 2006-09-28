@@ -2,8 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Kwartz 3.0 Users' Guide</title>
-  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <title>Kwartz-Ruby Users' Guide</title>
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" href="docstyle.css" type="text/css">
@@ -13,16 +12,16 @@
   <blockquote>
    <div class="mainbody">
 
-    <div align="left"><h1>Kwartz 3.0 Users' Guide</h1></div>
-    <div align="left">
-      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
-      last update: $Date$<br>
-    </div>
-
+    <div align="left"><h1>Kwartz-Ruby Users' Guide</h1></div>
+<p>$Release$<br>
+$Date$
+</p>
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>This is the users' guide of Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>,
-a template system which realized the concept of 'Independence of Presentation Logic'.
+<p>This is the users' guide of Kwartz-ruby.
+</p>
+<p>Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is a template system which realized the concept of 'Independence of Presentation Logic'.
+Kwartz-ruby is an implementation of Kwartz in Ruby.
 </p>
 <div class="footnote">
  <dl compact>
@@ -146,7 +145,6 @@ If you are familiar with CSS, you'll be also familiar with Kwartz.
 <img src="img/fig04.png" alt="relation of HTML, CSS, JavaScript, and Kwartz" />
 </div>
 <p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
-There is a plan to implement Kwartz in PHP or Java.
 </p>
 <p>In the following, the word 'Kwartz' means the specification of the template system
 and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
@@ -189,7 +187,7 @@ Multi-languages support</dt>
 <p>	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 &amp; 1.1).
 	Presentation logics are written in each language<sup>(<a href="#fnref:3" name="fnlink:3">*3</a>)</sup>.
 	This approach gives you the power of the target language fully.
-	For example, you can write Ruby on Rails helper method (such as <code>link_to</code>, <code>field_tag</code>, and so on) directly in your template file.
+	For example, you can write Ruby on Rails helper methods (such as <code>link_to</code>, <code>form_tag</code>, and so on) directly as a part of presentation logic.
 </p>
 </dd>
 <dt class="dt2">
@@ -224,7 +222,7 @@ Auto-escape and Partial-escape</dt>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
-  <dd>Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.</dd>
+  <dd>Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From version 3.0, it is required to write presentation logic in target language.</dd>
  </dl>
 </div>
 <br>
@@ -299,20 +297,20 @@ Presentation logic file(example1.plogic):</div>
   value: member;
 }
 </pre>
-<p>(Don't forget the semicolon at the end of line especially for Ruby user!)
+<p>(Don't forget the semicolon at the end of line!)
 </p>
 <p>Kwartz generates eRuby script from the above files. This action is called 'compiling'.
 </p>
 <div class="terminal_caption">
-how to compile eRuby script</div>
+how to compile</div>
 <pre class="terminal">$ kwartz -p example1.plogic example1.html &gt; example1.rhtml
 </pre>
-<p>The following is the compiled eRuby script.
+<p>The following is the compiled output script.
 Notice that <code>id="mark:item1"</code> is removed automatically while <code>id="list1"</code> is leaved.
 </p>
 <a name="example1.expected"></a>
 <div class="program_caption">
-generated eRuby script</div>
+generated output script</div>
 <pre class="program">&lt;table&gt;
 &lt;%     for member in @members %&gt;
   &lt;tr id="list1"&gt;
@@ -671,7 +669,7 @@ presentation logic (form1.plogic)</div>
   <strong>elem:</strong>  text_field 'member', 'name';
 }
 <strong>#member_birth</strong> {
-  <strong>elem:</strong>  date_select 'member', birth';
+  <strong>elem:</strong>  date_select 'member', 'birth';
 }
 <strong>#submit</strong> {
   <strong>elem:</strong>  submit_to 'Submit';
@@ -683,7 +681,7 @@ compile</div>
 <pre class="terminal">$ kwartz -p form1.plogic form1.html
 <strong>&lt;%= start_form_tag :action=&gt;'new' %&gt;</strong>
   Name: <strong>&lt;%= text_field 'member', 'name' %&gt;</strong>&lt;br&gt;
-  Birthday: <strong>&lt;%= date_select 'member', birth' %&gt;</strong>&lt;br&gt;
+  Birthday: <strong>&lt;%= date_select 'member', 'birth' %&gt;</strong>&lt;br&gt;
  <strong>&lt;%= submit_to 'Submit' %&gt;</strong>
 &lt;/form&gt;
 </pre>
@@ -740,7 +738,7 @@ Presentation Data(directive1.html):</div>
 </pre>
 <div class="terminal_caption">
 Compile:</div>
-<pre class="terminal">$ kwartz -l eruby  directive1.html &gt; directive1.rhtml
+<pre class="terminal">$ kwartz directive1.html &gt; directive1.rhtml
 </pre>
 <a name="directive1.expected"></a>
 <div class="program_caption">
@@ -862,7 +860,8 @@ presentation data (escape1.html):</div>
 <a name="escape1.plogic"></a>
 <div class="program_caption">
 presentation logic (escape1.plogic)</div>
-<pre class="program">#val1 {
+<pre class="program">
+#val1 {
   <strong>value:</strong> expr;
 }
 #val2 {
@@ -904,7 +903,7 @@ JSTL prints escaped value in default.
 </p>
 <p>Directives <code>kw:d="Value: <em>expr</em>"</code>, <code>kw:d="Attr: '<em>name</em>' <em>expr</em>"</code>, and <code>kw:d="Append: <em>expr</em>"</code> always escape expression value even when the command-line option '<code>-e</code>' is not specified.
 </p>
-<p>Directives <code>kw:d="VALUE: <em>expr</em>:"</code>, <code>kw:d="ATTR: '<em>name</em>' <em>expr</em>"</code>, and <code>kw:d="APPEND: <em>expr</em>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
+<p>Directives <code>kw:d="VALUE: <em>expr</em>"</code>, <code>kw:d="ATTR: '<em>name</em>' <em>expr</em>"</code>, and <code>kw:d="APPEND: <em>expr</em>"</code> doesn't escape expression value even when the command-line option '<code>-e</code>' is specified.
 </p>
 <p>Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
@@ -914,7 +913,7 @@ If this is true then Kwartz will escape values in default.
 
 <a name="langs"></a>
 <h3 class="section2">Multi-language</h3>
-<p>Kwartz-ruby now supports the following programming language.
+<p>Kwartz now supports the following programming language.
 </p>
 <ul type="disc">
 <li>Ruby, eRuby(ERB, Erubis)
@@ -1243,19 +1242,19 @@ This is useful to share common presentation logic in many files.
 <div class="program_caption">
 link_to.plogic</div>
 <pre class="program"><strong>#link_to_new</strong> {
-  elem:  start_link_tag :action=&gt;'new';
+  elem:  link_to 'New', :action=&gt;'new';
 }
 <strong>#link_to_show</strong> {
-  elem:  start_link_tag :action=&gt;'show', :id=&gt;@member;
+  elem:  link_to 'Show', :action=&gt;'show', :id=&gt;@member;
 }
 <strong>#link_to_edit</strong> {
-  elem:  start_link_tag :action=&gt;'edit', :id=&gt;@member;
+  elem:  link_to 'Edit', :action=&gt;'edit', :id=&gt;@member;
 }
 <strong>#link_to_list</strong> {
-  elem:  start_link_tag :action=&gt;'list';
+  elem:  link_to 'List', :action=&gt;'list';
 }
 <strong>#link_to_destroy</strong> {
-  stag:  start_link_tag({:action=&gt;'destroy', :id=&gt;@member}, :confirm=&gt;'Are you sure?');
+  elem:  link_to('Destroy', {:action=&gt;'destroy', :id=&gt;@member}, :confirm=&gt;'Are you sure?');
 }
 </pre>
 <a name="show2.html"></a>
@@ -1265,9 +1264,9 @@ show.html</div>
  Name: &lt;span id="mark:name"&gt;foo&lt;/span&gt; &lt;br&gt;
  Email: &lt;span id="mark:email"&gt;foo@mail.com&lt;/span&gt; &lt;br&gt;
 &lt;/p&gt;
-&lt;a href="#" <strong>id="link_to_edit"</strong>&gt;Edit this member&lt;/a&gt; |
-&lt;a href="#" <strong>id="link_to_new"</strong>&gt;Create new member&lt;/a&gt; |
-&lt;a href="#" <strong>id="link_to_list"</strong>&gt;Return to list&lt;/a&gt;
+&lt;a href="#" <strong>id="link_to_edit"</strong>&gt;Edit&lt;/a&gt; |
+&lt;a href="#" <strong>id="link_to_new"</strong>&gt;New&lt;/a&gt; |
+&lt;a href="#" <strong>id="link_to_list"</strong>&gt;List&lt;/a&gt;
 </pre>
 <div class="program_caption">
 show.plogic</div>
@@ -1288,9 +1287,9 @@ compile</div>
  Name: &lt;span&gt;&lt;%=h @member.name %&gt;&lt;/span&gt; &lt;br&gt;
  Email: &lt;span&gt;&lt;%=h @member.email %&gt;&lt;/span&gt; &lt;br&gt;
 &lt;/p&gt;
-&lt;%= start_link_tag :action=&gt;'edit', :id=&gt;@member %&gt; |
-&lt;%= start_link_tag :action=&gt;'new' %&gt; |
-&lt;%= start_link_tag :action=&gt;'list' %&gt;
+&lt;%= link_to 'Edit', :action=&gt;'edit', :id=&gt;@member %&gt; |
+&lt;%= link_to 'New', :action=&gt;'new' %&gt; |
+&lt;%= link_to 'List', :action=&gt;'list' %&gt;
 </pre>
 <br>
 
@@ -1505,8 +1504,8 @@ document-test.html</div>
 document-test.plogic</div>
 <pre class="program"><strong>#DOCUMENT</strong> {
   <strong>begin:</strong> {
-    title = _context[:title]
-    user  = _context[:user]
+    title = cgi['title']
+    user  = cgi['user']
   }
   <strong>end:</strong> {
     print "&lt;!--end--&gt;\n"
@@ -1517,8 +1516,8 @@ document-test.plogic</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -p document-test.plogic document-test.html
-<strong>&lt;%     title = _context[:title] %&gt;</strong>
-<strong>&lt;%     user  = _context[:user] %&gt;</strong>
+<strong>&lt;%     title = cgi['title'] %&gt;</strong>
+<strong>&lt;%     user  = cgi['user'] %&gt;</strong>
 &lt;html&gt;
  &lt;body&gt;hello&lt;/body&gt;
 &lt;/html&gt;
@@ -2052,7 +2051,30 @@ file "file3.rhtml" =&gt; ["file3.html", "file3.plogic", layout] do |t|
 end
 </pre>
 <div class="program_caption">
-example of Rookbook.yaml for <a href="http://www.rubyforge.org/projects/rook">Rook</a></div>
+example of Kookbook.yaml for <a href="http://www.kuwata-lab.com/kook">Kook</a></div>
+<pre class="program">properties:
+  - layout  :  layout.html
+
+parameters:
+  - all     :  [ file1.rhtml, file2.rhtml, file3.rhtml ]
+  - rook_product:  $(all)
+
+recipes:
+
+  - product:	*.rhtml
+    ingreds:	[ $(1).html, $(1).plogic ]
+    method*: |
+        $pdata = $ingreds[0]; $plogic = $ingreds[1];
+	k_sys("kwartz -p $plogic} $pdata &gt; $product");
+
+  - product:	file3.rhtml
+    ingres:	[ file3.html, file3.plogic, $(layout) ]
+    method*: |
+	$pdata = $ingreds[0]; $plogic = $ingreds[1]
+	k_sys("kwartz -p $plogic -L $(layout) $pdata &gt; $product"
+</pre>
+<div class="program_caption">
+example of Rookbook.yaml for <a href="http://www.kuwata-lab.com/kook">Rook</a></div>
 <pre class="program">properties:
   - layout  :  layout.html
 
@@ -2072,7 +2094,7 @@ recipes:
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method*: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L $(layout) #{pdata} &gt; #{@product}"
+	sys "kwartz -p #{plogic} -L $(layout) #{pdata} &gt; #{@product}"
 </pre>
 <br>
 
@@ -2085,7 +2107,6 @@ recipes:
 usage of Kwartz::Main class</div>
 <pre class="program"><strong>require 'kwartz'</strong>
 <strong>require 'kwartz/main'</strong>
-
 argv = %w[-p hello.plogic -L layout.html hello.html]
 <strong>main = Kwartz::Main.new(argv)</strong>
 <strong>output = main.execute()</strong>
@@ -2106,7 +2127,7 @@ Erubis is an implementation of eRuby which supports not only Ruby but also other
 presentation data (js-example.html)</div>
 <pre class="program">&lt;table&gt;
   &lt;tr class="odd" <strong>id="mark:list"</strong>&gt;
-    &lt;td&gt;<strong>@!{item}@</strong>&lt;/td&gt;
+    &lt;td&gt;<strong>@{item}@</strong>&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr class="even" <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;foo&lt;/td&gt;
@@ -2139,11 +2160,16 @@ output script (js-example.jshtml)</div>
 <strong>&lt;%       klass = i % 1 == 0 ? 'even' : 'odd'; %&gt;</strong>
 <strong>&lt;%       item = list[i]; %&gt;</strong>
   &lt;tr class="<strong>&lt;%= klass %&gt;</strong>"&gt;
-    &lt;td&gt;<strong>&lt;%= item %&gt;</strong>&lt;/td&gt;
+    &lt;td&gt;<strong>&lt;%== item %&gt;</strong>&lt;/td&gt;
   &lt;/tr&gt;
 <strong>&lt;%     } %&gt;</strong>
 &lt;/table&gt;
 </pre>
+<p>In Erubis, <code>&lt;%= ... %&gt;</code> means embedded expression and <code>&lt;%== ... %&gt;</code> means embedded expression with escaping.
+In this example, <code>@{item}@</code> is compiled into <code>&lt;%== item %&gt;</code> because it needs escaping and <code>attr: 'class' klass</code> is compiled into <code>&lt;%= klass %&gt;</code> without escaping.
+</p>
+<p>The following is an example to compile into JavaScript code with Erubis.
+</p>
 <a name="js-example.expected"></a>
 <div class="terminal_caption">
 convert into JavaScript code with erubis</div>
@@ -2153,7 +2179,7 @@ var _buf = []; _buf.push("&lt;table&gt;\n");
        <strong>klass = i % 1 == 0 ? 'even' : 'odd';</strong> 
        <strong>item = list[i];</strong> 
 _buf.push("  &lt;tr class=\""); _buf.push(<strong>klass</strong>); _buf.push("\"&gt;\n\
-    &lt;td&gt;"); _buf.push(<strong>item</strong>); _buf.push("&lt;/td&gt;\n\
+    &lt;td&gt;"); _buf.push(escape(<strong>item</strong>)); _buf.push("&lt;/td&gt;\n\
   &lt;/tr&gt;\n");
      <strong>}</strong> 
 _buf.push("&lt;/table&gt;\n");

@@ -1,26 +1,8 @@
-.=title:	Kwartz-ruby 3.0 Reference Guide
-.?lastupdate:	$Date$
-.?version:	$Release$
-.?stylesheet:	docstyle.css
-
-
-.$ Preface	| preface*
-
-This document{{(This document is generated automatically from unit-test data. Knuth had propsed integration of code and document.  I propose integration of test and document :-))}} is the reference manual of Kwartz-ruby 3.0.
-
-Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept 'Independence of Presentation Logic'.
-It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
-
-If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
-
-
-
-.$$ Table of Contents	      | toc*
-
-.<<< reference.toc
-
-
 [%
+
+  require 'doc-helper'
+  set_values()
+  @tests = []
 
   def untabify(str, width=8)
     sb = ''
@@ -33,7 +15,33 @@ If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
 
   require 'yaml'
 
-%]
+ %]
+.=title:	Kwartz-[%= @lang %] 3.0 Reference Guide
+.#.?lastupdate:	$Date$
+.#.?version:	$Release$
+.?stylesheet:	docstyle.css
+
+$Release$.^
+$Date$
+
+
+.$ Preface	| preface*
+
+This document{{(This document is generated automatically from unit-test data. Knuth had propsed integration of code and document.  I propose integration of test and document :-))}} is the reference manual of Kwartz-[%= @lang %].
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept 'Independence of Presentation Logic'.
+It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
+Kwartz-[%= @lang %] is an implementation of Kwartz in [%= @Lang %].
+
+If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
+
+
+
+.$$ Table of Contents	      | toc*
+
+.<<< reference.toc
+
+
 
 .# --------------------------------------------------------------------------------
 
@@ -73,7 +81,7 @@ Notice that the tail semicolon of declaration is not omittable.
   str = untabify(str)
   context = YAML.load(str)
 
-  context.each do |data|
+  for data in context do
     name     = data['name']
     title    = data['title']
     desc     = data['desc']
@@ -82,7 +90,7 @@ Notice that the tail semicolon of declaration is not omittable.
     expected = data['expected*']
     postscript = data['postscript'] || ''
 
-%]
+ %]
 
 .$$ [%= title %]	| property-[%= name %]
 
@@ -113,17 +121,17 @@ Notice that the tail semicolon of declaration is not omittable.
 
 .? compile
 .====================
-$ kwartz -l [%= lang %] -p ex-[%= name %].plogic ex-[%= name %].pdata
+$ [%= @command %] -l [%= lang %] -p ex-[%= name %].plogic ex-[%= name %].pdata
 [%= expected[lang].chomp %]
 .====================
 
 [%
-    end
-%]
+    end#each do
+ %]
 
 [%
-  end
-%]
+  end#for
+ %]
 
 
 .#.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
@@ -163,12 +171,13 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
   context = YAML.load(str)
 
   context.each do |data|
+    next if data['hide']
     name     = data['name']
     subject  = data['subject']
     desc     = data['desc']
     pdata    = data['pdata*']
     expected = data['expected*']
-%]
+ %]
 
 
 .$$ [%= subject %]	| directive-[%= name %]
@@ -177,7 +186,7 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
 
 [%
     if data['common']
-      list = [ ['Ruby, PHP, JSP, Perl', 'eruby'] ]
+      list = [ ['Ruby, PHP, JSP, Perl',  @outlang] ]
     else
       list = [ ['Ruby', 'eruby'], ['PHP', 'php'], ['JSP', 'jstl'], ['Perl', 'eperl'] ]
     end
@@ -194,24 +203,23 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
 
 .? compile
 .====================
-$ kwartz -l [%= lang %] ex-[%= name %].pdata
+$ [%= @command %] -l [%= lang %] ex-[%= name %].pdata
 [%= expected[lang].chomp %]
 .====================
 
 [%
     end
-%]
-
+ %]
 
 [%
   end
-%]
+ %]
 
 
 
 .$ Command-Line Options		| cmdline
 
-Usage:  kwartz [..options..] [-p file.plogic] file.html > file.rhtml
+Usage:  [%= @command %] [..options..] [-p file.plogic] file.html > file.rhtml
 
 Command-line options:
 

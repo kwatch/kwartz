@@ -175,8 +175,8 @@ module Kwartz
       status = 0
       begin
         main = Kwartz::Main.new(argv)
-        out = main.execute()
-        print out unless out == nil
+        output = main.execute()
+        print output unless output == nil
       rescue Kwartz::KwartzError => ex
         raise ex if $DEBUG
         $stderr.puts ex.to_s

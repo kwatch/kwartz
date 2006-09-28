@@ -2,7 +2,7 @@
 parameters:
   - u       :   users-guide
   - r       :   reference
-  - p       :   p-pattern
+  - p       :   pattern-catalog
   - tagfile :   html-css
   - reference_testdata : [ ../test/test-ruleset.yaml, ../test/test-directives.yaml ]
   - tmpdir  :   d
@@ -12,55 +12,75 @@ parameters:
 recipes:
 
   - product:	:all
-    ingreds:	[ :test, $(u).html, $(p).html, $(r).html ]
+    ingreds:	[ $(u).html, $(p).html, $(r).html, $(p).d/.retrieved ]
     method*: |
-	  mkdir_p "p-pattern"
-	  cp "#{tmpdir}/design.*", "p-pattern"
+	  mkdir_p "$(p)"
+	  cp "$(p).d/design.*", "$(p)"
 
   - product:    :clean
     method*: |
-	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt'
+	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.d'
 
   - product:	:clear
+    ingreds:	[ :clean ]
     method*: |
-	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.html', 'test-*', 'p-pattern'
+	rm_rf '*.html', 'test-*.rb', 'pattern-catalog'
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
     byprods:    [ $(1).toc.html ]
     method*: |
-	dir = '$(tmpdir)'
-	#rm_rf dir 
-	mkdir_p dir
-	sys "retrieve -d #{dir} $(1).txt"
 	sys "kwaser -t $(tagfile) -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t $(tagfile)     #{@ingred} > #{@product}"
 	rm_f @byprod
 
   - product:	:retrieve
+    ingreds:	[ users-guide.txt ]
     method*: |
 	dir = '$(tmpdir)'
 	mkdir_p dir
-	sys "retrieve -d #{dir} users-guide.eruby"
+	sys "retrieve -d #{dir} #{@ingred}"
 
   - product:    *.txt
-    desc:	create *.txt from *.eruby
+    desc:	create *.txt and test-*.rb from *.eruby
     ingreds:    [ $(1).eruby ]
+    coprods:	[ test-$(1).rb ]
     method*: |
-        sys "erubis -xp '\\[% %\\]' -E NoCode #{@ingred} > #{@product}"
+        #sys "erubis -xp '\\[% %\\]' -E NoCode #{@ingred} > #{@product}"
+        sys "erubis -p '\\[% %\\]' -E PercentLine #{@ingred} > #{@product}"
 
   - product:	$(r).txt
     ingreds:    [ $(r).eruby, $(reference_testdata) ]
     method*: |
 	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"
 
-  - product:    test-*.rb
-    ingreds:	[ $(1).eruby ]
+#  - product:    test-*.rb
+#    ingreds:	[ $(1).eruby ]
+#    method*: |
+#        dir = '$(tmpdir)'
+#	mkdir dir unless test(?d, dir)
+#	sys "retrieve -d #{dir} #{@ingred}"
+#	#sys "erubis -x -b -p '\\[% %\\]' -E NoText #{@ingred} > #{@product}"
+#        sys "erubis -p '\\[% %\\]' -E PercentLine #{@ingred} > #{@product}"
+
+  - product:	*.d/.retrieved
+    ingreds:	[ $(1).txt ]
     method*: |
-        dir = '$(tmpdir)'
-	mkdir dir unless test(?d, dir)
+	dir = '$(1).d'
+	rm_rf dir if test(?d, dir)
+	mkdir_p dir
 	sys "retrieve -d #{dir} #{@ingred}"
-	sys "erubis -x -b -p '\\[% %\\]' -E NoText #{@ingred} > #{@product}"
+	File.open(@product, 'w') { |f| f.write(Time.now.to_s) }
+
+  - product:	do-test-*
+    desc:	do test-{users-guide,pattern-catalog}
+    ingreds:	[ $(1).txt, $(1).d/.retrieved ]
+    symbolic:	true
+    method*: |
+	sys "ruby test-$(1).rb"
+
+  - product:	test-*.rb
+    ingreds:	[ $(1).txt ]
 
   - product:    :test
     ingreds:    [ test-$(u).rb, test-$(p).rb ]

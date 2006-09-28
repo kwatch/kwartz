@@ -1,39 +1,52 @@
-.=title:	Kwartz 3.0 Users' Guide
-.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?lastupdate:	$Date$
+%
+% lang = ENV['lang']
+% if lang
+%   lang = lang.downcase
+% else
+%   Dir.pwd =~ /\bkwartz-(\w+)\b/  or raise "cannot detect lang."
+%   lang = $1
+% end
+% lang =~ /^(ruby|php|java)$/  or raise "'#{lang}': unknown lang."
+% @lang = lang
+%
+% table = { 'ruby'=> ['Ruby',  'rhtml',  'kwartz',      'test-users-guide.rb'],
+%           'php' => ['PHP',   'php',    'kwartz-php',  'KwartzUsersGuideTest.php'],
+%           'java'=> ['Java',  'jsp',    'java kwartz.Main', 'UsersGuideTest.java'],
+%         }
+% @Lang, @suffix, @command, @testfile = table[@lang]
+% #@template = @testfile.sub(/\.\w+$/, '.eruby')
+% @template = @testfile + '.eruby'
+%
+% @support_defun = @lang == 'ruby'
+% @support_pl    = @lang == 'java'
+%
+% @tests = []
+%
+% def error
+%   ex = StandardError.new("*** internal error: @lang='#{@lang.inspect}'")
+%   ex.set_backtrace(caller())
+%   raise ex
+% end
+%
+.=title:	Kwartz-[%= @Lang %] Users' Guide
+.#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.#.?lastupdate:	$Date$
 .?version:	$Rev$
 .?release:	$Release$
 .?stylesheet:	docstyle.css
 .?copyright:	$Copyright$
 
-
-[%
-
-require File.expand_path(File.dirname(__FILE__) + '/../test/test.rb')
-
-class UsersGuideTest < Test::Unit::TestCase
-
-  def _test
-    tmpdir = 'd'
-    @name ||= (caller()[0] =~ /in `test_(.*?)'/) && $1
-    @command  ||= "kwartz -p #{@name}.plogic #{@name}.html"
-    @filename ||= "#{@name}.expected"
-    actual = `cd #{tmpdir}; #{@command}`
-    expected = File.read(tmpdir + '/' + @filename)
-    expected.gsub!(/(\{\{\*|\*\}\})/, '')
-    expected.sub!(/\A\$ (kwartz|erubis).*\n/, '')
-    expected.chomp! if @chomp
-    assert_text_equal(expected, actual)
-  end
-
-%]
+$Release$.^
+$Date$
 
 
 .$ Preface | preface*
 
 
-This is the users' guide of Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
-a template system which realized the concept of 'Independence of Presentation Logic'.
+This is the users' guide of Kwartz-[%= @lang %].
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept of 'Independence of Presentation Logic'.
+Kwartz-[%= @lang %] is an implementation of Kwartz in [%= @Lang %].
 
 
 
@@ -86,12 +99,12 @@ The following figure show the relation of HTML, CSS, JavaScript, and Kwartz.
 .+++++
 
 
-Kwartz-ruby is an implemenation of Kwartz in Ruby.
-There is a plan to implement Kwartz in PHP or Java.
+Kwartz-[%= @lang %] is an implemenation of Kwartz in [%= @Lang %].
+.#There is a plan to implement Kwartz in PHP or Java.
 
 
 In the following, the word 'Kwartz' means the specification of the template system
-and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+and the word 'Kwartz-[%= @lang %]' means the implementation of it in [%= @Lang %] language.
 
 
 
@@ -122,9 +135,15 @@ Kwartz has the following features:
 .%  Multi-languages support
 	
 	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 & 1.1).
-	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.)}}.
+	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From version 3.0, it is required to write presentation logic in target language.)}}.
 	This approach gives you the power of the target language fully.
-	For example, you can write Ruby on Rails helper method (such as {{,link_to,}}, {{,field_tag,}}, and so on) directly in your template file.
+% if @lang == 'ruby'
+	For example, you can write Ruby on Rails helper methods (such as {{,link_to,}}, {{,form_tag,}}, and so on) directly as a part of presentation logic.
+% elsif @lang == 'php'
+	For example, you can write Symfony helper functions (such as {{,link_to(),}}, {{,form_tag,}}, and so on) directly as a part of presentation logic.
+% elsif @lang == 'java'
+	For example, you can write JSP custom tag (such as {{,<html:anchor>,}}, {{,<html:form>,}}, and so on) directly as a part of presentation logic.
+% else error end
 	
 	
 .%  Doesn't break HTML design at all
@@ -182,7 +201,13 @@ In presentation logic, you can operate on elements which are marked in presentat
     .- '{{*{{,_stag,}}*}}' represents a start tag (= '<tr>').
     .- '{{*{{,_cont,}}*}}' represents content(= '<td id="mark:item1">foo</td>').
     .- '{{*{{,_etag,}}*}}' represents an end tag(= '</tr>').
-    .- '{{*{{,for {{/var/}} in {{/list/}} ...,}}*}}' is a Ruby code to loop.
+% if @lang == 'ruby'
+    .- '{{*{{,for {{/var/}} in {{/list/}} ...,}}*}}' is a [%= @Lang %] code to loop.
+% elsif @lang == 'php'
+    .- '{{*{{,foreach ({{/list/}} as {{/item/}}) { ... },}}*}}' is a [%= @Lang %] code to loop.
+% elsif @lang == 'java'
+    .- '{{*{{,foreach ({{/var/}} in {{/list/}}) { ... },}}*}}' means loop.
+% else error end
        In this case, the element(= start-tag + content + end-tag) is looped.
 .* '{{*{{,#item1 { ... },}}*}}' represents an element marked with name 'item1' (= '<td>...</td>').
     .- '{{*{{,value: {{/expression/}};,}}*}}' represents that the content of the element is replaced by value of {{,{{/expression/}},}}, which is value of a variable {{,member,}} in this case.
@@ -193,35 +218,56 @@ In presentation logic, you can operate on elements which are marked in presentat
 /* The element which is marked by 'id="list1"' */
 {{*#list1*}} {
   logic: {
+% if @lang == 'ruby'
     for member in @members
       {{*_stag*}}           # start tag
       {{*_cont*}}           # content
       {{*_etag*}}           # end tag
     end
+% elsif @lang == 'php'
+    foreach ($members as $member) {
+      {{*_stag();*}}        // start tag
+      {{*_cont();*}}        // content
+      {{*_etag();*}}        // end tag
+    }
+% elsif @lang == 'java'
+    foreach (member in members) {
+      {{*_stag;*}}          // start tag
+      {{*_cont;*}}          // content
+      {{*_etag;*}}          // end tag
+    }
+% else error end
   }
 }
 
 /* The element which is marked by 'id="mark:item1"' */
 {{*#item1*}} {
   /* replace the content with value of a variable 'member' */
+% if @lang == 'ruby'
   value: member;
+% elsif @lang == 'php'
+  value: $member;
+% elsif @lang == 'java'
+  value: member;
+% else error end
 }
 .--------------------
 
-(Don't forget the semicolon at the end of line especially for Ruby user!)
+(Don't forget the semicolon at the end of line!)
 
 Kwartz generates eRuby script from the above files. This action is called 'compiling'.
 
-.? how to compile eRuby script
+.? how to compile
 .====================
-$ kwartz -p example1.plogic example1.html > example1.rhtml
+$ [%= @command %] -p example1.plogic example1.html > example1.[%= @suffix %]
 .====================
 
-The following is the compiled eRuby script.
+The following is the compiled output script.
 Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}} is leaved.
 
-.? generated eRuby script
+.? generated output script
 .-------------------- example1.expected
+% if @lang == 'ruby'
 <table>
 <%     for member in @members %>
   <tr id="list1">
@@ -229,14 +275,28 @@ Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}
   </tr>
 <%     end %>
 </table>
+% elsif @lang == 'php'
+<table>
+<?php     foreach ($members as $member) { ?>
+  <tr id="list1">
+    <td><?php echo $member; ?></td>
+  </tr>
+<?php     } ?>
+</table>
+% elsif @lang == 'java'
+<table>
+<c:forEach var="member" items="${members}">
+  <tr id="list1">
+    <td><%= member %></td>
+  </tr>
+</c:forEach>
+</table>
+% else error end
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example1.plogic example1.html)
-[%
-   def test_example1
-     @name = 'example1'
-     _test
-   end
-%]
+%
+% @tests << { :name=>'example1' }
+%
 
 
 
@@ -269,6 +329,7 @@ Presentation Logic (example2.plogic):
  *  - print value of a variable 'color' as bgcolor attribute value.
  */
 {{*#list*}} {
+% if @lang == 'ruby'
   attrs:  "bgcolor" color;
   logic: {
     @members.each_with_index do |member, i|
@@ -278,6 +339,29 @@ Presentation Logic (example2.plogic):
       _etag    # end tag
     end
   }
+% elsif @lang == 'php'
+  attrs:  "bgcolor" $color;
+  logic: {
+    foreach ($members as $i => $member) {
+      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+      _stag();    // start tag
+      _cont();    // content
+      _etag();    // end tag
+    }
+  }
+% elsif @lang == 'java'
+  attrs:  "bgcolor" color;
+  logic: {
+    i = 0;
+    foreach (member in members) {
+      i += 1;
+      color = i % 2 == 1 ? '#FFCCCC' : '#CCCCFF';
+      _stag;    # start tag
+      _cont;    # content
+      _etag;    # end tag
+    }
+  }
+% else error end
 }
 
 /*
@@ -285,7 +369,13 @@ Presentation Logic (example2.plogic):
  *  - print value of member[:name] as content of the element.
  */
 {{*#name*}} {
+% if @lang == 'ruby'
   value: member[:name];
+% elsif @lang == 'php'
+  value: $member['name'];
+% elsif @lang == 'java'
+  value: member['name'];
+% else error end
 }
 
 /*
@@ -294,8 +384,16 @@ Presentation Logic (example2.plogic):
  *  - print "mailto:" and member[:email] as href attribute value.
  */
 {{*#email*}} {
+% if @lang == 'ruby'
   value: member[:email];
   attrs: "href" "mailto:#{member[:email]}";
+% elsif @lang == 'php'
+  value: $member['email'];
+  attrs: "href" "mailto:$member['email']";
+% elsif @lang == 'java'
+  value: member[:email];
+  attrs: "href" 'mailto:'.+member['email'];
+% else error end
 }
 .--------------------
 
@@ -306,12 +404,13 @@ That is to say, Kwartz can separate presentation logic from presentation data.
 
 .? compilation
 .====================
-$ kwartz -p example2.plogic example2.html > example2.rhtml
+$ [%= @command %] -p example2.plogic example2.html > example2.[%= @suffix %]
 .====================
 
 .? output script
 .-------------------- example2.expected
 <table>
+% if @lang == 'ruby'
 {{*<%     @members.each_with_index do |member, i| %>*}}
 {{*<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; %>*}}
  <tr bgcolor="{{*<%= color %>*}}">
@@ -322,14 +421,36 @@ $ kwartz -p example2.plogic example2.html > example2.rhtml
  </tr>
 {{*<%     end %>*}}
 </table>
+% elsif @lang == 'php'
+{{*<?php     foreach ($members as $i => $member) { ?>*}}
+{{*<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>*}}
+ <tr bgcolor="{{*<?php echo $color; ?>*}}">
+  <td>{{*<?php echo $member['name']; ?>*}}</td>
+  <td>
+   <a href="{{*<?php echo "mailto:$member['email']"; ?>*}}">{{*<?php echo $member['email']; ?>*}}</a>
+  </td>
+ </tr>
+{{*<?php     } ?>*}}
+</table>
+% elsif @lang == 'java'
+{{*<c:set var="i" value="${0}" />*}}
+{{*<c:forEach var="member" items="${members}">*}}
+{{*<c:set var="i" value="${i+1}" />*}}
+{{*<c:set var="color" value="${i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}" />*}}
+ <tr bgcolor="{{*${color}*}}">
+  <td>{{*${member['name']}*}}</td>
+  <td>
+   <a href="{{*mailto:${member['email']}*}}">{{*${member['email']}*}}</a>
+  </td>
+ </tr>
+{{*</c:forEach>*}}
+</table>
+% else error end
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example2.plogic example2.html)
-[%
-   def test_example2
-     @name = 'example2'
-     _test
-   end
-%]
+%
+% @tests << { :name=>'example2' }
+%
 
 
 
@@ -351,11 +472,25 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    for member in @members
 	      _stag
 	      _cont
 	      _etag
 	    end
+% elsif @lang == 'php'
+	    foreach ($members as $member) {
+	      _stag();
+	      _cont();
+	      _etag();
+	    }
+% elsif @lang == 'java'
+	    foreach (member in members) {
+	      _stag;
+	      _cont;
+	      _etag;
+	    }
+% else error end
 	  }
 	}
 	.--------------------
@@ -363,9 +498,19 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    for member in @members
 	      _elem     # equivarent to _stag + _cont + _etag
 	    end
+% elsif @lang == 'php'
+	    foreach ($members as $member) {
+	      _elem();  # equivarent to _stag + _cont + _etag
+	    }
+% elsif @lang == 'java'
+	    foreach (member in members) {
+	      _elem;    # equivarent to _stag + _cont + _etag
+	    }
+% else error end
 	  }
 	}
 	.--------------------
@@ -374,11 +519,25 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    _stag
 	    for member in @members
 	      _cont
 	    end
 	    _etag
+% elsif @lang == 'php'
+	    _stag();
+	    foreach ($members as $member) {
+	      _cont();
+	    }
+	    _etag();
+% elsif @lang == 'java'
+	    _stag;
+	    foreach (member in members) {
+	      _cont;
+	    }
+	    _etag;
+% else error end
 	  }
 	}
 	.--------------------
@@ -387,16 +546,32 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    _stag
 	    print expr
 	    _etag
+% elsif @lang == 'php'
+	    _stag
+	    print($expr);
+	    _etag
+% elsif @lang == 'java'
+	    _stag;
+	    print(expr);
+	    _etag;
+% else error end
 	  }
 	}
 	.--------------------
    Or
 	.--------------------
 	#list {
+% if @lang == 'ruby'
 	  value: expr;
+% elsif @lang == 'php'
+	  value: $expr;
+% elsif @lang == 'java'
+	  value: expr;
+% else error end
 	}
 	.--------------------
 
@@ -404,14 +579,26 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    print expr
+% elsif @lang == 'php'
+	    print($expr);
+% elsif @lang == 'java'
+	    print(expr);
+% else error end
 	  }
 	}
 	.--------------------
     Or
 	.--------------------
 	#list {
+% if @lang == 'ruby'
 	  elem:  expr;
+% elsif @lang == 'php'
+	  elem:  $expr;
+% elsif @lang == 'java'
+	  elem:  expr;
+% else error end
 	}
 	.--------------------
 
@@ -421,7 +608,13 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    _cont
+% elsif @lang == 'php'
+	    _cont();
+% elsif @lang == 'java'
+	    _cont;
+% else error end
 	  }
 	}
 	.--------------------
@@ -438,7 +631,13 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    _element(foo)  # expand other element marked with name 'foo'
+% elsif @lang == 'php'
+	    _element(foo);  # expand other element marked with name 'foo'
+% elsif @lang == 'java'
+	    _element(foo);  # expand other element marked with name 'foo'
+% else error end
 	  }
 	}
 	.--------------------
@@ -447,7 +646,13 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    _content(foo)  # expand content of other element
+% elsif @lang == 'php'
+	    _content(foo);  # expand content of other element
+% elsif @lang == 'java'
+	    _content(foo);  # expand content of other element
+% else error end
 	  }
 	}
 	.--------------------
@@ -456,6 +661,7 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	.--------------------
 	#list {
 	  logic: {
+% if @lang == 'ruby'
 	    i = 0
 	    for member in @members
 	      i += 1
@@ -466,6 +672,29 @@ See {{<Presentation Pattern Catalog|p-pattern.html>}} for details.
 	      end
 	      _elem    # '_elem' is equivarent to _stag + _cont + _etag
 	    end
+% elsif @lang == 'php'
+	    $i = 0;
+	    foreach ($members as $member) {
+	      $i++;
+	      if ($i % 2 == 0) {
+	        $color = '#FFCCCC';
+	      } else {
+	        $color = '#CCCCFF';
+	      }
+	      _elem();    # '_elem' is equivarent to _stag + _cont + _etag
+	    }
+% elsif @lang == 'java'
+	    i = 0;
+	    foreach (member in members) {
+	      i += 1;
+	      if (i % 2 == 0) {
+	        color = '#FFCCCC';
+	      } else {
+	        color = '#CCCCFF';
+	      }
+	      _elem;    # '_elem' is equivarent to _stag + _cont + _etag
+	    }
+% else error end
 	  }
 	}
 	.--------------------
@@ -513,9 +742,19 @@ These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz
 	The following is an example to specify some attributes.
 	.--------------------
 	#foo {
+% if @lang == 'ruby'
 	  attrs:  'href'  item[:url],
 		  'id'    item[:id],
 	          'class' classname;
+% elsif @lang == 'php'
+	  attrs:  'href'  $item['url'],
+		  'id'    $item['id'],
+	          'class' $classname;
+% elsif @lang == 'java'
+	  attrs:  'href'  item['url'],
+		  'id'    item['id'],
+	          'class' classname;
+% else error end
 	}
 	.--------------------
 
@@ -525,10 +764,22 @@ These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz
 	into the form control tag.
 	.--------------------
 	#checkbox1 {
+% if @lang == 'ruby'
 	  append:  member[:age] > 18 ? ' checked="checked"' : '';
+% elsif @lang == 'php'
+	  append:  $member['age'] > 18 ? ' checked="checked"' : '';
+% elsif @lang == 'java'
+	  append:  member['age'] > 18 ? ' checked="checked"' : '';
+% else error end
 	}
 	#select_options {
+% if @lang == 'ruby'
 	  append:  option[:value] == current_val ? ' selected="selected"' : '';
+% elsif @lang == 'php'
+	  append:  $option['value'] == current_val ? ' selected="selected"' : '';
+% elsif @lang == 'java'
+	  append:  $option['value'] == current_val ? ' selected="selected"' : '';
+% else error end
 	}
 	.--------------------
 
@@ -539,8 +790,16 @@ These are similar to CSS. If you are familiar with CSS, you'll be so with Kwartz
 	Logic of the element.
 
 
+% if @lang == 'ruby'
 'stag:' and 'elem:' are useful especially for Ruby on Rails.
 The following is an examle to use Kwartz in Ruby on Rails.
+% elsif @lang == 'php'
+'stag:' and 'elem:' are useful especially for framework-specific functions.
+The following is an examle to use Kwartz in Symphony.
+% elsif @lang == 'java'
+'stag:', 'etag:', and 'elem:' are useful especially for JSP custom tag.
+The following is an examle to use Kwartz in Struts.
+% else error end
 
 .? presentation data (form1.html)
 .-------------------- form1.html
@@ -555,6 +814,7 @@ The following is an examle to use Kwartz in Ruby on Rails.
 
 .? presentation logic (form1.plogic)
 .-------------------- form1.plogic
+% if @lang == 'ruby'
 {{*#form*}} {
   {{*stag:*}}  start_form_tag :action=>'new';
 }
@@ -562,29 +822,68 @@ The following is an examle to use Kwartz in Ruby on Rails.
   {{*elem:*}}  text_field 'member', 'name';
 }
 {{*#member_birth*}} {
-  {{*elem:*}}  date_select 'member', birth';
+  {{*elem:*}}  date_select 'member', 'birth';
 }
 {{*#submit*}} {
   {{*elem:*}}  submit_to 'Submit';
 }
+% elsif @lang == 'php'
+{{*#form*}} {
+  {{*stag:*}}  start_form_tag("action='new'");
+}
+{{*#member_name*}} {
+  {{*elem:*}}  text_field('member', 'name');
+}
+{{*#member_birth*}} {
+  {{*elem:*}}  date_select('member', 'birth');
+}
+{{*#submit*}} {
+  {{*elem:*}}  submit_to('Submit');
+}
+% elsif @lang == 'java'
+{{*#form*}} {
+  {{*stag:*}}  <%= <html:form action="new"> %>;
+  {{*etag:*}}  <%= </html:form> %>;
+}
+{{*#member_name*}} {
+  {{*elem:*}}  <%= <html:textfield name="name"/> %>;
+}
+{{*#member_birth*}} {
+  {{*elem:*}}  <%= <html:select name="birth"/> %>;
+}
+{{*#submit*}} {
+  {{*elem:*}}  <%= <html:submit value="Submit"/> %>;
+}
+% else error end
 .--------------------
 
 .? compile
 .==================== form1.expected
-$ kwartz -p form1.plogic form1.html
+$ [%= @command %] -p form1.plogic form1.html
+% if @lang == 'ruby'
 {{*<%= start_form_tag :action=>'new' %>*}}
   Name: {{*<%= text_field 'member', 'name' %>*}}<br>
-  Birthday: {{*<%= date_select 'member', birth' %>*}}<br>
+  Birthday: {{*<%= date_select 'member', 'birth' %>*}}<br>
  {{*<%= submit_to 'Submit' %>*}}
 </form>
+% elsif @lang == 'php'
+{{*<?php echo start_form_tag("action='new'"); ?>*}}
+  Name: {{*<?php echo text_field('member', 'name'); ?>*}}<br>
+  Birthday: {{*<?php echo date_select('member', 'birth'); ?>*}}<br>
+ {{*<?php echo submit_to('Submit'); ?>*}}
+</form>
+% elsif @lang == 'java'
+{{*<html:form action="new">*}}
+  Name: {{*<html:textfield name="name"/>*}}<br>
+  Birthday: {{*<html:select name="birth"/>*}}<br>
+ {{*<html:submit value="Submit"/>*}}
+{{*</html:form>*}}
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -p form1.plogic form1.html)
-[%
-  def test_form1
-    @name = 'form1'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'form1' }
+%
 
 
 
@@ -607,13 +906,24 @@ Directive is a command to embed presentation logic into presentation data.
 In Kwartz, 'kw:d' attributes{{(It is able to change attribute name by command-line option '--dattr=name' or configuration option PROPRERTY_DATTR.)}} are used to describe directives.
 
 The following is an example to use directives.
+% if @lang == 'ruby'
 .* Directive {{,kw:d="for {{/var/}} in {{/list/}}",}} means to iterate the element.
 .* Directive {{,kw:d="value: {{/expression/}}",}} means to print value of expression as content of the element.
 .* Directive {{,kw:d="dummy:",}} means that the element is a dummy and is not printed out.
+% elsif @lang == 'php'
+.* Directive {{,kw:d="foreach({{/list/}} as {{/var/}})",}} means to iterate the element.
+.* Directive {{,kw:d="value({{/expression/}})",}} means to print value of expression as content of the element.
+.* Directive {{,kw:d="dummy()",}} means that the element is a dummy and is not printed out.
+% elsif @lang == 'java'
+.* Directive {{,kw:d="foreach:{{/var/}}={{/list/}}",}} means to iterate the element.
+.* Directive {{,kw:d="value:{{/expression/}}",}} means to print value of expression as content of the element.
+.* Directive {{,kw:d="dummy:",}} means that the element is a dummy and is not printed out.
+% else error end
 
 .? Presentation Data(directive1.html):
 .-------------------- directive1.html
 <table>
+% if @lang == 'ruby'
   <tr {{*kw:d="for member in @members"*}}>
     <td {{*kw:d="value: member.name"*}}>foo</td>
     <td>
@@ -629,17 +939,51 @@ The following is an example to use directives.
     <td>baz</td>
     <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
   </tr>
+% elsif @lang == 'php'
+  <tr {{*kw:d="foreach($members as $member)"*}}>
+    <td {{*kw:d="value($member->name)"*}}>foo</td>
+    <td>
+      <a href="mailto:<?php echo $member->email; ?>"
+         kw:d="{{*value($member->email)*}}">foo@mai.com</a>
+    </td>
+  </tr>
+  <tr {{*kw:d="dummy()"*}}>
+    <td>bar</td>
+    <td><a href="mailto:bar@mail.org">bar@mail.org</a></td>
+  </tr>
+  <tr {{*kw:d="dummy()"*}}>
+    <td>baz</td>
+    <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
+  </tr>
+% elsif @lang == 'java'
+  <tr {{*kw:d="for member in @members"*}}>
+    <td {{*kw:d="value: member.name"*}}>foo</td>
+    <td>
+      <a href="mailto:@{member.email}@"
+         kw:d="{{*value:member.email*}}">foo@mai.com</a>
+    </td>
+  </tr>
+  <tr {{*kw:d="dummy:"*}}>
+    <td>bar</td>
+    <td><a href="mailto:bar@mail.org">bar@mail.org</a></td>
+  </tr>
+  <tr {{*kw:d="dummy:"*}}>
+    <td>baz</td>
+    <td><a href="mailto:baz@mail.net">baz@mail.net</a></td>
+  </tr>
+% else error end
 </table>
 .--------------------
 
 .? Compile:
 .====================
-$ kwartz -l eruby  directive1.html > directive1.rhtml
+$ [%= @command %] directive1.html > directive1.[%= @suffix %]
 .====================
 
 .? Output script:
 .-------------------- directive1.expected
 <table>
+% if @lang == 'ruby'
 {{*<% for member in @members do %>*}}
   <tr>
     <td>{{*<%= member.name %>*}}</td>
@@ -648,40 +992,67 @@ $ kwartz -l eruby  directive1.html > directive1.rhtml
     </td>
   </tr>
 {{*<% end %>*}}
+% elsif @lang == 'php'
+{{*<?php foreach ($members as $member) { ?>*}}
+  <tr>
+    <td>{{*<?php echo $member->name; ?>*}}</td>
+    <td>
+      <a href="mailto:{{*<?php echo $member->email; ?>*}}">{{*<?php echo $member->email; ?>*}}</a>
+    </td>
+  </tr>
+{{*<?php } ?>*}}
+% elsif @lang == 'java'
+{{*<c:forEach var="member" items="${members}">*}}
+  <tr>
+    <td>{{*<%= member.name %>*}}</td>
+    <td>
+      <a href="mailto:{{*${member.email}*}}">{{*${member.email}*}}</a>
+    </td>
+  </tr>
+{{*</c:forEach>*}}
+% else error end
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby directive1.html)
-[%
-  def test_directive1
-    @name = 'directive1'
-    @command = 'kwartz -l eruby directive1.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'directive1', :command=>"#{@command} directive1.html" }
+%
 
 
 If the first character of target attribute is a space, Kwartz recognize it as non-directive{{(This spec may change in the future if I get have better idea.)}}.
 
 .? presentation data (directive2.html)
 .-------------------- directive2.html
+% if @lang == 'ruby'
 <span {{*kw:d="value: expr1"*}}>foo</span>
 <span {{*kw:d=" value: expr2"*}}>bar</span>
+% elsif @lang == 'php'
+<span {{*kw:d="value($expr1)"*}}>foo</span>
+<span {{*kw:d=" value($expr2)"*}}>bar</span>
+% elsif @lang == 'java'
+<span {{*kw:d="value: expr1"*}}>foo</span>
+<span {{*kw:d=" value: expr2"*}}>bar</span>
+% else error end
 .--------------------
 
 .? compile
 .==================== directive2.expected
-$ kwartz directive2.html
+$ [%= @command %] directive2.html
+% if @lang == 'ruby'
 <span>{{*<%= expr1 %>*}}</span>
 <span {{*kw:d="value: expr2"*}}>bar</span>
+% elsif @lang == 'php'
+<span>{{*<?php echo $expr1; ?>*}}</span>
+<span {{*kw:d="value($expr2)"*}}>bar</span>
+% elsif @lang == 'java'
+<span>{{*${expr1}*}}</span>
+<span {{*kw:d="value: expr2"*}}>bar</span>
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz directive2.html)
-[%
-  def test_directive2
-    @name = 'directive2'
-    @command = 'kwartz directive2.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'directive2', :command=>"#{@command} directive2.html" }
+%
 
 Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -704,16 +1075,13 @@ The former escapes expression and the latter does not escape expression.
 
 .? compile
 .==================== embed1_eruby.expected
-$ kwartz -l eruby embed1_eruby.html
+$ [%= @command %] -l eruby embed1_eruby.html
 <p class="{{*<%= klass %>*}}">Hello {{*<%=h user %>*}}</p>
 <p class="{{*<%= klass %>*}}">Hello {{*<%=h user %>*}}</p>
 .====================
-[%
-  def test_embed1_eruby
-    @command = 'kwartz -l eruby embed1_eruby.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'embed1_eruby', :command=>"#{@command} -l eruby embed1_eruby.html" }
+%
 
 
 .? presentation data (embed1_ruby.html)
@@ -724,17 +1092,14 @@ $ kwartz -l eruby embed1_eruby.html
 
 .? compile
 .==================== embed1_ruby.expected
-$ kwartz -l eruby embed1_ruby.html
+$ [%= @command %] -l eruby embed1_ruby.html
 _buf = ""; _buf << "<p class=\"{{*#{klass}*}}\">Hello {{*#{ERB::Util.h user}*}}</p>
 <p class=\""; _buf << {{*(klass).to_s*}}; _buf << "\">Hello "; _buf << {{*ERB::Util.h(user)*}}; _buf << "</p>\n";
 ; _buf
 .====================
-[%
-  def test_embed1_ruby
-    @command = 'kwartz -l ruby embed1_ruby.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'embed1_ruby', :command=>"#{@command} -l ruby embed1_ruby.html" }
+%
 
 
 .? presentation data (embed1_php.html)
@@ -745,16 +1110,13 @@ _buf = ""; _buf << "<p class=\"{{*#{klass}*}}\">Hello {{*#{ERB::Util.h user}*}}<
 
 .? compile
 .==================== embed1_php.expected
-$ kwartz -l eruby embed1_php.html
+$ [%= @command %] -l eruby embed1_php.html
 <p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
 <p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
 .====================
-[%
-  def test_embed1_php
-    @command = 'kwartz -l php embed1_php.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'embed1_php', :command=>"#{@command} -l php embed1_php.html" }
+%
 
 
 
@@ -778,49 +1140,80 @@ Kwartz supports Automatic-escape and Partial-escape/unescape.
 
 .? presentation logic (escape1.plogic)
 .-------------------- escape1.plogic
+% if @lang == 'ruby'
+%   expr = 'expr'
+% elsif @lang == 'php'
+%   expr = '$expr'
+% elsif @lang == 'java'
+%   expr = 'expr'
+% else error end
+
 #val1 {
-  {{*value:*}} expr;
+  {{*value:*}} [%= expr %];
 }
 #val2 {
-  {{*Value:*}} expr;
+  {{*Value:*}} [%= expr %];
 }
 #val3 {
-  {{*VALUE:*}} expr;
+  {{*VALUE:*}} [%= expr %];
 }
 .--------------------
 
 .? compile without '{{,-e,}}' option.
 .==================== escape1.expected
-$ kwartz -p escape1.plogic escape1.html
+$ [%= @command %] -p escape1.plogic escape1.html
+% if @lang == 'ruby'
 <tr>
   <td><%= expr %></td>
   <td><%=h expr %></td>
   <td><%= expr %></td>
 </tr>
+% elsif @lang == 'php'
+<tr>
+  <td><?php echo $expr; ?></td>
+  <td><?php echo htmlspecialchars($expr); ?></td>
+  <td><?php echo $expr; ?></td>
+</tr>
+% elsif @lang == 'java'
+<tr>
+  <td>${expr}</td>
+  <td>${expr}</td>
+  <td><c:out value="${expr}"/></td>
+</tr>
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -p escape1.plogic escape1.html)
-[%
-  def test_escape1
-    _test
-  end
-%]
+%
+% @tests << { :name=>'escape1' }
+%
 
 .? comple with '{{,-e,}}' option.
 .==================== escape1e.expected
-$ kwartz {{*-e*}} -p escape1.plogic escape1.html
+$ [%= @command %] {{*-e*}} -p escape1.plogic escape1.html
+% if @lang == 'ruby'
 <tr>
   <td>{{*<%=h expr %>*}}</td>
   <td>{{*<%=h expr %>*}}</td>
   <td>{{*<%= expr %>*}}</td>
 </tr>
+% elsif @lang == 'php'
+<tr>
+  <td>{{*<?php echo htmlspecialchars($expr); ?>*}}</td>
+  <td>{{*<?php echo htmlspecialchars($expr); ?>*}}</td>
+  <td>{{*<?php echo $expr; ?>*}}</td>
+</tr>
+% elsif @lang == 'java'
+<tr>
+  <td>{{*${expr}*}}</td>
+  <td>{{*${expr}*}}</td>
+  <td>{{*<c:out value="${expr}"/>*}}</td>
+</tr>
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -e -p escape1.plogic escape1.html)
-[%
-  def test_escape1e
-    @command = 'kwartz -e -p escape1.plogic escape1.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'escape1e', :command=>"#{@command} -e -p escape1.plogic escape1.html" }
+%
 
 In the same way, '{{,Stag:,}}', '{{,Etag:,}}', '{{,Elem:,}}',
 '{{,Cont:,}}', '{{,Attrs:,}}', and '{{,Append:,}}' properties are
@@ -832,18 +1225,29 @@ Escape function or method is different for each tareget language.
 'h()' is used in eRuby and 'htmlspecialchars()' in PHP.
 JSTL prints escaped value in default.
 
+% if @lang == 'ruby'
 Directives {{,kw:d="Value: {{/expr/}}",}}, {{,kw:d="Attr: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="Append: {{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
 
-Directives {{,kw:d="VALUE: {{/expr/}}:",}}, {{,kw:d="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+Directives {{,kw:d="VALUE: {{/expr/}}",}}, {{,kw:d="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+
+% elsif @lang == 'php'
+Directives {{,kw:d="Value({{/expr/}})",}}, {{,kw:d="Attr('{{/name/}}'=>{{/expr/}})",}}, and {{,kw:d="Append({{/expr/}})",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
+
+Directives {{,kw:d="VALUE({{/expr/}})",}}, {{,kw:d="ATTR('{{/name/}}'=>{{/expr/}})",}}, and {{,kw:d="APPEND({{/expr/}})",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+
+% elsif @lang == 'java'
+Directives {{,kw:d="Value:{{/expr/}}",}}, {{,kw:d="Attr:{{/name/}}={{/expr/}}",}}, and {{,kw:d="Append:{{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
+
+Directives {{,kw:d="VALUE:{{/expr/}}",}}, {{,kw:d="ATTR:{{/name/}}={{/expr/}}",}}, and {{,kw:d="APPEND:{{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+% else error end
 
 Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
 
 
-
 .$$ Multi-language      | langs
 
-Kwartz-ruby now supports the following programming language.
+Kwartz now supports the following programming language.
 .* Ruby, eRuby(ERB, Erubis)
 .* PHP
 .* JSP (JSTL 1.1 and 1.2)
@@ -967,12 +1371,28 @@ The followings are examples of Ruby, eRuby, PHP, JSP, and ePerl.
 
 .? compile
 .==================== 
-$ kwartz -l eruby    -p table1.ruby.plogic  table1.html > table1.eruby
-$ kwartz -l ruby     -p table1.ruby.plogic  table1.html > table1.rb
-$ kwartz -l pierubis -p table1.ruby.plogic  table1.html > table1.pierubis
-$ kwartz -l php      -p table1.php.plogic   table1.html > table1.php
-$ kwartz -l jstl     -p table1.jstl.plogic  table1.html > table1.jsp
-$ kwartz -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
+% if @lang == 'ruby'
+$ [%= @command %] -l eruby    -p table1.ruby.plogic  table1.html > table1.eruby
+$ [%= @command %] -l ruby     -p table1.ruby.plogic  table1.html > table1.rb
+$ [%= @command %] -l pierubis -p table1.ruby.plogic  table1.html > table1.pierubis
+$ [%= @command %] -l php      -p table1.php.plogic   table1.html > table1.php
+$ [%= @command %] -l jstl     -p table1.jstl.plogic  table1.html > table1.jsp
+$ [%= @command %] -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
+% elsif @lang == 'php'
+$ [%= @command %] -l eruby    -p table1.ruby.plogic  table1.html > table1.eruby
+$ [%= @command %] -l ruby     -p table1.ruby.plogic  table1.html > table1.rb
+$ [%= @command %] -l pierubis -p table1.ruby.plogic  table1.html > table1.pierubis
+$ [%= @command %] -l php      -p table1.php.plogic   table1.html > table1.php
+$ [%= @command %] -l jstl     -p table1.jstl.plogic  table1.html > table1.jsp
+$ [%= @command %] -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
+% elsif @lang == 'java'
+$ [%= @command %] -l eruby    -p table1.ruby.plogic  table1.html > table1.eruby
+$ [%= @command %] -l ruby     -p table1.ruby.plogic  table1.html > table1.rb
+$ [%= @command %] -l pierubis -p table1.ruby.plogic  table1.html > table1.pierubis
+$ [%= @command %] -l php      -p table1.php.plogic   table1.html > table1.php
+$ [%= @command %] -l jstl     -p table1.jstl.plogic  table1.html > table1.jsp
+$ [%= @command %] -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
+% else error end
 .====================
 
 .? output script (table1.eruby)
@@ -994,13 +1414,10 @@ $ kwartz -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eruby -p table1.eruby.plogic table1.html)
-[%
-  def test_table1_eruby
-    @command = 'kwartz -l eruby -p table1.ruby.plogic table1.html'
-    @filename = 'table1.eruby'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_eruby', :filename=>'table1.eruby',
+%             :command=>"#{@command} -l eruby -p table1.ruby.plogic table1.html" }
+%
 
 
 .? output script (table1.rb)
@@ -1023,15 +1440,13 @@ _buf << "    </table>
 ; _buf
 .--------------------
 .#.<<<:! (cd d; kwartz -l ruby -p table1.ruby.plogic table1.html)
-[%
-  def test_table1_ruby
-    @command = 'kwartz -l ruby -p table1.ruby.plogic table1.html'
-    @filename = 'table1.rb'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_ruby', :filename=>'table1.rb',
+%             :command=>"#{@command} -l ruby -p table1.ruby.plogic table1.html" }
+%
 
 
+% if @lang == 'ruby'
 .? output script (table1.rails)
 .-------------------- table1.rails
 <html>
@@ -1051,13 +1466,13 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l rails -p table1.eruby.plogic table1.html)
-[%
-  def test_table1_rails
-    @command = 'kwartz -l rails -p table1.ruby.plogic table1.html'
-    @filename = 'table1.rails'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_rails', :filename=>'table1.rails',
+%              :command=>"#{@command} -l rails -p table1.ruby.plogic table1.html" }
+%
+% elsif @lang == 'php'
+% elsif @lang == 'java'
+% else error end
 
 
 .? output script (table1.pierubis)
@@ -1079,13 +1494,10 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l pierubis -p table1.eruby.plogic table1.html)
-[%
-  def test_table1_pierubis
-    @command = 'kwartz -l pierubis -p table1.ruby.plogic table1.html'
-    @filename = 'table1.pierubis'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_pierubis', :filename=>'table1.pierubis',
+%             :command=>"#{@command} -l pierubis -p table1.ruby.plogic table1.html" }
+%
 
 
 .? output script (table1.php)
@@ -1108,13 +1520,10 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l php -p table1.php.plogic table1.html)
-[%
-  def test_table1_php
-    @command = 'kwartz -l php -p table1.php.plogic table1.html'
-    @filename = 'table1.php'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_php', :filename=>'table1.php',
+%             :command=>"#{@command} -l php -p table1.php.plogic table1.html" }
+%
 
 
 .? output script (JSTL 1.2)
@@ -1138,13 +1547,10 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l jstl -p table1.jstl.plogic table1.html)
-[%
-  def test_table1_jstl
-    @command = 'kwartz -l jstl -p table1.jstl.plogic table1.html'
-    @filename = 'table1.jsp'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_jstl', :filename=>'table1.jsp',
+%             :command=>"#{@command} -l jstl -p table1.jstl.plogic table1.html" }
+%
 
 
 .? output script (ePerl)
@@ -1167,13 +1573,10 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eperl -p table1.eperl.plogic table1.html)
-[%
-  def test_table1_eperl
-    @command = 'kwartz -l eperl -p table1.eperl.plogic table1.html'
-    @filename = 'table1.eperl'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'table1_eperl', :filename=>'table1.eperl',
+%             :command=>"#{@command} -l eperl -p table1.eperl.plogic table1.html" }
+%
 
 
 
@@ -1185,30 +1588,50 @@ Kwartz regards span tags which contain only directives as dummy tags and delete 
 .-------------------- delspan1.html
 <h1><span {{*id="mark:title"*}}>title</span></h1>
 
+% if @lang == 'ruby'
 Hello <span {{*kw:d="value: user"*}}>World</span>!
+% elsif @lang == 'php'
+Hello <span {{*kw:d="value($user)"*}}>World</span>!
+% elsif @lang == 'java'
+Hello <span {{*kw:d="value:user"*}}>World</span>!
+% else error end
 .--------------------
 
 .? presentation logic (delspan1.plogic)
 .-------------------- delspan1.plogic
 #title {
+% if @lang == 'ruby'
   value: title;
+% elsif @lang == 'php'
+  value: $title;
+% elsif @lang == 'java'
+  value: title;
+% else error end
 }
 .--------------------
 
 .? compile
 .==================== delspan1.expected
-$ kwartz -p delspan1.plogic {{*--delspan*}} delspan1.html
+$ [%= @command %] -p delspan1.plogic {{*--delspan*}} delspan1.html
+% if @lang == 'ruby'
 <h1>{{*<%= title %>*}}</h1>
 
 Hello {{*<%= user %>*}}!
+% elsif @lang == 'php'
+<h1>{{*<?php echo $title; ?>*}}</h1>
+
+Hello {{*<?php echo $user; ?>*}}!
+% elsif @lang == 'java'
+<h1>{{*${title}*}}</h1>
+
+Hello {{*${user}*}}!
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -p delspan1.plogic --delspan delspan1.html)
-[%
-  def test_delspan1
-    @command = 'kwartz -p delspan1.plogic --delspan delspan1.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'delspan1',
+%             :command=>"#{@command} -p delspan1.plogic --delspan delspan1.html" }
+%
 
 
 The span tags are not removed when they have other attributes.
@@ -1217,7 +1640,13 @@ The span tags are not removed when they have other attributes.
 .-------------------- delspan2.html
 .#<h1><span {{*id="mark:title"*}}>title</span></h1>
 .#
+% if @lang == 'ruby'
 Hello <span {{*kw:d="value: user" style="color:black"*}}>World</span>!
+% elsif @lang == 'php'
+Hello <span {{*kw:d="value($user)" style="color:black"*}}>World</span>!
+% elsif @lang == 'java'
+Hello <span {{*kw:d="value:user" style="color:black"*}}>World</span>!
+% else error end
 .--------------------
 
 .#.? presentation logic (delspan2.plogic)
@@ -1230,18 +1659,21 @@ Hello <span {{*kw:d="value: user" style="color:black"*}}>World</span>!
 
 .? compile
 .==================== delspan2.expected
-$ kwartz {{*--delspan*}} delspan2.html
+$ [%= @command %] {{*--delspan*}} delspan2.html
 .#<h1>{{*<span id="mark:title">*}}title{{*</span>*}}</h1>
 .#
+% if @lang == 'ruby'
 Hello {{*<span style="color:black">*}}<%= user %>{{*</span>*}}!
+% elsif @lang == 'php'
+Hello {{*<span style="color:black">*}}<?php echo $user; ?>{{*</span>*}}!
+% elsif @lang == 'java'
+Hello {{*<span style="color:black">*}}${user}{{*</span>*}}!
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz --delspan delspan2.html)
-[%
-  def test_delspan2
-    @command = 'kwartz --delspan delspan2.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'delspan2', :command=>"#{@command} --delspan delspan2.html" }
+%
 
 
 .$$ Import Presentation Logic File		| import-plogic
@@ -1251,21 +1683,60 @@ This is useful to share common presentation logic in many files.
 
 .? link_to.plogic
 .-------------------- link_to2.plogic
+% if @lang == 'ruby'
 {{*#link_to_new*}} {
-  elem:  start_link_tag :action=>'new';
+  elem:  link_to 'New', :action=>'new';
 }
 {{*#link_to_show*}} {
-  elem:  start_link_tag :action=>'show', :id=>@member;
+  elem:  link_to 'Show', :action=>'show', :id=>@member;
 }
 {{*#link_to_edit*}} {
-  elem:  start_link_tag :action=>'edit', :id=>@member;
+  elem:  link_to 'Edit', :action=>'edit', :id=>@member;
 }
 {{*#link_to_list*}} {
-  elem:  start_link_tag :action=>'list';
+  elem:  link_to 'List', :action=>'list';
 }
 {{*#link_to_destroy*}} {
-  stag:  start_link_tag({:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
+  elem:  link_to('Destroy', {:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
 }
+% elsif @lang == 'php'
+{{*#link_to_new*}} {
+  elem:  link_to('New', "member/new");
+}
+{{*#link_to_show*}} {
+  elem:  link_to('Show', "member/show?id=".$member->getId());
+}
+{{*#link_to_edit*}} {
+  elem:  link_to('Edit', "member/edit?id=".$member->getId());
+}
+{{*#link_to_list*}} {
+  elem:  link_to('List', "member/list");
+}
+{{*#link_to_destroy*}} {
+  stag:  link_to('Destroy', "member/destroy?id=".$member->getId());
+}
+% elsif @lang == 'java'
+{{*#link_to_new*}} {
+  stag:  <%= <html:anchor> %>;
+  etag:  <%= </html:anchor> %>;
+}
+{{*#link_to_show*}} {
+  stag:  <%= <html:anchor> %>;
+  etag:  <%= </html:anchor> %>;
+}
+{{*#link_to_edit*}} {
+  stag:  <%= <html:anchor> %>;
+  etag:  <%= </html:anchor> %>;
+}
+{{*#link_to_list*}} {
+  stag:  <%= <html:anchor> %>;
+  etag:  <%= </html:anchor> %>;
+}
+{{*#link_to_destroy*}} {
+  stag:  <%= <html:anchor> %>;
+  etag:  <%= </html:anchor> %>;
+}
+% else error end
 .--------------------
 
 .? show.html
@@ -1274,53 +1745,110 @@ This is useful to share common presentation logic in many files.
  Name: <span id="mark:name">foo</span> <br>
  Email: <span id="mark:email">foo@mail.com</span> <br>
 </p>
-<a href="#" {{*id="link_to_edit"*}}>Edit this member</a> |
-<a href="#" {{*id="link_to_new"*}}>Create new member</a> |
-<a href="#" {{*id="link_to_list"*}}>Return to list</a>
+<a href="#" {{*id="link_to_edit"*}}>Edit</a> |
+<a href="#" {{*id="link_to_new"*}}>New</a> |
+<a href="#" {{*id="link_to_list"*}}>List</a>
 .--------------------
+.#.? show.html
+.#.-------------------- show2.html
+.#<p>
+.# Name: <span id="mark:name">foo</span> <br>
+.# Email: <span id="mark:email">foo@mail.com</span> <br>
+.#</p>
+.#<a href="#" {{*id="link_to_edit"*}}>Edit this member</a> |
+.#<a href="#" {{*id="link_to_new"*}}>Create new member</a> |
+.#<a href="#" {{*id="link_to_list"*}}>Return to list</a>
+.#.--------------------
 
 .? show.plogic
 .--------------------
 {{*@import 'link_to.plogic';*}}
 
+% if @lang == 'ruby'
 #name {
   Value: @member.name;
 }
 #email {
   Value: @member.email;
 }
+% elsif @lang == 'php'
+#name {
+  Value: $member->name;
+}
+#email {
+  Value: $member->email;
+}
+% elsif @lang == 'java'
+#name {
+  Value: member.name;
+}
+#email {
+  Value: member.email;
+}
+% else error end
 .--------------------
 
 .#+++
 .-------------------- show2.plogic
 @import 'link_to2.plogic';
-
+% if @lang == 'ruby'
 #name {
   Value: @member.name;
 }
 #email {
   Value: @member.email;
 }
+% elsif @lang == 'php'
+#name {
+  Value: $member->name;
+}
+#email {
+  Value: $member->email;
+}
+% elsif @lang == 'java'
+#name {
+  Value: member.name;
+}
+#email {
+  Value: member.email;
+}
+% else error end
 .--------------------
 .#---
 
 .? compile
 .==================== show2.expected
-$ kwartz -p show.plogic show.html
+$ [%= @command %] -p show.plogic show.html
+% if @lang == 'ruby'
 <p>
  Name: <span><%=h @member.name %></span> <br>
  Email: <span><%=h @member.email %></span> <br>
 </p>
-<%= start_link_tag :action=>'edit', :id=>@member %> |
-<%= start_link_tag :action=>'new' %> |
-<%= start_link_tag :action=>'list' %>
+<%= link_to 'Edit', :action=>'edit', :id=>@member %> |
+<%= link_to 'New', :action=>'new' %> |
+<%= link_to 'List', :action=>'list' %>
+% elsif @lang == 'php'
+<p>
+ Name: <span><?php echo htmlspecialchars($member->name); ?></span> <br>
+ Email: <span><?php echo htmlspecialchars($member->email); ?></span> <br>
+</p>
+<?php echo link_to('Edit', "member/edit?id=".$member->getId()); ?> |
+<?php echo link_to('New', "member/new"); ?> |
+<?php echo link_to('List', "member/list"); ?>
+% elsif @lang == 'java'
+<p>
+ Name: <span>${member.name}</span> <br>
+ Email: <span>${member.email}</span> <br>
+</p>
+<html:anchor>Edit</html:anchor> |
+<html:anchor>New</html:anchor> |
+<html:anchor>List</html:anchor>
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -p show2.plogic show2.html)
-[%
-  def test_show2
-    _test
-  end
-%]
+%
+% @tests << { :name=>'show2' }
+%
 
 
 
@@ -1352,14 +1880,20 @@ Command-line option '-i {{/filename,.../}}' imports element definitions form oth
 /* use element which is defined other file */
 {{*#placeholder*}} {
   logic: {
+% if @lang == 'ruby'
     {{*_content(form_content)*}}
+% elsif @lang == 'php'
+    {{*_content(form_content);*}}
+% elsif @lang == 'java'
+    {{*_content(form_content);*}}
+% else error end
   }
 }
 .--------------------
 
 .? compile
 .==================== new.expected
-$ kwartz {{*-i form.html*}} -p new.plogic new.html
+$ [%= @command %] {{*-i form.html*}} -p new.plogic new.html
 <form action="/new">
   {{*Name: <input type="text"><br>*}}
   {{*Password: <input type="password"><br>*}}
@@ -1367,12 +1901,9 @@ $ kwartz {{*-i form.html*}} -p new.plogic new.html
 </form>
 .====================
 .#.<<<:! (cd guide.d; kwartz -i form.html -p new.plogic new.html)
-[%
-  def test_new
-    @command = 'kwartz -i form.html -p new.plogic new.html'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'new', :command=>"#{@command} -i form.html -p new.plogic new.html" }
+%
 
 
 
@@ -1397,47 +1928,71 @@ and command option '-x {{/name/}}' extracts content of element.
 .? show.plogic
 .-------------------- show.plogic
 #name {
+% if @lang == 'ruby'
   value: user.name;
+% elsif @lang == 'php'
+  value: $user->name;
+% elsif @lang == 'java'
+  value: user.name;
+% else error end
 }
 #email {
+% if @lang == 'ruby'
   value: user.email;
+% elsif @lang == 'php'
+  value: $user->email;
+% elsif @lang == 'java'
+  value: user.email;
+% else error end
 }
 .--------------------
 
 .? compile with '-X'
 .==================== test_show_elem.expected'
-$ kwartz {{*-X content*}} -p show.plogic show.html
+$ [%= @command %] {{*-X content*}} -p show.plogic show.html
   <div>
    <h1>Show</h1>
+% if @lang == 'ruby'
    <p>Name: <span><%= user.name %></span></p>
    <p>Email: <span><%= user.email %></span></p>
+% elsif @lang == 'php'
+   <p>Name: <span><?php echo $user->name; ?></span></p>
+   <p>Email: <span><?php echo $user->email; ?></span></p>
+% elsif @lang == 'java'
+   <p>Name: <span>${user.name}</span></p>
+   <p>Email: <span>${user.email}</span></p>
+% else error end
   </div>
 .====================
 .#.<<<:! (cd guide.d; kwartz -X content -p show.plogic show.html)
-[%
-  def test_show_elem
-    @command = 'kwartz -X content -p show.plogic show.html'
-    @filename = 'test_show_elem.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'show_elem', :filename=>'test_show_elem.expected',
+%             :command=>"#{@command} -X content -p show.plogic show.html" }
+%
 
 
 .? compile with '-x'
 .==================== test_show_cont.expected
-$ kwartz {{*-x content*}} -p show.plogic show.html
+$ [%= @command %] {{*-x content*}} -p show.plogic show.html
+% if @lang == 'ruby'
    <h1>Show</h1>
    <p>Name: <span><%= user.name %></span></p>
    <p>Email: <span><%= user.email %></span></p>
+% elsif @lang == 'php'
+   <h1>Show</h1>
+   <p>Name: <span><?php echo $user->name; ?></span></p>
+   <p>Email: <span><?php echo $user->email; ?></span></p>
+% elsif @lang == 'java'
+   <h1>Show</h1>
+   <p>Name: <span>${user.name}</span></p>
+   <p>Email: <span>${user.email}</span></p>
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -x content -p show.plogic show.html)
-[%
-  def test_show_content
-    @command = 'kwartz -x content -p show.plogic show.html'
-    @filename = 'test_show_cont.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'show_content', :filename=>'test_show_cont.expected',
+%             :command=>"#{@command} -x content -p show.plogic show.html" }
+%
 
 
 .$$ Print Statement		| print-statement
@@ -1466,7 +2021,7 @@ Print statement is available in 'logic:' property.
 
 .? compile
 .==================== print-stmt.eruby.expected
-$ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
+$ [%= @command %] -l eruby -p print-stmt.eruby.plogic print-stmt.html
 <ul>
 <%     for item in list %>
   <li id="items">{{*<%= item %>*}}</li>
@@ -1474,13 +2029,10 @@ $ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html)
-[%
-  def test_print_stmt_eruby
-    @command = 'kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html'
-    @filename = 'print-stmt.eruby.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'print_stmt_eruby', :filename=>'print-stmt.eruby.expected',
+%             :command=>"#{@command} -l eruby -p print-stmt.eruby.plogic print-stmt.html" }
+%
 
 
 .? print-stmt.php.plogic
@@ -1498,7 +2050,7 @@ $ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
 
 .? compile
 .==================== print-stmt.php.expected
-$ kwartz -l php -p print-stmt.php.plogic print-stmt.html
+$ [%= @command %] -l php -p print-stmt.php.plogic print-stmt.html
 <ul>
 <?php     foreach ($list as $item) { ?>
   <li id="items">{{*<?php echo $item; ?>*}}</li>
@@ -1506,13 +2058,10 @@ $ kwartz -l php -p print-stmt.php.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l php -p print-stmt.php.plogic print-stmt.html)
-[%
-  def test_print_stmt_php
-    @command = 'kwartz -l php -p print-stmt.php.plogic print-stmt.html'
-    @filename = 'print-stmt.php.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'print_stmt_php', :filename=>'print-stmt.php.expected',
+%             :command=>"#{@command} -l php -p print-stmt.php.plogic print-stmt.html" }
+%
 
 
 .? print-stmt.jstl.plogic
@@ -1530,7 +2079,7 @@ $ kwartz -l php -p print-stmt.php.plogic print-stmt.html
 
 .? compile (JSTL 1.2)
 .==================== print-stmt.jstl12.expected
-$ kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html
+$ [%= @command %] -l jstl -p print-stmt.jstl.plogic print-stmt.html
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <ul>
@@ -1540,18 +2089,15 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html)
-[%
-  def test_print_stmt_jstl12
-    @command  = 'kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html'
-    @filename = 'print-stmt.jstl12.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'print_stmt_jstl12', :filename=>'print-stmt.jstl12.expected',
+%             :command=>"#{@command} -l jstl -p print-stmt.jstl.plogic print-stmt.html" }
+%
 
 
 .? compile (JSTL 1.1)
 .==================== print-stmt.jstl11.expected
-$ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
+$ [%= @command %] -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <ul>
     <c:forEach var="item" items="${list}">
@@ -1560,13 +2106,10 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html)
-[%
-  def test_print_stmt_jstl11
-    @command  = 'kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html'
-    @filename = 'print-stmt.jstl11.expected'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'print_stmt_jstl11', :filename=>'print-stmt.jstl11.expected',
+%             :command=>"#{@command} -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html" }
+%
 
 
 It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead of
@@ -1590,37 +2133,62 @@ In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beg
 .-------------------- document-test.plogic
 {{*#DOCUMENT*}} {
   {{*begin:*}} {
-    title = _context[:title]
-    user  = _context[:user]
+% if @lang == 'ruby'
+    title = cgi['title']
+    user  = cgi['user']
+% elsif @lang == 'php'
+    $title = $_REQUEST['title'];
+    $user  = $_REQUEST['user'];
+% elsif @lang == 'java'
+    title = request.title;
+    user  = request.user;
+% else error end
   }
   {{*end:*}} {
+% if @lang == 'ruby'
     print "<!--end-->\n"
+% elsif @lang == 'php'
+    print("<!--end-->\n");
+% elsif @lang == 'java'
+    print("<!--end-->\n");
+% else error end
   }
 }
 .--------------------
 
 .? compile
 .==================== document-test.expected
-$ kwartz -p document-test.plogic document-test.html
-{{*<%     title = _context[:title] %>*}}
-{{*<%     user  = _context[:user] %>*}}
+$ [%= @command %] -p document-test.plogic document-test.html
+% if @lang == 'ruby'
+{{*<%     title = cgi['title'] %>*}}
+{{*<%     user  = cgi['user'] %>*}}
+% elsif @lang == 'php'
+{{*<?php     $title = $_REQUEST['title']; ?>*}}
+{{*<?php     $user  = $_REQUEST['user']; ?>*}}
+% elsif @lang == 'java'
+{{*<%     title = request.title; %>*}}
+{{*<%     user  = request.user; %>*}}
+% else error end
 <html>
  <body>hello</body>
 </html>
+% if @lang == 'ruby'
 {{*<%= "<!--end-->\n" %>*}}
+% elsif @lang == 'php'
+{{*<?php echo "<!--end-->\n"; ?>*}}
+% elsif @lang == 'java'
+{{*${"<!--end-->\n"}*}}
+% else error end
 .====================
 .#.<<<:! (cd guide.d; kwartz -p document-test.plogic document-test.html)
-[%
-  def test_document_test
-    @command = 'kwartz -p document-test.plogic document-test.html'
-    @filename = 'document-test.expected'
-    @chomp = true
-    _test
-  end
-%]
+%
+% @tests << { :name=>'document_test', :filename=>'document-test.expected',
+%             :command=>"#{@command} -p document-test.plogic document-test.html",
+%             :chomp=>true }
+%
 
 
-
+% if @support_defun
 .$$ Compile Template into a Function of Ruby or PHP	| detail-defun
 
 Using the command-line option '{{,-a defun,}}', you can compile templates into a function of Ruby or PHP.
@@ -1635,6 +2203,7 @@ Hello <span id="user">user</span> !
 
 .? defun1.plogic : presentation logic
 .-------------------- defun1.plogic
+% if @lang == 'ruby'
 #user {
   elem:  @user;
 }
@@ -1652,11 +2221,48 @@ Hello <span id="user">user</span> !
 #item {
   value: item;
 }
+% elsif @lang == 'php'
+#user {
+  elem:  $user;
+}
+
+#list {
+  logic: {
+    _stag();
+    foreach ($list as $item) {
+      _cont();
+    }
+    _etag();
+  }
+}
+
+#item {
+  value: $item;
+}
+% elsif @lang == 'java'
+#user {
+  elem:  user;
+}
+
+#list {
+  logic: {
+    _stag;
+    foreach (item in list) {
+      _cont;
+    }
+    _etag;
+  }
+}
+
+#item {
+  value: item;
+}
+% else error end
 .--------------------
 
 .? Compile
 .==================== defun1.expected
-$ kwartz -l eruby {{*-a defun*}} -p defun1.plogic defun1.html | tee defun1.rb
+$ [%= @command %] -l eruby {{*-a defun*}} -p defun1.plogic defun1.html | tee defun1.rb
 {{*module View*}}
 
   (@@proc_table ||= {})['defun1'] = proc do
@@ -1683,14 +2289,11 @@ _erbout
 {{*end*}}
 .====================
 
-[%
-  def test_defun1
-    @command = 'kwartz -l eruby -a defun -p defun1.plogic defun1.html'
-    @filename = 'defun1.expected'
-    #@chomp = true
-    _test
-  end
-%]
+%
+% @tests << { :name=>'defun1', :filename=>'defun1.expected',
+%             :command=>"#{@command} -l eruby -a defun -p defun1.plogic defun1.html" }
+%            # :chomp=>true 
+%
 
 The following command-line properties are available with '-a defun'.
 .: --module={{/name/}}
@@ -1706,9 +2309,10 @@ The following languages are available with '-a defun'.
 .* -l erubis
 .* -l pierubis
 .* -l php
+% end  #if @support_defun
 
 
-
+% if @lang == 'ruby'
 .$ Ruby on Rails Support  | rails
 
 This section shows how to use Kwartz with Ruby on Rails.
@@ -1968,6 +2572,7 @@ It is able to embed Rails' helper method in kw:d attribute.
  => <%= image_tag "foo.gif", :alt=>"text", :size=>'30x40' %>
 .--------------------
 
+% end #if @lang == 'ruby'
 
 
 
@@ -1978,6 +2583,8 @@ It is able to embed Rails' helper method in kw:d attribute.
 
 There are several restrictions in presentation logic file.
 
+% if !@support_pl
+
 .* Position in which comment '{{,/* ... */,}}' is available is limited.
    In the following example, 'value:' property will be error because
    string from 'expr;' to the end of comment is regared as argument of 'value:' property.
@@ -1985,6 +2592,7 @@ There are several restrictions in presentation logic file.
    /* this comment is ok */
    #foo {
      /* this comment is ok */
+% if @lang == 'ruby'
      value:  expr;   /* this comment is NG! */
      logic: {        /* this comment will be Ruby syntax error! */
         for item in list    # ruby comment is OK in 'logic:' property
@@ -1993,8 +2601,28 @@ There are several restrictions in presentation logic file.
 	  _etag
 	end
      }
+% elsif @lang == 'php'
+     value:  expr;   /* this comment is NG! */
+     logic: {        /* this comment is PHP comment */
+        foreach ($list as $item) { // PHP comment is OK in 'logic:' property
+	  _stag();
+	  _cont();
+	  _etag();
+	}
+     }
+% elsif @lang == 'java'
+     value:  expr;   /* this comment is OK */
+     logic: {        /* this comment is OK */
+        foreach (list in item) {    // line comment is OK
+	  _stag;
+	  _cont;
+	  _etag;
+	}
+     }
+% else error end
    }
    .--------------------
+
 
 .* '_stag', '_cont', '_etag', '_elem', '_element()', and '_content()' must be placed
    one in per line, because Kwartz-ruby scans 'logic:' property with regular expression
@@ -2002,6 +2630,7 @@ There are several restrictions in presentation logic file.
    .--------------------
    #foo {
      logic: {
+% if @lang == 'ruby'
        # OK
        if x > 0
          _elem
@@ -2009,6 +2638,15 @@ There are several restrictions in presentation logic file.
 
        # NG (parse failed)
        _elem if x > 0
+% elsif @lang == 'php'
+       # OK
+       if ($x > 0) {
+         _elem();
+       }
+
+       # NG (parse failed)
+       if ($x > 0) { _elem(); }
+% else error end
      }
    }
    .--------------------
@@ -2017,17 +2655,30 @@ There are several restrictions in presentation logic file.
    .--------------------
    #foo {
      logic: {
+% if @lang == 'ruby'
        str = "{"         # this will be parse error 
        _elem
+% elsif @lang == 'php'
+       $str = "{";       # this will be parse error 
+       _elem();
+% else error end
      }
    }
    #bar {
      logic: {
+% if @lang == 'ruby'
        str = "{"         # add dummy '}' in comment!
        _elem
+% elsif @lang == 'php'
+       $str = "{";       # add dummy '}' in comment!
+       _elem();
+% else error end
      }
    }
    .--------------------
+
+% end #if !@support_pl
+
 
 .* '@import "file.plogic"' should be at the beginning of presentation logic file.
    .--------------------
@@ -2074,10 +2725,80 @@ This approach enables Kwartz to handle any type of text file, and also brings th
    .--------------------
 
 
+% if @lang == 'php'
+
+.$$ {{,link_to(),}} function in Symphony		| topics_symphony
+
+{{,link_to(),}} function in Symphony is a little incompatible with Kwartz
+because you must specify link label in both presentation data and presentation logic.
+It's not DRY.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">{{*Show member*}}</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  elem:  link_to({{*'Show member'*}}, "member/show?id=".$member->getId());
+}
+.--------------------
+
+It is recommended to use {{,start_link_tag(),}}, {{,start_remote_link_tag(),}}, and {{,start_function_link_tag(),}} instead of {{,link_to(),}}, {{,link_to_remote(),}}, and {{,link_to_function(),}} because the formers print only start tag of anchor.
+
+.? presentation data
+.--------------------
+<a href="#" id="mark:link_to_new">Show member</a>
+.--------------------
+
+.? presentation logic
+.--------------------
+#link_to_new {
+  stag:  {{*start_link_tag*}}("member/show?id=".$member->getId());
+}
+.--------------------
+
+.? expected result
+.--------------------
+<a href="/member/show?id=123">Show member</a>
+.--------------------
+
+To use {{,start_link_tag(),}}, {{,start_remote_link_tag(),}}, and {{,start_function_link_tag(),}}, require 'Kwartz/Helper/Symfony.php'.
+The following is the definition of 'Kwartz/Helper/Symfony.php'.
+
+.? Kwartz/Helper/Symfony.php
+.--------------------
+function start_link_tag($options = '', $html_options = array()) {
+   $s = link_to('', $options, $html_options);
+   return preg_replace('/<\/a>\z/', '', $s);
+}
+
+function start_remote_link_tag($options = array(), $html_options = array()) {
+   $s = link_to_remote('', $options, $html_options);
+   return preg_replace('/<\a>\z/', '', $s);
+}
+
+function start_function_link_tag($function, $html_options = array()) {
+   $s = link_to_function('', $function, $html_options);
+   return preg_replace('/<\a>\z/', '', $s);
+}
+.--------------------
+
+% end #if @lang == 'php'
+
 
 .$$ Makefile and Rakefile		| topics-makefile
 
 The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
+
+% if @lang == 'ruby'
+%   list = %[make rake rant rook]
+% elsif @lang == 'php'
+%   list = %[make kook]
+% elsif @lang == 'java'
+%   list = %[make ant]
+% end
 
 .? example of Makefile
 .--------------------
@@ -2088,11 +2809,11 @@ LAYOUT = layout.html
 
 default:  $(ALL)
 
-%.rhtml:  %.html %.plogic
-	kwartz -l eruby -p $*.plogic $*.html > $@
+%%.rhtml:  %.html %.plogic
+	[%= @command %] -l eruby -p $*.plogic $*.html > $@
 
 file3.rhtml: file3.html file3.plogic $(LAYOUT)
-	kwartz -p file3.plogic -L $(LAYOUT) file3.html > file3.rhtml
+	[%= @command %] -p file3.plogic -L $(LAYOUT) file3.html > file3.rhtml
 .--------------------
 
 .? example of Rakefile for {{<Rake|http://rake.rubyforge.org/>}}
@@ -2104,12 +2825,12 @@ task :default => all
 
 rule '.rhtml' => ['.html', '.plogic']           do |t|
   pdata, plogic = t.sources
-  sh "kwartz -l eruby -p #{plogic} #{pdata} > #{t.name}"
+  sh "[%= @command %] -l eruby -p #{plogic} #{pdata} > #{t.name}"
 end
 
 file 'file3.rhtml' => ["file3.html", "file3.plogic", layout] do |t|
   pdata, plogic, layout = t.prerequisites
-  sh "kwartz -p #{plogic} -L #{layout} #{pdata} > #{t.name}"
+  sh "[%= @command %] -p #{plogic} -L #{layout} #{pdata} > #{t.name}"
 end
 .--------------------
 
@@ -2122,16 +2843,40 @@ task :default => all
 
 gen Rule, ".rhtml" => [".html", ".plogic"] do |t|
   pdata, plogic = t.prerequisites
-  sys "kwartz -p #{plogic} #{pdata} > #{t.name}"
+  sys "[%= @command %] -p #{plogic} #{pdata} > #{t.name}"
 end
 
 file "file3.rhtml" => ["file3.html", "file3.plogic", layout] do |t|
   pdata, plogic, layout = t.prerequisites
-  sys "kwartz -p #{plogic} -L #{layout} #{pdata} > #{t.name}"
+  sys "[%= @command %] -p #{plogic} -L #{layout} #{pdata} > #{t.name}"
 end
 .--------------------
 
-.? example of Rookbook.yaml for {{<Rook|http://www.rubyforge.org/projects/rook>}}
+.? example of Kookbook.yaml for {{<Kook|http://www.kuwata-lab.com/kook>}}
+.--------------------
+properties:
+  - layout  :  layout.html
+
+parameters:
+  - all     :  [ file1.rhtml, file2.rhtml, file3.rhtml ]
+  - rook_product:  $(all)
+
+recipes:
+
+  - product:	*.rhtml
+    ingreds:	[ $(1).html, $(1).plogic ]
+    method*: |
+        $pdata = $ingreds[0]; $plogic = $ingreds[1];
+	k_sys("[%= @command %] -p $plogic} $pdata > $product");
+
+  - product:	file3.rhtml
+    ingres:	[ file3.html, file3.plogic, $(layout) ]
+    method*: |
+	$pdata = $ingreds[0]; $plogic = $ingreds[1]
+	k_sys("[%= @command %] -p $plogic -L $(layout) $pdata > $product"
+.--------------------
+
+.? example of Rookbook.yaml for {{<Rook|http://www.kuwata-lab.com/kook>}}
 .--------------------
 properties:
   - layout  :  layout.html
@@ -2146,30 +2891,56 @@ recipes:
     ingreds:	[ $(1).html, $(1).plogic ]
     method*: |
         pdata, plogic = @ingreds
-	sys "kwartz -p #{plogic} #{pdata} > #{@product}"
+	sys "[%= @command %] -p #{plogic} #{pdata} > #{@product}"
 
   - product:	file3.rhtml
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method*: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L $(layout) #{pdata} > #{@product}"
+	sys "[%= @command %] -p #{plogic} -L $(layout) #{pdata} > #{@product}"
 .--------------------
 
 
 
 .$$ Use Kwartz as Library		| topics-kwartz-lib
 
-If you want to use Kwartz library in your Ruby script, use Kwartz::Main class.
+% if @lang == 'ruby'
+%   main_class = 'Kwartz::Main'
+% elsif @lang == 'php'
+%   main_class = 'KwartzMain'
+% elsif @lang == 'java'
+%   main_class = 'kwartz.Main'
+% else error end
 
-.? usage of Kwartz::Main class
+If you want to use Kwartz library in your [%= @Lang %] script, use [%= main_class %] class.
+
+.? usage of [%= main_class %] class
 .--------------------
+% if @lang == 'ruby'
 {{*require 'kwartz'*}}
 {{*require 'kwartz/main'*}}
-
 argv = %w[-p hello.plogic -L layout.html hello.html]
 {{*main = Kwartz::Main.new(argv)*}}
 {{*output = main.execute()*}}
 File.open('hello.rhtml', 'w') { |f| f.write(output) }
+% elsif @lang == 'php'
+{{*require 'Kwartz';*}}
+{{*require 'kwartz/Main';*}}
+$argv = array('-p', 'hello.plogic', '-L', 'layout.html', 'hello.html');
+{{*$main = new KwartzMain($argv)*}}
+{{*$output = $main->execute()*}}
+file_put_content('hello.php', $output);
+% elsif @lang == 'java'
+try {
+    String[] args = {"-p", "hello.plogic", "-L", "layout.html", "hello.html"};
+    {{*kwartz.Main main = new kwartz.Main(args);*}}
+    {{*String output = main.execute();*}}
+    kwartz.Util.writeFile('hello.rhtml', output);
+}
+catch (Exception ex) {
+    ex.printStackTrace();
+}
+% else error end
 .--------------------
 
 
@@ -2179,12 +2950,13 @@ Using {{<Erubis|http://www.kuwata-lab.com/erubis>}}, it is able to use Kwartz wi
 Erubis is an implementation of eRuby which supports not only Ruby but also other languages.
 
 The followings are examples of using JavaScript with Kwartz and Erubis.
+.#{{,@!{...}@,}} means embedded expression and {{,@{...}@,}} means embedded expression with escaping.
 
 .? presentation data (js-example.html)
 .-------------------- js-example.html
 <table>
   <tr class="odd" {{*id="mark:list"*}}>
-    <td>{{*@!{item}@*}}</td>
+    <td>{{*@{item}@*}}</td>
   </tr>
   <tr class="even" {{*id="dummy:d1"*}}>
     <td>foo</td>
@@ -2208,7 +2980,7 @@ The followings are examples of using JavaScript with Kwartz and Erubis.
 
 .? compile
 .====================
-$ kwartz {{*-l erubis*}} -p js-example.plogic js-example.html  > js-example.jshtml
+$ [%= @command %] {{*-l erubis*}} -p js-example.plogic js-example.html  > js-example.jshtml
 .====================
 
 .? output script (js-example.jshtml)
@@ -2218,19 +2990,20 @@ $ kwartz {{*-l erubis*}} -p js-example.plogic js-example.html  > js-example.jsht
 {{*<%       klass = i % 1 == 0 ? 'even' : 'odd'; %>*}}
 {{*<%       item = list[i]; %>*}}
   <tr class="{{*<%= klass %>*}}">
-    <td>{{*<%= item %>*}}</td>
+    <td>{{*<%== item %>*}}</td>
   </tr>
 {{*<%     } %>*}}
 </table>
 .--------------------
-[%
-  def test_js_example
-    @command = 'kwartz -l erubis -p js-example.plogic js-example.html'
-    @filename = 'js-example.jshtml'
-    _test
-  end
-%]
+%
+% @tests << { :name=>'js_example', :filename=>'js-example.jshtml',
+%             :command=>"#{@command} -l erubis -p js-example.plogic js-example.html" }
+%
 
+In Erubis, {{,<%= ... %>,}} means embedded expression and {{,<%== ... %>,}} means embedded expression with escaping.
+In this example, {{,@{item}@,}} is compiled into {{,<%== item %>,}} because it needs escaping and {{,attr: 'class' klass,}} is compiled into {{,<%= klass %>,}} without escaping.
+
+The following is an example to compile into JavaScript code with Erubis.
 
 .? convert into JavaScript code with erubis
 .==================== js-example.expected
@@ -2240,20 +3013,16 @@ var _buf = []; _buf.push("<table>\n");
        {{*klass = i % 1 == 0 ? 'even' : 'odd';*}} 
        {{*item = list[i];*}} 
 _buf.push("  <tr class=\""); _buf.push({{*klass*}}); _buf.push("\">\n\
-    <td>"); _buf.push({{*item*}}); _buf.push("</td>\n\
+    <td>"); _buf.push(escape({{*item*}})); _buf.push("</td>\n\
   </tr>\n");
      {{*}*}} 
 _buf.push("</table>\n");
 document.write(_buf.join(""));
 .====================
-[%
-  def test_js_example_erubis
-    @command = 'erubis -l javascript -x js-example.jshtml'
-    @filename = 'js-example.expected'
-    _test
-  end
-%]
-
+%
+% @tests << { :name=>'js_example_erubis', :filename=>'js-example.expected',
+%             :command=>'erubis -l javascript -x js-example.jshtml', }
+%
 
 
 
@@ -2304,7 +3073,23 @@ include($view);
 .--------------------
 
 
-
-[%
-end
-%]
+%
+% hashlist = @tests.collect { |elem|
+%   elem.inject({}) { |h, t| h[t.first.to_s] = t.last; h }
+% }
+% #ydoc = { 'testdata' => hashlist }
+% #$require 'yaml'
+% #$stderr.puts ydoc.to_yaml
+%
+% def eval_template(template_filename, context)
+%   require 'erubis'
+%   erubis = Erubis::Eruby.new(File.read(template_filename))
+%   return context.instance_eval(erubis.src)
+% end
+% 
+% context = Object.new
+% context.instance_variable_set("@testdata", hashlist)
+% output = eval_template(@template, context)
+% #$stderr.print output
+% File.open(@testfile, 'w') { |f| f.write(output) }
+%

@@ -259,33 +259,33 @@
         }
     php: |
         #link1 {
-          {{*stag:*}} start_link_tag('list');
+          {{*stag:*}} start_link_tag('member/list');
         }
         #link2 {
-          {{*Stag:*}} start_link_tag('list');
+          {{*Stag:*}} start_link_tag('member/list');
         }
         #link3 {
-          {{*STAG:*}} start_link_tag('list');
+          {{*STAG:*}} start_link_tag('member/list');
         }
     eperl: |
         #link1 {
-          {{*stag:*}} start_link_tag('list');
+          {{*stag:*}} start_link_tag('member/list');
         }
         #link2 {
-          {{*Stag:*}} start_link_tag('list');
+          {{*Stag:*}} start_link_tag('member/list');
         }
         #link3 {
-          {{*STAG:*}} start_link_tag('list');
+          {{*STAG:*}} start_link_tag('member/list');
         }
     jstl: |
         #link1 {
-          {{*stag:*}} fn:start_link_tag('list');
+          {{*stag:*}} fn:start_link_tag('member', 'list');
         }
         #link2 {
-          {{*Stag:*}} fn:start_link_tag('list');
+          {{*Stag:*}} fn:start_link_tag('member', 'list');
         }
         #link3 {
-          {{*STAG:*}} fn:start_link_tag('list');
+          {{*STAG:*}} fn:start_link_tag('member', 'list');
         }
 
   expected*:
@@ -294,19 +294,19 @@
 	{{*<%=h start_link_tag :action=>'list' %>*}}<img src="button2.png"></a>
 	{{*<%= start_link_tag :action=>'list' %>*}}<img src="button3.png"></a>
     php: |
-	{{*<?php echo start_link_tag('list'); ?>*}}<img src="button1.png"></a>
-	{{*<?php echo htmlspecialchars(start_link_tag('list')); ?>*}}<img src="button2.png"></a>
-	{{*<?php echo start_link_tag('list'); ?>*}}<img src="button3.png"></a>
+	{{*<?php echo start_link_tag('member/list'); ?>*}}<img src="button1.png"></a>
+	{{*<?php echo htmlspecialchars(start_link_tag('member/list')); ?>*}}<img src="button2.png"></a>
+	{{*<?php echo start_link_tag('member/list'); ?>*}}<img src="button3.png"></a>
     eperl: |
-	{{*<?= start_link_tag('list') !>*}}<img src="button1.png"></a>
-	{{*<?= encode_entities(start_link_tag('list')) !>*}}<img src="button2.png"></a>
-	{{*<?= start_link_tag('list') !>*}}<img src="button3.png"></a>
+	{{*<?= start_link_tag('member/list') !>*}}<img src="button1.png"></a>
+	{{*<?= encode_entities(start_link_tag('member/list')) !>*}}<img src="button2.png"></a>
+	{{*<?= start_link_tag('member/list') !>*}}<img src="button3.png"></a>
     jstl: |
         <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-	{{*${fn:start_link_tag('list')}*}}<img src="button1.png"></a>
-	{{*${fn:start_link_tag('list')}*}}<img src="button2.png"></a>
-	{{*<c:out value="${fn:start_link_tag('list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
+	{{*${fn:start_link_tag('member', 'list')}*}}<img src="button1.png"></a>
+	{{*${fn:start_link_tag('member', 'list')}*}}<img src="button2.png"></a>
+	{{*<c:out value="${fn:start_link_tag('member', 'list')}" escapeXml="false"/>*}}<img src="button3.png"></a>
 
 ###
 - name:   etag

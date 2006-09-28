@@ -3,7 +3,6 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html">
   <title>Presentation Pattern Catalog</title>
-  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" href="docstyle.css" type="text/css">
@@ -14,11 +13,9 @@
    <div class="mainbody">
 
     <div align="left"><h1>Presentation Pattern Catalog</h1></div>
-    <div align="left">
-      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
-      last update: $Date$<br>
-    </div>
-
+<p>$Release$<br>
+$Date$
+</p>
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
 <p>Kwartz is the template system which realized the concept of '<strong>Independence of Presentation Logic (IoPL)</strong>.'
@@ -201,9 +198,9 @@ Output Script:</div>
 <a name="replace2a.expected"></a>
 <pre class="output">&lt;h1&gt;<strong>&lt;%= title %&gt;</strong>&lt;/h1&gt;
 </pre>
-<p>Kwartz Directive '<code>kw:d="cont: <em>expr</em>"</code>' or '<code>kw:d="value: <em>expr</em>"</code>' lets you to use this pattern without presentation logic file.
+<p>Kwartz Directive '<code>kw:d="cont: <em>expr</em>"</code>' or '<code>kw:d="kw:d="value: <em>expr</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
-<pre class="program">&lt;h1 <strong>id="value: title"</strong>&gt;Example&lt;/h1&gt;
+<pre class="program">&lt;h1 <strong>kw:d="value: title"</strong>&gt;Example&lt;/h1&gt;
 </pre>
 <br>
 
@@ -352,7 +349,7 @@ Presentation Logic:</div>
 
 <a name="replace-elem-with-elem-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p>Directive '<code>id="replace_element_with_element: <em>name</em>"</code>' and '<code>id="replace_element_with_content: <em>name</em>"</code>' lets you to use this pattern without presentation logic file.
+<p>Directive '<code>id="replace_element_with_element:<em>name</em>"</code>' and '<code>id="replace_element_with_content:<em>name</em>"</code>' lets you to use this pattern without presentation logic file.
 </p>
 <pre class="program">&lt;div <strong>id="mark:links"</strong>&gt;
  &lt;a href="/"&gt;HOME&lt;/a&gt; | &lt;a href="/doc"&gt;Document&lt;/a&gt; | &lt;a href="/faq"&gt;FAQ&lt;/a&gt;
@@ -360,7 +357,7 @@ Presentation Logic:</div>
 
 &lt;p&gt;Welcome to my Home Page!&lt;/p&gt;
 
-&lt;div <strong>id="replace_element_with_element: links"</strong>&gt;
+&lt;div <strong>id="replace_element_with_element:links"</strong>&gt;
   Home | Document | FAQ
 &lt;/div&gt;
 </pre>
@@ -738,7 +735,7 @@ This pattern is very useful for all these situations.
 Presentation Data:</div>
 <pre class="program">&lt;table&gt;
   &lt;tr <strong>id="mark:list"</strong>&gt;
-   &lt;td kw:d="value: item"&gt;item&lt;/td&gt;
+   &lt;td id="mark:item"&gt;item&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
@@ -754,6 +751,10 @@ Presentation Logic:</div>
       _etag
     <strong>end</strong>
   }
+}
+
+#item {
+  value: item;
 }
 </pre>
 <a name="iterate_elem.expected"></a>
@@ -806,8 +807,8 @@ This pattern is named 'Iterate Content' pattern.
 <div class="program_caption">
 Presentation Data:</div>
 <pre class="program">&lt;dl <strong>id="mark:list"</strong>&gt;
-  &lt;dt kw:d="value: item.text"&gt;text&lt;/dt&gt;
-  &lt;dd kw:d="value: item.desc"&gt;description&lt;/dd&gt;
+  &lt;dt id="mark:text"&gt;text&lt;/dt&gt;
+  &lt;dd id="mark:desc"&gt;description&lt;/dd&gt;
 &lt;/dl&gt;
 </pre>
 <a name="iterate_cont.plogic"></a>
@@ -822,6 +823,13 @@ Presentation Logic:</div>
     <strong>end</strong>
     _etag
   }
+}
+
+#text {
+  value:  item.text;
+}
+#desc {
+  value:  item.desc;
 }
 </pre>
 <a name="iterate_cont.expected"></a>
@@ -838,7 +846,7 @@ Output Script:</div>
 
 <a name="iterate-cont-supplement"></a>
 <h4 class="section3">Supplement</h4>
-<p>Kwartz directive <code>kw:d="list <em>item</em> in <em>list</em>"</code> lets you to use this pattern without presentation logic file.
+<p>Kwartz directive <code>kw:d=list <em>item</em> in <em>list</em></code> lets you to use this pattern without presentation logic file.
 See reference manual for details.
 </p>
 <pre class="program">&lt;dl <strong>kw:d="list item in items"</strong>&gt;
@@ -1025,7 +1033,7 @@ This pattern is named 'Extract Element Pattern' or 'Extract Content Pattern'.
 </p>
 <a name="design.html"></a>
 <div class="program_caption">
-Presentation Data (<a href="p-pattern/design.html">design.html</a>):</div>
+Presentation Data (<a href="pattern-catalog/design.html">design.html</a>):</div>
 <pre class="program">&lt;html <strong>id="mark:whole"</strong>&gt;
   &lt;head&gt;
     &lt;title&gt;Design Examples&lt;/title&gt;
@@ -1063,7 +1071,7 @@ Presentation Data (<a href="p-pattern/design.html">design.html</a>):</div>
     &lt;p&gt; ..... &lt;/p&gt;
     
     &lt;div align="center" class="copyright" <strong>id="mark:copyright"</strong>&gt;
-      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&amp;copy; 2004-2006 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
     
   &lt;/body&gt;
@@ -1119,10 +1127,10 @@ Presentation Logic (menulist.plogic):</div>
 #menus {
   logic: {
     _stag
-    foreach (menu in menulist) {
+    for menu in menulist
       _element(menu)
       _element(menu_separator)
-    }
+    end
     _etag
   }
 }
@@ -1152,7 +1160,7 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata &gt; menulist.rhtml
 <div class="output_caption">
 Output Script (copyright.rhtml):</div>
 <pre class="output">    &lt;div align="center" class="copyright"&gt;
-      Copyright&amp;copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&amp;copy; 2004-2006 kuwata-lab. All Rights Reserved.
     &lt;/div&gt;
 </pre>
 <a name="tablist.expected"></a>
@@ -1175,11 +1183,11 @@ Output Script (menulist.rhtml):</div>
 <pre class="output">    &lt;div&gt;
       &lt;span class="menu_title" id="value:menu_title"&gt;MenuList&lt;/span&gt;
       &lt;div class="menus"&gt;
-&lt;%     foreach (menu in menulist) { %&gt;
+&lt;%     for menu in menulist %&gt;
 &lt;%     klass = current_menu == menu['name'] ? 'selected' : '' %&gt;
         &lt;a href="&lt;%= menu['cgipath'] %&gt;" class="&lt;%= klass %&gt;"&gt;&lt;%= menu['name'] %&gt;&lt;/a&gt;
         &lt;span&gt;&lt;br&gt;&lt;/span&gt;
-&lt;%     } %&gt;
+&lt;%     end %&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 </pre>

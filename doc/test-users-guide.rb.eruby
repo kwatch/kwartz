@@ -1,0 +1,31 @@
+
+require File.expand_path(File.dirname(__FILE__) + '/../test/test.rb')
+
+class UsersGuideTest < Test::Unit::TestCase
+
+  def _test
+    #tmpdir = 'users-guide.d'
+    tmpdir = ENV['TMPDIR'] || 'users-guide.d'
+    @name ||= (caller()[0] =~ /in `test_(.*?)'/) && $1
+    return if ENV['TEST'] && ENV['TEST'] != @name
+    @command  ||= "kwartz -p #{@name}.plogic #{@name}.html"
+    @filename ||= "#{@name}.expected"
+    actual = `cd #{tmpdir}; #{@command}`
+    expected = File.read(tmpdir + '/' + @filename)
+    expected.gsub!(/(\{\{\*|\*\}\})/, '')
+    expected.sub!(/\A\$ (kwartz|erubis).*\n/, '')
+    expected.chomp! if @chomp
+    assert_text_equal(expected, actual)
+  end
+
+<% @testdata.each do |hash| %>
+  def test_<%= hash['name'] %>
+<%   hash.each do |key, val| %>
+    @<%= key %> = <%= val.inspect %>
+<%   end %>
+    _test()
+  end
+
+<% end %>
+
+end

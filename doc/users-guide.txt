@@ -1,39 +1,22 @@
-.=title:	Kwartz 3.0 Users' Guide
-.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?lastupdate:	$Date$
+.=title:	Kwartz-Ruby Users' Guide
+.#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.#.?lastupdate:	$Date$
 .?version:	$Rev$
 .?release:	$Release$
 .?stylesheet:	docstyle.css
 .?copyright:	$Copyright$
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+$Release$.^
+$Date$
 
 
 .$ Preface | preface*
 
 
-This is the users' guide of Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
-a template system which realized the concept of 'Independence of Presentation Logic'.
+This is the users' guide of Kwartz-ruby.
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept of 'Independence of Presentation Logic'.
+Kwartz-ruby is an implementation of Kwartz in Ruby.
 
 
 
@@ -87,7 +70,7 @@ The following figure show the relation of HTML, CSS, JavaScript, and Kwartz.
 
 
 Kwartz-ruby is an implemenation of Kwartz in Ruby.
-There is a plan to implement Kwartz in PHP or Java.
+.#There is a plan to implement Kwartz in PHP or Java.
 
 
 In the following, the word 'Kwartz' means the specification of the template system
@@ -122,9 +105,9 @@ Kwartz has the following features:
 .%  Multi-languages support
 	
 	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 & 1.1).
-	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.)}}.
+	Presentation logics are written in each language{{(Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From version 3.0, it is required to write presentation logic in target language.)}}.
 	This approach gives you the power of the target language fully.
-	For example, you can write Ruby on Rails helper method (such as {{,link_to,}}, {{,field_tag,}}, and so on) directly in your template file.
+	For example, you can write Ruby on Rails helper methods (such as {{,link_to,}}, {{,form_tag,}}, and so on) directly as a part of presentation logic.
 	
 	
 .%  Doesn't break HTML design at all
@@ -208,19 +191,19 @@ In presentation logic, you can operate on elements which are marked in presentat
 }
 .--------------------
 
-(Don't forget the semicolon at the end of line especially for Ruby user!)
+(Don't forget the semicolon at the end of line!)
 
 Kwartz generates eRuby script from the above files. This action is called 'compiling'.
 
-.? how to compile eRuby script
+.? how to compile
 .====================
 $ kwartz -p example1.plogic example1.html > example1.rhtml
 .====================
 
-The following is the compiled eRuby script.
+The following is the compiled output script.
 Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}} is leaved.
 
-.? generated eRuby script
+.? generated output script
 .-------------------- example1.expected
 <table>
 <%     for member in @members %>
@@ -231,12 +214,6 @@ Notice that {{,id="mark:item1",}} is removed automatically while {{,id="list1",}
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example1.plogic example1.html)
-
-
-
-
-
-
 
 
 
@@ -324,12 +301,6 @@ $ kwartz -p example2.plogic example2.html > example2.rhtml
 </table>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -p example2.plogic example2.html)
-
-
-
-
-
-
 
 
 
@@ -562,7 +533,7 @@ The following is an examle to use Kwartz in Ruby on Rails.
   {{*elem:*}}  text_field 'member', 'name';
 }
 {{*#member_birth*}} {
-  {{*elem:*}}  date_select 'member', birth';
+  {{*elem:*}}  date_select 'member', 'birth';
 }
 {{*#submit*}} {
   {{*elem:*}}  submit_to 'Submit';
@@ -574,17 +545,11 @@ The following is an examle to use Kwartz in Ruby on Rails.
 $ kwartz -p form1.plogic form1.html
 {{*<%= start_form_tag :action=>'new' %>*}}
   Name: {{*<%= text_field 'member', 'name' %>*}}<br>
-  Birthday: {{*<%= date_select 'member', birth' %>*}}<br>
+  Birthday: {{*<%= date_select 'member', 'birth' %>*}}<br>
  {{*<%= submit_to 'Submit' %>*}}
 </form>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p form1.plogic form1.html)
-
-
-
-
-
-
 
 
 
@@ -634,7 +599,7 @@ The following is an example to use directives.
 
 .? Compile:
 .====================
-$ kwartz -l eruby  directive1.html > directive1.rhtml
+$ kwartz directive1.html > directive1.rhtml
 .====================
 
 .? Output script:
@@ -653,13 +618,6 @@ $ kwartz -l eruby  directive1.html > directive1.rhtml
 .#.<<<:! (cd guide.d; kwartz -l eruby directive1.html)
 
 
-
-
-
-
-
-
-
 If the first character of target attribute is a space, Kwartz recognize it as non-directive{{(This spec may change in the future if I get have better idea.)}}.
 
 .? presentation data (directive2.html)
@@ -675,13 +633,6 @@ $ kwartz directive2.html
 <span {{*kw:d="value: expr2"*}}>bar</span>
 .====================
 .#.<<<:! (cd guide.d; kwartz directive2.html)
-
-
-
-
-
-
-
 
 Directives are different in each target language.
 For example, foreach loop is 'for item in list' in eRuby, 'foreach($list as $item)' in PHP, 'forEach(item in list)' in JSTL.
@@ -710,12 +661,6 @@ $ kwartz -l eruby embed1_eruby.html
 .====================
 
 
-
-
-
-
-
-
 .? presentation data (embed1_ruby.html)
 .-------------------- embed1_ruby.html
 <p class="{{*#{klass}*}}">Hello {{*#{ERB::Util.h user}*}}</p>
@@ -731,12 +676,6 @@ _buf = ""; _buf << "<p class=\"{{*#{klass}*}}\">Hello {{*#{ERB::Util.h user}*}}<
 .====================
 
 
-
-
-
-
-
-
 .? presentation data (embed1_php.html)
 .-------------------- embed1_php.html
 <p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
@@ -749,12 +688,6 @@ $ kwartz -l eruby embed1_php.html
 <p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
 <p class="{{*<?php echo $klass; ?>*}}">Hello {{*<?php echo htmlspecialchars($user); ?>*}}</p>
 .====================
-
-
-
-
-
-
 
 
 
@@ -778,6 +711,7 @@ Kwartz supports Automatic-escape and Partial-escape/unescape.
 
 .? presentation logic (escape1.plogic)
 .-------------------- escape1.plogic
+
 #val1 {
   {{*value:*}} expr;
 }
@@ -800,11 +734,6 @@ $ kwartz -p escape1.plogic escape1.html
 .====================
 .#.<<<:! (cd guide.d; kwartz -p escape1.plogic escape1.html)
 
-
-
-
-
-
 .? comple with '{{,-e,}}' option.
 .==================== escape1e.expected
 $ kwartz {{*-e*}} -p escape1.plogic escape1.html
@@ -815,12 +744,6 @@ $ kwartz {{*-e*}} -p escape1.plogic escape1.html
 </tr>
 .====================
 .#.<<<:! (cd guide.d; kwartz -e -p escape1.plogic escape1.html)
-
-
-
-
-
-
 
 In the same way, '{{,Stag:,}}', '{{,Etag:,}}', '{{,Elem:,}}',
 '{{,Cont:,}}', '{{,Attrs:,}}', and '{{,Append:,}}' properties are
@@ -834,16 +757,16 @@ JSTL prints escaped value in default.
 
 Directives {{,kw:d="Value: {{/expr/}}",}}, {{,kw:d="Attr: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="Append: {{/expr/}}",}} always escape expression value even when the command-line option '{{,-e,}}' is not specified.
 
-Directives {{,kw:d="VALUE: {{/expr/}}:",}}, {{,kw:d="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+Directives {{,kw:d="VALUE: {{/expr/}}",}}, {{,kw:d="ATTR: '{{/name/}}' {{/expr/}}",}}, and {{,kw:d="APPEND: {{/expr/}}",}} doesn't escape expression value even when the command-line option '{{,-e,}}' is specified.
+
 
 Configuration option PROPERTY_ESCAPE in 'kwartz/config.rb' determines whether values are escaped or not in default.
 If this is true then Kwartz will escape values in default.
 
 
-
 .$$ Multi-language      | langs
 
-Kwartz-ruby now supports the following programming language.
+Kwartz now supports the following programming language.
 .* Ruby, eRuby(ERB, Erubis)
 .* PHP
 .* JSP (JSTL 1.1 and 1.2)
@@ -996,13 +919,6 @@ $ kwartz -l eperl    -p table1.eperl.plogic table1.html > table1.eperl
 .#.<<<:! (cd guide.d; kwartz -l eruby -p table1.eruby.plogic table1.html)
 
 
-
-
-
-
-
-
-
 .? output script (table1.rb)
 .-------------------- table1.rb
 _buf = ""; _buf << "<html>
@@ -1023,13 +939,6 @@ _buf << "    </table>
 ; _buf
 .--------------------
 .#.<<<:! (cd d; kwartz -l ruby -p table1.ruby.plogic table1.html)
-
-
-
-
-
-
-
 
 
 .? output script (table1.rails)
@@ -1053,13 +962,6 @@ _buf << "    </table>
 .#.<<<:! (cd guide.d; kwartz -l rails -p table1.eruby.plogic table1.html)
 
 
-
-
-
-
-
-
-
 .? output script (table1.pierubis)
 .-------------------- table1.pierubis
 <html>
@@ -1079,13 +981,6 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l pierubis -p table1.eruby.plogic table1.html)
-
-
-
-
-
-
-
 
 
 .? output script (table1.php)
@@ -1108,13 +1003,6 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l php -p table1.php.plogic table1.html)
-
-
-
-
-
-
-
 
 
 .? output script (JSTL 1.2)
@@ -1140,13 +1028,6 @@ _buf << "    </table>
 .#.<<<:! (cd guide.d; kwartz -l jstl -p table1.jstl.plogic table1.html)
 
 
-
-
-
-
-
-
-
 .? output script (ePerl)
 .-------------------- table1.eperl
 <html>
@@ -1167,13 +1048,6 @@ _buf << "    </table>
 </html>
 .--------------------
 .#.<<<:! (cd guide.d; kwartz -l eperl -p table1.eperl.plogic table1.html)
-
-
-
-
-
-
-
 
 
 
@@ -1205,12 +1079,6 @@ Hello {{*<%= user %>*}}!
 .#.<<<:! (cd guide.d; kwartz -p delspan1.plogic --delspan delspan1.html)
 
 
-
-
-
-
-
-
 The span tags are not removed when they have other attributes.
 
 .? presentation data (delspan2.html)
@@ -1238,12 +1106,6 @@ Hello {{*<span style="color:black">*}}<%= user %>{{*</span>*}}!
 .#.<<<:! (cd guide.d; kwartz --delspan delspan2.html)
 
 
-
-
-
-
-
-
 .$$ Import Presentation Logic File		| import-plogic
 
 '{{,@imort "filename.plogic",}}' imports filename.plogic.
@@ -1252,19 +1114,19 @@ This is useful to share common presentation logic in many files.
 .? link_to.plogic
 .-------------------- link_to2.plogic
 {{*#link_to_new*}} {
-  elem:  start_link_tag :action=>'new';
+  elem:  link_to 'New', :action=>'new';
 }
 {{*#link_to_show*}} {
-  elem:  start_link_tag :action=>'show', :id=>@member;
+  elem:  link_to 'Show', :action=>'show', :id=>@member;
 }
 {{*#link_to_edit*}} {
-  elem:  start_link_tag :action=>'edit', :id=>@member;
+  elem:  link_to 'Edit', :action=>'edit', :id=>@member;
 }
 {{*#link_to_list*}} {
-  elem:  start_link_tag :action=>'list';
+  elem:  link_to 'List', :action=>'list';
 }
 {{*#link_to_destroy*}} {
-  stag:  start_link_tag({:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
+  elem:  link_to('Destroy', {:action=>'destroy', :id=>@member}, :confirm=>'Are you sure?');
 }
 .--------------------
 
@@ -1274,10 +1136,20 @@ This is useful to share common presentation logic in many files.
  Name: <span id="mark:name">foo</span> <br>
  Email: <span id="mark:email">foo@mail.com</span> <br>
 </p>
-<a href="#" {{*id="link_to_edit"*}}>Edit this member</a> |
-<a href="#" {{*id="link_to_new"*}}>Create new member</a> |
-<a href="#" {{*id="link_to_list"*}}>Return to list</a>
+<a href="#" {{*id="link_to_edit"*}}>Edit</a> |
+<a href="#" {{*id="link_to_new"*}}>New</a> |
+<a href="#" {{*id="link_to_list"*}}>List</a>
 .--------------------
+.#.? show.html
+.#.-------------------- show2.html
+.#<p>
+.# Name: <span id="mark:name">foo</span> <br>
+.# Email: <span id="mark:email">foo@mail.com</span> <br>
+.#</p>
+.#<a href="#" {{*id="link_to_edit"*}}>Edit this member</a> |
+.#<a href="#" {{*id="link_to_new"*}}>Create new member</a> |
+.#<a href="#" {{*id="link_to_list"*}}>Return to list</a>
+.#.--------------------
 
 .? show.plogic
 .--------------------
@@ -1294,7 +1166,6 @@ This is useful to share common presentation logic in many files.
 .#+++
 .-------------------- show2.plogic
 @import 'link_to2.plogic';
-
 #name {
   Value: @member.name;
 }
@@ -1311,16 +1182,11 @@ $ kwartz -p show.plogic show.html
  Name: <span><%=h @member.name %></span> <br>
  Email: <span><%=h @member.email %></span> <br>
 </p>
-<%= start_link_tag :action=>'edit', :id=>@member %> |
-<%= start_link_tag :action=>'new' %> |
-<%= start_link_tag :action=>'list' %>
+<%= link_to 'Edit', :action=>'edit', :id=>@member %> |
+<%= link_to 'New', :action=>'new' %> |
+<%= link_to 'List', :action=>'list' %>
 .====================
 .#.<<<:! (cd guide.d; kwartz -p show2.plogic show2.html)
-
-
-
-
-
 
 
 
@@ -1370,12 +1236,6 @@ $ kwartz {{*-i form.html*}} -p new.plogic new.html
 
 
 
-
-
-
-
-
-
 .$$ Extract Element		| extract
 
 Command option '-X {{/name/}}' extracts element marked as {{/name/}}
@@ -1416,13 +1276,6 @@ $ kwartz {{*-X content*}} -p show.plogic show.html
 .#.<<<:! (cd guide.d; kwartz -X content -p show.plogic show.html)
 
 
-
-
-
-
-
-
-
 .? compile with '-x'
 .==================== test_show_cont.expected
 $ kwartz {{*-x content*}} -p show.plogic show.html
@@ -1431,13 +1284,6 @@ $ kwartz {{*-x content*}} -p show.plogic show.html
    <p>Email: <span><%= user.email %></span></p>
 .====================
 .#.<<<:! (cd guide.d; kwartz -x content -p show.plogic show.html)
-
-
-
-
-
-
-
 
 
 .$$ Print Statement		| print-statement
@@ -1476,13 +1322,6 @@ $ kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html
 .#.<<<:! (cd guide.d; kwartz -l eruby -p print-stmt.eruby.plogic print-stmt.html)
 
 
-
-
-
-
-
-
-
 .? print-stmt.php.plogic
 .-------------------- print-stmt.php.plogic
 #items {
@@ -1506,13 +1345,6 @@ $ kwartz -l php -p print-stmt.php.plogic print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l php -p print-stmt.php.plogic print-stmt.html)
-
-
-
-
-
-
-
 
 
 .? print-stmt.jstl.plogic
@@ -1542,13 +1374,6 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic print-stmt.html)
 
 
-
-
-
-
-
-
-
 .? compile (JSTL 1.1)
 .==================== print-stmt.jstl11.expected
 $ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
@@ -1560,13 +1385,6 @@ $ kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html
 </ul>
 .====================
 .#.<<<:! (cd guide.d; kwartz -l jstl -p print-stmt.jstl.plogic --jstl=1.1 print-stmt.html)
-
-
-
-
-
-
-
 
 
 It is recommended to use 'elem:', 'stag:', 'etag:', 'cont:', or 'value:' instead of
@@ -1590,8 +1408,8 @@ In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beg
 .-------------------- document-test.plogic
 {{*#DOCUMENT*}} {
   {{*begin:*}} {
-    title = _context[:title]
-    user  = _context[:user]
+    title = cgi['title']
+    user  = cgi['user']
   }
   {{*end:*}} {
     print "<!--end-->\n"
@@ -1602,23 +1420,14 @@ In '#DOCUMENT', properties 'begin:' and 'end:' are available to add codes at beg
 .? compile
 .==================== document-test.expected
 $ kwartz -p document-test.plogic document-test.html
-{{*<%     title = _context[:title] %>*}}
-{{*<%     user  = _context[:user] %>*}}
+{{*<%     title = cgi['title'] %>*}}
+{{*<%     user  = cgi['user'] %>*}}
 <html>
  <body>hello</body>
 </html>
 {{*<%= "<!--end-->\n" %>*}}
 .====================
 .#.<<<:! (cd guide.d; kwartz -p document-test.plogic document-test.html)
-
-
-
-
-
-
-
-
-
 
 
 .$$ Compile Template into a Function of Ruby or PHP	| detail-defun
@@ -1684,14 +1493,6 @@ _erbout
 .====================
 
 
-
-
-
-
-
-
-
-
 The following command-line properties are available with '-a defun'.
 .: --module={{/name/}}
 	Module name. If false or null then no module is used. Default is 'View'.
@@ -1706,7 +1507,6 @@ The following languages are available with '-a defun'.
 .* -l erubis
 .* -l pierubis
 .* -l php
-
 
 
 .$ Ruby on Rails Support  | rails
@@ -1978,6 +1778,7 @@ It is able to embed Rails' helper method in kw:d attribute.
 
 There are several restrictions in presentation logic file.
 
+
 .* Position in which comment '{{,/* ... */,}}' is available is limited.
    In the following example, 'value:' property will be error because
    string from 'expr;' to the end of comment is regared as argument of 'value:' property.
@@ -1995,6 +1796,7 @@ There are several restrictions in presentation logic file.
      }
    }
    .--------------------
+
 
 .* '_stag', '_cont', '_etag', '_elem', '_element()', and '_content()' must be placed
    one in per line, because Kwartz-ruby scans 'logic:' property with regular expression
@@ -2028,6 +1830,8 @@ There are several restrictions in presentation logic file.
      }
    }
    .--------------------
+
+
 
 .* '@import "file.plogic"' should be at the beginning of presentation logic file.
    .--------------------
@@ -2075,9 +1879,11 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 
 
 
+
 .$$ Makefile and Rakefile		| topics-makefile
 
 The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
+
 
 .? example of Makefile
 .--------------------
@@ -2131,7 +1937,31 @@ file "file3.rhtml" => ["file3.html", "file3.plogic", layout] do |t|
 end
 .--------------------
 
-.? example of Rookbook.yaml for {{<Rook|http://www.rubyforge.org/projects/rook>}}
+.? example of Kookbook.yaml for {{<Kook|http://www.kuwata-lab.com/kook>}}
+.--------------------
+properties:
+  - layout  :  layout.html
+
+parameters:
+  - all     :  [ file1.rhtml, file2.rhtml, file3.rhtml ]
+  - rook_product:  $(all)
+
+recipes:
+
+  - product:	*.rhtml
+    ingreds:	[ $(1).html, $(1).plogic ]
+    method*: |
+        $pdata = $ingreds[0]; $plogic = $ingreds[1];
+	k_sys("kwartz -p $plogic} $pdata > $product");
+
+  - product:	file3.rhtml
+    ingres:	[ file3.html, file3.plogic, $(layout) ]
+    method*: |
+	$pdata = $ingreds[0]; $plogic = $ingreds[1]
+	k_sys("kwartz -p $plogic -L $(layout) $pdata > $product"
+.--------------------
+
+.? example of Rookbook.yaml for {{<Rook|http://www.kuwata-lab.com/kook>}}
 .--------------------
 properties:
   - layout  :  layout.html
@@ -2152,12 +1982,13 @@ recipes:
     ingres:	[ file3.html, file3.plogic, $(layout) ]
     method*: |
         pdata, plogic, layout = @ingreds
-	sys "kwartz- p #{plogic} -L $(layout) #{pdata} > #{@product}"
+	sys "kwartz -p #{plogic} -L $(layout) #{pdata} > #{@product}"
 .--------------------
 
 
 
 .$$ Use Kwartz as Library		| topics-kwartz-lib
+
 
 If you want to use Kwartz library in your Ruby script, use Kwartz::Main class.
 
@@ -2165,7 +1996,6 @@ If you want to use Kwartz library in your Ruby script, use Kwartz::Main class.
 .--------------------
 {{*require 'kwartz'*}}
 {{*require 'kwartz/main'*}}
-
 argv = %w[-p hello.plogic -L layout.html hello.html]
 {{*main = Kwartz::Main.new(argv)*}}
 {{*output = main.execute()*}}
@@ -2179,12 +2009,13 @@ Using {{<Erubis|http://www.kuwata-lab.com/erubis>}}, it is able to use Kwartz wi
 Erubis is an implementation of eRuby which supports not only Ruby but also other languages.
 
 The followings are examples of using JavaScript with Kwartz and Erubis.
+.#{{,@!{...}@,}} means embedded expression and {{,@{...}@,}} means embedded expression with escaping.
 
 .? presentation data (js-example.html)
 .-------------------- js-example.html
 <table>
   <tr class="odd" {{*id="mark:list"*}}>
-    <td>{{*@!{item}@*}}</td>
+    <td>{{*@{item}@*}}</td>
   </tr>
   <tr class="even" {{*id="dummy:d1"*}}>
     <td>foo</td>
@@ -2218,19 +2049,16 @@ $ kwartz {{*-l erubis*}} -p js-example.plogic js-example.html  > js-example.jsht
 {{*<%       klass = i % 1 == 0 ? 'even' : 'odd'; %>*}}
 {{*<%       item = list[i]; %>*}}
   <tr class="{{*<%= klass %>*}}">
-    <td>{{*<%= item %>*}}</td>
+    <td>{{*<%== item %>*}}</td>
   </tr>
 {{*<%     } %>*}}
 </table>
 .--------------------
 
+In Erubis, {{,<%= ... %>,}} means embedded expression and {{,<%== ... %>,}} means embedded expression with escaping.
+In this example, {{,@{item}@,}} is compiled into {{,<%== item %>,}} because it needs escaping and {{,attr: 'class' klass,}} is compiled into {{,<%= klass %>,}} without escaping.
 
-
-
-
-
-
-
+The following is an example to compile into JavaScript code with Erubis.
 
 .? convert into JavaScript code with erubis
 .==================== js-example.expected
@@ -2240,20 +2068,12 @@ var _buf = []; _buf.push("<table>\n");
        {{*klass = i % 1 == 0 ? 'even' : 'odd';*}} 
        {{*item = list[i];*}} 
 _buf.push("  <tr class=\""); _buf.push({{*klass*}}); _buf.push("\">\n\
-    <td>"); _buf.push({{*item*}}); _buf.push("</td>\n\
+    <td>"); _buf.push(escape({{*item*}})); _buf.push("</td>\n\
   </tr>\n");
      {{*}*}} 
 _buf.push("</table>\n");
 document.write(_buf.join(""));
 .====================
-
-
-
-
-
-
-
-
 
 
 
@@ -2302,9 +2122,5 @@ include($view);
 	erb = ERB.new(str, $SAFE, trim_mode)
 	print erb.result(binding())
 .--------------------
-
-
-
-
 
 

@@ -13,16 +13,16 @@
    <div class="mainbody">
 
     <div align="left"><h1>Kwartz-ruby 3.0 Reference Guide</h1></div>
-    <div align="left">
-      last update: $Date$<br>
-    </div>
-
+<p>$Release$<br>
+$Date$
+</p>
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>This document<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is the reference manual of Kwartz-ruby 3.0.
+<p>This document<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is the reference manual of Kwartz-ruby.
 </p>
 <p>Kwartz<sup>(<a href="#fnref:2" name="fnlink:2">*2</a>)</sup> is a template system which realized the concept 'Independence of Presentation Logic'.
 It means that presentation logics are separated from both presentation data (typically HTML file) and business logic layer (typically main program).
+Kwartz-ruby is an implementation of Kwartz in Ruby.
 </p>
 <p>If you are new to Kwartz, see <a href="users-guide.html">Users' Guide</a> at first.
 </p>
@@ -104,8 +104,6 @@ It means that presentation logics are separated from both presentation data (typ
     <li><a href="#directive-default">default, Default, DEFAULT</a>
     </li>
     <li><a href="#directive-replace">replace_element/content_with_element/content</a>
-    </li>
-    <li><a href="#directive-replace2">replace_element_with, replace_content_with</a>
     </li>
   </ul>
   </li>
@@ -585,21 +583,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> start_link_tag('list');
+  <strong>stag:</strong> start_link_tag('member/list');
 }
 #link2 {
-  <strong>Stag:</strong> start_link_tag('list');
+  <strong>Stag:</strong> start_link_tag('member/list');
 }
 #link3 {
-  <strong>STAG:</strong> start_link_tag('list');
+  <strong>STAG:</strong> start_link_tag('member/list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l php -p ex-stag.plogic ex-stag.pdata
-<strong>&lt;?php echo start_link_tag('list'); ?&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>&lt;?php echo htmlspecialchars(start_link_tag('list')); ?&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;?php echo start_link_tag('list'); ?&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_tag('member/list'); ?&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo htmlspecialchars(start_link_tag('member/list')); ?&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?php echo start_link_tag('member/list'); ?&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -614,13 +612,13 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> fn:start_link_tag('list');
+  <strong>stag:</strong> fn:start_link_tag('member', 'list');
 }
 #link2 {
-  <strong>Stag:</strong> fn:start_link_tag('list');
+  <strong>Stag:</strong> fn:start_link_tag('member', 'list');
 }
 #link3 {
-  <strong>STAG:</strong> fn:start_link_tag('list');
+  <strong>STAG:</strong> fn:start_link_tag('member', 'list');
 }
 </pre>
 <div class="terminal_caption">
@@ -628,9 +626,9 @@ compile</div>
 <pre class="terminal">$ kwartz -l jstl -p ex-stag.plogic ex-stag.pdata
 &lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
 &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
-<strong>${fn:start_link_tag('list')}</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>${fn:start_link_tag('list')}</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;c:out value="${fn:start_link_tag('list')}" escapeXml="false"/&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_tag('member', 'list')}</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>${fn:start_link_tag('member', 'list')}</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;c:out value="${fn:start_link_tag('member', 'list')}" escapeXml="false"/&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -645,21 +643,21 @@ presentation data (ex-stag.pdata)</div>
 <div class="program_caption">
 presentation logic (ex-stag.plogic)</div>
 <pre class="program">#link1 {
-  <strong>stag:</strong> start_link_tag('list');
+  <strong>stag:</strong> start_link_tag('member/list');
 }
 #link2 {
-  <strong>Stag:</strong> start_link_tag('list');
+  <strong>Stag:</strong> start_link_tag('member/list');
 }
 #link3 {
-  <strong>STAG:</strong> start_link_tag('list');
+  <strong>STAG:</strong> start_link_tag('member/list');
 }
 </pre>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eperl -p ex-stag.plogic ex-stag.pdata
-<strong>&lt;?= start_link_tag('list') !&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
-<strong>&lt;?= encode_entities(start_link_tag('list')) !&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
-<strong>&lt;?= start_link_tag('list') !&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_tag('member/list') !&gt;</strong>&lt;img src="button1.png"&gt;&lt;/a&gt;
+<strong>&lt;?= encode_entities(start_link_tag('member/list')) !&gt;</strong>&lt;img src="button2.png"&gt;&lt;/a&gt;
+<strong>&lt;?= start_link_tag('member/list') !&gt;</strong>&lt;img src="button3.png"&gt;&lt;/a&gt;
 </pre>
 <br>
 
@@ -3223,242 +3221,6 @@ presentation data (ex-replace.pdata)</div>
 <div class="terminal_caption">
 compile</div>
 <pre class="terminal">$ kwartz -l eruby ex-replace.pdata
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other content--&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-
-&lt;!-- replace content with other element --&gt;
-&lt;p&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/p&gt;
-</pre>
-<br>
-
-<br>
-
-
-<a name="directive-replace2"></a>
-<h3 class="section2">replace_element_with, replace_content_with</h3>
-<p>'replace_element_with' and 'replace_content_with' directives replace element
-or content with other element or content.
-</p>
-<a name="directive-replace2-eruby"></a>
-<h4 class="section3">Ruby</h4>
-<div class="program_caption">
-presentation data (ex-replace2.pdata)</div>
-<pre class="program">&lt;div <strong>id="mark:link"</strong>&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;p <strong>kw:d="replace_element_with: element(link)"</strong>&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace element with other content--&gt;
-&lt;p <strong>kw:d="replace_element_with: content(link)"</strong>&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other element --&gt;
-&lt;p <strong>kw:d="replace_content_with: element(link)"</strong>&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p <strong>kw:d="replace_content_with: content(link)"</strong>&gt;
-  back to home
-&lt;/p&gt;
-</pre>
-<div class="terminal_caption">
-compile</div>
-<pre class="terminal">$ kwartz -l eruby ex-replace2.pdata
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other content--&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-
-&lt;!-- replace content with other element --&gt;
-&lt;p&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/p&gt;
-</pre>
-<br>
-
-<a name="directive-replace2-php"></a>
-<h4 class="section3">PHP</h4>
-<div class="program_caption">
-presentation data (ex-replace2.pdata)</div>
-<pre class="program">&lt;div kw:d="id(link)"&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;p kw:d="replace_element_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace element with other content--&gt;
-&lt;p kw:d="replace_element_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other element --&gt;
-&lt;p kw:d="replace_content_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p kw:d="replace_content_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-</pre>
-<div class="terminal_caption">
-compile</div>
-<pre class="terminal">$ kwartz -l php ex-replace2.pdata
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other content--&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-
-&lt;!-- replace content with other element --&gt;
-&lt;p&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/p&gt;
-</pre>
-<br>
-
-<a name="directive-replace2-jstl"></a>
-<h4 class="section3">JSP</h4>
-<div class="program_caption">
-presentation data (ex-replace2.pdata)</div>
-<pre class="program">&lt;div kw:d="id(link)"&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;p kw:d="replace_element_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace element with other content--&gt;
-&lt;p kw:d="replace_element_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other element --&gt;
-&lt;p kw:d="replace_content_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p kw:d="replace_content_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-</pre>
-<div class="terminal_caption">
-compile</div>
-<pre class="terminal">$ kwartz -l jstl ex-replace2.pdata
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other content--&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-
-&lt;!-- replace content with other element --&gt;
-&lt;p&gt;
-&lt;div&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/p&gt;
-</pre>
-<br>
-
-<a name="directive-replace2-eperl"></a>
-<h4 class="section3">Perl</h4>
-<div class="program_caption">
-presentation data (ex-replace2.pdata)</div>
-<pre class="program">&lt;div kw:d="id(link)"&gt;
-  back to &lt;a href="/"&gt;home&lt;/a&gt;.
-&lt;/div&gt;
-
-&lt;!-- replace element with other element --&gt;
-&lt;p kw:d="replace_element_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace element with other content--&gt;
-&lt;p kw:d="replace_element_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other element --&gt;
-&lt;p kw:d="replace_content_with(element(link))"&gt;
-  back to home
-&lt;/p&gt;
-
-&lt;!-- replace content with other content --&gt;
-&lt;p kw:d="replace_content_with(content(link))"&gt;
-  back to home
-&lt;/p&gt;
-</pre>
-<div class="terminal_caption">
-compile</div>
-<pre class="terminal">$ kwartz -l eperl ex-replace2.pdata
 &lt;div&gt;
   back to &lt;a href="/"&gt;home&lt;/a&gt;.
 &lt;/div&gt;
