@@ -2,8 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Kwartz 3.0 Users' Guide</title>
-  <meta name="author" content="Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;">
+  <title>Kwartz-PHP Users' Guide</title>
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" href="docstyle.css" type="text/css">
@@ -13,16 +12,16 @@
   <blockquote>
    <div class="mainbody">
 
-    <div align="left"><h1>Kwartz 3.0 Users' Guide</h1></div>
-    <div align="left">
-      Makoto Kuwata &lt;kwa(at)kuwata-lab.com&gt;<br>
-      last update: $Date$<br>
-    </div>
-
+    <div align="left"><h1>Kwartz-PHP Users' Guide</h1></div>
+<p>$Release$<br>
+$Date$
+</p>
 <a name="preface"></a>
 <h2 class="section1">Preface</h2>
-<p>This is the users' guide of Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup>,
-a template system which realized the concept of 'Independence of Presentation Logic'.
+<p>This is the users' guide of Kwartz-php.
+</p>
+<p>Kwartz<sup>(<a href="#fnref:1" name="fnlink:1">*1</a>)</sup> is a template system which realized the concept of 'Independence of Presentation Logic'.
+Kwartz-php is an implementation of Kwartz in PHP.
 </p>
 <div class="footnote">
  <dl compact>
@@ -85,6 +84,8 @@ a template system which realized the concept of 'Independence of Presentation Lo
     </li>
     <li><a href="#topics-restriction2">Restrictions around presentation data</a>
     </li>
+    <li><a href="#topics_symphony"><code>link_to()</code> function in Symphony</a>
+    </li>
     <li><a href="#topics-makefile">Makefile and Rakefile</a>
     </li>
     <li><a href="#topics-kwartz-lib">Use Kwartz as Library</a>
@@ -129,11 +130,10 @@ If you are familiar with CSS, you'll be also familiar with Kwartz.
 <span>Figure1. Relation of HTML, CSS, JavaScript, and Kwartz.</span><br />
 <img src="img/fig04.png" alt="relation of HTML, CSS, JavaScript, and Kwartz" />
 </div>
-<p>Kwartz-ruby is an implemenation of Kwartz in Ruby.
-There is a plan to implement Kwartz in PHP or Java.
+<p>Kwartz-php is an implemenation of Kwartz in PHP.
 </p>
 <p>In the following, the word 'Kwartz' means the specification of the template system
-and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+and the word 'Kwartz-php' means the implementation of it in PHP language.
 </p>
 <div class="footnote">
  <dl compact>
@@ -173,7 +173,7 @@ Multi-languages support</dt>
 <p>	Kwartz can create output scripts for Ruby(eRuby), PHP, JSP(JSTL 1.2 &amp; 1.1).
 	Presentation logics are written in each language<sup>(<a href="#fnref:3" name="fnlink:3">*3</a>)</sup>.
 	This approach gives you the power of the target language fully.
-	For example, you can write Ruby on Rails helper method (such as <code>link_to</code>, <code>field_tag</code>, and so on) directly in your template file.
+	For example, you can write Symfony helper functions (such as <code>link_to()</code>, <code>form_tag</code>, and so on) directly as a part of presentation logic.
 </p>
 </dd>
 <dt class="dt2">
@@ -208,7 +208,7 @@ Auto-escape and Partial-escape</dt>
 <div class="footnote">
  <dl compact>
   <dt>(<a name="fnref:3" href="#fnlink:3">*3</a>)</dt>
-  <dd>Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From Current version, it is required to write presentation logic in target language.</dd>
+  <dd>Previous version of Kwartz adopt original language and convert it to each target language(Ruby, PHP, JSTL, and so on). From version 3.0, it is required to write presentation logic in target language.</dd>
  </dl>
 </div>
 <br>
@@ -283,7 +283,7 @@ Presentation logic file(example1.plogic):</div>
   value: $member;
 }
 </pre>
-<p>(Don't forget the semicolon at the end of line especially for Ruby user!)
+<p>(Don't forget the semicolon at the end of line!)
 </p>
 <p>Kwartz generates eRuby script from the above files. This action is called 'compiling'.
 </p>
@@ -694,7 +694,7 @@ In Kwartz, 'kw:d' attributes<sup>(<a href="#fnref:4" name="fnlink:4">*4</a>)</su
 <p>The following is an example to use directives.
 </p>
 <ul type="disc">
-<li>Directive <code>kw:d="foreach(<em>list</em> as <em>var</em>"</code> means to iterate the element.
+<li>Directive <code>kw:d="foreach(<em>list</em> as <em>var</em>)"</code> means to iterate the element.
 </li>
 <li>Directive <code>kw:d="value(<em>expression</em>)"</code> means to print value of expression as content of the element.
 </li>
@@ -1209,19 +1209,19 @@ This is useful to share common presentation logic in many files.
 <div class="program_caption">
 link_to.plogic</div>
 <pre class="program"><strong>#link_to_new</strong> {
-  elem:  link_to('New', "action='new'");
+  elem:  link_to('New', "member/new");
 }
 <strong>#link_to_show</strong> {
-  elem:  link_to('Show', "action='show', id=".$member-&gt;id);
+  elem:  link_to('Show', "member/show?id=".$member-&gt;getId());
 }
 <strong>#link_to_edit</strong> {
-  elem:  link_to('Edit', "action='edit', id=".$member-&gt;id);
+  elem:  link_to('Edit', "member/edit?id=".$member-&gt;getId());
 }
 <strong>#link_to_list</strong> {
-  elem:  link_to('List', "action='list'");
+  elem:  link_to('List', "member/list");
 }
 <strong>#link_to_destroy</strong> {
-  stag:  link_to('Destroy', "action='destroy', id=".$member", "confirm='Are you sure?'");
+  stag:  link_to('Destroy', "member/destroy?id=".$member-&gt;getId());
 }
 </pre>
 <a name="show2.html"></a>
@@ -1254,9 +1254,9 @@ compile</div>
  Name: &lt;span&gt;&lt;?php echo htmlspecialchars($member-&gt;name); ?&gt;&lt;/span&gt; &lt;br&gt;
  Email: &lt;span&gt;&lt;?php echo htmlspecialchars($member-&gt;email); ?&gt;&lt;/span&gt; &lt;br&gt;
 &lt;/p&gt;
-&lt;?php echo link_to('Edit', "action='edit', id=".$member-&gt;id); ?&gt; |
-&lt;?php echo link_to('New', "action='new'"); ?&gt; |
-&lt;?php echo link_to('List', "action='list'"); ?&gt;
+&lt;?php echo link_to('Edit', "member/edit?id=".$member-&gt;getId()); ?&gt; |
+&lt;?php echo link_to('New', "member/new"); ?&gt; |
+&lt;?php echo link_to('List', "member/list"); ?&gt;
 </pre>
 <br>
 
@@ -1608,6 +1608,61 @@ This approach enables Kwartz to handle any type of text file, and also brings th
 <br>
 
 
+<a name="topics_symphony"></a>
+<h3 class="section2"><code>link_to()</code> function in Symphony</h3>
+<p><code>link_to()</code> function in Symphony is a little incompatible with Kwartz
+because you must specify link label in both presentation data and presentation logic.
+It's not DRY.
+</p>
+<div class="program_caption">
+presentation data</div>
+<pre class="program">&lt;a href="#" id="mark:link_to_new"&gt;<strong>Show member</strong>&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic</div>
+<pre class="program">#link_to_new {
+  elem:  link_to(<strong>'Show member'</strong>, "member/show?id=".$member-&gt;getId());
+}
+</pre>
+<p>It is recommended to use <code>start_link_tag()</code>, <code>start_remote_link_tag()</code>, and <code>start_function_link_tag()</code> instead of <code>link_to()</code>, <code>link_to_remote()</code>, and <code>link_to_function()</code> because the formers print only start tag of anchor.
+</p>
+<div class="program_caption">
+presentation data</div>
+<pre class="program">&lt;a href="#" id="mark:link_to_new"&gt;Show member&lt;/a&gt;
+</pre>
+<div class="program_caption">
+presentation logic</div>
+<pre class="program">#link_to_new {
+  stag:  <strong>start_link_tag</strong>("member/show?id=".$member-&gt;getId());
+}
+</pre>
+<div class="program_caption">
+expected result</div>
+<pre class="program">&lt;a href="/member/show?id=123"&gt;Show member&lt;/a&gt;
+</pre>
+<p>To use <code>start_link_tag()</code>, <code>start_remote_link_tag()</code>, and <code>start_function_link_tag()</code>, require 'Kwartz/Helper/Symfony.php'.
+The following is the definition of 'Kwartz/Helper/Symfony.php'.
+</p>
+<div class="program_caption">
+Kwartz/Helper/Symfony.php</div>
+<pre class="program">function start_link_tag($options = '', $html_options = array()) {
+   $s = link_to('', $options, $html_options);
+   return preg_replace('/&lt;\/a&gt;\z/', '', $s);
+}
+
+function start_remote_link_tag($options = array(), $html_options = array()) {
+   $s = link_to_remote('', $options, $html_options);
+   return preg_replace('/&lt;\a&gt;\z/', '', $s);
+}
+
+function start_function_link_tag($function, $html_options = array()) {
+   $s = link_to_function('', $function, $html_options);
+   return preg_replace('/&lt;\a&gt;\z/', '', $s);
+}
+</pre>
+<br>
+
+
 <a name="topics-makefile"></a>
 <h3 class="section2">Makefile and Rakefile</h3>
 <p>The followings are examples of Makefile, Rakefile, Rantfile, and Rookbook.
@@ -1738,7 +1793,7 @@ Erubis is an implementation of eRuby which supports not only Ruby but also other
 presentation data (js-example.html)</div>
 <pre class="program">&lt;table&gt;
   &lt;tr class="odd" <strong>id="mark:list"</strong>&gt;
-    &lt;td&gt;<strong>@!{item}@</strong>&lt;/td&gt;
+    &lt;td&gt;<strong>@{item}@</strong>&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr class="even" <strong>id="dummy:d1"</strong>&gt;
     &lt;td&gt;foo&lt;/td&gt;
@@ -1771,11 +1826,16 @@ output script (js-example.jshtml)</div>
 <strong>&lt;%       klass = i % 1 == 0 ? 'even' : 'odd'; %&gt;</strong>
 <strong>&lt;%       item = list[i]; %&gt;</strong>
   &lt;tr class="<strong>&lt;%= klass %&gt;</strong>"&gt;
-    &lt;td&gt;<strong>&lt;%= item %&gt;</strong>&lt;/td&gt;
+    &lt;td&gt;<strong>&lt;%== item %&gt;</strong>&lt;/td&gt;
   &lt;/tr&gt;
 <strong>&lt;%     } %&gt;</strong>
 &lt;/table&gt;
 </pre>
+<p>In Erubis, <code>&lt;%= ... %&gt;</code> means embedded expression and <code>&lt;%== ... %&gt;</code> means embedded expression with escaping.
+In this example, <code>@{item}@</code> is compiled into <code>&lt;%== item %&gt;</code> because it needs escaping and <code>attr: 'class' klass</code> is compiled into <code>&lt;%= klass %&gt;</code> without escaping.
+</p>
+<p>The following is an example to compile into JavaScript code with Erubis.
+</p>
 <a name="js-example.expected"></a>
 <div class="terminal_caption">
 convert into JavaScript code with erubis</div>
@@ -1785,7 +1845,7 @@ var _buf = []; _buf.push("&lt;table&gt;\n");
        <strong>klass = i % 1 == 0 ? 'even' : 'odd';</strong> 
        <strong>item = list[i];</strong> 
 _buf.push("  &lt;tr class=\""); _buf.push(<strong>klass</strong>); _buf.push("\"&gt;\n\
-    &lt;td&gt;"); _buf.push(<strong>item</strong>); _buf.push("&lt;/td&gt;\n\
+    &lt;td&gt;"); _buf.push(_escape(<strong>item</strong>)); _buf.push("&lt;/td&gt;\n\
   &lt;/tr&gt;\n");
      <strong>}</strong> 
 _buf.push("&lt;/table&gt;\n");

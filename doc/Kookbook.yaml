@@ -24,8 +24,8 @@ recipes:
     ingreds:	[ $(1).txt ]
     byprods:	[ $(1).toc.html ]
     method*: |
-	k_sys("kwaser -t $(tagfile) -T $ingred > $byprod"); 
-	k_sys("kwaser -t $(tagfile)    $ingred > $product"); 
+	k_sys("kwaser -t $(tagfile) -T2 $ingred > $byprod"); 
+	k_sys("kwaser -t $(tagfile)     $ingred > $product"); 
 
   - product:	*.txt
     desc:	create *.txt and Kwartz*Test.php from *.eruby
@@ -48,8 +48,8 @@ recipes:
   - product:	KwartzPatternCatalogTest.php
     ingreds:	[ pattern-catalog.txt, KwartzPatternCatalogTest.php.eruby ]
   
-  - product:	KwartzReferenceTest.php
-    ingreds:	[ reference.txt, KwartzReferenceTest.php.eruby ]
+#  - product:	KwartzReferenceTest.php
+#    ingreds:	[ reference.txt, KwartzReferenceTest.php.eruby ]
 
   - product:	:test_users_guide
     desc:	test KwartzUsersGuideTest.php
@@ -65,12 +65,12 @@ recipes:
 	retrieve('pattern-catalog');
 	k_sys("phpunit $ingred");
 
-  - product:	:test_reference
-    desc:	test KwartzReferenceTest.php
-    ingreds:	[ KwartzReferenceTest.php ]
-    method*: |
-	retrieve('reference');
-	k_sys("phpunit $ingred");
+#  - product:	:test_reference
+#    desc:	test KwartzReferenceTest.php
+#    ingreds:	[ KwartzReferenceTest.php ]
+#    method*: |
+#	retrieve('reference');
+#	k_sys("phpunit $ingred");
 
   - product:	:test
     ingreds:	[ :test_users_guide, :test_pattern_catalog, :test_reference ]

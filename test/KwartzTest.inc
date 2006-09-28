@@ -4,7 +4,12 @@ $basedir = dirname($testdir);
 set_include_path(get_include_path() . PATH_SEPARATOR . $basedir);
 
 if (! extension_loaded('syck')) {
-    if (! dl('syck.so')) {   // or dl('/some/where/to/syck.so')
+    $extdir = '/usr/local/lib/php/extensions/no-debug-non-zts-20050922';
+    if (dl('syck.so')) {
+        // OK
+    } elseif (dl("$extdir/syck.so")) {
+       // OK
+    } else {
         die('cannot load syck extension.');
     }
 }

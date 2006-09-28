@@ -17,7 +17,6 @@
 % #@template = @testfile.sub(/\.\w+$/, '.eruby')
 % @template = @testfile + '.eruby'
 %
-% @support_rails = @lang == 'ruby'
 % @support_defun = @lang == 'ruby'
 % @support_pl    = @lang == 'java'
 %
@@ -31,8 +30,8 @@
 %
 .=title:	Kwartz-[%= @Lang %] Users' Guide
 .#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.#.?lastupdate:	$Date: 2006-09-24 19:37:59 +0900 (Sun, 24 Sep 2006) $
-.?version:	$Rev: 137 $
+.#.?lastupdate:	$Date$
+.?version:	$Rev$
 .?release:	$Release$
 .?stylesheet:	docstyle.css
 .?copyright:	$Copyright$
@@ -44,8 +43,10 @@ $Date$
 .$ Preface | preface*
 
 
-This is the users' guide of Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}},
-a template system which realized the concept of 'Independence of Presentation Logic'.
+This is the users' guide of Kwartz-[%= @lang %].
+
+Kwartz{{(Development of Kwartz had subsidized by Exploratory Software Project of {{<IPA (Information-Technology Promotion Agency Japan)|http://www.ipa.go.jp/about/english/index.html>}}.)}} is a template system which realized the concept of 'Independence of Presentation Logic'.
+Kwartz-[%= @lang %] is an implementation of Kwartz in [%= @Lang %].
 
 
 
@@ -98,12 +99,12 @@ The following figure show the relation of HTML, CSS, JavaScript, and Kwartz.
 .+++++
 
 
-Kwartz-ruby is an implemenation of Kwartz in Ruby.
-There is a plan to implement Kwartz in PHP or Java.
+Kwartz-[%= @lang %] is an implemenation of Kwartz in [%= @Lang %].
+.#There is a plan to implement Kwartz in PHP or Java.
 
 
 In the following, the word 'Kwartz' means the specification of the template system
-and the word 'Kwartz-ruby' means the implementation of it in Ruby language.
+and the word 'Kwartz-[%= @lang %]' means the implementation of it in [%= @Lang %] language.
 
 
 
@@ -200,7 +201,13 @@ In presentation logic, you can operate on elements which are marked in presentat
     .- '{{*{{,_stag,}}*}}' represents a start tag (= '<tr>').
     .- '{{*{{,_cont,}}*}}' represents content(= '<td id="mark:item1">foo</td>').
     .- '{{*{{,_etag,}}*}}' represents an end tag(= '</tr>').
-    .- '{{*{{,for {{/var/}} in {{/list/}} ...,}}*}}' is a Ruby code to loop.
+% if @lang == 'ruby'
+    .- '{{*{{,for {{/var/}} in {{/list/}} ...,}}*}}' is a [%= @Lang %] code to loop.
+% elsif @lang == 'php'
+    .- '{{*{{,foreach ({{/list/}} as {{/item/}}) { ... },}}*}}' is a [%= @Lang %] code to loop.
+% elsif @lang == 'java'
+    .- '{{*{{,foreach ({{/var/}} in {{/list/}}) { ... },}}*}}' means loop.
+% else error end
        In this case, the element(= start-tag + content + end-tag) is looped.
 .* '{{*{{,#item1 { ... },}}*}}' represents an element marked with name 'item1' (= '<td>...</td>').
     .- '{{*{{,value: {{/expression/}};,}}*}}' represents that the content of the element is replaced by value of {{,{{/expression/}},}}, which is value of a variable {{,member,}} in this case.
@@ -246,7 +253,7 @@ In presentation logic, you can operate on elements which are marked in presentat
 }
 .--------------------
 
-(Don't forget the semicolon at the end of line especially for Ruby user!)
+(Don't forget the semicolon at the end of line!)
 
 Kwartz generates eRuby script from the above files. This action is called 'compiling'.
 
@@ -2905,7 +2912,7 @@ recipes:
 %   main_class = 'kwartz.Main'
 % else error end
 
-If you want to use Kwartz library in your Ruby script, use [%= main_class %] class.
+If you want to use Kwartz library in your [%= @Lang %] script, use [%= main_class %] class.
 
 .? usage of [%= main_class %] class
 .--------------------
@@ -2943,12 +2950,13 @@ Using {{<Erubis|http://www.kuwata-lab.com/erubis>}}, it is able to use Kwartz wi
 Erubis is an implementation of eRuby which supports not only Ruby but also other languages.
 
 The followings are examples of using JavaScript with Kwartz and Erubis.
+.#{{,@!{...}@,}} means embedded expression and {{,@{...}@,}} means embedded expression with escaping.
 
 .? presentation data (js-example.html)
 .-------------------- js-example.html
 <table>
   <tr class="odd" {{*id="mark:list"*}}>
-    <td>{{*@!{item}@*}}</td>
+    <td>{{*@{item}@*}}</td>
   </tr>
   <tr class="even" {{*id="dummy:d1"*}}>
     <td>foo</td>
@@ -2982,7 +2990,7 @@ $ [%= @command %] {{*-l erubis*}} -p js-example.plogic js-example.html  > js-exa
 {{*<%       klass = i % 1 == 0 ? 'even' : 'odd'; %>*}}
 {{*<%       item = list[i]; %>*}}
   <tr class="{{*<%= klass %>*}}">
-    <td>{{*<%= item %>*}}</td>
+    <td>{{*<%== item %>*}}</td>
   </tr>
 {{*<%     } %>*}}
 </table>
@@ -2992,6 +3000,10 @@ $ [%= @command %] {{*-l erubis*}} -p js-example.plogic js-example.html  > js-exa
 %             :command=>"#{@command} -l erubis -p js-example.plogic js-example.html" }
 %
 
+In Erubis, {{,<%= ... %>,}} means embedded expression and {{,<%== ... %>,}} means embedded expression with escaping.
+In this example, {{,@{item}@,}} is compiled into {{,<%== item %>,}} because it needs escaping and {{,attr: 'class' klass,}} is compiled into {{,<%= klass %>,}} without escaping.
+
+The following is an example to compile into JavaScript code with Erubis.
 
 .? convert into JavaScript code with erubis
 .==================== js-example.expected
@@ -3001,7 +3013,7 @@ var _buf = []; _buf.push("<table>\n");
        {{*klass = i % 1 == 0 ? 'even' : 'odd';*}} 
        {{*item = list[i];*}} 
 _buf.push("  <tr class=\""); _buf.push({{*klass*}}); _buf.push("\">\n\
-    <td>"); _buf.push({{*item*}}); _buf.push("</td>\n\
+    <td>"); _buf.push(escape({{*item*}})); _buf.push("</td>\n\
   </tr>\n");
      {{*}*}} 
 _buf.push("</table>\n");

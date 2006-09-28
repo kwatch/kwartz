@@ -2,6 +2,10 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.70 (2006-09-28)
+	- [update] users-guide.eruby
+	- [update] reference.eruby updated
+
 : rev.69 (2006-09-27)
 	- [enhance] add 'Helper/Symfony.php'
 	- [update] users-guide.eruby updated around Symfony
