@@ -564,21 +564,24 @@ abstract class KwartzHandler {
      *  directive pattern, which is used to detect directives.
      *  ex. '/\A(\w+):\s*(.*)/'
      */
-    abstract function directive_pattern();
+    function directive_pattern() {}
+    //abstract function directive_pattern();   // pear package error
 
 
     /**
      *  mapping pattern, which is used to parse 'attr' directive.
      *  ex. '/\A\'([-:\w]+)\'\s+(.*)/'
      */
-    abstract function mapping_pattern();
+    function mapping_pattern() {}
+    //abstract function mapping_pattern();   // pear package error
 
 
     /**
      *  directive format, which is used at has_directive?() method.
      *  ex. '%s: %s'
      */
-    abstract function directive_format();
+    function directive_format() {}
+    //abstract function directive_format();  // pear package error
 
 
     function _error($message, $linenum=null) {
@@ -939,7 +942,8 @@ abstract class KwartzConverter {
     /**
      *  convert string into list of Statement.
      */
-    abstract function convert($input, $filename='');
+    function convert($input, $filename='') {}
+    //abstract function convert($input, $filename='');
 
 
 }

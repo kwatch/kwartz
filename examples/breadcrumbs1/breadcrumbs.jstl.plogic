@@ -1,0 +1,28 @@
+#breadcrumbs {
+  logic: {
+    <c:forEach var="item" items="${breadcrumbs}" varStatus="loop">
+      <c:if test="${loop.count != 1}">
+        _content('separator')
+      </c:if>
+      _element('item')
+    </c:forEach> 
+  }
+}  
+
+#item {
+  value:  item.title;
+  attrs:  "href" item.path;
+  logic: {
+      <c:choose>
+        <c:when test="${ !empty item.path }">
+          _stag
+          _cont
+          _etag
+        </c:when>
+        <c:otherwise>
+          _cont
+        </c:otherwise>
+      </c:choose>
+  }
+}
+

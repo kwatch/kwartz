@@ -1,0 +1,22 @@
+#breadcrumbs {
+  logic: {
+    last_index = breadcrumbs.length - 1
+    breadcrumbs.each_with_index do |item, i|
+      if i < last_index
+        _content('item1')
+      else
+        _content('item2')
+      end
+    end
+  }
+}  
+
+#anchor {
+  value:  item[:title];
+  attrs:  "href" item[:path];
+}
+
+#item2 {
+  value:  item[:title];
+}
+

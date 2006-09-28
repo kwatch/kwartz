@@ -15,7 +15,8 @@ abstract class KwartzNode {
     /**
      *  accept visitor
      */
-    abstract function accept($translator);
+    function accept($translator) {}
+    //abstract function accept($translator);    // pear package error
 
 
 }

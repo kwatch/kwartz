@@ -1,0 +1,14 @@
+#menulist {
+  logic:  {
+    _stag();
+    foreach ($menulist as $menu) {
+      _cont();
+    }
+    _etag();
+  }
+}
+
+#menu {
+  value:  $menu['label'];
+  attrs:  'href' $menu['url'];
+}

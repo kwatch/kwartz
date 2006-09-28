@@ -20,32 +20,36 @@ abstract class KwartzTranslator {
     /**
      *  translate list of Statement into String and return it
      */
-    abstract function translate($stmt_list);
+    public function translate($stmt_list) {}
+    //abstract public function translate($stmt_list);    // pear package error
 
 
     /**
      *  translate NativeStatement using visitor pattern
      */
-    abstract function translate_native_stmt($stmt);
+    function translate_native_stmt($stmt) {}
+    //abstract function translate_native_stmt($stmt);    // pear package error
 
 
     /**
      *  translate PrintStatement using visitor pattern
      */
-    abstract function translate_print_stmt($stmt);
+    function translate_print_stmt($stmt) {}
+    //abstract function translate_print_stmt($stmt);    // pear package error
 
 
     /**
      *  translate NativeExpression using visitor pattern
      */
-    abstract function translate_native_expr($expr);
+    function translate_native_expr($expr) {}
+    //abstract function translate_native_expr($expr);    // pear package error
 
 
     /**
      *  translate String using visitor pattern
      */
-    abstract function translate_string($str);
-
+    function translate_string($str) {}
+    //abstract function translate_string($str);    // pear package error
 
 }
 

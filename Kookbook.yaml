@@ -1,9 +1,73 @@
 
+parameters:
+  - copyright:	copyright(c) 2006 kuwata-lab.com all rights reserved.
+
 recipes:
+
+  - product:	package.xml
+    desc:	create package.xml
+    ingreds:	[ package.php, package.yaml ]
+    method*: |
+	k_sys("php $ingred > $product");
+
+  - product:	:package
+    desc:	create package
+    ingreds:	[ package.xml ]
+    method*: |
+	require_once 'Kook/YamlParser.php';
+	require_once 'Kook/FileUtil.php';
+	//$ydoc = syck_load(file_get_contents('package.yaml'));
+	$parser = new KookPlainYamlParser(file_get_contents('package.yaml'));
+	$ydoc = $parser->parse();
+	$maintainers = $ydoc['maintainers'];
+	$releases    = $ydoc['releases'];
+	$documents   = $ydoc['documents'];
+
+	$release = $releases[0]['version'];
+
+	// create dir
+	$dir = 'Kwartz-php-'.$release;
+	k_delete($dir);
+	k_mkdir($dir);
+
+	// store files
+	k_store($dir, 'Kwartz/**/*.php', 'bin/**/*', 'test/Kwartz*Test.*', $documents);
+	k_chmod_files(0755, "$dir/bin/**/*");
+
+	// store examples
+	$example_dirs = glob('examples/*');
+	foreach ($example_dirs as $exdir) {
+	    if (is_dir($exdir)) {
+	        $cwd = k_chdir($exdir);
+		k_sys("make clean");
+		k_backdir($cwd);
+	    }
+	}
+	#k_delete('examples/**/kook.log');
+	k_store($dir, 'examples/**/*');
+
+	// edit files
+	$replacer = array(
+	    array('/\$Release(:.*?)?\$/', '$Release: '.$release.' $'),
+	    array('/\$Copyright\$/', $copyright),
+	);
+	k_edit($replacer, "$dir/**/*");
+	
+	// create package.xml
+	k_mcopy($dir, 'package.php', 'package.yaml');
+	$cwd = k_chdir($dir);
+	k_sys("php package.php > package.xml");
+	k_delete('package.php', 'package.yaml');
+
+	// create package
+	k_sys("pear package");
+	k_backdir($cwd);
+	k_move(".", "$dir/Kwartz-$release.tgz");
+
 
   - product:	:copy_examples
     desc:	copy examples from kwartz-ruby
-    howto: |
+    method*: |
 	$home = getenv('HOME');
 	$base = "{$home}/src/kwartz-ruby/trunk/examples";
 	$list = array(

@@ -1,0 +1,40 @@
+body {
+    background-color: #FFFFFF;
+}
+
+ul  {
+    margin:        0px;
+    padding-left:  15px;
+}
+
+#pain-table {
+    border-width:  0;
+}
+
+#menu-pain, #content-pain {
+    border-style:  solid;
+    border-color:  #006699;
+    border-width:  2px;
+    padding:       10px;
+}
+
+#footer-pain {
+    text-align:    center;
+    color:         #FFFFFF;
+    background-color:  #006699;
+}
+
+.minus {
+    color:         #FF0000;
+}
+
+th.label {
+    text-align:    left;
+}
+
+.menulist {
+}
+
+.contents {
+}
+

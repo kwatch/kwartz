@@ -98,7 +98,8 @@ recipes:
 
   - product:	:clear
     method*: |
-	k_delete('*.html', 'pattern-catalog'); 
+	//k_delete('*.html', 'pattern-catalog');  // don't delete .svn!
+	k_delete('*.html'); 
 
   - product:	:link
     desc:	create hard-link of files

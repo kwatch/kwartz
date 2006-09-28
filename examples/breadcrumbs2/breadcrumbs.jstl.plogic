@@ -1,0 +1,24 @@
+#breadcrumbs {
+  logic: {
+    <c:forEach var="item" items="${breadcrumbs}" varStatus="loop">
+      <c:choose>
+        <c:when test="${loop.last}">
+          _element('item2')
+        </c:when>
+        <c:otherwise>
+          _element('item1')
+        </c:otherwise>
+      </c:choose>
+    </c:forEach>
+  }
+}  
+
+#anchor {
+  value:  item.title;
+  attrs:  "href" item.path;
+}
+
+#item2 {
+  value:  item.title;
+}
+

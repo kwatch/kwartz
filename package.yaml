@@ -1,0 +1,28 @@
+maintainers:
+  - user:    kwatch
+    name:    makoto kuwata
+    email:   kwa@kuwata-lab.com
+    role:    lead
+
+releases:
+  - version: 3.1.0
+#  - version: 0.3.0      # 3.1.0
+    date:    2006-09-29
+    state:   beta
+    notes: |
+      * initial release
+
+documents:
+  - doc/docstyle.css
+  - doc/users-guide.html
+  - doc/reference.html
+  - doc/pattern-catalog.html
+  - doc/pattern-catalog/design.*
+  - doc/img/fig04.png
+  - README.txt
+  - ChangeLog
+  - LGPL
+#  - COPYING
+  - examples/**/*
+
+

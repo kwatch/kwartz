@@ -1,0 +1,96 @@
+$ [ANN] Kwartz-php 3.1.0 released - a template system for web
+
+I have released Kwartz-php 3.1.0. (beta)
+http://www.kuwata-lab.com/kwartz/
+(Notice that this is beta-release. Spec may change in the future.)
+
+
+$$ What is Kwartz?
+
+Kwartz is a template system which realized the concept
+"Independence of Presentation Logic".
+It means that Kwartz can separate presentation logics
+from both business logics (= main program) and
+presentatin data (= HTML file).
+
+Kwartz is originally impremented in Ruby.  Kwartz-php is a
+porting into PHP.
+
+Kwartz generates eRuby/PHP/JSP/ePerl files from presentation
+data file (= HTML file) and presentation logic file.
+
+
+$$ Example
+
+template.html : presentation data
+--------------------
+<table>
+  <tr id="mark:list" bgcolor="#FFCCCC">
+    <td id="mark:item">foo</td>
+  </tr>
+  <tr id="dummy:d1" bgcolor="#CCCCFF">
+    <td>bar</td>
+  </tr>
+</table>
+--------------------
+
+
+template.plogic :  presentation logic
+--------------------
+#list {
+  attrs: 'bgcolor' $color;
+  logic: {
+    foreach ($users as $i => $user) {
+      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+      _stag();    // start-tag
+      _cont();    // content
+      _etag();    // end-tag
+    }
+  }
+}
+
+#item {
+  value:  $user;
+}
+--------------------
+
+
+compile
+====================
+$ kwartz-php -l php -p template.plogic template.html > template.php
+====================
+
+
+template.php : compiled output script
+--------------------
+<table>
+<?php     foreach ($users as $i => $user) { ?>
+<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>
+  <tr bgcolor="<?php echo $color; ?>">
+    <td><?php echo $user; ?></td>
+  </tr>
+<?php     } ?>
+</table>
+--------------------
+
+
+See users' guide for details in 'doc/' directory or
+http://www.kuwata-lab.com/kwartz/kwartz-php-users-guide.html
+
+
+$$ Installation
+
+* Download 'Kwartz-3.1.0.tgz'
+* Type 'pear install Kwartz-3.1.0.tgz' with root user.
+
+Kwartz-php requires PHP5.
+
+
+
+--
+regards,
+kwatch
+
+
+#--------------------------------------------------------------------------------
+

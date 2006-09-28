@@ -2,6 +2,12 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+
+: rev.72 (2006-09-29)
+	- [enhance] add examples/
+	- [enhance] add ChangeLog, README.txt, package.xml
+	- [change] kwartz-php is now under 'bin/' directory
+
 : rev.71 (2006-09-28)
 	- [update] pattern-catalog.eruby updated
 	- [bugfix] KwartzConverter.php: tag name was printed instead of tag string when same tag is nested

@@ -1,0 +1,37 @@
+#stocks {
+  logic: {
+    foreach ($stocks as $stock) {
+      _elem();
+    }
+  }
+}
+
+#stock_symbol {
+  value:  $stock['symbol'];
+}
+
+#stock_symbol_link {
+  value:  $stock['symbol'];
+  attrs:  'href' "?symbol={$stock['symbol']}";
+}
+
+#stock_company {
+  Value:  $stock['company'];
+}
+
+#stock_price {
+  value:  $stock['price'];
+}
+
+#stock_rate {
+  value:  "{$stock['rate']}%";
+  append: $klass;
+  logic: {
+    if ($stock['rate'] < 0.0) {
+      $klass = ' class="minus"';
+    } else {
+      $klass = '';
+    }
+    _elem();
+  }
+}

@@ -1,0 +1,8 @@
+.=title:	ChangeLog
+.?release:	$Release$
+.?lastupdate:	$Date$
+
+
+$ Release 3.1.0 (2006-09-29)
+
+	- initial release of Kwartz-php

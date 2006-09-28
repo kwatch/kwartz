@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<package version="1.0">
+  <name>Kwartz</name>
+  <summary>web template system which doesn't break HTML design at all</summary>
+  <description>Kwartz is a web template system which realized the concept
+  "Independence of Presentation Logic" (IoPL). It means that presentation
+  logics such as iteration or conditional branch are not mixed into HTML
+  template.
+  It is just like CSS. CSS separates page design from HTML file.
+  Kwartz separates presentation logics from HTML file.
+  </description>
+  <maintainers>
+    <maintainer>
+      <user>kwatch</user>
+      <name>makoto kuwata</name>
+      <email>kwa@kuwata-lab.com</email>
+      <role>lead</role>
+    </maintainer>
+  </maintainers>
+  <release>
+    <version>3.1.0</version>
+    <date>2006-09-29</date>
+    <license>LGPL 2.1</license>
+    <state>beta</state>
+    <notes>public beta</notes>
+    <filelist>
+      <file role="script" baseinstalldir="../" name="bin/kwartz-php"
+            md5sum="0cdaf7d4e2cb58a98879c24ff486beee">
+        <replace from="/usr/local/bin" to="PHP_BINDIR" type="php-const"/>
+        <replace from="@data_dir@" to="data_dir" type="pear-config"/>
+        <replace from="@doc_dir@" to="doc_dir" type="pear-config"/>
+        <replace from="@php_dir@" to="php_dir" type="pear-config"/>
+      </file>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzConfig.php"
+	    md5sum="bec99bf4fb249d777f772268fcfdf7cd"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzConverter.php"
+	    md5sum="55321ad246af7fc0e4ae090badac4e52"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzException.php"
+	    md5sum="fdd6c3ead2305640fcb6c5939e4daac0"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzMain.php"
+	    md5sum="90751b0e5588e812d54c4a93f4327602"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzNode.php"
+	    md5sum="21190bf34594bc8f061552522b3d3a92"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzParser.php"
+	    md5sum="f7062245b8843f1a7673dcee5ebbab1d"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzTranslator.php"
+	    md5sum="f33cfa21093e5c53545b9f373ce1d97f"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/KwartzUtility.php"
+	    md5sum="75885f102a94068bef743bd437682106"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Eperl.php"
+	    md5sum="57d446fcc22d30d5ae82a43871de3455"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Erubis.php"
+	    md5sum="8bcbaf1be8bbc6d4958537bb7b782878"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Eruby.php"
+	    md5sum="73f7b215dd9d6a8079b8f81bc75d6808"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Jstl.php"
+	    md5sum="0118b1a2b281f43d745b1a63c47ab82f"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Php.php"
+	    md5sum="cce0cda2ca70e3c0de51fe076ba534b4"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Pierubis.php"
+	    md5sum="887070bf0fe12be4eb92a4cc8c297d6f"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Binding/Ruby.php"
+	    md5sum="0eaf18e01348980f5921488838610556"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Helper/Symfony.php"
+	    md5sum="628396572bfb24e758aff3e44f398917"/>
+      <file role="doc" baseinstalldir="/" name="doc/docstyle.css"
+	    md5sum="d20b48bf36321ff9fd05e58acf96eb5b"/>
+      <file role="doc" baseinstalldir="/" name="doc/users-guide.html"
+	    md5sum="4369c0e0f714c743074d648a272335e9"/>
+      <file role="doc" baseinstalldir="/" name="doc/reference.html"
+	    md5sum="5cbc3cf61804fc8489bb0b75b79b5626"/>
+      <file role="doc" baseinstalldir="/" name="doc/pattern-catalog.html"
+	    md5sum="1087b9af749b27599a12b26216c34649"/>
+      <file role="doc" baseinstalldir="/" name="doc/pattern-catalog/design.css"
+	    md5sum="e85b9acb16a36e220b8d53e056329b86"/>
+      <file role="doc" baseinstalldir="/" name="doc/pattern-catalog/design.html"
+	    md5sum="b551d667f600ceac2ff63c4311b55cda"/>
+      <file role="doc" baseinstalldir="/" name="doc/img/fig04.png"
+	    md5sum="74073b643b26d44da46c6cec9547a1c8"/>
+      <file role="doc" baseinstalldir="/" name="README.txt"
+	    md5sum="00920d2d459bb4d977f8a066b2979f9a"/>
+      <file role="doc" baseinstalldir="/" name="ChangeLog"
+	    md5sum="891945cf7764c07afcc4759f6afff7cf"/>
+      <file role="doc" baseinstalldir="/" name="LGPL"
+	    md5sum="7fbc338309ac38fefcd64b04bb903e34"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/Makefile"
+	    md5sum="9019b7b47f6e34e5993e2935e9d3f541"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/breadcrumbs.eruby.plogic"
+	    md5sum="87d05d820c11da1431d2b77f2bbb477d"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/breadcrumbs.html"
+	    md5sum="b464106638b35bce2fab606145bbc020"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/breadcrumbs.jstl.plogic"
+	    md5sum="bb99aa44e6b41d4c960a2a23013fad08"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/breadcrumbs.php.plogic"
+	    md5sum="17a9d320b254e7cf29b7314465196ce0"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/main.php"
+	    md5sum="5488b455461724dc943efdaf65ac3fbe"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/main.rb"
+	    md5sum="d61bc5fa180e410151c118dd8a19030a"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/Makefile"
+	    md5sum="9019b7b47f6e34e5993e2935e9d3f541"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/breadcrumbs.eruby.plogic"
+	    md5sum="fbb5bf5b09a8305326817f0823a7de6f"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/breadcrumbs.html"
+	    md5sum="7f2882775e74796644c9627fd2f5fd54"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/breadcrumbs.jstl.plogic"
+	    md5sum="f8a22274009e2e15534f4fde639f6ab9"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/breadcrumbs.php.plogic"
+	    md5sum="557bd1069b8e41ddc4d5ae7c5baa8318"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/main.php"
+	    md5sum="5488b455461724dc943efdaf65ac3fbe"/>
+      <file role="doc" baseinstalldir="/" name="examples/breadcrumbs2/main.rb"
+	    md5sum="d61bc5fa180e410151c118dd8a19030a"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/Makefile"
+	    md5sum="b32a840416563e8a1de25316cd1c016f"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/content.eruby.plogic"
+	    md5sum="0ba77f2b8e27568fa6639c5c96466f33"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/content.jstl.plogic"
+	    md5sum="6c114abbf222d37494bb223dff173912"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/content.php.plogic"
+	    md5sum="91d5cb2815a1a6bc82912a292faf1bf0"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/content1.html"
+	    md5sum="6711fad7ff76dc6c8a905cda75d47a9f"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/content2.html"
+	    md5sum="d0dccf1e2aaf6cdc483c1daa73fe2ac4"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/design.css"
+	    md5sum="b71acae566dbeb20ab95e4b6d6906955"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/layout.html"
+	    md5sum="bfe2026bf5692653ae74af0c6caee5d9"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/main.php"
+	    md5sum="d2c802c7bd19f9445699eda603cbaefc"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/main.rb"
+	    md5sum="36d84c6fdc9334fbf15c000748a596af"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/menu.eruby.plogic"
+	    md5sum="d9df70f6de17eb04065675e1e7cd928c"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/menu.html"
+	    md5sum="aab305055b1a50e76f66b94d55430e2c"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/menu.jstl.plogic"
+	    md5sum="311ba6b52d7da72df782addfc3447d4d"/>
+      <file role="doc" baseinstalldir="/" name="examples/pagelayout/menu.php.plogic"
+	    md5sum="3d3d59c763b3097b2f8b0798ebc0ea18"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/Makefile"
+	    md5sum="b7d17c1d8f24d9ebb2ebe2fb5c00d821"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/main.php"
+	    md5sum="ecf252ced7bdfd38e42424a665110649"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/main.rb"
+	    md5sum="99527958924fcb6437d52c82885d63c1"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/table1.eruby.plogic"
+	    md5sum="b3496da73f6ccd351d18fd1058267cef"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/table1.html"
+	    md5sum="e6fe742a56b52557cda37112cae1bfad"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/table1.jstl.plogic"
+	    md5sum="fdc0849e7336c83ad694af57fc7bbcd9"/>
+      <file role="doc" baseinstalldir="/" name="examples/table1/table1.php.plogic"
+	    md5sum="1449a3dbfc56c861ffa97b2e54993777"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzCompileTest.php"
+	    md5sum="cdfc32f958ebfa32eb63c33fe39a9949"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzConverterTest.php"
+	    md5sum="e2ccc8110d1dcc9c46d2d8bd2159e9a5"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzDirectiveTest.php"
+	    md5sum="f94e8c3ec8325d6c854b2678a95e3a17"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzMainTest.php"
+	    md5sum="e14d4cab5a028a065352ec654a338b25"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzParserTest.php"
+	    md5sum="22cff21e3a115780cea33d2b7e78c681"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzRulesetTest.php"
+	    md5sum="1492ef6ebbeef819e0f35492220dfc58"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzTest.php"
+	    md5sum="0183020e0ce54895bd78d5e71f970b35"/>
+      <file role="test" baseinstalldir="/" name="test/Kookbook.yaml"
+	    md5sum="418034fc2596900040d8089dc1bf0fa4"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzCompileTest.yaml"
+	    md5sum="4c489a47799c1fa4431cc4e28cdf2984"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzConverterTest.yaml"
+	    md5sum="2504640c071cbb7c95d46c1124d685f7"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzDirectiveTest.yaml"
+	    md5sum="1aeec76097ee77e72f277c80b782f79e"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzMainTest.yaml"
+	    md5sum="705690b1f7442e7620433e0715d791a6"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzParserTest.yaml"
+	    md5sum="6d8813284671d8e1e143b33d6659ce92"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzRulesetTest.yaml"
+	    md5sum="37b8c4eee9eb218c16294dc1d13a9f2b"/>
+      <file role="test" baseinstalldir="/" name="test/KwartzTest.inc"
+	    md5sum="b6a8ba79ecab686b04cc4557a6479328"/>
+    </filelist>
+  </release>
+  <changelog>
+    <release>
+      <version>3.1.0</version>
+      <date>2006-09-29</date>
+      <state>beta</state>
+      <notes>* initial release
+      </notes>
+    </release>
+  </changelog>
+</package>
