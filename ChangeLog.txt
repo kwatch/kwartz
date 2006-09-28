@@ -2,6 +2,11 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.71 (2006-09-28)
+	- [update] pattern-catalog.eruby updated
+	- [bugfix] KwartzConverter.php: tag name was printed instead of tag string when same tag is nested
+	- [bugfix] KwartzNode.php: KwartzElementRuleset#set_logic() didn't clear statements when logic is false or empty string.
+
 : rev.70 (2006-09-28)
 	- [update] users-guide.eruby
 	- [update] reference.eruby updated

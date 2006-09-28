@@ -1,3 +1,176 @@
+
+# --------------------------------------------------------------------------------
+
+###
+- name:	   convert01
+  desc:    basic test
+  pdata: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+  expected: |
+	print("<ul>\n")
+	print("  <li>")
+	print("foo")
+	print("</li>\n")
+	print("</ul>\n")
+
+###
+- name:	   convert02
+  desc:    marked element
+  pdata: |
+	<ul id="list">
+	  <li id="mark:item">foo</li>
+	</ul>
+  expected: |
+	print("<ul id=\"list\">\n")
+	print("  <li>")
+	print("foo")
+	print("</li>\n")
+	print("</ul>\n")
+
+###
+- name:	   convert03
+  desc:    nested element
+  pdata: |
+        <div>
+	  <div>
+	    <div id="list">
+	      <div id="mark:item">
+	        <div>foo</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  expected: |
+	print("<div>\n")
+	print("  <div>\n")
+	print("    <div id=\"list\">\n")
+	print("      <div>\n")
+	print("        <div>")
+	print("foo")
+	print("</div>\n")
+	print("      </div>\n")
+	print("    </div>\n")
+	print("  </div>\n")
+	print("</div>\n")
+
+###
+- name:	   convert04
+  desc:    rest text
+  pdata: |
+        foo
+	bar
+	<ul id="mark:list">
+	</ul>
+	baz
+	boo
+  expected: |
+	print("foo\nbar\n")
+	print("<ul>\n")
+	print("</ul>\n")
+	print("baz\nboo\n")
+
+###
+- name:	   convert05
+  desc:    no tags
+  pdata: |
+        foo
+	bar
+	baz
+  expected: |
+	print("foo\nbar\nbaz\n")
+
+###
+- name:	   convert06
+  desc:    not well-formed
+  pdata: |
+	<div id="foo">
+  	 <p><span></b>
+	</div>
+  expected: |
+	print("<div id=\"foo\">\n")
+	print(" <p>")
+	print("<span>")
+	print("</b>\n")
+	print("</div>\n")
+
+###
+- name:	   convert08
+  desc:    tag is not closed
+  pdata: |
+        <span>
+	<div id="list">
+	  <div id="mark:item">
+	    <div>foo
+	  </div>
+	</div>
+	</span>
+  exception*:
+    ruby:  Kwartz::ConvertError
+    php:   KwartzConvertionException
+    java:  kwartz.ConverterException
+  errormsg*:
+    ruby:  ":2: '<div>' is not closed."
+    php:   ":2: '<div>' is not closed."
+    java:  ...error message...
+
+# --------------------------------------------------------------------------------
+
+###
+- name:    convert11
+  desc:    pdata and plogic
+  pdata: |
+	<ul id="mark:list">
+	  <li id="mark:item">foo</li>
+	</ul>
+  plogic: |
+	#list {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	#item {
+	  value: item;
+	}
+  expected: |
+  	print("<ul>\n")
+	<%    foreach (item in list) {%>
+	print("  <li>")
+	print(<%=item%>)
+	print("</li>\n")
+	<%    }%>
+  	print("</ul>\n")
+
+
+###
+- name:    convert12
+  desc:    empty logic
+  pdata: |
+        <div>
+	 <ul id="mark:list">
+	  <li id="mark:item">foo</li>
+	 </ul>
+	</div>
+  plogic: |
+	#list {
+	  logic: {
+	  }
+	}
+	#item {
+	  value: item;
+	}
+  expected: |
+  	print("<div>\n")
+  	print("</div>\n")
+
+
+# --------------------------------------------------------------------------------
+
 ###
 - name:    delspan1
   desc:    <span> and id="mark:foo"
@@ -329,30 +502,4 @@
 #  output: |
 #
 
-
-###
-- name:    unmatched
-  desc:    unmatched text to fetch pattern
-  bug:     self found
-  pdata*:
-    eruby: &unmatched_pdata |
-	foo
-	bar
-	baz
-    php: *unmatched_pdata
-    jstl: *unmatched_pdata
-    eperl: *unmatched_pdata
-
-  plogic*:
-    eruby: |
-    php: |
-    jstl: |
-    eperl: |
-
-  expected*:
-    eruby: &unmatched_expected |
-        print("foo\nbar\nbaz\n")
-    php:  *unmatched_expected
-    jstl: *unmatched_expected
-    eperl: *unmatched_expected
 

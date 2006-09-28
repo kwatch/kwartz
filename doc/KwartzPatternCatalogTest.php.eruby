@@ -1,0 +1,60 @@
+<?php
+
+/// $Rev$
+/// $Release$
+/// $Copyright$
+
+
+// you need to install PHPUnit2 by 'sudo pear install --alldeps PHPUnit2'
+// see http://www.phpunit.de/pocket_guide/2.3/en/installation.html
+
+require_once '../test/KwartzTest.inc';
+
+
+class KwartzPatternCatalogTest extends PHPUnit2_Framework_TestCase {
+
+    var $name;
+    var $pdata;       // filename
+    var $plogic;      // filename
+    var $command;
+    var $expected;    // filename
+
+
+    function _test() {
+        $name = $this->name;
+        $pdata = $this->pdata;
+        $plogic = $this->plogic;
+        $command = $this->command;
+        $expected = $this->expected;
+
+        $testname = getenv('TEST');
+        if ($testname && $testname != $name) return;
+
+        if (! $pdata)    $pdata = $name . '.pdata';
+        if (! $plogic)   $plogic = $name . '.plogic';
+        if (! $command)  $command = "kwartz-php -p $plogic $pdata";
+        if (! $expected) $expected = $name . '.expected';
+
+        $dir = 'pattern-catalog.d';
+        $rexp = '/(\{\{\*|\*\}\})/';
+        $expected_str = file_get_contents("$dir/$expected");
+        $expected_str = preg_replace($rexp, '', $expected_str);
+        //$actual_str = system("cd $dir; $command");
+        ob_start();
+        system("cd $dir; $command");
+        $actual_str = ob_get_clean();  ob_get_flush();
+        kwartz_assert_text_equals($expected_str, $actual_str);
+    }
+
+
+<% for test in @testdata %>
+    function test_<%= test[:name] %>() {
+<%   test.each do |key, val| %>
+        $this-><%= key.to_s %> = <%= val.inspect %>;
+<%   end %>
+        $this->_test();
+    }
+
+<% end %>
+
+}

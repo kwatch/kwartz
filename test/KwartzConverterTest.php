@@ -28,13 +28,18 @@ class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
     var $pdata;
     var $plogic;
     var $expected;
-    var $excpetion;
-    var $message;
+    var $exception;
+    var $errormsg;
 
     function _test() {
+        $name     = $this->name;
+        $testname = getenv('TEST');
+        if ($testname && $testname != $name) return;
         $pdata    = $this->pdata;
         $plogic   = $this->plogic;
         $expected = $this->expected;
+        $exception = $this->exception;
+        $errormsg = $this->errormsg;
         $properties = array();
         if ($this->properties) {
             foreach ($this->properties as $key => $val) {
@@ -51,14 +56,25 @@ class KwartzConverterTest_ extends PHPUnit2_Framework_TestCase {
         $rulesets = $parser->parse($plogic);
         $handler = new $handler_klass($rulesets, $properties);
         $converter = new KwartzTextConverter($handler, $properties);
-        $stmt_list = $converter->convert($pdata);
         //
-        $buf = array();
-        foreach ($stmt_list as $stmt) {
-            $buf[] = $stmt->_inspect();
+        if ($exception) {
+            try {
+                $stmt_list = $converter->convert($pdata);
+                $this->fail("'$excepion' is expected but not thrown.");
+            }
+            catch (Exception $ex) {
+                $this->assertType($exception, $ex);
+                $this->assertEquals($errormsg, $ex->__toString());
+            }
+        } else {
+            $stmt_list = $converter->convert($pdata);
+            $buf = array();
+            foreach ($stmt_list as $stmt) {
+                $buf[] = $stmt->_inspect();
+            }
+            $actual = join($buf);
+            kwartz_assert_text_equals($expected, $actual, $this->name);
         }
-        $actual = join($buf);
-        kwartz_assert_text_equals($expected, $actual, $this->name);
     }
 
 }

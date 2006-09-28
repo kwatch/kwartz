@@ -1,42 +1,28 @@
-[% 
-  lang = ENV['lang']
-  if lang
-    lang = lang.downcase
-  else
-    Dir.pwd =~ /\bkwartz-(\w+)\b/  or raise "cannot detect lang."
-    lang = $1
-  end
-  lang =~ /^(ruby|php|java)$/  or raise "'#{lang}': unknown lang."
-  @lang = lang
- 
-  table = { 'ruby'=> ['Ruby',  'rhtml',  'kwartz',      'test-reference.rb'],
-            'php' => ['PHP',   'php',    'kwartz-php',  'KwartzReferenceTest.php'],
-            'java'=> ['Java',  'jsp',    'java kwartz.Main', 'ReferenceTest.java'],
-          }
-  @Lang, @suffix, @command, @testfile = table[@lang]
-  #@template = @testfile.sub(/\.\w+$/, '.eruby')
-  @template = @testfile + '.eruby'
- 
-  @support_defun = @lang == 'ruby'
-  @support_pl    = @lang == 'java'
-  outlang_table = { 'ruby'=>'eruby', 'php'=>'php', 'java'=>'jstl', 'perl'=>'eperl' }
-  @outlang = outlang_table[@lang]
- 
+[%
+
+  require 'doc-helper'
+  set_values()
   @tests = []
- 
-  def error
-    ex = StandardError.new("*** internal error: @lang='#{@lang.inspect}'")
-    ex.set_backtrace(caller())
-    raise ex
+
+  def untabify(str, width=8)
+    sb = ''
+    str.scan(/(.*?)\t/m) do |s, |
+      len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
+      sb << s << (" " * (width - len % width))
+    end
+    return $' ? (sb << $') : str
   end
+
+  require 'yaml'
+
  %]
 .=title:	Kwartz-[%= @lang %] 3.0 Reference Guide
-.#.?lastupdate:	$Date: 2006-06-01 08:44:37 +0900 (Thu, 01 Jun 2006) $
+.#.?lastupdate:	$Date: 2006-09-28 22:22:34 +0900 (Thu, 28 Sep 2006) $
 .#.?version:	$Release$
 .?stylesheet:	docstyle.css
 
 $Release$.^
-$Date$
+$Date: 2006-09-28 22:22:34 +0900 (Thu, 28 Sep 2006) $
 
 
 .$ Preface	| preface*
@@ -56,20 +42,6 @@ If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
 .<<< reference.toc
 
 
-[%
-
-  def untabify(str, width=8)
-    sb = ''
-    str.scan(/(.*?)\t/m) do |s, |
-      len = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
-      sb << s << (" " * (width - len % width))
-    end
-    return $' ? (sb << $') : str
-  end
-
-  require 'yaml'
-
- %]
 
 .# --------------------------------------------------------------------------------
 
@@ -103,7 +75,11 @@ Notice that the tail semicolon of declaration is not omittable.
 
 [%
 
-  yamlfile = '../test/test-ruleset.yaml'
+  files = [ '../test/test-ruleset.yaml',
+            '../test/KwartzRulesetTest.yaml',
+          ]
+  yamlfile = files.find { |file| test(?f, file) }
+  yamlfile  or raise "*** internal error: yamlfile not found."
   
   str = File.read(yamlfile)
   str = untabify(str)
@@ -192,7 +168,11 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
 
 [%
 
-  yamlfile = '../test/test-directives.yaml'
+  files = [ '../test/test-directives.yaml',
+            '../test/KwartzDirectiveTest.yaml',
+          ]
+  yamlfile = files.find { |file| test(?f, file) }
+  yamlfile  or raise "*** internal error: yamlfile not found."
   
   str = File.read(yamlfile)
   str = untabify(str)

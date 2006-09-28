@@ -1,32 +1,20 @@
 .=title:	Presentation Pattern Catalog
-.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
-.?version:	$Rev: 135 $
+.#.?author:	Makoto Kuwata <kwa(at)kuwata-lab.com>
+.#.?version:	$Rev: 141 $
 .?release:	$Release$
-.?lastupdate:	$Date: 2006-09-18 10:43:06 +0900 (Mon, 18 Sep 2006) $
+.#.?lastupdate:	$Date: 2006-09-28 22:22:34 +0900 (Thu, 28 Sep 2006) $
 .?stylesheet:	docstyle.css
 
+$Release$.^
+$Date: 2006-09-28 22:22:34 +0900 (Thu, 28 Sep 2006) $
 
 [%
+  require 'doc-helper'
+  set_values()
 
-testdir = File.expand_path(File.dirname(__FILE__) + '/../test')
-require testdir + '/test.rb'
+  @tests = []
 
-class PresentationPatternTest < Test::Unit::TestCase
-
-  def _test
-    dir = 'd'
-    @name ||= (caller()[0] =~ /in `test_(.*?)'/) && $1
-    @pdata ||= @name + '.pdata'
-    @plogic ||= @name + '.plogic'
-    @command ||= "kwartz -p #{@plogic} #{@pdata}"
-    @expected ||= "#{@name}.expected"
-    rexp = /(\{\{\*|\*\}\})/
-    expected = File.read("#{dir}/#{@expected}").gsub(rexp, '')
-    actual = `cd #{dir}; #{@command}`
-    assert_text_equal(expected, actual)
-  end
-
-%]
+ %]
 
 
 .$ Preface	| preface*
@@ -43,7 +31,7 @@ This document shows Presentation Patterns.
 .$$ Table of Contents	| toc*
 
 .#.+toc:
-.<<< p-pattern.toc
+.<<< pattern-catalog.toc
 .#.-toc:
 
 
@@ -93,21 +81,29 @@ Hello <span {{*id="mark:user"*}}>World</span>!
 /* print value of variable 'username' instead of the element */
 #user {
   logic: {
+% if @lang == 'ruby'
     {{*print username*}}
+% elsif @lang == 'php'
+    {{*print($username);*}}
+% elsif @lang == 'java'
+    {{*print(username);*}}
+% else error end
   }
 }
 .--------------------
 
 .? Output Script:
 .____________________ replace1.expected
+% if @lang == 'ruby'
 Hello {{*<%= username %>*}}!
+% elsif @lang == 'php'
+Hello {{*<?php echo $username; ?>*}}!
+% elsif @lang == 'java'
+Hello {{*${username}*}}!
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace1.plogic replace1.pdata)
-[%
-  def test_replace1
-    _test
-  end
-%]
+% @tests << { :name=>'replace1' }
 
 
 .$$$ Supplement				| replace-elem-with-value-suppliment
@@ -115,21 +111,28 @@ Hello {{*<%= username %>*}}!
 Kwartz supports the short-notation of this pattern.
 .-------------------- replace1a.plogic
 #user {
+% if @lang == 'ruby'
   elem: username;
+% elsif @lang == 'php'
+  elem: $username;
+% elsif @lang == 'java'
+  elem: username;
+% else error end
 }
 .--------------------
 
 The output script will be:
 .____________________ replace1a.expected
+% if @lang == 'ruby'
 Hello {{*<%= username %>*}}!
+% elsif @lang == 'php'
+Hello {{*<?php echo $username; ?>*}}!
+% elsif @lang == 'java'
+Hello {{*${username}*}}!
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace1a.plogic replace1.pdata)
-[%
-  def test_replace1a
-    @pdata = 'replace1.pdata'
-    _test
-  end
-%]
+% @tests << { :name=>'replace1a', :pdata=>'replace1.pdata' }
 
 
 .$$ Replace Content with Value Pattern	| replace-cont-with-value
@@ -158,24 +161,35 @@ This pattern is used frequently because the situation to replace the content wit
 /* print expression value instead of content text */
 #title {
   logic: {
+% if @lang == 'ruby'
     _stag   # start-tag
     {{*print title *}}
     _etag   # end-tag
+% elsif @lang == 'php'
+    _stag();   // start-tag
+    {{*print($title); *}}
+    _etag();   // end-tag
+% elsif @lang == 'java'
+    _stag;   # start-tag
+    {{*print(title); *}}
+    _etag;   # end-tag
+% else error end
   }
 }
 .--------------------
 
 .? Output Script:
 .____________________ replace2.expected
+% if @lang == 'ruby'
 <h1><%= title %></h1>
+% elsif @lang == 'php'
+<h1><?php echo $title; ?></h1>
+% elsif @lang == 'java'
+<h1>${title}</h1>
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace2.plogic replace2.pdata)
-[%
-  def test_replace2
-    _test
-  end
-%]
-
+% @tests << { :name=>'replace2' }
 
 
 .$$$ Supplement				| replace-cont-with-value-suppliment
@@ -183,25 +197,48 @@ This pattern is used frequently because the situation to replace the content wit
 Kwartz provides the shorter notation for this pattern.
  .-------------------- replace2a.plogic
  #title {
+% if @lang == 'ruby'
    {{*cont: title;*}}
      /* or value: title; */
+% elsif @lang == 'php'
+   {{*cont: $title;*}}
+     /* or value: $title; */
+% elsif @lang == 'java'
+   {{*cont: title;*}}
+     /* or value: title; */
+% else error end
  }
  .--------------------
 The output will be:
 .____________________ replace2a.expected
+% if @lang == 'ruby'
 <h1>{{*<%= title %>*}}</h1>
+% elsif @lang == 'php'
+<h1>{{*<?php echo $title; ?>*}}</h1>
+% elsif @lang == 'java'
+<h1>{{*${title}*}}</h1>
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz -l eruby -p replace2a.plogic replace2.pdata)
-[%
-  def test_replace2a
-    @pdata = 'replace2.pdata'
-    _test
-  end
-%]
+% @tests << { :name=>'replace2a', :pdata=>'replace2.pdata' }
 
-Kwartz Directive '{{,kw:d="cont: {{/expr/}}",}}' or '{{,kw:d="value: {{/expr/}}",}}' lets you to use this pattern without presentation logic file.
+% if @lang == 'ruby'
+%   d = [ 'cont: {{/expr/}}', 'kw:d="value: {{/expr/}}' ]
+% elsif @lang == 'php'
+%   d = [ 'cont({{/expr/}})', 'kw:d="value({{/expr/}})' ]
+% elsif @lang == 'java'
+%   d = [ 'cont:{{/expr/}}', 'kw:d="value:{{/expr/}}' ]
+% else error end
+
+Kwartz Directive '{{,kw:d="[%= d[0] %]",}}' or '{{,kw:d="[%= d[1] %]",}}' lets you to use this pattern without presentation logic file.
 .--------------------
-<h1 {{*id="value: title"*}}>Example</h1>
+% if @lang == 'ruby'
+<h1 {{*kw:d="value: title"*}}>Example</h1>
+% elsif @lang == 'php'
+<h1 {{*kw:d="value(title)"*}}>Example</h1>
+% elsif @lang == 'java'
+<h1 {{*kw:d="value:title"*}}>Example</h1>
+% else error end
 .--------------------
 
 
@@ -238,50 +275,83 @@ Hello <span {{*id="mark:user"*}}>World</span>!
 /* Print 'guest' as a default value when 'username' is empty string */
 #user {
   logic: {
+% if @lang == 'ruby'
     if username && !username.empty?
       {{*print username*}}
     else
       {{*_cont*}}            # print content text
     end
+% elsif @lang == 'php'
+    if ($username) {
+      {{*print($username);*}}
+    } else {
+      {{*_cont();*}}         // print content text
+    }
+% elsif @lang == 'java'
+    if (username == empty) {
+      {{*print(username);*}}
+    } else {
+      {{*_cont;*}}            # print content text
+    }
+% else error end
   }
 }
 .--------------------
 
 .? Output Script:
 .____________________ replace5.expected
+% if @lang == 'ruby'
 Hello <%     if username && !username.empty? %>
 <%= username %><%     else %>
 World<%     end %>
 !
+% elsif @lang == 'php'
+Hello <?php     if ($username) { ?>
+<?php echo $username; ?><?php     } else { ?>
+World<?php     } ?>
+!
+% elsif @lang == 'java'
+Hello <c:case><c:when test="${not empty username}">
+${username}</c:when><c:otherwise>
+World</c:otherwise></c:case>
+!
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz -p replace5.plogic replace5.pdata)
-[%
-  def test_replace5
-    _test
-  end
-%]
+% @tests << { :name=>'replace5' }
 
 
 .$$$ Suppliement			| default-content-suppliment
 
+% if @lang == 'ruby'
 Directive 'kw:d="default: {{/expr/}}"' is for Default Content Pattern.
-
 .-------------------- replace5a.pdata
 Hello <span {{*kw:d="default: user"*}}>World</span>!
 .--------------------
+% elsif @lang == 'php'
+Directive 'kw:d="default({{/expr/}})"' is for Default Content Pattern.
+.-------------------- replace5a.pdata
+Hello <span {{*kw:d="default($user)"*}}>World</span>!
+.--------------------
+% elsif @lang == 'java'
+Directive 'kw:d="default:{{/expr/}}"' is for Default Content Pattern.
+.-------------------- replace5a.pdata
+Hello <span {{*kw:d="default:user"*}}>World</span>!
+.--------------------
+% else error end
 
 The output is:
 .____________________ replace5a.expected
+% if @lang == 'ruby'
 Hello <span><% if (user) && !(user).to_s.empty? then %><%= user %><% else %>World<% end %></span>!
+% elsif @lang == 'php'
+Hello <span><?php if ($user) { ?><?php echo $user; ?><?php } else { ?>World<?php } ?></span>!
+% elsif @lang == 'java'
+Hello <span><c:case><c:when test="${not empty user}">${user}</c:when><c:otherwise>World</c:otherwise></c:case></span>!
+% else error end
 .____________________
 .#.<<<:! (cd guide.d; kwartz replace5a.pdata)
-[%
-  def test_replace5a
-    @pdata = 'replace5.pdata'
-    @command = 'kwartz replace5a.pdata'
-    _test
-  end
-%]
+% @tests << { :name=>'replace5a', :pdata=>'replace5.pdata', :command=>"#{@command} replace5a.pdata" }
 
 
 
@@ -321,7 +391,13 @@ This pattern is very useful to reuse the element in other place.
 /* replace the element 'links2' with the element 'links' */
 #links2 {
   logic: {
+% if @lang == 'ruby'
     {{*_element(links)*}}
+% elsif @lang == 'php'
+    {{*_element(links);*}}
+% elsif @lang == 'java'
+    {{*_element(links);*}}
+% else error end
   }
 }
 .--------------------
@@ -343,11 +419,7 @@ This pattern is very useful to reuse the element in other place.
 </div>
 .____________________
 .#.<<<:! (cd guide.d; kwartz -p replace3.plogic replace3.pdata)
-[%
-  def test_replace3
-    _test
-  end
-%]
+% @tests << { :name=>'replace3' }
 
 Use '_content({{/name/}})' instead of '_element({{/name/}})'
 if you want to reuse content of other element.
@@ -357,16 +429,21 @@ if you want to reuse content of other element.
 /* replace the element 'links2' with the content 'links' */
 #links2 {
   logic: {
+% if @lang == 'ruby'
     {{*_content(links)*}}
+% elsif @lang == 'php'
+    {{*_content(links);*}}
+% elsif @lang == 'java'
+    {{*_content(links);*}}
+% else error end
   }
 }
 .--------------------
 
 
-
 .$$$ Supplement				| replace-elem-with-elem-supplement
 
-Directive '{{,id="replace_element_with_element: {{/name/}}",}}' and '{{,id="replace_element_with_content: {{/name/}}",}}' lets you to use this pattern without presentation logic file.
+Directive '{{,id="replace_element_with_element:{{/name/}}",}}' and '{{,id="replace_element_with_content:{{/name/}}",}}' lets you to use this pattern without presentation logic file.
 .--------------------
 <div {{*id="mark:links"*}}>
  <a href="/">HOME</a> | <a href="/doc">Document</a> | <a href="/faq">FAQ</a>
@@ -374,7 +451,7 @@ Directive '{{,id="replace_element_with_element: {{/name/}}",}}' and '{{,id="repl
 
 <p>Welcome to my Home Page!</p>
 
-<div {{*id="replace_element_with_element: links"*}}>
+<div {{*id="replace_element_with_element:links"*}}>
   Home | Document | FAQ
 </div>
 .--------------------
@@ -474,17 +551,39 @@ The following example contains four files.
 .-------------------- contents.plogic
 #menu {
   logic: {
+% if @lang == 'ruby'
     _stag
     for item in menu_list
       _cont
     end
     _etag
+% elsif @lang == 'php'
+    _stag();
+    foreach ($menu_list as $item) {
+      _cont();
+    }
+    _etag();
+% elsif @lang == 'java'
+    _stag;
+    foreach (item in menu_list) {
+      _cont;
+    }
+    _etag;
+% else error end
   }
 }
 
 #menu_item {
+% if @lang == 'ruby'
   value:  item['name'];
   attrs:  "href" item['url'];
+% elsif @lang == 'php'
+  value:  $item['name'];
+  attrs:  "href" $item['url'];
+% elsif @lang == 'java'
+  value:  item['name'];
+  attrs:  "href" item['url'];
+% else error end
 }
 .--------------------
 
@@ -540,18 +639,38 @@ The following example contains four files.
 /* replace content with other element */
 #placeholder_menu {
   logic: {
+% if @lang == 'ruby'
     _stag
     {{*_element(menu)*}}
     _etag
+% elsif @lang == 'php'
+    _stag;
+    {{*_element(menu);*}}
+    _etag;
+% elsif @lang == 'java'
+    _stag;
+    {{*_element(menu);*}}
+    _etag;
+% else error end
   }
 }
 
 /* replace content with other content */
 #placeholder_article {
   logic: {
+% if @lang == 'ruby'
     _stag
     {{*_content(article)*}}
     _etag
+% elsif @lang == 'php'
+    _stag;
+    {{*_content(article);*}}
+    _etag;
+% elsif @lang == 'java'
+    _stag;
+    {{*_content(article);*}}
+    _etag;
+% else error end
   }
 }
 .--------------------
@@ -581,9 +700,19 @@ $ kwartz -l eruby  {{*-i contents.html*}} -p contens.plogic,layout.plogic layout
         <!-- menu part -->
         <td class="menu" width="100" valign="top">
     <ul>
+% if @lang == 'ruby'
 <%     for item in menu_list %>
       <li><a href="<%= item['url'] %>"><%= item['name'] %></a></li>
 <%     end %>
+% elsif @lang == 'php'
+<?php     foreach ($menu_list as $item) { ?>
+      <li><a href="<?php echo $item['url']; ?>"><?php echo $item['name']; ?></a></li>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:forEach var="item" items="${menu_list}">
+      <li><a href="${item['url']}">${item['name']}</a></li>
+</c:forEach>
+% else error end
     </ul>
         </td>
         
@@ -608,12 +737,7 @@ $ kwartz -l eruby  {{*-i contents.html*}} -p contens.plogic,layout.plogic layout
   </body>
 </html>
 .____________________
-[%
-  def test_layout
-    @command = 'kwartz -i contents.html -p contents.plogic,layout.plogic layout.html'
-    _test
-  end
-%]
+% @tests << { :name=>'layout', :command=>"#{@command} -i contents.html -p contents.plogic,layout.plogic layout.html" }
 
 
 .$$$ Supplement				| replace-cont-with-elem-supplement
@@ -688,11 +812,7 @@ This pattern enables you to delete dummy element in presentation data.
   <li>foo</li>
 </ul>
 .____________________
-[%
-  def test_dummy_elem
-    _test
-  end
-%]
+% @tests << { :name=> 'dummy_elem' }
 
 
 .$$$ Supplement				| delete-elem-supplement
@@ -736,6 +856,7 @@ This pattern is very useful if you want to print tags according to condition.
 .-------------------- dummy_tag.plogic
 /* delete tags when url is empty */
 #next {
+% if @lang == 'ruby'
   attrs:  "href" url;
   logic: {
     if !url || url.empty?
@@ -746,21 +867,52 @@ This pattern is very useful if you want to print tags according to condition.
       _etag
     end
   }
+% elsif @lang == 'php'
+  attrs:  "href" $url;
+  logic: {
+    if (! $url) {
+      {{*_cont*}}
+    } else {
+      _stag();
+      _cont();
+      _etag();
+    }
+  }
+% elsif @lang == 'java'
+  attrs:  "href" url;
+  logic: {
+    if (url == empty) {
+      {{*_cont;*}}
+    } else {
+      _stag;
+      _cont;
+      _etag;
+    }
+  }
+% else error end
 }
 .--------------------
 
 .? Output Script:
 .____________________ dummy_tag.expected
+% if @lang == 'ruby'
 <%     if !url || url.empty? %>
 Next<%     else %>
 <a href="<%= url %>">Next</a>
 <%     end %>
+% elsif @lang == 'php'
+<?php     if (! $url) { ?>
+Next<?php     } else { ?>
+<a href="<?php echo $url; ?>">Next</a>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:case><c:when test="${empty url}">
+Next</c:when><c:otherwise>
+<a href="${url}">Next</a>
+</c:otherwise></c:case>
+% else error end
 .____________________
-[%
-  def test_dummy_tag
-    _test
-  end
-%]
+% @tests << { :name=>'dummy_tag' }
 
 
 .$ Iteration	| iteration
@@ -787,7 +939,7 @@ This pattern is very useful for all these situations.
 .-------------------- iterate_elem.pdata
 <table>
   <tr {{*id="mark:list"*}}>
-   <td kw:d="value: item">item</td>
+   <td id="mark:item">item</td>
   </tr>
 </table>
 .--------------------
@@ -797,42 +949,94 @@ This pattern is very useful for all these situations.
 /* iterate element */
 #list {
   logic: {
+% if @lang == 'ruby'
     {{*for item in list*}}
       _stag
       _cont
       _etag
     {{*end*}}
+% elsif @lang == 'php'
+    {{*foreach ($list as $item) {*}}
+      _stag();
+      _cont();
+      _etag();
+    {{*}*}}
+% elsif @lang == 'java'
+    {{*foreach (item in list) {*}}
+      _stag;
+      _cont;
+      _etag;
+    {{*}*}}
+% else error end
   }
+}
+
+#item {
+% if @lang == 'ruby'
+  value: item;
+% elsif @lang == 'php'
+  value: $item;
+% elsif @lang == 'java'
+  value: item;
+% else error end
 }
 .--------------------
 
 .? Output Script:
 .____________________ iterate_elem.expected
 <table>
+% if @lang == 'ruby'
 <%     for item in list %>
   <tr>
    <td><%= item %></td>
   </tr>
 <%     end %>
+% elsif @lang == 'php'
+<?php     foreach ($list as $item) { ?>
+  <tr>
+   <td><?php echo $item; ?></td>
+  </tr>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:forEach var="item" items="${list}">
+  <tr>
+   <td>${item}</td>
+  </tr>
+</c:forEach>
+% else error end
 </table>
 .____________________
-[%
-  def test
-    _test
-  end
-%]
+% @tests << { :name=>'iterate_elem' }
 
 
 .$$$ Supplement				| iterate-elem-supplement
 
-Kwartz directive {{,kw:d="for {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
+% if @lang == 'ruby'
+%   directive = 'kw:d="for {{/item/}} in {{/list/}}"'
+% elsif @lang == 'php'
+%   directive = 'kw:d="foreach({{/list/}} as {{/item/}})"'
+% elsif @lang == 'java'
+%   directive = 'kw:d="foreach:{{/item/}}={{/list/}}"'
+% else error end
+
+Kwartz directive {{,[%= directive %],}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
 
 .--------------------
 <table>
+% if @lang == 'ruby'
   <tr {{*kw:d="for item in list"*}}>
     <td kw:d="value: item">item</td>
   </tr>
+% elsif @lang == 'php'
+  <tr {{*kw:d="foreach($list as $item)"*}}>
+    <td kw:d="value($item)">item</td>
+  </tr>
+% elsif @lang == 'java'
+  <tr {{*kw:d="foreach:item=list"*}}>
+    <td kw:d="value:item">item</td>
+  </tr>
+% else error end
 </table>
 .--------------------
 
@@ -857,8 +1061,8 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 .? Presentation Data:
 .-------------------- iterate_cont.pdata
 <dl {{*id="mark:list"*}}>
-  <dt kw:d="value: item.text">text</dt>
-  <dd kw:d="value: item.desc">description</dd>
+  <dt id="mark:text">text</dt>
+  <dd id="mark:desc">description</dd>
 </dl>
 .--------------------
 
@@ -867,41 +1071,106 @@ This pattern is very useful when creating <dl></dl> list or table which repeats 
 /* iterate only content */
 #list {
   logic: {
+% if @lang == 'ruby'
     _stag
     {{*for item in items*}}
       _cont
     {{*end*}}
     _etag
+% elsif @lang == 'php'
+    _stag();
+    {{*foreach ($items as $item) {*}}
+      _cont();
+    {{*}*}}
+    _etag();
+% elsif @lang == 'java'
+    _stag;
+    {{*foreach (item = items) {*}}
+      _cont;
+    {{*}*}}
+    _etag;
+% else error end
   }
 }
+
+% if @lang == 'ruby'
+#text {
+  value:  item.text;
+}
+#desc {
+  value:  item.desc;
+}
+% elsif @lang == 'php'
+#text {
+  value:  $item->text;
+}
+#desc {
+  value:  $item->desc;
+}
+% elsif @lang == 'java'
+#text {
+  value:  item.text;
+}
+#desc {
+  value:  item.desc;
+}
+% else error end
 .--------------------
 
 .? Output Script:
 .____________________ iterate_cont.expected
 <dl>
+% if @lang == 'ruby'
 <%     for item in items %>
   <dt><%= item.text %></dt>
   <dd><%= item.desc %></dd>
 <%     end %>
+% elsif @lang == 'php'
+<?php     foreach ($items as $item) { ?>
+  <dt><?php echo $item->text; ?></dt>
+  <dd><?php echo $item->desc; ?></dd>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:forEach var="item" items="${items}">
+  <dt>${item.text}</dt>
+  <dd>${item.desc}</dd>
+</c:forEach>
+% else error end
 </dl>
 .____________________
-[%
-  def test_iterate_cont
-    _test
-  end
-%]
+% @tests << { :name=>'iterate_cont' }
 
 
 .$$$ Supplement				| iterate-cont-supplement
 
-Kwartz directive {{,kw:d="list {{/item/}} in {{/list/}}",}} lets you to use this pattern without presentation logic file.
+% if @lang == 'ruby'
+%   directive = "list {{/item/}} in {{/list/}}"
+% elsif @lang == 'php'
+%   directive = "list({{/list/}} as {{/item/}}"
+% elsif @lang == 'java'
+%   directive = "list:{{/item/}}={{/list/}}"
+% else error end
+
+Kwartz directive {{,kw:d=[%= directive %],}} lets you to use this pattern without presentation logic file.
 See reference manual for details.
 
 .--------------------
+% if @lang == 'ruby'
 <dl {{*kw:d="list item in items"*}}>
   <dt kw:d="value: item.text">text</dt>
   <dd kw:d="value: item.desc">description</dd>
 </dl>
+% elsif @lang == 'php'
+<dl {{*kw:d="list($items as $item)"*}}>
+  <dt kw:d="value($item->text)">text</dt>
+  <dd kw:d="value($item->desc)">description</dd>
+</dl>
+% elsif @lang == 'java'
+<dl {{*id="list(item=items)"*}}>
+  <dt id="value:item.text">text</dt>
+  <dd id="value:item.desc">description</dd>
+</dl>
+% else error end
 .--------------------
 
 
@@ -939,6 +1208,7 @@ This pattern is very useful when you want to change data according to conditions
 /* select element according to status */
 #message {
   logic: {
+% if @lang == 'ruby'
     if status == 'error'
       {{*_element(error)*}}      # ERROR!
     else if (status == 'warning')
@@ -946,12 +1216,30 @@ This pattern is very useful when you want to change data according to conditions
     else
       {{*_element(good)*}}       # No error.
     end
+% elsif @lang == 'php'
+    if ($status == 'error') {
+      {{*_element(error);*}}      // ERROR!
+    } else if ($status == 'warning') {
+      {{*_element(warning);*}}    // Warning:
+    } else {
+      {{*_element(good);*}}       // No error.
+    }
+% elsif @lang == 'java'
+    if (status == 'error') {
+      {{*_element(error);*}}      # ERROR!
+    } elseif (status == 'warning') {
+      {{*_element(warning);*}}    # Warning:
+    } else {
+      {{*_element(good);*}}       # No error.
+    }
+% else error end
   }
 }
 .--------------------
 
 .? Output Script:
 .____________________ select_elem.expected
+% if @lang == 'ruby'
 <%     if status == 'error' %>
   <span style="color:red">ERROR!</span>
 <%     else if (status == 'warning') %>
@@ -959,23 +1247,55 @@ This pattern is very useful when you want to change data according to conditions
 <%     else %>
   <span style="color:black">No error.</span>
 <%     end %>
+% elsif @lang == 'php'
+<?php     if ($status == 'error') { ?>
+  <span style="color:red">ERROR!</span>
+<?php     } else if ($status == 'warning') { ?>
+  <span style="color:blue">Warning:</span>
+<?php     } else { ?>
+  <span style="color:black">No error.</span>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:case><c:when test="${status == 'error'}">
+  <span style="color:red">ERROR!</span>
+</c:when><c:when test="${status == 'warning'}">
+  <span style="color:blue">Warning:</span>
+</c:when><c:otherwise>
+  <span style="color:black">No error.</span>
+</c:otherwise></c:case>
+% else error end
 .____________________
-[%
-  def test_select_elem
-    _test
-  end
-%]
+% @tests << { :name=>'select_elem' }
 
 
 .$$$ Supplement				| select-elem-supplement
 
- Kwartz directive '{{,kw:d="if {{/condition/}}",}}', '{{,kw:d="elsif {{/condition/}}",}}',
- and '{{,kw:d="else",}}' let you to use this pattern without presentation logic file.
+% if @lang == 'ruby'
+%   d = [ 'if {{/condition/}}', 'elsif {{/condition/}}', 'else' ]
+% elsif @lang == 'php'
+%   d = [ 'if({{/condition/}})', 'elseif({{/condition/}})', 'else' ]
+% elsif @lang == 'java'
+%   d = [ 'if:{{/condition/}}', 'elseif:{{/condition/}}', 'else:' ]
+% else error end
+
+
+ Kwartz directive '{{,kw:d="[%= d[0] %]",}}', '{{,kw:d="[%= d[1] %]",}}',
+ and '{{,kw:d="[%= d[2] %]",}}' let you to use this pattern without presentation logic file.
 .--------------------
 <div>
+% if @lang == 'ruby'
   <span style="color:red"   {{*kw:d="if status=='error'"*}}>ERROR!</span>
   <span style="color:blue"  {{*kw:d="elsif status=='warning'"*}}>Warning:</span>
   <span style="color:black" {{*kw:d="else"*}}>No error.</span>
+% elsif @lang == 'php'
+  <span style="color:red"   {{*kw:d="if($status=='error')"*}}>ERROR!</span>
+  <span style="color:blue"  {{*kw:d="elseif($status=='warning')"*}}>Warning:</span>
+  <span style="color:black" {{*kw:d="else"*}}>No error.</span>
+% elsif @lang == 'java'
+  <span style="color:red"   {{*id="if:status=='error'"*}}>ERROR!</span>
+  <span style="color:blue"  {{*id="elseif:status=='warning'"*}}>Warning:</span>
+  <span style="color:black" {{*id="else:"*}}>No error.</span>
+% else error end
 </div>
 .--------------------
 
@@ -1037,14 +1357,29 @@ This pattern is useful when many dummy datas are exist.
 .-------------------- pickup_elem.plogic
 #breadcrumbs {
   logic: {
+% if @lang == 'ruby'
     for item in list
       {{*_element(crumb)*}}          # print <a>...</a>
       {{*_content(separator)*}}      # print '&gt;'
     end
     {{*_element(title)*}}            # print <strong>title</strong>
+% elsif @lang == 'php'
+    foreach ($list as $item) {
+      {{*_element(crumb);*}}          // print <a>...</a>
+      {{*_content(separator);*}}      // print '&gt;'
+    }
+    {{*_element(title);*}}            // print <strong>title</strong>
+% elsif @lang == 'java'
+    foreach (item = list) {
+      {{*_element(crumb);*}}          # print <a>...</a>
+      {{*_content(separator);*}}      # print '&gt;'
+    }
+    {{*_element(title);*}}            # print <strong>title</strong>
+% else error end
   }
 }
 
+% if @lang == 'ruby'
 #crumb {
   value:  item['name'];
   attrs:  "href" item['path'];
@@ -1052,24 +1387,49 @@ This pattern is useful when many dummy datas are exist.
 #title {
   value: title;
 }
+% elsif @lang == 'php'
+#crumb {
+  value:  $item['name'];
+  attrs:  "href" $item['path'];
+}
+#title {
+  value: $title;
+}
+% elsif @lang == 'java'
+#crumb {
+  value:  item['name'];
+  attrs:  "href" item['path'];
+}
+#title {
+  value: title;
+}
+% else error end
 .--------------------
 
 .? Output Script:
 .____________________ pickup_elem.expected
 <html>
   <body>
+% if @lang == 'ruby'
 <%     for item in list %>
       <a href="<%= item['path'] %>"><%= item['name'] %></a>
 &gt;<%     end %>
       <strong><%= title %></strong>
+% elsif @lang == 'php'
+<?php     foreach ($list as $item) { ?>
+      <a href="<?php echo $item['path']; ?>"><?php echo $item['name']; ?></a>
+&gt;<?php     } ?>
+      <strong><?php echo $title; ?></strong>
+% elsif @lang == 'java'
+<c:forEach var="item" items="${list}">
+      <a href="${item['path']}">${item['name']}</a>
+&gt;</c:forEach>
+      <strong>${title}</strong>
+% else error end
   </body>
 </html>
 .____________________
-[%
-  def test_pickup_elem
-    _test
-  end
-%]
+% @tests << { :name=>'pickup_elem' }
 
 
 .#The above example should be described as following.
@@ -1188,7 +1548,7 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 .--------------------
 .#------
 
-.? Presentation Data ({{<design.html|p-pattern/design.html>}}):
+.? Presentation Data ({{<design.html|pattern-catalog/design.html>}}):
 .-------------------- design.html
 <html {{*id="mark:whole"*}}>
   <head>
@@ -1227,7 +1587,7 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
     <p> ..... </p>
     
     <div align="center" class="copyright" {{*id="mark:copyright"*}}>
-      Copyright&copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&copy; 2004-2006 kuwata-lab. All Rights Reserved.
     </div>
     
   </body>
@@ -1240,7 +1600,13 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 /* replace the 'whole' element with the element you want to extract */
 {{*#whole*}} {
   logic: {
+% if @lang == 'ruby'
     {{*_element(copyright)*}}
+% elsif @lang == 'php'
+    {{*_element(copyright);*}}
+% elsif @lang == 'java'
+    {{*_element(copyright);*}}
+% else error end
   }
 }
 .--------------------
@@ -1251,25 +1617,57 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 /* replace the 'whole' element with the element you want to extract */
 {{*#whole*}} {
   logic: {
+% if @lang == 'ruby'
     {{*_element(tablist)*}}
+% elsif @lang == 'php'
+    {{*_element(tablist);*}}
+% elsif @lang == 'java'
+    {{*_element(tablist);*}}
+% else error end
   }
 }
 
 #tabs {
   logic: {
+% if @lang == 'ruby'
     _stag
     for tab in tablist
       klass = current_tabname == tab['name'] ? 'selected' : ''
       _element(tab)
     end
     _etag
+% elsif @lang == 'php'
+    _stag;
+    foreach ($tablist as $tab) {
+      $klass = $current_tabname == $tab['name'] ? 'selected' : '';
+      _element(tab);
+    }
+    _etag;
+% elsif @lang == 'java'
+    _stag;
+    foreach (tab = tablist) {
+      klass = current_tabname == tab['name'] ? 'selected' : '';
+      _element(tab);
+    }
+    _etag;
+% else error end
   }
 }
 
 #tab {
+% if @lang == 'ruby'
   value:  tab['name'];
   attrs:  "href" tab['href'],
           "class" klass;
+% elsif @lang == 'php'
+  value:  $tab['name'];
+  attrs:  "href" $tab['href'],
+          "class" $klass;
+% elsif @lang == 'java'
+  value:  tab['name'];
+  attrs:  "href" tab['href'],
+          "class" klass;
+% else error end
 }
 .--------------------
 
@@ -1279,22 +1677,45 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 /* replace the 'whole' element with the element you want to extract */
 {{*#whole*}} {
   logic: {
+% if @lang == 'ruby'
     {{*_element(menulist)*}}
+% elsif @lang == 'php'
+    {{*_element(menulist);*}}
+% elsif @lang == 'java'
+    {{*_element(menulist);*}}
+% else error end
   }
 }
 
 #menus {
   logic: {
+% if @lang == 'ruby'
     _stag
-    foreach (menu in menulist) {
+    for menu in menulist
       _element(menu)
       _element(menu_separator)
-    }
+    end
     _etag
+% elsif @lang == 'php'
+    _stag();
+    foreach ($menulist as $menu) {
+      _element(menu);
+      _element(menu_separator);
+    }
+    _etag();
+% elsif @lang == 'java'
+    _stag;
+    foreach (menu in menulist) {
+      _element(menu);
+      _element(menu_separator);
+    }
+    _etag;
+% else error end
   }
 }
 
 #menu {
+% if @lang == 'ruby'
   value:   menu['name'];
   attrs:   "href" menu['cgipath'],
            "class" klass;
@@ -1302,6 +1723,23 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
     klass = current_menu == menu['name'] ? 'selected' : ''
     _elem
   }
+% elsif @lang == 'php'
+  value:   $menu['name'];
+  attrs:   "href" $menu['cgipath'],
+           "class" $klass;
+  logic: {
+    $klass = $current_menu == $menu['name'] ? 'selected' : '';
+    _elem();
+  }
+% elsif @lang == 'java'
+  value:   menu['name'];
+  attrs:   "href" menu['cgipath'],
+           "class" klass;
+  logic: {
+    klass = current_menu == menu['name'] ? 'selected' : '';
+    _elem;
+  }
+% else error end
 }
 .--------------------
 
@@ -1309,49 +1747,51 @@ The following is an example to extract the HTML fragments 'tablist', 'menulist',
 .? Compile:
 .====================
 ### copyright
-$ kwartz -l eruby -p copyright.plogic design.pdata > copyright.rhtml
+$ [%= @command %] -l [%= @outlang %] -p copyright.plogic design.pdata > copyright.[%= @suffix %]
 
 ### tablist
-$ kwartz -l eruby -p tablist.plogic   design.pdata > tablist.rhtml
+$ [%= @command %] -l [%= @outlang %] -p tablist.plogic   design.pdata > tablist.[%= @suffix %]
 
 ### menulist
-$ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
+$ [%= @command %] -l [%= @outlang %] -p menulist.plogic  design.pdata > menulist.[%= @suffix %]
 .====================
 
 
 .? Output Script (copyright.rhtml):
 .____________________ copyright.expected
     <div align="center" class="copyright">
-      Copyright&copy; 2004-2005 kuwata-lab. All Rights Reserved.
+      Copyright&copy; 2004-2006 kuwata-lab. All Rights Reserved.
     </div>
 .____________________
-[%
-  def test_copyright
-    @pdata = 'design.html'
-    _test
-  end
-%]
+% @tests << { :name=>'copyright', :pdata=>'design.html' }
 
 
 .? Output Script (tablist.rhtml):
 .____________________ tablist.expected
     <div>
       <div class="tabs">
+% if @lang == 'ruby'
 <%     for tab in tablist %>
 <%       klass = current_tabname == tab['name'] ? 'selected' : '' %>
         <a href="<%= tab['href'] %>" class="<%= klass %>"><%= tab['name'] %></a>
 <%     end %>
+% elsif @lang == 'php'
+<?php     foreach ($tablist as $tab) { ?>
+<?php       $klass = $current_tabname == $tab['name'] ? 'selected' : ''; ?>
+        <a href="<?php echo $tab['href']; ?>" class="<?php echo $klass; ?>"><?php echo $tab['name']; ?></a>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:forEach var="tab" items="${tablist}">
+<c:set var="klass" value="${current_tabname == tab['name'] ? 'selected' : ''}"/>
+        <a href="${tab['href']}" class="${klass}">${tab['name']}</a>
+</c:forEach>
+% else error end
       </div>
       <div class="tabsline">
       </div>
     </div>
 .____________________
-[%
-  def test_tablist
-    @pdata = 'design.html'
-    _test
-  end
-%]
+% @tests << { :name=>'tablist', :pdata=>'design.html' }
 
 
 .? Output Script (menulist.rhtml):
@@ -1359,20 +1799,29 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
     <div>
       <span class="menu_title" id="value:menu_title">MenuList</span>
       <div class="menus">
-<%     foreach (menu in menulist) { %>
+% if @lang == 'ruby'
+<%     for menu in menulist %>
 <%     klass = current_menu == menu['name'] ? 'selected' : '' %>
         <a href="<%= menu['cgipath'] %>" class="<%= klass %>"><%= menu['name'] %></a>
         <span><br></span>
-<%     } %>
+<%     end %>
+% elsif @lang == 'php'
+<?php     foreach ($menulist as $menu) { ?>
+<?php     $klass = $current_menu == $menu['name'] ? 'selected' : ''; ?>
+        <a href="<?php echo $menu['cgipath']; ?>" class="<?php echo $klass; ?>"><?php echo $menu['name']; ?></a>
+        <span><br></span>
+<?php     } ?>
+% elsif @lang == 'java'
+<c:forEach var="menu" items="${menulist}">
+<c:set var="klass" value="${current_menu == menu['name'] ? 'selected' : ''}"/>
+        <a href="${menu['cgipath']}" class="${klass}">${menu['name']}</a>
+        <span><br></span>
+</c:forEach>
+% else error end
       </div>
     </div>
 .____________________
-[%
-  def test_menulist
-    @pdata = 'design.html'
-    _test
-  end
-%]
+% @tests << { :name=>'menulist', :pdata=>'design.html' }
 
 
 .$$$ Supplement				| extract-elem-supplement
@@ -1383,5 +1832,12 @@ $ kwartz -l eruby -p menulist.plogic  design.pdata > menulist.rhtml
 
 
 [%
-end
-%]
+
+  filenames = { 'ruby'=> 'test-pattern-catalog.rb',
+                'php' => 'KwartzPatternCatalogTest.php',
+                'java'=> 'PatternCatalogTest.java',
+              }
+  filename = ENV['TESTSCRIPT'] || filenames[@lang]
+  create_testscript(@tests, filename)
+
+ %]

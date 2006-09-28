@@ -249,7 +249,7 @@ class KwartzElementInfo {
             }
         }
         $this->tagname = $elem_ruleset->tagname;
-        if ($elem_ruleset->logic)
+        if ($elem_ruleset->logic !== null)
             $this->logic = $elem_ruleset->logic;
     }
 
@@ -1073,7 +1073,7 @@ class KwartzTextConverter extends KwartzConverter {
                     $stag_info = $taginfo;
                     $stmt_list[] = $this->_builder->create_text_print_stmt($stag_info->tag_text);
                     $etag_info = $this->_convert($stmt_list, $stag_info);
-                    $stmt_list[] = $this->_builder->create_text_print_stmt($etag_info->tagname);
+                    $stmt_list[] = $this->_builder->create_text_print_stmt($etag_info->tag_text);
                 } else {
                     $stmt_list[] = $this->_builder->create_text_print_stmt($taginfo->tag_text);
                 }

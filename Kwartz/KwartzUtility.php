@@ -119,6 +119,8 @@ function kwartz_scan_text($pregex, $input, &$matches, &$rest) {
  *  get array item
  */
 function kwartz_array_get(&$array, $key, $default=NULL) {
+    assert('is_array($array)');
+    //fprintf(STDERR, "*** debug: array=" . var_export($array, true));
     return array_key_exists($key, $array) ? $array[$key] : $default;
 }
 

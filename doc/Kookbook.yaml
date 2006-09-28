@@ -19,6 +19,12 @@ parameters:
 
 recipes:
 
+  - product:	:all
+    ingreds:	[ $(html_files), 'pattern-catalog.d/.retrieved' ]
+    method*: |
+	k_mkdir('pattern-catalog');
+	k_mcopy('pattern-catalog', 'pattern-catalog.d/design.*');
+
   - product:	*.html
     desc:	generate *.html from *.txt
     ingreds:	[ $(1).txt ]
@@ -51,19 +57,30 @@ recipes:
 #  - product:	KwartzReferenceTest.php
 #    ingreds:	[ reference.txt, KwartzReferenceTest.php.eruby ]
 
+  - product:	*.d/.retrieved
+    ingreds:	[ $(1).txt ]
+    method*: |
+	$dir  = '$(1).d';
+	if (file_exists($dir)) k_delete($dir);
+	k_mkdir($dir);
+	k_sys("retrieve -d $dir $ingred");
+	file_put_contents($product, date('Y-m-d H:i:s'));
+	
   - product:	:test_users_guide
     desc:	test KwartzUsersGuideTest.php
-    ingreds:	[ KwartzUsersGuideTest.php ]
+    #ingreds:	[ KwartzUsersGuideTest.php, users-guide.d/.retrieved ]
+    ingreds:	[ users-guide.d/.retrieved ]
     method*: |
-	retrieve('users-guide');
-	k_sys("phpunit $ingred");
+	#k_sys("phpunit $ingred");
+	k_sys("phpunit KwartzUsersGuideTest.php");
 
   - product:	:test_pattern_catalog
     desc:	test KwartzPatternCatalogTest.php
-    ingreds:	[ KwartzPatternCatalogTest.php ]
+    #ingreds:	[ KwartzPatternCatalogTest.php, pattern-catalog.d/.retrieved ]
+    ingreds:	[ pattern-catalog.d/.retrieved ]
     method*: |
-	retrieve('pattern-catalog');
-	k_sys("phpunit $ingred");
+	#k_sys("phpunit $ingred");
+	k_sys("phpunit KwartzPatternCatalogTest.php");
 
 #  - product:	:test_reference
 #    desc:	test KwartzReferenceTest.php
@@ -73,7 +90,7 @@ recipes:
 #	k_sys("phpunit $ingred");
 
   - product:	:test
-    ingreds:	[ :test_users_guide, :test_pattern_catalog, :test_reference ]
+    ingreds:	[ :test_users_guide, :test_pattern_catalog ]
 
   - product:	:clean
     method*: |
@@ -81,21 +98,25 @@ recipes:
 
   - product:	:clear
     method*: |
-	k_delete('*.html'); 
+	k_delete('*.html', 'pattern-catalog'); 
 
   - product:	:link
     desc:	create hard-link of files
     method*: |
-	k_delete($doc_files);
-	foreach ($doc_files as $file) {
+	$files = $doc_files;
+	$files[] = 'doc-helper.rb';
+	k_delete($files);
+	foreach ($files as $file) {
 	    k_sys("ln $basedir/$file .");
 	}
 
   - product:	:copy
     desc:	copy files
     method*: |
-	k_delete($doc_files);
-	foreach ($doc_files as $file) {
+	$files = $doc_files;
+	$files[] = 'doc-helper.rb';
+	k_delete($files);
+	foreach ($files as $file) {
 	    k_copy("$basedir/$file", $file);
 	}
 	

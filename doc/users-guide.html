@@ -251,7 +251,7 @@ In presentation logic, you can operate on elements which are marked in presentat
     </li>
     <li>'<strong><code>_etag</code></strong>' represents an end tag(= '&lt;/tr&gt;').
     </li>
-    <li>'<strong><code>for <em>var</em> in <em>list</em> ...</code></strong>' is a Ruby code to loop.
+    <li>'<strong><code>foreach (<em>list</em> as <em>item</em>) { ... }</code></strong>' is a PHP code to loop.
        In this case, the element(= start-tag + content + end-tag) is looped.
     </li>
     </ul>
@@ -1767,7 +1767,7 @@ recipes:
 
 <a name="topics-kwartz-lib"></a>
 <h3 class="section2">Use Kwartz as Library</h3>
-<p>If you want to use Kwartz library in your Ruby script, use KwartzMain class.
+<p>If you want to use Kwartz library in your PHP script, use KwartzMain class.
 </p>
 <div class="program_caption">
 usage of KwartzMain class</div>
@@ -1845,7 +1845,7 @@ var _buf = []; _buf.push("&lt;table&gt;\n");
        <strong>klass = i % 1 == 0 ? 'even' : 'odd';</strong> 
        <strong>item = list[i];</strong> 
 _buf.push("  &lt;tr class=\""); _buf.push(<strong>klass</strong>); _buf.push("\"&gt;\n\
-    &lt;td&gt;"); _buf.push(_escape(<strong>item</strong>)); _buf.push("&lt;/td&gt;\n\
+    &lt;td&gt;"); _buf.push(escape(<strong>item</strong>)); _buf.push("&lt;/td&gt;\n\
   &lt;/tr&gt;\n");
      <strong>}</strong> 
 _buf.push("&lt;/table&gt;\n");

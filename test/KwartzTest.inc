@@ -65,7 +65,8 @@ function kwartz_select_testdata($testdata, $lang) {
             if ($key[strlen($key)-1] == '*') {
                 unset($data[$key]);
                 $key = substr($key, 0, strlen($key)-1);
-                $val = $val[$lang];
+                $l = _kwartz_is_special_key($key) ? 'php' : $lang;
+                $val = $val[$l];
                 $data[$key] = $val;
             }
         }
@@ -101,6 +102,11 @@ function kwartz_define_testmethods($testdata, $classname) {
 }
 
 
+function _kwartz_is_special_key($key) {
+    return $key == 'exception' || $key == 'errormsg';
+}
+
+
 function kwartz_build_testmethods_with_each_lang($testdata, $classname, $langs=null, $parent_classname=null) {
     if (! $langs)
         $langs = array('php', 'eruby', 'jstl', 'eperl');
@@ -115,7 +121,8 @@ function kwartz_build_testmethods_with_each_lang($testdata, $classname, $langs=n
             foreach ($data as $key=>$val) {
                 if ($key[strlen($key)-1] == '*') {
                     $key = substr($key, 0, strlen($key)-1);
-                    $val = $val[$lang];
+                    $l = _kwartz_is_special_key($key) ? 'php' : $lang;
+                    $val = $val[$l];
                 }
                 $val = preg_replace('/\{\{\*|\*\}\}/', '', $val);
                 $expr = var_export($val, true);

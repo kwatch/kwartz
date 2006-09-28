@@ -293,7 +293,11 @@ class KwartzElementRuleset extends KwartzRuleset {
 
 
     function set_logic($code) {
-        if (! $code) return;
+        if (! $code) {
+            if ($code !== null)           // if empty string or false
+                $this->logic = array();   // then clear statements
+            return;
+        }
         $stmt_list = array();
         $lines = preg_split('/\n/', $code);
         if (! $lines[count($lines) - 1]) {
