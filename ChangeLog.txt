@@ -2,6 +2,8 @@
 .?release:     $Rev$
 .?lastupdate:  $Date$
 
+: rev.73 (2006-09-29)
+	- [refactor] rename 'Kwartz/Kwartz*.php' to 'Kwartz/*.php'
 
 : rev.72 (2006-09-29)
 	- [enhance] add examples/

@@ -3049,7 +3049,7 @@ $plogic = 'example.plogic';    # presentation logic file
 $view   = 'example.view';      # output script file
 $flag_escape = TRUE;           # flag of sanitizing
 
-{{*require_once('Kwartz/KwartzHelper.php');*}}
+{{*require_once('Kwartz/Helper.php');*}}
 {{*KwartzHelper::compile_template($pdata, $plogic, $view, $flag_escape)*}}
 
 include($view);

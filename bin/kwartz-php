@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 
-require 'Kwartz/KwartzMain.php';
+require 'Kwartz/Main.php';
 
 KwartzMain::main($argv);
 

@@ -6,7 +6,7 @@
 // $Copyright$
 
 
-require_once 'Kwartz/KwartzUtility.php';
+require_once 'Kwartz/Utility.php';
 
 
 abstract class KwartzNode {

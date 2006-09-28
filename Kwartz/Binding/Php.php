@@ -6,8 +6,8 @@
 // $Copyright$
 
 
-require_once 'Kwartz/KwartzConverter.php';
-require_once 'Kwartz/KwartzTranslator.php';
+require_once 'Kwartz/Converter.php';
+require_once 'Kwartz/Translator.php';
 
 
 /**

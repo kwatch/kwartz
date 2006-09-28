@@ -10,9 +10,9 @@
 
 require_once 'KwartzTest.inc';
 
-require_once 'Kwartz/KwartzParser.php';
-require_once 'Kwartz/KwartzConverter.php';
-require_once 'Kwartz/KwartzTranslator.php';
+require_once 'Kwartz/Parser.php';
+require_once 'Kwartz/Converter.php';
+require_once 'Kwartz/Translator.php';
 require_once 'Kwartz/Binding/Php.php';
 require_once 'Kwartz/Binding/Eruby.php';
 require_once 'Kwartz/Binding/Jstl.php';

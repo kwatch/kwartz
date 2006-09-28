@@ -10,12 +10,12 @@
 
 require_once 'KwartzTest.inc';
 
-//require_once 'Kwartz/KwartzException.php';
-//require_once 'Kwartz/KwartzNode.php';
-//require_once 'Kwartz/KwartzUtility.php';
-require_once 'Kwartz/KwartzConfig.php';
-require_once 'Kwartz/KwartzConverter.php';
-require_once 'Kwartz/KwartzTranslator.php';
+//require_once 'Kwartz/Exception.php';
+//require_once 'Kwartz/Node.php';
+//require_once 'Kwartz/Utility.php';
+require_once 'Kwartz/Config.php';
+require_once 'Kwartz/Converter.php';
+require_once 'Kwartz/Translator.php';
 require_once 'Kwartz/Binding/Php.php';
 require_once 'Kwartz/Binding/Eruby.php';
 require_once 'Kwartz/Binding/Jstl.php';

@@ -10,7 +10,7 @@
 
 require_once 'KwartzTest.inc';
 
-require_once 'Kwartz/KwartzMain.php';
+require_once 'Kwartz/Main.php';
 
 $filename = preg_replace('/\.php$/', '.yaml', __FILE__);
 $str = file_get_contents($filename);

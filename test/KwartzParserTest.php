@@ -10,7 +10,7 @@
 
 require_once 'KwartzTest.inc';
 
-require_once 'Kwartz/KwartzParser.php';
+require_once 'Kwartz/Parser.php';
 
 
 class KwartzParserTest_ extends PHPUnit2_Framework_TestCase {

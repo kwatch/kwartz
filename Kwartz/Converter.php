@@ -6,10 +6,10 @@
 // $Copyright$
 
 
-require_once('Kwartz/KwartzException.php');
-require_once('Kwartz/KwartzNode.php');
-require_once('Kwartz/KwartzUtility.php');
-require_once('Kwartz/KwartzConfig.php');
+require_once('Kwartz/Exception.php');
+require_once('Kwartz/Node.php');
+require_once('Kwartz/Utility.php');
+require_once('Kwartz/Config.php');
 
 
 
