@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.143 (2006-09-30)
+	- [bugfix] testcase-helper.rb: undefined local variable 'special-names'
+
 : rev.142 (2006-09-29)
 	- [update] release preparation
 	- [change] website/*.html:  use prefix 'kwartz3ruby' instead of 'kwartz3-ruby'

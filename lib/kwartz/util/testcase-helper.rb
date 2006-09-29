@@ -86,7 +86,7 @@ class Test::Unit::TestCase   # :nodoc:
       ydoc.each do |key, val|
         if key[-1] == ?*
           key = key[0, key.length-1]
-          k = special_names.include?(key) ? 'ruby' : lang
+          k = special_keys.include?(key) ? 'ruby' : lang
           val = val[k]
         end
         s << "  @#{key} = #{val.inspect}\n"
