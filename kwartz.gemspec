@@ -34,12 +34,16 @@ spec = Gem::Specification.new do |s|
   files += Dir.glob('examples/**/*')
   files += Dir.glob('test/**/*')
   #files += Dir.glob('man/**/*')
-  files += [ "doc/users-guide.html",
-             "doc/reference.html",
-             "doc/p-pattern.html",
-             "doc/docstyle.css",
-             #"doc/design.css", "doc/design.html",
-           ]
+  files += Dir.glob('doc/*.html')
+  files += Dir.glob('doc/*.css')
+  files += Dir.glob('doc/img/*.png')
+  files += Dir.glob('doc/pattern-catalog/design.*')
+  #files += [ "doc/users-guide.html",
+  #           "doc/reference.html",
+  #           "doc/p-pattern.html",
+  #           "doc/docstyle.css",
+  #           #"doc/design.css", "doc/design.html",
+  #         ]
   files += Dir.glob('doc-api/**/*')
   files += %w[README.txt ChangeLog LGPL setup.rb kwartz.gemspec]
   s.files       = files

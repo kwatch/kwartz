@@ -1,4 +1,36 @@
-$ [ANN] Kwartz 3.1.0 released - a template system for web
+$ [ANN] Kwartz 3.1.1 released - a template system for web
+
+I have released Kwartz 3.1.1.
+http://www.kuwata-lab.com/kwartz/
+(Notice that this is beta-release. Spec may change in the future.)
+
+This is document update release and no code changed.
+
+Changes from 3.1.0:
+
+   * Test data and documents are integrated with Kwartz-php 3.1.1.
+
+
+Kwartz is a template system which realized the concept
+"Independence of Presentation Logic".
+It means that Kwartz can separate presentation logics
+from both business logics (= main program) and
+presentatin data (= HTML file).
+
+Kwartz generates eRuby/PHP/JSP/ePerl files from presentation
+data file (= HTML file) and presentation logic file.
+
+And I'm pleased to announce that Kwartz-php 3.1.1 is released, too.
+It is an implementation of Kwartz in PHP.
+
+--
+regards,
+kwatch
+
+
+# --------------------------------------------------------------------------------
+
+$ [ANN] Kwartz 3.1.0 released -
 
 I have released Kwartz 3.0.0. (beta)
 http://www.kuwata-lab.com/kwartz/

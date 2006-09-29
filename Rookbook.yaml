@@ -27,6 +27,7 @@ recipes:
 
 
   - product:   :packages
+    desc:      create packages (*.gem and *.tar.bz2)
     ingreds:   [ $(packages) ]
 
   - product:   $(project)_*.tar.bz2
@@ -80,8 +81,8 @@ recipes:
 	store %w[README.txt ChangeLog LGPL setup.rb $(project).gemspec], dir
 	#
 	chdir 'doc' do sys 'rook -F :all' end
-	store 'doc/users-guide.html', 'doc/p-pattern.html', 'doc/reference.html', 'doc/docstyle.css', 'doc/img/*.png', dir
-	store 'doc/p-pattern/*', dir
+	#store 'doc/users-guide.html', 'doc/pattern-catalog.html', 'doc/reference.html', 'doc/docstyle.css', 'doc/pattern-catalog/*', 'doc/img/*.png', dir
+	store 'doc/*.html', 'doc/*.css', 'doc/img/*.png', 'doc/pattern-catalog/design.*', dir
 	#
 	Dir.glob('examples/*').each do |dirname|
 	  next unless test(?d, dirname)

@@ -19,12 +19,12 @@ recipes:
 
   - product:    :clean
     method*: |
-	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.d'
+	rm_rf tmpdir, '$(u).txt', '$(r).txt', '$(p).txt', '*.d', 'test-*.rb'
 
   - product:	:clear
     ingreds:	[ :clean ]
     method*: |
-	rm_rf '*.html', 'test-*.rb', 'pattern-catalog'
+	rm_rf '*.html'  #, 'pattern-catalog'
 
   - product:	*.html
     ingreds:	[ $(1).txt ]
@@ -83,8 +83,5 @@ recipes:
     ingreds:	[ $(1).txt ]
 
   - product:    :test
-    ingreds:    [ test-$(u).rb, test-$(p).rb ]
-    method*: |
-	sys "ruby test-$(u).rb"
-	sys "ruby test-$(p).rb"
+    ingreds:    [ do-test-$(u), do-test-$(p) ]
 

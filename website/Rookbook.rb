@@ -1,8 +1,9 @@
 property :release, '0.0.0'
 
-U = 'users-guide' unless defined?(U)
-R = 'reference'   unless defined?(R)
-P = 'p-pattern'   unless defined?(P)
+U = 'users-guide'      unless defined?(U)
+R = 'reference'        unless defined?(R)
+P = 'pattern-catalog'  unless defined?(P)
+prefix = 'kwartz3ruby'
 
 docdir = '../doc'
 tagfile = 'site-design'
@@ -12,31 +13,31 @@ tmpdir = 'd'
 ##
 ##  recipes for kuwata-lab.com
 ##
-products = %W[kwartz3-#{P}.xhtml kwartz3-#{U}.xhtml kwartz3-#{R}.xhtml 
-              kwartz3-ruby-README.txt kwartz3-ruby-ChangeLog
-	      index.xhtml p-pattern/design.html img]
+products = %W[#{prefix}-#{P}.xhtml #{prefix}-#{U}.xhtml #{prefix}-#{R}.xhtml 
+              #{prefix}-README.txt #{prefix}-ChangeLog
+	      index.xhtml #{P}/design.html img]
 
 
 recipe  :all			, products
 
 
 recipe  :clean								do |r|
-	rm_rf '*.toc.html', "kwartz3-*.txt"
+	rm_rf '*.toc.html', "#{prefix}-*.txt"
     end
 
 
 recipe  :clear								do |r|
-	rm_rf "kwartz3-*", 'index.xhtml', 'img', 'p-pattern'
+	rm_rf "#{prefix}-*", 'index.xhtml', 'img', "#{P}"
     end
 
 
-recipe	'kwartz3-*.xhtml'	, 'kwartz3-$(1).txt', :byprods=>['$(1).toc.html']  do |r|
+recipe	"#{prefix}-*.xhtml"	, "#{prefix}-$(1).txt", :byprods=>['$(1).toc.html']  do |r|
 	sys "kwaser -t #{tagfile} -bsn -T2 #{@ingred} > #{@byprod}"
 	sys "kwaser -t #{tagfile} -bsn     #{@ingred}"
 	rm_f @byprod
-	files = Dir.glob("kwartz3-#{@m[1]}*.html")
+	files = Dir.glob("#{prefix}-#{@m[1]}*.html")
 	edit files do |content|
-	  content.gsub!(/"(p-pattern|reference|users-guide).html"/, '"kwartz3-\1.html"')
+	  content.gsub!(/"(pattern-catalog|reference|users-guide).html"/, "\"#{prefix}-\\1.html\"")
 	  content.sub!(/"docstyle\.css"/, '"site-design.css"')
 	end
 	files.each do |old|
@@ -46,12 +47,12 @@ recipe	'kwartz3-*.xhtml'	, 'kwartz3-$(1).txt', :byprods=>['$(1).toc.html']  do |
     end
 
 
-recipe	/^kwartz3-ruby-(README.txt|ChangeLog)$/	, '../$(1)'	do |r|
+recipe	/^#{prefix}-(README.txt|ChangeLog)$/	, '../$(1)'	do |r|
 	cp @ingred, @product
     end
 
 
-recipe 'kwartz3-*.txt'	, '../doc/$(1).txt'			do |r|
+recipe "#{prefix}-*.txt"	, '../doc/$(1).txt'			do |r|
 	cp @ingred, @product
     end
 
@@ -61,11 +62,11 @@ recipe '../doc/*.txt'	, '../doc/$(1).eruby'				do |r|
     end
 
 
-recipe 'p-pattern/design.html'	, "kwartz3-#{P}.txt", :coprods=>['p-pattern/design.css'] do |r|
+recipe "#{P}/design.html"	, "#{prefix}-#{P}.txt", :coprods=>["#{P}/design.css"] do |r|
 	mkdir_p tmpdir
 	sys "retrieve -d #{tmpdir} #{@ingred}"
-	mkdir_p 'p-pattern'
-	cp "#{tmpdir}/design.*", 'p-pattern'
+	mkdir_p "#{P}"
+	cp "#{tmpdir}/design.*", "#{P}"
 	rm_rf tmpdir
     end
 

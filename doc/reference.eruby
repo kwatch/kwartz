@@ -75,7 +75,11 @@ Notice that the tail semicolon of declaration is not omittable.
 
 [%
 
-  yamlfile = '../test/test-ruleset.yaml'
+  files = [ '../test/test-ruleset.yaml',
+            '../test/KwartzRulesetTest.yaml',
+          ]
+  yamlfile = files.find { |file| test(?f, file) }
+  yamlfile  or raise "*** internal error: yamlfile not found."
   
   str = File.read(yamlfile)
   str = untabify(str)
@@ -164,7 +168,11 @@ See the {{,directive notation table,}} for PHP, Java, and Perl user.
 
 [%
 
-  yamlfile = '../test/test-directives.yaml'
+  files = [ '../test/test-directives.yaml',
+            '../test/KwartzDirectiveTest.yaml',
+          ]
+  yamlfile = files.find { |file| test(?f, file) }
+  yamlfile  or raise "*** internal error: yamlfile not found."
   
   str = File.read(yamlfile)
   str = untabify(str)

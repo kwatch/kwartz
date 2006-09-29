@@ -6,11 +6,12 @@
 
 .$ News
 
-.* (2006-09-24)  {{<kwartz-ruby_3.1.0|#Download>}} released
-.* (2006-06-01)  {{<kwartz-ruby_3.0.0|#Download>}} released
-.* (2005-08-11)  {{<kwartz-java_0.0.1 (alpha release)|#Download>}} released
-.* (2005-05-17)  {{<kwartz-ruby_2.0.4|#Download>}} released
-.* (2005-01-10)  {{<kwartz-php_0.3.2|#Download>}} released
+.* (2006-09-29)  {{<kwartz-ruby and kwartz-php 3.1.1|#Download>}} released
+.* (2006-09-24)  {{<kwartz-ruby 3.1.0|#Download>}} released
+.* (2006-06-01)  {{<kwartz-ruby 3.0.0|#Download>}} released
+.* (2005-08-11)  {{<kwartz-java 0.0.1 (alpha release)|#Download>}} released
+.* (2005-05-17)  {{<kwartz-ruby 2.0.4|#Download>}} released
+.* (2005-01-10)  {{<kwartz-php 0.3.2|#Download>}} released
 
 
 .$ Introduction
@@ -71,33 +72,52 @@ In addition, Kwartz has more features:
 	.* Handle any text file
 	.* Supports auto-sanitizing and partial-sanitizing
 
-See {{<users' guide|kwartz3-users-guide.html>}} for details.
-.#See {{<Brief Overview|overview/index.cgi?page=1>}} for overview, or {{<Kwartz Users' Guide|users-guide.en.html>}} for more detail.
+See {{<users' guide|kwartz3ruby-users-guide.html>}} for details.
+.#See {{<Brief Overview|overview/index.cgi?page=1>}} for overview, or {{<Kwartz Users' Guide|kwartz3ruby-users-guide.html>}} for more detail.
 
 
 .$ Download
-	.* if you have installed RubyGems, just type `{{,gem install --remote kwartz,}}' to install Kwartz.
-	.* Or download from {{<sourceforge.net|download.cgi>}}
-	   .- kwartz-ruby_3.1.0 (beta)
-	   .#.- kwartz-ruby_2.0.4 (stable)
-	   .- kwartz-java_0.0.1 (alpha) 
-	   .- kwartz-php_0.3.2 (obsolete)
+	.* Download from {{<sourceforge.net|download.cgi>}}
+	   .- Kwartz-ruby 3.1.1 (beta) (2006-09-29)
+	   .- Kwartz-php 3.1.1 (beta) (2006-09-29) {{!(New!)!}}
+	   .#.- kwartz-ruby 3.1.0 (beta) (2006-09-24)
+	   .#.- kwartz-ruby 2.0.4 (stable)
+	   .- Kwartz-java 0.0.1 (alpha)
 
 
-.$ Documents  	
-	.* {{<README.txt|kwartz3-ruby-README.txt>}}
-	.* {{<Users' guide|kwartz3-users-guide.html>}}
-	.* {{<Reference manual|kwartz3-reference.html>}}
-	.* {{<Presentation pattern catalog|kwartz3-p-pattern.html>}}
+.$ Installation
+	.* Kwartz-ruby
+	   .- Just type '{{,gem install --remote kwartz,}}'
+	   .- Or download kwartz_X.X.X.tar.bz2 from {{<sourceforge|download.cgi>}}, expand it, and type '{{,ruby setup.rb,}}'.
+	.* Kwartz-php
+	   .- Download Kwartz-X.X.X.tgz from {{<sourceforge|download.cgi>}} and just type '{{,pear install Kwartz-X.X.X.tgz,}}'.
+
+
+
+.$ Documents
+	.* README           ({{<kwartz-ruby|kwartz3ruby-README.txt>}},
+		             {{<kwartz-php|kwartz3php-README.txt>}})
+	.* ChangeLog        ({{<kwartz-ruby|kwartz3ruby-ChangeLog>}},
+			     {{<kwartz-php|kwartz3php-ChangeLog>}})
+	.* Users' guide     ({{<kwartz-ruby|kwartz3ruby-users-guide.html>}},
+			     {{<kwartz-php|kwartz3php-users-guide.html>}})
+	.* Reference manual ({{<kwartz-ruby|kwartz3ruby-reference.html>}},
+			     {{<kwartz-php|kwartz3php-reference.html>}})
+	.* Pattern Catalog  ({{<kwartz-ruby|kwartz3ruby-pattern-catalog.html>}},
+			     {{<kwartz-php|kwartz3php-pattern-catalog.html>}})
+	.#.* {{<README.txt|kwartz3-ruby-README.txt>}}
+	.#.* {{<Users' guide|kwartz3-users-guide.html>}}
+	.#.* {{<Reference manual|kwartz3-reference.html>}}
+	.#.* {{<Presentation pattern catalog|kwartz3-p-pattern.html>}}
 	.#.* {{<Brief overview|overview/index.cgi?page=1>}}
-	.* {{<Changelog|kwartz3-ChangeLog>}}
+	.#.* {{<Changelog|kwartz3-ChangeLog>}}
 
 
 .$ License
 	.* LGPL 2.1
-	   
+	     
 	   If you need looser license, please suggest me.
-	   
+	     
 	   Output scripts kwartz command generates are outside of the license.
 
 .$ Author

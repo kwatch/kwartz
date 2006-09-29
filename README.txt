@@ -30,6 +30,11 @@ Else download kwartz-ruby_x.x.x.tar.bz2 and install with setup.rb.
 
 == Copyright
 
+$Copyright$
+
+
+== License
+
 LGPL 2.1
 
 If you need looser license, please suggest me.

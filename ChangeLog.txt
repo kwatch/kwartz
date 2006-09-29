@@ -2,6 +2,10 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.142 (2006-09-29)
+	- [update] release preparation
+	- [change] website/*.html:  use prefix 'kwartz3ruby' instead of 'kwartz3-ruby'
+
 : rev.141 (2006-09-28)
 	- [update] users-guide, reference, and pattern-catalog are shared with kwartz-php
 	- [change] 'p-pattern.*' is renamed to 'pattern-catalog.*'

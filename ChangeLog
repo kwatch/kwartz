@@ -3,7 +3,14 @@
 .?updated:   $Date$
 
 
-* Release 3.1.0
+* Release 3.1.1 (2006-09-29)
+
+  [changes from 3.1.0]
+
+    - Testdata and documents are integrated with Kwartz-php.
+
+
+* Release 3.1.0 (2006-09-24)
 
   [enhancements from 3.0.0]
 
