@@ -1,0 +1,95 @@
+
+properties:
+  - release:	3.1.1
+
+
+parameters:
+  - u	:  users-guide
+  - r   :  reference
+  - p   :  pattern-catalog
+  - prefix : kwartz3php
+  - tagfile : site-design
+  - copyright:  copyright(c) 2006 kuwata-lab.com all rights reserved.
+  - symlinks:   [ .properties, $(tagfile).css, $(tagfile).ktag ]
+
+
+recipes:
+
+
+  - product:	:clean
+    method*: |
+	k_delete('$(prefix)-*', '$(p)', 'img');
+
+
+  - product:	:all
+    ingreds:	[ $(symlinks),
+		  $(prefix)-$(u).xhtml, $(prefix)-$(r).xhtml, $(prefix)-$(p).xhtml,
+		  $(prefix)-ChangeLog, $(prefix)-README.txt ]
+    method*: |
+	k_mkdir("img");
+	k_mcopy("img", "../doc/img/*.png");
+	k_mkdir("$(p)");
+	k_mcopy("$(p)", "../doc/$(p)/design.*");
+
+  - product:	.properties
+    method*: |
+	if (! file_exists($product))
+	    k_sys("ln -s ../../../kwartz-ruby/trunk/website/$product .");
+
+  - product:	$(tagfile).css
+    method*: &m1 |
+	if (! file_exists($product))
+	    k_sys("ln -s ../../../kuwata-lab/$product .");
+
+  - product:	$(tagfile).ktag
+    method*: *m1
+
+
+#  - product:	index.xhtml
+#    ingreds:	[ index.txt ]
+#    method*: |
+#	k_sys("kwaser -t $(tagfile) $ingred > $product"); 
+
+
+  - product:	$(prefix)-*.xhtml
+    ingreds:	[ $(prefix)-$(1).txt ]
+    byprods:	[ $(1).toc.html ]
+    method*: |
+	k_sys("kwaser -t $(tagfile) -bsn -T2 $ingred > $byprod");
+	k_sys("kwaser -t $(tagfile) -bsn     $ingred");
+	k_delete($byprod);
+	$replacer = array(
+		array('/\$Release(:.*?)?\$/', '$Release: $(release) $'),
+		array('/\$Copyright\$/', $copyright),
+		array('/href="($(u)|$(r)|$(p)).html"/', 'href="$(prefix)-$1.html"'),
+		array('/"docstyle\.css"/', '"site-design.css"'),
+	);
+	$filepattern = "$(prefix)-$(1)*.html";
+	k_edit($replacer, $filepattern);
+	$files = glob($filepattern);
+	foreach ($files as $file) {
+	    k_rename($file, preg_replace('/\.html$/', '.xhtml', $file));
+	}
+
+
+  - product:    $(prefix)-*.txt
+    ingreds:	[ ../doc/$(1).eruby ]
+    method*: |
+	$dir = '../doc';
+	$pwd = k_chdir($dir);
+	k_sys("kook $(1).txt");
+	k_backdir($pwd);
+	k_copy("../doc/$(1).txt", $product);
+
+
+  - product:	$(prefix)-ChangeLog
+    ingreds:	[ ../ChangeLog ]
+    method*: |
+	k_copy($ingred, $product);
+
+
+  - product:	$(prefix)-README.txt
+    ingreds:	[ ../README.txt ]
+    method*: |
+	k_copy($ingred, $product);
+	 

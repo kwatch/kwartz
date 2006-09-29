@@ -5,8 +5,7 @@ maintainers:
     role:    lead
 
 releases:
-  - version: 3.1.0
-#  - version: 0.3.0      # 3.1.0
+  - version: 3.1.1
     date:    2006-09-29
     state:   beta
     notes: |
@@ -18,7 +17,7 @@ documents:
   - doc/reference.html
   - doc/pattern-catalog.html
   - doc/pattern-catalog/design.*
-  - doc/img/fig04.png
+  - doc/img/*.png
   - README.txt
   - ChangeLog
   - LGPL

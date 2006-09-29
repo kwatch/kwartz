@@ -19,8 +19,8 @@ See users' guide ('doc/users-guide.html') for details.
 
 .$ Installation
 
-.1) Download 'Kwartz-3.1.0.tgz'
-.2) Type 'pear install Kwartz-3.1.0.tgz' with root user.
+.1) Download 'Kwartz-3.1.1.tgz'
+.2) Type 'pear install Kwartz-3.1.1.tgz' with root user.
 
 Kwartz-php requires PHP5.
 

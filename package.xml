@@ -18,69 +18,75 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <date>2006-09-29</date>
     <license>LGPL 2.1</license>
     <state>beta</state>
     <notes>public beta</notes>
     <filelist>
       <file role="script" baseinstalldir="../" name="bin/kwartz-php"
-            md5sum="0cdaf7d4e2cb58a98879c24ff486beee">
+            md5sum="3175e8ce31a20efcb9ac1c4b4a071a7a">
         <replace from="/usr/local/bin" to="PHP_BINDIR" type="php-const"/>
         <replace from="@data_dir@" to="data_dir" type="pear-config"/>
         <replace from="@doc_dir@" to="doc_dir" type="pear-config"/>
         <replace from="@php_dir@" to="php_dir" type="pear-config"/>
       </file>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzConfig.php"
-	    md5sum="bec99bf4fb249d777f772268fcfdf7cd"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzConverter.php"
-	    md5sum="55321ad246af7fc0e4ae090badac4e52"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzException.php"
+      <file role="php" baseinstalldir="/" name="Kwartz/Config.php"
+	    md5sum="b021fb94aef8f1a1e2ebae2bb35ad53b"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Converter.php"
+	    md5sum="7889316cff85825f1f2641f83f921863"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Exception.php"
 	    md5sum="fdd6c3ead2305640fcb6c5939e4daac0"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzMain.php"
-	    md5sum="90751b0e5588e812d54c4a93f4327602"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzNode.php"
-	    md5sum="21190bf34594bc8f061552522b3d3a92"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzParser.php"
-	    md5sum="f7062245b8843f1a7673dcee5ebbab1d"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzTranslator.php"
-	    md5sum="f33cfa21093e5c53545b9f373ce1d97f"/>
-      <file role="php" baseinstalldir="/" name="Kwartz/KwartzUtility.php"
-	    md5sum="75885f102a94068bef743bd437682106"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Main.php"
+	    md5sum="cb96eafde5efa1ebdf12eb9b747c66df"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Node.php"
+	    md5sum="2bbd6b4edd51600a5b923f92903079c4"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Parser.php"
+	    md5sum="72b76101b8cb9206f4e37899107c28d2"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Translator.php"
+	    md5sum="f04e83d07b36da0868110b5ec9015e0b"/>
+      <file role="php" baseinstalldir="/" name="Kwartz/Utility.php"
+	    md5sum="44c2480de8f19387beeebad46c955683"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Eperl.php"
-	    md5sum="57d446fcc22d30d5ae82a43871de3455"/>
+	    md5sum="da143a78a9375d0cbf0901c2ec36f494"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Erubis.php"
-	    md5sum="8bcbaf1be8bbc6d4958537bb7b782878"/>
+	    md5sum="282538980e46d5e52b4282365cdf5da6"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Eruby.php"
-	    md5sum="73f7b215dd9d6a8079b8f81bc75d6808"/>
+	    md5sum="3e5172a6075f286f791fc92224f1d705"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Jstl.php"
-	    md5sum="0118b1a2b281f43d745b1a63c47ab82f"/>
+	    md5sum="ca8b6fe42a861afc967c02d53829eae2"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Php.php"
-	    md5sum="cce0cda2ca70e3c0de51fe076ba534b4"/>
+	    md5sum="1588f2a7eb31e73020a621a965d85332"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Pierubis.php"
-	    md5sum="887070bf0fe12be4eb92a4cc8c297d6f"/>
+	    md5sum="129936c5c9276cb5b5bfc0e245585b5e"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Binding/Ruby.php"
-	    md5sum="0eaf18e01348980f5921488838610556"/>
+	    md5sum="8aa2b0b878576ead2f0ca6cc8fe41b12"/>
       <file role="php" baseinstalldir="/" name="Kwartz/Helper/Symfony.php"
 	    md5sum="628396572bfb24e758aff3e44f398917"/>
       <file role="doc" baseinstalldir="/" name="doc/docstyle.css"
 	    md5sum="d20b48bf36321ff9fd05e58acf96eb5b"/>
       <file role="doc" baseinstalldir="/" name="doc/users-guide.html"
-	    md5sum="4369c0e0f714c743074d648a272335e9"/>
+	    md5sum="adfa1138b8c6c772ecf9b35f0ee69ca6"/>
       <file role="doc" baseinstalldir="/" name="doc/reference.html"
-	    md5sum="5cbc3cf61804fc8489bb0b75b79b5626"/>
+	    md5sum="681eae3965528518670f7b36315055b4"/>
       <file role="doc" baseinstalldir="/" name="doc/pattern-catalog.html"
-	    md5sum="1087b9af749b27599a12b26216c34649"/>
+	    md5sum="5c0fdfa816abff6f516b15fabba90f65"/>
       <file role="doc" baseinstalldir="/" name="doc/pattern-catalog/design.css"
 	    md5sum="e85b9acb16a36e220b8d53e056329b86"/>
       <file role="doc" baseinstalldir="/" name="doc/pattern-catalog/design.html"
 	    md5sum="b551d667f600ceac2ff63c4311b55cda"/>
+      <file role="doc" baseinstalldir="/" name="doc/img/fig01.png"
+	    md5sum="b23a1ac42ae62ad69e0807776c333440"/>
+      <file role="doc" baseinstalldir="/" name="doc/img/fig02.png"
+	    md5sum="bac9425633be6dc508521b078d49f85e"/>
+      <file role="doc" baseinstalldir="/" name="doc/img/fig03.png"
+	    md5sum="caeb4014d0667c744154b1ccaa07c05e"/>
       <file role="doc" baseinstalldir="/" name="doc/img/fig04.png"
 	    md5sum="74073b643b26d44da46c6cec9547a1c8"/>
       <file role="doc" baseinstalldir="/" name="README.txt"
 	    md5sum="00920d2d459bb4d977f8a066b2979f9a"/>
       <file role="doc" baseinstalldir="/" name="ChangeLog"
-	    md5sum="891945cf7764c07afcc4759f6afff7cf"/>
+	    md5sum="126476658157a1b8c81c0535c27e4162"/>
       <file role="doc" baseinstalldir="/" name="LGPL"
 	    md5sum="7fbc338309ac38fefcd64b04bb903e34"/>
       <file role="doc" baseinstalldir="/" name="examples/breadcrumbs1/Makefile"
@@ -154,17 +160,17 @@
       <file role="doc" baseinstalldir="/" name="examples/table1/table1.php.plogic"
 	    md5sum="1449a3dbfc56c861ffa97b2e54993777"/>
       <file role="test" baseinstalldir="/" name="test/KwartzCompileTest.php"
-	    md5sum="cdfc32f958ebfa32eb63c33fe39a9949"/>
+	    md5sum="80df0fe1a041530c0027c34d753b9c0e"/>
       <file role="test" baseinstalldir="/" name="test/KwartzConverterTest.php"
-	    md5sum="e2ccc8110d1dcc9c46d2d8bd2159e9a5"/>
+	    md5sum="cf234a62b0a742d655913ff30054405b"/>
       <file role="test" baseinstalldir="/" name="test/KwartzDirectiveTest.php"
-	    md5sum="f94e8c3ec8325d6c854b2678a95e3a17"/>
+	    md5sum="ae9536206ec6b8ebc02b5a23c7d6cabd"/>
       <file role="test" baseinstalldir="/" name="test/KwartzMainTest.php"
-	    md5sum="e14d4cab5a028a065352ec654a338b25"/>
+	    md5sum="efdcb1a8732a6fcb304a64e6430912f1"/>
       <file role="test" baseinstalldir="/" name="test/KwartzParserTest.php"
-	    md5sum="22cff21e3a115780cea33d2b7e78c681"/>
+	    md5sum="50d5ce3d94f5cd1c0db29a9a68452904"/>
       <file role="test" baseinstalldir="/" name="test/KwartzRulesetTest.php"
-	    md5sum="1492ef6ebbeef819e0f35492220dfc58"/>
+	    md5sum="816c62b38707c5645df231a81f718164"/>
       <file role="test" baseinstalldir="/" name="test/KwartzTest.php"
 	    md5sum="0183020e0ce54895bd78d5e71f970b35"/>
       <file role="test" baseinstalldir="/" name="test/Kookbook.yaml"
@@ -187,7 +193,7 @@
   </release>
   <changelog>
     <release>
-      <version>3.1.0</version>
+      <version>3.1.1</version>
       <date>2006-09-29</date>
       <state>beta</state>
       <notes>* initial release
