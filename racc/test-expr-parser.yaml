@@ -1,0 +1,558 @@
+
+###
+- name:		literal1
+  desc:		integer
+  input:	'3'
+  expected: |
+	3
+
+- name:		literal2
+  desc:		float
+  input:	'3.14'
+  expected: |
+	3.14
+
+- name:		literal3
+  desc:		quoted string
+  input: |
+	'foo \'bar\'\n'
+  expected: |
+	"foo 'bar'\\n"
+
+- name:		literal4
+  desc:		double quoted string
+  input: |
+	"foo \"bar\"\n"
+  expected: |
+	"foo \"bar\"\n"
+
+- name:		literal5
+  desc:		'true'
+  input:	"true"
+  expected: |
+	true
+
+- name:		literal6
+  desc:		'false'
+  input:	"false"
+  expected: |
+	false
+
+- name:		literal7
+  desc:		'null'
+  input:	"null"
+  expected: |
+	null
+
+
+###
+- name:		arithmetic_expr1
+  desc:		op combinatory rule
+  input:	3 + 4 .+ 5 - 6
+  expected: |
+	-
+	  .+
+	    +
+	      3
+	      4
+	    5
+	  6
+
+- name:		arithmetic_expr2
+  desc:		op priority
+  input:	3 + 4 * 5 % 6
+  expected: |
+	+
+	  3
+	  %
+	    *
+	      4
+	      5
+	    6
+
+- name:		arithmetic_expr3
+  desc:		paren
+  input:	3*(x+2*(y-1))%1
+  expected: |
+	%
+	  *
+	    3
+	    +
+	      x
+	      *
+	        2
+		-
+		  y
+		  1
+	  1
+
+
+###
+- name:		relational1
+  input:	a == b
+  expected: |
+	==
+	  a
+	  b
+
+- name:		relational2
+  input:	a != b
+  expected: |
+	!=
+	  a
+	  b
+
+- name:		relational3
+  input:	a < b
+  expected: |
+	<
+	  a
+	  b
+
+- name:		relational4
+  input:	a <= b
+  expected: |
+	<=
+	  a
+	  b
+
+- name:		relational5
+  input:	a > b
+  expected: |
+	>
+	  a
+	  b
+
+- name:		relational6
+  input:	a >= b
+  expected: |
+	>=
+	  a
+	  b
+
+- name:		relational7
+  desc:		relational ops are nonassoc
+  input:	a < b < c
+  exception:	Kwartz::SyntaxError
+  errormsg:	"\nparse error on value \"<\" (\"<\")"
+
+  
+###
+- name:		logical1
+  input:	a && b
+  expected: |
+	&&
+	  a
+	  b
+
+- name:		logical2
+  input:	a || b
+  expected: |
+	||
+	  a
+	  b
+
+- name:		logical3
+  input:	'!a'
+  expected: |
+	!
+	  a
+
+- name:		logical4
+  desc:		logical op conjunction
+  input:	a || b || c && d || e && f
+  expected: |
+	||
+	  ||
+	    ||
+	      a
+	      b
+	    &&
+	      c
+	      d
+	  &&
+	    e
+	    f
+
+- name:		logical5
+  desc:		not operator conjunction
+  input:	'!a && ! b==c'
+  expected: |
+	&&
+	  !
+	    a
+	  ==
+	    !
+	      b
+	    c
+
+- name:		logical6
+  desc:		combination of relational and logical
+  input:	x < 0 && 100 < x || 40 < x && x < 60 && x != 50
+  expected: |
+	||
+	  &&
+	    <
+	      x
+	      0
+	    <
+	      100
+	      x
+	  &&
+	    &&
+	      <
+	        40
+		x
+	      <
+	        x
+		60
+	    !=
+	      x
+	      50
+
+
+###
+- name:		index1
+  input:	list[1]
+  expected: |
+	[]
+	  list
+	  1
+
+- name:		index2
+  input:	hash['key']
+  expected: |
+	[]
+	  hash
+	  "key"
+
+- name:		index3
+  input:	hash[:key]
+  expected: |
+	[:]
+	  hash
+	  "key"
+
+- name:		index4
+  desc:		index conjunction
+  input:	hash['str'][x+2*y][:key]
+  expected: |
+	[:]
+	  []
+	    []
+	      hash
+	      "str"
+	    +
+	      x
+	      *
+	        2
+		y
+	  "key"
+
+
+###
+- name:		funcall1
+  desc:		f()
+  input:	f()
+  expected: |
+	f()
+
+- name:		funcall2
+  desc:		f(x)
+  input:	f(x)
+  expected: |
+	f()
+	  x
+
+- name:		funcall3
+  desc:		f(x, 10, "foo", true)
+  input:	f(x, 10, "foo", true)
+  expected: |
+	f()
+	  x
+	  10
+	  "foo"
+	  true
+
+- name:		funcall4
+  desc:		f(g(h(3*(x+1))))
+  input:	f(g(h(3*(x+1))))
+  expected: |
+	f()
+	  g()
+	    h()
+	      *
+	        3
+		+
+		  x
+		  1
+
+
+###
+- name:		method1
+  desc:		obj.m1()
+  input:	obj.m1()
+  expected: |
+	.()
+	  obj
+	  .m1()
+
+- name:		method2
+  desc:		obj.m1(x, 10, "str")
+  input:	obj.m1(x, 10, "str")
+  expected: |
+	.()
+	  obj
+	  .m1()
+	    x
+	    10
+	    "str"
+
+- name:		method3
+  input:	(f()+g()).m1(x(a+x), z%2)
+  expected: |
+	.()
+	  +
+	    f()
+	    g()
+	  .m1()
+	    x()
+	      +
+	        a
+		x
+	    %
+	      z
+	      2
+
+- name:		method4
+  desc:		method conjunction
+  input:	obj.m1().m2(x,y).m3(x+y)
+  expected: |
+	.()
+	  .()
+	    .()
+	      obj
+	      .m1()
+	    .m2()
+	      x
+	      y
+	  .m3()
+	    +
+	      x
+	      y
+
+
+###
+- name:		property1
+  input:	obj.name
+  expected: |
+	.
+	  obj
+	  .name
+
+- name:		property2
+  input:	obj.prop1.prop2.prop3
+  expected: |
+	.
+	  .
+	    .
+	      obj
+	      .prop1
+	    .prop2
+	  .prop3
+
+- name:		property3
+  input:	(obj['key'].prop1).prop2
+  expected: |
+	.
+	  .
+	    []
+	      obj
+	      "key"
+	    .prop1
+	  .prop2
+
+
+###
+- name:		assignment1
+  input:	x = y + 1
+  expected: |
+	=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment2
+  input:	x += y + 1
+  expected: |
+	+=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment3
+  input:	x -= y + 1
+  expected: |
+	-=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment4
+  input:	x *= y + 1
+  expected: |
+	*=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment5
+  input:	x /= y + 1
+  expected: |
+	/=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment6
+  input:	x %= y + 1
+  expected: |
+	%=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment7
+  input:	x .+= y + 1
+  expected: |
+	.+=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment8
+  input:	x ||= y + 1
+  expected: |
+	||=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment9
+  input:	x &&= y + 1
+  expected: |
+	&&=
+	  x
+	  +
+	    y
+	    1
+
+- name:		assignment11
+  desc:		assignment conjunction
+  input:	x += y = z = null
+  expected: |
+	+=
+	  x
+	  =
+	    y
+	    =
+	      z
+	      null
+
+- name:		assignment12
+  desc:		index op is allowed on lhs
+  input:	list[i]['key'] = z
+  expected: |
+	=
+	  []
+	    []
+	      list
+	      i
+	    "key"
+	  z
+
+- name:		assignment13
+  desc:		index op is allowed on lhs
+  input:	object.method().prop = z
+  expected: |
+	=
+	  .
+	    .()
+	      object
+	      .method()
+	    .prop
+	  z
+ 
+- name:		assignment14
+  desc:		invalid lhs
+  input:
+    - x + y = z
+    - x && y = z
+    - x == y = z
+    - x() = z
+    - x.y() = z
+    - 123 = z
+    - '"foo" = z'
+    - true = z
+    - false = z
+    - null = z
+  exception:	Kwartz::SemanticError
+  errormsg:	"=: invalid left-side value."
+
+
+###
+- name:		conditional1
+  input:	'cond ? val1 : val2'
+  expected: |
+	?:
+	  cond
+	  val1
+	  val2
+
+- name:		conditional2
+  input:	'abs = x > y ? x - y : y - x'
+  expected: |
+	=
+	  abs
+	  ?:
+	    >
+	      x
+	      y
+	    -
+	      x
+	      y
+	    -
+	      y
+	      x
+
+- name:		conditional3
+  desc:		'nested conditional (answer: expr x > y ? (x > z ? x : z) : (y > z ? y : z))'
+  input:	'max = x > y ? x > z ? x : z : y > z ? y : z'
+  expected: |
+	=
+	  max
+	  ?:
+	    >
+	      x
+	      y
+	    ?:
+	      >
+	        x
+		z
+	      x
+	      z
+	    ?:
+	      >
+	        y
+		z
+	      y
+	      z
+

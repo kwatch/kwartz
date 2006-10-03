@@ -1,0 +1,65 @@
+
+properties:
+  - i      : false
+  - tab_files   :  [ expr-parser.tab.rb, stmt-parser.tab.rb, ruleset-parser.tab.rb ]
+
+parameters:
+
+  - rook_product:  :main
+
+recipes:
+
+  - product:	:main
+    ingreds:	[ parser.tab.rb ]
+    method*: |
+	opt = @i ? '-i' : ''
+	sys "ruby parser.rb #{opt}"
+
+
+  - product:	:test
+    ingreds:	[ $(tab_files) ]
+    method*: |
+	sys "ruby test-expr-parser.rb"
+	sys "ruby test-stmt-parser.rb"
+	sys "ruby test-ruleset-parser.rb"
+
+
+  - product:	:expr
+    desc:	execute expression parser interactively
+    ingreds:	[ parser.rb, expr-parser.tab.rb ]
+    method*: |
+	sys "ruby #{@ingred} -expr"
+
+
+  - product:	:stmt
+    desc:	execute statement parser interactively
+    ingreds:	[ parser.rb, stmt-parser.tab.rb ]
+    method*: |
+	sys "ruby #{@ingred} -stmt"
+
+  - product:	:ruleset
+    desc:	execute rulset parser interactively
+    ingreds:	[ parser.rb, ruleset-parser.tab.rb ]
+    method*: |
+	sys "ruby #{@ingred} -ruleset"
+
+
+  - product:	:racc
+    desc:	generate *.tab.rb files
+    ingreds:	[ $(tab_files) ]
+
+
+  - product:	*.tab.rb
+    ingreds:	[ $(1).racc ]
+    method*: |
+	sys "racc #{@ingred}"
+
+
+  - product:	*-parser.racc
+    ingreds:	[ parser.racc ]
+    method*: |
+	ENV['KIND'] = '$(1)'
+	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"
+	ENV['KIND'] = nil
+
+

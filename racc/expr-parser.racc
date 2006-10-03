@@ -1,0 +1,76 @@
+
+class Kwartz::ExpressionParser
+
+token IDENT STRING INTEGER FLOAT TRUE FALSE NULL
+
+prechigh
+  left  '.' '[' ']' '[:'
+  left  '*' '/' '%'
+  left  '+' '-' '.+'
+  nonassoc '==' '!=' '<' '<=' '>' '>='
+  left  '!'
+  left  '&&'
+  left  '||'
+  right  '?' ':'
+  right '=' '+=' '-=' '*=' '/=' '%=' '.+=' '||=' '&&='
+preclow
+
+rule
+
+
+  expr	: expr '+' expr  { result = @builder.build_arithmetic_expr(:'+', val[0], val[2]) }
+  	| expr '-' expr  { result = @builder.build_arithmetic_expr(:'-', val[0], val[2]) }
+	| expr '*' expr  { result = @builder.build_arithmetic_expr(:'*', val[0], val[2]) }
+	| expr '/' expr  { result = @builder.build_arithmetic_expr(:'/', val[0], val[2]) }
+	| expr '%' expr  { result = @builder.build_arithmetic_expr(:'%', val[0], val[2]) }
+	| expr '.+' expr { result = @builder.build_arithmetic_expr(:'.+', val[0], val[2]) }
+        #	
+	| expr '==' expr { result = @builder.build_relational_expr(:'==', val[0], val[2]) }
+	| expr '!=' expr { result = @builder.build_relational_expr(:'!=', val[0], val[2]) }
+	| expr '<'  expr { result = @builder.build_relational_expr(:'<',  val[0], val[2]) }
+	| expr '<=' expr { result = @builder.build_relational_expr(:'<=', val[0], val[2]) }
+	| expr '>'  expr { result = @builder.build_relational_expr(:'>',  val[0], val[2]) }
+	| expr '>=' expr { result = @builder.build_relational_expr(:'>=', val[0], val[2]) }
+        #
+	| expr '&&' expr { result = @builder.build_relational_expr(:'&&', val[0], val[2]) }
+	| expr '||' expr { result = @builder.build_relational_expr(:'||', val[0], val[2]) }
+	| '!' primary    { result = @builder.build_relational_expr(:'!',  val[1], nil) }
+	#
+	| '-' primary    { result = @builder.build_arithmetic_expr(:'-.', val[1]) }
+	| '+' primary    { result = @builder.build_arithmetic_expr(:'+.', val[1]) }
+	#
+	| expr '?' expr ':' expr { result = @builder.build_conditional_expr(val[0], val[2], val[4]) }
+	#
+        | expr '='   expr { result = @builder.build_assignment_expr(:'=',   val[0], val[2]) }
+	| expr '+='  expr { result = @builder.build_assignment_expr(:'+=',  val[0], val[2]) }
+	| expr '-='  expr { result = @builder.build_assignment_expr(:'-=',  val[0], val[2]) }
+	| expr '*='  expr { result = @builder.build_assignment_expr(:'*=',  val[0], val[2]) }
+	| expr '/='  expr { result = @builder.build_assignment_expr(:'/=',  val[0], val[2]) }
+	| expr '%='  expr { result = @builder.build_assignment_expr(:'%=',  val[0], val[2]) }
+	| expr '.+=' expr { result = @builder.build_assignment_expr(:'.+=', val[0], val[2]) }
+	| expr '||=' expr { result = @builder.build_assignment_expr(:'||=', val[0], val[2]) }
+	| expr '&&=' expr { result = @builder.build_assignment_expr(:'&&=', val[0], val[2]) }
+	#
+	| primary        { result = val[0] }
+
+  primary   : primary '[' expr ']'  { result = @builder.build_index_expr(:'[]', val[0], val[2]) }
+            | primary '[:' IDENT ']' { result = @builder.build_index2_expr(:'[:]', val[0], val[2]) }
+            | primary '.' IDENT '(' args ')' { result = @builder.build_method_expr(val[0], val[2], val[4]) }
+            | primary '.' IDENT { result = @builder.build_property_expr(val[0], val[2]) }
+            | IDENT '(' args ')'  { result = @builder.build_funcall_expr(val[0], val[2]) }
+            | IDENT         { result = @builder.build_variable_literal(val[0]) }
+            | literal       { result = val[0] }
+            | '(' expr ')'  { result = val[1] }
+
+  literal   : STRING     { result = @builder.build_string_literal(val[0]) }
+            | INTEGER    { result = @builder.build_integer_literal(val[0].to_i) }
+            | FLOAT      { result = @builder.build_float_literal(val[0].to_f) }
+            | TRUE       { result = @builder.build_true_literal(true) }
+            | FALSE      { result = @builder.build_false_literal(false) }
+            | NULL       { result = @builder.build_null_literal(nil) }
+
+  args  :  args ',' expr   { result = val[0] << val[2] }
+        |  expr            { result = [ val[0] ] }
+	|                  { result = [] }
+
+end

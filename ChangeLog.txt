@@ -2,6 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.145 (2006-10-04)
+	- [experimental] add 'racc/' dir
+
+: rev.144 (2006-09-30)
+	- [release] 3.1.1
+
 : rev.143 (2006-09-30)
 	- [bugfix] testcase-helper.rb: undefined local variable 'special-names'
 

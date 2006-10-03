@@ -1,0 +1,210 @@
+###
+- name:		ruleset1
+  input: |
+	#foo { value: s; }
+  expected: |
+	#foo {
+	  value:
+	    s
+	}
+
+- name:		ruleset2
+  input: |
+	#mark2 {
+	  stag: start_tag();
+	  cont: content();
+	  etag: end_tag();
+	  elem: element();
+	}
+  expected: |
+	#mark2 {
+	  stag:
+	    start_tag()
+	  cont:
+	    content()
+	  etag:
+	    end_tag()
+	  elem:
+	    element()
+	}
+
+- name:		ruleset3
+  input: |
+	#mark3 {
+	  value: value();
+	  attrs: 'class' klass, 'name' name, 'href' 'http://'.+host;
+	  append: checked ? ' checked="checked"' : '';
+	  remove: 'id', 'value', "title";
+	  tagname: "html:anchor";
+	}
+  expected: |
+	#mark3 {
+	  value:
+	    value()
+	  attrs:
+	    - 'class'
+	      klass
+	    - 'name'
+	      name
+	    - 'href'
+	      .+
+	        "http://"
+		host
+	  append:
+	    ?:
+	      checked
+	      " checked=\"checked\""
+	      ""
+	  remove:
+	    - 'id'
+	    - 'value'
+	    - 'title'
+	  tagname: 'html:anchor'
+	}
+
+- name:		ruleset4
+  input: |
+	#mark4 {
+	  stag:  s;
+	  etag:  e;
+	  cont:  c;
+	  elem:  m;
+	  value: v;
+	  attrs: 'a1' v1,
+	         "a2" v2;
+	  append:  e1, e2;
+	}
+	#mark4E {
+	  Stag:  s;
+	  Etag:  e;
+	  Cont:  c;
+	  Elem:  m;
+	  Value: v;
+	  Attrs: 'a1' v1,
+	         "a2" v2;
+	  Append:  e1, e2;
+	}
+	#mark4X {
+	  STAG:  s;
+	  ETAG:  e;
+	  CONT:  c;
+	  ELEM:  m;
+	  VALUE: v;
+	  ATTRS: 'a1' v1,
+	         "a2" v2;
+	  APPEND:  e1, e2;
+	}
+  expected: |
+	#mark4 {
+	  stag:
+	    s
+	  cont:
+	    c
+	  etag:
+	    e
+	  elem:
+	    m
+	  value:
+	    v
+	  attrs:
+	    - 'a1'
+	      v1
+	    - 'a2'
+	      v2
+	  append:
+	    e1
+	    e2
+	}
+	#mark4E {
+	  stag:
+	    E()
+	      s
+	  cont:
+	    E()
+	      c
+	  etag:
+	    E()
+	      e
+	  elem:
+	    E()
+	      m
+	  value:
+	    E()
+	      v
+	  attrs:
+	    - 'a1'
+	      E()
+	        v1
+	    - 'a2'
+	      E()
+	        v2
+	  append:
+	    E()
+	      e1
+	    E()
+	      e2
+	}
+	#mark4X {
+	  stag:
+	    X()
+	      s
+	  cont:
+	    X()
+	      c
+	  etag:
+	    X()
+	      e
+	  elem:
+	    X()
+	      m
+	  value:
+	    X()
+	      v
+	  attrs:
+	    - 'a1'
+	      X()
+	        v1
+	    - 'a2'
+	      X()
+	        v2
+	  append:
+	    X()
+	      e1
+	    X()
+	      e2
+	}
+
+- name:		elem5
+  desc:		"'logic:' part"
+  input: |
+	#elem5 {
+	  logic: {
+	    i = 0;
+	    foreach (value in list) {
+	      i += 1;
+	      _stag;
+	      _cont;
+	      _etag;
+	    }
+	  }
+	}
+  expected: |
+	#elem5 {
+	  logic: {
+	    :EXPR
+	      =
+	        i
+		0
+	    :FOREACH
+	      value
+	      list
+	      :BLOCK
+	        :EXPR
+		  +=
+		    i
+		    1
+		_stag
+		_cont
+		_etag
+	  }
+	}
