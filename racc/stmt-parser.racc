@@ -24,38 +24,38 @@ rule
         |                { result = [] }
 
   stmt  : PRINT '(' args ')' ';'
-            { result = @builder.build_print_stmt(val[2]) }
+            { result = @builder.build_print_stmt(val[0], val[2]) }
         | FOREACH '(' primary in expr ')' block
-	    { result = @builder.build_foreach_stmt(val[2], val[4], val[6]) }
+	    { result = @builder.build_foreach_stmt(val[0], val[2], val[4], val[6]) }
 	| WHILE '(' expr ')' block
-	    { result = @builder.build_while_stmt(val[2], val[4]) }
+	    { result = @builder.build_while_stmt(val[0], val[2], val[4]) }
 	| IF '(' expr ')' block else_clause
-	    { result = @builder.build_if_stmt(val[2], val[4], val[5]) }
+	    { result = @builder.build_if_stmt(val[0], val[2], val[4], val[5]) }
 	| BREAK ';'
-	    { result = @builder.build_break_stmt(); }
+	    { result = @builder.build_break_stmt(val[0]); }
 	| CONTINUE ';'
-	    { result = @builder.build_continue_stmt(); }
+	    { result = @builder.build_continue_stmt(val[0]); }
 	| STAG ';'
-	    { result = @builder.build_stag_stmt() }
+	    { result = @builder.build_stag_stmt(val[0]) }
 	| ETAG ';'
-	    { result = @builder.build_etag_stmt() }
+	    { result = @builder.build_etag_stmt(val[0]) }
 	| CONT ';'
-	    { result = @builder.build_cont_stmt() }
+	    { result = @builder.build_cont_stmt(val[0]) }
 	| ELEM ';'
-	    { result = @builder.build_elem_stmt() }
+	    { result = @builder.build_elem_stmt(val[0]) }
 	| ELEMENT '(' IDENT ')' ';'
-	    { result = @builder.build_element_stmt(val[2]) }
+	    { result = @builder.build_element_stmt(val[0], val[2][1]) }
 	| CONTENT '(' IDENT ')' ';'
-	    { result = @builder.build_content_stmt(val[2]) }
+	    { result = @builder.build_content_stmt(val[0], val[2][1]) }
 	| expr ';'
-	    { result = @builder.build_expression_stmt(val[0]) }
+	    { result = @builder.build_expression_stmt(val[1], val[0]) }
 
   block : '{' stmts '}'
                   { 
-		    result = @builder.build_block_stmt(val[1]) }
+		    result = @builder.build_block_stmt(val[0], val[1]) }
 
   else_clause : ELSEIF '(' expr ')' block else_clause
-                  { result = @builder.build_if_stmt(val[2], val[4], val[5]) }
+                  { result = @builder.build_if_stmt(val[0], val[2], val[4], val[5]) }
               | ELSE block
                   { result = val[1] }
 	      |
@@ -65,56 +65,58 @@ rule
         | IDENT { raise SyntaxError.new("#{@token_val}: '=' or 'in' expected.") if @token_val != 'in' }
 
 
-  expr	: expr '+' expr  { result = @builder.build_arithmetic_expr(:'+', val[0], val[2]) }
-  	| expr '-' expr  { result = @builder.build_arithmetic_expr(:'-', val[0], val[2]) }
-	| expr '*' expr  { result = @builder.build_arithmetic_expr(:'*', val[0], val[2]) }
-	| expr '/' expr  { result = @builder.build_arithmetic_expr(:'/', val[0], val[2]) }
-	| expr '%' expr  { result = @builder.build_arithmetic_expr(:'%', val[0], val[2]) }
-	| expr '.+' expr { result = @builder.build_arithmetic_expr(:'.+', val[0], val[2]) }
+  expr	: expr '+' expr  { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
+  	| expr '-' expr  { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
+	| expr '*' expr  { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
+	| expr '/' expr  { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
+	| expr '%' expr  { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
+	| expr '.+' expr { result = @builder.build_arithmetic_expr(val[1], val[0], val[2]) }
         #	
-	| expr '==' expr { result = @builder.build_relational_expr(:'==', val[0], val[2]) }
-	| expr '!=' expr { result = @builder.build_relational_expr(:'!=', val[0], val[2]) }
-	| expr '<'  expr { result = @builder.build_relational_expr(:'<',  val[0], val[2]) }
-	| expr '<=' expr { result = @builder.build_relational_expr(:'<=', val[0], val[2]) }
-	| expr '>'  expr { result = @builder.build_relational_expr(:'>',  val[0], val[2]) }
-	| expr '>=' expr { result = @builder.build_relational_expr(:'>=', val[0], val[2]) }
+	| expr '==' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '!=' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '<'  expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '<=' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '>'  expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '>=' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
         #
-	| expr '&&' expr { result = @builder.build_relational_expr(:'&&', val[0], val[2]) }
-	| expr '||' expr { result = @builder.build_relational_expr(:'||', val[0], val[2]) }
-	| '!' primary    { result = @builder.build_relational_expr(:'!',  val[1], nil) }
+	| expr '&&' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| expr '||' expr { result = @builder.build_relational_expr(val[1], val[0], val[2]) }
+	| '!' primary    { result = @builder.build_relational_expr(val[0], val[1], nil) }
 	#
-	| '-' primary    { result = @builder.build_arithmetic_expr(:'-.', val[1]) }
-	| '+' primary    { result = @builder.build_arithmetic_expr(:'+.', val[1]) }
+	| '-' primary    { result = @builder.build_unary_expr(val[0], val[1]) }
+	| '+' primary    { result = @builder.build_unary_expr(val[0], val[1]) }
 	#
-	| expr '?' expr ':' expr { result = @builder.build_conditional_expr(val[0], val[2], val[4]) }
+	| expr '?' expr ':' expr { result = @builder.build_conditional_expr(val[1], val[0], val[2], val[4]) }
 	#
-        | expr '='   expr { result = @builder.build_assignment_expr(:'=',   val[0], val[2]) }
-	| expr '+='  expr { result = @builder.build_assignment_expr(:'+=',  val[0], val[2]) }
-	| expr '-='  expr { result = @builder.build_assignment_expr(:'-=',  val[0], val[2]) }
-	| expr '*='  expr { result = @builder.build_assignment_expr(:'*=',  val[0], val[2]) }
-	| expr '/='  expr { result = @builder.build_assignment_expr(:'/=',  val[0], val[2]) }
-	| expr '%='  expr { result = @builder.build_assignment_expr(:'%=',  val[0], val[2]) }
-	| expr '.+=' expr { result = @builder.build_assignment_expr(:'.+=', val[0], val[2]) }
-	| expr '||=' expr { result = @builder.build_assignment_expr(:'||=', val[0], val[2]) }
-	| expr '&&=' expr { result = @builder.build_assignment_expr(:'&&=', val[0], val[2]) }
+        | expr '='   expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '+='  expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '-='  expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '*='  expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '/='  expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '%='  expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '.+=' expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '||=' expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
+	| expr '&&=' expr { result = @builder.build_assignment_expr(val[1], val[0], val[2]) }
 	#
 	| primary        { result = val[0] }
 
-  primary   : primary '[' expr ']'  { result = @builder.build_index_expr(:'[]', val[0], val[2]) }
-            | primary '[:' IDENT ']' { result = @builder.build_index2_expr(:'[:]', val[0], val[2]) }
-            | primary '.' IDENT '(' args ')' { result = @builder.build_method_expr(val[0], val[2], val[4]) }
-            | primary '.' IDENT { result = @builder.build_property_expr(val[0], val[2]) }
+  primary   : primary '[' expr ']'  { result = @builder.build_index_expr(val[1], val[0], val[2]) }
+            | primary '[:' word ']' { result = @builder.build_index2_expr(val[1], val[0], val[2]) }
+            | primary '.' IDENT '(' args ')' { result = @builder.build_method_expr(val[1], val[0], val[2][1], val[4]) }
+            | primary '.' IDENT { result = @builder.build_property_expr(val[1], val[0], val[2][1]) }
             | IDENT '(' args ')'  { result = @builder.build_funcall_expr(val[0], val[2]) }
             | IDENT         { result = @builder.build_variable_literal(val[0]) }
             | literal       { result = val[0] }
             | '(' expr ')'  { result = val[1] }
 
   literal   : STRING     { result = @builder.build_string_literal(val[0]) }
-            | INTEGER    { result = @builder.build_integer_literal(val[0].to_i) }
-            | FLOAT      { result = @builder.build_float_literal(val[0].to_f) }
-            | TRUE       { result = @builder.build_true_literal(true) }
-            | FALSE      { result = @builder.build_false_literal(false) }
-            | NULL       { result = @builder.build_null_literal(nil) }
+            | INTEGER    { result = @builder.build_integer_literal(val[0]) }
+            | FLOAT      { result = @builder.build_float_literal(val[0]) }
+            | TRUE       { result = @builder.build_true_literal(val[0]) }
+            | FALSE      { result = @builder.build_false_literal(val[0]) }
+            | NULL       { result = @builder.build_null_literal(val[0]) }
+
+  word  :  IDENT         { result = @builder.build_string_literal(val[0]) }
 
   args  :  args ',' expr   { result = val[0] << val[2] }
         |  expr            { result = [ val[0] ] }

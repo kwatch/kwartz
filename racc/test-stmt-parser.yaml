@@ -195,7 +195,7 @@
 - name:		foreach4
   input:	foreach (item['key'] = list) { print(item['key']); }
   exception:	Kwartz::SemanticError
-  errormsg:	'[]: invalid loop-variable of foreach statement.'
+  errormsg:	'1:14: []: invalid loop-variable of foreach statement.'
 
 
 ###

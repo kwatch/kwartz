@@ -44,12 +44,12 @@
 	  attrs:
 	    - 'class'
 	      klass
-	    - 'name'
-	      name
 	    - 'href'
 	      .+
 	        "http://"
 		host
+	    - 'name'
+	      name
 	  append:
 	    ?:
 	      checked
@@ -116,58 +116,58 @@
 	    e2
 	}
 	#mark4E {
-	  stag:
+	  Stag:
 	    E()
 	      s
-	  cont:
+	  Cont:
 	    E()
 	      c
-	  etag:
+	  Etag:
 	    E()
 	      e
-	  elem:
+	  Elem:
 	    E()
 	      m
-	  value:
+	  Value:
 	    E()
 	      v
-	  attrs:
+	  Attrs:
 	    - 'a1'
 	      E()
 	        v1
 	    - 'a2'
 	      E()
 	        v2
-	  append:
+	  Append:
 	    E()
 	      e1
 	    E()
 	      e2
 	}
 	#mark4X {
-	  stag:
+	  STAG:
 	    X()
 	      s
-	  cont:
+	  CONT:
 	    X()
 	      c
-	  etag:
+	  ETAG:
 	    X()
 	      e
-	  elem:
+	  ELEM:
 	    X()
 	      m
-	  value:
+	  VALUE:
 	    X()
 	      v
-	  attrs:
+	  ATTRS:
 	    - 'a1'
 	      X()
 	        v1
 	    - 'a2'
 	      X()
 	        v2
-	  append:
+	  APPEND:
 	    X()
 	      e1
 	    X()

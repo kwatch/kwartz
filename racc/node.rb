@@ -11,8 +11,10 @@ module Kwartz
 
   class Node
 
-    def initialize(token)
+    def initialize(token, linenum, column)
       @token = token
+      @linenum = linenum
+      @column = column
     end
     attr_accessor :token
     attr_accessor :parent
@@ -24,8 +26,7 @@ module Kwartz
     end
 
 
-    def _error(message)
-      linenum = column = nil
+    def _error(message, linenum, column)
       return SemanticError.new(message, linenum, column)
     end
 
@@ -56,8 +57,8 @@ module Kwartz
 
   class BinaryExpression < Expression
 
-    def initialize(token, left, right)
-      super(token)
+    def initialize(token, left, right, linenum, column)
+      super(token, linenum, column)
       @left = left
       @right = right
       left.parent  = self if left
@@ -94,10 +95,10 @@ module Kwartz
   ## '=', '+=', '-=', '*=', '/=', '%=', '.+='
   class AssignmentExpression < BinaryExpression
 
-    def initialize(token, left, right)
-      super(token, left, right)
+    def initialize(token, left, right, linenum, column)
+      super(token, left, right, linenum, column)
       unless left.available_as_lhs?
-        raise _error("#{@token}: invalid left-side value.")
+        raise _error("#{@token}: invalid left-side value.", linenum, column)
       end
     end
 
@@ -117,8 +118,8 @@ module Kwartz
   ## conditional operator ('?' and ':')
   class ConditionalExpression < Expression
 
-    def initialize(condition, left, right)
-      super(:'?:')
+    def initialize(condition, left, right, linenum, column)
+      super(:'?:', linenum, column)
       @condition = condition
       @left = left
       @right = right
@@ -139,8 +140,8 @@ module Kwartz
 
   class FuncallExpression < Expression
 
-    def initialize(funcname, arguments)
-      super(:'()')
+    def initialize(funcname, arguments, linenum, column)
+      super(:'()', linenum, column)
       @funcname = funcname
       @arguments = arguments
       arguments.each do |expr| expr.parent = self end
@@ -161,8 +162,8 @@ module Kwartz
 
   class MethodExpression < Expression
 
-    def initialize(receiver, methodname, arguments)
-      super(:'.()')
+    def initialize(receiver, methodname, arguments, linenum, column)
+      super(:'.()', linenum, column)
       @receiver = receiver
       @methodname = methodname
       @arguments = arguments
@@ -186,8 +187,8 @@ module Kwartz
 
   class PropertyExpression < Expression
 
-    def initialize(receiver_expr, property_name)
-      super(:'.')
+    def initialize(receiver_expr, property_name, linenum, column)
+      super(:'.', linenum, column)
       @receiver = receiver_expr
       @propname = property_name
       receiver_expr.parent = self
@@ -211,8 +212,8 @@ module Kwartz
 
   class Literal < Expression
 
-    def initialize(token, value)
-      super(token)
+    def initialize(token, value, linenum, column)
+      super(token, linenum, column)
       @value = value
     end
     attr_accessor :value
@@ -226,8 +227,8 @@ module Kwartz
 
 
   class VariableLiteral < Literal
-    def initialize(varname)
-      super(:VARIABLE, varname)
+    def initialize(varname, linenum, column)
+      super(:VARIABLE, varname, linenum, column)
     end
     alias name value
 
@@ -243,8 +244,8 @@ module Kwartz
 
 
   class StringLiteral < Literal
-    def initialize(value)
-      super(:STRING, value)
+    def initialize(value, linenum, column)
+      super(:STRING, value, linenum, column)
     end
   end
 
@@ -255,15 +256,15 @@ module Kwartz
 
 
   class IntegerLiteral < Literal
-    def initialize(value)
-      super(:INTEGER, value)
+    def initialize(value, linenum, column)
+      super(:INTEGER, value, linenum, column)
     end
   end
 
 
   class FloatLiteral < Literal
-    def initialize(value)
-      super(:INTEGER, value)
+    def initialize(value, linenum, column)
+      super(:INTEGER, value, linenum, column)
     end
   end
 
@@ -274,22 +275,22 @@ module Kwartz
 
 
   class TrueLiteral < Literal
-    def initialize(value=true)
-      super(:TRUE, value)
+    def initialize(value, linenum, column)
+      super(:TRUE, value, linenum, column)
     end
   end
 
 
   class FalseLiteral < Literal
-    def initialize(value=false)
-      super(:FALSE, value)
+    def initialize(value, linenum, column)
+      super(:FALSE, value, linenum, column)
     end
   end
 
 
   class NullLiteral < Literal
-    def initialize(value=nil)
-      super(:NULL, value)
+    def initialize(value, linenum, column)
+      super(:NULL, value, linenum, column)
     end
     def _inspect(level=0, buf='')
       _inspect_value(level, buf, 'null')
@@ -311,8 +312,8 @@ module Kwartz
 
   class ExpressionStatement < Statement
 
-    def initialize(expression)
-      super(:EXPR)
+    def initialize(expression, linenum, column)
+      super(:EXPR, linenum, column)
       @expression = expression
       expression.parent = self
     end
@@ -330,8 +331,8 @@ module Kwartz
 
   class PrintStatement < Statement
 
-    def initialize(arguments)
-      super(:PRINT)
+    def initialize(arguments, linenum, column)
+      super(:PRINT, linenum, column)
       @arguments = arguments
       arguments.each do |expr| expr.parent = self end
     end
@@ -349,8 +350,8 @@ module Kwartz
 
   class IfStatement < Statement
 
-    def initialize(condition, then_stmt, else_stmt=nil)
-      super(:IF)
+    def initialize(condition, then_stmt, else_stmt, linenum, column)
+      super(:IF, linenum, column)
       @condition = condition   # expression
       @then_stmt = then_stmt   # block-stmt
       @else_stmt = else_stmt   # block-stmt, if-stmt, or nil
@@ -374,8 +375,8 @@ module Kwartz
 
   class WhileStatement < Statement
 
-    def initialize(condition_expr, body)
-      super(:WHILE)
+    def initialize(condition_expr, body, linenum, column)
+      super(:WHILE, linenum, column)
       @condition = condition_expr
       @body = body
       condition_expr.parent = body.parent = self
@@ -395,13 +396,13 @@ module Kwartz
 
   class ForeachStatement < Statement
 
-    def initialize(loopvar_expr, list_expr, body)
-      super(:FOREACH)
+    def initialize(loopvar_expr, list_expr, body, linenum, column)
+      super(:FOREACH, linenum, column)
       @loopvar = loopvar_expr
       @list = list_expr
       @body = body
       unless @loopvar.token == :VARIABLE
-        raise _error("#{@loopvar.token}: invalid loop-variable of foreach statement.")
+        raise _error("#{@loopvar.token}: invalid loop-variable of foreach statement.", @loopvar.linenum, @loopvar.column)
       end
       loopvar_expr.parent = list_expr.parent = body.parent = self
     end
@@ -421,8 +422,8 @@ module Kwartz
 
   class BlockStatement < Statement
 
-    def initialize(statements)
-      super(:BLOCK)
+    def initialize(statements, linenum, column)
+      super(:BLOCK, linenum, column)
       @statements = statements
       statements.each do |stmt| stmt.parent = self end
     end
@@ -442,8 +443,8 @@ module Kwartz
 
   class BreakStatement < Statement
 
-    def initialize()
-      super(:BREAK)
+    def initialize(linenum, column)
+      super(:BREAK, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -456,8 +457,8 @@ module Kwartz
 
   class ContinueStatement < Statement
 
-    def initialize()
-      super(:CONTINUE)
+    def initialize(linenum, column)
+      super(:CONTINUE, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -470,8 +471,8 @@ module Kwartz
 
   class NativeStatement < Statement
 
-    def initialize(native_code)
-      super(:NATIVE)
+    def initialize(native_code, linenum, column)
+      super(:NATIVE, linenum, column)
       @code = native_code
     end
     attr_accessor :code
@@ -492,8 +493,8 @@ module Kwartz
 
   class StagStatement < TagStatement
 
-    def initialize()
-      super(:STAG)
+    def initialize(linenum, column)
+      super(:STAG, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -507,8 +508,8 @@ module Kwartz
 
   class EtagStatement < TagStatement
 
-    def initialize()
-      super(:ETAG)
+    def initialize(linenum, column)
+      super(:ETAG, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -522,8 +523,8 @@ module Kwartz
 
   class ContStatement < TagStatement
 
-    def initialize()
-      super(:CONT)
+    def initialize(linenum, column)
+      super(:CONT, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -537,8 +538,8 @@ module Kwartz
 
   class ElemStatement < TagStatement
 
-    def initialize()
-      super(:ELEM)
+    def initialize(linenum, column)
+      super(:ELEM, linenum, column)
     end
 
     def _inspect(level=0, buf='')
@@ -552,8 +553,8 @@ module Kwartz
 
   class ElementStatement < TagStatement
 
-    def initialize(name)
-      super(:ELEMENT)
+    def initialize(name, linenum, column)
+      super(:ELEMENT, linenum, column)
       @name = name
     end
 
@@ -568,8 +569,8 @@ module Kwartz
 
   class ContentStatement < TagStatement
 
-    def initialize(name)
-      super(:CONTENT)
+    def initialize(name, linenum, column)
+      super(:CONTENT, linenum, column)
       @name = name
     end
 
@@ -586,53 +587,76 @@ module Kwartz
   ##########
 
 
+  class Declaration < Node
+
+    def initialize(token, propname, argument, linenum, column)
+      super(token, linenum, column)
+      @propname = propname
+      @argument = argument
+    end
+    attr_accessor :propname, :argument
+
+    def _inspect(level=0, buf='')
+      case @token
+      when :P_APPEND
+        _inspect_value(level, buf, @propname+':')
+        @argument.each do |expr| expr._inspect(level+1, buf) end
+      when :P_ATTRS
+        _inspect_value(level, buf, @propname+':')
+        hash = @argument
+        hash.keys.sort.each do |name|
+          expr = hash[name]
+          _inspect_value(level+1, buf, "- '#{name}'")
+          expr._inspect(level+2, buf)
+        end
+      when :P_LOGIC
+        _inspect_value(level, buf, @propname+': {')
+        @argument.each do |stmt| stmt._inspect(level+1, buf) end
+        _inspect_value(level, buf, '}')
+      when :P_REMOVE
+        _inspect_value(level, buf, @propname+':')
+        @argument.each do |name|
+          _inspect_value(level+1, buf, "- '#{name}'")
+        end
+      when :P_TAGNAME
+        _inspect_value(level, buf, @propname+": '#{@argument}'")
+      else
+        _inspect_value(level, buf, @propname+':')
+        @argument._inspect(level+1, buf)
+      end
+      return buf
+    end
+
+  end
+
+
+  class Selector < Node
+
+    def initialize(value, linenum, column)
+      super(:SELECTOR, linenum, column)
+      @value = value
+    end
+    attr_reader :value
+
+  end
+
+
   class Ruleset < Node
 
-    def initialize(selectors, declarations)
-      super(:RULESET)
+    def initialize(selectors, declarations, linenum, column)
+      super(:RULESET, linenum, column)
       @selectors = selectors         # list
-      @declarations = declarations   # hash
+      @declarations = declarations   # hash of Declaration
     end
     attr_reader :selectors, :declarations
 
     def _inspect(level=0, buf='')
-      buf << @selectors.join(', ') << " {\n"
-      hash = @declarations
-      [:stag, :cont, :etag, :elem, :value].each do |key|
-        next unless expr = hash[key]
-        buf << "  #{key}:\n"
-        expr._inspect(2, buf)
-      end
-      if hash[:attrs]
-        buf <<   "  attrs:\n"
-        hash[:attrs].each do |tuple|
-          name, expr = tuple
-          buf << "    - '#{name}'\n"
-          expr._inspect(3, buf)
-        end
-      end
-      if hash[:append]
-        buf <<   "  append:\n"
-        hash[:append].each do |expr|
-          expr._inspect(2, buf)
-        end
-      end
-      if hash[:remove]
-        buf <<   "  remove:\n"
-        hash[:remove].each do |name|
-          buf << "    - '#{name}'\n"
-        end
-      end
-      [:logic, :begin, :end].each do |key|
-        next unless stmts = hash[key]
-        buf <<   "  logic: {\n"
-        stmts.each do |stmt|
-          stmt._inspect(2, buf)
-        end
-        buf <<   "  }\n"
-      end
-      if hash[:tagname]
-        buf <<   "  tagname: '#{hash[:tagname]}'\n"
+      buf << @selectors.collect{|sel| sel.value}.join(', ') << " {\n"
+      keys = [:stag, :cont, :etag, :elem, :value, :attrs,
+              :append, :remove, :tagname, :logic, :begin, :end]
+      keys.each do |key|
+        decl = @declarations[key]
+        decl._inspect(level+1, buf) if decl
       end
       buf << "}\n"
       return buf
@@ -640,252 +664,289 @@ module Kwartz
 
   end
 
+
   ##########
 
 
   class NodeBuilder
 
-    def initialize(parser)
-      @parser = parser
-    end
-
-    def linenum
-      @parser.linenum
-    end
-
-    def column
-      @parser.column
-    end
-
-    def filename
-      @parser.filename
-    end
-
     def hook(node)
-      node.linenum = @parser.linenum
-      node.column  = @parser.column
     end
 
-    def build_arithmetic_expr(token, left, right)
-      node = ArithmeticExpression.new(token, left, right)
+    def build_arithmetic_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = ArithmeticExpression.new(tuple[0].intern, left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_logical_expr(token, left, right)
-      node = LogicalExpression.new(token, left, right)
+    def build_unary_expr(tuple, left, right)  # unary '-' or '+' operator
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = ArithmeticExpression.new((tuple[0]+'.').intern, left, nil, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_relational_expr(token, left, right)
-      node = RelationalExpression.new(token, left, right)
+    def build_logical_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = LogicalExpression.new(tuple[0].intern, left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_assignment_expr(token, left, right)
-      node = AssignmentExpression.new(token, left, right)
+    def build_relational_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = RelationalExpression.new(tuple[0].intern, left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_index_expr(token, left, right)
-      node = IndexExpression.new(token, left, right)
+    def build_assignment_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = AssignmentExpression.new(tuple[0].intern, left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_index2_expr(token, left, keystr)
-      node = IndexExpression.new(token, left, StringLiteral.new(keystr))
+    def build_index_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = IndexExpression.new(:'[]', left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_conditional_expr(condition, left, right)
-      node = ConditionalExpression.new(condition, left, right)
+    def build_index2_expr(tuple, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = IndexExpression.new(:'[:]', left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_funcall_expr(funcname, arguments)
-      node = FuncallExpression.new(funcname, arguments)
+    def build_conditional_expr(tuple, condition, left, right)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = ConditionalExpression.new(condition, left, right, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_method_expr(receiver, methodname, arguments)
-      node = MethodExpression.new(receiver, methodname, arguments)
+    def build_funcall_expr(tuple, arguments)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      funcname = tuple[1]
+      node = FuncallExpression.new(funcname, arguments, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_property_expr(receiver, propname)
-      node = PropertyExpression.new(receiver, propname)
+    def build_method_expr(tuple, receiver, methodname, arguments)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = MethodExpression.new(receiver, methodname, arguments, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-
-    ####
-
-    def build_variable_literal(varname)
-      node = VariableLiteral.new(varname)
-      hook(node)
-      return node
-    end
-
-    def build_string_literal(value)
-      node = StringLiteral.new(value)
-      hook(node)
-      return node
-    end
-
-    def build_integer_literal(value)
-      node = IntegerLiteral.new(value)
-      hook(node)
-      return node
-    end
-
-    def build_float_literal(value)
-      node = FloatLiteral.new(value)
-      hook(node)
-      return node
-    end
-
-    def build_true_literal(value=true)
-      node = TrueLiteral.new(value)
-      hook(node)
-      return node
-    end
-
-    def build_false_literal(value=false)
-      node = FalseLiteral.new(value)
-      hook(node)
-      return node
-    end
-
-    def build_null_literal(value=nil)
-      node = NullLiteral.new(value)
+    def build_property_expr(tuple, receiver, propname)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = PropertyExpression.new(receiver, propname, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
     ####
 
-    def build_expression_stmt(expr)
-      node = ExpressionStatement.new(expr)
+    def build_variable_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      varname = tuple[1]
+      node = VariableLiteral.new(varname, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_print_stmt(arguments)
-      node = PrintStatement.new(arguments)
+    def build_string_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      strval = tuple[1]
+      node = StringLiteral.new(strval, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_if_stmt(condition, then_stmt, else_stmt)
-      node = IfStatement.new(condition, then_stmt, else_stmt)
+    def build_integer_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      intval = tuple[1].to_i
+      node = IntegerLiteral.new(intval, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_while_stmt(condition, body_stmt)
-      node = WhileStatement.new(condition, body_stmt)
+    def build_float_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      floatval = tuple[1].to_f
+      node = FloatLiteral.new(floatval, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_foreach_stmt(loopvar, list_expr, body_stmt)
-      node = ForeachStatement.new(loopvar, list_expr, body_stmt)
+    def build_true_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = TrueLiteral.new(true, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_block_stmt(statements)
-      node = BlockStatement.new(statements)
+    def build_false_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = FalseLiteral.new(false, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_break_stmt()
-      node = BreakStatement.new()
+    def build_null_literal(tuple)
+      #token_id, token_val, start_linenum, start_column, end_linenum, end_column = tuple
+      node = NullLiteral.new(nil, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_continue_stmt()
-      node = ContinueStatement.new()
+    ####
+
+    def build_expression_stmt(tuple, expr)
+      node = ExpressionStatement.new(expr, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_native_stmt(native_code)
-      node = NativeStatement.new(native_code)
+    def build_print_stmt(tuple, arguments)
+      node = PrintStatement.new(arguments, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_if_stmt(tuple, condition, then_stmt, else_stmt)
+      node = IfStatement.new(condition, then_stmt, else_stmt, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_while_stmt(tuple, condition, body_stmt)
+      node = WhileStatement.new(condition, body_stmt, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_foreach_stmt(tuple, loopvar, list_expr, body_stmt)
+      node = ForeachStatement.new(loopvar, list_expr, body_stmt, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_block_stmt(tuple, statements)
+      node = BlockStatement.new(statements, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_break_stmt(tuple)
+      node = BreakStatement.new(tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_continue_stmt(tuple)
+      node = ContinueStatement.new(tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    def build_native_stmt(tuple, native_code)
+      node = NativeStatement.new(native_code, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
     ###
 
-    def build_stag_stmt()
-      node = StagStatement.new()
+    def build_stag_stmt(tuple)
+      node = StagStatement.new(tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_etag_stmt()
-      node = EtagStatement.new()
+    def build_etag_stmt(tuple)
+      node = EtagStatement.new(tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_cont_stmt()
-      node = ContStatement.new()
+    def build_cont_stmt(tuple)
+      node = ContStatement.new(tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_elem_stmt()
-      node = ElemStatement.new()
+    def build_elem_stmt(tuple)
+      node = ElemStatement.new(tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_element_stmt(name)
-      node = ElementStatement.new(name)
+    def build_element_stmt(tuple, name)
+      node = ElementStatement.new(name, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
-    def build_content_stmt(name)
-      node = ContentStatement.new(name)
-      hook(node)
-      return node
-    end
-
-    ###
-
-    def build_ruleset(selectors, declarations)
-      node = Ruleset.new(selectors, declarations)
+    def build_content_stmt(tuple, name)
+      node = ContentStatement.new(name, tuple[2], tuple[3])
       hook(node)
       return node
     end
 
     ###
 
-    def wrap(funcname, arg, kind=nil)
-      if kind.nil?
-        arg = FuncallExpression.new(funcname, [arg])
-      elsif kind == :list
-        assert unless arg.is_a?(Array)
+    @@escape_flag_table = hash = {}
+    %w[stag cont etag elem value attrs append].each do |w|
+      hash[w]            = nil     # default (according to config file)
+      hash[w.capitalize] = true    # escape
+      hash[w.upcase]     = false   # not escape
+    end
+
+    def build_declaration(tuple, arg)
+      token_id, propname, linenum, column = tuple
+      flag_escape = @@escape_flag_table[propname]
+      arg = wrap(flag_escape ? 'E' : 'X', arg) unless flag_escape.nil?
+      node = Declaration.new(token_id, propname, arg, linenum, column)
+      hook(node)
+      return node
+    end
+
+    def build_selector(tuple)
+      token_id, token_val, linenum, column = tuple
+      node = Selector.new(token_val, linenum, column)
+      hook(node)
+      return node
+    end
+
+    def build_ruleset(tuple, selectors, declarations)
+      decl_table = {}
+      declarations.each do |decl|
+        key = decl.token.to_s[2..-1].downcase   # :P_VALUE => "value"
+        decl_table[key.intern] = decl
+      end
+      sel = selectors.first
+      node = Ruleset.new(selectors, decl_table, sel.linenum, sel.column)
+      #node = Ruleset.new(selectors, decl_table, tuple[2], tuple[3])
+      hook(node)
+      return node
+    end
+
+    ###
+
+    def wrap(funcname, arg)
+      if arg.is_a?(Array)
         arg.collect! {|expr| wrap(funcname, expr) }
-      elsif kind == :pairs
-        assert unless arg.is_a?(Array)
-        arg.each {|pair| pair[1] = wrap(funcname, pair[1]) }
+      elsif arg.is_a?(Hash)
+        arg.each {|name, expr| arg[name] = wrap(funcname, expr) }
       else
-        unreachable "kind=#{kind.inspect}"
+        arg = FuncallExpression.new(funcname, [arg], arg.linenum, arg.column)
       end
       return arg
     end

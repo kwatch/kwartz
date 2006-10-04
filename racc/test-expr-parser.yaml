@@ -134,7 +134,7 @@
   desc:		relational ops are nonassoc
   input:	a < b < c
   exception:	Kwartz::SyntaxError
-  errormsg:	"\nparse error on value \"<\" (\"<\")"
+  errormsg:	"1:7: parse error on value \"<\" (\"<\")"
 
   
 ###
@@ -494,18 +494,18 @@
 - name:		assignment14
   desc:		invalid lhs
   input:
-    - x + y = z
+    - x + y  = z
     - x && y = z
     - x == y = z
-    - x() = z
-    - x.y() = z
-    - 123 = z
-    - '"foo" = z'
-    - true = z
-    - false = z
-    - null = z
+    - x()    = z
+    - x.y()  = z
+    - 123    = z
+    - '"foo"  = z'
+    - true   = z
+    - false  = z
+    - null   = z
   exception:	Kwartz::SemanticError
-  errormsg:	"=: invalid left-side value."
+  errormsg:	"1:8: =: invalid left-side value."
 
 
 ###

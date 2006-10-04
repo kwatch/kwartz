@@ -15,12 +15,19 @@ module Kwartz
 
 
   class ParseError < StandardError
+
     def initialize(message, linenum, column)
       super(message)
+      @message = message
       @linenum = linenum
-      @column = column
+      @column  = column
     end
     attr_accessor :linenum, :column
+
+    def to_s
+      return "%d:%d: %s" % [@linenum, @column, @message]
+    end
+
   end
 
 
@@ -38,7 +45,7 @@ module Kwartz
     def initialize(input, properties={})
       @scanner = Scanner.new(input, properties)
       @properties = properties
-      @builder = NodeBuilder.new(@scanner)
+      @builder = NodeBuilder.new()
     end
     attr_reader :start_linenum, :start_column, :end_linenum, :end_column
 
@@ -66,37 +73,37 @@ module Kwartz
     }
 
     @@properties = {
-      'stag'    =>  :STAG1,
-      'Stag'    =>  :STAG2,
-      'STAG'    =>  :STAG3,
-      'etag'    =>  :ETAG1,
-      'Etag'    =>  :ETAG2,
-      'ETAG'    =>  :ETAG3,
-      'cont'    =>  :CONT1,
-      'Cont'    =>  :CONT2,
-      'CONT'    =>  :CONT3,
-      'elem'    =>  :ELEM1,
-      'Elem'    =>  :ELEM2,
-      'ELEM'    =>  :ELEM3,
+      'stag'    =>  :P_STAG,
+      'Stag'    =>  :P_STAG,
+      'STAG'    =>  :P_STAG,
+      'etag'    =>  :P_ETAG,
+      'Etag'    =>  :P_ETAG,
+      'ETAG'    =>  :P_ETAG,
+      'cont'    =>  :P_CONT,
+      'Cont'    =>  :P_CONT,
+      'CONT'    =>  :P_CONT,
+      'elem'    =>  :P_ELEM,
+      'Elem'    =>  :P_ELEM,
+      'ELEM'    =>  :P_ELEM,
       #
-      'value'   =>  :VALUE1,
-      'Value'   =>  :VALUE2,
-      'VALUE'   =>  :VALUE3,
-      'attrs'   =>  :ATTRS1,
-      'Attrs'   =>  :ATTRS2,
-      'ATTRS'   =>  :ATTRS3,
-      'append'  =>  :APPEND1,
-      'Append'  =>  :APPEND2,
-      'APPEND'  =>  :APPEND3,
-      'remove'  =>  :REMOVE,
-      'logic'   =>  :LOGIC,
-      'tagname' =>  :TAGNAME,       # not used
+      'value'   =>  :P_VALUE,
+      'Value'   =>  :P_VALUE,
+      'VALUE'   =>  :P_VALUE,
+      'attrs'   =>  :P_ATTRS,
+      'Attrs'   =>  :P_ATTRS,
+      'ATTRS'   =>  :P_ATTRS,
+      'append'  =>  :P_APPEND,
+      'Append'  =>  :P_APPEND,
+      'APPEND'  =>  :P_APPEND,
+      'remove'  =>  :P_REMOVE,
+      'logic'   =>  :P_LOGIC,
+      'tagname' =>  :P_TAGNAME,   # not used
       #
-      'begin'   =>  :BEGIN,
-      'end'     =>  :END,
-      'global'  =>  :GLOBAL,
-      'local'   =>  :LOCAL,
-      'fixture' =>  :FIXTURE,       # not used
+      'begin'   =>  :P_BEGIN,
+      'end'     =>  :P_END,
+      'global'  =>  :P_GLOBAL,
+      'local'   =>  :P_LOCAL,
+      'fixture' =>  :P_FIXTURE,   # not used
     }
 
 
@@ -104,7 +111,7 @@ module Kwartz
       begin
         return do_parse()
       rescue Racc::ParseError => ex
-        raise SyntaxError.new(ex.message, @scanner.linenum, @scanner.column)
+        raise _error(ex.message, @scanner.linenum, @scanner.column)
       end
     end
 
@@ -120,16 +127,14 @@ module Kwartz
 
 
     def next_token()
-      if @mode == :ruleset
-        tuple = _next_token_for_ruleset()
-      else
-        tuple = _next_token_for_statement()
-      end
+      tuple = @mode == :ruleset ? _next_token_for_ruleset()   \
+                                : _next_token_for_statement()
+      return nil unless tuple
       @token_id, @token_val = tuple
-      @end_linenum = @scanner.linenum
-      @end_column  = @scanner.column
-      return tuple
-      #return [@token_id, @token_val, @start_linenum, @start_column, @end_linenum, @end_column]
+      #@end_linenum = @scanner.linenum
+      #@end_column  = @scanner.column
+      #return tuple
+      return [@token_id, [@token_id, @token_val, @start_linenum, @start_column]]
     end
 
 
@@ -140,9 +145,7 @@ module Kwartz
       scanner = @scanner
 
       scanner.scan_whitespace()
-
       return nil if scanner.eos?
-
       @start_linenum = @scanner.linenum
       @start_column  = @scanner.column
 
@@ -193,9 +196,7 @@ module Kwartz
       scanner = @scanner
 
       scanner.scan_whitespace()
-
       return nil if scanner.eos?
-
       @start_linenum = @scanner.linenum
       @start_column  = @scanner.column
 
@@ -238,6 +239,26 @@ module Kwartz
     protected
 
 
+    def _error(message, linenum, column)
+      return SyntaxError.new(message, linenum, column)
+    end
+
+
+    #--
+    #def on_error( t, val, vstack )
+    #  raise ParseError, sprintf("\nparse error on value %s (%s)",
+    #                            val.inspect, token_to_str(t) || '?')
+    #end
+    #++
+    def on_error(token, value, vstack)
+      tuple = value
+      token_id, value, linenum, column = tuple
+      #super(token, value, vstack)
+      msg = "parse error on value %s (%s)" % [ value.inspect, token_id.to_s.inspect ]
+      raise _error(msg, linenum, column)
+    end
+
+
     def handle_command(command, argstr)
       if command == 'import'
         filename = argstr
@@ -248,8 +269,13 @@ module Kwartz
     end
 
 
+    def dprt(str)
+      puts "*** debug: #{str}"
+    end
+
 
   end
+
 
 
   class ExpressionParser
@@ -257,9 +283,11 @@ module Kwartz
   end
 
 
+
   class StatementParser
     include Parser
   end
+
 
 
   class RulesetParser

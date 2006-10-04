@@ -2,8 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.146 (2006-10-05)
+	- [enhance] racc: keep linenum and column
+	- [enhance] racc: add Selector and Declaration
+
 : rev.145 (2006-10-04)
-	- [experimental] add 'racc/' dir
+	- [experimental] racc: add 'racc/' dir
 
 : rev.144 (2006-09-30)
 	- [release] 3.1.1
