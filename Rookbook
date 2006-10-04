@@ -154,6 +154,7 @@ grecipe "kwartz-java_*.{tar.bz2|zip}"	, "kwartz-{1}.jar"  do |r|
 	      if jarfile != 'kwartz.jar' && filename =~ /\/build.xml$/
 	         s.gsub!(/kwartz.jar/, jarfile)
 	      end
+	      s
 	   end
 	end
 	
