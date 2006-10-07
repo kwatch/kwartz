@@ -1,0 +1,57 @@
+parameters:
+  - javadir:	../java/kwartz
+  - parsers:	[ $(javadir)/ExpressionParser.java,
+                  $(javadir)/StatementParser.java,
+		  $(javadir)/PresentationLogicParser.java,
+		  $(javadir)/Token.java ]
+  - javac:	'javac -J-Duser.language -source 1.4 -cp .. '
+
+recipes:
+
+#  - product:	Parser*.java
+#    ingreds:	[ Parser$(1).jy ]
+#    method*: |
+#	sys "kmyacc #{@ingred}"
+
+  - product:	:all
+    ingreds:	[ $(parsers) ]
+
+  - product:	$(javadir)/*.java
+    ingreds:	[ $(1).java ]
+    method*: |
+	cp_pr @ingreds, javadir
+
+  - product:	:exec
+    ingreds:	[ Parser.class ]
+    method*: |
+	sys "java -cp .. kwartz.Parser"
+
+  - product:	*.class
+    ingreds:	[ $(1).java ]
+    method*: |
+	sys "$(javac) #{@ingred}"
+
+
+  - product:	*Parser.java
+    ingreds:	[ $(1)Parser.jy, kmyacc.kwartz.parser ]
+    method*: |
+	sys "kmyacc -m #{@ingreds[1]} #{@ingreds[0]}"
+	#sys "kmyacc -t -m #{@ingreds[1]} #{@ingreds[0]}"
+
+  - product:	Token.java
+    ingreds:	[ Token.jy, kmyacc.kwartz.token ]
+    method*: |
+	sys "kmyacc -m #{@ingreds[1]} #{@ingreds[0]}"
+	#rm @ingreds[0]
+#    ingreds:	[ BNF.jy, kmyacc.kwartz.token ]
+#    method*: |
+#	sys "kmyacc -m #{@ingreds[1]} #{@ingreds[0]}"
+#	sys "mv BNF.java Token.java"
+
+  - product:	*.jy
+    ingreds:	[ BNF.eruby ]
+    method*: |
+	kind = '$(1)'
+	ENV['KIND'] = kind
+	sys "erubis -p '\\[% %\\]' #{@ingred} > #{@product}"
+

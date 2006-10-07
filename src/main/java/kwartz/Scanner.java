@@ -1,379 +1,531 @@
-/**
- *  @(#) Scanner.java
- *  @Id  $Id$
- *  @copyright $Copyright$
- *  @release $Release$
+/*
+ * $Rev$
+ * $Release$
+ * $Copyright$
  */
 package kwartz;
+
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class Scanner {
-    private String _code;
-    private int    _index;
-    private int    _column;
-    private int    _linenum;
-    private String _filename;
-    private char   _ch;
-    private Properties _props;
 
-    private int    _token;
-    private StringBuffer _value = new StringBuffer();
-
-
-    public Scanner() {
-        this("", null, new Properties(Configuration.defaults));
-    }
-    public Scanner(Properties props) {
-        this("", null, props);
-    }
-    public Scanner(String code) {
-        this(code, null, new Properties(Configuration.defaults));
-    }
-    public Scanner(String code, Properties props) {
-        this(code, null, props);
-    }
-    public Scanner(String code, String filename) {
-        this(code, filename, new Properties(Configuration.defaults));
-    }
-    public Scanner(String code, String filename, Properties props) {
-        _props = props;
-        reset(code);
-        _filename = filename;
-    }
-
-    public Properties getProperties() { return _props; }
-    public String getProperty(String key) { return _props.getProperty(key); }
-    //public String setProperty(String key, String value) { _props.setProperty(key, value); }
-
-    public int getLinenum() { return _linenum; }
-    public int getColumn()  { return _column; }
-    public String getFilename() { return _filename; }
-    public void setFilename(String filename) { _filename = filename; }
-    public int getToken()   { return _token; }
-    public String getValue()   { return _value.toString(); }
-    //public String getCode() { return _code; }
-
-    private void _clearValue() {
-        _value.delete(0, _value.length());
-    }
-
-    public void reset(String code, int linenum) {
-        _code    = code;
-        _index   = -1;
-        _column  = -1;
-        _linenum = linenum;
-        _token   = -1;
-        _clearValue();
-        read();
-    }
-
-    public void reset(String code) {
-        reset(code, 1);
-    }
-
-    public char read() {
-        _index++;
-        _column++;
-        if (_index >= _code.length()) {
-            _ch = '\0';
-            return _ch;
-        }
-        _ch = _code.charAt(_index);
-        if (_ch == '\n') {
-            _linenum++;
-            _column = -1;         // Aha!
-        }
-        return _ch;
-    }
-
-    protected static Map keywords;
-    protected static byte[] _op_table1  = new byte[Byte.MAX_VALUE];
-    protected static byte[] _op_table2 = new byte[Byte.MAX_VALUE];
-    protected static byte[] _op_table3 = new byte[Byte.MAX_VALUE];
-    static {
-        keywords = new HashMap();
-        keywords.put("print",   new Integer(TokenType.PRINT));
-        keywords.put("foreach", new Integer(TokenType.FOREACH));
-        keywords.put("in",      new Integer(TokenType.IN));
-        keywords.put("while",   new Integer(TokenType.WHILE));
-        keywords.put("if",      new Integer(TokenType.IF));
-        keywords.put("else",    new Integer(TokenType.ELSE));
-        keywords.put("elseif",  new Integer(TokenType.ELSEIF));
-        keywords.put("true",    new Integer(TokenType.TRUE));
-        keywords.put("false",   new Integer(TokenType.FALSE));
-        keywords.put("null",    new Integer(TokenType.NULL));
-        keywords.put("empty",   new Integer(TokenType.EMPTY));
-        //
-        _op_table1['+'] = TokenType.ADD;
-        _op_table1['-'] = TokenType.SUB;
-        _op_table1['*'] = TokenType.MUL;
-        _op_table1['/'] = TokenType.DIV;
-        _op_table1['%'] = TokenType.MOD;
-        _op_table1['='] = TokenType.ASSIGN;
-        _op_table1['!'] = TokenType.NOT;
-        _op_table1['<'] = TokenType.LT;
-        _op_table1['>'] = TokenType.GT;
-        //
-        _op_table2['+'] = TokenType.ADD_TO;
-        _op_table2['-'] = TokenType.SUB_TO;
-        _op_table2['*'] = TokenType.MUL_TO;
-        _op_table2['/'] = TokenType.DIV_TO;
-        _op_table2['%'] = TokenType.MOD_TO;
-        _op_table2['='] = TokenType.EQ;
-        _op_table2['!'] = TokenType.NE;
-        _op_table2['<'] = TokenType.LE;
-        _op_table2['>'] = TokenType.GE;
-        //
-        _op_table3['('] = TokenType.L_PAREN;
-        _op_table3[')'] = TokenType.R_PAREN;
-        _op_table3['{'] = TokenType.L_CURLY;
-        _op_table3['}'] = TokenType.R_CURLY;
-        _op_table3[']'] = TokenType.R_BRACKET;
-        _op_table3['?'] = TokenType.CONDITIONAL;
-        _op_table3[':'] = TokenType.COLON;
-        _op_table3[';'] = TokenType.SEMICOLON;
-        _op_table3[','] = TokenType.COMMA;
-        _op_table3['#'] = TokenType.SHARP;
-    }
-
-    public int scan() throws LexicalException {
-        String msg;
-        char ch, ch2;
-        int start_linenum, start_column;
-
-        // ignore whitespaces
-        ch = _ch;
-        while (CharacterUtil.isWhitespace(ch)) {
-            ch = read();
-        }
-
-        // EOF
-        if (ch == '\0')
-            return _token = TokenType.EOF;
-
-        // keyword, ture, false, null, name
-        if (CharacterUtil.isAlphabet(ch)) {
-            _clearValue();
-            _value.append(ch);
-            while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
-                _value.append(ch);
-            }
-            Integer keyword = (Integer)keywords.get(_value.toString());
-            _token = keyword != null ? keyword.intValue() : TokenType.NAME;
-            return _token;
-        }
-
-        // integer, double
-        if (CharacterUtil.isDigit(ch)) {
-            _clearValue();
-            _value.append(ch);
-            _token = TokenType.INTEGER;
-            while (true) {
-                while ((ch = read()) != '\0' && CharacterUtil.isDigit(ch)) {
-                    _value.append(ch);
-                }
-                if (CharacterUtil.isAlphabet(ch) || ch == '_') {
-                    _value.append(ch);
-                    while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
-                        _value.append(ch);
-                    }
-                    msg = "'" + _value.toString() + "': invalid token.";
-                    throw new LexicalException(msg, getFilename(), _linenum, _column);
-                }
-                if (ch != '.') {
-                    break;
-                } else if (_token == TokenType.INTEGER) {
-                    _token = TokenType.DOUBLE;
-                    _value.append('.');
-                    continue;
-                } else {
-                    msg = "'" + _value.toString() + "': invalid double.";
-                    throw new LexicalException(msg, getFilename(), _linenum, _column);
-                }
-            }
-            return _token;
-        }
-
-        // string literal
-        if (ch == '\'' || ch == '"') {
-            start_linenum = _linenum;
-            start_column  = _column;
-            _clearValue();
-            char quote = ch;
-            while ((ch = read()) != '\0' && ch != quote) {
-                if (ch == '\\') {
-                    switch (quote) {
-                      case '\'':
-                        if ((ch = read()) != '\'' && ch != '\\') _value.append('\\');
-                        break;
-                      case '"':
-                        ch = read();
-                        switch (ch) {
-                          case 'n':  ch = '\n';  break;
-                          case 't':  ch = '\t';  break;
-                          case 'r':  ch = '\r';  break;
-                        }
-                        break;
-                      default:
-                        assert false;
-                    }
-                }
-                _value.append(ch);
-            }
-            if (ch == '\0') {
-                msg = "string literal is not closed by " + (quote == '\'' ? "\"'\"." : "'\"'.");
-                throw new LexicalException(msg, getFilename(), start_linenum, start_column);
-            }
-            read();
-            return _token = TokenType.STRING;
-        }
-
-        // comment
-        if (ch == '/') {
-            ch = read();
-            if (ch == '/') {   // line comment
-                while ((ch = read()) != '\0' && ch != '\n')
-                    ;
-                if (ch == '\0')
-                    return _token = TokenType.EOF;
-                read();
-                return scan();
-            }
-            if (ch == '*') {   // region comment
-                start_linenum = _linenum;
-                start_column  = _column;
-                while ((ch = read()) != '\0') {
-                    if (ch == '*') {
-                        if ((ch = read()) == '/') {
-                            read();
-                            return scan();
-                        }
-                    }
-                }
-                if (ch == '\0') {
-                    msg = "'/*' is not closed by '*/'.";
-                    throw new LexicalException(msg, getFilename(), start_linenum, start_column);
-                }
-                assert false;
-            }
-            if (ch == '=') {
-                read();
-                return _token = TokenType.DIV_TO;
-            }
-            return _token = TokenType.DIV;
-        }
-
-        // < <= <%...%> <?...?>
-        if (ch == '<') {
-            ch = read();
-            if (ch == '=') {
-                read();
-                return _token = TokenType.LE;
-            }
-            if (ch == '%' || ch == '?') {
-                char delim = ch;
-                start_linenum = _linenum;
-                start_column  = _column;
-                _clearValue();
-                ch = read();
-                if (ch == '=') {
-                    ch = read();
-                    _token = TokenType.RAWEXPR;
-                } else {
-                    _token = TokenType.RAWSTMT;
-                }
-                while (ch != '\0') {
-                    if (ch == delim) {
-                        ch = read();
-                        if (ch == '>') break;
-                        _value.append('%');
-                    }
-                    _value.append(ch);
-                    ch = read();
-                }
-                if (ch == '\0') {
-                    String stag = "<" + delim + (_token == TokenType.RAWEXPR ? "=" : "");
-                    String etag = "" + delim + ">";
-                    msg = "'" + stag + "' is not closed by '" + etag + "'.";
-                    throw new LexicalException(msg, getFilename(), start_linenum, start_column);
-                }
-                read();
-                return _token;
-            }
-            return _token = TokenType.LT;
-        }
-
-        // + - * / % = ! < >
-        if (ch < 128 && _op_table1[ch] != 0) {
-            ch2 = read();
-            if (ch2 == '=') {
-                read();
-                return _token = _op_table2[ch];
-            }
-            return _token = _op_table1[ch];
-        }
-
-        // &&, ||
-        if (ch == '&' || ch == '|') {
-            ch2 = read();
-            if (ch != ch2) {
-                msg = "'" + ch + "': invalid token.";
-                throw new LexicalException(msg, getFilename(), _linenum, _column);
-            }
-            read();
-            return _token = ch == '&' ? TokenType.AND : TokenType.OR;
-        }
-
-        // [ [:
-        if (ch == '[') {
-            ch = read();
-            if (ch == ':') {
-                read();
-                return _token = TokenType.L_BRACKETCOLON;
-            }
-            return _token = TokenType.L_BRACKET;
-        }
-
-        // @
-        if (ch == '@') {
-            _clearValue();
-            while ((ch = read()) != '\0' && CharacterUtil.isWordLetter(ch)) {
-                _value.append(ch);
-            }
-            return _token = TokenType.EXPAND;
-        }
-
-        // .
-        if (ch == '.') {
-            if ((ch = read()) != '+') return _token = TokenType.PERIOD;
-            if ((ch = read()) != '=') return _token = TokenType.CONCAT;
-            read();
-            return _token = TokenType.CONCAT_TO;
-        }
-        //if (ch == '.') {
-        //    ch = read();
-        //    if (ch == '+') {
-        //        ch = read();
-        //        if (ch == '=') {
-        //            read();
-        //            return _token = TokenType.CONCAT_TO;
-        //        }
-        //        return _token = TokenType.CONCAT;
-        //    }
-        //    return _token = TokenType.PERIOD;
-        //}
+	private String _input;
+	private int    _input_length;
+	private int    _linenum = 1;
+	private int    _column = 0;
+	private int    _index = -1;
+	private int    _ch;
+	private String _token_value;
+	private int    _start_linenum;
+	private int    _start_column;
+	private boolean _is_ruleset = false;
+	private LexicalException _error;
+	private StringBuffer _sbuf = new StringBuffer();
+	
+	
+	public String getTokenValue() {
+		return _token_value;
+	}
+	
+	public LexicalException getError() {
+		return _error;
+	}
+	
+	public int getStartLinenum() {
+		return _start_linenum;
+	}
+	
+	public int getStartColumn() {
+		return _start_column;
+	}
+	
+	public void setRulesetMode(boolean is_ruleset) {
+		_is_ruleset = is_ruleset;
+	}
 
 
-        // ( ) ] : ? ; , #
-        if (ch < Byte.MAX_VALUE && _op_table3[ch] != 0) {
-            read();
-            return _token = _op_table3[ch];
-        }
+	public Scanner(String input) {
+		_input = input;
+		_input_length = input.length();
+		// init
+		getChar();
+	}
 
-        msg = "'" + ch + "': invalid character.";
-        throw new LexicalException(msg, getFilename(), _linenum, _column);
-    }
+
+	public int getChar() {
+		_index++;
+		if (_index >= _input_length)
+			return _ch = 0;
+		_ch = _input.charAt(_index);
+		if (_ch == '\n') {
+			_linenum++;
+			_column = 0;
+		}
+		else {
+			_column++;
+		}
+		return _ch;
+	}
+	
+	
+	public static boolean isAlphabet(int ch) {
+		return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z';
+	}
+	
+	
+	public static boolean isDigit(int ch) {
+		//return Character.isDigit(ch);
+		return '0' <= ch && ch <= '9';
+	}
+	
+	
+	public static boolean isWhite(int ch) {
+		return Character.isWhitespace(ch);
+	}
+
+
+	protected LexicalException error(String message, int linenum, int column) {
+		return new LexicalException(message, linenum, column);
+	}
+	
+	
+	public int scanIdentifier() {
+		int ch = _ch;
+		if (!isAlphabet(ch) && ch != '_') {
+			return 0;
+		}
+		StringBuffer sbuf = _sbuf;
+		sbuf.setLength(0);
+		sbuf.append((char)ch);
+		while (isAlphabet(ch = getChar()) || isDigit(ch) || ch == '_') {
+			sbuf.append((char)ch);
+		}
+		_token_value = sbuf.toString();
+		return Token.IDENT;
+	}
+
+
+	/*
+	public String scanInteger() {
+		int ch = _ch;
+		if (!isDigit(ch)) {
+			return null;
+		}
+		StringBuffer sbuf = _sbuf;
+		sbuf.setLength(0);
+		sbuf.append((char)ch);
+		while (isDigit(ch = getChar())) {
+			sbuf.append((char)ch);
+		}
+		return sbuf.toString();
+	}
+	*/
+	
+	
+	public int scanNumber() {
+		int ch = _ch;
+		if (!isDigit(ch)) {
+			return 0;
+		}
+		StringBuffer sbuf = _sbuf;
+		sbuf.setLength(0);
+		sbuf.append((char)ch);
+		while (isDigit(ch = getChar())) {
+			sbuf.append((char)ch);
+		}
+		if (ch != '.') {
+			_token_value = sbuf.toString();
+			return Token.INTEGER;
+		}
+		sbuf.append((char)ch);
+		while (isDigit(ch = getChar())) {
+			sbuf.append((char)ch);
+		}
+		_token_value = sbuf.toString();
+		return Token.FLOAT;
+	}
+	
+	
+	public int scanString() {
+		if (_ch == '\'') {
+			return scanSingleQuotedString();
+		}
+		else if (_ch == '"') {
+			return scanDoubleQuotedString();
+		}
+		assert false;  /* unreachable */
+		return 0;
+	}
+	
+	
+	public int scanSingleQuotedString() {
+		int ch = _ch;
+		if (ch != '\'')
+			return 0;
+		int start_linenum = _linenum;
+		int start_column  = _column;
+		StringBuffer sbuf = _sbuf;
+		sbuf.setLength(0);
+		while ((ch = getChar()) != '\'' && ch != 0) {
+			if (ch == '\\') {
+				ch = getChar();
+				if (ch == 0)
+					break;
+				if (ch != '\\' && ch != '\'')
+					sbuf.append('\\');
+			}
+			sbuf.append((char)ch);
+		}
+		if (ch == 0) {
+			_error = error("'\\'': string is not closed.", start_linenum, start_column);
+			return Token.ERROR;
+		}
+		assert ch == '\'';
+		getChar();
+		_token_value = sbuf.toString();
+		return Token.STRING;
+	}
+	
+	
+	public int scanDoubleQuotedString() {
+		int ch = _ch;
+		if (ch != '"')
+			return 0;
+		int start_linenum = _linenum;
+		int start_column = _column;
+		StringBuffer sbuf = _sbuf;
+		sbuf.setLength(0);
+		while ((ch = getChar()) != '"' && ch != 0) {
+			if (ch == '\\') {
+				ch = getChar();
+				switch (ch) {
+				case 'n':  sbuf.append('\n');  break;
+				case 'b':  sbuf.append('\b');  break;
+				case 'r':  sbuf.append('\r');  break;
+				case 't':  sbuf.append('\t');  break;
+				case 'f':  sbuf.append('\f');  break;
+				case '"':  sbuf.append('"');   break;
+				case '\\': sbuf.append('\\');  break;
+				default:   sbuf.append('\\');  sbuf.append((char)ch);
+				}
+			}
+			else {
+				sbuf.append((char)ch);
+			}
+		}
+		if (ch == 0) {
+			_error = error("'\"': string is not closed.", start_linenum, start_column);
+			return Token.ERROR;
+		}
+		assert ch == '"';
+		getChar();
+		_token_value = sbuf.toString();
+		return Token.STRING;
+	}
+
+	
+	public int scan() {
+		//return _token_id = _scan();
+		return _scan();
+	}
+	
+	
+	private int _scan() {
+		int ch = _ch;
+		while (isWhite(ch)) {
+			ch = getChar();
+		}
+		if (ch == 0)
+			return 0;
+		_start_linenum = _linenum;
+		_start_column  = _column;
+
+		/// '/', '/=', '/*', '//'
+		if (ch == '/') {
+			ch = getChar();
+			if (ch == '*') {        /// region comment
+				int start_linenum = _linenum;
+				int start_column = _column;
+				while (true) {
+					while ((ch = getChar()) != '*' && ch != 0)
+						;
+					if (ch == 0) {
+						_error = error("comment is not closed.", start_linenum, start_column);
+						return Token.ERROR;
+					}
+					if ((ch = getChar()) != '/')  /// comment is closed
+						continue;
+					getChar();
+					return _scan();  // call recursively
+				}
+			}
+			else if (ch == '/') {   /// line comment
+				while ((ch = getChar()) != '\n' && ch != 0)
+					;
+				if (ch == 0)
+					return 0;
+				return _scan();  // call recursively
+			}
+			else if (_is_ruleset) {
+				return _invalidChar('/');
+			}
+			else if (ch == '=') {
+				ch = getChar();
+				return Token.SLASH_EQ;   // "/="
+			}
+			else {
+				return '/';
+			}
+		}
+
+		/// ruleset mode
+		if (_is_ruleset) {
+			return _scanForRuleset(ch);
+		}
+		
+		/// keyword or identifier
+		if (isAlphabet(ch) || ch == '_') {
+			scanIdentifier();
+			Integer obj = (Integer)__keywords.get(_token_value);
+			return obj != null ? obj.intValue() : Token.IDENT;
+		}
+		
+		/// number
+		if (isDigit(ch)) {
+			int start_linenum = _linenum;
+			int start_column = _column;
+			int token = scanNumber();
+			if (isAlphabet(_ch) || _ch == '_') {
+				String numstr = _token_value;
+				scanIdentifier();
+				_error = error("'" + numstr + _token_value + "': invalid word.", start_linenum, start_column);
+				return Token.ERROR;
+			}
+			return token;
+		}
+		
+		/// string
+		if (ch == '"' || ch == '\'') {
+			return scanString();
+		}
+		
+		
+		/// '<', '<=', '<%', '<%='
+		if (ch == '<') {
+			ch = getChar();
+			if (ch == '=') {
+				getChar();
+				return Token.LE;  // "<="
+			}
+			else if (ch == '%') {
+				int start_linenum = _linenum;
+				int start_column = _column;
+				ch = getChar();
+				boolean is_expr = false;
+				String start_pat = "<%";
+				if (ch == '=') {
+					ch = getChar();
+					is_expr = true;
+					start_pat = "<%=";
+				}
+				StringBuffer sbuf = _sbuf;
+				sbuf.setLength(0);
+				while (true) {
+					while (ch != '%' && ch != 0) {
+						sbuf.append((char)ch);
+						ch = getChar();
+					}
+					if (ch == 0) {
+						_error = error("'" + start_pat + "': native code is not closed.", start_linenum, start_column);
+						return Token.ERROR;
+					}
+					ch = getChar();
+					if (ch == '>')
+						break;
+					sbuf.append('%').append(ch);
+					ch = getChar();
+				}
+				_token_value = sbuf.toString();
+				return is_expr ? Token.NATIVE_EXPR : Token.NATIVE_STMT;
+			}
+			else {
+				return '<';
+			}
+		}
+
+		/// '+', '-', '*', '%', '=', '!', '>'
+		if (   ch == '+' || ch == '-' || ch == '*' || ch == '%'
+			|| ch == '=' || ch == '!' || ch == '>') {
+			if (getChar() != '=')
+				return ch;
+			getChar();
+			switch (ch) {
+			case '+':  return Token.PLUS_EQ;       // '+='
+			case '-':  return Token.MINUS_EQ;      // '-='
+			case '*':  return Token.STAR_EQ;       // '*='
+			case '/':  return Token.SLASH_EQ;      // '/='
+			case '%':  return Token.PERCENT_EQ;    // '%='
+			case '=':  return Token.EQ;            // '=='
+			case '!':  return Token.NE;            // '!='
+			case '>':  return Token.GE;            // '>='
+			default:   assert false;
+			}
+		}
+
+		/// '&&', '||'
+		if (ch == '&' || ch == '|') {
+			int ch2 = getChar();
+			int linenum = _linenum;
+			int column = _column;
+			if (ch != ch2) {
+				_error = error("'" + ch + "': invalid character.", linenum, column);
+				return Token.ERROR;
+			}
+			ch2 = getChar();
+			if (ch2 != '=')
+				return ch == '&' ? Token.AND : Token.OR;  // "&&" : "||"
+			getChar();
+			return ch == '&' ? Token.AND_EQ : Token.OR_EQ;  // "&&=" : "||="
+		}
+
+		/// '{', '}', '(', ')', ']', ';', ',', '?', ':'
+		if (   ch == '{' || ch == '}' || ch == '(' || ch == ')' || ch == ']'
+			|| ch == ';' || ch == ',' || ch == '?' || ch == ':') {
+			getChar();
+			return ch;
+		}
+		
+		/// '.', '.+', '.+='
+		if (ch == '.') {
+			if (getChar() != '+')
+				return '.';
+			if (getChar() != '=')
+				return Token.CONCAT;  // '.+'
+			getChar();
+			return Token.CONCAT_EQ;   // '.+='
+		}
+		
+		/// '[:', '['
+		if (ch == '[') {
+			if (getChar() != ':')
+				return '[';  // '[';
+			getChar();
+			return Token.INDEX2;     // '[:'
+		}
+		
+		//_token_value = Character.toString((char)ch);
+		//return ":ERROR";
+		return _invalidChar(ch);
+	}
+	
+	
+	private int _invalidChar(int ch) {
+		_token_value = Character.toString((char)ch);
+		_error = error("'" + (char)ch + "': invalid character.", _start_linenum, _start_column);
+		return Token.ERROR;   // or ch ?
+	}
+	
+	
+	private int _scanForRuleset(int ch) {
+		if (ch == '#' || ch == '.') {
+			int ch2 = getChar();
+			if (! isAlphabet(ch2) && ch2 != '_')
+				return _invalidChar(ch);
+			scanIdentifier();
+			_token_value = Character.toString((char)ch) + _token_value;
+			return Token.SELECTOR;
+		}
+		if (ch == '{' || ch == '}' || ch == ':' || ch == ';' || ch == ',') {
+			getChar();
+			return ch;
+		}
+		if (ch == '@') {
+			int ch2 = getChar();
+			if (! isAlphabet(ch2) && ch2 != '_')
+				return _invalidChar(ch);
+			scanIdentifier();
+			return Token.COMMAND;
+		}
+		if (ch == '"' || ch == '\'') {
+			return scanString();
+		}
+		if (isAlphabet(ch) || ch == '_') {
+			scanIdentifier();
+			String word = _token_value;
+			Integer intobj = (Integer)__properties.get(word);
+			return intobj != null ? intobj.intValue() : Token.IDENT; 
+		}
+		return _invalidChar(ch);
+	}
+	
+	
+	private static Map __keywords;
+	private static Map __properties;
+	static {
+		__keywords = new HashMap();
+		__keywords.put("if",       new Integer(Token.IF));
+		__keywords.put("else",     new Integer(Token.ELSE));
+		__keywords.put("elseif",   new Integer(Token.ELSEIF));
+		__keywords.put("foreach",  new Integer(Token.FOREACH));
+		__keywords.put("while",    new Integer(Token.WHILE));
+		__keywords.put("print",    new Integer(Token.PRINT));
+		__keywords.put("break",    new Integer(Token.BREAK));
+		__keywords.put("continue", new Integer(Token.CONTINUE));
+		__keywords.put("true",     new Integer(Token.TRUE));
+		__keywords.put("false",    new Integer(Token.FALSE));
+		__keywords.put("null",     new Integer(Token.NULL));
+		__keywords.put("_stag",    new Integer(Token.STAG));
+		__keywords.put("_cont",    new Integer(Token.CONT));
+		__keywords.put("_etag",    new Integer(Token.ETAG));
+		__keywords.put("_elem",    new Integer(Token.ELEM));
+		__keywords.put("_element", new Integer(Token.ELEMENT));
+		__keywords.put("_content", new Integer(Token.CONTENT));
+		
+		__properties = new HashMap();
+		__properties.put("stag",    new Integer(Token.P_STAG));
+		__properties.put("Stag",    new Integer(Token.P_STAG));
+		__properties.put("STAG",    new Integer(Token.P_STAG));
+		__properties.put("etag",    new Integer(Token.P_ETAG));
+		__properties.put("Etag",    new Integer(Token.P_ETAG));
+		__properties.put("ETAG",    new Integer(Token.P_ETAG));
+		__properties.put("cont",    new Integer(Token.P_CONT));
+		__properties.put("Cont",    new Integer(Token.P_CONT));
+		__properties.put("CONT",    new Integer(Token.P_CONT));
+		__properties.put("elem",    new Integer(Token.P_ELEM));
+		__properties.put("Elem",    new Integer(Token.P_ELEM));
+		__properties.put("ELEM",    new Integer(Token.P_ELEM));
+		__properties.put("value",   new Integer(Token.P_VALUE));
+		__properties.put("Value",   new Integer(Token.P_VALUE));
+		__properties.put("VALUE",   new Integer(Token.P_VALUE));
+		__properties.put("attrs",   new Integer(Token.P_ATTRS));
+		__properties.put("Attrs",   new Integer(Token.P_ATTRS));
+		__properties.put("ATTRS",   new Integer(Token.P_ATTRS));
+		__properties.put("append",  new Integer(Token.P_APPEND));
+		__properties.put("Append",  new Integer(Token.P_APPEND));
+		__properties.put("APPEND",  new Integer(Token.P_APPEND));
+		__properties.put("remove",  new Integer(Token.P_REMOVE));
+		__properties.put("tagname", new Integer(Token.P_TAGNAME));
+		__properties.put("logic",   new Integer(Token.P_LOGIC));
+		__properties.put("begin",   new Integer(Token.P_BEGIN));
+		__properties.put("end",     new Integer(Token.P_END));
+		__properties.put("before",  new Integer(Token.P_BEFORE));
+		__properties.put("after",   new Integer(Token.P_AFTER));
+		__properties.put("global",  new Integer(Token.P_GLOBAL));
+	}
+
+	
+	public static void main(String[] args) throws Exception {
+		String input;
+		input = "if (x > 0) { print(x); }";
+		input = "while (x && y || z) { x + y * z / 3 .+ \"foo\"; }";
+		
+		Scanner scanner = new Scanner(input);
+		int token;
+		while ((token = scanner.scan()) != 0) {
+			System.out.println("token="+Parser.tokenSymbol(token)+"("+token+"), value="+scanner.getTokenValue());
+		}
+	}
+
 
 }

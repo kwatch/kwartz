@@ -1,0 +1,137 @@
+/*
+ * $Rev$
+ * $Release$
+ * $Copyright$
+ */
+
+%{
+package kwartz;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+%}
+
+
+%token  IDENT
+%token  VARIABLE INTEGER FLOAT STRING TRUE FALSE NULL
+%token  PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ
+%token  CONCAT CONCAT_EQ
+%token  EQ NE GT GE LT LE
+%token  AND OR AND_EQ OR_EQ
+%token  FUNCALL METHOD PROPERTY
+%token  INDEX INDEX2
+%token  UPLUS UMINUS CONDITIONAL
+
+%token  PRINT EXPR IF ELSEIF ELSE WHILE FOREACH BREAK CONTINUE BLOCK
+%token  NATIVE_STMT NATIVE_EXPR
+%token  STAG CONT ETAG ELEM ELEMENT CONTENT
+
+%token  COMMAND SELECTOR DECLARATION RULESET
+%token  P_STAG P_CONT P_ETAG P_ELEM P_VALUE P_ATTRS P_APPEND P_REMOVE P_TAGNAME P_LOGIC
+%token  P_BEGIN P_END P_BEFORE P_AFTER P_GLOBAL
+
+%token  ERROR
+
+
+%right '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
+%right '?' ':'
+%left  OR
+%left  AND
+%nonassoc EQ NE '>' GE '<' LE
+%left  '+' '-' CONCAT
+%left  '*' '/' '%'
+%left  '!'
+%left  '.' '[' ']' INDEX2
+
+
+%type <Ast.Expression> expr primary
+%type <Ast.Literal> word literal
+%type <List> args
+%type <Parser.Info> IDENT STRING INTEGER FLOAT TRUE FALSE NULL
+%type <Parser.Info> '+' '-' '*' '/' '%' CONCAT EQ NE '>' GE '<' LE AND OR '!' '?' ':'
+%type <Parser.Info> '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
+%type <Parser.Info> '(' ')' '[' ']' INDEX2 ',' '.'
+
+
+%%
+
+
+
+
+
+expr     :  expr '+' expr    { $$ = _f.createArithmeticExpression($2, $1, $3); }  // (info, expr, expr)
+         |  expr '-' expr    { $$ = _f.createArithmeticExpression($2, $1, $3); }
+         |  expr '*' expr    { $$ = _f.createArithmeticExpression($2, $1, $3); }
+         |  expr '/' expr    { $$ = _f.createArithmeticExpression($2, $1, $3); }
+         |  expr '%' expr    { $$ = _f.createArithmeticExpression($2, $1, $3); }
+         |  expr CONCAT expr { $$ = _f.createArithmeticExpression($2, $1, $3); }
+
+         |  expr EQ  expr    { $$ = _f.createRelationalExpression($2, $1, $3); }  // (info, expr, expr)
+         |  expr NE  expr    { $$ = _f.createRelationalExpression($2, $1, $3); }
+         |  expr '>' expr    { $$ = _f.createRelationalExpression($2, $1, $3); }
+         |  expr GE  expr    { $$ = _f.createRelationalExpression($2, $1, $3); }
+         |  expr '<' expr    { $$ = _f.createRelationalExpression($2, $1, $3); }
+         |  expr LE  expr    { $$ = _f.createRelationalExpression($2, $1, $3); }
+
+         |  expr AND expr    { $$ = _f.createLogicalExpression($2, $1, $3); }  // (info, expr, expr)
+         |  expr OR  expr    { $$ = _f.createLogicalExpression($2, $1, $3); }
+         |  '!' expr         { $$ = _f.createLogicalExpression($1, $2, null); }  // (info, expr)
+
+	 |  '-' primary      { $$ = _f.createUnaryExpression($1, $2); }  // (info, expr)
+	 |  '+' primary      { $$ = _f.createUnaryExpression($1, $2); }  // (info, expr)
+
+	 |  expr '?' expr ':' expr  { $$ = _f.createConditionalExpression($2, $1, $3, $5); } // (info, expr, expr, expr)
+
+         |  expr '='        expr { $$ = _f.createAssignmentExpression($2, $1, $3); }  // (info, expr, expr)
+         |  expr PLUS_EQ    expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr MINUS_EQ   expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr STAR_EQ    expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr SLASH_EQ   expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr PERCENT_EQ expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr CONCAT_EQ  expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr AND_EQ     expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+         |  expr OR_EQ      expr { $$ = _f.createAssignmentExpression($2, $1, $3); }
+	 
+         |  primary	     { $$ = $1; }
+         ;
+
+primary  :  primary '[' expr ']'    { $$ = _f.createIndexExpression($2, $1, $3); }   // (info, expr, expr)
+         |  primary INDEX2 word ']' { $$ = _f.createIndex2Expression($2, $1, $3); }  // (info, expr, literal)
+         |  primary '.' IDENT '(' args ')' { $$ = _f.createMethodExpression($2, $1, ($3).getValue(), $5); } // (info, expr, str, list)
+         |  primary '.' IDENT       { $$ = _f.createPropertyExpression($2, $1, ($3).getValue()); } // (info, expr, str)
+	 |  IDENT '(' args ')'      { $$ = _f.createFuncallExpression($1, $3); }  // (info, list)
+	 |  literal                 { $$ = $1; }  // literal
+         |  '(' expr ')'            { $$ = $2; }  // expr
+         ;
+
+literal  :  IDENT	     { $$ = _f.createVariableLiteral($1); }   // (info)
+	 |  STRING	     { $$ = _f.createStringLiteral($1); }
+	 |  INTEGER	     { $$ = _f.createIntegerLiteral($1); }
+         |  FLOAT	     { $$ = _f.createFloatLiteral($1); }
+	 |  TRUE	     { $$ = _f.createTrueLiteral($1); }
+	 |  FALSE	     { $$ = _f.createFalseLiteral($1); }
+	 |  NULL	     { $$ = _f.createNullLiteral($1); }
+	 ;
+
+word     :  IDENT            { $$ = _f.createStringLiteral($1); }   // (info)
+
+args     :  args ',' expr    { $1.add($3); $$ = $1; }
+         |  expr             { List l = new ArrayList(); l.add($1); $$ = l; }
+         |                   { $$ = new ArrayList(); }
+	 ;
+
+
+%%
+
+	protected Object yyval() { return yyval; }
+	protected Object yylval() { return yylval; }
+	protected Object[] yyastk() { return yyastk; }
+
+	protected Object getYyval() { return yyval; }
+	protected Object getYylval() { return yylval; }
+	protected Object[] getYyastk() { return yyastk; }
+
+	protected void setYylval(Object val) { yylval = val; }
+

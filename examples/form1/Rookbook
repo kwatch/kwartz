@@ -1,5 +1,0 @@
-$basename = 'form1'
-$classname = 'Register'
-$files = %w[register.html register.plogic finish.html finish.plogic]
-
-load "../Rookbook.common"

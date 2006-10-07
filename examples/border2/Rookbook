@@ -1,4 +1,0 @@
-#$basename = 'border2'
-#$classname = 'Border2'
-
-load "../Rookbook.common"

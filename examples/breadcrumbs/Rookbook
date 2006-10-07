@@ -1,4 +1,0 @@
-#$basename = 'breadcrumbs'
-#$classname = 'Breadcrumbs'
-
-load "../Rookbook.common"

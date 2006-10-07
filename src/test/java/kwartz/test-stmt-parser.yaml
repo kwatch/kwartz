@@ -1,0 +1,465 @@
+### $Date$
+### $Release$
+### $Copyright$
+
+###
+- name:		print1
+  input: |
+	print(x);
+  expected: |
+	:PRINT
+	  x
+
+- name:		print2
+  input: |
+	print(x, y+20*x, a.b.c());
+  expected: |
+	:PRINT
+	  x
+	  +
+	    y
+	    *
+	      20
+	      x
+	  .()
+	    .
+	      a
+	      .b
+	    .c()
+
+- name:		print3
+  input: |
+	print(x);
+	print(y); print(z);
+  expected: |
+	:PRINT
+	  x
+	:PRINT
+	  y
+	:PRINT
+	  z
+
+###
+- name:		expr1
+  input: |
+  	x = x + 1;
+  expected: |
+	:EXPR
+	  =
+	    x
+	    +
+	      x
+	      1
+
+- name:		expr2
+  input: |
+	x = 1;
+	x = x + 1;
+	f(x);
+  expected: |
+	:EXPR
+	  =
+	    x
+	    1
+	:EXPR
+	  =
+	    x
+	    +
+	      x
+	      1
+	:EXPR
+	  f()
+	    x
+
+###
+- name:		while1
+  input: |
+	while (x > 0) { print(x); }
+  expected: |
+	:WHILE
+	  >
+	    x
+	    0
+	  :BLOCK
+	    :PRINT
+	      x
+
+- name:		while2
+  input: |
+	i = 0;
+	while (i < N) {
+	  j = i;
+	  while (j < M) {
+	    arr[i][j] = i * j;
+	    j += 1;
+	  }
+	  i += 1;
+	}
+  expected: |
+	:EXPR
+	  =
+	    i
+	    0
+	:WHILE
+	  <
+	    i
+	    N
+	  :BLOCK
+	    :EXPR
+	      =
+	        j
+	        i
+	    :WHILE
+	      <
+	        j
+	        M
+	      :BLOCK
+	        :EXPR
+		  =
+		    []
+		      []
+		        arr
+			i
+		      j
+		    *
+		      i
+		      j
+		:EXPR
+		  +=
+		    j
+		    1
+	    :EXPR
+	      +=
+	        i
+		1
+
+###
+- name:		foreach1
+  input: |
+	foreach (item = list) { print(item); }
+  expected: |
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :PRINT
+	      item
+
+- name:		foreach2
+  desc:		"'in' is used instead of '='"
+  input: |
+	foreach (item in list) { print(item); }
+  expected: |
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :PRINT
+	      item
+
+- name:		foreach3
+  input: |
+	i = 0;
+	foreach (item = obj.list()) {
+	  i += 1;
+	  color = i % 2 == 0 ? '#FCC' : '#CCF';
+	  print("color=", color);
+	}
+  expected: |
+	:EXPR
+	  =
+	    i
+	    0
+	:FOREACH
+	  item
+	  .()
+	    obj
+	    .list()
+	  :BLOCK
+	    :EXPR
+	      +=
+	        i
+		1
+	    :EXPR
+	      =
+	        color
+	        ?:
+		  ==
+		    %
+		      i
+		      2
+		    0
+		  "#FCC"
+		  "#CCF"
+	    :PRINT
+	      "color="
+	      color
+
+- name:		foreach4
+  input:	foreach (item['key'] = list) { print(item['key']); }
+  exception*:
+    ruby:	Kwartz::SemanticError
+    java:	kwartz.SemanticException
+  errormsg*:
+    ruby:	'1:14: []: invalid loop-variable of foreach statement.'
+    java:	'1:14: []: invalid loop-variable of foreach statement.'
+
+
+###
+- name:		if1
+  input: |
+	if (x > 0) {
+	  print(x);
+	}
+  expected: |
+	:IF
+	  >
+	    x
+	    0
+	  :BLOCK
+	    :PRINT
+	      x
+
+- name:		if2
+  input: |
+	if (x > 0) {
+	  print('positive');
+	}
+	else {
+	  print("not positive");
+	}
+  expected: |
+	:IF
+	  >
+	    x
+	    0
+	  :BLOCK
+	    :PRINT
+	      "positive"
+	  :BLOCK
+	    :PRINT
+	      "not positive"
+
+- name:		if3
+  input: |
+	if (x > 0) {
+	  print('positive');
+	}
+	elseif (x < 0) {
+	  print("negative");
+	}
+  expected: |
+	:IF
+	  >
+	    x
+	    0
+	  :BLOCK
+	    :PRINT
+	      "positive"
+	  :IF
+	    <
+	      x
+	      0
+	    :BLOCK
+	      :PRINT
+	        "negative"
+
+- name:		if4
+  input: |
+	if (x > 0) {
+	  print('positive');
+	}
+	elseif (x < 0) {
+	  print("negative");
+	}
+	elseif (y < 0) {
+	  print("y is negative.");
+	}
+	else {
+	  print("zero.");
+	}
+  expected: |
+	:IF
+	  >
+	    x
+	    0
+	  :BLOCK
+	    :PRINT
+	      "positive"
+	  :IF
+	    <
+	      x
+	      0
+	    :BLOCK
+	      :PRINT
+	        "negative"
+	    :IF
+	      <
+	        y
+		0
+	      :BLOCK
+	        :PRINT
+		  "y is negative."
+	      :BLOCK
+	        :PRINT
+		  "zero."
+
+- name:		if5
+  input: |
+	if (x > y) {
+	  if (x > z) {
+	    print("max is x(=", x, ")\n");
+	  } else {
+	    print("max is z(=", z, ")\n");
+	  }
+	} else {
+	  if (y > z) {
+	    print("max is y(=", y, ")\n");
+	  } else {
+	    print("max is z(=", z, ")\n");
+	  }
+	}
+  expected: |
+	:IF
+	  >
+	    x
+	    y
+	  :BLOCK
+	    :IF
+	      >
+	        x
+		z
+	      :BLOCK
+	        :PRINT
+		  "max is x(="
+		  x
+		  ")\n"
+	      :BLOCK
+	        :PRINT
+		  "max is z(="
+		  z
+		  ")\n"
+	  :BLOCK
+	    :IF
+	      >
+	        y
+		z
+	      :BLOCK
+	        :PRINT
+		  "max is y(="
+		  y
+		  ")\n"
+	      :BLOCK
+	        :PRINT
+		  "max is z(="
+		  z
+		  ")\n"
+
+###
+- name:		break1
+  input: |
+	break;
+  expected: |
+	:BREAK
+
+- name:		break2
+  input: |
+	while (true) {
+	  if (x < 0) {
+	    break;
+	  }
+	}
+  expected: |
+	:WHILE
+	  true
+	  :BLOCK
+	    :IF
+	      <
+	        x
+		0
+	      :BLOCK
+	        :BREAK
+
+- name:		continue1
+  input: |
+	continue;
+  expected: |
+	:CONTINUE
+
+- name:		continue2
+  input: |
+	while (true) {
+	  if (locked == true) {
+	    sleep(10);
+  	    continue;
+	  }
+	  break;
+	}
+  expected: |
+	:WHILE
+	  true
+	  :BLOCK
+	    :IF
+	      ==
+	        locked
+		true
+	      :BLOCK
+	        :EXPR
+	          sleep()
+		    10
+		:CONTINUE
+	    :BREAK
+
+###
+- name:		elem1
+  input: |
+	_stag;
+	_cont;
+	_etag;
+	_elem;
+	_element(foo);
+	_content(bar);
+  expected: |
+	_stag
+	_cont
+	_etag
+	_elem
+	_element(foo)
+	_content(bar)
+
+- name:		elem2
+  input: |
+	if (cond) {
+	   _stag;
+	   foreach (item = list) {
+	     _cont;
+	   }
+	   _etag;
+	} elseif (cond) {
+	   foreach (item in list) {
+	     _elem;
+	   }
+	} else {
+	  _element(foo);
+	}
+  expected: |
+	:IF
+	  cond
+	  :BLOCK
+	    _stag
+	    :FOREACH
+	      item
+	      list
+	      :BLOCK
+	        _cont
+	    _etag
+	  :IF
+	    cond
+	    :BLOCK
+	      :FOREACH
+	        item
+		list
+	        :BLOCK
+		  _elem
+	    :BLOCK
+	      _element(foo)

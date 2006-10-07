@@ -1,5 +1,0 @@
-MethodExpression.java		java.util.List
-PropertyExpression.java		java.util.List	
-InterpreterTest.java		junit.framework.TestSuite
-StatementTest.java		java.io.Writer
-TagHelperTest.java		java.util

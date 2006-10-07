@@ -1,6 +1,0 @@
-$basename = 'calendar'
-$classname = 'CalendarExample'
-$files = %w[calendar-month.html calendar-month.plogic calendar-page.html calendar-page.plogic ]
-
-load "../Rookbook.common"
-
