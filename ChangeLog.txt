@@ -1,0 +1,12 @@
+.+document:	ChangeLog
+.?lastupdate:	$Date$
+.?revision:	$Rev$
+
+: rev.2 (2006-10-09)
+	- [enhance] converter and handler created
+
+: rev.1 (2006-10-08)
+	- [enhance] ExpressionParser, StatementParser, and PresentationLogicParser implemented
+
+.-document:
+

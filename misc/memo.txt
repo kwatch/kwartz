@@ -1,0 +1,70 @@
+
+●クラス設計
+
+kmyacc.java.parserに手を入れずに済ませられるか？→結論：できない。
+
+.--------------------
+class ParserHelper
+  def initialize(parser)
+    @parser = parser   # parserの型が決まらない。ExpressionParserとStatementParserは共通の親クラスを持たない。
+    @scanner = nil
+  end
+
+  def yylex
+    scanner = @scanner
+    @parser.set_yyval = [scanner.token, scanner.value, scanner.start_linenum, scanner.start_column]
+    return scanner.token
+  end
+
+  def yyerror(msg)
+    @parser.yyval()
+    @parser.yyastk
+    throw @error = SyntaxException.new(msg, @scanner.start_linenum, @scanner.start_column)
+  end
+
+  def parse(input)
+    @scanner = Scanner.new(input)
+    result = @parser.yyparse()
+    if result != 0
+      @error ||= @scanner.error
+      throw @error
+    end
+    @parser.yylval
+  end
+  
+end
+
+
+class ExpressionParser extends ExpressionParser_ implementes Parser
+  def parser(input)
+    super.parse(input)
+  end
+end
+
+
+class ExpressionParser_
+
+  def initialize()
+    @helper = new ParserHelper(self, input)
+    @builder = new Builder()
+  end
+
+  def yylex
+    @helper.yylex
+  end
+
+  def yyerror
+    @helper.yyerror
+  end
+
+  def parse(input)
+    @helper.parse(input)
+  end
+
+end
+
+
+class RulesetParser_
+
+end
+.--------------------

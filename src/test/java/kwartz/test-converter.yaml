@@ -1,0 +1,317 @@
+### $Date$
+### $Release$
+### $Copyright$
+
+###
+- name:		fetch1
+  pdata: |
+	foo
+	bar
+	<table>
+	 <tr>
+	  <td id="mark:item">foo</td>
+	 </tr>
+	</table>
+	baz<br/>
+	end
+  plogic: |
+  expected: |
+	linenum    : 3
+	prev_text  : "foo\nbar\n"
+	tag_text   : "<table>\n"
+	head_space : ""
+	is_etag    : false
+	tagname    : "table"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : false
+	tail_space : "\n"
+	
+	linenum    : 4
+	prev_text  : ""
+	tag_text   : " <tr>\n"
+	head_space : " "
+	is_etag    : false
+	tagname    : "tr"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : false
+	tail_space : "\n"
+	
+	linenum    : 5
+	prev_text  : ""
+	tag_text   : "  <td id=\"mark:item\">"
+	head_space : "  "
+	is_etag    : false
+	tagname    : "td"
+	attr_str   : " id=\"mark:item\""
+	extra_space: ""
+	is_empty   : false
+	tail_space : null
+	
+	linenum    : 5
+	prev_text  : "foo"
+	tag_text   : "</td>\n"
+	head_space : null
+	is_etag    : true
+	tagname    : "td"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : false
+	tail_space : "\n"
+	
+	linenum    : 6
+	prev_text  : ""
+	tag_text   : " </tr>\n"
+	head_space : " "
+	is_etag    : true
+	tagname    : "tr"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : false
+	tail_space : "\n"
+	
+	linenum    : 7
+	prev_text  : ""
+	tag_text   : "</table>\n"
+	head_space : ""
+	is_etag    : true
+	tagname    : "table"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : false
+	tail_space : "\n"
+	
+	linenum    : 8
+	prev_text  : "baz"
+	tag_text   : "<br/>\n"
+	head_space : null
+	is_etag    : false
+	tagname    : "br"
+	attr_str   : ""
+	extra_space: ""
+	is_empty   : true
+	tail_space : "\n"
+	
+	rest: "end\n"
+
+###
+- name:		converter1
+  pdata: |
+	<table>
+	 <tr id="mark:list">
+	  <td id="mark:item">foo</td>
+	 </tr>
+	</table>
+  plogic: |
+	#list {
+	  logic: {
+	    foreach (item = list) {
+	      _stag;
+	      _cont;
+	      _etag;
+	    }
+	  }
+	}
+	#item { value: item; }
+  expected: |
+	:PRINT
+	  "<table>\n"
+	:BLOCK
+	  :FOREACH
+	    item
+	    list
+	    :BLOCK
+	      :PRINT
+	        " <tr>\n"
+	      :BLOCK
+	        :BLOCK
+	          :PRINT
+	            "  <td>"
+	          :PRINT
+	            item
+	          :PRINT
+	            "</td>\n"
+	      :PRINT
+	        " </tr>\n"
+	:PRINT
+	  "</table>\n"
+
+
+- name:		converter2
+  desc:		complex example
+  pdata: |
+	<table>
+	 <tr id="mark:list">
+	  <td id="mark:item">foo</td>
+	 </tr>
+	</table>
+  plogic: |
+	#list {
+	  attrs: 'bgcolor' color;
+	  logic: {
+	    i = 0;
+	    foreach (item = list) {
+	      i += 1;
+	      color = i % 2 == 0 ? '#FCC' : '#CCF';
+	      _stag;
+	      _cont;
+	      _etag;
+	    }
+	  }
+	}
+	#item { value: item; }
+  expected: |
+	:PRINT
+	  "<table>\n"
+	:BLOCK
+	  :EXPR
+	    =
+	      i
+	      0
+	  :FOREACH
+	    item
+	    list
+	    :BLOCK
+	      :EXPR
+	        +=
+	          i
+		  1
+	      :EXPR
+	        =
+		  color
+		  ?:
+		    ==
+		      %
+	                i
+	                2
+		      0
+	            "#FCC"
+	            "#CCF"
+	      :PRINT
+	        " <tr bgcolor=\""
+		color
+		"\">\n"
+	      :BLOCK
+	        :BLOCK
+	          :PRINT
+	            "  <td>"
+	          :PRINT
+	            item
+	          :PRINT
+	            "</td>\n"
+	      :PRINT
+	        " </tr>\n"
+	:PRINT
+	  "</table>\n"
+
+
+###
+- name:		converter11
+  desc:		id attribute
+  pdata: |
+	<ul id="list">
+	 <li id="item">foo</li>
+	</ul>
+  plogic: |
+	#list {
+	  logic: {
+	    _stag;
+	    foreach (item = list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	#item { value: item; }
+  expected: |
+	:BLOCK
+	  :PRINT
+	    "<ul id=\"list\">\n"
+	  :FOREACH
+	    item
+	    list
+	    :BLOCK
+	      :BLOCK
+	        :BLOCK
+	          :PRINT
+	            " <li id=\"item\">"
+	          :PRINT
+	            item
+	          :PRINT
+	            "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+
+- name:		converter12
+  desc:		class attribute
+  pdata: |
+	<ul class="list">
+	 <li class="item">foo</li>
+	</ul>
+  plogic: |
+	.list {
+	  logic: {
+	    _stag;
+	    foreach (item = list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	.item { value: item; }
+  expected: |
+	:BLOCK
+	  :PRINT
+	    "<ul class=\"list\">\n"
+	  :FOREACH
+	    item
+	    list
+	    :BLOCK
+	      :BLOCK
+	        :BLOCK
+	          :PRINT
+	            " <li class=\"item\">"
+	          :PRINT
+	            item
+	          :PRINT
+	            "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+
+- name:		converter13
+  desc:		tagname
+  pdata: |
+	<ul>
+	 <li>foo</li>
+	</ul>
+  plogic: |
+	ul {
+	  logic: {
+	    _stag;
+	    foreach (item = list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	li { value: item; }
+  expected: |
+	:BLOCK
+	  :PRINT
+	    "<ul>\n"
+	  :FOREACH
+	    item
+	    list
+	    :BLOCK
+	      :BLOCK
+	        :BLOCK
+	          :PRINT
+	            " <li>"
+	          :PRINT
+	            item
+	          :PRINT
+	            "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+

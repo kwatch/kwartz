@@ -171,6 +171,16 @@ abstract public class Parser implements Token {
   	}
 
 
+	public static int detectEscapeFlag(String propname) {
+		if (Character.isLowerCase(propname.charAt(0)))
+			return 0;
+		else if (Character.isLowerCase(propname.charAt(propname.length()-1)))
+			return 1;
+		else
+			return -1;
+	}
+
+	
   	public static void main(String[] args) throws ParseException {
   		//String input = "3 + 1";
   		//Parser parser = new ExpressionParser();

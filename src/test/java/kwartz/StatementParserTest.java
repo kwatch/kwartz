@@ -1,8 +1,12 @@
+/*
+ * $Rev$
+ * $Release$
+ * $Copyright$
+ */
 package kwartz;
 
 import junit.framework.TestCase;
 import java.util.*;
-
 
 
 public class StatementParserTest extends TestCase {

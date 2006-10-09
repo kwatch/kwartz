@@ -12,6 +12,7 @@ public class Ast {
 	abstract static class Node {
 	
 		int _token;
+		String _filename;
 		int _linenum;
 		int _column;
 		
@@ -32,6 +33,14 @@ public class Ast {
 			_token = token;
 		}
 		
+		public String getFilename() {
+			return _filename;
+		}
+		
+		public void setFilename(String filename) {
+			_filename = filename;
+		}
+
 		public int getLinenum() {
 			return _linenum;
 		}
@@ -326,6 +335,7 @@ public class Ast {
 	}
 
 
+	////
 	
 	static abstract class Statement extends Node {
 		
@@ -340,8 +350,19 @@ public class Ast {
 		
 		public PrintStatement(Expression[] arguments) {
 			super(Token.PRINT);
-			_arguments = arguments;
 			assert arguments != null;
+			_arguments = arguments;
+		}
+		
+		public PrintStatement(List arguments) {
+			super(Token.PRINT);
+			assert arguments != null;
+			_arguments = new Expression[arguments.size()];
+			arguments.toArray(_arguments);
+		}
+		
+		public Expression[] getArguments() {
+			return _arguments;
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
@@ -360,6 +381,10 @@ public class Ast {
 			super(Token.EXPR);
 			_expression = expression;
 			assert expression != null;
+		}
+
+		public Expression getExpression() {
+			return _expression;
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
@@ -380,6 +405,18 @@ public class Ast {
 			_else_stmt = else_stmt;
 		}
 		
+		public Expression getCondition() {
+			return _condition;
+		}
+		
+		public Statement getThenStatement() {
+			return _then_stmt;
+		}
+		
+		public Statement getElseStatement() {
+			return _else_stmt;
+		}
+		
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_condition._inspect(level+1, sb);
@@ -397,6 +434,14 @@ public class Ast {
 			super(Token.WHILE);
 			_condition = condition;
 			_body = body;
+		}
+		
+		public Expression getCondition() {
+			return _condition;
+		}
+		
+		public Statement getBodyStatement() {
+			return _body;
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
@@ -424,6 +469,18 @@ public class Ast {
 				String mesg = s + ": invalid loop-variable of foreach statement.";
 				throw new SemanticException(mesg, _item.getLinenum(), _item.getColumn());
 			}
+		}
+		
+		public Expression getItemExpression() {
+			return _item;
+		}
+		
+		public Expression getListExpression() {
+			return _list;
+		}
+		
+		public Statement getBodyStatement() {
+			return _body;
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
@@ -484,46 +541,57 @@ public class Ast {
 	
 	////
 	
-	static class StagStatement extends Statement {
+	static class ExpandStatement extends Statement {
+		String _name;
+		public ExpandStatement(int token, String name) {
+			super(token);
+			_name = name;
+		}
+		public ExpandStatement(int token) {
+			super(token);
+		}
+		public String getName() {
+			return _name;
+		}
+	}
+	
+	
+	static class StagStatement extends ExpandStatement {
 		public StagStatement() {
 			super(Token.STAG);
 		}
 	}
 	
-	static class ContStatement extends Statement {
+	static class ContStatement extends ExpandStatement {
 		public ContStatement() {
 			super(Token.CONT);
 		}
 	}
 
-	static class EtagStatement extends Statement {
+	static class EtagStatement extends ExpandStatement {
 		public EtagStatement() {
 			super(Token.ETAG);
 		}
 	}
 	
-	static class ElemStatement extends Statement {
+	static class ElemStatement extends ExpandStatement {
 		public ElemStatement() {
 			super(Token.ELEM);
 		}
 	}
 	
-	static class ElementStatement extends Statement {
-		private String _name;
+	static class ElementStatement extends ExpandStatement {
 		public ElementStatement(String name) {
-			super(Token.ELEMENT);
-			_name = name;
+			super(Token.ELEMENT, name);
 		}
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, "_element("+_name+")");
 		}
 	}
 	
-	static class ContentStatement extends Statement {
-		private String _name;
+	static class ContentStatement extends ExpandStatement {
 		public ContentStatement(String name) {
-			super(Token.CONTENT);
-			_name = name;
+			super(Token.CONTENT, name);
 		}
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, "_content("+_name+")");
@@ -572,59 +640,26 @@ public class Ast {
 	static class Declaration extends Node {
 		
 		private String _propname;
-		private Object _argument;
+		private Object _propvalue;
 		
-		public Declaration(int token, String propname, Object argument) {
+		public Declaration(int token, String propname, Object propvalue) {
 			super(token);
 			_propname = propname;
-			String wrap_func = _wrapFunctionName(propname);
-			if (wrap_func != null) {
-				argument = _wrap(argument, wrap_func);
+			int escape_flag = Parser.detectEscapeFlag(propname);
+			if (escape_flag != 0) {
+				String wrap_funcname = escape_flag > 0 ? "E" : "X";
+				propvalue = Ast.Helper.wrapWithFunction(propvalue, wrap_funcname);
 			}
-			_argument = argument;
+			_propvalue = propvalue;
 		}
 
 		public String getPropertyName() {
 			return _propname;
 		}
-		public Object getArgument() {
-			return _argument;
-		}
-	
-		private String _wrapFunctionName(String propname) {
-			if (Character.isLowerCase(propname.charAt(0)))
-				return null;
-			else if (Character.isLowerCase(propname.charAt(propname.length()-1)))
-				return "E";  // escape
-			else
-				return "X";  // not escape
+		public Object getPropertyValue() {
+			return _propvalue;
 		}
 		
-		private Object _wrap(Object arg, String funcname) {
-			if (arg instanceof Expression) {
-				return new Ast.FuncallExpression(funcname, new Expression[] { (Expression)arg });
-			}
-			if (arg instanceof List) {
-				List exprs = (List)arg;
-				//for (Iterator it = exprs.iterator(); it.hasNext(); ) {
-				for (int i = 0, n = exprs.size(); i < n; i++) {
-					//Expression expr = (Expression)it.next();
-					Expression expr = (Expression)exprs.get(i);
-					exprs.set(i, _wrap(expr, funcname));
-				}
-				return exprs;
-			}
-			if (arg instanceof Map) {
-				Map attrs = (Map)arg;
-				for (Iterator it = attrs.keySet().iterator(); it.hasNext(); ) {
-					String name = (String)it.next();
-					attrs.put(name, _wrap(attrs.get(name), funcname));
-				}
-				return attrs;
-			}
-			return arg;
-		}
-
 	}
 
 
@@ -636,61 +671,165 @@ public class Ast {
 	 * ruleset ::= selectors '{' declarations '}'
 	 * selectors ::= selector | selectors ',' selecotr
 	 * declarations ::= declaration | declarations declaration
+	 * declaration ::= property_name | property_value
 	 * </pre>
 	 */
 	static class Ruleset extends Node {
 		
 		private List _selectors;
-		private Map _declarations;
+		private List _declarations;
+		private Map _prop_table = new HashMap();
+		private String[] _selector_names;
 		
-		public Ruleset(List selectors, Map declarations) {
+		public Ruleset(List selectors, List decl_list) {
 			super(Token.RULESET);
 			_selectors = selectors == null ? new ArrayList() : selectors;
-			_declarations = declarations == null ? (Map)new HashMap() : declarations;
-		}
-	
-		public Ruleset(List selectors, List decl_list) {
-			this(selectors, new HashMap());
+			_declarations = decl_list == null ? new ArrayList() : decl_list;
+			_selector_names = new String[_selectors.size()];
+			int i = 0;
+			for (Iterator it = _selectors.iterator(); it.hasNext(); ) {
+				_selector_names[i] = (String)((Selector)it.next()).getValue();
+				i++;
+			}
 			for (Iterator it = decl_list.iterator(); it.hasNext(); ) {
-				addDeclaration((Declaration)it.next());
+				Declaration decl = (Declaration)it.next();
+				addProperty(decl.getToken(), decl.getPropertyValue());
 			}
 		}
 	
 		public Ruleset() {
-			this(new ArrayList(), new HashMap());
+			this(new ArrayList(), new ArrayList());
 		}
+
 		
-		public void addSelector(String selector) {
-			_selectors.add(selector);
-		}
-		
-		public Iterator selectors() {
+		public Iterator selectorsIterator() {
 			return _selectors.iterator();
 		}
 		
-		public void addDeclaration(Declaration decl) {
-			_declarations.put(new Integer(decl.getToken()), decl);
+		public Iterator declarationsIterator() {
+			return _declarations.iterator();
 		}
 		
-		public Declaration getDeclaration(int token) {
-			return (Declaration)_declarations.get(new Integer(token));
+		public String[] selectorNames() {
+			return _selector_names;
 		}
 		
-		public Iterator declarations() {
-			return _declarations.values().iterator();
+		public void addProperty(int token, Object propvalue) {
+			_prop_table.put(new Integer(token), propvalue);
 		}
 		
-		public boolean match(String selector_str) {
-			Selector selector = (Selector)_selectors.get(0);
-			if (selector.getValue().equals(selector_str))
-				return true;
-			for (Iterator it = _selectors.iterator(); it.hasNext(); ) {
-				selector = (Selector)it.next();
-				if (selector.getValue().equals(selector_str))
+		public Object getProperty(int token) {
+			return _prop_table.get(new Integer(token));
+		}
+		
+		
+		public Ast.Expression getStag() {
+			return _getExpression(Token.P_STAG);
+		}
+		
+		public Ast.Expression getEtag() {
+			return _getExpression(Token.P_ETAG);
+		}
+		
+		public Ast.Expression getCont() {
+			Expression expr = _getExpression(Token.P_CONT);
+			if (expr == null) expr = _getExpression(Token.P_VALUE);
+			return expr;
+		}
+		
+		public Ast.Expression getElem() {
+			return _getExpression(Token.P_ELEM);
+		}
+		
+		public Ast.Expression getValue() {
+			return _getExpression(Token.P_VALUE);
+		}
+		
+		private Ast.Expression _getExpression(int token) {
+			return (Ast.Expression)getProperty(token);
+		}
+		
+		public Map getAttrs() {
+			return (Map)getProperty(Token.P_ATTRS);
+		}
+		
+		public List getAppend() {
+			return (List)getProperty(Token.P_APPEND);
+		}
+		
+		public List getRemove() {
+			return (List)getProperty(Token.P_REMOVE);
+		}
+		
+		public String getTagname() {
+			return (String)getProperty(Token.P_TAGNAME);
+		}
+		
+		public List getLogic() {
+			return _getStatements(Token.P_LOGIC);
+		}
+		
+		public List getBefore() {
+			List stmts = _getStatements(Token.P_BEFORE);
+			if (stmts == null) stmts = _getStatements(Token.P_BEGIN);
+			return stmts;
+		}
+		
+		public List getAfter() {
+			List stmts = _getStatements(Token.P_AFTER);
+			if (stmts == null) stmts = _getStatements(Token.P_END);
+			return stmts;
+		}
+		
+		private List _getStatements(int token) {
+			if (token < Token.P_LOGIC || Token.P_AFTER < token)
+				throw new IllegalArgumentException("Ruleset#getStatement(): token " + token + ": must be Token.P_LOGIC <= token <= Token.P_AFTER.");
+			return (List)getProperty(token);
+		}
+		
+		
+		public boolean match(String selector_name) {
+			for (int i = 0, n = _selector_names.length; i < n; i++) {
+				if (_selector_names[i].equals(selector_name))
 					return true;
 			}
 			return false;
 		}
+		
+		
+		static Ruleset merged(Ruleset ruleset1, Ruleset ruleset2) {
+			Map new_proptable = new HashMap();
+			new_proptable.putAll(ruleset1._prop_table);
+			new_proptable.putAll(ruleset2._prop_table);
+			Map attrs1 = ruleset1.getAttrs();
+			Map attrs2 = ruleset2.getAttrs();
+			if (attrs1 != null || attrs2 != null) {
+				Map new_attrs = new HashMap();
+				if (attrs1 != null) new_attrs.putAll(attrs1);
+				if (attrs2 != null) new_attrs.putAll(attrs2);
+				new_proptable.put(new Integer(Token.P_ATTRS), new_attrs);
+			}
+			List exprs1 = ruleset1.getAppend();
+			List exprs2 = ruleset2.getAppend();
+			if (exprs1 != null || exprs2 != null) {
+				List new_exprs = new ArrayList();
+				if (exprs1 != null) new_exprs.addAll(exprs1);
+				if (exprs2 != null) new_exprs.addAll(exprs2);
+				new_proptable.put(new Integer(Token.P_APPEND), new_exprs);
+			}
+			List names1 = ruleset1.getRemove();
+			List names2 = ruleset2.getRemove();
+			if (names1 != null || names2 != null) {
+				List new_names = new ArrayList();
+				if (names1 != null) new_names.addAll(names1);
+				if (names2 != null) new_names.addAll(names2);
+				new_proptable.put(new Integer(Token.P_REMOVE), new_names);
+			}
+			Ruleset new_ruleset = new Ruleset();
+			new_ruleset._prop_table = new_proptable;
+			return new_ruleset;
+		}
+		
 	
 		protected void _inspect(int level, StringBuffer sb) {
 			sb.append(Util.repeatString("  ", level));
@@ -701,49 +840,51 @@ public class Ast {
 				sep = ", ";
 			}
 			sb.append(" {\n");
-			Declaration decl = null;
-			for (int i = Token.P_STAG; i <= Token.P_VALUE; i++) {
-				if ((decl = getDeclaration(i)) != null) {
-					_addValue(level+1, sb, decl.getPropertyName() + ":");
-					((Expression)decl.getArgument())._inspect(level+2, sb);
+			String[] labels = {"stag:", "cont:", "etag:", "elem:", "value:"}; 
+			for (int t = Token.P_STAG; t <= Token.P_VALUE; t++) {
+				Expression expr = (Expression)getProperty(t);
+				if (expr != null) {
+					_addValue(level+1, sb, labels[t - Token.P_STAG]);
+					expr._inspect(level+2, sb);
 				}
 			}
-			if ((decl = getDeclaration(Token.P_ATTRS)) != null) {
-				_addValue(level+1, sb, decl.getPropertyName() + ":");
-				Map map = (Map)decl.getArgument();
-				List names = new ArrayList(map.keySet());
+			Map attrs = getAttrs();
+			if (attrs != null) {
+				_addValue(level+1, sb, "attrs:");
+				List names = new ArrayList(attrs.keySet());
 				Collections.sort(names);
 				for (Iterator it = names.iterator(); it.hasNext(); ) {
 					String key = (String)it.next();
-					Expression expr = (Expression)map.get(key);
-					_addValue(level+2, sb, "- '" + key + "'");
+					Expression expr = (Expression)attrs.get(key);
+					_addValue(level+2, sb, "- '"+key+"'");
 					expr._inspect(level+3, sb);
 				}
 			}
-			if ((decl = getDeclaration(Token.P_APPEND)) != null) {
-				_addValue(level+1, sb, decl.getPropertyName() + ":");
-				List exprs = (List)decl.getArgument();
+			List exprs = getAppend();
+			if (exprs != null) {
+				_addValue(level+1, sb, "append:");
 				for (Iterator it = exprs.iterator(); it.hasNext(); ) {
 					Expression expr = (Expression)it.next();
 					expr._inspect(level+2, sb);
 				}
 			}
-			if ((decl = getDeclaration(Token.P_REMOVE)) != null) {
-				_addValue(level+1, sb, decl.getPropertyName() + ":");
-				List names = (List)decl.getArgument();
+			List names = getRemove();
+			if (names != null) {
+				_addValue(level+1, sb, "remove:");
 				for (Iterator it = names.iterator(); it.hasNext(); ) {
 					String name = (String)it.next();
-					_addValue(level+2, sb, "- '" + name + "'");
+					_addValue(level+2, sb, "- '"+name+"'");
 				}
 			}
-			if ((decl = getDeclaration(Token.P_TAGNAME)) != null) {
-				String name = (String)decl.getArgument();
-				_addValue(level+1, sb, decl.getPropertyName() + ": '" + name + "'");
+			String tagname = (String)getProperty(Token.P_TAGNAME);
+			if (tagname != null) {
+				_addValue(level+1, sb, "tagname: '"+tagname+"'");
 			}
+			labels = new String[]{"logic:", "begin:", "end:", "before:", "after:"};
 			for (int t = Token.P_LOGIC; t <= Token.P_AFTER; t++) {
-				if ((decl = getDeclaration(t)) != null) {
-					_addValue(level+1, sb, decl.getPropertyName() + ": {");
-					List stmts = (List)decl.getArgument();
+				List stmts = (List)getProperty(t);
+				if (stmts != null) {
+					_addValue(level+1, sb, labels[t - Token.P_LOGIC] + " {");
 					for (Iterator it = stmts.iterator(); it.hasNext(); ) {
 						Statement stmt = (Statement)it.next();
 						stmt._inspect(level+2, sb);
@@ -755,5 +896,39 @@ public class Ast {
 		}
 	}
 
+
+	/////
 	
+	
+	public static class Helper {
+		
+		
+		public static Object wrapWithFunction(Object arg, String funcname) {
+			if (arg instanceof Expression) {
+				return new Ast.FuncallExpression(funcname, new Expression[] { (Expression)arg });
+			}
+			if (arg instanceof List) {
+				List exprs = (List)arg;
+				//for (Iterator it = exprs.iterator(); it.hasNext(); ) {
+				for (int i = 0, n = exprs.size(); i < n; i++) {
+					//Expression expr = (Expression)it.next();
+					Expression expr = (Expression)exprs.get(i);
+					exprs.set(i, wrapWithFunction(expr, funcname));
+				}
+				return exprs;
+			}
+			if (arg instanceof Map) {
+				Map attrs = (Map)arg;
+				for (Iterator it = attrs.keySet().iterator(); it.hasNext(); ) {
+					String name = (String)it.next();
+					attrs.put(name, wrapWithFunction(attrs.get(name), funcname));
+				}
+				return attrs;
+			}
+			return arg;
+		}
+		
+	}
+
+
 }

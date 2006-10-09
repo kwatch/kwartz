@@ -120,58 +120,58 @@
 	    e2
 	}
 	#mark4E {
-	  Stag:
+	  stag:
 	    E()
 	      s
-	  Cont:
+	  cont:
 	    E()
 	      c
-	  Etag:
+	  etag:
 	    E()
 	      e
-	  Elem:
+	  elem:
 	    E()
 	      m
-	  Value:
+	  value:
 	    E()
 	      v
-	  Attrs:
+	  attrs:
 	    - 'a1'
 	      E()
 	        v1
 	    - 'a2'
 	      E()
 	        v2
-	  Append:
+	  append:
 	    E()
 	      e1
 	    E()
 	      e2
 	}
 	#mark4X {
-	  STAG:
+	  stag:
 	    X()
 	      s
-	  CONT:
+	  cont:
 	    X()
 	      c
-	  ETAG:
+	  etag:
 	    X()
 	      e
-	  ELEM:
+	  elem:
 	    X()
 	      m
-	  VALUE:
+	  value:
 	    X()
 	      v
-	  ATTRS:
+	  attrs:
 	    - 'a1'
 	      X()
 	        v1
 	    - 'a2'
 	      X()
 	        v2
-	  APPEND:
+	  append:
 	    X()
 	      e1
 	    X()
@@ -286,12 +286,12 @@
 	}
   expected: |
 	#title {
-	  Value:
+	  value:
 	    E()
 	      doctitle
 	}
 	#h1 {
-	  VALUE:
+	  value:
 	    X()
 	      doctitle
 	}
@@ -329,7 +329,7 @@
 	  }
 	}
 	#td {
-	  Value:
+	  value:
 	    E()
 	      item
 	}

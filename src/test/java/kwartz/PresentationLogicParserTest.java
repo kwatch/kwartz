@@ -1,8 +1,12 @@
+/*
+ * $Rev$
+ * $Release$
+ * $Copyright$
+ */
 package kwartz;
 
 import junit.framework.TestCase;
 import java.util.*;
-
 
 
 public class PresentationLogicParserTest extends TestCase {
@@ -82,23 +86,23 @@ public class PresentationLogicParserTest extends TestCase {
 	}
 	
 
-//	public void test_ruleset1() throws Exception { _test("ruleset1"); }
-//	public void test_ruleset2() throws Exception { _test("ruleset2"); }
-//	public void test_ruleset3() throws Exception { _test("ruleset3"); }
-//	public void test_ruleset4() throws Exception { _test("ruleset4"); }
-//	public void test_ruleset5() throws Exception { _test("ruleset5"); }
-//	public void test_ruleset6() throws Exception { _test("ruleset6"); }
-//	public void test_ruleset7() throws Exception { _test("ruleset7"); }
+	public void test_ruleset1()  throws Exception { _test("ruleset1"); }
+	public void test_ruleset2()  throws Exception { _test("ruleset2"); }
+	public void test_ruleset3()  throws Exception { _test("ruleset3"); }
+	public void test_ruleset4()  throws Exception { _test("ruleset4"); }
+	public void test_ruleset5()  throws Exception { _test("ruleset5"); }
+	public void test_ruleset6()  throws Exception { _test("ruleset6"); }
+	public void test_ruleset7()  throws Exception { _test("ruleset7"); }
 	public void test_selector1() throws Exception { _test("selector1"); }
 	public void test_selector2() throws Exception { _test("selector2"); }
 	public void test_selector3() throws Exception { _test("selector3"); }
-//	public void test_rcurly1()  throws Exception { _test("rcurly1"); }
-//	public void test_rcurly2()  throws Exception { _test("rcurly2"); }
-//	public void test_rcurly3()  throws Exception { _test("rcurly3"); }
-//	public void test_command1() throws Exception { _test("command1"); }
-//	public void test_command2() throws Exception { _test("command2"); }
-//	public void test_comment1() throws Exception { _test("comment1"); }
-//	public void test_comment2() throws Exception { _test("comment2"); }
-//	public void test_comment3() throws Exception { _test("comment3"); }
+	public void test_rcurly1()   throws Exception { _test("rcurly1"); }
+	public void test_rcurly2()   throws Exception { _test("rcurly2"); }
+	public void test_rcurly3()   throws Exception { _test("rcurly3"); }
+	public void test_command1()  throws Exception { _test("command1"); }
+	public void test_command2()  throws Exception { _test("command2"); }
+	public void test_comment1()  throws Exception { _test("comment1"); }
+	public void test_comment2()  throws Exception { _test("comment2"); }
+	public void test_comment3()  throws Exception { _test("comment3"); }
 	
 }

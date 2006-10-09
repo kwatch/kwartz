@@ -29,6 +29,7 @@ import java.util.Collection;
  * utilities.
  */
 public class Util {
+	
 
 
 	/**
@@ -39,7 +40,7 @@ public class Util {
 		inspect(obj, sb);
 		return sb.toString();
 	}
-	
+
 	
 	/**
 	 * convert object to string with proper format.
@@ -158,6 +159,29 @@ public class Util {
 		return untabify(str, 8);
 	}
 
+	
+	/**
+	 * count characters in string 
+	 */
+	public static int count(String str, char ch) {
+		if (str == null)
+			return 0;
+		int ctr = 0;
+		for (int i = 0, n = str.length(); i < n; i++) {
+			if (str.charAt(i) == ch)
+				ctr++;
+		}
+		return ctr;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static Object or(Object obj1, Object obj2) {
+		return obj1 != null ? obj1 : obj2;
+	}
+	
 
 	/**
 	 * read file content
