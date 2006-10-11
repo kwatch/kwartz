@@ -14,13 +14,9 @@ public class PresentationLogicParserTest extends TestCase {
 	static Map __testdata;
 	
 	static {
-		String resource = "kwartz/test-plogic-parser.yaml";
+		String resource_name = "kwartz/test-plogic-parser.yaml";
 		try {
-			String filename = Util.findResource(resource, PresentationLogicParserTest.class);
-			if (filename == null)
-				throw new java.io.FileNotFoundException(resource + ": not found.");
-			List maplist = Util.loadYamlTestData(filename);
-			__testdata = Util.convertMaplistToMaptable(maplist, "name");
+			__testdata = TestUtil.findAndLoadYamlTestData(resource_name, PresentationLogicParserTest.class);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();

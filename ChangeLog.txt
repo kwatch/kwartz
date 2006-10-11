@@ -2,6 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.3 (2006-10-11)
+	- [enhance] TestUti.java added
+	- [enhance] ConverterTest is improved
+	- [refactor] HandlerArgument class is removed
+	- [refacotr] Handler#handle() and Handler#handleDirectives() takes ElementInfo argument
+
 : rev.2 (2006-10-09)
 	- [enhance] converter and handler created
 

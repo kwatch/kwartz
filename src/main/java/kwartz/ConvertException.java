@@ -29,4 +29,12 @@ public class ConvertException extends KwartzException {
 		return _linenum;
 	}
 	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(_filename != null ? _filename : "").append(':');
+		if (_linenum > 0) sb.append(_linenum).append(':');
+		sb.append(' ').append(getMessage());
+		return sb.toString();
+	}
+	
 }

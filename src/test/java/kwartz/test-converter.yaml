@@ -2,6 +2,8 @@
 ### $Release$
 ### $Copyright$
 
+### ----------------------------------------
+
 ###
 - name:		fetch1
   pdata: |
@@ -95,8 +97,720 @@
 	
 	rest: "end\n"
 
+### -------------------------------------------
+
 ###
-- name:		converter1
+- name:	   convert01
+  desc:    basic test
+  pdata: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+  plogic: 
+  expected*:
+    ruby: &convert01_expected |
+	print("<ul>\n")
+	print("  <li>")
+	print("foo")
+	print("</li>\n")
+	print("</ul>\n")
+    php: *convert01_expected
+    java: |
+	:PRINT
+	  "<ul>\n  <li>foo</li>\n</ul>\n"
+    obsolete: |
+	:PRINT
+	  "<ul>\n"
+	:PRINT
+	  "  <li>"
+	:PRINT
+	  "foo"
+	:PRINT
+	  "</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+###
+- name:	   convert02
+  desc:    marked element
+  pdata: |
+	<ul id="list">
+	  <li id="mark:item">foo</li>
+	</ul>
+  plogic:
+  expected*:
+    ruby: &convert02_expected |
+	print("<ul id=\"list\">\n")
+	print("  <li>")
+	print("foo")
+	print("</li>\n")
+	print("</ul>\n")
+    php: *convert02_expected
+    java: |
+	:PRINT
+	  "<ul id=\"list\">\n"
+	:BLOCK
+	  :PRINT
+	    "  <li>"
+	  :BLOCK
+	    :PRINT
+	      "foo"
+	  :PRINT
+	    "</li>\n"
+	:PRINT
+	  "</ul>\n"
+    obsolete: |
+	:BLOCK
+	  :PRINT
+	    "<ul id=\"list\">\n"
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :BLOCK
+	        :PRINT
+	          "foo"
+	      :PRINT
+	        "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+
+###
+- name:	   convert03
+  desc:    nested element
+  pdata: |
+        <div>
+	  <div>
+	    <div id="list">
+	      <div id="mark:item">
+	        <div>foo</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  plogic:
+  expected*:
+    ruby: &convert03_expected |
+	print("<div>\n")
+	print("  <div>\n")
+	print("    <div id=\"list\">\n")
+	print("      <div>\n")
+	print("        <div>")
+	print("foo")
+	print("</div>\n")
+	print("      </div>\n")
+	print("    </div>\n")
+	print("  </div>\n")
+	print("</div>\n")
+    php: *convert03_expected
+    java: |
+	:PRINT
+	  "<div>\n  <div>\n"
+	:PRINT
+	  "    <div id=\"list\">\n"
+	:BLOCK
+	  :PRINT
+	    "      <div>\n"
+	  :BLOCK
+	    :PRINT
+	      "        <div>"
+	    :PRINT
+	      "foo"
+	    :PRINT
+	      "</div>\n"
+	  :PRINT
+	    "      </div>\n"
+	:PRINT
+	  "    </div>\n"
+	:PRINT
+	  "  </div>\n</div>\n"
+    obsolete: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  <div>\n"
+	:BLOCK
+	  :PRINT
+	    "    <div id=\"list\">\n"
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "      <div>\n"
+	      :BLOCK
+	        :PRINT
+	          "        <div>"
+                :PRINT
+	          "foo"
+	        :PRINT
+	          "</div>\n"
+	      :PRINT
+	        "      </div>\n"
+	  :PRINT
+	    "    </div>\n"
+	:PRINT
+	  "  </div>\n"
+	:PRINT
+	  "</div>\n"
+
+###
+- name:	   convert04
+  desc:    rest text
+  pdata: |
+        foo
+	bar
+	<ul id="mark:list">
+	</ul>
+	baz
+	boo
+  plogic:
+  expected*:
+    ruby: &convert04_expected |
+	print("foo\nbar\n")
+	print("<ul>\n")
+	print("</ul>\n")
+	print("baz\nboo\n")
+    php:  *convert04_expected
+    java: |
+	:PRINT
+	  "foo\nbar\n"
+	:PRINT
+	  "<ul>\n"
+	:BLOCK
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "baz\nboo\n"
+    obsolete: |
+	:PRINT
+	  "foo\nbar\n"
+	:BLOCK
+	  :PRINT
+	    "<ul>\n"
+	  :BLOCK
+	  :PRINT
+	    "</ul>\n"
+	:PRINT
+	  "baz\nboo\n"
+
+###
+- name:	   convert05
+  desc:    no tags
+  pdata: |
+        foo
+	bar
+	baz
+  plogic:
+  expected*:
+    ruby: &convert05_expected |
+	print("foo\nbar\nbaz\n")
+    php:  *convert05_expected
+    java: |
+	:PRINT
+	  "foo\nbar\nbaz\n"
+
+###
+- name:	   convert06
+  desc:    not well-formed
+  pdata: |
+	<div id="foo">
+  	 <p><span></b>
+	</div>
+  plogic:
+  expected*:
+    ruby: &convert06_expected |
+	print("<div id=\"foo\">\n")
+	print(" <p>")
+	print("<span>")
+	print("</b>\n")
+	print("</div>\n")
+    php:  *convert06_expected
+    java: |
+	:PRINT
+	  "<div id=\"foo\">\n"
+	:BLOCK
+	  :PRINT
+	    " <p><span></b>\n"
+	:PRINT
+	  "</div>\n"
+    obsolete: |
+	:BLOCK
+	  :PRINT
+	    "<div id=\"foo\">\n"
+	  :BLOCK
+	    :PRINT
+	      " <p>"
+	    :PRINT
+	      "<span>"
+	    :PRINT
+	      "</b>\n"
+	  :PRINT
+	    "</div>\n"
+
+###
+- name:		convert07
+  desc:		empty tag
+  pdata: |
+	<input type="text" id="user_name"/>
+	<input type="text" id="user_mail">
+	<img src="foo.jpg" id="mark:image">
+	<br id="mark:br">
+	<hr id="mark:hr">
+	<meta id="mark:meta">
+	<link id="mark:link">
+  plogic:
+  expected*:
+    ruby: |
+    php: |
+    java: |
+	:PRINT
+	  "<input type=\"text\" id=\"user_name\"/>\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<input type=\"text\" id=\"user_mail\">\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<img src=\"foo.jpg\">\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<br>\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<hr>\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<meta>\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "<link>\n"
+	:BLOCK
+	:PRINT
+	  ""
+
+###
+- name:	   convert08
+  desc:    tag is not closed
+  pdata: |
+        <span>
+	<div id="list">
+	  <div id="mark:item">
+	    <div>foo
+	  </div>
+	</div>
+	</span>
+  plogic: 
+  exception*:
+    ruby:  Kwartz::ConvertError
+    php:   KwartzConvertionException
+    java:  kwartz.ConvertException
+  errormsg*:
+    ruby:  ":2: '<div>' is not closed."
+    php:   ":2: '<div>' is not closed."
+    java:  ":2: '<div>' is not closed."
+
+
+### ----------------------------------------
+
+###
+- name:    convert11
+  desc:    stag property
+  pdata: |
+	<a id="mark:link">link</a>
+  plogic*:
+    ruby: |
+	#link {
+	  stag:  start_link_tag 'list' :controller=>'user';
+	}
+    php: |
+	#link {
+	  stag: start_link_tag("user/list");
+	}
+    java: |
+	#link {
+	  stag: start_link_tag("user", "list");
+	}
+  expected*:
+    ruby: |
+	print(<%start_link_tag 'list' :controller=>'user'%>)
+	print("link</a>\n")
+    php:  |
+	print(<%start_link_tag 'list' :controller=>'user'%>)
+	print("link</a>\n")
+    java: |
+	:PRINT
+	  start_link_tag()
+	    "user"
+	    "list"
+	:BLOCK
+	  :PRINT
+	    "link"
+	:PRINT
+	  "</a>\n"
+
+###
+- name:    convert12
+  desc:    etag property
+  pdata: |
+	<form id="mark:form1">
+ 	  foo
+	</form>
+  plogic*:
+    ruby: |
+	#form1 {
+	  etag: end_form_tag;
+	}
+    php: |
+	#form1 {
+	  etag: end_form_tag();
+	}
+    java: |
+        #form1 {
+          etag: end_form_tag;
+        }
+  expected*:
+    ruby: |
+	print("<form>\n")
+	print("  foo\n")
+	print(<%end_form_tag%>)
+	print("\n")
+    php:  |
+	print("<form>\n")
+	print("  foo\n")
+	print(<%end_form_tag()%>)
+	print("\n")
+    java: |
+	:PRINT
+	  "<form>\n"
+	:BLOCK
+	  :PRINT
+	    "  foo\n"
+	:PRINT
+	  end_form_tag
+	  "\n"
+
+###
+- name:    convert13
+  desc:    cont property
+  pdata: |
+	<b id="mark:item">foo</b>
+  plogic*:
+    ruby: |
+	#item {
+	  cont: item;
+	}
+    php: |
+    	#item {
+    	  cont: $item;
+    	}
+    java: |
+    	#item {
+    	  cont: item;
+    	}
+  expected*:
+    ruby: |
+    	print("<b>")
+    	print(item)
+    	print("</b>\n")
+    php:  |
+    	print("<b>")
+    	print($item)
+    	print("</b>\n")
+    java: |
+	:PRINT
+	  "<b>"
+	:PRINT
+	  item
+	:PRINT
+	  "</b>\n"
+
+###
+- name:    convert14
+  desc:    elem property
+  pdata: |
+	<span>
+	  <a href="foo" id="mark:link">link</a>
+	</span>
+  plogic*:
+    ruby: |
+	#link {
+	  elem: link_to 'Back', 'list', controller=>'user';
+	}
+    php: |
+	#link {
+	  elem: link_to('Back', "user/list");
+	}
+    java: |
+	#link {
+	  elem: link_to('Back', "user", "list");
+	}
+  expected*:
+    ruby: |
+	print("<span>\n")
+	print("  ")
+	print(link_to 'Back', 'list', controller=>'user')
+	print("\n")
+	print("</span>\n")
+    php:  |
+	print("<span>\n")
+	print("  ")
+	print(link_to('Back', "user/list"))
+	print("\n")
+	print("</span>\n")
+    java: |
+	:PRINT
+	  "<span>\n"
+	:PRINT
+	  "  "
+	  link_to()
+	    "Back"
+	    "user"
+	    "list"
+	  "\n"
+	:PRINT
+	  "</span>\n"
+
+###
+- name:    convert15
+  desc:    value property
+  pdata: |
+	<b id="mark:item">foo</b>
+  plogic*:
+    ruby: |
+	#item {
+	  value: item;
+	}
+    php: |
+    	#item {
+    	  value: $item;
+    	}
+    java: |
+    	#item {
+    	  value: item;
+    	}
+  expected*:
+    ruby: |
+    	print("<b>")
+    	print(item)
+    	print("</b>\n")
+    php:  |
+    	print("<b>")
+    	print($item)
+    	print("</b>\n")
+    java: |
+	:PRINT
+	  "<b>"
+	:PRINT
+	  item
+	:PRINT
+	  "</b>\n"
+
+###
+- name:    convert16
+  desc:    attrs property
+  pdata: |
+	<span id="mark:error" class="foo">ERROR</span>
+  plogic*:
+    ruby: |
+	#error {
+	  attrs:  'class' klass,
+	          "bgcolor" color,
+	          'style'  get_style("size", size);
+	}
+    php: |
+	#error {
+	  attrs:  'class' $class,
+	          "bgcolor" $color,
+	          'style'  get_style("size", $size);
+	}
+    java: |
+	#error {
+	  attrs: 'class' klass, "bgcolor" color,
+	         "style" get_style("size", size);
+	}
+  expected*:
+    ruby: |
+    php:  |
+    java: |
+	:PRINT
+	  "<span class=\""
+	  klass
+	  "\" style=\""
+	  get_style()
+	    "size"
+	    size
+	  "\" bgcolor=\""
+	  color
+	  "\">"
+	:BLOCK
+	  :PRINT
+	    "ERROR"
+	:PRINT
+	  "</span>\n"
+
+
+###
+- name:    convert17
+  desc:    append property
+  pdata: |
+	<form>
+	<input type="checkbox" id="user_name"/>
+	</form>
+  plogic*:
+    ruby: |
+	#user_name {
+	  append: flag ? ' checked="checked"' : '';
+	}
+    php: |
+	#user_name {
+	  append: $flag ? ' checked="checked"' : '';
+	}
+    java: |
+	#user_name {
+	  append: flag ? ' checked="checked"' : '';
+	}
+ 
+  expected*:
+    ruby: |
+	print("<form>\n")
+	print("<input type=\"checkbox\" id=\"user_name\"")
+	print(flag ? ' checked="checked"' : '')
+	print("/>\n")
+	print("</form>\n")
+    php:  |
+	print("<form>\n")
+	print("<input type=\"checkbox\" id=\"user_name\"")
+	print($flag ? ' checked="checked"' : '')
+	print("/>\n")
+	print("</form>\n")
+    java: |
+	:PRINT
+	  "<form>\n"
+	:PRINT
+	  "<input type=\"checkbox\" id=\"user_name\""
+	  ?:
+	    flag
+	    " checked=\"checked\""
+	    ""
+	  "/>\n"
+	:BLOCK
+	:PRINT
+	  ""
+	:PRINT
+	  "</form>\n"
+
+
+###
+- name:    convert18
+  desc:    remove property
+  pdata: |
+	<b class="foo" id="item" title="title">xxx</b>
+  plogic*:
+    ruby: |
+	#item {
+	  remove: "id", 'title';
+	}
+    php: |
+	#item {
+	  remove: "id", 'title';
+	}
+    java: |
+	#item {
+	  remove: "id", 'title';
+	}
+  expected*:
+    ruby: |
+    php:  |
+    java: |
+	:PRINT
+	  "<b class=\"foo\">"
+	:BLOCK
+	  :PRINT
+	    "xxx"
+	:PRINT
+	  "</b>\n"
+
+
+###
+- name:    convert19
+  desc:    logic property
+  pdata: |
+	<ul id="mark:list">
+	  <li>foo</li>
+	</ul>
+  plogic*:
+    ruby: |
+	#list {
+	  logic: {
+	    _stag
+	    for item in list do
+	      _cont
+	    end
+	    _etag
+	  }
+	}
+    php: |
+	#list {
+	  logic: {
+	    _stag();
+	    foreach ($list as $item) {
+	      _cont();
+	    }
+	    _etag();
+	  }
+	}
+    java: |
+	#list {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    ruby: |
+  	print("<ul>\n")
+	<%    for item in list do%>
+	print("  <li>foo</li>\n")
+	<%    end%>
+  	print("</ul>\n")
+    php: |
+  	print("<ul>\n")
+	<%    foreach ($list as $item) {%>
+	print("  <li>foo</li>\n")
+	<%    }%>
+  	print("</ul>\n")
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>foo</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+### ----------------------------------------
+
+###
+- name:		converter01
+  desc:		basic example
   pdata: |
 	<table>
 	 <tr id="mark:list">
@@ -114,7 +828,28 @@
 	  }
 	}
 	#item { value: item; }
-  expected: |
+  expected*:
+    java: |
+	:PRINT
+	  "<table>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :PRINT
+	      " <tr>\n"
+	    :BLOCK
+	      :PRINT
+	        "  <td>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</td>\n"
+	    :PRINT
+	      " </tr>\n"
+	:PRINT
+	  "</table>\n"
+    obsolete: |
 	:PRINT
 	  "<table>\n"
 	:BLOCK
@@ -137,8 +872,8 @@
 	:PRINT
 	  "</table>\n"
 
-
-- name:		converter2
+###
+- name:		converter02
   desc:		complex example
   pdata: |
 	<table>
@@ -161,7 +896,49 @@
 	  }
 	}
 	#item { value: item; }
-  expected: |
+  expected*:
+    java: |
+	:PRINT
+	  "<table>\n"
+	:EXPR
+	  =
+	    i
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        i
+		1
+	    :EXPR
+	      =
+		color
+		?:
+		  ==
+		    %
+	              i
+	              2
+		    0
+	          "#FCC"
+	          "#CCF"
+	    :PRINT
+	      " <tr bgcolor=\""
+	      color
+	      "\">\n"
+	    :BLOCK
+	      :PRINT
+	        "  <td>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</td>\n"
+	    :PRINT
+	      " </tr>\n"
+	:PRINT
+	  "</table>\n"
+    obsolete: |
 	:PRINT
 	  "<table>\n"
 	:BLOCK
@@ -205,6 +982,112 @@
 	:PRINT
 	  "</table>\n"
 
+###
+- name:		converter03
+  desc:		empty logic
+  pdata: |
+        <div>
+	 <ul id="mark:list">
+	  <li id="mark:item">foo</li>
+	 </ul>
+	</div>
+  plogic: |
+	#list {
+	  logic: {
+	  }
+	}
+	#item {
+	  value: item;
+	}
+  expected*:
+    ruby: &convert12_expected |
+  	print("<div>\n")
+  	print("</div>\n")
+    php:  *convert12_expected
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "</div>\n"
+
+###
+- name:		converter04
+  desc:		multi selectors
+  pdata: |
+	<ul id="mark:list1">
+	  <li id="mark:item1">foo</li>
+	</ul>
+	<ol id="mark:list2">
+	  <li id="mark:item2">bar</li>
+	</ol>
+	<dl id="mark:list3">
+	  <dd id="mark:item3>baz</dd>
+	</dl>
+  plogic*:
+    java: |
+	#list1, #list2, #list3 {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	#item1, #item2, #item3 {
+	  value: item;
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "<ol>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ol>\n"
+	:PRINT
+	  "<dl>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</dl>\n"
+
+
+
+### ----------------------------------------
 
 ###
 - name:		converter11
@@ -224,7 +1107,24 @@
 	  }
 	}
 	#item { value: item; }
-  expected: |
+  expected*:
+    java: &converter11_expected |
+	:PRINT
+	  "<ul id=\"list\">\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        " <li id=\"item\">"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+    obsolete: |
 	:BLOCK
 	  :PRINT
 	    "<ul id=\"list\">\n"
@@ -243,6 +1143,7 @@
 	  :PRINT
 	    "</ul>\n"
 
+###
 - name:		converter12
   desc:		class attribute
   pdata: |
@@ -260,7 +1161,25 @@
 	  }
 	}
 	.item { value: item; }
-  expected: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul class=\"list\">\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        " <li class=\"item\">"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+    obsolete: |
 	:BLOCK
 	  :PRINT
 	    "<ul class=\"list\">\n"
@@ -279,6 +1198,7 @@
 	  :PRINT
 	    "</ul>\n"
 
+###
 - name:		converter13
   desc:		tagname
   pdata: |
@@ -296,7 +1216,24 @@
 	  }
 	}
 	li { value: item; }
-  expected: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        " <li>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+    obsolete: |
 	:BLOCK
 	  :PRINT
 	    "<ul>\n"
@@ -314,4 +1251,138 @@
 	            "</li>\n"
 	  :PRINT
 	    "</ul>\n"
+
+###
+- name:		converter14
+  desc:		combination of tag&class, class&id, id&tag
+  pdata: |
+	<p class="small">
+	  foo
+	</p>
+	<p id="mark:name1">
+	  bar
+	</p>
+	<span class="small" id="mark:name2">
+	  baz
+	</span>
+  plogic: |
+ 	p   {
+ 	  attrs: 'title' desc;
+ 	}
+ 	.small {
+ 	  append:  ' style="font-size:small"'; 
+ 	}
+	#name1 {
+	  value: value1;
+	}
+	#name2 {
+	  value: value2;
+	} 
+  expected*:
+    java: |
+	:PRINT
+	  "<p class=\"small\" title=\""
+	  desc
+	  "\""
+	  " style=\"font-size:small\""
+	  ">\n"
+	:BLOCK
+	  :PRINT
+	    "  foo\n"
+	:PRINT
+	  "</p>\n"
+	:PRINT
+	  "<p title=\""
+	  desc
+	  "\">\n"
+	:PRINT
+	  value1
+	:PRINT
+	  "</p>\n"
+	:PRINT
+	  "<span class=\"small\""
+	  " style=\"font-size:small\""
+	  ">\n"
+	:PRINT
+	  value2
+	:PRINT
+	  "</span>\n"
+
+###
+- name:		converter15
+  desc:		combination of tag, class, and id
+  pdata: |
+	<ul id="mark:list" class="small">
+	 <li>foo</li>
+	</ul>
+  plogic: |
+ 	ul   {
+ 	  attrs: 'title' desc;
+ 	}
+ 	.small {
+ 	  append:  ' style="font-size:small"'; 
+ 	}
+	#list {
+	  logic: {
+	    _stag;
+	    foreach (item = list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	li { value: item; }
+  expected*:
+    java: |
+	:PRINT
+	  "<ul class=\"small\" title=\""
+	  desc
+	  "\""
+	  " style=\"font-size:small\""
+	  ">\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        " <li>"
+	      :PRINT
+	        item
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+###
+- name:		converter16
+  desc:		tag, class, and id selectors
+  pdata: |
+	<b>foo</b>
+	<span class="val">bar</span>
+	<span id="name1">baz</span>
+  plogic: |
+	b, .val, #name1 {
+	  value: value;
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<b>"
+	:PRINT
+	  value
+	:PRINT
+	  "</b>\n"
+	:PRINT
+	  "<span class=\"val\">"
+	:PRINT
+	  value
+	:PRINT
+	  "</span>\n"
+	:PRINT
+	  "<span id=\"name1\">"
+	:PRINT
+	  value
+	:PRINT
+	  "</span>\n"
 

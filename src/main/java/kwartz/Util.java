@@ -496,55 +496,6 @@ public class Util {
 	
 	
 	/**
-	 * load testdata in YAML format.
-	 * 
-	 * ex.
-	 * <pre>
-	 *  String resource = "kwartz/testdata.yaml";
-	 *  try {
-	 *     String filename = Util.findResource(resource, StatementParserTest.class);
-	 *     if (filename == null)
-	 *        throw new Exception(resource + ": not found.");
-	 *     List maplist = Util.oadYamlTestData(filename);
-	 *     Map testdata = Util.convertMaplistToMaptable(maplist, "name");
-	 *  } catch (Exception ex) {
-	 *     ex.printStackTrace();
-	 *  }
-	 * </pre>
-	 */
-	public static List loadYamlTestData(String filename) throws IOException, kwalify.SyntaxException, Exception {
-		String str = Util.readFile(filename);
-		str = Util.untabify(str);
-		kwalify.YamlParser yamlparser = new kwalify.YamlParser(str);
-		List list = (List)yamlparser.parse();
-		for (Iterator it = list.iterator(); it.hasNext(); ) {
-			Map data = (Map)it.next();
-			String name = (String)data.get("name");
-			if (name == null)
-				throw new Exception("*** name not found. ("+filename+")");
-			List keys = null;
-			for (Iterator it2 = data.keySet().iterator(); it2.hasNext(); ) {
-				String key = (String)it2.next();
-				if (key.charAt(key.length()-1) == '*') {
-					if (keys == null)
-						keys = new ArrayList();
-					keys.add(key);
-				}
-			}
-			if (keys != null) {
-				for (Iterator it3 = keys.iterator(); it3.hasNext(); ) {
-					String key = (String)it3.next();
-					Map m = (Map)data.remove(key);
-					key = key.substring(0, key.length()-1); // 'key*' => 'key'
-					data.put(key, m.get("java"));
-				}
-			}
-		}
-		return list;
-	}
-	
-
-	/**
 	 * create map of map from list of map unsing key.
 	 */
 	public static Map convertMaplistToMaptable(List maplist, String key) throws Exception {
@@ -558,6 +509,32 @@ public class Util {
 			maptable.put(map.get(key), map);
 		}
 		return maptable;
+	}
+	
+	
+	/**
+	 * create map from list
+	 */
+	public static Map convertListToMap(List list) {
+		HashMap map = new HashMap();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			Object key = it.next();
+			map.put(key, Boolean.TRUE);
+		}
+		return map;
+	}
+
+	
+	/**
+	 * create map from array
+	 */
+	public static Map convertArrayToMap(String[] arr) {
+		HashMap map = new HashMap();
+		for (int i = 0, n = arr.length; i < n; i++) {
+			String key = arr[i];
+			map.put(key, Boolean.TRUE);
+		}
+		return map;
 	}
 
 

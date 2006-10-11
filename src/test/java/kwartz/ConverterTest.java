@@ -15,15 +15,11 @@ public class ConverterTest extends TestCase {
 	static Map __testdata;
 	
 	static {
-		String resource = "kwartz/test-converter.yaml";
+		String resource_name = "kwartz/test-converter.yaml";
 		try {
-			String filename = Util.findResource(resource, ConverterTest.class);
-			if (filename == null)
-				throw new java.io.FileNotFoundException(resource + ": not found.");
-			List maplist = Util.loadYamlTestData(filename);
-			__testdata = Util.convertMaplistToMaptable(maplist, "name");
+			__testdata = TestUtil.findAndLoadYamlTestData(resource_name, ConverterTest.class);
 		}
-		catch(Exception ex) {
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -31,6 +27,8 @@ public class ConverterTest extends TestCase {
 	
 	public void _test(String name) throws Exception {
 		Map data = (Map)__testdata.get(name);
+		if (data == null)
+			throw new Exception("*** ConverterTest: name '"+name+"' is not found.");
 		String pdata = (String)data.get("pdata");
 		String plogic = (String)data.get("plogic");
 		String expected = (String)data.get("expected");
@@ -75,12 +73,38 @@ public class ConverterTest extends TestCase {
 			}
 		}
 	}
-	
+
 
 	public void test_fetch1() throws Exception { _test("fetch1"); }
-	public void test_converter1() throws Exception { _test("converter1"); }
-	public void test_converter2() throws Exception { _test("converter2"); }
+	
+	public void test_convert01() throws Exception { _test("convert01"); }
+	public void test_convert02() throws Exception { _test("convert02"); }
+	public void test_convert03() throws Exception { _test("convert03"); }
+	public void test_convert04() throws Exception { _test("convert04"); }
+	public void test_convert05() throws Exception { _test("convert05"); }
+	public void test_convert06() throws Exception { _test("convert06"); }
+	public void test_convert07() throws Exception { _test("convert07"); }
+	public void test_convert08() throws Exception { _test("convert08"); }
+	
+	public void test_convert11() throws Exception { _test("convert11"); }
+	public void test_convert12() throws Exception { _test("convert12"); }
+	public void test_convert13() throws Exception { _test("convert13"); }
+	public void test_convert14() throws Exception { _test("convert14"); }
+	public void test_convert15() throws Exception { _test("convert15"); }
+	public void test_convert16() throws Exception { _test("convert16"); }
+	public void test_convert17() throws Exception { _test("convert17"); }
+	public void test_convert18() throws Exception { _test("convert18"); }
+	public void test_convert19() throws Exception { _test("convert19"); }
+
+	public void test_converter01() throws Exception { _test("converter01"); }
+	public void test_converter02() throws Exception { _test("converter02"); }
+	public void test_converter03() throws Exception { _test("converter03"); }
+	public void test_converter04() throws Exception { _test("converter04"); }
 	public void test_converter11() throws Exception { _test("converter11"); }
 	public void test_converter12() throws Exception { _test("converter12"); }
 	public void test_converter13() throws Exception { _test("converter13"); }
+	public void test_converter14() throws Exception { _test("converter14"); }
+	public void test_converter15() throws Exception { _test("converter15"); }
+	public void test_converter16() throws Exception { _test("converter16"); }
+
 }

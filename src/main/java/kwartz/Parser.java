@@ -113,6 +113,7 @@ abstract public class Parser implements Token {
   	public Object parse(String input) throws ParseException {
   		_scanner = createScanner(input);
   		int result = yyparse();
+  		
   		if (result != 0) {
   			if (_error == null)
   				_error = _scanner.getError();

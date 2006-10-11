@@ -46,6 +46,8 @@ public class Scanner {
 
 
 	public Scanner(String input) {
+		if (input == null)
+			input = "";
 		_input = input;
 		_input_length = input.length();
 		// init

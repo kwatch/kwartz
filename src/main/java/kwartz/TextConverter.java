@@ -198,6 +198,14 @@ class ElementInfo {
 	//
 	Ast.Expression _stag_expr, _etag_expr, _cont_expr, _elem_expr;
 	
+	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
+		this(null, stag_info, etag_info, cont_stmts, attr_info, append_exprs);
+	}
+
+	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info) {
+		this(null, stag_info, etag_info, cont_stmts, attr_info, new ArrayList());
+	}
+
 	ElementInfo(String name, TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
 		_name = name;
 		_stag_info  = stag_info;
@@ -252,6 +260,97 @@ class ElementInfo {
 		//String name;
 		//if ((name = ruleset.getTagame() != null) _tagname = name;
 	}
+
+	
+	String inspect() {
+		return inspect(0);
+	}
+	
+	String inspect(int level) {
+		StringBuffer sb = new StringBuffer();
+		_inspect(level, sb);
+		return sb.toString();
+	}
+	
+	void _inspect(int level, StringBuffer sb) {
+		String indent = Util.repeatString("  ", level);
+		if (_stag_expr != null) {
+			sb.append(indent).append("stag_expr:\n");
+			_stag_expr._inspect(level+1, sb);
+		}
+		if (_cont_expr != null) {
+			sb.append(indent).append("cont_expr:\n");
+			_cont_expr._inspect(level+1, sb);
+		}
+		if (_etag_expr != null) {
+			sb.append(indent).append("etag_expr:\n");
+			_etag_expr._inspect(level+1, sb);
+		}
+		if (_elem_expr != null) {
+			sb.append(indent).append("elem_expr:\n");
+			_elem_expr._inspect(level+1, sb);
+		}
+		if (_stag_info != null) {
+			sb.append(indent).append("stag_info:\n");
+			_stag_info._inspect(level+1, sb);
+		}
+		if (_etag_info != null) {
+			sb.append(indent).append("etag_info:\n");
+			_etag_info._inspect(level+1, sb);
+		}
+		if (_cont_stmts != null) {
+			sb.append(indent).append("cont_stmts:\n");
+			for (Iterator it = _cont_stmts.iterator(); it.hasNext(); ) {
+				Ast.Statement stmt = (Ast.Statement)it.next();
+				stmt._inspect(level+1, sb);
+			}
+		}
+		if (_attr_info != null && !_attr_info.isEmpty()) {
+			sb.append(indent).append("attr_info:\n");
+			//_attr_info._inspect(level+1, sb);
+			List names = _attr_info.getNames();
+			for (Iterator it = names.iterator(); it.hasNext(); ) {
+				String name = (String) it.next();
+				Object value = _attr_info.getValue(name);
+				String space = _attr_info.getSpace(name);
+				sb.append(indent).append("  - name: ").append(name).append("\n");
+				sb.append(indent).append("    space: ").append(Util.inspect(space)).append("\n");
+				sb.append(indent).append("    value:");
+				if (value instanceof Ast.Expression)
+					((Ast.Expression)value)._inspect(level+3, sb.append('\n'));
+				else if (value instanceof String)
+					sb.append(' ').append(Util.inspect(value));
+				else
+					assert false;
+				sb.append('\n');
+			}
+		}
+		if (_append_exprs != null && !_append_exprs.isEmpty()) {
+			sb.append(indent).append("append_exprs:\n");
+			for (Iterator it = _append_exprs.iterator(); it.hasNext();) {
+				Ast.Expression expr = (Ast.Expression) it.next();
+				expr._inspect(level+1, sb);
+			}
+		}
+		if (_logic != null) {
+			sb.append(indent).append("logic:\n");
+			for (Iterator it = _logic.iterator(); it.hasNext(); ) {
+				((Ast.Statement)it.next())._inspect(level+1, sb);
+			}
+		}
+		if (_before != null) {
+			sb.append(indent).append("before:\n");
+			for (Iterator it = _before.iterator(); it.hasNext(); ) {
+				((Ast.Statement)it.next())._inspect(level+1, sb);
+			}
+		}
+		if (_after!= null) {
+			sb.append(indent).append("after:\n");
+			for (Iterator it = _after.iterator(); it.hasNext(); ) {
+				((Ast.Statement)it.next())._inspect(level+1, sb);
+			}
+		}
+	}
 }
 
 
@@ -263,16 +362,26 @@ public class TextConverter implements Converter {
 	private Matcher _matcher;
 	private int _linenum, _linenum_delta;
 	private int _index;
-	//
-	private boolean _delspan = false;
-	//
+	private HashMap _no_etag_table;
+
 	private Handler _handler;
+
+	private static HashMap __default_no_etag_table = new HashMap();
+	static {
+		String[] arr = "input img br hr meta link".split(" ");
+		__default_no_etag_table = (HashMap)Util.convertArrayToMap(arr);
+	}
+
 	
 	public TextConverter(Handler handler, Map properties) {
 		_handler = handler;
 		if (properties != null) {
-			Object val = properties.get("delspan");
-			_delspan = val == Boolean.TRUE;
+			String no_etags = (String)properties.get("no-etags");
+			String[] arr = no_etags.split("[ ,]");
+			_no_etag_table = (HashMap)Util.convertArrayToMap(arr);
+		}
+		else {
+			_no_etag_table = __default_no_etag_table;
 		}
 	}
 	
@@ -317,7 +426,7 @@ public class TextConverter implements Converter {
 		__fetch_pattern = Pattern.compile(s, Pattern.MULTILINE);
 	}
 
-	
+
 	TagInfo _fetch() {
 		if (_matcher.find()) {
 			int start = _matcher.start();
@@ -348,18 +457,25 @@ public class TextConverter implements Converter {
 	
 	private TagInfo _convert(List stmt_list, TagInfo start_tag_info) throws ConvertException {
 		String start_tagname = start_tag_info != null ? start_tag_info.getTagName() : null;
-		TagInfo taginfo; 
+		TagInfo taginfo;
+		StringBuffer textbuf = new StringBuffer();
 		while ((taginfo = _fetch()) != null) {
-			// prev text
+			/// prev text
 			String prev_text = taginfo.getPrevText();
-			if (prev_text != null && prev_text.length() > 0)
-				stmt_list.add(_createPrintStatement(prev_text));
-			// end-tag, empty-tag, or start-tag
+			//if (prev_text != null && prev_text.length() > 0)
+			//	stmt_list.add(_createPrintStatement(prev_text));
+			if (prev_text != null)
+				textbuf.append(prev_text);
+			/// end-tag, empty-tag, or start-tag
 			if (taginfo.isEtag()) {                                     // end-tag
-				if (taginfo.getTagName().equals(start_tagname))
+				if (taginfo.getTagName().equals(start_tagname)) {
+					_AddTextbufAsPrintStatement(stmt_list, textbuf);
 					return taginfo;  // end-tag info
-				else
-					stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+				}
+				else {
+					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+					textbuf.append(taginfo.getTagText());
+				}
 			}
 			else if (taginfo.isEmpty() || _shouldSkipEtag(taginfo)) {   // empty-tag
 				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr());
@@ -367,10 +483,12 @@ public class TextConverter implements Converter {
 					TagInfo stag_info = taginfo;
 					TagInfo etag_info = null;
 					List cont_stmts = new ArrayList();   // List<Ast.Statement>
-					handleDirective(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
 				}
 				else {
-					stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+					textbuf.append(taginfo.getTagText());
 				}
 			}
 			else {                                                      // start-tag
@@ -380,92 +498,57 @@ public class TextConverter implements Converter {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
-					handleDirective(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
 				}
 				else if (matchesRuleset(taginfo, attr_info)) {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf);
 					applyRuleset(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
 				}
 				else if (taginfo.getTagName().equals(start_tagname)) {
 					stag_info = taginfo;
-					stmt_list.add(_createPrintStatement(stag_info.getTagText()));
+					//stmt_list.add(_createPrintStatement(stag_info.getTagText()));
+					textbuf.append(stag_info.getTagText());
+					_AddTextbufAsPrintStatement(stmt_list, textbuf);
 					etag_info = _convert(stmt_list, stag_info);
-					stmt_list.add(_createPrintStatement(etag_info.getTagText()));
+					//stmt_list.add(_createPrintStatement(etag_info.getTagText()));
+					textbuf.append(etag_info.getTagText());
 				}
 				else {
-					stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
+					textbuf.append(taginfo.getTagText());
 				}
 			}//if
 		}//while
 		// fetch end
 		if (start_tag_info != null)
 			throw _convertError("'<"+start_tagname+">' is not closed.", start_tag_info.getLinenum());
-		if (_rest != null && _rest.length() > 0)
-			stmt_list.add(_createPrintStatement(_rest));
+		//if (_rest != null && _rest.length() > 0)
+		//	stmt_list.add(_createPrintStatement(_rest));
+		if (_rest != null)
+			textbuf.append(_rest);
+		_AddTextbufAsPrintStatement(stmt_list, textbuf);
 		return null;
 	}
-		
-	private boolean _shouldSkipEtag(TagInfo taginfo) {
-		// TBC
-		return false;
+	
+	private void _AddTextbufAsPrintStatement(List stmt_list, StringBuffer textbuf) {
+		if (textbuf.length() > 0) {
+			stmt_list.add(_createPrintStatement(textbuf.toString()));
+			textbuf.setLength(0);
+		}
 	}
-
-	protected void handleDirective(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List stmt_list) throws ConvertException {
 		
-		String directive_name = null, directive_arg = null, directive_str = null;
-		List append_exprs = null;
-		
-		// handle 'attr:' and 'append:' directives
-		String d_str = null;
-		if (stag_info.getDirectiveStr() != null) {
-			String[] strs = stag_info.getDirectiveStr().split(";");
-			Pattern pattern = Pattern.compile("\\A(\\w+):\\s*(.*)");
-			for (int i = 0, n = strs.length; i < n; i++) {
-				d_str = strs[i].trim();
-				Matcher m = pattern.matcher(d_str);
-				if (! m.find()) {
-					throw _convertError("'"+d_str+"': invalid directive pattern.", stag_info.getLinenum());
-				}
-				String d_name = m.group(1);   // directive_name
-				String d_arg  = m.group(2);   // directive_arg
-				if ("attr".equals(d_name) || "Attr".equals(d_name) || "ATTR".equals(d_name)) {
-					HandlerArgument arg = new HandlerArgument(d_name, d_arg, d_str, stag_info, etag_info,
-							                                  cont_stmts, attr_info, append_exprs);
-					_handler.handle(stmt_list, arg);
-				}
-				else if ("append".equals(d_name) || "Append".equals(d_name) || "APPEND".equals(d_name)) {
-					if (append_exprs == null)
-						append_exprs = new ArrayList();
-					HandlerArgument arg = new HandlerArgument(d_name, d_arg, d_str, stag_info, etag_info,
-							                                  cont_stmts, attr_info, append_exprs);
-					_handler.handle(stmt_list, arg);
-				}
-				else {
-					if (directive_name != null) {
-						throw _convertError("'"+d_str+"': not available with '"+directive_name+"' directive.", stag_info.getLinenum());
-					}
-					directive_name = d_name;
-					directive_arg  = d_arg;
-					directive_str  = d_str;
-				}//if
-			}//for
-		}//if
-
-		// remove dummy <span> tag
-		if (_delspan && stag_info.getTagName() == "span" && attr_info.isEmpty() && append_exprs == null && !"id".equals(directive_name)) {
-			stag_info.setTagName(null);
-			etag_info.setTagName(null);
-		}
-		
-		// handle other directives
-		HandlerArgument arg = new HandlerArgument(directive_name, directive_arg, directive_str,
-				                                  stag_info, etag_info, cont_stmts, attr_info, append_exprs);
-		boolean result = _handler.handle(stmt_list, arg);
-		if (directive_name != null && !result) {
-			throw _convertError("'"+directive_str+"': unknown directive.", stag_info.getLinenum());
-		}
+	private boolean _shouldSkipEtag(TagInfo tag_info) {
+		return _no_etag_table.containsKey(tag_info.getTagName());
+	}
+	
+	
+	protected void handleDirectives(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List stmt_list) throws ConvertException {
+		ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
+		_handler.handleDirectives(elem_info, stmt_list);
 	}
 	
 
@@ -489,7 +572,8 @@ public class TextConverter implements Converter {
 
 
 	protected void applyRuleset(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List stmt_list) throws ConvertException {
-		_handler.applyRuleset(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+		ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
+		_handler.applyRuleset(elem_info, stmt_list);
 	}
 
 	
@@ -519,13 +603,13 @@ public class TextConverter implements Converter {
 			+ "    }\n"
 			+ "  }\n"
 			+ "}\n"
-			+ "#item { value: item; }\n"
+			+ "#xitem { value: item; }\n"
 			;
 		String pdata = ""
 			+ "foo\n"
 			+ "bar\n"
 			+ "<table>\n"
-			+ " <tr>\n"
+			+ " <tr id=\"mark:list\">\n"
 			+ "  <td id=\"mark:item\">foo</td>\n"
 			+ " </tr>\n"
 			+ "</table>\n"
@@ -534,29 +618,25 @@ public class TextConverter implements Converter {
 			;
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
-//		for (Iterator it = rulesets.iterator(); it.hasNext();) {
-//			Ast.Ruleset ruleset = (Ast.Ruleset) it.next();
+//		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
+//			Ast.Ruleset ruleset = (Ast.Ruleset)it.next();
 //			System.out.println(ruleset.inspect());
 //		}
 		Handler handler = new BaseHandler(rulesets, null);
 		TextConverter converter = new TextConverter(handler);
 
-		converter._reset(pdata, 1);
-		TagInfo taginfo;
-		while ((taginfo = converter._fetch()) != null) {
-			System.out.println(taginfo._inspect());
-		}
-		System.out.println("rest: "+Util.inspect(converter.getRest()));
+//		converter._reset(pdata, 1);
+//		TagInfo taginfo;
+//		while ((taginfo = converter._fetch()) != null) {
+//			System.out.println(taginfo._inspect());
+//		}
+//		System.out.println("rest: "+Util.inspect(converter.getRest()));
 		
-//		List stmts = converter.convert(pdata);
-//		for (Iterator it = stmts.iterator(); it.hasNext(); ) {
-//			Ast.Statement stmt = (Ast.Statement)it.next();
-//			System.out.println(stmt.inspect());
-//		}
-//		for (Iterator it = stmts.iterator(); it.hasNext(); ) {
-//			Ast.Statement stmt = (Ast.Statement)it.next();
-//			System.out.println(stmt.inspect());
-//		}
+		List stmts = converter.convert(pdata);
+		for (Iterator it = stmts.iterator(); it.hasNext(); ) {
+			Ast.Statement stmt = (Ast.Statement)it.next();
+			System.out.println(stmt.inspect());
+		}
 	}
 
 }

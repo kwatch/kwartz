@@ -8,13 +8,9 @@ public class ExpressionParserTest extends TestCase {
 	static Map __testdata;
 	
 	static {
-		String resource = "kwartz/test-expr-parser.yaml";
+		String resource_name = "kwartz/test-expr-parser.yaml";
 		try {
-			String filename = Util.findResource(resource, ExpressionParserTest.class);
-			if (filename == null)
-				throw new java.io.FileNotFoundException(resource + ": not found.");
-			List maplist = Util.loadYamlTestData(filename);
-			__testdata = Util.convertMaplistToMaptable(maplist, "name");
+			__testdata = TestUtil.findAndLoadYamlTestData(resource_name, ExpressionParserTest.class);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
