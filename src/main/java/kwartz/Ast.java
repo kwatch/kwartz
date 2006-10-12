@@ -304,6 +304,8 @@ public class Ast {
 		}
 	}
 	
+	static final StringLiteral EMPTY_STRING_LITERAL = new StringLiteral(""); 
+	
 	static class IntegerLiteral extends Literal {
 		public IntegerLiteral(java.lang.String token_value) {
 			super(Token.INTEGER, token_value);
@@ -361,6 +363,10 @@ public class Ast {
 			arguments.toArray(_arguments);
 		}
 		
+		public PrintStatement(Expression expr) {
+			this(new Expression[] { expr });
+		}
+		
 		public Expression[] getArguments() {
 			return _arguments;
 		}
@@ -415,6 +421,10 @@ public class Ast {
 		
 		public Statement getElseStatement() {
 			return _else_stmt;
+		}
+		
+		public void setElseStatement(Statement stmt) {
+			_else_stmt = stmt;
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
@@ -514,6 +524,11 @@ public class Ast {
 		public BlockStatement(List statements) {
 			super(Token.BLOCK);
 			setStatements(statements);
+		}
+		
+		public BlockStatement(Statement stmt) {
+			super(Token.BLOCK);
+			_statements = new Statement[] { stmt };
 		}
 		
 		public Statement[] getStatements() {

@@ -41,7 +41,7 @@ public class ConverterTest extends TestCase {
 		Handler handler = new BaseHandler(rulesets, properties);
 		Converter converter = new TextConverter(handler, properties);
 		//
-		if (Pattern.matches("fetch\\d+", name)) {
+		if (Pattern.matches(".*_fetch\\d+$", name)) {
 			((TextConverter)converter)._reset(pdata, 1);
 			TagInfo tag_info;
 			StringBuffer sb = new StringBuffer();
@@ -75,26 +75,64 @@ public class ConverterTest extends TestCase {
 	}
 
 
-	public void test_fetch1() throws Exception { _test("fetch1"); }
+	public void test_convert_fetch1() throws Exception { _test("convert_fetch1"); }
 	
-	public void test_convert01() throws Exception { _test("convert01"); }
-	public void test_convert02() throws Exception { _test("convert02"); }
-	public void test_convert03() throws Exception { _test("convert03"); }
-	public void test_convert04() throws Exception { _test("convert04"); }
-	public void test_convert05() throws Exception { _test("convert05"); }
-	public void test_convert06() throws Exception { _test("convert06"); }
-	public void test_convert07() throws Exception { _test("convert07"); }
-	public void test_convert08() throws Exception { _test("convert08"); }
+	public void test_convert_pdata1() throws Exception { _test("convert_pdata1"); }
+	public void test_convert_pdata2() throws Exception { _test("convert_pdata2"); }
+	public void test_convert_pdata3() throws Exception { _test("convert_pdata3"); }
+	public void test_convert_pdata4() throws Exception { _test("convert_pdata4"); }
+	public void test_convert_pdata5() throws Exception { _test("convert_pdata5"); }
+	public void test_convert_pdata6() throws Exception { _test("convert_pdata6"); }
+	public void test_convert_pdata7() throws Exception { _test("convert_pdata7"); }
+	public void test_convert_pdata9() throws Exception { _test("convert_pdata9"); }
 	
-	public void test_convert11() throws Exception { _test("convert11"); }
-	public void test_convert12() throws Exception { _test("convert12"); }
-	public void test_convert13() throws Exception { _test("convert13"); }
-	public void test_convert14() throws Exception { _test("convert14"); }
-	public void test_convert15() throws Exception { _test("convert15"); }
-	public void test_convert16() throws Exception { _test("convert16"); }
-	public void test_convert17() throws Exception { _test("convert17"); }
-	public void test_convert18() throws Exception { _test("convert18"); }
-	public void test_convert19() throws Exception { _test("convert19"); }
+	public void test_convert_prop_stag1() throws Exception { _test("convert_prop_stag1"); }
+	public void test_convert_prop_etag1() throws Exception { _test("convert_prop_etag1"); }
+	public void test_convert_prop_cont1() throws Exception { _test("convert_prop_cont1"); }
+	public void test_convert_prop_elem1() throws Exception { _test("convert_prop_elem1"); }
+	public void test_convert_prop_value1() throws Exception { _test("convert_prop_value1"); }
+	public void test_convert_prop_attrs1() throws Exception { _test("convert_prop_attrs1"); }
+	public void test_convert_prop_append1() throws Exception { _test("convert_prop_append1"); }
+	public void test_convert_prop_remove1() throws Exception { _test("convert_prop_remove1"); }
+	public void test_convert_prop_logic1() throws Exception { _test("convert_prop_logic1"); }
+	public void test_convert_prop_before1() throws Exception { _test("convert_prop_before1"); }
+	public void test_convert_prop_after1() throws Exception { _test("convert_prop_after1"); }
+	
+	public void test_convert_directive_dummy1() throws Exception { _test("convert_directive_dummy1"); }
+	public void test_convert_directive_mark1() throws Exception { _test("convert_directive_mark1"); }
+	public void test_convert_directive_stag1() throws Exception { _test("convert_directive_stag1"); }
+	public void test_convert_directive_etag1() throws Exception { _test("convert_directive_etag1"); }
+	public void test_convert_directive_cont1() throws Exception { _test("convert_directive_cont1"); }
+	public void test_convert_directive_elem1() throws Exception { _test("convert_directive_elem1"); }
+	public void test_convert_directive_value1() throws Exception { _test("convert_directive_value1"); }
+	public void test_convert_directive_attr1() throws Exception { _test("convert_directive_attr1"); }
+	public void test_convert_directive_append1() throws Exception { _test("convert_directive_append1"); }
+	public void test_convert_directive_replace1() throws Exception { _test("convert_directive_replace1"); }
+	public void test_convert_directive_replace2() throws Exception { _test("convert_directive_replace2"); }
+	public void test_convert_directive_replace3() throws Exception { _test("convert_directive_replace3"); }
+	public void test_convert_directive_replace4() throws Exception { _test("convert_directive_replace4"); }
+	public void test_convert_directive_replace9() throws Exception { _test("convert_directive_replace9"); }
+	public void test_convert_directive_set1() throws Exception { _test("convert_directive_set1"); }
+	public void test_convert_directive_set2() throws Exception { _test("convert_directive_set2"); }
+	public void test_convert_directive_if1() throws Exception { _test("convert_directive_if1"); }
+	public void test_convert_directive_elseif1() throws Exception { _test("convert_directive_elseif1"); }
+	public void test_convert_directive_elseif2() throws Exception { _test("convert_directive_elseif2"); }
+	public void test_convert_directive_elseif9() throws Exception { _test("convert_directive_elseif9"); }
+	public void test_convert_directive_else1() throws Exception { _test("convert_directive_else1"); }
+	public void test_convert_directive_else2() throws Exception { _test("convert_directive_else2"); }
+	public void test_convert_directive_else9() throws Exception { _test("convert_directive_else9"); }
+	public void test_convert_directive_while1() throws Exception { _test("convert_directive_while1"); }
+	public void test_convert_directive_loop1() throws Exception { _test("convert_directive_loop1"); }
+	public void test_convert_directive_foreach1() throws Exception { _test("convert_directive_foreach1"); }
+	public void test_convert_directive_foreach2() throws Exception { _test("convert_directive_foreach2"); }
+	public void test_convert_directive_foreach3() throws Exception { _test("convert_directive_foreach3"); }
+	public void test_convert_directive_foreach4() throws Exception { _test("convert_directive_foreach4"); }
+	public void test_convert_directive_foreach9() throws Exception { _test("convert_directive_foreach9"); }
+	public void test_convert_directive_list1() throws Exception { _test("convert_directive_list1"); }
+	public void test_convert_directive_list2() throws Exception { _test("convert_directive_list2"); }
+	public void test_convert_directive_list3() throws Exception { _test("convert_directive_list3"); }
+	public void test_convert_directive_list9() throws Exception { _test("convert_directive_list9"); }
+	public void test_convert_directive_default1() throws Exception { _test("convert_directive_default1"); }
 
 	public void test_converter01() throws Exception { _test("converter01"); }
 	public void test_converter02() throws Exception { _test("converter02"); }

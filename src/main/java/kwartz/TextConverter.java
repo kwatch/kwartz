@@ -68,8 +68,10 @@ class TagInfo {
 	}
 	
 	void setTagName(String tagname) { _tagname = tagname; }
-	void setHeadSpace(String space) { _head_space = space; }
-	void setTailSpace(String space) { _tail_space = space; }
+	//void setHeadSpace(String space) { _head_space = space; }
+	//void setTailSpace(String space) { _tail_space = space; }
+	void deleteHeadSpace() { _head_space = ""; rebuildTagText(null); }
+	void deleteTailSpace() { _tail_space = ""; rebuildTagText(null); }
 	
 	void rebuildTagText(AttrInfo attr_info) {
 		if (attr_info != null) {
@@ -194,6 +196,7 @@ class ElementInfo {
 	AttrInfo _attr_info;
 	List     _append_exprs;            // List<Ast.Expression>
 	List     _logic, _before, _after;  // List<Ast.Statement>
+	String   _directive_text;
 	boolean  _is_merged = false;
 	//
 	Ast.Expression _stag_expr, _etag_expr, _cont_expr, _elem_expr;
@@ -205,7 +208,7 @@ class ElementInfo {
 	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info) {
 		this(null, stag_info, etag_info, cont_stmts, attr_info, new ArrayList());
 	}
-
+	
 	ElementInfo(String name, TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
 		_name = name;
 		_stag_info  = stag_info;
@@ -226,18 +229,52 @@ class ElementInfo {
 	List     getContStmts() { return _cont_stmts; }
 	AttrInfo getAttrInfo() { return _attr_info; }
 	List     getAppendExprs() { return _append_exprs; }
+	//
 	List     getLogic() { return _logic; }
+	List     getBefore() { return _before; }
+	List     getAfter() { return _after; }
+	void     setLogic(List stmt_list) { _logic = stmt_list; } 
+	void     setBefore(List stmt_list) { _before= stmt_list; } 
+	void     setAfter(List stmt_list) { _after = stmt_list; }
+	void     setLogic(Ast.Statement stmt) { (_logic = new ArrayList()).add(stmt); }
+	void     setBefore(Ast.Statement stmt) { (_before = new ArrayList()).add(stmt); }
+	void     setAfter(Ast.Statement stmt) { (_after = new ArrayList()).add(stmt); }
+	//
 	boolean  isMerged() { return _is_merged; }
 	void     setMerged(boolean flag) { _is_merged = flag; }
+	String   getDirectiveText() { return _directive_text; }
+	void     setDirectiveText(String s) { _directive_text = s; }
+	//
 	Ast.Expression getStagExpr() { return _stag_expr; }
 	Ast.Expression getContExpr() { return _cont_expr; }
 	Ast.Expression getEtagExpr() { return _etag_expr; }
 	Ast.Expression getElemExpr() { return _elem_expr; }
+	void setStagExpr(Ast.Expression expr) { _stag_expr = expr; }
+	void setContExpr(Ast.Expression expr) { _cont_expr = expr; }
+	void setEtagExpr(Ast.Expression expr) { _etag_expr = expr; }
+	void setElemExpr(Ast.Expression expr) { _elem_expr = expr; }
+
+	ElementInfo duplicate() {
+		ElementInfo elem_info = new ElementInfo(_name, _stag_info, _etag_info, _cont_stmts, _attr_info, _append_exprs);
+		elem_info.setLogic(_logic);
+		elem_info.setBefore(_before);
+		elem_info.setAfter(_after);
+		elem_info.setStagExpr(_stag_expr);
+		elem_info.setContExpr(_cont_expr);
+		elem_info.setEtagExpr(_etag_expr);
+		elem_info.setElemExpr(_elem_expr);
+		return elem_info;
+	}
 	
 	static ElementInfo create(Map values) {
 		Map v = values;
 		return new ElementInfo((String)v.get("name"), (TagInfo)v.get("stag"), (TagInfo)v.get("etag"),
 				               (List)v.get("cont"), (AttrInfo)v.get("attr"), (List)v.get("append"));
+	}
+	
+	boolean isDummySpanTag(String tagname) {
+		return tagname.equals(getStagInfo().getTagName()) && _directive_text != null
+		       && getAttrInfo().isEmpty() && getAppendExprs().isEmpty();
 	}
 
 	void merge(Ast.Ruleset ruleset) {
@@ -259,7 +296,10 @@ class ElementInfo {
 		if ((stmts = ruleset.getAfter())  != null) _after = stmts;
 		//String name;
 		//if ((name = ruleset.getTagame() != null) _tagname = name;
-	}
+	}	
+
+
+	static final List EMPTY_LOGIC = new ArrayList(); 
 
 	
 	String inspect() {
@@ -376,11 +416,13 @@ public class TextConverter implements Converter {
 	public TextConverter(Handler handler, Map properties) {
 		_handler = handler;
 		if (properties != null) {
-			String no_etags = (String)properties.get("no-etags");
-			String[] arr = no_etags.split("[ ,]");
-			_no_etag_table = (HashMap)Util.convertArrayToMap(arr);
+			Object val;
+			if ((val = properties.get("no-etags")) != null) {
+				String[] arr = val.toString().split("[ ,]");
+				_no_etag_table = (HashMap)Util.convertArrayToMap(arr);
+			}
 		}
-		else {
+		if (_no_etag_table == null) {
 			_no_etag_table = __default_no_etag_table;
 		}
 	}
@@ -590,10 +632,10 @@ public class TextConverter implements Converter {
 	
 	public static void main(String[] args) throws Exception {
 		String plogic = ""
-			+ "tr {\n"
-			+ "  attrs: 'bgcolor' color;\n"
+			+ "#list {\n"
+			//+ "  attrs: 'bgcolor' color;\n"
 			+ "  logic: {\n"
-			+ "    ctr = 0;\n"
+			//+ "    ctr = 0;\n"
 			+ "    foreach (item = list) {\n"
 			+ "      ctr += 1;\n"
 			+ "      color = ctr % 2 == 0 ? '#FCC' : '#CCF';\n"
@@ -603,14 +645,14 @@ public class TextConverter implements Converter {
 			+ "    }\n"
 			+ "  }\n"
 			+ "}\n"
-			+ "#xitem { value: item; }\n"
+			+ "#item { value: item; }\n"
 			;
 		String pdata = ""
 			+ "foo\n"
 			+ "bar\n"
 			+ "<table>\n"
-			+ " <tr id=\"mark:list\">\n"
-			+ "  <td id=\"mark:item\">foo</td>\n"
+			+ " <tr id=\"set:ctr=0;foreach:item=list;attr:bgcolor=color\">\n"
+			+ "  <td id=\"VALUE:item\">foo</td>\n"
 			+ " </tr>\n"
 			+ "</table>\n"
 			+ "baz<br/>\n"

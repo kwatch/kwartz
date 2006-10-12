@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 
 abstract public class Parser implements Token {
-  
+
   	private static String[] __tokens = { "<YYERRTOK>",
   		"<IDENT>",
   		"<VARIABLE>", "<INTEGER>", "<FLOAT>", "<STRING>", "true", "false", "null",
@@ -47,7 +47,7 @@ abstract public class Parser implements Token {
   		}
   	}
   
-  
+
   	/// -------------------------
   
   	static class Info {

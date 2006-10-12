@@ -84,6 +84,7 @@ public interface Token {
   public static final int P_AFTER = 325;
   public static final int P_GLOBAL = 326;
   public static final int ERROR = 327;
-  
+
+
 }
 

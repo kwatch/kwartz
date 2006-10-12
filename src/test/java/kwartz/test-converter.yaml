@@ -5,7 +5,7 @@
 ### ----------------------------------------
 
 ###
-- name:		fetch1
+- name:		convert_fetch1
   pdata: |
 	foo
 	bar
@@ -100,7 +100,7 @@
 ### -------------------------------------------
 
 ###
-- name:	   convert01
+- name:	   convert_pdata1
   desc:    basic test
   pdata: |
 	<ul>
@@ -131,7 +131,7 @@
 	  "</ul>\n"
 
 ###
-- name:	   convert02
+- name:	   convert_pdata2
   desc:    marked element
   pdata: |
 	<ul id="list">
@@ -176,7 +176,7 @@
 	    "</ul>\n"
 
 ###
-- name:	   convert03
+- name:	   convert_pdata3
   desc:    nested element
   pdata: |
         <div>
@@ -253,7 +253,7 @@
 	  "</div>\n"
 
 ###
-- name:	   convert04
+- name:	   convert_pdata4
   desc:    rest text
   pdata: |
         foo
@@ -293,7 +293,7 @@
 	  "baz\nboo\n"
 
 ###
-- name:	   convert05
+- name:	   convert_pdata5
   desc:    no tags
   pdata: |
         foo
@@ -309,7 +309,7 @@
 	  "foo\nbar\nbaz\n"
 
 ###
-- name:	   convert06
+- name:	   convert_pdata6
   desc:    not well-formed
   pdata: |
 	<div id="foo">
@@ -347,7 +347,7 @@
 	    "</div>\n"
 
 ###
-- name:		convert07
+- name:		convert_pdata7
   desc:		empty tag
   pdata: |
 	<input type="text" id="user_name"/>
@@ -399,7 +399,7 @@
 	  ""
 
 ###
-- name:	   convert08
+- name:	   convert_pdata9
   desc:    tag is not closed
   pdata: |
         <span>
@@ -423,7 +423,7 @@
 ### ----------------------------------------
 
 ###
-- name:    convert11
+- name:    convert_prop_stag1
   desc:    stag property
   pdata: |
 	<a id="mark:link">link</a>
@@ -459,7 +459,7 @@
 	  "</a>\n"
 
 ###
-- name:    convert12
+- name:    convert_prop_etag1
   desc:    etag property
   pdata: |
 	<form id="mark:form1">
@@ -500,7 +500,7 @@
 	  "\n"
 
 ###
-- name:    convert13
+- name:    convert_prop_cont1
   desc:    cont property
   pdata: |
 	<b id="mark:item">foo</b>
@@ -535,7 +535,7 @@
 	  "</b>\n"
 
 ###
-- name:    convert14
+- name:    convert_prop_elem1
   desc:    elem property
   pdata: |
 	<span>
@@ -581,7 +581,7 @@
 	  "</span>\n"
 
 ###
-- name:    convert15
+- name:    convert_prop_value1
   desc:    value property
   pdata: |
 	<b id="mark:item">foo</b>
@@ -616,7 +616,7 @@
 	  "</b>\n"
 
 ###
-- name:    convert16
+- name:    convert_prop_attrs1
   desc:    attrs property
   pdata: |
 	<span id="mark:error" class="foo">ERROR</span>
@@ -660,7 +660,7 @@
 
 
 ###
-- name:    convert17
+- name:    convert_prop_append1
   desc:    append property
   pdata: |
 	<form>
@@ -711,7 +711,7 @@
 
 
 ###
-- name:    convert18
+- name:    convert_prop_remove1
   desc:    remove property
   pdata: |
 	<b class="foo" id="item" title="title">xxx</b>
@@ -742,7 +742,7 @@
 
 
 ###
-- name:    convert19
+- name:    convert_prop_logic1
   desc:    logic property
   pdata: |
 	<ul id="mark:list">
@@ -805,6 +805,1229 @@
 	:PRINT
 	  "</ul>\n"
 
+
+###
+- name:    convert_prop_before1
+  desc:    before property
+  pdata: |
+	<ul id="mark:userlist">
+	  <li>foo</li>
+	</ul>
+	<ol id="mark:grouplist">
+	  <li>admin</li>
+	</ol>
+  plogic*:
+    ruby: |
+	#userlist {
+	  before: {
+	    list = @users
+	  }
+	}
+	#grouplist {
+	  before: {
+	    list = @groups
+	  }
+	}
+	#userlist, grouplist {
+	  logic: {
+	    _stag
+	    for item in list do
+	      _cont
+	    end
+	    _etag
+	  }
+	}
+    php: |
+	#userlist {
+	  before: {
+	    $list = $_SESSION['users'];
+	  }
+	}
+	#grouplist {
+	  before: {
+	    $list = $_SESSION['groups'];
+	  }
+	}
+	#userlist, #grouplist {
+	  logic: {
+	    _stag();
+	    foreach ($list as $item) {
+	      _cont();
+	    }
+	    _etag();
+	  }
+	}
+    java: |
+	#userlist {
+	  before: {
+	    list = context['users'];
+	  }
+	}
+	#grouplist {
+	  before: {
+	    list = context['groups'];
+	  }
+	}
+	#userlist, #grouplist {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    ruby: |
+	<%    list = context['users'] %>
+  	print("<ul>\n")
+	<%    for item in list do%>
+	print("  <li>foo</li>\n")
+	<%    end%>
+  	print("</ul>\n")
+	<%    list = context['groups'] %>
+  	print("<ol>\n")
+	<%    for item in list do%>
+	print("  <li>foo</li>\n")
+	<%    end%>
+  	print("</ol>\n")
+    php: |
+	<%    $list = $_SESSION['users']; %> 
+  	print("<ul>\n")
+	<%    foreach ($list as $item) {%>
+	print("  <li>foo</li>\n")
+	<%    }%>
+  	print("</ul>\n")
+	<%    $list = $_SESSION['groups']; %> 
+  	print("<ol>\n")
+	<%    foreach ($list as $item) {%>
+	print("  <li>foo</li>\n")
+	<%    }%>
+  	print("</ol>\n")
+    java: |
+	:EXPR
+	  =
+	    list
+	    []
+	      context
+	      "users"
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>foo</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:EXPR
+	  =
+	    list
+	    []
+	      context
+	      "groups"
+	:PRINT
+	  "<ol>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>foo</li>\n"
+	:PRINT
+	  "</ol>\n"
+
+
+###
+- name:		convert_prop_after1
+  desc:		after property
+  pdata: |
+	<i id="mark:word1">foo</i>
+	<b id="mark:word2">bar</b>
+  plogic*:
+    ruby: |
+    php: |
+    java: |
+	#word1, #word2 {
+	  value: word;
+	  after: {
+	    print("<!-- comment -->\n");
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<i>"
+	:PRINT
+	  word
+	:PRINT
+	  "</i>\n"
+	:PRINT
+	  "<!-- comment -->\n"
+	:PRINT
+	  "<b>"
+	:PRINT
+	  word
+	:PRINT
+	  "</b>\n"
+	:PRINT
+	  "<!-- comment -->\n"
+  
+
+### ----------------------------------------
+
+###
+- name:		convert_directive_dummy1
+  pdata: |
+	<tr>
+	  <td>foo</td>
+	  <td id="dummy:d1">bar</td>
+	  <td id="dummy:d2">baz</td>
+	</tr>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<tr>\n  <td>foo</td>\n"
+	:PRINT
+	  "</tr>\n"
+
+###
+- name:		convert_directive_mark1
+  pdata: |
+	<ul id="mark:list">
+	  <li id="mark:item">foo</li>
+	</ul>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:BLOCK
+	  :PRINT
+	    "  <li>"
+	  :BLOCK
+	    :PRINT
+	      "foo"
+	  :PRINT
+	    "</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		convert_directive_stag1
+  pdata: |
+	<div>
+	  <form id="stag:start_form_tag()">
+	  ...
+	  </form>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  "
+	  start_form_tag()
+	  "\n"
+	:BLOCK
+	  :PRINT
+	    "  ...\n"
+	:PRINT
+	  "  </form>\n"
+	:PRINT
+	  "</div>\n"
+
+
+###
+- name:		convert_directive_etag1
+  pdata: |
+	<div>
+	  <form id="etag:end_form_tag()">
+	  ...
+	  </form>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  <form>\n"
+	:BLOCK
+	  :PRINT
+	    "  ...\n"
+	:PRINT
+	  "  "
+	  end_form_tag()
+	  "\n"
+	:PRINT
+	  "</div>\n"
+
+
+###
+- name:		convert_directive_cont1
+  pdata: |
+	<div>
+	  <p id="cont:val(x)">
+	  ...
+	  </p>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  <p>"
+	:PRINT
+	  val()
+	    x
+	:PRINT
+	  "</p>\n"
+	:PRINT
+	  "</div>\n"
+
+
+###
+- name:		convert_directive_elem1
+  pdata: |
+	<div>
+	  <p id="elem:val(x)">
+	  ...
+	  </p>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  "
+	  val()
+	    x
+	  "\n"
+	:PRINT
+	  "</div>\n"
+
+
+###
+- name:		convert_directive_value1
+  pdata: |
+	<div>
+	  <p id="value:val(x)">
+	  ...
+	  </p>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div>\n"
+	:PRINT
+	  "  <p>"
+	:PRINT
+	  val()
+	    x
+	:PRINT
+	  "</p>\n"
+	:PRINT
+	  "</div>\n"
+
+
+###
+- name:		convert_directive_attr1
+  pdata: |
+	<p bgcolor="#FFC" id="attr:class=klass;attr:bgcolor:color">
+	  ...
+	</p>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<p bgcolor=\""
+	  color
+	  "\" class=\""
+	  klass
+	  "\">\n"
+	:BLOCK
+	  :PRINT
+	    "  ...\n"
+	:PRINT
+	  "</p>\n"
+
+
+###
+- name:		convert_directive_append1
+  pdata: |
+	<input type="checkbox" id="user_name" kw:d="append:flag?' checked':''"/>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<input type=\"checkbox\" id=\"user_name\""
+	  ?:
+	    flag
+	    " checked"
+	    ""
+	  "/>\n"
+	:BLOCK
+	:PRINT
+	  ""
+
+
+###
+- name:		convert_directive_replace1
+  pdata: |
+	<ul id="mark:menulist">
+	  <li id="value:menu">menu1</li>
+	</ul>
+	<p>...</p>
+	<ol id="replace_element_with_element:menulist">
+	  <li>menu1</li>
+	</ol>
+  plogic*:
+    java: |
+	#menulist {
+	  logic: {
+	    _stag;
+	    foreach (menu = menulist) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  menu
+	  menulist
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        menu
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "<p>...</p>\n"
+	:BLOCK
+	  :PRINT
+	    "<ul>\n"
+	  :FOREACH
+	    menu
+	    menulist
+	    :BLOCK
+	      :BLOCK
+	        :PRINT
+	          "  <li>"
+	        :PRINT
+	          menu
+	        :PRINT
+	          "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+
+
+###
+- name:		convert_directive_replace2
+  pdata: |
+	<ul id="mark:menulist">
+	  <li id="value:menu">menu1</li>
+	</ul>
+	<p>...</p>
+	  <ol id="replace_element_with_content:menulist">
+	  <li>menu1</li>
+	  </ol>
+  plogic*:
+    java: |
+	#menulist {
+	  logic: {
+	    _stag;
+	    foreach (menu = menulist) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  menu
+	  menulist
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        menu
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "<p>...</p>\n"
+	:BLOCK
+	  :BLOCK
+	    :PRINT
+	      "  <li>"
+	    :PRINT
+	      menu
+	    :PRINT
+	      "</li>\n"
+
+
+###
+- name:		convert_directive_replace3
+  pdata: |
+	<ul id="mark:menulist">
+	  <li id="value:menu">menu1</li>
+	</ul>
+	<p>...</p>
+	<ol id="replace_content_with_element:menulist">
+	  <li>menu1</li>
+	</ol>
+  plogic*:
+    java: |
+	#menulist {
+	  logic: {
+	    _stag;
+	    foreach (menu = menulist) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  menu
+	  menulist
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        menu
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "<p>...</p>\n"
+	:PRINT
+	  "<ol>\n"
+	:BLOCK
+	  :PRINT
+	    "<ul>\n"
+	  :FOREACH
+	    menu
+	    menulist
+	    :BLOCK
+	      :BLOCK
+	        :PRINT
+	          "  <li>"
+	        :PRINT
+	          menu
+	        :PRINT
+	          "</li>\n"
+	  :PRINT
+	    "</ul>\n"
+	:PRINT
+	  "</ol>\n"
+
+
+###
+- name:		convert_directive_replace4
+  pdata: |
+	<ul id="mark:menulist">
+	  <li id="value:menu">menu1</li>
+	</ul>
+	<p>...</p>
+	<ol id="replace_content_with_content:menulist">
+	  <li>menu1</li>
+	</ol>
+  plogic*:
+    java: |
+	#menulist {
+	  logic: {
+	    _stag;
+	    foreach (menu = menulist) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  menu
+	  menulist
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	      :PRINT
+	        menu
+	      :PRINT
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  "<p>...</p>\n"
+	:PRINT
+	  "<ol>\n"
+	:BLOCK
+	  :BLOCK
+	    :PRINT
+	      "  <li>"
+	    :PRINT
+	      menu
+	    :PRINT
+	      "</li>\n"
+	:PRINT
+	  "</ol>\n"
+
+###
+- name:		convert_directive_replace9
+  pdata: |
+	<ul id="mark:menulist">
+	  <li id="value:menu">menu1</li>
+	</ul>
+	<p>...</p>
+	<ol id="replace_element_with_element:list">
+	  <li>menu1</li>
+	</ol>
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	":5: 'replace_element_with_element:list': element not found."
+
+
+###
+- name:		convert_directive_set1
+  pdata: |
+	<table>
+	  <tr id="set:i=0">
+	    <td>foo</td>
+	  </tr>
+	</table>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<table>\n"
+	:EXPR
+	  =
+	    i
+	    0
+	:PRINT
+	  "  <tr>\n"
+	:BLOCK
+	  :PRINT
+	    "    <td>foo</td>\n"
+	:PRINT
+	  "  </tr>\n"
+	:PRINT
+	  "</table>\n"
+
+###
+- name:		convert_directive_set2
+  pdata: |
+	<td id="set:i+=1">foo</td>
+  plogic: |
+  expected*:
+    java: |
+	:EXPR
+	  +=
+	    i
+	    1
+	:PRINT
+	  "<td>"
+	:BLOCK
+	  :PRINT
+	    "foo"
+	:PRINT
+	  "</td>\n"
+
+
+###
+- name:		convert_directive_if1
+  pdata: |
+	<div id="if:error">
+	  error happened.
+	</div>
+  plogic: |
+  expected*:
+    java: |
+	:IF
+	  error
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  error happened.\n"
+	    :PRINT
+	      "</div>\n"
+
+
+###
+- name:		convert_directive_elseif1
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	<div id="elseif:status=='warning'">
+	  warning.
+	</div>
+  plogic: |
+  expected*:
+    java: |
+	:IF
+	  ==
+	    status
+	    "error"
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  error happened.\n"
+	    :PRINT
+	      "</div>\n"
+	  :IF
+	    ==
+	      status
+	      "warning"
+	    :BLOCK
+	      :PRINT
+	        "<div>\n"
+	      :BLOCK
+	        :PRINT
+	          "  warning.\n"
+	      :PRINT
+	        "</div>\n"
+
+
+###
+- name:		convert_directive_elseif2
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	<div id="elseif:status=='warning'">
+	  warning.
+	</div>
+	<div id="elseif:status=='normal'">
+	  no errors nor warnings.
+	</div>
+  plogic: |
+  expected*:
+    java: |
+	:IF
+	  ==
+	    status
+	    "error"
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  error happened.\n"
+	    :PRINT
+	      "</div>\n"
+	  :IF
+	    ==
+	      status
+	      "warning"
+	    :BLOCK
+	      :PRINT
+	        "<div>\n"
+	      :BLOCK
+	        :PRINT
+	          "  warning.\n"
+	      :PRINT
+	        "</div>\n"
+	    :IF
+	      ==
+	        status
+	        "normal"
+	      :BLOCK
+	        :PRINT
+	          "<div>\n"
+	        :BLOCK
+	          :PRINT
+	            "  no errors nor warnings.\n"
+	        :PRINT
+	          "</div>\n"
+
+
+###
+- name:		convert_directive_elseif9
+  desc:		erro if previous statement is not if-statement 
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	
+	<div id="elseif:status=='warning'">
+	  warning.
+	</div>
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	":5: 'elseif:status=='warning'': previous is not if-statement nor elseif-statement."
+
+
+###
+- name:		convert_directive_else1
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	<div id="else:">
+	  no errors.
+	</div>
+  plogic: |
+  expected*:
+    java: |
+	:IF
+	  ==
+	    status
+	    "error"
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  error happened.\n"
+	    :PRINT
+	      "</div>\n"
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  no errors.\n"
+	    :PRINT
+	      "</div>\n"
+
+
+###
+- name:		convert_directive_else2
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	<div id="elseif:status=='warning'">
+	  warning.
+	</div>
+	<div id="else:">
+	  no errors, no warnings.
+	</div>
+  plogic: |
+  expected*:
+    java: |
+	:IF
+	  ==
+	    status
+	    "error"
+	  :BLOCK
+	    :PRINT
+	      "<div>\n"
+	    :BLOCK
+	      :PRINT
+	        "  error happened.\n"
+	    :PRINT
+	      "</div>\n"
+	  :IF
+	    ==
+	      status
+	      "warning"
+	    :BLOCK
+	      :PRINT
+	        "<div>\n"
+	      :BLOCK
+	        :PRINT
+	          "  warning.\n"
+	      :PRINT
+	        "</div>\n"
+	    :BLOCK
+	      :PRINT
+	        "<div>\n"
+	      :BLOCK
+	        :PRINT
+	          "  no errors, no warnings.\n"
+	      :PRINT
+	        "</div>\n"
+
+
+###
+- name:		convert_directive_else9
+  desc:		erro if previous statement is not if-statement 
+  pdata: |
+	<div id="if:status=='error'">
+	  error happened.
+	</div>
+	
+	<div id="else:">
+	  warning.
+	</div>
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	":5: 'else:': previous is not if-statement nor elseif-statement."
+
+
+###
+- name:		convert_directive_while1
+  pdata: |
+	<ul id="while:i>0">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:WHILE
+	  >
+	    i
+	    0
+	  :BLOCK
+	    :PRINT
+	      "<ul>\n"
+	    :BLOCK
+	      :PRINT
+	        "  <li>123</li>\n"
+	    :PRINT
+	      "</ul>\n"
+
+
+###
+- name:		convert_directive_loop1
+  pdata: |
+	<ul id="loop:i>0">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:WHILE
+	  >
+	    i
+	    0
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>123</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		convert_directive_foreach1
+  pdata: |
+	<ul id="foreach:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "<ul>\n"
+	      :BLOCK
+	        :PRINT
+	          "  <li>123</li>\n"
+	      :PRINT
+	        "</ul>\n"
+
+
+###
+- name:		convert_directive_foreach2
+  pdata: |
+	<ul id="Foreach:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:EXPR
+	  =
+	    item_ctr
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        item_ctr
+	        1
+	    :BLOCK
+	      :PRINT
+	        "<ul>\n"
+	      :BLOCK
+	        :PRINT
+	          "  <li>123</li>\n"
+	      :PRINT
+	        "</ul>\n"
+
+
+###
+- name:		convert_directive_foreach3
+  pdata: |
+	<ul id="FOREACH:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:EXPR
+	  =
+	    item_ctr
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        item_ctr
+	        1
+	    :EXPR
+	      =
+	        item_tgl
+	        ?:
+	          ==
+	            %
+	              item_ctr
+	              2
+	            0
+	          "even"
+	          "odd"
+	    :BLOCK
+	      :PRINT
+	        "<ul>\n"
+	      :BLOCK
+	        :PRINT
+	          "  <li>123</li>\n"
+	      :PRINT
+	        "</ul>\n"
+
+
+###
+- name:		convert_directive_foreach4
+  desc:		even and odd property
+  pdata: |
+	<ul id="FOREACH:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  properties:
+    odd:	"'#CCF'"
+    even:	"'#FCC'"
+  expected*:
+    java: |
+	:EXPR
+	  =
+	    item_ctr
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        item_ctr
+	        1
+	    :EXPR
+	      =
+	        item_tgl
+	        ?:
+	          ==
+	            %
+	              item_ctr
+	              2
+	            0
+	          "#FCC"
+	          "#CCF"
+	    :BLOCK
+	      :PRINT
+	        "<ul>\n"
+	      :BLOCK
+	        :PRINT
+	          "  <li>123</li>\n"
+	      :PRINT
+	        "</ul>\n"
+
+
+###
+- name:		convert_directive_foreach9
+  pdata: |
+	<ul id="foreach:item.name=list">
+	  <li>123</li>
+	</ul>
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	":1: 'foreach:item.name=list': invalid directive syntax."
+
+
+###
+- name:		convert_directive_list1
+  pdata: |
+	<ul id="list:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>123</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		convert_directive_list2
+  pdata: |
+	<ul id="List:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:EXPR
+	  =
+	    item_ctr
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        item_ctr
+	        1
+	    :BLOCK
+	      :PRINT
+	        "  <li>123</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		convert_directive_list3
+  pdata: |
+	<ul id="LIST:item=list">
+	  <li>123</li>
+	</ul>
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:EXPR
+	  =
+	    item_ctr
+	    0
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :EXPR
+	      +=
+	        item_ctr
+	        1
+	    :EXPR
+	      =
+	        item_tgl
+	        ?:
+	          ==
+	            %
+	              item_ctr
+	              2
+	            0
+	          "even"
+	          "odd"
+	    :BLOCK
+	      :PRINT
+	        "  <li>123</li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		convert_directive_list9
+  pdata: |
+	<ul id="list:item.name=list">
+	  <li>123</li>
+	</ul>
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	":1: 'list:item.name=list': invalid directive syntax."
+
+
+###
+- name:		convert_directive_default1
+  pdata: |
+	Hello <em id="default:user">guest</em>!
+  plogic: |
+  expected*:
+    java: |
+	:PRINT
+	  "Hello "
+	:PRINT
+	  "<em>"
+	:IF
+	  !
+	    str_empty()
+	      user
+	  :BLOCK
+	    :PRINT
+	      user
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "guest"
+	:PRINT
+	  "</em>"
+	:PRINT
+	  "!\n"
+	
 
 ### ----------------------------------------
 
