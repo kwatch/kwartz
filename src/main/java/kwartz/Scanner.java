@@ -525,7 +525,7 @@ public class Scanner {
 		Scanner scanner = new Scanner(input);
 		int token;
 		while ((token = scanner.scan()) != 0) {
-			System.out.println("token="+Parser.tokenSymbol(token)+"("+token+"), value="+scanner.getTokenValue());
+			System.out.println("token="+TokenHelper.tokenSymbol(token)+"("+token+"), value="+scanner.getTokenValue());
 		}
 	}
 

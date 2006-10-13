@@ -45,10 +45,10 @@ package kwartz;
 %type <Ast.Expression> expr primary
 %type <Ast.Literal> word literal
 %type <List> args
-%type <Parser.Info> IDENT STRING INTEGER FLOAT TRUE FALSE NULL
-%type <Parser.Info> '+' '-' '*' '/' '%' CONCAT EQ NE '>' GE '<' LE AND OR '!' '?' ':'
-%type <Parser.Info> '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
-%type <Parser.Info> '(' ')' '[' ']' INDEX2 ',' '.'
+%type <ParseInfo> IDENT STRING INTEGER FLOAT TRUE FALSE NULL
+%type <ParseInfo> '+' '-' '*' '/' '%' CONCAT EQ NE '>' GE '<' LE AND OR '!' '?' ':'
+%type <ParseInfo> '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
+%type <ParseInfo> '(' ')' '[' ']' INDEX2 ',' '.'
 
 
 %%

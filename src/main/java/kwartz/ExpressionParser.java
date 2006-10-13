@@ -314,91 +314,91 @@ public class ExpressionParser extends Parser {
           /* Following line will be replaced by reduce actions */
           switch(yyn) {
           case 1:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 2:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 3:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 4:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 5:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 6:
-{ yyval = _f.createArithmeticExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createArithmeticExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 7:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 8:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 9:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 10:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 11:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 12:
-{ yyval = _f.createRelationalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createRelationalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 13:
-{ yyval = _f.createLogicalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createLogicalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 14:
-{ yyval = _f.createLogicalExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createLogicalExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 15:
-{ yyval = _f.createLogicalExpression(((Parser.Info)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)]), null); } break;
+{ yyval = _f.createLogicalExpression(((ParseInfo)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)]), null); } break;
           case 16:
-{ yyval = _f.createUnaryExpression(((Parser.Info)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)])); } break;
+{ yyval = _f.createUnaryExpression(((ParseInfo)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)])); } break;
           case 17:
-{ yyval = _f.createUnaryExpression(((Parser.Info)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)])); } break;
+{ yyval = _f.createUnaryExpression(((ParseInfo)yyastk[yysp-(2-1)]), ((Ast.Expression)yyastk[yysp-(2-2)])); } break;
           case 18:
-{ yyval = _f.createConditionalExpression(((Parser.Info)yyastk[yysp-(5-2)]), ((Ast.Expression)yyastk[yysp-(5-1)]), ((Ast.Expression)yyastk[yysp-(5-3)]), ((Ast.Expression)yyastk[yysp-(5-5)])); } break;
+{ yyval = _f.createConditionalExpression(((ParseInfo)yyastk[yysp-(5-2)]), ((Ast.Expression)yyastk[yysp-(5-1)]), ((Ast.Expression)yyastk[yysp-(5-3)]), ((Ast.Expression)yyastk[yysp-(5-5)])); } break;
           case 19:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 20:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 21:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 22:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 23:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 24:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 25:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 26:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 27:
-{ yyval = _f.createAssignmentExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
+{ yyval = _f.createAssignmentExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), ((Ast.Expression)yyastk[yysp-(3-3)])); } break;
           case 28:
 { yyval = ((Ast.Expression)yyastk[yysp-(1-1)]); } break;
           case 29:
-{ yyval = _f.createIndexExpression(((Parser.Info)yyastk[yysp-(4-2)]), ((Ast.Expression)yyastk[yysp-(4-1)]), ((Ast.Expression)yyastk[yysp-(4-3)])); } break;
+{ yyval = _f.createIndexExpression(((ParseInfo)yyastk[yysp-(4-2)]), ((Ast.Expression)yyastk[yysp-(4-1)]), ((Ast.Expression)yyastk[yysp-(4-3)])); } break;
           case 30:
-{ yyval = _f.createIndex2Expression(((Parser.Info)yyastk[yysp-(4-2)]), ((Ast.Expression)yyastk[yysp-(4-1)]), ((Ast.Literal)yyastk[yysp-(4-3)])); } break;
+{ yyval = _f.createIndex2Expression(((ParseInfo)yyastk[yysp-(4-2)]), ((Ast.Expression)yyastk[yysp-(4-1)]), ((Ast.Literal)yyastk[yysp-(4-3)])); } break;
           case 31:
-{ yyval = _f.createMethodExpression(((Parser.Info)yyastk[yysp-(6-2)]), ((Ast.Expression)yyastk[yysp-(6-1)]), (((Parser.Info)yyastk[yysp-(6-3)])).getValue(), ((List)yyastk[yysp-(6-5)])); } break;
+{ yyval = _f.createMethodExpression(((ParseInfo)yyastk[yysp-(6-2)]), ((Ast.Expression)yyastk[yysp-(6-1)]), (((ParseInfo)yyastk[yysp-(6-3)])).getValue(), ((List)yyastk[yysp-(6-5)])); } break;
           case 32:
-{ yyval = _f.createPropertyExpression(((Parser.Info)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), (((Parser.Info)yyastk[yysp-(3-3)])).getValue()); } break;
+{ yyval = _f.createPropertyExpression(((ParseInfo)yyastk[yysp-(3-2)]), ((Ast.Expression)yyastk[yysp-(3-1)]), (((ParseInfo)yyastk[yysp-(3-3)])).getValue()); } break;
           case 33:
-{ yyval = _f.createFuncallExpression(((Parser.Info)yyastk[yysp-(4-1)]), ((List)yyastk[yysp-(4-3)])); } break;
+{ yyval = _f.createFuncallExpression(((ParseInfo)yyastk[yysp-(4-1)]), ((List)yyastk[yysp-(4-3)])); } break;
           case 34:
 { yyval = ((Ast.Literal)yyastk[yysp-(1-1)]); } break;
           case 35:
 { yyval = ((Ast.Expression)yyastk[yysp-(3-2)]); } break;
           case 36:
-{ yyval = _f.createVariableLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createVariableLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 37:
-{ yyval = _f.createStringLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createStringLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 38:
-{ yyval = _f.createIntegerLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createIntegerLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 39:
-{ yyval = _f.createFloatLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createFloatLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 40:
-{ yyval = _f.createTrueLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createTrueLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 41:
-{ yyval = _f.createFalseLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createFalseLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 42:
-{ yyval = _f.createNullLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createNullLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 43:
-{ yyval = _f.createStringLiteral(((Parser.Info)yyastk[yysp-(1-1)])); } break;
+{ yyval = _f.createStringLiteral(((ParseInfo)yyastk[yysp-(1-1)])); } break;
           case 44:
 { ((List)yyastk[yysp-(3-1)]).add(((Ast.Expression)yyastk[yysp-(3-3)])); yyval = ((List)yyastk[yysp-(3-1)]); } break;
           case 45:

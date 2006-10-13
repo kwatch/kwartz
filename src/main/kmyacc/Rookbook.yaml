@@ -19,7 +19,7 @@ recipes:
   - product:	$(javadir)/*.java
     ingreds:	[ $(1).java ]
     method*: |
-	cp_pr @ingreds, javadir
+	mv @ingreds, javadir
 
   - product:	:exec
     ingreds:	[ Parser.class ]

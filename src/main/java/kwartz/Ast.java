@@ -68,7 +68,7 @@ public class Ast {
 		}
 		
 		protected void _inspect(int level, StringBuffer sb) {
-			_addValue(level, sb, Parser.tokenSymbol(_token));
+			_addValue(level, sb, TokenHelper.tokenSymbol(_token));
 		}
 		
 		protected void _addValue(int level, StringBuffer sb, String value) {
@@ -150,7 +150,7 @@ public class Ast {
 		
 		public void validate() throws ParseException {
 			if (! _left.availableAsLhs()) {
-				String s = Parser.tokenSymbol(_token);
+				String s = TokenHelper.tokenSymbol(_token);
 				throw new SemanticException("" + s + ": invalid left-side value.", _linenum, _column);
 			}
 		}
@@ -479,7 +479,7 @@ public class Ast {
 		
 		public void validate() throws ParseException {
 			if (_item.getToken() != Token.VARIABLE) {
-				String s = Parser.tokenSymbol(_item.getToken());
+				String s = TokenHelper.tokenSymbol(_item.getToken());
 				String mesg = s + ": invalid loop-variable of foreach statement.";
 				throw new SemanticException(mesg, _item.getLinenum(), _item.getColumn());
 			}

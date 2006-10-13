@@ -73,18 +73,18 @@ import java.util.HashMap;
 %type <Ast.Expression> expr primary
 %type <Ast.Literal> word literal
 %type <List> args
-%type <Parser.Info> IDENT STRING INTEGER FLOAT TRUE FALSE NULL
-%type <Parser.Info> '+' '-' '*' '/' '%' CONCAT EQ NE '>' GE '<' LE AND OR '!' '?' ':'
-%type <Parser.Info> '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
-%type <Parser.Info> '(' ')' '[' ']' INDEX2 ',' '.'
+%type <ParseInfo> IDENT STRING INTEGER FLOAT TRUE FALSE NULL
+%type <ParseInfo> '+' '-' '*' '/' '%' CONCAT EQ NE '>' GE '<' LE AND OR '!' '?' ':'
+%type <ParseInfo> '=' PLUS_EQ MINUS_EQ STAR_EQ SLASH_EQ PERCENT_EQ CONCAT_EQ AND_EQ OR_EQ
+%type <ParseInfo> '(' ')' '[' ']' INDEX2 ',' '.'
 [% end %]
 [% if flag_stmt %]
 %type <List> stmts
 %type <Ast.Statement> stmt
 %type <Ast.Statement> block else_clause
-%type <Parser.Info> PRINT FOREACH WHILE IF ELSEIF ELSE
-%type <Parser.Info> BREAK CONTINUE STAG ETAG CONT ELEM ELEMENT CONTENT
-%type <Parser.Info> in ';' '{' '}'
+%type <ParseInfo> PRINT FOREACH WHILE IF ELSEIF ELSE
+%type <ParseInfo> BREAK CONTINUE STAG ETAG CONT ELEM ELEMENT CONTENT
+%type <ParseInfo> in ';' '{' '}'
 [% end %]
 [% if flag_plogic %]
 %type  <List> plogic rulesets commands command selectors declarations
@@ -92,9 +92,9 @@ import java.util.HashMap;
 %type  <Ast.Ruleset> ruleset
 %type  <Ast.Selector> selector
 %type  <Ast.Declaration> declaration
-%type  <Parser.Info> COMMAND SELECTOR
-%type  <Parser.Info> P_STAG P_ETAG P_CONT P_ELEM P_VALUE P_ATTRS P_APPEND P_REMOVE P_TAGNAME P_LOGIC
-%type  <Parser.Info> P_BEGIN P_END P_BEFORE P_AFTER
+%type  <ParseInfo> COMMAND SELECTOR
+%type  <ParseInfo> P_STAG P_ETAG P_CONT P_ELEM P_VALUE P_ATTRS P_APPEND P_REMOVE P_TAGNAME P_LOGIC
+%type  <ParseInfo> P_BEGIN P_END P_BEFORE P_AFTER
 %type  <null> off on
 %type  <Map> attrs
 %type  <String> name

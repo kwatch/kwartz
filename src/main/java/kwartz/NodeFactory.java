@@ -5,18 +5,18 @@ import java.util.List;
 public class NodeFactory {
 
 	
-	private void setInfo(Ast.Node node, Parser.Info info) {
+	private void setInfo(Ast.Node node, ParseInfo info) {
 		node.setLinenum(info.getLinenum());
 		node.setColumn(info.getColumn());
 	}
 	
-	public Ast.Expression createArithmeticExpression(Parser.Info info, Ast.Expression left, Ast.Expression right) {
+	public Ast.Expression createArithmeticExpression(ParseInfo info, Ast.Expression left, Ast.Expression right) {
 		Ast.Expression expr = new Ast.ArithmeticExpression(info.getToken(), left, right);
 		setInfo(expr, info);
 		return expr;
 	}
 	
-	public Ast.Expression createUnaryExpression(Parser.Info info, Ast.Expression primary) {
+	public Ast.Expression createUnaryExpression(ParseInfo info, Ast.Expression primary) {
 		int token = info.getToken();
 		token = token == '-' ? Token.UMINUS : Token.UPLUS;
 		Ast.Expression expr = new Ast.ArithmeticExpression(token, primary, null);
@@ -24,39 +24,39 @@ public class NodeFactory {
 		return expr;
 	}
 
-	public Ast.Expression createLogicalExpression(Parser.Info info, Ast.Expression left, Ast.Expression right) {
+	public Ast.Expression createLogicalExpression(ParseInfo info, Ast.Expression left, Ast.Expression right) {
 		Ast.Expression expr = new Ast.LogicalExpression(info.getToken(), left, right);
 		setInfo(expr, info);
 		return expr;
 	}
 
-	public Ast.Expression createRelationalExpression(Parser.Info info, Ast.Expression left, Ast.Expression right) {
+	public Ast.Expression createRelationalExpression(ParseInfo info, Ast.Expression left, Ast.Expression right) {
 		Ast.Expression expr = new Ast.RelationalExpression(info.getToken(), left, right);
 		setInfo(expr, info);
 		return expr;
 	}
 
-	public Ast.Expression createAssignmentExpression(Parser.Info info, Ast.Expression left, Ast.Expression right) throws ParseException {
+	public Ast.Expression createAssignmentExpression(ParseInfo info, Ast.Expression left, Ast.Expression right) throws ParseException {
 		Ast.Expression expr = new Ast.AssignmentExpression(info.getToken(), left, right);
 		setInfo(expr, info);
 		expr.validate();
 		return expr;
 	}
 	
-	public Ast.Expression createIndexExpression(Parser.Info info, Ast.Expression primary, Ast.Expression arg) {
+	public Ast.Expression createIndexExpression(ParseInfo info, Ast.Expression primary, Ast.Expression arg) {
 		Ast.Expression expr = new Ast.IndexExpression(Token.INDEX, primary, arg);
 		setInfo(expr, info);
 		return expr;
 	}
 	
-	public Ast.Expression createIndex2Expression(Parser.Info info, Ast.Expression primary, Ast.Literal word) {
+	public Ast.Expression createIndex2Expression(ParseInfo info, Ast.Expression primary, Ast.Literal word) {
 		Ast.Expression expr = new Ast.IndexExpression(Token.INDEX2, primary, word);
 		setInfo(expr, info);
 		return expr;
 	}
 	
 	
-	public Ast.Expression createFuncallExpression(Parser.Info info, List arguments) {
+	public Ast.Expression createFuncallExpression(ParseInfo info, List arguments) {
 		Ast.Expression[] args = new Ast.Expression[arguments.size()];
 		arguments.toArray(args);
 		String funcname = info.getValue();
@@ -65,7 +65,7 @@ public class NodeFactory {
 		return expr;
 	}
 	
-	public Ast.Expression createMethodExpression(Parser.Info info, Ast.Expression receiver, String methodname, List arguments) {
+	public Ast.Expression createMethodExpression(ParseInfo info, Ast.Expression receiver, String methodname, List arguments) {
 		Ast.Expression[] args = new Ast.Expression[arguments.size()];
 		arguments.toArray(args);
 		Ast.Expression expr = new Ast.MethodExpression(receiver, methodname, args);
@@ -73,13 +73,13 @@ public class NodeFactory {
 		return expr;
 	}
 	
-	public Ast.Expression createPropertyExpression(Parser.Info info, Ast.Expression receiver, String property_name) {
+	public Ast.Expression createPropertyExpression(ParseInfo info, Ast.Expression receiver, String property_name) {
 		Ast.Expression expr = new Ast.PropertyExpression(receiver, property_name);
 		setInfo(expr, info);
 		return expr;
 	}
 	
-	public Ast.Expression createConditionalExpression(Parser.Info info, Ast.Expression condition, Ast.Expression left, Ast.Expression right) {
+	public Ast.Expression createConditionalExpression(ParseInfo info, Ast.Expression condition, Ast.Expression left, Ast.Expression right) {
 		Ast.Expression expr = new Ast.ConditionalExpression(condition, left, right);
 		setInfo(expr, info);
 		return expr;
@@ -87,43 +87,43 @@ public class NodeFactory {
 	
 	//
 	
-	public Ast.Literal createVariableLiteral(Parser.Info info) {
+	public Ast.Literal createVariableLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.VariableLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 	
-	public Ast.Literal createStringLiteral(Parser.Info info) {
+	public Ast.Literal createStringLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.StringLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 	
-	public Ast.Literal createIntegerLiteral(Parser.Info info) {
+	public Ast.Literal createIntegerLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.IntegerLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 	
-	public Ast.Literal createFloatLiteral(Parser.Info info) {
+	public Ast.Literal createFloatLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.FloatLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 	
-	public Ast.Literal createTrueLiteral(Parser.Info info) {
+	public Ast.Literal createTrueLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.TrueLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 
-	public Ast.Literal createFalseLiteral(Parser.Info info) {
+	public Ast.Literal createFalseLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.FalseLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
 	}
 
-	public Ast.Literal createNullLiteral(Parser.Info info) {
+	public Ast.Literal createNullLiteral(ParseInfo info) {
 		Ast.Literal literal = new Ast.NullLiteral(info.getValue());
 		setInfo(literal, info);
 		return literal;
@@ -131,7 +131,7 @@ public class NodeFactory {
 
 	//
 	
-	public Ast.Statement createPrintStatement(Parser.Info info, List arguments) {
+	public Ast.Statement createPrintStatement(ParseInfo info, List arguments) {
 		Ast.Expression[] args = new Ast.Expression[arguments.size()];
 		arguments.toArray(args);
 		Ast.Statement stmt = new Ast.PrintStatement(args);
@@ -139,44 +139,44 @@ public class NodeFactory {
 		return stmt;
 	}
 	
-	public Ast.Statement createForeachStatement(Parser.Info info, Ast.Expression item, Ast.Expression list, Ast.Statement body) throws ParseException {
+	public Ast.Statement createForeachStatement(ParseInfo info, Ast.Expression item, Ast.Expression list, Ast.Statement body) throws ParseException {
 		Ast.Statement stmt = new Ast.ForeachStatement(item, list, body);
 		setInfo(stmt, info);
 		stmt.validate();
 		return stmt;
 	}
 
-	public Ast.Statement createWhileStatement(Parser.Info info, Ast.Expression condition, Ast.Statement body) {
+	public Ast.Statement createWhileStatement(ParseInfo info, Ast.Expression condition, Ast.Statement body) {
 		Ast.Statement stmt = new Ast.WhileStatement(condition, body);
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createIfStatement(Parser.Info info, Ast.Expression condition, Ast.Statement then_stmt, Ast.Statement else_stmt) {
+	public Ast.Statement createIfStatement(ParseInfo info, Ast.Expression condition, Ast.Statement then_stmt, Ast.Statement else_stmt) {
 		Ast.Statement stmt = new Ast.IfStatement(condition, then_stmt, else_stmt);
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createBreakStatement(Parser.Info info) {
+	public Ast.Statement createBreakStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.BreakStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createContinueStatement(Parser.Info info) {
+	public Ast.Statement createContinueStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.ContinueStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createExpressionStatement(Parser.Info info, Ast.Expression expr) {
+	public Ast.Statement createExpressionStatement(ParseInfo info, Ast.Expression expr) {
 		Ast.Statement stmt = new Ast.ExpressionStatement(expr);
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createBlockStatement(Parser.Info info, List statements) {
+	public Ast.Statement createBlockStatement(ParseInfo info, List statements) {
 		Ast.Statement stmt = new Ast.BlockStatement(statements);
 		setInfo(stmt, info);
 		return stmt;
@@ -184,37 +184,37 @@ public class NodeFactory {
 
 	//
 	
-	public Ast.Statement createStagStatement(Parser.Info info) {
+	public Ast.Statement createStagStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.StagStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 
-	public Ast.Statement createContStatement(Parser.Info info) {
+	public Ast.Statement createContStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.ContStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 	
-	public Ast.Statement createEtagStatement(Parser.Info info) {
+	public Ast.Statement createEtagStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.EtagStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 
-	public Ast.Statement createElemStatement(Parser.Info info) {
+	public Ast.Statement createElemStatement(ParseInfo info) {
 		Ast.Statement stmt = new Ast.ElemStatement();
 		setInfo(stmt, info);
 		return stmt;
 	}
 
-	public Ast.Statement createElementStatement(Parser.Info info, Parser.Info arg) {
+	public Ast.Statement createElementStatement(ParseInfo info, ParseInfo arg) {
 		Ast.Statement stmt = new Ast.ElementStatement(arg.getValue());
 		setInfo(stmt, info);
 		return stmt;
 	}
 
-	public Ast.Statement createContentStatement(Parser.Info info, Parser.Info arg) {
+	public Ast.Statement createContentStatement(ParseInfo info, ParseInfo arg) {
 		Ast.Statement stmt = new Ast.ContentStatement(arg.getValue());
 		setInfo(stmt, info);
 		return stmt;
@@ -222,20 +222,20 @@ public class NodeFactory {
 
 	//
 	
-	public Ast.Selector createSelector(Parser.Info info) {
+	public Ast.Selector createSelector(ParseInfo info) {
 		Ast.Selector selector = new Ast.Selector(info.getValue());
 		setInfo(selector, info);
 		return selector;
 	}
 	
-	public Ast.Declaration createDeclaration(Parser.Info info, Object arg) {
+	public Ast.Declaration createDeclaration(ParseInfo info, Object arg) {
 		String propname = info.getValue();
 		Ast.Declaration decl = new Ast.Declaration(info.getToken(), propname, arg);
 		setInfo(decl, info);
 		return decl;
 	}
 	
-	public Ast.Declaration createLogicDeclaration(Parser.Info info, List stmts, Parser.Info rcurly) throws ParseException {
+	public Ast.Declaration createLogicDeclaration(ParseInfo info, List stmts, ParseInfo rcurly) throws ParseException {
 		if (info.getColumn() != rcurly.getColumn() && info.getLinenum() != rcurly.getLinenum()) {
 			String msg = "'}': column of closing curly bracket is not matched with of property '"+info.getValue()+"'"
 	                   + " starting at line "+info.getLinenum()+", column "+info.getColumn()+".";
@@ -247,7 +247,7 @@ public class NodeFactory {
 		return decl;
 	}
 	
-	public Ast.Ruleset createRuleset(Parser.Info info, List selectors, List declarations, Parser.Info rcurly) throws ParseException {
+	public Ast.Ruleset createRuleset(ParseInfo info, List selectors, List declarations, ParseInfo rcurly) throws ParseException {
 		Ast.Selector selector = (Ast.Selector)selectors.get(0);
 		if (selector.getColumn() != rcurly.getColumn() && selector.getLinenum() != rcurly.getLinenum()) {
 			String msg = "'}': column of closing curly bracket is not matched with of selector '"+selector.getValue()+"'"

@@ -2,6 +2,10 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.36 (2006-10-13)
+	- [refactor] new class TokenHelper added
+	- [refactor] Parser.tokenSymbol() is moved to TokenHelper
+
 : rev.35 (2006-10-13)
 	- [enhance] logic property with #DOCUMENT selector support
 	- [enhance] delspan support

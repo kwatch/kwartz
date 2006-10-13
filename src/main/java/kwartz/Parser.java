@@ -9,65 +9,31 @@ import java.util.List;
 import java.util.Iterator;
 
 
+
+class ParseInfo {
+	int token;
+	String value;
+	int linenum;
+	int column;
+  
+	public ParseInfo(int token, String value, int linenum, int column) {
+		this.token   = token;
+		this.value   = value;
+		this.linenum = linenum;
+		this.column  = column;
+	}
+  
+	public int getToken() { return token; }
+	public String getValue() { return value; }
+	public int getLinenum() { return linenum; }
+	public int getColumn() { return column; }
+}
+  
+ 
+
 abstract public class Parser implements Token {
 
-  	private static String[] __tokens = { "<YYERRTOK>",
-  		"<IDENT>",
-  		"<VARIABLE>", "<INTEGER>", "<FLOAT>", "<STRING>", "true", "false", "null",
-  		"+=", "-=", "*=", "/=", "%=",
-  		".+", ".+=",
-  		"==", "!=", ">", ">=", "<", "<=",
-  		"&&", "||", "&&=", "||=",
-  		"()", ".()", ".",
-  		"[]", "[:]",
-  		"+.", "-.", "?:",
-  		
-  		//
-  		":PRINT", ":EXPR", ":IF", ":ELSEIF", ":ELSE", ":WHILE", ":FOREACH", ":BREAK", ":CONTINUE", ":BLOCK",
-  		"<% %>", "<%= %>",
-  		"_stag", "_cont", "_etag", "_elem", "_element", "_content",
-  		
-  		//
-  		"<COMMAND>", "<SELECTOR>", "<DECLARATION>", "<RULESET>",
-  		"stag:", "cont:", "etag:", "elem:", "value:", "attrs:", "append:", "remove:", "tagname:", "logic:",
-  		"begin:", "end:", "before:", "after:", "global:",
-  	};
-  
-  	static {
-  		assert __tokens.length + Token.YYERRTOK != Token.ERROR;
-  	}
-  
-  
-  	public static String tokenSymbol(int token) {
-  		if (token < Token.YYERRTOK) {  // YYERRTOK == 256
-  			return Character.toString((char)token);
-  		}
-  		else {
-  			return __tokens[token - Token.YYERRTOK];
-  		}
-  	}
-  
-
   	/// -------------------------
-  
-  	static class Info {
-  		int token;
-  		String value;
-  		int linenum;
-  		int column;
-  
-  		public Info(int token, String value, int linenum, int column) {
-  			this.token   = token;
-  			this.value   = value;
-  			this.linenum = linenum;
-  			this.column  = column;
-  		}
-  
-  		public int getToken() { return token; }
-  		public String getValue() { return value; }
-  		public int getLinenum() { return linenum; }
-  		public int getColumn() { return column; }
-  	}
   
   
   	/// -------------------------
@@ -85,7 +51,7 @@ abstract public class Parser implements Token {
   		int    linenum = _scanner.getStartLinenum();
   		int    column  = _scanner.getStartColumn();
   		//yylval = new Info(token, value, linenum, column);
-  		Info info = new Info(token, value, linenum, column);
+  		ParseInfo info = new ParseInfo(token, value, linenum, column);
   		setYylval(info);
   		return _token = token;
   	}
@@ -137,7 +103,7 @@ abstract public class Parser implements Token {
   	abstract void     setYylval(Object val);
   
 
-  	protected List handleCommand(String command, String arg, Parser.Info info) throws ParseException {
+  	protected List handleCommand(String command, String arg, ParseInfo info) throws ParseException {
   		return handleCommand(command, arg, info.getLinenum(), info.getColumn());
   	}
   	
