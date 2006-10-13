@@ -22,19 +22,6 @@ class TagInfo {
 	int     _linenum, _linenum_delta;
 	String  _dattr_name, _directive_str;
 	
-//	TagInfo(Matcher m, int linenum) {
-//		_prev_text   = m.group(1);
-//		_tag_text    = m.group(2);
-//		_head_space  = m.group(3);
-//		_is_etag     = "/".equals(m.group(4));
-//		_tagname     = m.group(5);
-//		_attr_str    = m.group(6);
-//		_extra_space = m.group(7);
-//		_is_empty    = "/".equals(m.group(8));
-//		_tail_space  = m.group(9);
-//		_linenum     = linenum;
-//	}
-	
 	TagInfo(String prev_text, String tag_text, String head_space, boolean is_etag, String tagname,
 			String attr_str, String extra_space, boolean is_empty, String tail_space, int linenum) {
 		_prev_text   = prev_text;
@@ -47,6 +34,9 @@ class TagInfo {
 		_is_empty    = is_empty;
 		_tail_space  = tail_space;
 		_linenum     = linenum;
+	}
+	
+	TagInfo() {
 	}
 
 	String getPrevText() { return _prev_text; }
@@ -68,8 +58,6 @@ class TagInfo {
 	}
 	
 	void setTagName(String tagname) { _tagname = tagname; }
-	//void setHeadSpace(String space) { _head_space = space; }
-	//void setTailSpace(String space) { _tail_space = space; }
 	void deleteHeadSpace() { _head_space = ""; rebuildTagText(null); }
 	void deleteTailSpace() { _tail_space = ""; rebuildTagText(null); }
 	
@@ -96,6 +84,12 @@ class TagInfo {
 		if (_tail_space != null) sb.append(_tail_space);
 		_tag_text = sb.toString();
 	}
+
+	void setAsDummyTag() {
+		_tagname = null;
+		if (_head_space != null && _tail_space != null)
+			_head_space = _tail_space = null;
+	}
 	
 	void _inspect(int level, StringBuffer sb) {
 		String indent = Util.repeatString("  ", level);
@@ -111,14 +105,14 @@ class TagInfo {
 		sb.append(indent).append("tail_space : ").append(Util.inspect(_tail_space)).append("\n");
 	}
 	
-	String _inspect(int level) {
+	String inspect(int level) {
 		StringBuffer sb = new StringBuffer();
 		_inspect(level, sb);
 		return sb.toString();
 	}
 	
-	String _inspect() {
-		return _inspect(0);
+	String inspect() {
+		return inspect(0);
 	}
 
 }
@@ -140,6 +134,9 @@ class AttrInfo {
 			_spaces.put(name, m.group(1));
 			_values.put(name, _parseAttrValue(m.group(3), linenum));
 		}
+	}
+	
+	AttrInfo() {
 	}
 	
 	private Ast.Expression _parseAttrValue(String str, int linenum) throws ConvertException {
@@ -214,7 +211,7 @@ class AttrInfo {
 
 class ElementInfo {
 	
-	String   _name;
+	//String   _name;
 	TagInfo  _stag_info, _etag_info;
 	List     _cont_stmts;              // List<Ast.Statement>
 	AttrInfo _attr_info;
@@ -225,16 +222,15 @@ class ElementInfo {
 	//
 	Ast.Expression _stag_expr, _etag_expr, _cont_expr, _elem_expr;
 	
-	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
-		this(null, stag_info, etag_info, cont_stmts, attr_info, append_exprs);
-	}
-
 	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info) {
-		this(null, stag_info, etag_info, cont_stmts, attr_info, new ArrayList());
+		this(stag_info, etag_info, cont_stmts, attr_info, new ArrayList());
 	}
 	
-	ElementInfo(String name, TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
-		_name = name;
+	ElementInfo(List cont_stmts) {
+		this(new TagInfo(), new TagInfo(), cont_stmts, new AttrInfo(), new ArrayList());
+	}
+	
+	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
 		_stag_info  = stag_info;
 		_etag_info  = etag_info;
 		_cont_stmts = cont_stmts;
@@ -247,7 +243,6 @@ class ElementInfo {
 		_logic.add(new Ast.EtagStatement());
 	}
 	
-	String   getName() { return _name; }
 	TagInfo  getStagInfo() { return _stag_info; }
 	TagInfo  getEtagInfo() { return _etag_info; }
 	List     getContStmts() { return _cont_stmts; }
@@ -279,7 +274,7 @@ class ElementInfo {
 	void setElemExpr(Ast.Expression expr) { _elem_expr = expr; }
 
 	ElementInfo duplicate() {
-		ElementInfo elem_info = new ElementInfo(_name, _stag_info, _etag_info, _cont_stmts, _attr_info, _append_exprs);
+		ElementInfo elem_info = new ElementInfo(_stag_info, _etag_info, _cont_stmts, _attr_info, _append_exprs);
 		elem_info.setLogic(_logic);
 		elem_info.setBefore(_before);
 		elem_info.setAfter(_after);
@@ -290,15 +285,37 @@ class ElementInfo {
 		return elem_info;
 	}
 	
+	void clearStag() {
+		_stag_expr = null;
+		_stag_info = new TagInfo();
+	}
+
+	void clearEtag() {
+		_etag_expr = null;
+		_etag_info = new TagInfo();
+	}
+	
 	static ElementInfo create(Map values) {
 		Map v = values;
-		return new ElementInfo((String)v.get("name"), (TagInfo)v.get("stag"), (TagInfo)v.get("etag"),
-				               (List)v.get("cont"), (AttrInfo)v.get("attr"), (List)v.get("append"));
+		return new ElementInfo((TagInfo)v.get("stag"), (TagInfo)v.get("etag"), (List)v.get("cont"), 
+				               (AttrInfo)v.get("attr"), (List)v.get("append"));
 	}
 	
 	boolean isDummySpanTag(String tagname) {
-		return tagname.equals(getStagInfo().getTagName()) && _directive_text != null
+		return tagname.equals(getStagInfo().getTagName()) 
 		       && getAttrInfo().isEmpty() && getAppendExprs().isEmpty();
+	}
+
+	void setAttribute(String name, String value) throws ConvertException {
+		_attr_info.set(name, value, null);
+	}
+
+	void setAttribute(String name, Ast.Expression value) throws ConvertException {
+		_attr_info.set(name, value, null);
+	}
+
+	void appendExpression(Ast.Expression expr) {
+		_append_exprs.add(expr);
 	}
 
 	void merge(Ast.Ruleset ruleset) {
@@ -318,8 +335,6 @@ class ElementInfo {
 		if ((stmts = ruleset.getLogic())  != null) _logic = stmts;
 		if ((stmts = ruleset.getBefore()) != null) _before = stmts;
 		if ((stmts = ruleset.getAfter())  != null) _after = stmts;
-		//String name;
-		//if ((name = ruleset.getTagame() != null) _tagname = name;
 	}	
 
 
@@ -371,7 +386,6 @@ class ElementInfo {
 		}
 		if (_attr_info != null && !_attr_info.isEmpty()) {
 			sb.append(indent).append("attr_info:\n");
-			//_attr_info._inspect(level+1, sb);
 			List names = _attr_info.getNames();
 			for (Iterator it = names.iterator(); it.hasNext(); ) {
 				String name = (String) it.next();
@@ -471,13 +485,17 @@ public class TextConverter implements Converter {
 	public List convert(String pdata, int linenum) throws ConvertException {
 		_reset(pdata, linenum);
 		List stmt_list = new ArrayList();
-		List stmts;
 		Ast.Ruleset docruleset = _handler.getRuleset("#DOCUMENT");
-		if (docruleset != null && (stmts = docruleset.getBefore()) != null)
-			stmt_list.addAll(stmts);
-		_convert(stmt_list, null);
-		if (docruleset != null && (stmts = docruleset.getAfter()) != null)
-			stmt_list.addAll(stmts);
+		if (docruleset == null) {
+			_convert(stmt_list, null);
+		}
+		else {
+			List cont_stmts = new ArrayList();
+			_convert(cont_stmts, null);
+			ElementInfo elem_info = new ElementInfo(cont_stmts);
+			elem_info.setAttribute("id", "DOCUMENT");
+			_handler.applyRuleset(elem_info, stmt_list);
+		}
 		return stmt_list;
 	}
 	
@@ -487,17 +505,18 @@ public class TextConverter implements Converter {
 		                Pattern.MULTILINE);
 
 	TagInfo _fetch() {
-		if (_matcher.find()) {
-			int start = _matcher.start();
+		Matcher m = _matcher;
+		if (m.find()) {
+			int start = m.start();
 			String prev_text   = _pdata.substring(_index, start);
-			String tag_str     = _matcher.group(0);
-			String head_space  = _matcher.group(1);
-			boolean is_etag    = "/".equals(_matcher.group(2));
-			String tagname     = _matcher.group(3);
-			String attr_str    = _matcher.group(4);
-			String extra_space = _matcher.group(5);
-			boolean is_empty   = "/".equals(_matcher.group(6));
-			String tail_space  = _matcher.group(7);
+			String tag_str     = m.group(0);
+			String head_space  = m.group(1);
+			boolean is_etag    = "/".equals(m.group(2));
+			String tagname     = m.group(3);
+			String attr_str    = m.group(4);
+			String extra_space = m.group(5);
+			boolean is_empty   = "/".equals(m.group(6));
+			String tail_space  = m.group(7);
 			_index = start + tag_str.length();
 			_linenum += _linenum_delta + Util.count(prev_text, '\n');
 			_linenum_delta =  Util.count(tag_str, '\n'); 
@@ -681,14 +700,26 @@ public class TextConverter implements Converter {
 			+ "<li>item</li>\n"
 			+ "</ul>\n"
 			;
+		pdata = ""
+			+ "<p>\n"
+			//+ "  <span id=\"mark:bar\">BAR</span>\n"
+			+ "  <span id=\"mark:bar\">\n"
+			+ "    BAR\n"
+			+ "  </span>\n"
+			//+ "  <span kw:d=\"id:baz\">BAZ</span>\n"
+			+ "</p>\n"
+			;
+
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
 //		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
 //			Ast.Ruleset ruleset = (Ast.Ruleset)it.next();
 //			System.out.println(ruleset.inspect());
 //		}
-		Handler handler = new BaseHandler(rulesets, null);
-		TextConverter converter = new TextConverter(handler);
+		Map properties = new HashMap();
+		properties.put("delspan", Boolean.TRUE);
+		Handler handler = new BaseHandler(rulesets, properties);
+		TextConverter converter = new TextConverter(handler, properties);
 
 //		converter._reset(pdata, 1);
 //		TagInfo taginfo;

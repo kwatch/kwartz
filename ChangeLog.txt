@@ -2,6 +2,10 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.35 (2006-10-13)
+	- [enhance] logic property with #DOCUMENT selector support
+	- [enhance] delspan support
+
 : rev.34 (2006-10-13)
 	- [enhance] embedded expression support
 	- [change] AttrInfo#getValue() returns Expression
