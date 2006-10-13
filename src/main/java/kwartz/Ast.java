@@ -278,6 +278,10 @@ public class Ast {
 			super(token);
 			_token_value = token_value;
 		}
+		
+		public String getValue() {
+			return _token_value;
+		}
 	
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, _token_value);
@@ -920,7 +924,8 @@ public class Ast {
 		
 		public static Object wrapWithFunction(Object arg, String funcname) {
 			if (arg instanceof Expression) {
-				return new Ast.FuncallExpression(funcname, new Expression[] { (Expression)arg });
+				return wrapWithFunction((Expression)arg, funcname);
+				//return new Ast.FuncallExpression(funcname, new Expression[] { (Expression)arg });
 			}
 			if (arg instanceof List) {
 				List exprs = (List)arg;
@@ -941,6 +946,11 @@ public class Ast {
 				return attrs;
 			}
 			return arg;
+		}
+		
+		
+		public static Expression wrapWithFunction(Expression expr, String funcname) {
+			return new Ast.FuncallExpression(funcname, new Expression[] { expr });
 		}
 		
 	}

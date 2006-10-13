@@ -2313,7 +2313,7 @@
 ### ----------------------------------------
 
 ###
-- name:		converter11
+- name:		converter_selector_id1
   desc:		id attribute
   pdata: |
 	<ul id="list">
@@ -2366,8 +2366,9 @@
 	  :PRINT
 	    "</ul>\n"
 
+
 ###
-- name:		converter12
+- name:		converter_selector_class1
   desc:		class attribute
   pdata: |
 	<ul class="list">
@@ -2421,8 +2422,9 @@
 	  :PRINT
 	    "</ul>\n"
 
+
 ###
-- name:		converter13
+- name:		converter_selector_tag1
   desc:		tagname
   pdata: |
 	<ul>
@@ -2475,8 +2477,9 @@
 	  :PRINT
 	    "</ul>\n"
 
+
 ###
-- name:		converter14
+- name:		converter_selector_mixed1
   desc:		combination of tag&class, class&id, id&tag
   pdata: |
 	<p class="small">
@@ -2531,8 +2534,9 @@
 	:PRINT
 	  "</span>\n"
 
+
 ###
-- name:		converter15
+- name:		converter_selector_mixed2
   desc:		combination of tag, class, and id
   pdata: |
 	<ul id="mark:list" class="small">
@@ -2577,8 +2581,9 @@
 	:PRINT
 	  "</ul>\n"
 
+
 ###
-- name:		converter16
+- name:		converter_selector_mixed3
   desc:		tag, class, and id selectors
   pdata: |
 	<b>foo</b>
@@ -2609,3 +2614,250 @@
 	:PRINT
 	  "</span>\n"
 
+
+### ----------------------------------------
+
+###
+
+- name:		converter_embedexpr1
+  desc:		@{expr}@ and @!{expr}@
+  pdata: |
+	Hello @{user}@!
+	<ul>
+	  <li>@!{item}@</li>
+	</ul>
+	@!{copyright}@
+  plogic*:
+    java: |
+	ul {
+	  logic: {
+	    _stag;
+	    foreach (item = list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "Hello "
+	  E()
+	    user
+	  "!\n"
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>"
+	        item
+	        "</li>\n"
+	:PRINT
+	  "</ul>\n"
+	:PRINT
+	  copyright
+	  "\n"
+
+
+###
+- name:		converter_embedexpr2
+  desc:		@{expr}@ in attr value with marking
+  pdata: |
+	<ul>
+	  <li>
+	    <a name="@{user.id}@" href="mailto:@{user.email}@" id="mark:user">foo</a>
+	  </li>
+	</ul>
+  plogic*:
+    java: |
+	li {
+	  logic: {
+	    foreach (item in list) {
+	      _elem;
+	    }
+	  }
+	}
+	#user {
+	  value: user.name;
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>\n"
+	      :BLOCK
+	        :PRINT
+	          "    <a name=\""
+	          E()
+	            .
+	              user
+	              .id
+	          "\" href=\""
+	          .+
+	            "mailto:"
+	            E()
+	              .
+	                user
+	                .email
+	          "\">"
+	        :PRINT
+	          .
+	            user
+	            .name
+	        :PRINT
+	          "</a>\n"
+	      :PRINT
+	        "  </li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		converter_embedexpr3
+  desc:		@{expr}@ in attr value, without ruleset matching
+  pdata: |
+	<ul>
+	  <li>
+	    <a name="@{user.id}@" href="mailto:@{user.email}@">@{user.name}@</a>
+	  </li>
+	</ul>
+  plogic*:
+    java: |
+	li {
+	  logic: {
+	    foreach (item in list) {
+	      _elem;
+	    }
+	  }
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<ul>\n"
+	:FOREACH
+	  item
+	  list
+	  :BLOCK
+	    :BLOCK
+	      :PRINT
+	        "  <li>\n"
+	      :BLOCK
+	        :PRINT
+	          "    <a name=\""
+	          E()
+	            .
+	              user
+	              .id
+	          "\" href=\"mailto:"
+	          E()
+	            .
+	              user
+	              .email
+	          "\">"
+	          E()
+	            .
+	              user
+	              .name
+	          "</a>\n"
+	      :PRINT
+	        "  </li>\n"
+	:PRINT
+	  "</ul>\n"
+
+
+###
+- name:		converter_embedexpr4
+  desc:		@{expr}@ in plogic has no means
+  pdata: |
+	<a href="mailto:foo@mail.com" id="mark:user">foo</a>
+  plogic*:
+    java: |
+ 	#user {
+ 	  value: "@{user.name}@";
+ 	  attrs: 'href' "mailto:@{user.email}@";
+ 	}
+  expected*:
+    java: |
+	:PRINT
+	  "<a href=\"mailto:@{user.email}@\">"
+	:PRINT
+	  "@{user.name}@"
+	:PRINT
+	  "</a>\n"
+
+
+###
+- name:		converter_embedexpr5
+  desc:		@{expr}@ is not available with directive attribute
+  pdata: |
+	<div id="@{user_id}@">
+	  <p kw:d="@{user_title}@">...</p>
+	</div>
+  plogic:
+  expected*:
+    java: |
+	:PRINT
+	  "<div id=\""
+	  E()
+	    user_id
+	  "\">\n  <p kw:d=\""
+	  E()
+	    user_title
+	  "\">...</p>\n</div>\n"
+
+
+###
+- name:		converter_embedexpr7
+  desc:		syntax error at @{expr}@ in text 
+  pdata: |
+	foo
+	bar
+	baz@{expr,}@
+  plogic:
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	':3: @{expr,}@: embedded expression has syntax error.'
+
+
+###
+- name:		converter_embedexpr8
+  desc:		syntax error at @{expr}@ in tag 
+  pdata: |
+	<div id="section">
+	  <ul id="mark:list">
+	    <li id="mark:item">@{expr,}@</li>
+	  </ul>
+	</div>
+  plogic:
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	':3: @{expr,}@: embedded expression has syntax error.'
+
+
+###
+- name:		converter_embedexpr9
+  desc:		syntax error at @{expr}@ in attr 
+  pdata: |
+	<div id="section">
+	  <ul id="mark:list">
+	    <li id="@{expr,}@"</li>
+	  </ul>
+	</div>
+  plogic:
+  exception*:
+    java:	kwartz.ConvertException
+  errormsg*:
+    java:	':3: @{expr,}@: embedded expression has syntax error.'
+ 

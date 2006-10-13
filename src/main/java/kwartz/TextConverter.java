@@ -126,26 +126,39 @@ class TagInfo {
 
 
 class AttrInfo {
-	List _names = new ArrayList();
-	Map _values = new HashMap();
-	Map _spaces = new HashMap();
+	List _names = new ArrayList();   // List<String>
+	Map _values = new HashMap();     // List<Ast.Expression>
+	Map _spaces = new HashMap();     // List<String>
 	
 	static Pattern __pat = Pattern.compile("(\\s+)([-:_\\w]+)=\"([^\"]*?)\"");
 	
-	AttrInfo(String attr_str) {
+	AttrInfo(String attr_str, int linenum) throws ConvertException {
 		Matcher m = __pat.matcher(attr_str);
 		while (m.find()) {
 			String name = m.group(2);
 			_names.add(name);
-			_values.put(name, m.group(3));
 			_spaces.put(name, m.group(1));
+			_values.put(name, _parseAttrValue(m.group(3), linenum));
 		}
 	}
 	
-	void set(String name, Object value, String space) {
+	private Ast.Expression _parseAttrValue(String str, int linenum) throws ConvertException {
+		List exprs = HandlerHelper.parseEmbeddedExpression(str, linenum);
+		Ast.Expression expr = (Ast.Expression)exprs.get(0);
+		for (int i = 1, n = exprs.size(); i < n; i++) {
+			expr = new Ast.ArithmeticExpression(Token.CONCAT, expr, (Ast.Expression)exprs.get(i));
+		}
+		return expr;
+	}
+	
+	void set(String name, String value, String space) throws ConvertException {
+		set(name, _parseAttrValue(value, -999), space);
+	}
+
+	void set(String name, Ast.Expression value, String space) {
 		if (! _names.contains(name))
 			_names.add(name);
-		_values.put(name, value);  // String or Ast.Expression
+		_values.put(name, value);
 		if (space != null)
 			_spaces.put(name, space);
 		else if (! _spaces.containsKey(name))
@@ -163,7 +176,7 @@ class AttrInfo {
 			return;
 		for (Iterator it = attrs.keySet().iterator(); it.hasNext(); ) {
 			String name = (String)it.next();
-			Object value = attrs.get(name);
+			Ast.Expression value = (Ast.Expression)attrs.get(name);
 			set(name, value, null);
 		}
 	}
@@ -172,8 +185,19 @@ class AttrInfo {
 		return _names;
 	}
 	
-	Object getValue(String name) {
-		return _values.get(name);
+	Ast.Expression getValue(String name) {
+		return (Ast.Expression)_values.get(name);
+	}
+	
+	String getValueIfString(String name) {
+		Object val = _values.get(name);
+		if (val == null) return null;
+		if (val instanceof String)
+			return (String)val;
+		if (val instanceof Ast.StringLiteral)
+			return ((Ast.StringLiteral)val).getValue();
+		assert val instanceof Ast.Expression;
+		return null;
 	}
 	
 	String getSpace(String name) {
@@ -353,8 +377,8 @@ class ElementInfo {
 				String name = (String) it.next();
 				Object value = _attr_info.getValue(name);
 				String space = _attr_info.getSpace(name);
-				sb.append(indent).append("  - name: ").append(name).append("\n");
-				sb.append(indent).append("    space: ").append(Util.inspect(space)).append("\n");
+				sb.append(indent).append("  - name: ").append(name).append('\n');
+				sb.append(indent).append("    space: ").append(Util.inspect(space)).append('\n');
 				sb.append(indent).append("    value:");
 				if (value instanceof Ast.Expression)
 					((Ast.Expression)value)._inspect(level+3, sb.append('\n'));
@@ -449,25 +473,18 @@ public class TextConverter implements Converter {
 		List stmt_list = new ArrayList();
 		List stmts;
 		Ast.Ruleset docruleset = _handler.getRuleset("#DOCUMENT");
-		if (docruleset != null) {
-			stmts = docruleset.getBefore();
-			if (stmts != null) stmt_list.addAll(stmts);
-		}
+		if (docruleset != null && (stmts = docruleset.getBefore()) != null)
+			stmt_list.addAll(stmts);
 		_convert(stmt_list, null);
-		if (docruleset != null) {
-			stmts = docruleset.getAfter();
-			if (stmts != null) stmt_list.addAll(stmts);
-		}
+		if (docruleset != null && (stmts = docruleset.getAfter()) != null)
+			stmt_list.addAll(stmts);
 		return stmt_list;
 	}
 	
 	
-	private static Pattern __fetch_pattern;
-	static {
-		String s = "(^[ \t]*)?<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n)?";
-		__fetch_pattern = Pattern.compile(s, Pattern.MULTILINE);
-	}
-
+	private static Pattern __fetch_pattern = 
+		Pattern.compile("(^[ \t]*)?<(/?)([-:_\\w]+)((?:\\s+[-:_\\w]+=\"[^\"]*?\")*)(\\s*)(/?)>([ \t]*\r?\n)?",
+		                Pattern.MULTILINE);
 
 	TagInfo _fetch() {
 		if (_matcher.find()) {
@@ -496,89 +513,88 @@ public class TextConverter implements Converter {
 	String getRest() {
 		return _rest;
 	}
-	
+
+
 	private TagInfo _convert(List stmt_list, TagInfo start_tag_info) throws ConvertException {
 		String start_tagname = start_tag_info != null ? start_tag_info.getTagName() : null;
 		TagInfo taginfo;
 		StringBuffer textbuf = new StringBuffer();
+		int linenum = _linenum + _linenum_delta;
 		while ((taginfo = _fetch()) != null) {
 			/// prev text
 			String prev_text = taginfo.getPrevText();
-			//if (prev_text != null && prev_text.length() > 0)
-			//	stmt_list.add(_createPrintStatement(prev_text));
 			if (prev_text != null)
 				textbuf.append(prev_text);
 			/// end-tag, empty-tag, or start-tag
 			if (taginfo.isEtag()) {                                     // end-tag
 				if (taginfo.getTagName().equals(start_tagname)) {
-					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					linenum = _linenum + _linenum_delta;
 					return taginfo;  // end-tag info
 				}
 				else {
-					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
 					textbuf.append(taginfo.getTagText());
 				}
 			}
 			else if (taginfo.isEmpty() || _shouldSkipEtag(taginfo)) {   // empty-tag
-				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr());
+				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr(), _linenum);
 				if (hasDirective(attr_info, taginfo)) {
 					TagInfo stag_info = taginfo;
 					TagInfo etag_info = null;
 					List cont_stmts = new ArrayList();   // List<Ast.Statement>
-					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					linenum = _linenum + _linenum_delta;
 				}
 				else {
-					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
 					textbuf.append(taginfo.getTagText());
 				}
 			}
 			else {                                                      // start-tag
-				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr());
-				TagInfo stag_info, etag_info;
+				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr(), _linenum);
+				TagInfo stag_info = null, etag_info = null;
 				if (hasDirective(attr_info, taginfo)) {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
-					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					linenum = _linenum + _linenum_delta;
 				}
 				else if (matchesRuleset(taginfo, attr_info)) {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
-					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					applyRuleset(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					linenum = _linenum + _linenum_delta;
 				}
 				else if (taginfo.getTagName().equals(start_tagname)) {
 					stag_info = taginfo;
-					//stmt_list.add(_createPrintStatement(stag_info.getTagText()));
 					textbuf.append(stag_info.getTagText());
-					_AddTextbufAsPrintStatement(stmt_list, textbuf);
+					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					etag_info = _convert(stmt_list, stag_info);
-					//stmt_list.add(_createPrintStatement(etag_info.getTagText()));
 					textbuf.append(etag_info.getTagText());
+					linenum = _linenum + _linenum_delta;
 				}
 				else {
-					//stmt_list.add(_createPrintStatement(taginfo.getTagText()));
 					textbuf.append(taginfo.getTagText());
 				}
 			}//if
 		}//while
-		// fetch end
+		/// fetch end
 		if (start_tag_info != null)
 			throw _convertError("'<"+start_tagname+">' is not closed.", start_tag_info.getLinenum());
-		//if (_rest != null && _rest.length() > 0)
-		//	stmt_list.add(_createPrintStatement(_rest));
 		if (_rest != null)
 			textbuf.append(_rest);
-		_AddTextbufAsPrintStatement(stmt_list, textbuf);
+		_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 		return null;
 	}
-	
-	private void _AddTextbufAsPrintStatement(List stmt_list, StringBuffer textbuf) {
+
+
+	private void _AddTextbufAsPrintStatement(List stmt_list, StringBuffer textbuf, int linenum) throws ConvertException {
 		if (textbuf.length() > 0) {
-			stmt_list.add(_createPrintStatement(textbuf.toString()));
+			stmt_list.add(_createPrintStatement(textbuf.toString(), linenum));
 			textbuf.setLength(0);
 		}
 	}
@@ -600,10 +616,10 @@ public class TextConverter implements Converter {
 
 	
 	protected boolean matchesRuleset(TagInfo tag_info, AttrInfo attr_info) {
-		String idname = (String)attr_info.getValue("id");
+		String idname = attr_info.getValueIfString("id");
 		if (idname != null && _handler.getRuleset("#"+idname) != null)
 			return true;
-		String classname = (String)attr_info.getValue("class");
+		String classname = attr_info.getValueIfString("class");
 		if (classname != null && _handler.getRuleset("."+classname) != null)
 			return true;
 		String tagname = tag_info.getTagName();
@@ -619,14 +635,15 @@ public class TextConverter implements Converter {
 	}
 
 	
-	private static Ast.PrintStatement _createPrintStatement(String text) {
-		Ast.Expression expr = new Ast.StringLiteral(text);
-		return new Ast.PrintStatement(new Ast.Expression[] { expr });
+	static Pattern __embed_pattern = Pattern.compile("@(!*)\\{(.*?)\\}@");
+	
+	private static Ast.PrintStatement _createPrintStatement(String text, int linenum) throws ConvertException {
+		return HandlerHelper.createTextPrintStatement(text, linenum);
 	}
 	
 	
 	private static ConvertException _convertError(String message, int linenum) {
-		return new ConvertException(message, null, linenum);
+		return HandlerHelper.convertError(message, linenum);
 	}
 
 	
@@ -649,14 +666,20 @@ public class TextConverter implements Converter {
 			;
 		String pdata = ""
 			+ "foo\n"
-			+ "bar\n"
-			+ "<table>\n"
-			+ " <tr id=\"set:ctr=0;foreach:item=list;attr:bgcolor=color\">\n"
+			+ "bar@!{title}@\n"
+			+ "<table class=\"@{klass1}@\">\n"
+			+ " <tr id=\"set:ctr=0;foreach:item=list;attr:bgcolor=color\" class=\"@{klass2}@\">\n"
 			+ "  <td id=\"VALUE:item\">foo</td>\n"
+			+ "  <td>@{item}@</td>\n"
 			+ " </tr>\n"
 			+ "</table>\n"
-			+ "baz<br/>\n"
+			+ "baz@{var}@<br/>\n"
 			+ "end"
+			;
+		pdata = ""
+			+ "<ul id=\"mark:foo\" class=\"klass\">\n"
+			+ "<li>item</li>\n"
+			+ "</ul>\n"
 			;
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);

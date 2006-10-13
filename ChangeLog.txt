@@ -2,8 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.34 (2006-10-13)
+	- [enhance] embedded expression support
+	- [change] AttrInfo#getValue() returns Expression
+	- [change] HandlerHelper mehtods are changed to class method
+
 : rev.33 (2006-10-12)
-	- [enhance] class BaseHandler: directives support
 	- [enhance] class BaseHandler: directives support
 
 : rev.32 (2006-10-11)

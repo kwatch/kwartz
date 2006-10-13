@@ -19,18 +19,21 @@ class HandlerHelper {
 	
 	//// converter helper
 	
-	public ConvertException convertError(String message, int linenum) {
+	public static ConvertException convertError(String message, int linenum) {
 		return new ConvertException(message, null, linenum);
 	}
 	
-	public void errorIfEmptyTag(ElementInfo elem_info, String directive_str) throws ConvertException {
+	
+	////
+	
+	public static void errorIfEmptyTag(ElementInfo elem_info, String directive_str) throws ConvertException {
 		if (elem_info.getEtagInfo() == null) {
 			String msg = "'"+directive_str+"': "+" directive is not available with empty tag.";
 			throw convertError(msg, elem_info.getStagInfo().getLinenum());
 		}
 	}
 	
-	public void errorWhenLastStmtIsNotIf(ElementInfo elem_info, String directive_str, List stmt_list) throws ConvertException {
+	public static void errorWhenLastStmtIsNotIf(ElementInfo elem_info, String directive_str, List stmt_list) throws ConvertException {
 		int t = _lastStatementToken(stmt_list);
 		if (t != Token.IF && t != Token.ELSEIF) {
 			String msg = "'"+directive_str+"': previous statement should be 'if' or 'elseif'.";
@@ -38,7 +41,7 @@ class HandlerHelper {
 		}
 	}
 	
-	public int _lastStatementToken(List stmt_list) {
+	public static int _lastStatementToken(List stmt_list) {
 		if (stmt_list == null || stmt_list.size() == 0)
 			return -1;
 		Ast.Statement last_stmt = (Ast.Statement)stmt_list.get(stmt_list.size() - 1);
@@ -47,12 +50,18 @@ class HandlerHelper {
 	
 	//// statement heldper
 	
-	public Ast.PrintStatement createTextPrintStatement(String text) {
+	
+	public static Ast.PrintStatement createPrintStatement(String text) {
 		Ast.Expression expr = new Ast.StringLiteral(text);
 		return new Ast.PrintStatement(new Ast.Expression[] { expr });
 	}
 	
-	public List buildPrintStatementArguments(TagInfo taginfo, AttrInfo attr_info, List append_exprs) {
+	public static Ast.PrintStatement createTextPrintStatement(String text, int linenum) throws ConvertException {
+		List exprs = parseEmbeddedExpression(text, linenum);
+		return new Ast.PrintStatement(exprs);
+	}
+	
+	public static List buildPrintStatementArguments(TagInfo taginfo, AttrInfo attr_info, List append_exprs) {
 		List args = new ArrayList();
 		if (taginfo.getTagName() == null)
 			return args;
@@ -73,7 +82,10 @@ class HandlerHelper {
 			Object value = attr_info.getValue(name);
 			String space = attr_info.getSpace(name);
 			sb.append(space).append(name).append("=\"");
-			if (value instanceof Ast.Expression) {
+			if (value instanceof Ast.StringLiteral) {
+				sb.append(((Ast.StringLiteral)value).getValue());
+			}
+			else if (value instanceof Ast.Expression) {
 				args.add(new Ast.StringLiteral(sb.toString()));
 				args.add(value);
 				sb.setLength(0);
@@ -99,12 +111,12 @@ class HandlerHelper {
 	}
 
 	
-	public Ast.PrintStatement buildPrintStatement(TagInfo taginfo, AttrInfo attr_info, List append_exprs) {
+	public static Ast.PrintStatement buildPrintStatement(TagInfo taginfo, AttrInfo attr_info, List append_exprs) {
 		List args = buildPrintStatementArguments(taginfo, attr_info, append_exprs);
 		return new Ast.PrintStatement(args);
 	}
 	
-	public Ast.PrintStatement buildPrintStatementForExpression(Ast.Expression expr, TagInfo stag_info, TagInfo etag_info) {
+	public static Ast.PrintStatement buildPrintStatementForExpression(Ast.Expression expr, TagInfo stag_info, TagInfo etag_info) {
 		String head_space = (stag_info != null ? stag_info : etag_info).getHeadSpace();
 		String tail_space = (etag_info != null ? etag_info : stag_info).getTailSpace();
 		List args = new ArrayList();
@@ -116,16 +128,16 @@ class HandlerHelper {
 		return new Ast.PrintStatement(args);
 	}
 	
-	public Ast.PrintStatement stagStatement(ElementInfo elem_info) {
+	public static Ast.PrintStatement stagStatement(ElementInfo elem_info) {
 		return buildPrintStatement(elem_info.getStagInfo(), elem_info.getAttrInfo(), elem_info.getAppendExprs());
 	}
 	
-	public Ast.PrintStatement etagStatement(ElementInfo elem_info) {
+	public static Ast.PrintStatement etagStatement(ElementInfo elem_info) {
 		return buildPrintStatement(elem_info.getEtagInfo(), null, null);
 	}
 	
 	////
-	public Ast.Expression parseAndEscapeExpression(String directive_name, String directive_arg, int linenum) throws ConvertException {
+	public static Ast.Expression parseAndEscapeExpression(String directive_name, String directive_arg, int linenum) throws ConvertException {
 		Ast.Expression expr = parseExpression(directive_arg, linenum);
 		int escape_flag = Parser.detectEscapeFlag(directive_name);
 		if (escape_flag != 0) {
@@ -135,31 +147,76 @@ class HandlerHelper {
 		return expr;
 	}
 
-	public Ast.Expression parseExpression(String expr_str, int linenum) throws ConvertException {
-		Ast.Expression expr = null;
+	public static Ast.Expression parseExpression(String expr_str, int linenum) throws ConvertException {
 		try {
-			Parser parser = new ExpressionParser();
-			expr = (Ast.Expression)parser.parse(expr_str);
+			return _parseExpression(expr_str, linenum);
 		}
 		catch (ParseException ex) {
-			throw convertError(ex.getMessage(), linenum);
+			//throw convertError(ex.getMessage(), linenum);
+			throw convertError(""+expr_str+": expression has syntax error.", linenum);
 		}
-		return expr;
 	}
 	
-	public Ast.ExpressionStatement createExpressionStatement(String expr_str) throws ConvertException {
+	public static Ast.Expression _parseExpression(String expr_str, int linenum) throws ParseException {
+		Parser parser = new ExpressionParser();
+		Ast.Expression expr = (Ast.Expression)parser.parse(expr_str);
+		return expr;
+	}
+
+	
+	public static Ast.ExpressionStatement createExpressionStatement(String expr_str) throws ConvertException {
 		Ast.Expression expr = parseExpression(expr_str, -1);
 		return new Ast.ExpressionStatement(expr);
 	}
+
+
+	static final Pattern EMBED_EXPRESSION_PATTERN = Pattern.compile("@(!*)\\{(.*?)\\}@");
 	
-	
-	////
-	private static HandlerHelper __instance = new HandlerHelper();
-	
-	public static HandlerHelper getInstance() {
-		return __instance;
+
+	public static List parseEmbeddedExpression(String text, int linenum) throws ConvertException {
+		String embedded_expr_str = null;
+		try {
+			ArrayList exprs = new ArrayList();
+			int index = 0;
+			Matcher m = EMBED_EXPRESSION_PATTERN.matcher(text);
+			while (m.find()) {
+				int pos = m.start();
+				if (pos > index) {
+					String prev_text = text.substring(index, pos);
+					exprs.add(new Ast.StringLiteral(prev_text));
+					linenum += Util.count(prev_text, '\n');
+				}
+				embedded_expr_str = m.group(0);
+				index = pos + embedded_expr_str.length();
+				String expr_str = m.group(2);
+				Ast.Expression expr = _parseExpression(expr_str, linenum);
+				linenum += Util.count(expr_str, '\n');
+				String indicator = m.group(1);
+				switch (indicator.length()) {
+				case 0:
+					expr = Ast.Helper.wrapWithFunction(expr, "E");
+					break;
+				case 1:
+					/// nothing
+					break;
+				case 2:
+					/// debug: report expression value into stderr
+					break;
+				default:		
+				}
+				exprs.add(expr);
+			}
+			String rest = text.substring(index);
+			if (rest.length() > 0)
+				exprs.add(new Ast.StringLiteral(rest));
+			return exprs;
+		}
+		catch (ParseException ex) {
+			throw convertError(""+embedded_expr_str+": embedded expression has syntax error.", linenum);
+		}
 	}
-	
+
+
 }
 
 
@@ -172,7 +229,6 @@ public class BaseHandler implements Handler {
 	String  _dattr = "kw:d";
 	String  _even = "'even'";
 	String  _odd  = "'odd'";
-	HandlerHelper _helper = HandlerHelper.getInstance();
 
 	public BaseHandler(List rulesets, Map properties) {
 		_rulesets = rulesets;
@@ -215,7 +271,14 @@ public class BaseHandler implements Handler {
 	public boolean hasDirective(AttrInfo attr_info, TagInfo tag_info) throws ConvertException {
 		// kw:d attribute
 		String dattr_name = _dattr;         // ex. _dattr == 'kw:d'
-		String dattr_value = (String)attr_info.getValue(dattr_name); 
+		String dattr_value = null;
+		Ast.Expression dattr_value_expr = attr_info.getValue(dattr_name);
+		if (dattr_value_expr != null) {
+			//if (! (dattr_value_expr instanceof Ast.StringLiteral))
+			//	throw HandlerHelper.convertError(_dattr+"=\"...\": directive cannot contain '@{...}@'.", tag_info.getLinenum());
+			if (dattr_value_expr instanceof Ast.StringLiteral)
+				dattr_value = ((Ast.StringLiteral)dattr_value_expr).getValue();
+		}
 		if (dattr_value != null && dattr_value.length() > 0) {
 			if (dattr_value.charAt(0) == ' ') {
 				String value = dattr_value.substring(1, dattr_value.length()-1);
@@ -225,14 +288,14 @@ public class BaseHandler implements Handler {
 			}
 			else {
 				if (! Pattern.matches("\\A\\w+:.*", dattr_value))
-					throw _helper.convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
+					throw HandlerHelper.convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
 				attr_info.remove(dattr_name);
 			}
 			tag_info.rebuildTagText(attr_info);
 		}
 		if (dattr_value == null) {
 			dattr_name = "id";
-			dattr_value = (String)attr_info.getValue(dattr_name);
+			dattr_value = attr_info.getValueIfString(dattr_name);
 			if (dattr_value != null) {
 				if (Pattern.matches("\\A\\w+\\z", dattr_value)) {
 					dattr_value = "mark:" + dattr_value;
@@ -277,13 +340,13 @@ public class BaseHandler implements Handler {
 			String d_str = strs[i].trim();
 			Matcher m = pattern.matcher(d_str);
 			if (! m.find()) {
-				throw _helper.convertError("'"+d_str+"': invalid directive pattern.", stag_info.getLinenum());
+				throw HandlerHelper.convertError("'"+d_str+"': invalid directive pattern.", stag_info.getLinenum());
 			}
 			String d_name = m.group(1);   // directive_name
 			String d_arg  = m.group(2);   // directive_arg
 			boolean handled = handle(d_name, d_arg, d_str, elem_info, stmt_list);
 			if (! handled) {
-				throw _helper.convertError("'"+d_str+"': unknown directive.", stag_info.getLinenum());
+				throw HandlerHelper.convertError("'"+d_str+"': unknown directive.", stag_info.getLinenum());
 			}
 		}
 		
@@ -314,10 +377,10 @@ public class BaseHandler implements Handler {
 		if (d_name == null) {
 			assert false;
 			//assert !attr_info.isEmpty() || !append_exprs.isEmpty();  // ???
-			//stmt_list.add(_helper.stagStatement(elem_info));
+			//stmt_list.add(HandlerHelper.stagStatement(elem_info));
 			//stmt_list.addAll(cont_stmts);
 			//if (etag_info != null)
-			//	stmt_list.add(_helper.etagStatement(elem_info));   // when not empty-tag
+			//	stmt_list.add(HandlerHelper.etagStatement(elem_info));   // when not empty-tag
 			//return true;
 		}
 		Integer d_kind_obj = (Integer)__directive_table.get(d_name);
@@ -339,7 +402,7 @@ public class BaseHandler implements Handler {
 		case D_ID:
 		case D_MARK:
 			if (! Pattern.matches("\\A\\w+\\z", d_arg))
-				throw _helper.convertError("'"+d_str+"': invalid marking name.", stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': invalid marking name.", stag_linenum);
 			String name = d_arg;
 			Ast.Ruleset ruleset = (Ast.Ruleset)_ruleset_table.get("#"+name); 
 			if (ruleset != null)
@@ -347,7 +410,7 @@ public class BaseHandler implements Handler {
 			if (_elem_info_table.containsKey(name)) {
 				int previous_linenum = ((ElementInfo)_elem_info_table.get(name)).getStagInfo().getLinenum();
 				String msg = "'"+d_str+"': id '"+name+"' is already used at line "+previous_linenum+".";
-				throw _helper.convertError(msg, stag_linenum);
+				throw HandlerHelper.convertError(msg, stag_linenum);
 			}
 			_elem_info_table.put(name, elem_info);
 			//boolean content_only = false;
@@ -358,41 +421,41 @@ public class BaseHandler implements Handler {
 			//return true;
 			return true;
 		case D_STAG:
-			_helper.errorIfEmptyTag(elem_info, directive_str);					
-			expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
-			//stmt_list.add(_helper.buildPrintStatementForExpression(expr, stag_info, etag_info));
+			HandlerHelper.errorIfEmptyTag(elem_info, directive_str);					
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			//stmt_list.add(HandlerHelper.buildPrintStatementForExpression(expr, stag_info, etag_info));
 			//stmt_list.addAll(cont_stmts);
-			//stmt_list.add(_helper.etagStatement(elem_info));
+			//stmt_list.add(HandlerHelper.etagStatement(elem_info));
 			//return true;
 			elem_info.setStagExpr(expr);
 			return true;
 		case D_ETAG:
-			_helper.errorIfEmptyTag(elem_info, directive_str);
-			expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
-			//stmt_list.add(_helper.stagStatement(elem_info));
+			HandlerHelper.errorIfEmptyTag(elem_info, directive_str);
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			//stmt_list.add(HandlerHelper.stagStatement(elem_info));
 			//stmt_list.addAll(cont_stmts);
-			//stmt_list.add(_helper.buildPrintStatementForExpression(expr, stag_info, etag_info));
+			//stmt_list.add(HandlerHelper.buildPrintStatementForExpression(expr, stag_info, etag_info));
 			//return true;
 			elem_info.setEtagExpr(expr);
 			return true;
 		case D_CONT:
 		case D_VALUE:
-			_helper.errorIfEmptyTag(elem_info, directive_str);
+			HandlerHelper.errorIfEmptyTag(elem_info, directive_str);
 			stag_info.deleteTailSpace();
 			etag_info.deleteHeadSpace();
-			//List pargs = _helper.buildPrintStatementArguments(stag_info, attr_info, append_exprs);
-			//expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			//List pargs = HandlerHelper.buildPrintStatementArguments(stag_info, attr_info, append_exprs);
+			//expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
 			//pargs.add(expr);
 			//if (etag_info.getTagName() != null)
 			//	pargs.add(etag_info.getTagText());
 			//stmt_list.add(new Ast.PrintStatement(pargs));
 			//return true;
-			expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
 			elem_info.setContExpr(expr);
 			return true;
 		case D_ELEM:
-			expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
-			//stmt_list.add(_helper.buildPrintStatementForExpression(expr, stag_info, etag_info));
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			//stmt_list.add(HandlerHelper.buildPrintStatementForExpression(expr, stag_info, etag_info));
 			//return true;
 			elem_info.setElemExpr(expr);
 			return true;
@@ -400,13 +463,13 @@ public class BaseHandler implements Handler {
 			Pattern pattern = Pattern.compile("\\A(\\w+(?::\\w+)?)[:=](.*)\\z");
 			m = pattern.matcher(d_arg);
 			if (! m.find())
-				throw _helper.convertError("'"+d_str+"': invalid attr pattern.", stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': invalid attr pattern.", stag_linenum);
 			String aname = m.group(1), avalue = m.group(2);
-			expr = _helper.parseAndEscapeExpression(d_name, avalue, stag_linenum);
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, avalue, stag_linenum);
 			elem_info.getAttrInfo().set(aname, expr, null);
 			return true;
 		case D_APPEND:
-			expr = _helper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
+			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
 			elem_info.getAppendExprs().add(expr);
 			return true;
 		case D_REPLACE1:
@@ -417,7 +480,7 @@ public class BaseHandler implements Handler {
 			name = d_arg;
 			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
 			if (elem_info2 == null)
-				throw _helper.convertError("'"+d_str+"': element not found.", stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': element not found.", stag_linenum);
 			boolean replace_content = d_kind == D_REPLACE3 || d_kind == D_REPLACE4;
 			boolean with_content    = d_kind == D_REPLACE2 || d_kind == D_REPLACE4;
 			if (replace_content)
@@ -431,14 +494,14 @@ public class BaseHandler implements Handler {
 			elem_info.setLogic(stmts);
 			return true;
 		case D_SET:
-			expr = _helper.parseExpression(d_arg, stag_linenum);
+			expr = HandlerHelper.parseExpression(d_arg, stag_linenum);
 			stmts = elem_info.getBefore();
 			if (stmts == null)
 				elem_info.setBefore(stmts = new ArrayList());
 			stmts.add(new Ast.ExpressionStatement(expr));
 			return true;
 		case D_IF:
-			expr = _helper.parseExpression(d_arg, stag_linenum);  // condition
+			expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
 			Ast.Statement then_stmt = new Ast.BlockStatement(elem_info.getLogic());
 			Ast.Statement else_stmt = null;
 			elem_info.setLogic(new Ast.IfStatement(expr, then_stmt, else_stmt));
@@ -449,7 +512,7 @@ public class BaseHandler implements Handler {
 			if (stmt_list.size() > 0)
 				stmt = (Ast.Statement)stmt_list.get(stmt_list.size()-1);
 			if (stmt == null || stmt.getToken() != Token.IF)
-				throw _helper.convertError("'"+d_str+"': previous is not if-statement nor elseif-statement.", stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': previous is not if-statement nor elseif-statement.", stag_linenum);
 			Ast.IfStatement if_stmt = (Ast.IfStatement)stmt;
 			else_stmt = if_stmt.getElseStatement();
 			while (else_stmt != null && else_stmt.getToken() == Token.IF) {
@@ -457,10 +520,10 @@ public class BaseHandler implements Handler {
 				else_stmt = if_stmt.getElseStatement();
 			}
 			if (else_stmt != null)
-				throw _helper.convertError("'"+d_str+"': previous if-statement already takes other statement.", stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': previous if-statement already takes other statement.", stag_linenum);
 			stmt = new Ast.BlockStatement(elem_info.getLogic());
 			if (d_kind == D_ELSEIF) {
-				expr = _helper.parseExpression(d_arg, stag_linenum);  // condition
+				expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
 				stmt = new Ast.IfStatement(expr, stmt, else_stmt);
 			}
 			_expandStatement(stmt, elem_info);
@@ -468,14 +531,14 @@ public class BaseHandler implements Handler {
 			elem_info.setLogic(ElementInfo.EMPTY_LOGIC);
 			return true;
 		case D_WHILE:
-			expr = _helper.parseExpression(d_arg, stag_linenum);  // condition
+			expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
 			block_stmt = new Ast.BlockStatement(elem_info.getLogic());
 			stmt = new Ast.WhileStatement(expr, block_stmt);
 			elem_info.setLogic(stmt);
 			return true;
 		case D_LOOP:
-			_helper.errorIfEmptyTag(elem_info, directive_str);
-			expr = _helper.parseExpression(d_arg, stag_linenum);  // condition
+			HandlerHelper.errorIfEmptyTag(elem_info, directive_str);
+			expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
 			stmts = new ArrayList();
 			stmts.add(new Ast.StagStatement());
 			stmts.add(new Ast.WhileStatement(expr, new Ast.BlockStatement(new Ast.ContStatement())));
@@ -485,27 +548,27 @@ public class BaseHandler implements Handler {
 		case D_FOREACH:
 		case D_LIST:
 			if (d_kind == D_LIST)
-				_helper.errorIfEmptyTag(elem_info, directive_str);
+				HandlerHelper.errorIfEmptyTag(elem_info, directive_str);
 			int indicator = _detectKind(d_name);
 			Pattern pat = Pattern.compile("\\A([a-zA-Z_]\\w*)[:=](.+)\\z");
 			m = pat.matcher(d_arg);
 			if (! m.find())
-				throw _helper.convertError("'"+d_str+"': invalid directive syntax.", stag_linenum);
-			Ast.Expression item_expr = _helper.parseExpression(m.group(1), stag_linenum);
-			Ast.Expression loop_expr = _helper.parseExpression(m.group(2), stag_linenum);
+				throw HandlerHelper.convertError("'"+d_str+"': invalid directive syntax.", stag_linenum);
+			Ast.Expression item_expr = HandlerHelper.parseExpression(m.group(1), stag_linenum);
+			Ast.Expression loop_expr = HandlerHelper.parseExpression(m.group(2), stag_linenum);
 			String counter = indicator != 0 ? m.group(1) + "_ctr" : null;
 			String toggle  = indicator <  0 ? m.group(1) + "_tgl" : null;
 			stmts = new ArrayList();
 			if (counter != null)
-				stmts.add(_helper.createExpressionStatement(counter+"+=1"));
+				stmts.add(HandlerHelper.createExpressionStatement(counter+"+=1"));
 			if (toggle != null)
-				stmts.add(_helper.createExpressionStatement(toggle+"="+counter+"%2==0?"+_even+":"+_odd));
+				stmts.add(HandlerHelper.createExpressionStatement(toggle+"="+counter+"%2==0?"+_even+":"+_odd));
 			if (d_kind == D_FOREACH) {
 				stmts.add(new Ast.ElemStatement());
 				block_stmt = new Ast.BlockStatement(stmts);
 				stmts = new ArrayList();
 				if (counter != null)
-					stmts.add(_helper.createExpressionStatement(counter+"=0"));
+					stmts.add(HandlerHelper.createExpressionStatement(counter+"=0"));
 				stmts.add(new Ast.ForeachStatement(item_expr, loop_expr, block_stmt));
 				elem_info.setLogic(stmts);
 			}
@@ -515,18 +578,18 @@ public class BaseHandler implements Handler {
 				stmts = new ArrayList();
 				stmts.add(new Ast.StagStatement());
 				if (counter != null)
-					stmts.add(_helper.createExpressionStatement(counter+"=0"));
+					stmts.add(HandlerHelper.createExpressionStatement(counter+"=0"));
 				stmts.add(new Ast.ForeachStatement(item_expr, loop_expr, block_stmt));
 				stmts.add(new Ast.EtagStatement());
 				elem_info.setLogic(stmts);
 			}
 			return true;
 		case D_DEFAULT:
-			_helper.errorIfEmptyTag(elem_info, directive_str);
-			expr = _helper.parseExpression(d_arg, stag_linenum);
+			HandlerHelper.errorIfEmptyTag(elem_info, directive_str);
+			expr = HandlerHelper.parseExpression(d_arg, stag_linenum);
 			then_stmt = new Ast.BlockStatement(new Ast.PrintStatement(expr));
 			else_stmt = new Ast.BlockStatement(new Ast.ContStatement());
-			expr = _helper.parseExpression("!str_empty("+d_arg+")", stag_linenum); // condition
+			expr = HandlerHelper.parseExpression("!str_empty("+d_arg+")", stag_linenum); // condition
 			stmt = new Ast.IfStatement(expr, then_stmt, else_stmt);
 			stmts = new ArrayList();
 			stmts.add(new Ast.StagStatement());
@@ -655,12 +718,12 @@ public class BaseHandler implements Handler {
 		}
 		AttrInfo attr_info = elem_info.getAttrInfo();
 		if (flag_classname) {
-			String classname = (String)attr_info.getValue("class");
+			String classname = attr_info.getValueIfString("class");
 			if (classname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("."+classname)) != null)
 				elem_info.merge(ruleset);
 		}
 		if (flag_idname) {
-			String idname = (String)attr_info.getValue("id");
+			String idname = attr_info.getValueIfString("id");
 			if (idname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("#"+idname)) != null)
 				elem_info.merge(ruleset);
 		}
@@ -707,7 +770,7 @@ public class BaseHandler implements Handler {
 		// logic
 		if (elem_info.getElemExpr() != null) {
 			ElementInfo e = elem_info;
-			stmt = _helper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
+			stmt = HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
 			stmt_list.add(stmt);
 		}
 		else {
@@ -793,7 +856,7 @@ public class BaseHandler implements Handler {
 		case Token.ELEM:
 			ElementInfo e = elem_info;
 			if (e.getElemExpr() != null) {
-				return _helper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
+				return HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
 			}
 			else {
 				List list = new ArrayList();
@@ -808,7 +871,7 @@ public class BaseHandler implements Handler {
 			String name = ((Ast.ExpandStatement)stmt).getName();
 			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
 			if (elem_info2 == null)
-				throw _helper.convertError("element '"+name+"' is not found.", stmt.getLinenum());
+				throw HandlerHelper.convertError("element '"+name+"' is not found.", stmt.getLinenum());
 			boolean content_only2 = t == Token.CONTENT;
 			return expandElementInfo(elem_info2, content_only2);
 		default:
@@ -819,18 +882,18 @@ public class BaseHandler implements Handler {
 	
 	private Ast.Statement _expandStagStatement(ElementInfo e) {
 		if (e.getStagExpr() != null)
-			return _helper.buildPrintStatementForExpression(e.getStagExpr(), e.getStagInfo(), null);
+			return HandlerHelper.buildPrintStatementForExpression(e.getStagExpr(), e.getStagInfo(), null);
 		else
-			return _helper.buildPrintStatement(e.getStagInfo(), e.getAttrInfo(), e.getAppendExprs());
+			return HandlerHelper.buildPrintStatement(e.getStagInfo(), e.getAttrInfo(), e.getAppendExprs());
 	}
 
 	private Ast.Statement _expandEtagStatement(ElementInfo e) {
 		if (e.getEtagExpr() != null)
-			return _helper.buildPrintStatementForExpression(e.getEtagExpr(), null, e.getEtagInfo());
+			return HandlerHelper.buildPrintStatementForExpression(e.getEtagExpr(), null, e.getEtagInfo());
 		else if (e.getEtagInfo() == null)  // e.getEtagInfo() is null when <br>, <input>, <hr>, <img>, and <meta>
-			return _helper.createTextPrintStatement("");
+			return HandlerHelper.createPrintStatement("");
 		else
-			return _helper.buildPrintStatement(e.getEtagInfo(), null, null);
+			return HandlerHelper.buildPrintStatement(e.getEtagInfo(), null, null);
 	}
 	
 	private Ast.Statement _expandContStatement(ElementInfo e) throws ConvertException {
@@ -848,7 +911,7 @@ public class BaseHandler implements Handler {
 	public Ast.Statement extract(String elem_name, boolean content_only) throws ConvertException {
 		ElementInfo elem_info = (ElementInfo)_elem_info_table.get(elem_name);
 		if (elem_info == null) {
-			throw _helper.convertError("element '"+elem_name+"' not found.", elem_info.getStagInfo().getLinenum());
+			throw HandlerHelper.convertError("element '"+elem_name+"' not found.", elem_info.getStagInfo().getLinenum());
 		}
 		return expandElementInfo(elem_info, content_only);
 	}
