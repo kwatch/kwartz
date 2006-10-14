@@ -125,13 +125,13 @@ args     :  args ',' expr    { $1.add($3); $$ = $1; }
 
 %%
 
-	protected Object yyval() { return yyval; }
-	protected Object yylval() { return yylval; }
-	protected Object[] yyastk() { return yyastk; }
+	//protected Object yyval() { return yyval; }
+	//protected Object yylval() { return yylval; }
+	//protected Object[] yyastk() { return yyastk; }
 
-	protected Object getYyval() { return yyval; }
-	protected Object getYylval() { return yylval; }
-	protected Object[] getYyastk() { return yyastk; }
+	//protected Object getYyval() { return yyval; }
+	//protected Object getYylval() { return yylval; }
+	//protected Object[] getYyastk() { return yyastk; }
 
-	protected void setYylval(Object val) { yylval = val; }
+	//protected void setYylval(Object val) { yylval = val; }
 

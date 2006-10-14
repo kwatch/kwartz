@@ -57,6 +57,7 @@ public class Ast {
 			_column = column;
 		}
 		
+
 		public String inspect(int level) {
 			StringBuffer sb = new StringBuffer();
 			_inspect(level, sb);
@@ -93,6 +94,7 @@ public class Ast {
     	public boolean availableAsLhs() {
     		return false;
     	}
+    	
     }
     
     

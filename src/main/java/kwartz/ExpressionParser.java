@@ -36,37 +36,37 @@ public class ExpressionParser extends Parser {
   static boolean yydebug = false;
 
   /** lexical element object **/
-  private Object yylval;
+  //private Object yylval;
 
   /** Semantic value */
-  private Object yyval;
+  //private Object yyval;
 
   /** Semantic stack **/
-  private Object yyastk[];
+  //private Object yyastk[];
 
   /** Syntax stack **/
-  private short yysstk[];
+  //private short yysstk[];
 
   /** Stack pointer **/
-  private int yysp;
+  //private int yysp;
 
   /** Error handling state **/
-  private int yyerrflag;
+  //private int yyerrflag;
 
   /** lookahead token **/
-  private int yychar;
+  //private int yychar;
 
   /* code after %% in *.y */
   
-  	protected Object yyval() { return yyval; }
-  	protected Object yylval() { return yylval; }
-  	protected Object[] yyastk() { return yyastk; }
+  	//protected Object yyval() { return yyval; }
+  	//protected Object yylval() { return yylval; }
+  	//protected Object[] yyastk() { return yyastk; }
   
-  	protected Object getYyval() { return yyval; }
-  	protected Object getYylval() { return yylval; }
-  	protected Object[] getYyastk() { return yyastk; }
+  	//protected Object getYyval() { return yyval; }
+  	//protected Object getYylval() { return yylval; }
+  	//protected Object[] getYyastk() { return yyastk; }
   
-  	protected void setYylval(Object val) { yylval = val; }
+  	//protected void setYylval(Object val) { yylval = val; }
   
 
 

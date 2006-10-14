@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.37 (2006-10-14)
+	- [enhance] error handling improved
+
 : rev.36 (2006-10-13)
 	- [refactor] new class TokenHelper added
 	- [refactor] Parser.tokenSymbol() is moved to TokenHelper

@@ -463,3 +463,405 @@
 		  _elem
 	    :BLOCK
 	      _element(foo)
+
+
+### ----------------------------------------
+
+###
+- name:		syntaxerr_print1
+  input: |
+	print x;
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:7: '(' expected."
+
+
+- name:		syntaxerr_print2
+  input: |
+  	print(foo);
+	print(bar(x,y);
+	print(baz);
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:15: ')' expected."
+
+
+- name:		syntaxerr_print3
+  input: |
+  	print(foo);
+	print(bar(x,y))
+	print(baz);
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:16: ';' expected."
+
+
+- name:		syntaxerr_print4
+  input: |
+  	print(foo);
+	print(x,y,z,);
+	print(baz);
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:13: expression syntax error."
+
+
+###
+- name:		syntaxerr_exprstmt1
+  input: |
+	x = y;
+	y +=;
+  exception:	kwartz.SyntaxException
+  #errormsg:	"2:5: expression syntax error."
+  errormsg:	"2:5: syntax error"
+ 
+  
+- name:		syntaxerr_exprstmt2
+  input: |
+	x = y;
+	x = y
+	print(x);
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:6: ';' expected."
+
+
+- name:		syntaxerr_exprstmt3
+  input: |
+	x = y;
+	x = y
+	x = 1;
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:6: ';' expected."
+ 
+
+- name:		syntaxerr_exprstmt4
+  input: |
+	x = y + 6(x);
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:10: ';' expected."
+ 
+
+###
+- name:		syntaxerr_foreach1
+  input: |
+	i = 0;
+	foreach item in list {
+	  i += 1;
+	  print(item);
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:9: '(' expected."
+
+
+- name:		syntaxerr_foreach2
+  input: |
+	i = 0;
+	foreach (item in list {
+	  i += 1;
+	  print(item);
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:23: ')' expected."
+ 
+ 
+- name:		syntaxerr_foreach3
+  input: |
+	i = 0;
+	foreach (item in list)) {
+	  i += 1;
+	  print(item);
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:23: '{' expected."
+ 
+ 
+- name:		syntaxerr_foreach4
+  input: |
+	i = 0;
+	foreach (item in list) {
+	  i += 1;
+	  print(item);
+	
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:24: '{' is not closed."
+ 
+ 
+- name:		syntaxerr_foreach5
+  input: |
+	i = 0;
+	foreach (item as list) {
+	  i += 1;
+	  print(item);
+	}	
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:15: 'in' or '=' expected."
+ 
+ 
+###
+- name:		syntaxerr_if1
+  input: |
+	if x > 0 {
+	  print("positive.");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:4: '(' expected."
+
+
+- name:		syntaxerr_if2
+  input: |
+	if (x > f(0) {
+	  print("positive.");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:14: ')' expected."
+
+
+- name:		syntaxerr_if3
+  input: |
+	if (x > f(0))
+	  print("positive.");
+
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:3: '{' expected."
+
+
+- name:		syntaxerr_if4
+  input: |
+	if (x > f(0)) {
+	  print("positive.");
+	
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:15: '{' is not closed."
+
+
+###
+- name:		syntaxerr_elseif1
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif x < 0 { 
+	  print("negative.");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:10: '(' expected."
+
+
+- name:		syntaxerr_elseif2
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif (x < 0 {
+	  print("negative.");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:17: ')' expected."
+
+
+- name:		syntaxerr_elseif3
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif (x < 0)
+	  print("negative.");
+  exception:	kwartz.SyntaxException
+  errormsg:	"4:3: '{' expected."
+
+
+- name:		syntaxerr_elseif4
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif (x < 0) {
+	  print("negative.");
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:18: '{' is not closed."
+
+
+###
+- name:		syntaxerr_else1
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif (x < 0) {
+	  print("negative.");
+	} else
+	  print("zero.");
+  exception:	kwartz.SyntaxException
+  errormsg:	"6:3: '{' expected."
+  
+
+- name:		syntaxerr_else2
+  input: |
+	if (x > 0) {
+	  print("positive.");
+	} elseif (x < 0) {
+	  print("negative.");
+	} else {
+	  print("zero.");
+  exception:	kwartz.SyntaxException
+  errormsg:	"5:8: '{' is not closed."
+
+
+###
+- name:		syntaxerr_while1
+  input: |
+	i = 0;
+	while i < n {
+	  print(i, "\n");
+	  i += 1;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:7: '(' expected."
+
+
+- name:		syntaxerr_while2
+  input: |
+	i = 0;
+	while (i < n {
+	  print(i, "\n");
+	  i += 1;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:14: ')' expected."
+
+
+- name:		syntaxerr_while3
+  input: |
+	i = 0;
+	while (i < n) 
+	  print(i, "\n");
+	  i += 1;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:3: '{' expected."
+
+
+- name:		syntaxerr_while4
+  input: |
+	i = 0;
+	while (i < n) {
+	  print(i, "\n");
+	  i += 1;
+	
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:15: '{' is not closed."
+
+
+- name:		syntaxerr_while5
+  input: |
+	i = 0;
+	while (i+ < n) {
+	  print(i, "\n");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:11: expression syntax error."
+
+
+###
+- name:		syntaxerr_break1
+  input: |
+	i = 0;
+	while (true) {
+	  if (i >= n) {
+	    break
+	  }
+	  i += 1;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"4:10: ';' expected."
+
+
+- name:		syntaxerr_continue1
+  input: |
+	i = 0;
+	while (true) {
+	  i += 1;
+	  if (i < n) {
+	    continue
+	  }
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"5:13: ';' expected."
+
+
+###
+- name:		syntaxerr_stag1
+  input: |
+	foreach (item in list) {
+	  _stag
+	  _cont;
+	  _etag;
+	  _elem;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:8: ';' expected."
+
+
+- name:		syntaxerr_etag1
+  input: |
+	foreach (item in list) {
+	  _stag;
+	  _cont;
+	  _etag
+	  _elem;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"4:8: ';' expected."
+
+
+- name:		syntaxerr_cont1
+  input: |
+	foreach (item in list) {
+	  _stag;
+	  _cont
+	  _etag;
+	  _elem;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:8: ';' expected."
+
+
+- name:		syntaxerr_elem1
+  input: |
+	foreach (item in list) {
+	  _stag;
+	  _cont;
+	  _etag;
+	  _elem
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"5:8: ';' expected."
+
+
+###
+- name:		syntaxerr_element1
+  input: |
+	foreach (item in list) {
+	  _element(foo)
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:16: ';' expected."
+
+
+- name:		syntaxerr_element2
+  input: |
+	foreach (item in list) {
+	  _element("foo");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:12: element name expected."
+
+
+- name:		syntaxerr_content1
+  input: |
+	foreach (item in list) {
+	  _content(foo)
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:16: ';' expected."
+
+
+- name:		syntaxerr_content2
+  input: |
+	foreach (item in list) {
+	  _content("foo");
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:12: element name expected."
+

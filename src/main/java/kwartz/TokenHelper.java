@@ -28,10 +28,11 @@ public class TokenHelper implements Token {
   		"<COMMAND>", "<SELECTOR>", "<DECLARATION>", "<RULESET>",
   		"stag:", "cont:", "etag:", "elem:", "value:", "attrs:", "append:", "remove:", "tagname:", "logic:",
   		"begin:", "end:", "before:", "after:", "global:",
+  		"ERROR",
   	};
   
   	static {
-  		assert __tokens.length + Token.YYERRTOK != Token.ERROR;
+  		assert __tokens.length + Token.YYERRTOK == Token.ERROR;
   	}
   
   
@@ -40,7 +41,16 @@ public class TokenHelper implements Token {
   			return Character.toString((char)token);
   		}
   		else {
-  			return __tokens[token - Token.YYERRTOK];
+  			try {
+  				return __tokens[token - Token.YYERRTOK];
+  			}
+  			catch (RuntimeException ex) {
+  				System.err.println("*** debug: token=" + token);
+  				for (int i = 0, n = __tokens.length; i < n; i++) {
+  					System.err.println("*** __tokens["+i+"]="+__tokens[i]);
+  				}
+  				throw ex;
+  			}
   		}
   	}
   

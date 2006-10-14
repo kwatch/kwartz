@@ -59,6 +59,7 @@ import java.util.HashMap;
 %type <ParseInfo> PRINT FOREACH WHILE IF ELSEIF ELSE
 %type <ParseInfo> BREAK CONTINUE STAG ETAG CONT ELEM ELEMENT CONTENT
 %type <ParseInfo> in ';' '{' '}'
+%type <null> _l_ _r_ _b_ _e_ _s_ _x_ _z_ _n_ _enter_block_ _exit_block_
 %type  <List> plogic rulesets commands command selectors declarations
 %type  <String> command_arg
 %type  <Ast.Ruleset> ruleset
@@ -72,69 +73,96 @@ import java.util.HashMap;
 %type  <String> name
 %type  <List> exprs
 %type  <List> names
+%type  <null> _c_ _S_ _A_
 
 
 %%
 
 
 
-  plogic   : commands rulesets                { $1.addAll($2); $$ = $1; }
-           ;
+plogic
+	: commands rulesets             { $1.addAll($2); $$ = $1; }
+	;
 
-  commands : commands command                 { $1.addAll($2); $$ = $1; }
-           |                                  { $$ = new ArrayList(); }
-	   ;
+commands
+	: commands command              { $1.addAll($2); $$ = $1; }
+	|                               { $$ = new ArrayList(); }
+	;
 
-  command  : COMMAND command_arg ';'          { $$ = handleCommand($1.getValue(), $2, $1); } // list of ruleset
+command
+	: COMMAND command_arg _s_ ';' _z_  { $$ = handleCommand($1.getValue(), $2, $1); } // list of ruleset
+	;
 
-  command_arg : STRING                        { $$ = $1.getValue(); }
+command_arg
+	: STRING			{ $$ = $1.getValue(); }
+	;
 
-  rulesets : rulesets ruleset                 { $1.add($2); $$ = $1; }
-           |                                  { $$ = new ArrayList(); }  // list of ruleset
+rulesets
+	: rulesets ruleset              { $1.add($2); $$ = $1; }
+	|                               { $$ = new ArrayList(); }  // list of ruleset
+	;
 
-  ruleset  : selectors '{' declarations '}'   { $$ = _f.createRuleset($2, $1, $3, $4); }
+ruleset
+	: selectors _b_ '{' _enter_block_ declarations _e_ '}' _exit_block_ {
+		$$ = _f.createRuleset($3, $1, $5, $7);
+	  }
+ 	;
 
-  selectors : selectors ',' selector          { $1.add($3); $$ = $1; }
-            | selector                        { List l = new ArrayList(); l.add($1); $$ = l; }
+selectors
+	: selectors ',' _S_ selector _z_  { $1.add($4); $$ = $1; }
+	| selector _z_			  { List l = new ArrayList(); l.add($1); $$ = l; }
+        ;
 
-  selector  : SELECTOR                        { $$ = _f.createSelector($1); }
-            | IDENT                           { $$ = _f.createSelector($1); }
+selector
+	: SELECTOR			{ $$ = _f.createSelector($1); }
+	| IDENT				{ $$ = _f.createSelector($1); }
+	;
+	
+declarations
+	: declarations declaration	{ $1.add($2); $$ = $1; }
+	|				{ $$ = new ArrayList(); }
+	;
 
-  declarations : declarations declaration     { $1.add($2); $$ = $1; }
-               |                              { $$ = new ArrayList(); }
+declaration
+	:  P_STAG    _c_ ':' off _x_ expr  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_ETAG    _c_ ':' off _x_ expr  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_CONT    _c_ ':' off _x_ expr  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_ELEM    _c_ ':' off _x_ expr  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_VALUE   _c_ ':' off _x_ expr  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_ATTRS   _c_ ':' off _A_ attrs on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_APPEND  _c_ ':' off _x_ exprs on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_REMOVE  _c_ ':' off _n_ names on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_TAGNAME _c_ ':' off _n_ name  on _s_ ';' _z_   { $$ = _f.createDeclaration($1, $6); }
+	|  P_LOGIC   _c_ ':' _b_ '{' _z_ off stmts on _e_ '}' _z_  { $$ = _f.createLogicDeclaration($1, $8, $11); }
+	|  P_BEGIN   _c_ ':' _b_ '{' _z_ off stmts on _e_ '}' _z_  { $$ = _f.createLogicDeclaration($1, $8, $11); }
+	|  P_END     _c_ ':' _b_ '{' _z_ off stmts on _e_ '}' _z_  { $$ = _f.createLogicDeclaration($1, $8, $11); }
+	|  P_BEFORE  _c_ ':' _b_ '{' _z_ off stmts on _e_ '}' _z_  { $$ = _f.createLogicDeclaration($1, $8, $11); }
+	|  P_AFTER   _c_ ':' _b_ '{' _z_ off stmts on _e_ '}' _z_  { $$ = _f.createLogicDeclaration($1, $8, $11); }
+	;
 
-  declaration  :  P_STAG    ':' off expr  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_ETAG    ':' off expr  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_CONT    ':' off expr  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_ELEM    ':' off expr  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_VALUE   ':' off expr  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_ATTRS   ':' off attrs on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_APPEND  ':' off exprs on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_REMOVE  ':' off names on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_TAGNAME ':' off name  on ';'  { $$ = _f.createDeclaration($1, $4); }
-               |  P_LOGIC   ':' '{' off stmts on '}'  { $$ = _f.createLogicDeclaration($1, $5, $7); }
-               |  P_BEGIN   ':' '{' off stmts on '}'  { $$ = _f.createLogicDeclaration($1, $5, $7); }
-               |  P_END     ':' '{' off stmts on '}'  { $$ = _f.createLogicDeclaration($1, $5, $7); }
-               |  P_BEFORE  ':' '{' off stmts on '}'  { $$ = _f.createLogicDeclaration($1, $5, $7); }
-               |  P_AFTER   ':' '{' off stmts on '}'  { $$ = _f.createLogicDeclaration($1, $5, $7); }
+off	:       { _scanner.setRulesetMode(false); }  // stmt, expr
+	;
 
-  off    :                         { _scanner.setRulesetMode(false); }  // stmt, expr
-  on     :                         { _scanner.setRulesetMode(true);  }  // ruleset
+on	:       { _scanner.setRulesetMode(true);  }  // ruleset
+	;
 
-  attrs  :  attrs ',' name expr    { Map m = $1; m.put($3, $4); $$ = m; }
-         |  name expr              { Map m = new HashMap(); m.put($1, $2); $$ = m; }
+attrs	:  attrs ',' _A_ name _x_ expr _z_    { Map m = $1; m.put($4, $6); $$ = m; }
+	|  name _x_ expr _z_                  { Map m = new HashMap(); m.put($1, $3); $$ = m; }
+	;
 /*
-  attrs  :  attrs ',' name expr    { List l = $1; l.add(new Object[] { $3, $4 }); $$ = l; }
-         |  name expr              { List l = new ArrayList(); l.add(new Object[] { $1, $2 }); $$ = l; }
+attrs  :  attrs ',' name expr     { List l = $1; l.add(new Object[] { $3, $4 }); $$ = l; }
+         |  name expr             { List l = new ArrayList(); l.add(new Object[] { $1, $2 }); $$ = l; }
 */
 
-  exprs  :  exprs ',' expr         { List l = $1; l.add($3); $$ = l; }
-         |  expr                   { List l = new ArrayList(); l.add($1); $$ = l; }
+exprs	:  exprs ',' expr         { List l = $1; l.add($3); $$ = l; }
+	|  expr                   { List l = new ArrayList(); l.add($1); $$ = l; }
+	;
  
-  names  :  names ',' name         { List l = $1; l.add($3); $$ = l; }
-         |  name                   { List l = new ArrayList(); l.add($1); $$ = l; }
+names	:  names ',' name         { List l = $1; l.add($3); $$ = l; }
+	|  name                   { List l = new ArrayList(); l.add($1); $$ = l; }
+	;
 
-  name   :  STRING                 { $$ = $1.getValue(); }   // name is a string and not an expression
+name	:  STRING                 { $$ = $1.getValue(); }   // name is a string and not an expression
 
 
 
@@ -142,34 +170,56 @@ stmts   :  stmts stmt          { $1.add($2); $$ = $1; }
 	|                      { $$ = new ArrayList(); }
 	;
 
-stmt    : PRINT '(' args ')' ';'                 { $$ = _f.createPrintStatement($1, $3); }
-        | FOREACH '(' primary in expr ')' block  { $$ = _f.createForeachStatement($1, $3, $5, $7); }
-	| WHILE '(' expr ')' block               { $$ = _f.createWhileStatement($1, $3, $5); }
-	| IF '(' expr ')' block else_clause      { $$ = _f.createIfStatement($1, $3, $5, $6); }
-	| BREAK ';'                              { $$ = _f.createBreakStatement($1); }
-	| CONTINUE ';'                           { $$ = _f.createContinueStatement($1); }
-	| STAG ';'                               { $$ = _f.createStagStatement($1); }
-	| CONT ';'                               { $$ = _f.createContStatement($1); }
-	| ETAG ';'                               { $$ = _f.createEtagStatement($1); }
-	| ELEM ';'                               { $$ = _f.createElemStatement($1); }
-	| ELEMENT '(' IDENT ')' ';'              { $$ = _f.createElementStatement($1, $3); }
-	| CONTENT '(' IDENT ')' ';'              { $$ = _f.createContentStatement($1, $3); }
-	| expr ';'                               { $$ = _f.createExpressionStatement($2, $1); }
+
+stmt    : PRINT _l_ '(' _x_ args _r_ ')' _s_ ';' _z_  { $$ = _f.createPrintStatement($1, $5); }
+        | FOREACH _l_ '(' _x_ primary in expr _r_ ')' _b_ block   { $$ = _f.createForeachStatement($1, $5, $7, $11); }
+	| WHILE _l_ '(' _x_ expr _r_ ')' _b_ block    { $$ = _f.createWhileStatement($1, $5, $9); }
+	| IF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($1, $5, $9, $10); }
+		
+	| BREAK _s_ ';' _z_        { $$ = _f.createBreakStatement($1); }
+	| CONTINUE _s_ ';' _z_     { $$ = _f.createContinueStatement($1); }
+	| STAG _s_ ';' _z_         { $$ = _f.createStagStatement($1); }
+	| CONT _s_ ';' _z_         { $$ = _f.createContStatement($1); }
+	| ETAG _s_ ';' _z_         { $$ = _f.createEtagStatement($1); }
+	| ELEM _s_ ';' _z_         { $$ = _f.createElemStatement($1); }
+	| ELEMENT _l_ '(' _n_ IDENT _r_ ')' _s_ ';' _z_   { $$ = _f.createElementStatement($1, $5); }
+	| CONTENT _l_ '(' _n_ IDENT _r_ ')' _s_ ';' _z_   { $$ = _f.createContentStatement($1, $5); }
+	| expr _s_ ';' _z_				  { $$ = _f.createExpressionStatement($3, $1); }
 	;
 
-block   : '{' stmts '}'       { $$ = _f.createBlockStatement($1, $2); }
+
+else_clause
+	: ELSEIF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($1, $5, $9, $10); }
+        | ELSE IF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($2, $6, $10, $11); }
+        | ELSE _b_ block  { $$ = $3; }
+	|                 { $$ = null; }
         ;
 
-else_clause : ELSEIF '(' expr ')' block else_clause   { $$ = _f.createIfStatement($1, $3, $5, $6); }
-            | ELSE IF '(' expr ')' block else_clause  { $$ = _f.createIfStatement($2, $4, $6, $7); }
-            | ELSE block                         { $$ = $2; }
-	    |                                    { $$ = null; }
-            ;
+block	: '{' _enter_block_ stmts _e_ '}' _exit_block_    { $$ = _f.createBlockStatement($1, $3); }
+	;
+
+
+_l_  :   { _expected = '('; } 		/* '(' expected */
+_r_  :   { _expected = ')'; } 		/* ')' expected */
+_b_  :   { _expected = '{'; } 		/* '{' expected */
+_e_  :   { _expected = '}'; } 		/* '}' expected */
+_s_  :   { _expected = ';'; }		/* ';' expected */
+_x_  :   { _expected = 'X'; }    	/* expression expected */
+_z_  :   { _expected =  0; }    	/* clear _expected */
+_n_  :   { _expected = 'N'; }		/* element name expected */
+_c_  :   { _expected = ':'; }		/* ':' expected */
+_S_  :   { _expected = 'S'; }		/* selector expected */
+_A_  :   { _expected = 'A'; }		/* attribute name expected */
+
+
+_enter_block_  :   {  _expected = 0;  enterBlock(); }
+_exit_block_   :   {  _expected = 0;  exitBlock(); }
+
 
 in      : '='
         | IDENT  {
 	        if (! $1.getValue().equals("in")) {
-	              throw new SyntaxException("syntax error", $1.getLinenum(), $1.getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", $1.getLinenum(), $1.getColumn());
 		}
           }
         ;
@@ -238,15 +288,15 @@ args     :  args ',' expr    { $1.add($3); $$ = $1; }
 
 %%
 
-	protected Object yyval() { return yyval; }
-	protected Object yylval() { return yylval; }
-	protected Object[] yyastk() { return yyastk; }
+	//protected Object yyval() { return yyval; }
+	//protected Object yylval() { return yylval; }
+	//protected Object[] yyastk() { return yyastk; }
 
-	protected Object getYyval() { return yyval; }
-	protected Object getYylval() { return yylval; }
-	protected Object[] getYyastk() { return yyastk; }
+	//protected Object getYyval() { return yyval; }
+	//protected Object getYylval() { return yylval; }
+	//protected Object[] getYyastk() { return yyastk; }
 
-	protected void setYylval(Object val) { yylval = val; }
+	//protected void setYylval(Object val) { yylval = val; }
 
 	protected Scanner createScanner(String input) {
 		Scanner scanner = super.createScanner(input);

@@ -672,7 +672,7 @@ public class TextConverter implements Converter {
 			//+ "  attrs: 'bgcolor' color;\n"
 			+ "  logic: {\n"
 			//+ "    ctr = 0;\n"
-			+ "    foreach (item = list) {\n"
+			+ "    foreach (item = list;) {\n"
 			+ "      ctr += 1;\n"
 			+ "      color = ctr % 2 == 0 ? '#FCC' : '#CCF';\n"
 			+ "      _stag;\n"
@@ -709,6 +709,13 @@ public class TextConverter implements Converter {
 			//+ "  <span kw:d=\"id:baz\">BAZ</span>\n"
 			+ "</p>\n"
 			;
+		plogic = ""
+			+ "@import 'foo.plogic'\n"
+			+ "#foo {\n"
+			+ "  value: x;\n"
+			+ "}\n"
+			;
+
 
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);

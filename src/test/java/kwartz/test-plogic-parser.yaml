@@ -264,6 +264,38 @@
 	}
 
 - name:		ruleset7
+  desc:		empty logic
+  input: |
+	#foo {
+	  logic: {
+	  
+	  }
+	  before: {}
+	  after: {
+	  }
+	}
+	#DOCUMENT {
+	  begin: {}
+	  end: {}
+	}
+  expected: |
+	#foo {
+	  logic: {
+	  }
+	  before: {
+	  }
+	  after: {
+	  }
+	}
+	#DOCUMENT {
+	  begin: {
+	  }
+	  end: {
+	  }
+	}
+
+
+- name:		ruleset8
   desc:		complex rulesets
   input: |
 	#title { Value: doctitle; }
@@ -384,72 +416,6 @@
 	      list
 	      :BLOCK
 	        _elem
-	  }
-	}
-
-###
-- name:		rcurly1
-  desc:		closing curly bracket check of ruleset
-  input: |
-	#foo {
-	}
-	#bar {
-	  logic: {
-	    if (x > 0) {
-	      print(x);
-	    }
-	  } 
-	  }
-	}
-  exception*:
-    ruby:	Kwartz::SyntaxError
-    java:	kwartz.SyntaxException
-  errormsg*:
-    ruby:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
-    java:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
-
-- name:		rcurly2
-  desc:		closing curly bracket check of logic
-  input: |
-	#foo {
-	}
-	#bar {
-	  logic: {
-	    if (x > 0) {
-	        print(x);
-	      }
-	    }
-	  }
-	}
-  exception*:
-    ruby:	Kwartz::SyntaxError
-    java:	kwartz.SyntaxException
-  errormsg*:
-    ruby:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
-    java:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
-
-- name:		rcurly3
-  desc:		one-liner is OK
-  input: |
-  	#foo { value: x; }
-  	#bar {
-  	  logic: { _elem; }
-  	}
-	#baz { logic: { print(x); } }
-  expected: |
-	#foo {
-	  value:
-	    x
-	}
-	#bar {
-	  logic: {
-	    _elem
-	  }
-	}
-	#baz {
-	  logic: {
-	    :PRINT
-	      x
 	  }
 	}
 
@@ -584,3 +550,376 @@
 	  }
 	}
 
+
+### ----------------------------------------
+
+###
+- name:		syntaxerr_ruleset1
+  input: |
+	#foo (
+	  value: x;
+	)
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:6: '{' expected."
+
+
+- name:		syntaxerr_ruleset2
+  input: |
+	#foo {
+	  value: x;
+	  logic: {
+	    _cont;
+	  }
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:6: '{' is not closed."
+
+
+###
+- name:		syntaxerr_selector1
+  input: |
+	#foo, {
+	  value: x;
+	  logic: {
+	    _cont;
+	  }
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:7: selector expected."
+
+
+- name:		syntaxerr_selector2
+  input: |
+	.bar {
+	  value: x;
+	}
+	foo .bar {
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  #errormsg:	"4:5: '{' expected."
+  errormsg:	"4:5: compound selector is not available."
+
+
+- name:		syntaxerr_selector3
+  input: |
+	.bar {
+	  value: x;
+	}
+	#name, foo .bar, #baz {
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  #errormsg:	"4:12: '{' expected."
+  errormsg:	"4:12: compound selector is not available."
+
+
+- name:		syntaxerr_selector4
+  input: |
+	,foo {
+	  value: x;
+	}
+
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:1: syntax error"
+
+
+###
+- name:		syntaxerr_stag1
+  input: |
+	#foo {
+	  stag: x
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: ';' expected."
+
+
+- name:		syntaxerr_cont1
+  input: |
+	#foo {
+	  cont: x
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: ';' expected."
+
+
+- name:		syntaxerr_etag1
+  input: |
+	#foo {
+	  etag: x
+	  logic: {
+	  }
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: ';' expected."
+
+
+- name:		syntaxerr_elem1
+  input: |
+	#foo {
+	  elem: x
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: ';' expected."
+
+
+###
+- name:		syntaxerr_value1
+  input: |
+	#foo {
+	  value: x
+	  attr: 'class' klass; 
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:11: ';' expected."
+
+
+- name:		syntaxerr_value2
+  input: |
+	#foo {
+	  value: x[1,];
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:13: expression syntax error."
+
+
+###
+- name:		syntaxerr_attrs1
+  input: |
+	#foo {
+	  value: x;
+	  attrs: 'class' klass 
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:23: ';' expected."
+
+
+- name:		syntaxerr_attrs2
+  input: |
+	#foo {
+	  value: x;
+	  attrs: class=klass; 
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:10: attribute name expected."
+
+
+- name:		syntaxerr_attrs3
+  input: |
+	#foo {
+	  value: x;
+	  attrs: "class" klass(x,); 
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:26: expression syntax error."
+
+
+- name:		syntaxerr_attrs4
+  input: |
+	#foo {
+	  attr: 'class' klass; 
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:3: 'attr' may be typo of 'attrs'."
+
+
+###
+- name:		syntaxerr_append1
+  input: |
+	#foo {
+	  append: flag ? ' checked="checked"' : ''
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:43: ';' expected."
+
+
+- name:		syntaxerr_append2
+  input: |
+	#foo {
+	  append: flag ? " checked="checked\"" : '';
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:29: expression syntax error."
+
+
+###
+- name:		syntaxerr_remove1
+  input: |
+	#foo {
+	  remove:  'foo', "bar"
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:24: ';' expected."
+
+
+- name:		syntaxerr_remove2
+  input: |
+	#foo {
+	  append: 'foo', "bar",
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"3:1: expression syntax error."
+
+
+###
+- name:		syntaxerr_logic1
+  input: |
+	#foo {
+	  logic: {
+
+  exception:	kwartz.SyntaxException
+  #errormsg:	"2:10: '{' is not closed."
+  errormsg:	"1:6: '{' is not closed."
+  
+
+- name:		syntaxerr_logic2
+  input: |
+	#foo {
+	  logic: val;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: '{' expected."
+  
+
+- name:		syntaxerr_before1
+  input: |
+	#foo {
+	  before: {
+
+  exception:	kwartz.SyntaxException
+  #errormsg:	"2:11: '{' is not closed."
+  errormsg:	"1:6: '{' is not closed."
+  
+
+- name:		syntaxerr_before2
+  input: |
+	#foo {
+	  before: val;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:11: '{' expected."
+  
+
+- name:		syntaxerr_after1
+  input: |
+	#foo {
+	  after: {
+
+  exception:	kwartz.SyntaxException
+  #errormsg:	"2:10: '{' is not closed."
+  errormsg:	"1:6: '{' is not closed."
+
+
+- name:		syntaxerr_after2
+  input: |
+	#foo {
+	  after: val;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"2:10: '{' expected."
+  
+
+
+###
+- name:		syntaxerr_command1
+  input: |
+	@import 'foo.plogic'
+	#foo {
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:21: ';' expected."
+
+
+- name:		syntaxerr_command2
+  input: |
+	@import foo.plogic;
+	#foo {
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:9: syntax error"
+
+
+- name:		syntaxerr_command3
+  input: |
+	@inport "foo.plogic";
+	#foo {
+	  value: x;
+	}
+  exception:	kwartz.SyntaxException
+  errormsg:	"1:1: '@inport': unknown command."
+
+
+
+
+### ----------------------------------------
+
+###
+- name:		rcurly1
+  desc:		closing curly bracket check of ruleset
+  input: |
+	#foo {
+	}
+	#bar {
+	  logic: {
+	    if (x > 0) {
+	      print(x);
+	    }
+	  } 
+	  }
+	}
+  exception*:
+    ruby:	Kwartz::SyntaxError
+    java:	kwartz.SyntaxException
+  errormsg*:
+    ruby:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
+    java:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
+
+
+- name:		rcurly2
+  desc:		closing curly bracket check of logic
+  input: |
+	#foo {
+	}
+	#bar {
+	  logic: {
+	    if (x > 0) {
+	        print(x);
+	      }
+	    }
+	  }
+	}
+  exception*:
+    ruby:	Kwartz::SyntaxError
+    java:	kwartz.SyntaxException
+  errormsg*:
+    ruby:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
+    java:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
+
+
+- name:		rcurly3
+  desc:		one-liner is OK
+  input: |
+  	#foo { value: x; }
+  	#bar {
+  	  logic: { _elem; }
+  	}
+	#baz { logic: { print(x); } }
+  expected: |
+	#foo {
+	  value:
+	    x
+	}
+	#bar {
+	  logic: {
+	    _elem
+	  }
+	}
+	#baz {
+	  logic: {
+	    :PRINT
+	      x
+	  }
+	}
+
+ 

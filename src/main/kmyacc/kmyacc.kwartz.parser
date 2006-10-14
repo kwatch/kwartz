@@ -37,25 +37,25 @@ public class $(CLASSNAME) extends Parser {
   static boolean yydebug = false;
 
   /** lexical element object **/
-  private Object yylval;
+  //private Object yylval;
 
   /** Semantic value */
-  private Object yyval;
+  //private Object yyval;
 
   /** Semantic stack **/
-  private Object yyastk[];
+  //private Object yyastk[];
 
   /** Syntax stack **/
-  private short yysstk[];
+  //private short yysstk[];
 
   /** Stack pointer **/
-  private int yysp;
+  //private int yysp;
 
   /** Error handling state **/
-  private int yyerrflag;
+  //private int yyerrflag;
 
   /** lookahead token **/
-  private int yychar;
+  //private int yychar;
 
   /* code after %% in *.y */
   $tailcode;

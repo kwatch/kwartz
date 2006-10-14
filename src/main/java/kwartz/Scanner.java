@@ -32,6 +32,14 @@ public class Scanner {
 		return _error;
 	}
 	
+	public int getLinenum() {
+		return _linenum;
+	}
+	
+	public int getColumn() {
+		return _column;
+	}
+	
 	public int getStartLinenum() {
 		return _start_linenum;
 	}
@@ -55,18 +63,32 @@ public class Scanner {
 	}
 
 
+//	public int getChar() {
+//		_index++;
+//		if (_index >= _input_length)
+//			return _ch = 0;
+//		_ch = _input.charAt(_index);
+//		if (_ch == '\n') {
+//			_linenum++;
+//			_column = 0;
+//		}
+//		else {
+//			_column++;
+//		}
+//		return _ch;
+//	}
 	public int getChar() {
 		_index++;
 		if (_index >= _input_length)
 			return _ch = 0;
-		_ch = _input.charAt(_index);
 		if (_ch == '\n') {
 			_linenum++;
-			_column = 0;
+			_column = 1;
 		}
 		else {
 			_column++;
 		}
+		_ch = _input.charAt(_index);
 		return _ch;
 	}
 	

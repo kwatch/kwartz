@@ -59,6 +59,7 @@ import java.util.HashMap;
 %type <ParseInfo> PRINT FOREACH WHILE IF ELSEIF ELSE
 %type <ParseInfo> BREAK CONTINUE STAG ETAG CONT ELEM ELEMENT CONTENT
 %type <ParseInfo> in ';' '{' '}'
+%type <null> _l_ _r_ _b_ _e_ _s_ _x_ _z_ _n_ _enter_block_ _exit_block_
 
 
 %%
@@ -70,34 +71,53 @@ stmts   :  stmts stmt          { $1.add($2); $$ = $1; }
 	|                      { $$ = new ArrayList(); }
 	;
 
-stmt    : PRINT '(' args ')' ';'                 { $$ = _f.createPrintStatement($1, $3); }
-        | FOREACH '(' primary in expr ')' block  { $$ = _f.createForeachStatement($1, $3, $5, $7); }
-	| WHILE '(' expr ')' block               { $$ = _f.createWhileStatement($1, $3, $5); }
-	| IF '(' expr ')' block else_clause      { $$ = _f.createIfStatement($1, $3, $5, $6); }
-	| BREAK ';'                              { $$ = _f.createBreakStatement($1); }
-	| CONTINUE ';'                           { $$ = _f.createContinueStatement($1); }
-	| STAG ';'                               { $$ = _f.createStagStatement($1); }
-	| CONT ';'                               { $$ = _f.createContStatement($1); }
-	| ETAG ';'                               { $$ = _f.createEtagStatement($1); }
-	| ELEM ';'                               { $$ = _f.createElemStatement($1); }
-	| ELEMENT '(' IDENT ')' ';'              { $$ = _f.createElementStatement($1, $3); }
-	| CONTENT '(' IDENT ')' ';'              { $$ = _f.createContentStatement($1, $3); }
-	| expr ';'                               { $$ = _f.createExpressionStatement($2, $1); }
+
+stmt    : PRINT _l_ '(' _x_ args _r_ ')' _s_ ';' _z_  { $$ = _f.createPrintStatement($1, $5); }
+        | FOREACH _l_ '(' _x_ primary in expr _r_ ')' _b_ block   { $$ = _f.createForeachStatement($1, $5, $7, $11); }
+	| WHILE _l_ '(' _x_ expr _r_ ')' _b_ block    { $$ = _f.createWhileStatement($1, $5, $9); }
+	| IF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($1, $5, $9, $10); }
+		
+	| BREAK _s_ ';' _z_        { $$ = _f.createBreakStatement($1); }
+	| CONTINUE _s_ ';' _z_     { $$ = _f.createContinueStatement($1); }
+	| STAG _s_ ';' _z_         { $$ = _f.createStagStatement($1); }
+	| CONT _s_ ';' _z_         { $$ = _f.createContStatement($1); }
+	| ETAG _s_ ';' _z_         { $$ = _f.createEtagStatement($1); }
+	| ELEM _s_ ';' _z_         { $$ = _f.createElemStatement($1); }
+	| ELEMENT _l_ '(' _n_ IDENT _r_ ')' _s_ ';' _z_   { $$ = _f.createElementStatement($1, $5); }
+	| CONTENT _l_ '(' _n_ IDENT _r_ ')' _s_ ';' _z_   { $$ = _f.createContentStatement($1, $5); }
+	| expr _s_ ';' _z_				  { $$ = _f.createExpressionStatement($3, $1); }
 	;
 
-block   : '{' stmts '}'       { $$ = _f.createBlockStatement($1, $2); }
+
+else_clause
+	: ELSEIF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($1, $5, $9, $10); }
+        | ELSE IF _l_ '(' _x_ expr _r_ ')' _b_ block else_clause  { $$ = _f.createIfStatement($2, $6, $10, $11); }
+        | ELSE _b_ block  { $$ = $3; }
+	|                 { $$ = null; }
         ;
 
-else_clause : ELSEIF '(' expr ')' block else_clause   { $$ = _f.createIfStatement($1, $3, $5, $6); }
-            | ELSE IF '(' expr ')' block else_clause  { $$ = _f.createIfStatement($2, $4, $6, $7); }
-            | ELSE block                         { $$ = $2; }
-	    |                                    { $$ = null; }
-            ;
+block	: '{' _enter_block_ stmts _e_ '}' _exit_block_    { $$ = _f.createBlockStatement($1, $3); }
+	;
+
+
+_l_  :   { _expected = '('; } 		/* '(' expected */
+_r_  :   { _expected = ')'; } 		/* ')' expected */
+_b_  :   { _expected = '{'; } 		/* '{' expected */
+_e_  :   { _expected = '}'; } 		/* '}' expected */
+_s_  :   { _expected = ';'; }		/* ';' expected */
+_x_  :   { _expected = 'X'; }    	/* expression expected */
+_z_  :   { _expected =  0; }    	/* clear _expected */
+_n_  :   { _expected = 'N'; }		/* element name expected */
+
+
+_enter_block_  :   {  _expected = 0;  enterBlock(); }
+_exit_block_   :   {  _expected = 0;  exitBlock(); }
+
 
 in      : '='
         | IDENT  {
 	        if (! $1.getValue().equals("in")) {
-	              throw new SyntaxException("syntax error", $1.getLinenum(), $1.getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", $1.getLinenum(), $1.getColumn());
 		}
           }
         ;
@@ -166,13 +186,13 @@ args     :  args ',' expr    { $1.add($3); $$ = $1; }
 
 %%
 
-	protected Object yyval() { return yyval; }
-	protected Object yylval() { return yylval; }
-	protected Object[] yyastk() { return yyastk; }
+	//protected Object yyval() { return yyval; }
+	//protected Object yylval() { return yylval; }
+	//protected Object[] yyastk() { return yyastk; }
 
-	protected Object getYyval() { return yyval; }
-	protected Object getYylval() { return yylval; }
-	protected Object[] getYyastk() { return yyastk; }
+	//protected Object getYyval() { return yyval; }
+	//protected Object getYylval() { return yylval; }
+	//protected Object[] getYyastk() { return yyastk; }
 
-	protected void setYylval(Object val) { yylval = val; }
+	//protected void setYylval(Object val) { yylval = val; }
 
