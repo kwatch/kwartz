@@ -33,16 +33,17 @@ public class ExpressionParserTest extends TestCase {
 		//
 		Parser parser = new ExpressionParser();
 		Ast.Expression expr;
+		String filename = "test-expr-parser.plogic";
 		for (Iterator it = inputs.iterator(); it.hasNext(); ) {
 			input = (String)it.next();
 			if (exception == null) {
-				expr = (Ast.Expression)parser.parse(input);
+				expr = (Ast.Expression)parser.parse(input, filename);
 				String actual = expr.inspect();
 				assertEquals(expected, actual);
 			}
 			else {
 				try {
-					expr = (Ast.Expression)parser.parse(input);
+					expr = (Ast.Expression)parser.parse(input, filename);
 					fail("'"+exception+"' is expected but not thrown.");
 				}
 				catch (Exception ex) {
@@ -75,7 +76,7 @@ public class ExpressionParserTest extends TestCase {
 	public void test_relational4() throws Exception { _test("relational4"); }
 	public void test_relational5() throws Exception { _test("relational5"); }
 	public void test_relational6() throws Exception { _test("relational6"); }
-	public void test_relational7() throws Exception { _test("relational7"); }
+	public void test_relational7() throws Exception { _test("relational9"); }
 	/* */
 	
 	public void test_logical1() throws Exception { _test("logical1"); }
@@ -121,7 +122,7 @@ public class ExpressionParserTest extends TestCase {
 	public void test_assignment11() throws Exception { _test("assignment11"); }
 	public void test_assignment12() throws Exception { _test("assignment12"); }
 	public void test_assignment13() throws Exception { _test("assignment13"); }
-	public void test_assignment14() throws Exception { _test("assignment14"); }
+	public void test_assignment14() throws Exception { _test("assignment19"); }
 	/* */
 	
 	public void test_conditional1() throws Exception { _test("conditional1"); }

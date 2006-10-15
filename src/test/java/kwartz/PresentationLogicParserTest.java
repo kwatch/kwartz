@@ -46,9 +46,10 @@ public class PresentationLogicParserTest extends TestCase {
 			}
 		}
 		//
-		Parser parser = new PresentationLogicParser();		
+		Parser parser = new PresentationLogicParser();
+		String filename = "test-plogic-parser.plogic";
 		if (exception == null) {
-			List rulesets = (List)parser.parse(input);
+			List rulesets = (List)parser.parse(input, filename);
 			StringBuffer sb = new StringBuffer();
 			for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
 				Ast.Ruleset ruleset = (Ast.Ruleset)it.next();
@@ -59,7 +60,7 @@ public class PresentationLogicParserTest extends TestCase {
 		}
 		else {
 			try {
-				parser.parse(input);
+				parser.parse(input, filename);
 				fail("'"+exception+"' is expected but not thrown.");
 			}
 			catch (Exception ex) {

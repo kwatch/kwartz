@@ -448,7 +448,7 @@ public class StatementParser extends Parser {
           case 32:
 {
 	        if (! ((ParseInfo)yyastk[yysp-(1-1)]).getValue().equals("in")) {
-	              throw new SyntaxException("'in' or '=' expected.", ((ParseInfo)yyastk[yysp-(1-1)]).getLinenum(), ((ParseInfo)yyastk[yysp-(1-1)]).getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", _filename, ((ParseInfo)yyastk[yysp-(1-1)]).getLinenum(), ((ParseInfo)yyastk[yysp-(1-1)]).getColumn());
 		}
           } break;
           case 33:

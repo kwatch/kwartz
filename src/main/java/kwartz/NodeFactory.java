@@ -4,10 +4,29 @@ import java.util.List;
 
 public class NodeFactory {
 
+	private String _filename;
+	
+	public NodeFactory(String filename) {
+		_filename = filename;
+	}
+	
+	public NodeFactory() {
+		_filename = null;
+	}
+	
+	public String getFilename() {
+		return _filename;
+	}
+	
+	public void setFilename(String name) {
+		_filename = name;
+	}
+	
 	
 	private void setInfo(Ast.Node node, ParseInfo info) {
 		node.setLinenum(info.getLinenum());
 		node.setColumn(info.getColumn());
+		node.setFilename(_filename);
 	}
 	
 	public Ast.Expression createArithmeticExpression(ParseInfo info, Ast.Expression left, Ast.Expression right) {
@@ -239,7 +258,7 @@ public class NodeFactory {
 		if (info.getColumn() != rcurly.getColumn() && info.getLinenum() != rcurly.getLinenum()) {
 			String msg = "'}': column of closing curly bracket is not matched with of property '"+info.getValue()+"'"
 	                   + " starting at line "+info.getLinenum()+", column "+info.getColumn()+".";
-			throw new SyntaxException(msg, rcurly.getLinenum(), rcurly.getColumn());
+			throw new SyntaxException(msg, _filename, rcurly.getLinenum(), rcurly.getColumn());
 		}
 		String propname = info.getValue();
 		Ast.Declaration decl = new Ast.Declaration(info.getToken(), propname, stmts);
@@ -252,7 +271,7 @@ public class NodeFactory {
 		if (selector.getColumn() != rcurly.getColumn() && selector.getLinenum() != rcurly.getLinenum()) {
 			String msg = "'}': column of closing curly bracket is not matched with of selector '"+selector.getValue()+"'"
 			           + " starting at line "+selector.getLinenum()+", column "+selector.getColumn()+".";
-			throw new SyntaxException(msg, rcurly.getLinenum(), rcurly.getColumn());
+			throw new SyntaxException(msg, _filename, rcurly.getLinenum(), rcurly.getColumn());
 		}		
 		Ast.Ruleset ruleset = new Ast.Ruleset(selectors, declarations);
 		setInfo(ruleset, info);

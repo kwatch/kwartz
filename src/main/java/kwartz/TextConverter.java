@@ -436,6 +436,7 @@ class ElementInfo {
 public class TextConverter implements Converter {
 
 	private String _pdata;
+	private String _filename;
 	private String _rest;
 	private Matcher _matcher;
 	private int _linenum, _linenum_delta;
@@ -469,8 +470,9 @@ public class TextConverter implements Converter {
 		this(handler, null);
 	}
 	
-	void _reset(String pdata, int linenum) {
+	void _reset(String pdata, String filename, int linenum) {
 		_pdata = pdata;
+		_filename = filename;
 		_linenum = linenum;
 		_linenum_delta = 0;
 		_index = 0;
@@ -478,25 +480,41 @@ public class TextConverter implements Converter {
 		_matcher = __fetch_pattern.matcher(pdata);
 	}
 	
+	
+	public List convert(String pdata, String filename) throws ConvertException {
+		return convert(pdata, filename, 1);
+	}
+	
 	public List convert(String pdata) throws ConvertException {
-		return convert(pdata, 1);
+		return convert(pdata, null, 1);
 	}
 	
 	public List convert(String pdata, int linenum) throws ConvertException {
-		_reset(pdata, linenum);
-		List stmt_list = new ArrayList();
-		Ast.Ruleset docruleset = _handler.getRuleset("#DOCUMENT");
-		if (docruleset == null) {
-			_convert(stmt_list, null);
+		return convert(pdata, null, linenum);
+	}
+	
+	public List convert(String pdata, String filename, int linenum) throws ConvertException {
+		try {
+			_reset(pdata, filename, linenum);
+			List stmt_list = new ArrayList();
+			Ast.Ruleset docruleset = _handler.getRuleset("#DOCUMENT");
+			if (docruleset == null) {
+				_convert(stmt_list, null);
+			}
+			else {
+				List cont_stmts = new ArrayList();
+				_convert(cont_stmts, null);
+				ElementInfo elem_info = new ElementInfo(cont_stmts);
+				elem_info.setAttribute("id", "DOCUMENT");
+				_handler.applyRuleset(elem_info, stmt_list);
+			}
+			return stmt_list;
 		}
-		else {
-			List cont_stmts = new ArrayList();
-			_convert(cont_stmts, null);
-			ElementInfo elem_info = new ElementInfo(cont_stmts);
-			elem_info.setAttribute("id", "DOCUMENT");
-			_handler.applyRuleset(elem_info, stmt_list);
+		catch (ConvertException ex) {
+			if (ex.getFilename() == null)
+				ex.setFilename(_filename);
+			throw ex;
 		}
-		return stmt_list;
 	}
 	
 	
@@ -661,8 +679,9 @@ public class TextConverter implements Converter {
 	}
 	
 	
-	private static ConvertException _convertError(String message, int linenum) {
-		return HandlerHelper.convertError(message, linenum);
+	private ConvertException _convertError(String message, int linenum) {
+		//return HandlerHelper.convertError(message, linenum);
+		return new ConvertException(message, _filename, linenum);
 	}
 
 	

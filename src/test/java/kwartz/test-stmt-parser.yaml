@@ -201,8 +201,8 @@
     ruby:	Kwartz::SemanticError
     java:	kwartz.SemanticException
   errormsg*:
-    ruby:	'1:14: []: invalid loop-variable of foreach statement.'
-    java:	'1:14: []: invalid loop-variable of foreach statement.'
+    ruby:	'test-stmt-parser.plogic:1:14: []: invalid loop-variable of foreach statement.'
+    java:	'test-stmt-parser.plogic:1:14: []: invalid loop-variable of foreach statement.'
 
 
 ###
@@ -472,7 +472,7 @@
   input: |
 	print x;
   exception:	kwartz.SyntaxException
-  errormsg:	"1:7: '(' expected."
+  errormsg:	"test-stmt-parser.plogic:1:7: '(' expected."
 
 
 - name:		syntaxerr_print2
@@ -481,7 +481,7 @@
 	print(bar(x,y);
 	print(baz);
   exception:	kwartz.SyntaxException
-  errormsg:	"2:15: ')' expected."
+  errormsg:	"test-stmt-parser.plogic:2:15: ')' expected."
 
 
 - name:		syntaxerr_print3
@@ -490,7 +490,7 @@
 	print(bar(x,y))
 	print(baz);
   exception:	kwartz.SyntaxException
-  errormsg:	"2:16: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:16: ';' expected."
 
 
 - name:		syntaxerr_print4
@@ -499,7 +499,7 @@
 	print(x,y,z,);
 	print(baz);
   exception:	kwartz.SyntaxException
-  errormsg:	"2:13: expression syntax error."
+  errormsg:	"test-stmt-parser.plogic:2:13: expression syntax error."
 
 
 ###
@@ -508,8 +508,8 @@
 	x = y;
 	y +=;
   exception:	kwartz.SyntaxException
-  #errormsg:	"2:5: expression syntax error."
-  errormsg:	"2:5: syntax error"
+  #errormsg:	"test-stmt-parser.plogic:2:5: expression syntax error."
+  errormsg:	"test-stmt-parser.plogic:2:5: syntax error"
  
   
 - name:		syntaxerr_exprstmt2
@@ -518,7 +518,7 @@
 	x = y
 	print(x);
   exception:	kwartz.SyntaxException
-  errormsg:	"2:6: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:6: ';' expected."
 
 
 - name:		syntaxerr_exprstmt3
@@ -527,14 +527,14 @@
 	x = y
 	x = 1;
   exception:	kwartz.SyntaxException
-  errormsg:	"2:6: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:6: ';' expected."
  
 
 - name:		syntaxerr_exprstmt4
   input: |
 	x = y + 6(x);
   exception:	kwartz.SyntaxException
-  errormsg:	"1:10: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:1:10: ';' expected."
  
 
 ###
@@ -546,7 +546,7 @@
 	  print(item);
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:9: '(' expected."
+  errormsg:	"test-stmt-parser.plogic:2:9: '(' expected."
 
 
 - name:		syntaxerr_foreach2
@@ -557,7 +557,7 @@
 	  print(item);
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:23: ')' expected."
+  errormsg:	"test-stmt-parser.plogic:2:23: ')' expected."
  
  
 - name:		syntaxerr_foreach3
@@ -568,7 +568,7 @@
 	  print(item);
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:23: '{' expected."
+  errormsg:	"test-stmt-parser.plogic:2:23: '{' expected."
  
  
 - name:		syntaxerr_foreach4
@@ -579,7 +579,7 @@
 	  print(item);
 	
   exception:	kwartz.SyntaxException
-  errormsg:	"2:24: '{' is not closed."
+  errormsg:	"test-stmt-parser.plogic:2:24: '{' is not closed."
  
  
 - name:		syntaxerr_foreach5
@@ -590,7 +590,7 @@
 	  print(item);
 	}	
   exception:	kwartz.SyntaxException
-  errormsg:	"2:15: 'in' or '=' expected."
+  errormsg:	"test-stmt-parser.plogic:2:15: 'in' or '=' expected."
  
  
 ###
@@ -600,7 +600,7 @@
 	  print("positive.");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"1:4: '(' expected."
+  errormsg:	"test-stmt-parser.plogic:1:4: '(' expected."
 
 
 - name:		syntaxerr_if2
@@ -609,7 +609,7 @@
 	  print("positive.");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"1:14: ')' expected."
+  errormsg:	"test-stmt-parser.plogic:1:14: ')' expected."
 
 
 - name:		syntaxerr_if3
@@ -618,7 +618,7 @@
 	  print("positive.");
 
   exception:	kwartz.SyntaxException
-  errormsg:	"2:3: '{' expected."
+  errormsg:	"test-stmt-parser.plogic:2:3: '{' expected."
 
 
 - name:		syntaxerr_if4
@@ -627,7 +627,7 @@
 	  print("positive.");
 	
   exception:	kwartz.SyntaxException
-  errormsg:	"1:15: '{' is not closed."
+  errormsg:	"test-stmt-parser.plogic:1:15: '{' is not closed."
 
 
 ###
@@ -639,7 +639,7 @@
 	  print("negative.");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:10: '(' expected."
+  errormsg:	"test-stmt-parser.plogic:3:10: '(' expected."
 
 
 - name:		syntaxerr_elseif2
@@ -650,7 +650,7 @@
 	  print("negative.");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:17: ')' expected."
+  errormsg:	"test-stmt-parser.plogic:3:17: ')' expected."
 
 
 - name:		syntaxerr_elseif3
@@ -660,7 +660,7 @@
 	} elseif (x < 0)
 	  print("negative.");
   exception:	kwartz.SyntaxException
-  errormsg:	"4:3: '{' expected."
+  errormsg:	"test-stmt-parser.plogic:4:3: '{' expected."
 
 
 - name:		syntaxerr_elseif4
@@ -670,7 +670,7 @@
 	} elseif (x < 0) {
 	  print("negative.");
   exception:	kwartz.SyntaxException
-  errormsg:	"3:18: '{' is not closed."
+  errormsg:	"test-stmt-parser.plogic:3:18: '{' is not closed."
 
 
 ###
@@ -683,7 +683,7 @@
 	} else
 	  print("zero.");
   exception:	kwartz.SyntaxException
-  errormsg:	"6:3: '{' expected."
+  errormsg:	"test-stmt-parser.plogic:6:3: '{' expected."
   
 
 - name:		syntaxerr_else2
@@ -695,7 +695,7 @@
 	} else {
 	  print("zero.");
   exception:	kwartz.SyntaxException
-  errormsg:	"5:8: '{' is not closed."
+  errormsg:	"test-stmt-parser.plogic:5:8: '{' is not closed."
 
 
 ###
@@ -707,7 +707,7 @@
 	  i += 1;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:7: '(' expected."
+  errormsg:	"test-stmt-parser.plogic:2:7: '(' expected."
 
 
 - name:		syntaxerr_while2
@@ -718,7 +718,7 @@
 	  i += 1;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:14: ')' expected."
+  errormsg:	"test-stmt-parser.plogic:2:14: ')' expected."
 
 
 - name:		syntaxerr_while3
@@ -729,7 +729,7 @@
 	  i += 1;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:3: '{' expected."
+  errormsg:	"test-stmt-parser.plogic:3:3: '{' expected."
 
 
 - name:		syntaxerr_while4
@@ -740,7 +740,7 @@
 	  i += 1;
 	
   exception:	kwartz.SyntaxException
-  errormsg:	"2:15: '{' is not closed."
+  errormsg:	"test-stmt-parser.plogic:2:15: '{' is not closed."
 
 
 - name:		syntaxerr_while5
@@ -750,7 +750,7 @@
 	  print(i, "\n");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:11: expression syntax error."
+  errormsg:	"test-stmt-parser.plogic:2:11: expression syntax error."
 
 
 ###
@@ -764,7 +764,7 @@
 	  i += 1;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"4:10: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:4:10: ';' expected."
 
 
 - name:		syntaxerr_continue1
@@ -777,7 +777,7 @@
 	  }
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"5:13: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:5:13: ';' expected."
 
 
 ###
@@ -790,7 +790,7 @@
 	  _elem;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:8: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:8: ';' expected."
 
 
 - name:		syntaxerr_etag1
@@ -802,7 +802,7 @@
 	  _elem;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"4:8: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:4:8: ';' expected."
 
 
 - name:		syntaxerr_cont1
@@ -814,7 +814,7 @@
 	  _elem;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:8: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:3:8: ';' expected."
 
 
 - name:		syntaxerr_elem1
@@ -826,7 +826,7 @@
 	  _elem
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"5:8: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:5:8: ';' expected."
 
 
 ###
@@ -836,7 +836,7 @@
 	  _element(foo)
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:16: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:16: ';' expected."
 
 
 - name:		syntaxerr_element2
@@ -845,7 +845,7 @@
 	  _element("foo");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:12: element name expected."
+  errormsg:	"test-stmt-parser.plogic:2:12: element name expected."
 
 
 - name:		syntaxerr_content1
@@ -854,7 +854,7 @@
 	  _content(foo)
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:16: ';' expected."
+  errormsg:	"test-stmt-parser.plogic:2:16: ';' expected."
 
 
 - name:		syntaxerr_content2
@@ -863,5 +863,5 @@
 	  _content("foo");
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:12: element name expected."
+  errormsg:	"test-stmt-parser.plogic:2:12: element name expected."
 

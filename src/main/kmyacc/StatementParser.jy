@@ -117,7 +117,7 @@ _exit_block_   :   {  _expected = 0;  exitBlock(); }
 in      : '='
         | IDENT  {
 	        if (! $1.getValue().equals("in")) {
-	              throw new SyntaxException("'in' or '=' expected.", $1.getLinenum(), $1.getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", _filename, $1.getLinenum(), $1.getColumn());
 		}
           }
         ;

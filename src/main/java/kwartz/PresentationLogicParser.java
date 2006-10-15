@@ -68,8 +68,8 @@ public class PresentationLogicParser extends Parser {
   
   	//protected void setYylval(Object val) { yylval = val; }
   
-  	protected Scanner createScanner(String input) {
-  		Scanner scanner = super.createScanner(input);
+  	protected Scanner createScanner(String input, String filename) {
+  		Scanner scanner = super.createScanner(input, filename);
   		scanner.setRulesetMode(true);    // set ruleset mode on 
   		return scanner;
   	}
@@ -620,7 +620,7 @@ public class PresentationLogicParser extends Parser {
           case 72:
 {
 	        if (! ((ParseInfo)yyastk[yysp-(1-1)]).getValue().equals("in")) {
-	              throw new SyntaxException("'in' or '=' expected.", ((ParseInfo)yyastk[yysp-(1-1)]).getLinenum(), ((ParseInfo)yyastk[yysp-(1-1)]).getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", _filename, ((ParseInfo)yyastk[yysp-(1-1)]).getLinenum(), ((ParseInfo)yyastk[yysp-(1-1)]).getColumn());
 		}
           } break;
           case 73:

@@ -219,7 +219,7 @@ _exit_block_   :   {  _expected = 0;  exitBlock(); }
 in      : '='
         | IDENT  {
 	        if (! $1.getValue().equals("in")) {
-	              throw new SyntaxException("'in' or '=' expected.", $1.getLinenum(), $1.getColumn());
+	              throw new SyntaxException("'in' or '=' expected.", _filename, $1.getLinenum(), $1.getColumn());
 		}
           }
         ;
@@ -298,8 +298,8 @@ args     :  args ',' expr    { $1.add($3); $$ = $1; }
 
 	//protected void setYylval(Object val) { yylval = val; }
 
-	protected Scanner createScanner(String input) {
-		Scanner scanner = super.createScanner(input);
+	protected Scanner createScanner(String input, String filename) {
+		Scanner scanner = super.createScanner(input, filename);
 		scanner.setRulesetMode(true);    // set ruleset mode on 
 		return scanner;
 	}

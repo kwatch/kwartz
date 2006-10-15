@@ -422,9 +422,9 @@
     php:   KwartzConvertionException
     java:  kwartz.ConvertException
   errormsg*:
-    ruby:  ":2: '<div>' is not closed."
-    php:   ":2: '<div>' is not closed."
-    java:  ":2: '<div>' is not closed."
+    ruby:  "test-converter.html:2: '<div>' is not closed."
+    php:   "test-converter.html:2: '<div>' is not closed."
+    java:  "test-converter.html:2: '<div>' is not closed."
 
 
 ### ----------------------------------------
@@ -1733,7 +1733,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":5: 'replace_element_with_element:list': element not found."
+    java:	"test-converter.html:5: 'replace_element_with_element:list': element not found."
 
 
 ###
@@ -1909,7 +1909,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":5: 'elseif:status=='warning'': previous is not if-statement nor elseif-statement."
+    java:	"test-converter.html:5: 'elseif:status=='warning'': previous is not if-statement nor elseif-statement."
 
 
 ###
@@ -2009,7 +2009,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":5: 'else:': previous is not if-statement nor elseif-statement."
+    java:	"test-converter.html:5: 'else:': previous is not if-statement nor elseif-statement."
 
 
 ###
@@ -2209,7 +2209,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":1: 'foreach:item.name=list': invalid directive syntax."
+    java:	"test-converter.html:1: 'foreach:item.name=list': invalid directive syntax."
 
 
 ###
@@ -2314,7 +2314,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":1: 'list:item.name=list': invalid directive syntax."
+    java:	"test-converter.html:1: 'list:item.name=list': invalid directive syntax."
 
 
 ###
@@ -2355,7 +2355,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":2: 'vlaue:x': unknown directive."
+    java:	"test-converter.html:2: 'vlaue:x': unknown directive."
 
 
 ###
@@ -2368,7 +2368,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	":2: 'value:x': not available with other directive 'mark' at one time."
+    java:	"test-converter.html:2: 'value:x': not available with other directive 'mark' at one time."
 
 
 ###
@@ -3231,7 +3231,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	':3: @{expr,}@: embedded expression has syntax error.'
+    java:	'test-converter.html:3: @{expr,}@: embedded expression has syntax error.'
 
 
 ###
@@ -3247,7 +3247,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	':3: @{expr,}@: embedded expression has syntax error.'
+    java:	'test-converter.html:3: @{expr,}@: embedded expression has syntax error.'
 
 
 ###
@@ -3263,7 +3263,7 @@
   exception*:
     java:	kwartz.ConvertException
   errormsg*:
-    java:	':3: @{expr,}@: embedded expression has syntax error.'
+    java:	'test-converter.html:3: @{expr,}@: embedded expression has syntax error.'
  
  
  

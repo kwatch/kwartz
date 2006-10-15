@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class Scanner {
 
+	private String _filename;
 	private String _input;
 	private int    _input_length;
 	private int    _linenum = 1;
@@ -52,12 +53,16 @@ public class Scanner {
 		_is_ruleset = is_ruleset;
 	}
 
-
+	
 	public Scanner(String input) {
-		if (input == null)
-			input = "";
-		_input = input;
-		_input_length = input.length();
+		this(input, null);
+	}
+
+
+	public Scanner(String input, String filename) {
+		_filename = filename;
+		_input = input == null ? "" : input;
+		_input_length = _input.length();
 		// init
 		getChar();
 	}
@@ -110,7 +115,7 @@ public class Scanner {
 
 
 	protected LexicalException error(String message, int linenum, int column) {
-		return new LexicalException(message, linenum, column);
+		return new LexicalException(message, _filename, linenum, column);
 	}
 	
 	

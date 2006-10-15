@@ -228,6 +228,8 @@ class HandlerHelper {
 
 
 public class BaseHandler implements Handler {
+	
+	String  _filename;
 	List    _rulesets;
 	Map     _ruleset_table = new HashMap();
 	Map     _elem_info_table = new HashMap();
@@ -236,7 +238,8 @@ public class BaseHandler implements Handler {
 	String  _even = "'even'";
 	String  _odd  = "'odd'";
 
-	public BaseHandler(List rulesets, Map properties) {
+	public BaseHandler(List rulesets, String filename, Map properties) {
+		_filename = filename;
 		_rulesets = rulesets;
 		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
 			Ast.Ruleset ruleset = (Ast.Ruleset)it.next();
@@ -258,8 +261,16 @@ public class BaseHandler implements Handler {
 		}
 	}
 	
+	public BaseHandler(List ruleset, String filename) {
+		this(ruleset, filename, null);
+	}
+	
+	public BaseHandler(List ruleset, Map properties) {
+		this(ruleset, null, properties);
+	}
+	
 	public BaseHandler(List rulesets) {
-		this(rulesets, null);
+		this(rulesets, null, null);
 	}
 
 	private void _registerRuleset(String key, Ast.Ruleset ruleset) {
@@ -281,7 +292,7 @@ public class BaseHandler implements Handler {
 		Ast.Expression dattr_value_expr = attr_info.getValue(dattr_name);
 		if (dattr_value_expr != null) {
 			//if (! (dattr_value_expr instanceof Ast.StringLiteral))
-			//	throw HandlerHelper.convertError(_dattr+"=\"...\": directive cannot contain '@{...}@'.", tag_info.getLinenum());
+			//	throw _convertError(_dattr+"=\"...\": directive cannot contain '@{...}@'.", tag_info.getLinenum());
 			if (dattr_value_expr instanceof Ast.StringLiteral)
 				dattr_value = ((Ast.StringLiteral)dattr_value_expr).getValue();
 		}
@@ -294,7 +305,7 @@ public class BaseHandler implements Handler {
 			}
 			else {
 				if (! Pattern.matches("\\A\\w+:.*", dattr_value))
-					throw HandlerHelper.convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
+					throw _convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
 				attr_info.remove(dattr_name);
 			}
 			tag_info.rebuildTagText(attr_info);
@@ -339,7 +350,7 @@ public class BaseHandler implements Handler {
 			String d_str = strs[i].trim();
 			Matcher m = pattern.matcher(d_str);
 			if (! m.find()) {
-				throw HandlerHelper.convertError("'"+d_str+"': invalid directive pattern.", stag_info.getLinenum());
+				throw _convertError("'"+d_str+"': invalid directive pattern.", stag_info.getLinenum());
 			}
 			String d_name = m.group(1);   // directive_name
 			String d_arg  = m.group(2);   // directive_arg
@@ -347,11 +358,11 @@ public class BaseHandler implements Handler {
 			if (d_code == D_ATTR || d_code == D_APPEND || d_code == D_SET) {
 				boolean handled = handle(d_name, d_arg, d_str, elem_info, stmt_list);
 				if (! handled)
-					throw HandlerHelper.convertError("'"+d_str+"': unknown directive.", stag_info.getLinenum());
+					throw _convertError("'"+d_str+"': unknown directive.", stag_info.getLinenum());
 			}
 			else {
 				if (directive_name != null)
-					throw HandlerHelper.convertError("'"+d_str+"': not available with other directive '"+directive_name+"' at one time.", stag_info.getLinenum());
+					throw _convertError("'"+d_str+"': not available with other directive '"+directive_name+"' at one time.", stag_info.getLinenum());
 				directive_name = d_name;
 				directive_arg  = d_arg;
 				directive_str  = d_str;
@@ -368,7 +379,7 @@ public class BaseHandler implements Handler {
 		if (directive_name != null) {
 			boolean handled = handle(directive_name, directive_arg, directive_str, elem_info, stmt_list);
 			if (! handled)
-				throw HandlerHelper.convertError("'"+directive_str+"': unknown directive.", stag_info.getLinenum());	
+				throw _convertError("'"+directive_str+"': unknown directive.", stag_info.getLinenum());	
 		}
 
 		// expand elem_info and append to stmt_list
@@ -406,7 +417,7 @@ public class BaseHandler implements Handler {
 		case D_ID:
 		case D_MARK:
 			if (! Pattern.matches("\\A\\w+\\z", d_arg))
-				throw HandlerHelper.convertError("'"+d_str+"': invalid marking name.", stag_linenum);
+				throw _convertError("'"+d_str+"': invalid marking name.", stag_linenum);
 			String name = d_arg;
 			Ast.Ruleset ruleset = (Ast.Ruleset)_ruleset_table.get("#"+name); 
 			if (ruleset != null)
@@ -414,7 +425,7 @@ public class BaseHandler implements Handler {
 			if (_elem_info_table.containsKey(name)) {
 				int previous_linenum = ((ElementInfo)_elem_info_table.get(name)).getStagInfo().getLinenum();
 				String msg = "'"+d_str+"': id '"+name+"' is already used at line "+previous_linenum+".";
-				throw HandlerHelper.convertError(msg, stag_linenum);
+				throw _convertError(msg, stag_linenum);
 			}
 			_elem_info_table.put(name, elem_info);
 			return true;
@@ -444,7 +455,7 @@ public class BaseHandler implements Handler {
 			Pattern pattern = Pattern.compile("\\A(\\w+(?::\\w+)?)[:=](.*)\\z");
 			m = pattern.matcher(d_arg);
 			if (! m.find())
-				throw HandlerHelper.convertError("'"+d_str+"': invalid attr pattern.", stag_linenum);
+				throw _convertError("'"+d_str+"': invalid attr pattern.", stag_linenum);
 			String aname = m.group(1), avalue = m.group(2);
 			expr = HandlerHelper.parseAndEscapeExpression(d_name, avalue, stag_linenum);
 			elem_info.getAttrInfo().set(aname, expr, null);
@@ -461,7 +472,7 @@ public class BaseHandler implements Handler {
 			name = d_arg;
 			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
 			if (elem_info2 == null)
-				throw HandlerHelper.convertError("'"+d_str+"': element not found.", stag_linenum);
+				throw _convertError("'"+d_str+"': element not found.", stag_linenum);
 			boolean replace_content = d_code == D_REPLACE3 || d_code == D_REPLACE4;
 			boolean with_content    = d_code == D_REPLACE2 || d_code == D_REPLACE4;
 			if (replace_content)
@@ -493,7 +504,7 @@ public class BaseHandler implements Handler {
 			if (stmt_list.size() > 0)
 				stmt = (Ast.Statement)stmt_list.get(stmt_list.size()-1);
 			if (stmt == null || stmt.getToken() != Token.IF)
-				throw HandlerHelper.convertError("'"+d_str+"': previous is not if-statement nor elseif-statement.", stag_linenum);
+				throw _convertError("'"+d_str+"': previous is not if-statement nor elseif-statement.", stag_linenum);
 			Ast.IfStatement if_stmt = (Ast.IfStatement)stmt;
 			else_stmt = if_stmt.getElseStatement();
 			while (else_stmt != null && else_stmt.getToken() == Token.IF) {
@@ -501,7 +512,7 @@ public class BaseHandler implements Handler {
 				else_stmt = if_stmt.getElseStatement();
 			}
 			if (else_stmt != null)
-				throw HandlerHelper.convertError("'"+d_str+"': previous if-statement already takes other statement.", stag_linenum);
+				throw _convertError("'"+d_str+"': previous if-statement already takes other statement.", stag_linenum);
 			stmt = new Ast.BlockStatement(elem_info.getLogic());
 			if (d_code == D_ELSEIF) {
 				expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
@@ -534,7 +545,7 @@ public class BaseHandler implements Handler {
 			Pattern pat = Pattern.compile("\\A([a-zA-Z_]\\w*)[:=](.+)\\z");
 			m = pat.matcher(d_arg);
 			if (! m.find())
-				throw HandlerHelper.convertError("'"+d_str+"': invalid directive syntax.", stag_linenum);
+				throw _convertError("'"+d_str+"': invalid directive syntax.", stag_linenum);
 			Ast.Expression item_expr = HandlerHelper.parseExpression(m.group(1), stag_linenum);
 			Ast.Expression loop_expr = HandlerHelper.parseExpression(m.group(2), stag_linenum);
 			String counter = indicator != 0 ? m.group(1) + "_ctr" : null;
@@ -842,7 +853,7 @@ public class BaseHandler implements Handler {
 			String name = ((Ast.ExpandStatement)stmt).getName();
 			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
 			if (elem_info2 == null)
-				throw HandlerHelper.convertError("element '"+name+"' is not found.", stmt.getLinenum());
+				throw _convertError("element '"+name+"' is not found.", stmt.getLinenum());
 			boolean content_only2 = t == Token.CONTENT;
 			return expandElementInfo(elem_info2, content_only2);
 		default:
@@ -882,11 +893,15 @@ public class BaseHandler implements Handler {
 	public Ast.Statement extract(String elem_name, boolean content_only) throws ConvertException {
 		ElementInfo elem_info = (ElementInfo)_elem_info_table.get(elem_name);
 		if (elem_info == null) {
-			throw HandlerHelper.convertError("element '"+elem_name+"' not found.", elem_info.getStagInfo().getLinenum());
+			throw _convertError("element '"+elem_name+"' not found.", elem_info.getStagInfo().getLinenum());
 		}
 		return expandElementInfo(elem_info, content_only);
 	}
 
+	
+	private ConvertException _convertError(String message, int linenum) {
+		return new ConvertException(message, _filename, linenum);
+	}
 
 	
 	public static void main(String[] args) throws Exception {
@@ -955,7 +970,7 @@ public class BaseHandler implements Handler {
 
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
-		Handler handler = new BaseHandler(rulesets, null);
+		Handler handler = new BaseHandler(rulesets);
 		TextConverter converter = new TextConverter(handler);
 		List stmt_list = converter.convert(pdata);
 		for (Iterator it = stmt_list.iterator(); it.hasNext(); ) {

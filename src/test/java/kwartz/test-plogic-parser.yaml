@@ -499,7 +499,7 @@
     java:	kwartz.SemanticException
   errormsg*:
     ruby:	file 'foobar.plogic' is not found.
-    java:	'2:1: foobar.plogic (No such file or directory)'
+    java:	'test-plogic-parser.plogic:2:1: foobar.plogic (No such file or directory)'
 
 
 ###
@@ -560,7 +560,7 @@
 	  value: x;
 	)
   exception:	kwartz.SyntaxException
-  errormsg:	"1:6: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:1:6: '{' expected."
 
 
 - name:		syntaxerr_ruleset2
@@ -571,7 +571,7 @@
 	    _cont;
 	  }
   exception:	kwartz.SyntaxException
-  errormsg:	"1:6: '{' is not closed."
+  errormsg:	"test-plogic-parser.plogic:1:6: '{' is not closed."
 
 
 ###
@@ -583,7 +583,7 @@
 	    _cont;
 	  }
   exception:	kwartz.SyntaxException
-  errormsg:	"1:7: selector expected."
+  errormsg:	"test-plogic-parser.plogic:1:7: selector expected."
 
 
 - name:		syntaxerr_selector2
@@ -595,8 +595,8 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  #errormsg:	"4:5: '{' expected."
-  errormsg:	"4:5: compound selector is not available."
+  #errormsg:	"test-plogic-parser.plogic:4:5: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:4:5: compound selector is not available."
 
 
 - name:		syntaxerr_selector3
@@ -608,8 +608,8 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  #errormsg:	"4:12: '{' expected."
-  errormsg:	"4:12: compound selector is not available."
+  #errormsg:	"test-plogic-parser.plogic:4:12: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:4:12: compound selector is not available."
 
 
 - name:		syntaxerr_selector4
@@ -619,7 +619,7 @@
 	}
 
   exception:	kwartz.SyntaxException
-  errormsg:	"1:1: syntax error"
+  errormsg:	"test-plogic-parser.plogic:1:1: syntax error"
 
 
 ###
@@ -629,7 +629,7 @@
 	  stag: x
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: ';' expected."
 
 
 - name:		syntaxerr_cont1
@@ -638,7 +638,7 @@
 	  cont: x
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: ';' expected."
 
 
 - name:		syntaxerr_etag1
@@ -649,7 +649,7 @@
 	  }
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: ';' expected."
 
 
 - name:		syntaxerr_elem1
@@ -658,7 +658,7 @@
 	  elem: x
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: ';' expected."
 
 
 ###
@@ -669,7 +669,7 @@
 	  attr: 'class' klass; 
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:11: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:11: ';' expected."
 
 
 - name:		syntaxerr_value2
@@ -678,7 +678,7 @@
 	  value: x[1,];
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:13: expression syntax error."
+  errormsg:	"test-plogic-parser.plogic:2:13: expression syntax error."
 
 
 ###
@@ -689,7 +689,7 @@
 	  attrs: 'class' klass 
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:23: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:3:23: ';' expected."
 
 
 - name:		syntaxerr_attrs2
@@ -699,7 +699,7 @@
 	  attrs: class=klass; 
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:10: attribute name expected."
+  errormsg:	"test-plogic-parser.plogic:3:10: attribute name expected."
 
 
 - name:		syntaxerr_attrs3
@@ -709,7 +709,7 @@
 	  attrs: "class" klass(x,); 
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:26: expression syntax error."
+  errormsg:	"test-plogic-parser.plogic:3:26: expression syntax error."
 
 
 - name:		syntaxerr_attrs4
@@ -719,7 +719,7 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:3: 'attr' may be typo of 'attrs'."
+  errormsg:	"test-plogic-parser.plogic:2:3: 'attr' may be typo of 'attrs'."
 
 
 ###
@@ -729,7 +729,7 @@
 	  append: flag ? ' checked="checked"' : ''
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:43: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:43: ';' expected."
 
 
 - name:		syntaxerr_append2
@@ -738,7 +738,7 @@
 	  append: flag ? " checked="checked\"" : '';
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:29: expression syntax error."
+  errormsg:	"test-plogic-parser.plogic:2:29: expression syntax error."
 
 
 ###
@@ -748,7 +748,7 @@
 	  remove:  'foo', "bar"
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:24: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:2:24: ';' expected."
 
 
 - name:		syntaxerr_remove2
@@ -757,7 +757,7 @@
 	  append: 'foo', "bar",
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"3:1: expression syntax error."
+  errormsg:	"test-plogic-parser.plogic:3:1: expression syntax error."
 
 
 ###
@@ -767,8 +767,8 @@
 	  logic: {
 
   exception:	kwartz.SyntaxException
-  #errormsg:	"2:10: '{' is not closed."
-  errormsg:	"1:6: '{' is not closed."
+  #errormsg:	"test-plogic-parser.plogic:2:10: '{' is not closed."
+  errormsg:	"test-plogic-parser.plogic:1:6: '{' is not closed."
   
 
 - name:		syntaxerr_logic2
@@ -777,7 +777,7 @@
 	  logic: val;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: '{' expected."
   
 
 - name:		syntaxerr_before1
@@ -786,8 +786,8 @@
 	  before: {
 
   exception:	kwartz.SyntaxException
-  #errormsg:	"2:11: '{' is not closed."
-  errormsg:	"1:6: '{' is not closed."
+  #errormsg:	"test-plogic-parser.plogic:2:11: '{' is not closed."
+  errormsg:	"test-plogic-parser.plogic:1:6: '{' is not closed."
   
 
 - name:		syntaxerr_before2
@@ -796,7 +796,7 @@
 	  before: val;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:11: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:2:11: '{' expected."
   
 
 - name:		syntaxerr_after1
@@ -805,8 +805,8 @@
 	  after: {
 
   exception:	kwartz.SyntaxException
-  #errormsg:	"2:10: '{' is not closed."
-  errormsg:	"1:6: '{' is not closed."
+  #errormsg:	"test-plogic-parser.plogic:2:10: '{' is not closed."
+  errormsg:	"test-plogic-parser.plogic:1:6: '{' is not closed."
 
 
 - name:		syntaxerr_after2
@@ -815,7 +815,7 @@
 	  after: val;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"2:10: '{' expected."
+  errormsg:	"test-plogic-parser.plogic:2:10: '{' expected."
   
 
 
@@ -827,7 +827,7 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"1:21: ';' expected."
+  errormsg:	"test-plogic-parser.plogic:1:21: ';' expected."
 
 
 - name:		syntaxerr_command2
@@ -837,7 +837,7 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"1:9: syntax error"
+  errormsg:	"test-plogic-parser.plogic:1:9: syntax error"
 
 
 - name:		syntaxerr_command3
@@ -847,7 +847,7 @@
 	  value: x;
 	}
   exception:	kwartz.SyntaxException
-  errormsg:	"1:1: '@inport': unknown command."
+  errormsg:	"test-plogic-parser.plogic:1:1: '@inport': unknown command."
 
 
 
@@ -872,8 +872,8 @@
     ruby:	Kwartz::SyntaxError
     java:	kwartz.SyntaxException
   errormsg*:
-    ruby:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
-    java:	"9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
+    ruby:	"test-plogic-parser.plogic:9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
+    java:	"test-plogic-parser.plogic:9:3: '}': column of closing curly bracket is not matched with of selector '#bar' starting at line 3, column 1."
 
 
 - name:		rcurly2
@@ -893,8 +893,8 @@
     ruby:	Kwartz::SyntaxError
     java:	kwartz.SyntaxException
   errormsg*:
-    ruby:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
-    java:   	"8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
+    ruby:   	"test-plogic-parser.plogic:8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
+    java:   	"test-plogic-parser.plogic:8:5: '}': column of closing curly bracket is not matched with of property 'logic' starting at line 4, column 3."
 
 
 - name:		rcurly3

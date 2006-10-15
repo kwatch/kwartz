@@ -117,13 +117,14 @@ abstract public class Parser implements Token {
 	// -----------------------
 
 	
+	String  _filename;
   	Scanner _scanner;
   	int     _token;
   	int     _expected;
   	Stack   _block_stack = new Stack();
   	Object  _prev_yylval;
   	ParseException _error;
-  	NodeFactory _f = new NodeFactory();
+  	NodeFactory _f;
   	  
 
   	public int yylex() {
@@ -147,8 +148,22 @@ abstract public class Parser implements Token {
 
   	
   	public Object parse(String input) throws ParseException {
-  		_scanner = createScanner(input);
-  		int result = yyparse();
+  		return parse(input, null);
+  	}
+  	
+  	public Object parse(String input, String filename) throws ParseException {
+  		_filename = filename;
+  		_scanner = createScanner(input, filename);
+  		_f = new NodeFactory(filename);
+  		int result = -1;
+  		try {
+  			result = yyparse();
+  		}
+  		catch (ParseException ex) {
+  			if (ex.getFilename() == null)
+  				ex.setFilename(_filename);
+  			throw ex;
+  		}
   		
   		if (result != 0) {
   			if (_error == null)
@@ -226,7 +241,7 @@ abstract public class Parser implements Token {
   			}
   			System.err.println("]");
   		}
-  		_error = new SyntaxException(msg, linenum, column);
+  		_error = new SyntaxException(msg, _filename, linenum, column);
   		throw _error;
   	}
   
@@ -256,14 +271,19 @@ abstract public class Parser implements Token {
   	}
   	
   	
-  	protected Scanner createScanner(String input) {
-  		return new Scanner(input);
+  	protected Scanner createScanner(String input, String filename) {
+  		return new Scanner(input, filename);
   	}
   
 
   	protected List handleCommand(String command, String arg, ParseInfo info) throws ParseException {
   		return handleCommand(command, arg, info.getLinenum(), info.getColumn());
   	}
+  	
+  	
+  	
+  	
+  	
   	
   	protected List handleCommand(String command, String arg, int linenum, int column) throws ParseException {
   		if (command.equals("import")) {
@@ -275,10 +295,10 @@ abstract public class Parser implements Token {
   				return rulesets;
   			}
   			catch (Exception ex) {
-  				throw new SemanticException(ex.getMessage(), linenum, column);
+  				throw new SemanticException(ex.getMessage(), _filename, linenum, column);
   			}
   		}
-  		throw new SyntaxException("'@"+command+"': unknown command.", linenum, column);
+  		throw new SyntaxException("'@"+command+"': unknown command.", _filename, linenum, column);
   	}
   	
 

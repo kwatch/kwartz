@@ -25,7 +25,7 @@ public class ConverterTest extends TestCase {
 	}
 	
 	
-	static String __testname_pattern = null; //"converter_delspan\\d+";
+	static String __testname_pattern = null; // "converter_directive_foreach\\d";
 	
 	public void _test(String name) throws Exception {
 		if (__testname_pattern != null && !Pattern.matches(__testname_pattern, name))
@@ -40,13 +40,15 @@ public class ConverterTest extends TestCase {
 		String errormsg = (String)data.get("errormsg");
 		Map properties = (Map)data.get("properties");
 		//
+		String filename = "test-converter.plogic";
 		Parser parser = new PresentationLogicParser();
-		List rulesets = (List)parser.parse(plogic);
+		List rulesets = (List)parser.parse(plogic, filename);
 		Handler handler = new BaseHandler(rulesets, properties);
 		Converter converter = new TextConverter(handler, properties);
 		//
+		filename = "test-converter.html";
 		if (Pattern.matches(".*_fetch\\d+$", name)) {
-			((TextConverter)converter)._reset(pdata, 1);
+			((TextConverter)converter)._reset(pdata, filename, 1);
 			TagInfo tag_info;
 			StringBuffer sb = new StringBuffer();
 			while ((tag_info = ((TextConverter)converter)._fetch()) != null) {
@@ -58,7 +60,7 @@ public class ConverterTest extends TestCase {
 			assertEquals(expected, sb.toString());
 		}
 		else if (exception == null) {
-			List stmts = converter.convert(pdata);
+			List stmts = converter.convert(pdata, filename);
 			StringBuffer sb = new StringBuffer();
 			for (Iterator it = stmts.iterator(); it.hasNext(); ) {
 				Ast.Statement stmt = (Ast.Statement)it.next();
@@ -68,7 +70,7 @@ public class ConverterTest extends TestCase {
 		}
 		else {
 			try {
-				converter.convert(pdata);
+				converter.convert(pdata, filename);
 				fail("'"+exception+"' is expected but not thrown.");
 			}
 			catch (Exception ex) {

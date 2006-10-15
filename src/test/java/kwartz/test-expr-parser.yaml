@@ -133,15 +133,15 @@
 	  a
 	  b
 
-- name:		relational7
+- name:		relational9
   desc:		relational ops are nonassoc
   input:	a < b < c
   exception*:
     ruby:	Kwartz::SyntaxError
     java:	kwartz.SyntaxException
   errormsg*:
-    ruby:	"1:7: parse error on value \"<\" (\"<\")"
-    java:	"1:7: syntax error"
+    ruby:	"test-expr-parser.plogic:1:7: parse error on value \"<\" (\"<\")"
+    java:	"test-expr-parser.plogic:1:7: syntax error"
 
   
 ###
@@ -498,7 +498,7 @@
 	    .prop
 	  z
  
-- name:		assignment14
+- name:		assignment19
   desc:		invalid lhs
   inputs:
     - x + y  = z
@@ -515,8 +515,8 @@
     ruby:	Kwartz::SemanticError
     java:	kwartz.SemanticException
   errormsg*:
-    ruby:	"1:8: =: invalid left-side value."
-    java:	"1:8: =: invalid left-side value."
+    ruby:	"test-expr-parser.plogic:1:8: =: invalid left-side value."
+    java:	"test-expr-parser.plogic:1:8: =: invalid left-side value."
     
 
 

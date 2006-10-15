@@ -34,9 +34,10 @@ public class StatementParserTest extends TestCase {
 		String exception = (String)data.get("exception");
 		String errormsg = (String)data.get("errormsg");
 		//
-		Parser parser = new StatementParser();		
+		Parser parser = new StatementParser();
+		String filename = "test-stmt-parser.plogic";
 		if (exception == null) {
-			List stmts = (List)parser.parse(input);
+			List stmts = (List)parser.parse(input, filename);
 			StringBuffer sb = new StringBuffer();
 			for (Iterator it = stmts.iterator(); it.hasNext(); ) {
 				Ast.Statement stmt = (Ast.Statement)it.next();
@@ -47,7 +48,7 @@ public class StatementParserTest extends TestCase {
 		}
 		else {
 			try {
-				parser.parse(input);
+				parser.parse(input, filename);
 				fail("'"+exception+"' is expected but not thrown.");
 			}
 			catch (Exception ex) {
