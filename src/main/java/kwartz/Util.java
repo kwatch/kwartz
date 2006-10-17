@@ -15,6 +15,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.io.File;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
 import java.util.ArrayList;
@@ -172,6 +174,22 @@ public class Util {
 				ctr++;
 		}
 		return ctr;
+	}
+	
+	/**
+	 * quote string by single quotation
+	 */
+	public static String quote(String str) {
+		StringBuffer sb = new StringBuffer();
+		sb.append('\'');
+		for (int i = 0, n = str.length(); i < n; i++) {
+			char ch = str.charAt(i);
+			if (ch == '\'' || ch == '\\')
+				sb.append(ch);
+			sb.append(ch);
+		}
+		sb.append('\'');
+		return sb.toString();
 	}
 	
 	
@@ -536,6 +554,19 @@ public class Util {
 		}
 		return map;
 	}
+	
+	
+	/**
+	 * copy map
+	 */
+	public static Map copy(Map map) {
+		Map map2 = new HashMap();
+		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+			Entry entry = (Entry)it.next();
+			map2.put(entry.getKey(), entry.getValue());
+		}
+		return map2;
+	}
 
 
 	/**
@@ -560,6 +591,79 @@ public class Util {
 	public static String capitalize(String str) {
 		return Character.toString(str.charAt(0)).toUpperCase() + str.substring(1);
 	}
+	
+	
+	/**
+	 * compile string into regex pattern with caching
+	 */
+	public static Pattern pattern(String pattern_str) {
+		Pattern pat = (Pattern)__pattern_cache.get(pattern_str);
+		if (pat == null) {
+			pat = Pattern.compile(pattern_str);
+			__pattern_cache.put(pattern_str, pat);
+		}
+		return pat;
+	}
+	private static HashMap __pattern_cache = new HashMap();
 
+
+	/**
+	 * get matcher object
+	 */
+	public static Matcher matcher(String pattern_str, String target) {
+		Pattern pat = Util.pattern(pattern_str);
+		return pat.matcher(target);
+	}
+	
+	
+	/**
+	 * matching regex pattern with string 
+	 */
+	public static boolean matches(String pattern_str, String target) {
+		Matcher m = Util.matcher(pattern_str, target);
+		return m.find();
+	}
+
+	
+	
+	/**
+	 * caller information.
+	 */
+	public static StackTraceElement caller(int i) {
+		StackTraceElement info = null;
+		try {
+			throw new Exception();
+		}
+		catch (Exception ex) {
+			info = ex.getStackTrace()[i+1];
+		}
+		return info;
+	}
+	
+	
+	/**
+	 * caller information. equals to Util.caller(1)
+	 */
+	public static StackTraceElement caller() {
+		return Util.caller(1+1);
+	}
+	
+	
+	/**
+	 * current method name
+	 */
+	public static String currentMethodName() {
+		return Util.caller(0+1).getMethodName();
+	}
+	
+	
+	/**
+	 * method name of caller
+	 */
+	public static String callerMethodName() {
+		return Util.caller(1+1).getMethodName();
+	}
+	
+	
 
 }

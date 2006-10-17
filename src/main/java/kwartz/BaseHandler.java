@@ -203,7 +203,7 @@ class HandlerHelper {
 					expr = Ast.Helper.wrapWithFunction(expr, "E");
 					break;
 				case 1:
-					/// nothing
+					expr = Ast.Helper.wrapWithFunction(expr, "X");
 					break;
 				case 2:
 					/// debug: report expression value into stderr
@@ -546,7 +546,7 @@ public class BaseHandler implements Handler {
 			m = pat.matcher(d_arg);
 			if (! m.find())
 				throw _convertError("'"+d_str+"': invalid directive syntax.", stag_linenum);
-			Ast.Expression item_expr = HandlerHelper.parseExpression(m.group(1), stag_linenum);
+			Ast.VariableLiteral item_expr = (Ast.VariableLiteral)HandlerHelper.parseExpression(m.group(1), stag_linenum);
 			Ast.Expression loop_expr = HandlerHelper.parseExpression(m.group(2), stag_linenum);
 			String counter = indicator != 0 ? m.group(1) + "_ctr" : null;
 			String toggle  = indicator <  0 ? m.group(1) + "_tgl" : null;

@@ -2,6 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.39 (2006-10-17)
+	- [enhance] JstlTranslator support
+
+: rev.38 (2006-10-15)
+	- [enhance] report filename when error occurred
+
 : rev.37 (2006-10-14)
 	- [enhance] error handling improved
 

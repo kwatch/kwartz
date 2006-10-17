@@ -1,0 +1,489 @@
+### $Date$
+### $Release$
+### $Copyright$
+
+### ----------------------------------------
+
+###
+- name:		literal_var1
+  input:	'var1'
+  expected*:
+    jstl:	var1
+    velocity:	$var1
+
+###
+- name:		literal_str1
+  input:	'"string\\nfoo\n"'
+  expected*:
+    jstl: |-
+	'string\\nfoo
+	'
+    velocity: |-
+	"string\\nfoo\n"
+
+###
+- name:		literal_int1
+  input:	'123'
+  expected*:
+    jstl:	'123'
+    velocity:	'123'
+
+###
+- name:		literal_float1
+  input:	'3.14159'
+  expected*:
+    jstl:	'3.14159'
+    velocity:	'3.14159'
+
+###
+- name:		literal_true1
+  input:	'true'
+  expected*:
+    jstl:	'true'
+    velocity:	'true'
+
+###
+- name:		literal_false1
+  input:	'false'
+  expected*:
+    jstl:	'false'
+    velocity:	'false'
+
+###
+- name:		literal_null1
+  input:	'null'
+  expected*:
+    jstl:	'null'
+    velocity:	'null'
+
+
+
+### ----------------------------------------
+
+###
+- name:		expr_arith1
+  input:	'a+b*c/(d-e)%f'
+  expected*:
+    jstl:	'a + b * c div (d - e) mod f'
+    velocity:	'$a + $b * $c / ($d - $e) % $f'
+
+###
+- name:		expr_arith2
+  input:	'(a+b)-(c+d)'
+  expected*:
+    jstl:	'a + b - (c + d)'
+    velocity:	'$a + $b - ($c + $d)'
+
+###
+- name:		expr_logical1
+  input:	'x&&y||!z'
+  expected*:
+    jstl:	'x and y or not z'
+    velocity:	'$x && $y || !$z'
+
+###
+- name:		expr_logical2
+  input:	'(!a||b) && !(x||!y)'
+  expected*:
+    jstl:	'(not a or b) and not (x or not y)'
+    velocity:	'(!$a or $b) && !($x || !$y)'
+
+###
+- name:		expr_relational1
+  input:	'a==1&&b!=2&&c<3&&d<=4&&e>5&&f>=6'
+  expected*:
+    jstl:	'a eq 1 and b ne 2 and c lt 3 and d le 4 and e gt 5 and f ge 6'
+    velocity:	'a==1&&b!=2&&c<3&&d<=4&&e>5&&f>=6'
+
+###
+- name:		expr_assignment1
+  input:	'a = 10'
+  exception*:
+    jstl:	kwartz.TranslateException
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    jstl:	'test-translator.plogic:1:3: assignment is available only as independent statement in JSTL.'
+    velocity:	'test-translator.plogic:1:3: assignment is available only as independent statement in Velocity.'
+
+###
+- name:		expr_method1
+  input:	'obj.method1()'
+  expected*:
+    velocity:	'$obj.method1()'
+  exception*:
+    jstl:	kwartz.TranslateException
+  errormsg*:
+    jstl:	'test-translator.plogic:1:4: method1(): method call is not available in JSTL.'
+
+###
+- name:		expr_property1
+  input:	'obj.prop1'
+  expected*:
+    jstl:	'obj.prop1'
+    velocity:	'$obj.prop1'
+
+###
+- name:		expr_property2
+  input:	'obj.prop1.prop2.prop3'
+  expected*:
+    jstl:	'obj.prop1.prop2.prop3'
+    velocity:	'$obj.prop1.prop2.prop3'
+
+###
+- name:		expr_property3
+  input:	'(a+b).prop1.prop2'
+  expected*:
+    jstl:	'(a + b).prop1.prop2'
+    #velocity:	'($a + $b).prop1.prop2'
+  exception*:
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    velocity:	'test-translator.plogic:1:10: only variable is available as receiver of property in Velocity.'
+
+###
+- name:		expr_index1
+  input:	"list[0]  +  hash[key]"
+  expected*:
+    jstl:	"list[0] + hash[key]"
+    velocity:	"$list[0] + $hash[$key]"
+
+###
+- name:		expr_index2
+  input:	"hash[:name]"
+  expected*:
+    jstl:	hash.name
+    velocity:	hash.name
+
+###
+- name:		expr_index3
+  input:	'hash["str"]'
+  expected*:
+    jstl:	hash['str']
+    velocity:	hash['str']
+    #jstl:	hash.str
+    #velocity:	hash.str
+
+###
+- name:		expr_conditional1
+  input:	'a>b?a:b'
+  expected*:
+    jstl11:	'a gt b ? a : b'
+  exception*:
+    jstl10:	kwartz.TranslateException
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    jstl10:	'test-translator.plogic:1:4: conditional operator is not available in JSTL 1.1.'
+    velocity:	'test-translator.plogic:1:4: conditional operator is not available in Velocity.'
+
+
+### ----------------------------------------
+
+###
+- name:		stmt_print1
+  input: |
+	print('<b>', x, "</b>\n");
+  expected*:
+    jstl10: |
+	<b><c:out value="${x}"/></b>
+    jstl11: |
+	<b>${x}</b>
+    velocity: |
+	<b>${x}</b>
+
+###
+- name:		stmt_print2
+  input: |
+	print('foo', 123, var, 3.14159, true, false, null, "\n");
+  expected*:
+    jstl10: |
+	foo123<c:out value="${var}"/>3.14159<c:out value="${true}"/><c:out value="${false}"/><c:out value="${null}"/>
+    jstl11: |
+	foo123${var}3.14159${true}${false}${null}
+    velocity: |
+	foo123${var}3.14159truefalsenull
+
+###
+- name:		stmt_print3
+  desc:		concat operator
+  input: |
+	print('mailto:'.+user_name.+'@mail.com',"\n");
+  expected*:
+    jstl10: |
+	mailto:<c:out value="${user_name}"/>@mail.com
+    jstl11: |
+	mailto:${user_name}@mail.com
+    velocity: |
+	mailto:${user_name}@mail.com
+
+###
+- name:		stmt_print4
+  desc:		conditional operator
+  input: |
+	print(a>b?a:b, "\n");
+  expected*:
+    jstl10: |
+	<c:choose><c:when test="${a gt b}"><c:out value="${a}"/></c:when><c:otherwise><c:out value="${b}"/></c:otherwise></c:choose>
+    jstl11: |
+	${a gt b ? a : b}
+    velocity: |
+	#if($a > $b)${a}#else${b}#end
+
+###
+- name:		stmt_print5
+  desc:		E() and X()
+  input: |
+	print(E(val), X(val), "\n");
+  expected*:
+    jstl10: |
+	<c:out value="${val}"/><c:out value="${val}" escapeXml="false"/>
+    jstl11: |
+	${val}<c:out value="${val}" escapeXml="false"/>
+    velocity: |
+	${util.escape($val)}
+
+###
+- name:		stmt_expr1
+  input: |
+	x = 1;
+  expected*:
+    jstl: |
+	<c:set var="x" value="${1}"/>
+    velocity: |
+	#set(x = 1)
+
+###
+- name:		stmt_expr2
+  input: |
+	x = 1;
+	a += x+1;
+	b -= x+1;
+	c *= x+1;
+	d /= x+1;
+	e %= x+1;
+	f .+= x+1;
+	g &&= x+1;
+	h ||= x+1;
+  expected*:
+    jstl: |
+	<c:set var="x" value="${1}"/>
+	<c:set var="a" value="${a + (x + 1)}"/>
+	<c:set var="b" value="${b - (x + 1)}"/>
+	<c:set var="c" value="${c * (x + 1)}"/>
+	<c:set var="d" value="${d div (x + 1)}"/>
+	<c:set var="e" value="${e mod (x + 1)}"/>
+	<c:set var="f" value="${f}${(x + 1)}"/>
+	<c:set var="g" value="${g and x + 1}"/>
+	<c:set var="h" value="${h or x + 1}"/>
+    velocity: |
+	#set($x = 1)
+	#set($a = $a + $x + 1)
+	#set($b = $b - ($x + 1))
+	#set($c = $c * ($x + 1))
+	#set($d = $d / ($x + 1))
+	#set($e = $e % ($x + 1))
+	#set($f = $f($x + 1))
+	#set($g = $g && $x + 1)
+	#set($h = $h || $x + 1)
+
+###
+- name:		stmt_expr3
+  desc:		conditional operator
+  input: |
+	val = x>=y?x+100:y-100;
+  expected*:
+    jstl10: |
+	<c:choose><c:when test="${x ge y}">
+	<c:set var="val" value="${x + 100}"/>
+	</c:when><c:otherwise>
+	<c:set var="val" value="${y - 100}"/>
+	</c:otherwise></c:choose>
+    jstl11: |
+	<c:set var="val" value="${x ge y ? x + 100 : y - 100}"/>
+    velocity: |
+	#if(x >= y)
+	#set(val = x + 100)
+	#else
+	#set(val = y - 100)
+	#end
+
+###
+- name:		stmt_if1
+  input: |
+	if (x == 0) {
+	  print("zero.\n");
+	}
+  expected*:
+    jstl: |
+	<c:if test="${x eq 0}">
+	zero.
+	</c:if>
+    velocity: |
+	#if(x == 0)
+	zero.
+	#end
+
+###
+- name:		stmt_elseif1
+  input: |
+	if (x > 0) {
+	  print("positive.\n");
+	} elseif (x < 0) {
+	  print("negative.\n");
+	} else if (x == 0) {
+	  print("zero.\n");
+	}
+  expected*:
+    jstl: |
+	<c:choose><c:when test="${x gt 0}">
+	positive.
+	</c:when><c:when test="${x lt 0}">
+	negative.
+	</c:when><c:when test="${x eq 0}">
+	zero.
+	</c:when></c:choose>
+    velocity: |
+	#if(x > 0)
+	positive.
+	#elseif(x < 0)
+	negative.
+	#elseif(x == 0)
+	zero.
+	#end
+
+###
+- name:		stmt_else1
+  input: |
+	if (x > 0) {
+	  print("positive.\n");
+	}
+	else {
+	  print("zero or negative.\n");
+	}
+  expected*:
+    jstl: |
+	<c:choose><c:when test="${x gt 0}">
+	positive.
+	</c:when><c:otherwise>
+	zero or negative.
+	</c:otherwise></c:choose>
+    velocity: |
+	#if(x > 0)
+	positive.
+	#else
+	negative.
+	#end
+
+###
+- name:		stmt_else2
+  input: |
+	if (x > 0) {
+	  print("positive.\n");
+	}
+	else if(x < 0) {
+	  print("negative.\n");
+	}
+	elseif (x == 0) {
+	  print("zero.\n");
+	}
+	else {
+	  print("oh, unknown number!\n");
+	}
+  expected*:
+    jstl: |
+	<c:choose><c:when test="${x gt 0}">
+	positive.
+	</c:when><c:when test="${x lt 0}">
+	negative.
+	</c:when><c:when test="${x eq 0}">
+	zero.
+	</c:when><c:otherwise>
+	oh, unknown number!
+	</c:otherwise></c:choose>
+    velocity: |
+	#if($x > 0)
+	positive.
+	#elseif($x < 0)
+	negative.
+	#elseif($x == 0)
+	zero.
+	#else
+	oh, unknown number!
+	#end
+
+###
+- name:		stmt_foreach1
+  input: |
+	foreach(item in list) {
+	  print("item.\n");
+	}
+  expected*:
+    jstl: |
+	<c:forEach var="item" items="${list}">
+	item.
+	</c:forEach>
+    velocity: |
+	#foreach($item in $list)
+	item.
+	#end
+
+###
+- name:		stmt_foreach2
+  properties:	{ loopctr: true }
+  input: |
+	i = 0;
+	print("<ul>\n");
+	foreach(item in list) {
+	  i += 1;
+	  print(" <li>i=", i, "</li>\n");
+	}
+	print("</ul>\n");
+  expected*:
+    jstl: |
+	<ul>
+	<c:forEach var="item" items="${list}" varStatus="item_loop">
+	<c:set var="i" value="${item_loop.count}"/>
+	 <li>i=${i}</li>
+	</c:forEach>
+	</ul>
+    velocity: |
+	<ul>
+	#foreach($item in $list)
+	#set(i = $velocityCount)
+	 <li>i=${i}</li>
+	#end
+	</ul>
+
+###
+- name:		stmt_while1
+  input: |
+	while(x >= 0) {
+	  print("positive.\n");
+	}
+  exception*:
+    jstl:	kwartz.TranslateException
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    jstl:	'test-translator.plogic:1:1: while statement is not available in JSTL.'
+    velocity:	'test-translator.plogic:1:1: while statement is not available in Velocity.'
+
+###
+- name:		stmt_break1
+  input: |
+	break;
+  exception*:
+    jstl:	kwartz.TranslateException
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    jstl:	'test-translator.plogic:1:1: break statement is not available in JSTL.'
+    velocity:	'test-translator.plogic:1:1: break statement is not available in Velocity.'
+
+###
+- name:		stmt_continue1
+  input: |
+	continue;
+  exception*:
+    jstl:	kwartz.TranslateException
+    velocity:	kwartz.TranslateException
+  errormsg*:
+    jstl:	'test-translator.plogic:1:1: continue statement is not available in JSTL.'
+    velocity:	'test-translator.plogic:1:1: continue statement is not available in Velocity.'

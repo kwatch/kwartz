@@ -57,6 +57,9 @@ public class Ast {
 			_column = column;
 		}
 		
+		
+		abstract public Object accept(Visitor visitor) throws KwartzException ;
+
 
 		public String inspect(int level) {
 			StringBuffer sb = new StringBuffer();
@@ -95,6 +98,10 @@ public class Ast {
     		return false;
     	}
     	
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
     }
     
     
@@ -116,6 +123,10 @@ public class Ast {
 			return _right;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			if (_left != null)  _left._inspect(level+1, sb);
@@ -128,6 +139,11 @@ public class Ast {
 		public ArithmeticExpression(int token, Expression left, Expression right) {
 			super(token, left, right);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -135,6 +151,11 @@ public class Ast {
 		public LogicalExpression(int token, Expression left, Expression right) {
 			super(token, left, right);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -142,6 +163,11 @@ public class Ast {
 		public RelationalExpression(int token, Expression left, Expression right) {
 			super(token, left, right);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -156,6 +182,11 @@ public class Ast {
 				throw new SemanticException("" + s + ": invalid left-side value.", _filename, _linenum, _column);
 			}
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -167,6 +198,11 @@ public class Ast {
 		public boolean availableAsLhs() {
 			return true;
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -181,6 +217,18 @@ public class Ast {
 			assert arguments != null;
 		}
 		
+		public String getFuncname() {
+			return _funcname;
+		}
+		
+		public Expression[] getArguments() {
+			return _arguments;
+		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, _funcname + "()");
 			for (int i = 0, n = _arguments.length; i < n; i++) {
@@ -204,6 +252,22 @@ public class Ast {
 			assert arguments != null;
 		}
 		
+		public String getMethodName() {
+			return _method_name;
+		}
+		
+		public Expression getReceiver() {
+			return _receiver;
+		}
+		
+		public Expression[] getArguments() {
+			return _arguments;
+		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+		
 		public void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_receiver._inspect(level+1, sb);
@@ -225,16 +289,29 @@ public class Ast {
 			_receiver = receiver;
 			_property_name = property_name;
 		}
-
+		
 		public boolean availableAsLhs() {
 			return true;
 		}
+		
+		public String getPropertyName() {
+			return _property_name;
+		}
+		
+		public Expression getReceiver() {
+			return _receiver;
+		}
 
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		public void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_receiver._inspect(level+1, sb);
 			_addValue(level+1, sb, "."+_property_name);
 		}
+
 	}
 	
 	
@@ -262,6 +339,10 @@ public class Ast {
 			_right = right;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_condition._inspect(level+1, sb);
@@ -285,6 +366,10 @@ public class Ast {
 			return _token_value;
 		}
 	
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, _token_value);
 		}
@@ -298,13 +383,22 @@ public class Ast {
 		public boolean availableAsLhs() {
 			return true;
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class StringLiteral extends Literal {
 		public StringLiteral(java.lang.String token_value) {
 			super(Token.STRING, token_value);
 		}
-		
+	
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, Util.inspect(_token_value));
 		}
@@ -316,30 +410,55 @@ public class Ast {
 		public IntegerLiteral(java.lang.String token_value) {
 			super(Token.INTEGER, token_value);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 	static class FloatLiteral extends Literal {
 		public FloatLiteral(java.lang.String token_value) {
 			super(Token.FLOAT, token_value);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 	static class TrueLiteral extends Literal {
 		public TrueLiteral(java.lang.String token_value) {
 			super(Token.TRUE, token_value);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 	static class FalseLiteral extends Literal {
 		public FalseLiteral(java.lang.String token_value) {
 			super(Token.FALSE, token_value);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class NullLiteral extends Literal {
 		public NullLiteral(java.lang.String token_value) {
 			super(Token.NULL, token_value);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 
@@ -350,6 +469,11 @@ public class Ast {
 		public Statement(int token) {
 			super(token);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -377,6 +501,11 @@ public class Ast {
 			return _arguments;
 		}
 		
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			for (int i = 0, n = _arguments.length; i < n; i++) {
@@ -399,6 +528,10 @@ public class Ast {
 			return _expression;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_expression._inspect(level+1, sb);
@@ -433,6 +566,10 @@ public class Ast {
 			_else_stmt = stmt;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_condition._inspect(level+1, sb);
@@ -460,6 +597,10 @@ public class Ast {
 			return _body;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_condition._inspect(level+1, sb);
@@ -468,26 +609,26 @@ public class Ast {
 	}
 	
 	static class ForeachStatement extends Statement {
-		Expression _item;
+		VariableLiteral _item;
 		Expression _list;
 		Statement _body;
 		
-		public ForeachStatement(Expression item, Expression list, Statement body) {
+		public ForeachStatement(VariableLiteral item, Expression list, Statement body) {
 			super(Token.FOREACH);
 			_item = item;
 			_list = list;
 			_body = body;
 		}
+
+//		public void validate() throws ParseException {
+//			if (_item.getToken() != Token.VARIABLE) {
+//				String s = TokenHelper.tokenSymbol(_item.getToken());
+//				String mesg = s + ": invalid loop-variable of foreach statement.";
+//				throw new SemanticException(mesg, _filename, _item.getLinenum(), _item.getColumn());
+//			}
+//		}
 		
-		public void validate() throws ParseException {
-			if (_item.getToken() != Token.VARIABLE) {
-				String s = TokenHelper.tokenSymbol(_item.getToken());
-				String mesg = s + ": invalid loop-variable of foreach statement.";
-				throw new SemanticException(mesg, _filename, _item.getLinenum(), _item.getColumn());
-			}
-		}
-		
-		public Expression getItemExpression() {
+		public VariableLiteral getItemVariable() {
 			return _item;
 		}
 		
@@ -499,6 +640,10 @@ public class Ast {
 			return _body;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			_item._inspect(level+1, sb);
@@ -511,12 +656,22 @@ public class Ast {
 		public BreakStatement() {
 			super(Token.BREAK);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class ContinueStatement extends Statement {
 		public ContinueStatement() {
 			super(Token.CONTINUE);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class BlockStatement extends Statement {
@@ -541,8 +696,8 @@ public class Ast {
 			return _statements;
 		}
 		
-		public void setStatements(Statement[] statements) {
-			_statements = statements;
+		public void setStatement(Statement stmt, int index) {
+			_statements[index] = stmt;
 		}
 		
 		public void setStatements(List statements) {
@@ -551,6 +706,10 @@ public class Ast {
 			_statements = stmts;			
 		}
 
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 		protected void _inspect(int level, StringBuffer sb) {
 			super._inspect(level, sb);
 			for (int i = 0, n = _statements.length; i < n; i++) {
@@ -560,7 +719,7 @@ public class Ast {
 	}
 	
 	
-	////
+	//// exapnd statement
 	
 	static class ExpandStatement extends Statement {
 		String _name;
@@ -574,6 +733,11 @@ public class Ast {
 		public String getName() {
 			return _name;
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	
@@ -581,24 +745,44 @@ public class Ast {
 		public StagStatement() {
 			super(Token.STAG);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class ContStatement extends ExpandStatement {
 		public ContStatement() {
 			super(Token.CONT);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 	static class EtagStatement extends ExpandStatement {
 		public EtagStatement() {
 			super(Token.ETAG);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class ElemStatement extends ExpandStatement {
 		public ElemStatement() {
 			super(Token.ELEM);
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class ElementStatement extends ExpandStatement {
@@ -608,6 +792,11 @@ public class Ast {
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, "_element("+_name+")");
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 	static class ContentStatement extends ExpandStatement {
@@ -617,6 +806,11 @@ public class Ast {
 		public void _inspect(int level, StringBuffer sb) {
 			_addValue(level, sb, "_content("+_name+")");
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 
@@ -643,6 +837,11 @@ public class Ast {
 		public int getKind() {
 			return _kind;
 		}
+		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 	
 
@@ -681,6 +880,10 @@ public class Ast {
 			return _propvalue;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	}
 
 
@@ -851,6 +1054,10 @@ public class Ast {
 			return new_ruleset;
 		}
 		
+    	public Object accept(Visitor visitor) throws KwartzException {
+    		return visitor.visit(this);
+    	}
+    	
 	
 		protected void _inspect(int level, StringBuffer sb) {
 			sb.append(Util.repeatString("  ", level));

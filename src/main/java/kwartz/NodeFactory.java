@@ -159,7 +159,12 @@ public class NodeFactory {
 	}
 	
 	public Ast.Statement createForeachStatement(ParseInfo info, Ast.Expression item, Ast.Expression list, Ast.Statement body) throws ParseException {
-		Ast.Statement stmt = new Ast.ForeachStatement(item, list, body);
+		if (item.getToken() != Token.VARIABLE) {
+			String s = TokenHelper.tokenSymbol(item.getToken());
+			String mesg = s + ": invalid loop-variable of foreach statement.";
+			throw new SemanticException(mesg, _filename, item.getLinenum(), item.getColumn());
+		}
+		Ast.Statement stmt = new Ast.ForeachStatement((Ast.VariableLiteral)item, list, body);
 		setInfo(stmt, info);
 		stmt.validate();
 		return stmt;

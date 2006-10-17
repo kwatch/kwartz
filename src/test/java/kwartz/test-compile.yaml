@@ -1,0 +1,382 @@
+- name:   bordered_table1
+  properties:	{ loopctr: true }
+  
+  pdata: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	      <tr bgcolor="#FFCCCC" {{*id="mark:list"*}}>
+	        <td {{*id="mark:name"*}}>foo</td>
+	        <td {{*id="mark:mail"*}}>foo@mail.com</td>
+	      </tr>
+	      <tr {{*id="dummy:d1"*}} bgcolor="#CCCCFF">
+	        <td>bar</td>
+	        <td>bar@mail.org</td>
+	      </tr>
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+  plogic*:
+
+    eruby: &plogic1_ruby |
+	#list {
+	  attrs: 'bgcolor' color,
+	         'title'   user.name;
+	  logic: {
+	    @list.each_with_index { |user, i|
+	      color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'
+	      _stag
+	      _cont
+	      _etag
+	    }
+	  }
+	}
+	#name {
+	  Value: user.name;
+	}
+	#mail {
+	  cont: user[:mail];
+	}
+
+    ruby: *plogic1_ruby
+
+    erubis: *plogic1_ruby
+
+    pierubis: *plogic1_ruby
+
+    php: |
+	#list {
+	  attrs: 'bgcolor' $color,
+	         'title'   $user->name;
+	  logic: {
+	    $i = 0;
+	    foreach ($list as $user) {
+	      $i++;
+	      $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+	      _stag();
+	      _cont();
+	      _etag();
+	    }
+	  }
+	}
+	#name {
+	  Value: $user->name;
+	}
+	#mail {
+	  cont: $user['mail'];
+	}
+
+    jstl: |
+	#list {
+	  attrs: 'bgcolor' color,
+	         'title'   user.name;
+	  logic: {
+	    <c:forEach var="user" items="${list}" varStatus="loop">
+	      <c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>
+	      _stag();
+	      _cont();
+	      _etag();
+	    </c:forEach>
+	  }
+	}
+	#name {
+	  Value: user.name;
+	}
+	#mail {
+	  cont: user.mail;
+	}
+
+    eperl: |
+	#list {
+	  attrs: 'bgcolor' $color,
+	         'title'   $user->name();
+	  logic: {
+	    my $i = 0;
+	    foreach my $user (@list) {
+	      $i++;
+	      my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF';
+	      _stag();
+	      _cont();
+	      _etag();
+	    }
+	  }
+	}
+	#name {
+	  Value: $user->name();
+	}
+	#mail {
+	  cont: $user{'mail'};
+	}
+
+    java: |
+	#list {
+	  attrs: 'bgcolor' color, 'title'   user.name;
+	  logic: {
+	    i = 0;
+	    foreach (user in list) {
+	      i += 1;
+	      color = i%2==0 ? "#FFCCCC" : "#CCCCFF";
+	      _stag;
+	      _cont;
+	      _etag;
+	    }
+	  }
+	}
+	#name {
+	  Value: user.name;
+	}
+	#mail {
+	  cont: user[:mail];
+	}
+
+  expected*:
+
+    eruby: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<%     @list.each_with_index { |user, i| %>*}}
+	{{*<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>*}}
+	      <tr bgcolor="{{*<%= color %>*}}" title="{{*<%= user.name %>*}}">
+	        <td>{{*<%=h user.name %>*}}</td>
+	        <td>{{*<%= user[:mail] %>*}}</td>
+	      </tr>
+	{{*<%     } %>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    ruby: |
+	_buf = ""; _buf << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+	<html>
+	  <body>
+	    <table>\n";
+	    {{*@list.each_with_index { |user, i|*}}
+	      {{*color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'*}}
+	_buf << "      <tr bgcolor=\""; _buf << {{*(color).to_s*}}; _buf << "\" title=\""; _buf << {{*(user.name).to_s*}}; _buf << "\">
+	        <td>"; _buf << {{*ERB::Util.h(user.name)*}}; _buf << "</td>
+	        <td>"; _buf << {{*(user[:mail]).to_s*}}; _buf << "</td>
+	      </tr>\n";
+	    {{*}*}}
+	_buf << "    </table>
+	  </body>
+	</html>
+	<!-- end -->\n";
+	; _buf
+
+    erubis: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<%     @list.each_with_index { |user, i| %>*}}
+	{{*<%       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' %>*}}
+	      <tr bgcolor="{{*<%= color %>*}}" title="{{*<%= user.name %>*}}">
+	        <td>{{*<%== user.name %>*}}</td>
+	        <td>{{*<%= user[:mail] %>*}}</td>
+	      </tr>
+	{{*<%     } %>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    pierubis: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?rb     @list.each_with_index { |user, i| ?>*}}
+	{{*<?rb       color = i % 2 == 0 ? '#FFCCCC' : '#CCCCFF' ?>*}}
+	      <tr bgcolor="{{*@!{color}@*}}" title="{{*@!{user.name}@*}}">
+	        <td>{{*@{user.name}@*}}</td>
+	        <td>{{*@!{user[:mail]}@*}}</td>
+	      </tr>
+	{{*<?rb     } ?>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    php: |
+	<{{*<?php ?>*}}?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?php     $i = 0; ?>*}}
+	{{*<?php     foreach ($list as $user) { ?>*}}
+	{{*<?php       $i++; ?>*}}
+	{{*<?php       $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; ?>*}}
+	      <tr bgcolor="{{*<?php echo $color; ?>*}}" title="{{*<?php echo $user->name; ?>*}}">
+	        <td>{{*<?php echo htmlspecialchars($user->name); ?>*}}</td>
+	        <td>{{*<?php echo $user['mail']; ?>*}}</td>
+	      </tr>
+	{{*<?php     } ?>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    jstl: |
+	{{*<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>*}}
+	{{*<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>*}}
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	    {{*<c:forEach var="user" items="${list}" varStatus="loop">*}}
+	      {{*<c:set var="color" value="${loop.count % 2 == 0 ? '#FFCCCC' : '#CCCCFF'}"/>*}}
+	      <tr bgcolor="{{*${color}*}}" title="{{*${user.name}*}}">
+	        <td>{{*${user.name}*}}</td>
+	        <td>{{*${user.mail}*}}</td>
+	      </tr>
+	    {{*</c:forEach>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    eperl: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<?     my $i = 0; !>*}}
+	{{*<?     foreach my $user (@list) { !>*}}
+	{{*<?       $i++; !>*}}
+	{{*<?       my $color = $i % 2 == 0 ? '#FFCCCC' : '#CCCCFF'; !>*}}
+	      <tr bgcolor="{{*<?= $color !>*}}" title="{{*<?= $user->name() !>*}}">
+	        <td>{{*<?= encode_entities($user->name()) !>*}}</td>
+	        <td>{{*<?= $user{'mail'} !>*}}</td>
+	      </tr>
+	{{*<?     } !>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    jstl11: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<c:forEach var="user" items="${list}" varStatus="user_loop">*}}
+	{{*<c:set var="i" value="${user_loop.count}"/>*}}
+	{{*<c:set var="color" value="${i mod 2 eq 0 ? '#FFCCCC' : '#CCCCFF'}"/>*}}
+	      <tr bgcolor="{{*${color}*}}" title="{{*${user.name}*}}">
+	        <td>{{*${user.name}*}}</td>
+	        <td>{{*${user.mail}*}}</td>
+	      </tr>
+	{{*</c:forEach>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+    jstl10: |
+	<?xml version="1.0" encoding="UTF-8"?>
+	<html>
+	  <body>
+	    <table>
+	{{*<c:forEach var="user" items="${list}" varStatus="user_loop">*}}
+	{{*<c:set var="i" value="${user_loop.count}"/>*}}
+	{{*<c:choose><c:when test="${i mod 2 eq 0}">*}}
+	{{*<c:set var="color" value="${'#FFCCCC'}"/>*}}
+	{{*</c:when><c:otherwise>*}}
+	{{*<c:set var="color" value="${'#CCCCFF'}"/>*}}
+	{{*</c:otherwise></c:choose>*}}
+	      <tr bgcolor="{{*<c:out value="${color}"/>*}}" title="{{*<c:out value="${user.name}"/>*}}">
+	        <td>{{*<c:out value="${user.name}"/>*}}</td>
+	        <td>{{*<c:out value="${user.mail}"/>*}}</td>
+	      </tr>
+	{{*</c:forEach>*}}
+	    </table>
+	  </body>
+	</html>
+	<!-- end -->
+
+
+### ----------------------------------------
+
+###
+- name:   embedded_expr1
+  desc:   embedded expression
+  pdata*:
+    eruby: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:<%=email%>"><%=h name%></a>
+    ruby: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:#{email}">#{ERB::Util.h name}</a>
+    erubis: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:<%= email %>"><%== name %></a>
+    pierubis: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="#" id="mark:link_to_destroy">Destroy</a>
+    php: |
+      <a href="mailto:@!{$email}@">@{$name}@</a>
+      <a href="mailto:<?php echo $email; ?>"><?php echo htmlspecialchars($name); ?></a>
+    jstl: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:<c:out value="${email}" escapeXml="false"/>">${name}</a>
+    eperl: |
+      <a href="mailto:@!{$email}@">@{$name}@</a>
+      <a href="mailto:<?= $email !>"><?= encode_entities($name) !></a>
+    java: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:${email}">${name}</a>
+
+  plogic*:
+    eruby: |
+    ruby: |
+    erubis: |
+    pierubis: |
+      #link_to_destroy {
+        stag: start_link_tag {:action=>'destroy', :id=>@member.id},
+	                    :confirm=>"Are you OK?";
+      }
+    php: |
+    jstl: |
+    eperl: |
+    java: |
+
+  expected*:
+    eruby: |
+      <a href="mailto:<%= email %>"><%=h name %></a>
+      <a href="mailto:<%=email%>"><%=h name%></a>
+    ruby: |
+      _buf = ""; _buf << "<a href=\"mailto:"; _buf << (email).to_s; _buf << "\">"; _buf << ERB::Util.h(name); _buf << "</a>
+      <a href=\"mailto:#{email}\">#{ERB::Util.h name}</a>\n";
+      ; _buf
+    erubis: |
+      <a href="mailto:<%= email %>"><%== name %></a>
+      <a href="mailto:<%= email %>"><%== name %></a>
+    pierubis: |
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <a href="mailto:@!{email}@">@{name}@</a>
+      <%=start_link_tag {:action=>'destroy', :id=>@member.id},
+                            :confirm=>"Are you OK?"%>Destroy</a>
+    php: |
+      <a href="mailto:<?php echo $email; ?>"><?php echo htmlspecialchars($name); ?></a>
+      <a href="mailto:<?php echo $email; ?>"><?php echo htmlspecialchars($name); ?></a>
+    jstl: |
+      <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+      <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+      <a href="mailto:<c:out value="${email}" escapeXml="false"/>">${name}</a>
+      <a href="mailto:<c:out value="${email}" escapeXml="false"/>">${name}</a>
+    eperl: |
+      <a href="mailto:<?= $email !>"><?= encode_entities($name) !></a>
+      <a href="mailto:<?= $email !>"><?= encode_entities($name) !></a>
+    jstl10: |
+      <a href="mailto:<c:out value="${email}" escapeXml="false"/>"><c:out value="${name}"/></a>
+      <a href="mailto:${email}">${name}</a>
+    jstl11: |
+      <a href="mailto:<c:out value="${email}" escapeXml="false"/>">${name}</a>
+      <a href="mailto:${email}">${name}</a>

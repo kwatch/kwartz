@@ -3058,12 +3058,14 @@
 	    :BLOCK
 	      :PRINT
 	        "  <li>"
-	        item
+		X()
+	          item
 	        "</li>\n"
 	:PRINT
 	  "</ul>\n"
 	:PRINT
-	  copyright
+	  X()
+	    copyright
 	  "\n"
 
 
