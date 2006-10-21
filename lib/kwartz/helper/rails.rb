@@ -88,7 +88,7 @@ module Kwartz
       end
 
 
-      @@use_cache = nil
+      @@use_cache = nil  # true: use cache, false: don't use cache, nil: use cache only when ENV['RAILS_ENV'] == 'production'
 
       def self.use_cache
         return @@use_cache
@@ -179,7 +179,7 @@ module Kwartz
           ]
           mtime = File.mtime(cache_filename)
           convert_flag = filenames.any? { |filename|
-            test(?f, filename) && File.mtime(filename) > mtime
+            result = test(?f, filename) && File.mtime(filename) > mtime
           }
         end
 
@@ -301,13 +301,16 @@ module Kwartz
 
         ## presentation data files
         pdata = template
+        tmp_handler = Kwartz::Handler.get_class(@@lang).new(rulesets, properties)
         config[:import_pdata].each do |hash|
           filename = hash[:filename]
           patterns = hash[:patterns]
-          tmp_handler   = Kwartz::Handler.get_class(@@lang).new(rulesets, properties)
           tmp_converter = Kwartz::TextConverter.new(tmp_handler, properties)
           tmp_converter.convert(File.read(filename), filename)
           handler._import_element_info_from_handler(tmp_handler, patterns)
+          tmp_handler2   = Kwartz::Handler.get_class(@@lang).new(rulesets, properties)
+          tmp_handler2._import_element_info_from_handler(tmp_handler, patterns)
+          tmp_handler = tmp_handler2
         end if config[:import_pdata]
         if test(?f, layout_pdata_filename)
           converter.convert(pdata, template_pdata_filename)
@@ -406,7 +409,7 @@ end #module Kwartz
 
 
 
-# override ActionController::Base::render
+## override ActionController::Base::render
 
 module ActionController #:nodoc:
 
@@ -430,6 +433,32 @@ module ActionController #:nodoc:
     def render_file(template_path, status=nil, use_full_path=false, locals={}) #:nodoc:
       @render_template_basename = template_path
       _render_file_orig(template_path, status, use_full_path, locals)
+    end
+
+  end
+
+end
+
+
+
+## override ActionView#initialize to show error message correctly
+
+module ActionView
+  # The TemplateError exception is raised when the compilation of the template fails. This exception then gathers a
+  # bunch of intimate details and uses it to report a very precise exception message.
+  class TemplateError < ActionViewError #:nodoc:
+
+    alias _initialize_orig initialize
+
+    def initialize(base_path, file_name, assigns, source, original_exception)
+      suffix = Kwartz::Helper::RailsTemplate.pdata_suffix
+      len = suffix.length
+      if file_name[-len..-1] == suffix
+        file_name = file_name[0, file_name.length - len] + '.cache'
+      else
+        $stderr.puts "*** debug: kwartz/helper/rails.rb: cannot detect cache file name (template=#{file_name.inspect})"
+      end
+      _initialize_orig(base_path, file_name, assigns, source, original_exception)
     end
 
   end

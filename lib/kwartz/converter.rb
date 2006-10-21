@@ -457,7 +457,7 @@ module Kwartz
       #  stmt = ExpandStatement.new(:cont, elem_info.name)
       #  expand_statement(stmt, stmt_list, elem_info)
       #else
-      #  element.logic.each do |stmt|
+      #  elem_info.logic.each do |stmt|
       #    expand_statement(stmt, stmt_list, elem_info)
       #  end
       #end
@@ -913,7 +913,7 @@ module Kwartz
     end
 
 
-    def _convert(stmt_list, start_tag_info=nil, start_attr_info=nil)
+    def _convert(stmt_list, start_tag_info=nil)
       start_tagname = start_tag_info ? start_tag_info.tagname : nil
       start_linenum = @linenum
 

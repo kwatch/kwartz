@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.147 (2006-10-22)
+	- [enhance] helper/rails.rb: now reports cache filename and linenum on where exception raised
+
 : rev.146 (2006-10-05)
 	- [enhance] racc: keep linenum and column
 	- [enhance] racc: add Selector and Declaration
