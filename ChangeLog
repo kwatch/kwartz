@@ -3,6 +3,17 @@
 .?updated:   $Date$
 
 
+* Release 3.1.2 (2006-10-22)
+
+  [enhancements from 3.1.1]
+
+    - Error reporting improved when using with Ruby on Rails.
+      'kwartz/helper/rails.rb' now show template filename and
+      linenumber on where exception raised.
+      Notice that you have to read *.cache file instead of *.html
+      or *.plogic.
+
+
 * Release 3.1.1 (2006-09-29)
 
   [changes from 3.1.0]

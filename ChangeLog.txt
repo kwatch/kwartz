@@ -2,8 +2,15 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
-: rev.147 (2006-10-22)
+: rev.149 (2006-10-22)
+	- [change] update ChangeLog
+
+: rev.148 (2006-10-22)
 	- [enhance] helper/rails.rb: now reports cache filename and linenum on where exception raised
+	- [refactor] converter.rb: removed unused argument 'start_attr_info' from TextConverter#_convert()
+
+: rev.147 (2006-10-05)
+	- [release] 0.0.2
 
 : rev.146 (2006-10-05)
 	- [enhance] racc: keep linenum and column
