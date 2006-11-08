@@ -2,6 +2,12 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.151 (2006-11-08)
+	- [enhance] add new document 'introduction-to-kwartz.html'
+
+: rev.150 (2006-10-22)
+	- [release] 3.1.2
+
 : rev.149 (2006-10-22)
 	- [change] update ChangeLog
 

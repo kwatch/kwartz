@@ -1,3 +1,6 @@
+### $Date$
+### $Release$
+### $Copyright$
 
 ###
 - name:		print1
@@ -194,8 +197,12 @@
 
 - name:		foreach4
   input:	foreach (item['key'] = list) { print(item['key']); }
-  exception:	Kwartz::SemanticError
-  errormsg:	'1:14: []: invalid loop-variable of foreach statement.'
+  exception*:
+    ruby:	Kwartz::SemanticError
+    java:	kwartz.SemanticException
+  errormsg*:
+    ruby:	'1:14: []: invalid loop-variable of foreach statement.'
+    java:	'1:14: []: invalid loop-variable of foreach statement.'
 
 
 ###

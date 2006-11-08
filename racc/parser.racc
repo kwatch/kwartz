@@ -21,11 +21,12 @@ token P_BEGIN P_END P_GLOBAL P_LOCAL
 [% end %]
 
 prechigh
+  nonassoc '(' ')'
   left  '.' '[' ']' '[:'
+  left  '!'
   left  '*' '/' '%'
   left  '+' '-' '.+'
   nonassoc '==' '!=' '<' '<=' '>' '>='
-  left  '!'
   left  '&&'
   left  '||'
   right  '?' ':'
@@ -174,11 +175,11 @@ rule
             | primary '.' IDENT '(' args ')' { result = @builder.build_method_expr(val[1], val[0], val[2][1], val[4]) }
             | primary '.' IDENT { result = @builder.build_property_expr(val[1], val[0], val[2][1]) }
             | IDENT '(' args ')'  { result = @builder.build_funcall_expr(val[0], val[2]) }
-            | IDENT         { result = @builder.build_variable_literal(val[0]) }
             | literal       { result = val[0] }
             | '(' expr ')'  { result = val[1] }
 
-  literal   : STRING     { result = @builder.build_string_literal(val[0]) }
+  literal   : IDENT      { result = @builder.build_variable_literal(val[0]) }
+            | STRING     { result = @builder.build_string_literal(val[0]) }
             | INTEGER    { result = @builder.build_integer_literal(val[0]) }
             | FLOAT      { result = @builder.build_float_literal(val[0]) }
             | TRUE       { result = @builder.build_true_literal(val[0]) }
@@ -188,7 +189,7 @@ rule
   word  :  IDENT         { result = @builder.build_string_literal(val[0]) }
 
   args  :  args ',' expr   { result = val[0] << val[2] }
-        |  expr            { result = [ val[0] ] }
+	|  expr            { result = [ val[0] ] }
 	|                  { result = [] }
 
 end

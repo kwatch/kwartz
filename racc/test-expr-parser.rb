@@ -19,7 +19,7 @@ class ExpressionParserTest < Test::Unit::TestCase
     return if ENV['TEST'] && ENV['TEST'] != @name
     if @exception
       error_class = @exception.split(/::/).inject(Object) { |m, name| m.const_get(name) }
-      inputs = @input.is_a?(Array) ? @input : [ @input ]
+      inputs = @inputs || [ @input ]
       inputs.each do |input|
         parser = Kwartz::ExpressionParser.new(input)
         ex = assert_raise(error_class) do

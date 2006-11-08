@@ -1,3 +1,6 @@
+### $Date$
+### $Release$
+### $Copyright$
 
 ###
 - name:		literal1
@@ -46,7 +49,7 @@
 
 
 ###
-- name:		arithmetic_expr1
+- name:		arithmetic1
   desc:		op combinatory rule
   input:	3 + 4 .+ 5 - 6
   expected: |
@@ -58,7 +61,7 @@
 	    5
 	  6
 
-- name:		arithmetic_expr2
+- name:		arithmetic2
   desc:		op priority
   input:	3 + 4 * 5 % 6
   expected: |
@@ -70,7 +73,7 @@
 	      5
 	    6
 
-- name:		arithmetic_expr3
+- name:		arithmetic3
   desc:		paren
   input:	3*(x+2*(y-1))%1
   expected: |
@@ -133,8 +136,12 @@
 - name:		relational7
   desc:		relational ops are nonassoc
   input:	a < b < c
-  exception:	Kwartz::SyntaxError
-  errormsg:	"1:7: parse error on value \"<\" (\"<\")"
+  exception*:
+    ruby:	Kwartz::SyntaxError
+    java:	kwartz.SyntaxException
+  errormsg*:
+    ruby:	"1:7: parse error on value \"<\" (\"<\")"
+    java:	"1:7: syntax error"
 
   
 ###
@@ -493,7 +500,7 @@
  
 - name:		assignment14
   desc:		invalid lhs
-  input:
+  inputs:
     - x + y  = z
     - x && y = z
     - x == y = z
@@ -504,8 +511,13 @@
     - true   = z
     - false  = z
     - null   = z
-  exception:	Kwartz::SemanticError
-  errormsg:	"1:8: =: invalid left-side value."
+  exception*:
+    ruby:	Kwartz::SemanticError
+    java:	kwartz.SemanticException
+  errormsg*:
+    ruby:	"1:8: =: invalid left-side value."
+    java:	"1:8: =: invalid left-side value."
+    
 
 
 ###

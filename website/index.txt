@@ -6,12 +6,13 @@
 
 .$ News
 
+.* (2006-10-22)  {{<kwartz-ruby 3.1.2|#Download>}} released
 .* (2006-09-29)  {{<kwartz-ruby and kwartz-php 3.1.1|#Download>}} released
 .* (2006-09-24)  {{<kwartz-ruby 3.1.0|#Download>}} released
 .* (2006-06-01)  {{<kwartz-ruby 3.0.0|#Download>}} released
-.* (2005-08-11)  {{<kwartz-java 0.0.1 (alpha release)|#Download>}} released
-.* (2005-05-17)  {{<kwartz-ruby 2.0.4|#Download>}} released
-.* (2005-01-10)  {{<kwartz-php 0.3.2|#Download>}} released
+.#.* (2005-08-11)  {{<kwartz-java 0.0.1 (alpha release)|#Download>}} released
+.#.* (2005-05-17)  {{<kwartz-ruby 2.0.4|#Download>}} released
+.#.* (2005-01-10)  {{<kwartz-php 0.3.2|#Download>}} released
 
 
 .$ Introduction
@@ -78,7 +79,7 @@ See {{<users' guide|kwartz3ruby-users-guide.html>}} for details.
 
 .$ Download
 	.* Download from {{<sourceforge.net|download.cgi>}}
-	   .- Kwartz-ruby 3.1.1 (beta) (2006-09-29)
+	   .- Kwartz-ruby 3.1.2 (beta) (2006-10-22)
 	   .- Kwartz-php 3.1.1 (beta) (2006-09-29) {{!(New!)!}}
 	   .#.- kwartz-ruby 3.1.0 (beta) (2006-09-24)
 	   .#.- kwartz-ruby 2.0.4 (stable)
