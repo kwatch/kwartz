@@ -2,6 +2,15 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.154 (2006-11-09)
+	- [enhance] introduction-to-kwartz.html: IE6 support with JavaScript
+
+: rev.153 (2006-11-09)
+	- [update] introduction-to-kwartz.html: design changed
+
+: rev.152 (2006-11-09)
+	- [update] add 'img/fig05.png' and update 'introduction-to-kwartz.html'
+
 : rev.151 (2006-11-08)
 	- [enhance] add new document 'introduction-to-kwartz.html'
 

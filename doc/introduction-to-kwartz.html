@@ -252,11 +252,148 @@
 	}
       -->
     </style>
+    <script type="text/javascript">//<!--
+
+  function keys(obj) {
+    var list = [];
+    for (key in obj) {
+      list.push(key);
+    }
+    return list;
+  }
+
+  function dp(obj) {
+    var list = keys(obj);
+    alert(list.sort().join(', '));
+  }
+
+
+  var slide_list = [];
+  var slide_table = {};
+  var slide_classname = 'slide';
+  var slide_id_prefix = '#slide';
+  //var z_index = 1;
+
+
+  function find_slide_by_id(slide_id) {   /// string or object
+    //alert(slide_id);
+    if (! slide_id)
+      return undefined;
+    if (slide_id.substring(0,1) == '#')
+      slide_id = slide_id.substring(1);   /// ex. '#slide1' => 'slide1'
+    //for (var i = 0, n = slide_list.length; i < n; i++) {
+    //  if (slide_list[i].id == slide_id)
+    //    return slide_list[i];                 /// found
+    //}
+    //return undefiend;                     /// not found
+    return slide_table[slide_id];
+  }
+
+
+  function find_slide(slide_or_id) {
+    var arg = slide_or_id;
+    var t = typeof(arg);
+    if (t == 'object') {
+      return arg;
+    }
+    if (t == 'string') {
+      slide = find_slide_by_id(arg);
+      if (! slide) {
+        alert("slide '"+arg+"' not found.");
+      }
+      return slide;
+    }
+    alert("find_slide(): '"+arg+"': invalid argument.");
+    return undefined;
+  }
+
+
+  function show_slide(slide_or_id) {
+    slide = find_slide(slide_or_id);
+    //z_index++;
+    //dp(slides[i].style);
+    slide.style.display = 'block';
+    //slide.style.zIndex = z_index;
+  }
+
+
+  function hide_slide(slide_or_id) {
+    slide = find_slide(slide_or_id);
+    slide.style.display = 'none';
+  }
+
+
+  function current_slide(node) {
+    var tagname = 'DIV';
+    while (typeof(node) == 'object') {
+      //alert("tagname="+node.tagName+",class="+node.className);
+      if (tagname == node.tagName && slide_classname == node.className)
+        return node;
+      node = node.parentNode;
+    }
+    return undefined;
+  }
+
+
+  function create_anchor_onclick_listener(anchor) {
+    return function() {
+      //alert("anchor.hash="+anchor.hash+", anchor.text="+anchor.childNodes[0].nodeValue);
+      var slide = current_slide(anchor);
+      if (slide)
+        hide_slide(slide);
+      var target_slide_id = anchor.hash;
+      show_slide(target_slide_id);
+    }
+  }
+
+
+  function init_slide_list() {
+    var children = document.body.childNodes;
+    for (var i = 0, n = children.length; i < n; i++) {
+      var child = children[i];
+      if (typeof(child) == 'object' && child.className == slide_classname) {
+        slide_list.push(child);
+        slide_table[child.id] = child;
+      }
+    }
+  }
+
+
+  function init_slide_anchors() {
+    var anchors = document.getElementsByTagName('A');
+    var len = slide_id_prefix.length;
+    for (var i = 0, n = anchors.length; i < n; i++) {
+      var anchor = anchors[i];
+      if (anchor.hash && anchor.hash.substring(0,len) == slide_id_prefix) {
+        anchor.onclick = create_anchor_onclick_listener(anchor);
+      }
+    }
+  }
+
+
+  function init_document() {
+    init_slide_list();
+    init_slide_anchors();
+    //
+    var slide_id = document.location.hash;
+    if (slide_id) {
+      alert("** deubg: slide_id="+slide_id+",location="+document.location);
+      hide_slide(slide_list[0]);
+      show_slide(slide_id);
+    }
+  }
+
+
+  //document.onload = init_document;
+  if (window.attachEvent) window.attachEvent("onload", init_document);
+
+//--></script>
+
   </head>
   <body>
 
 
-    <div id="slide-title" class="slide titlepage">
+    <div id="slide-title" class="slide">
       <h1>Kwartzテンプレートシステム入門</h1>
       <h4>― デザイナーとプログラマーが真に協業する方法 ―</h4>
       <div class="slide-body">
