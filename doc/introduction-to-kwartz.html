@@ -171,8 +171,63 @@
 	    background: #99C;
 	    position: absolute;
 	    width: 100%;
+	    /*
+	    height: 1em;
+	    */
 	    bottom: 0;
+	    font-size:11pt;
+	    padding:5px 0;
+	    color:#FFF
 	}
+
+	.footer-left {
+	    float: left;
+	    /*
+	    position: absolute;
+	    left: 0%;
+	    bottom: 0;
+	    */
+	    width: 10%;
+	    text-align: left;
+	}
+
+	.footer-right {
+	    float: right;
+	    /*
+	    position: absolute;
+	    left: 90%;
+	    bottom: 0;
+	    */
+	    width: 10%;
+	    text-align: right;
+	}
+
+	.footer-center {
+	    /*
+	    position: absolute;
+	    left: 10%;
+	    bottom: 0;
+	    width:80%;
+	    */
+	    text-align:center;
+	}
+
+	.pagenum {
+	    padding-right: 20px;
+	}
+	/*
+	.pagenum:before {
+	    padding-right: 20px;
+	    counter-increment: pagenum;
+	    content: '1/25';
+	}
+	*/
+
+	/*
+	.copyright:before {
+	    content: 'copyright(c)2006 kuwata-lab.com all rights reserved';
+	}
+	*/
 
 	div.note {
 	    margin: 20px 0 0 0;
@@ -201,31 +256,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<!--
-	<table style="width:100%">
-	  <tr>
-	    <td>
-	      <a href="" class="navi-prev">&lt;&lt;</a>
-	      <a href="" class="navi-up">^</a>
-	      <a href="#slide0-1" class="navi-next">&gt;&gt;</a>
-	    </td>
-	    <td style="text-align:center">
-	      <span style="font-size: 11pt">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
-	    </td>
-	    <td>
-	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    </td>
-	  </tr>
-	</table>
-	-->
-	<!--
-	<div style="text-align:center">
-	  <span style="font-size: 11pt">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
-	</div>
-	-->
-	<a href="#slide-last" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide-last" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">1/50</span>
+          <a href="#slide-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -247,9 +288,17 @@
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide-title" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide1-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide-title" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-title" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">2/50</span>
+          <a href="#slide1-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -281,9 +330,17 @@
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide1-1" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">3/50</span>
+          <a href="#slide1-1" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -331,9 +388,17 @@
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide1-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-2" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">4/50</span>
+          <a href="#slide1-2" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -345,7 +410,7 @@
 	  <li>テキスト汎用型
 	    <ul>
 	      <li>独自パーサを使用 ⇒ 任意のテキストファイルが利用可能</li>
-	      <li>マーキングは独自方式 ⇒ テンプレートのHTMLデザインが崩れる
+	      <li>マーキングは独自方式 ⇒ HTMLデザインが崩れる、HTMLバリデータが使えない
 		<sup><a href="#" onclick="return false;" title="マーキングの書式をHTMLと同じにすればHTMLデザインを崩さずに済むが、そのようなテンプレートシステムはなぜか少ない。">*</a></sup></li>
 	      <li>ロジック（繰り返しや条件分岐）はテンプレート中に記述</li>
 	      <li>代表例：Velocity(Java), Smarty(PHP), HTML::Template(Perl)</li>
@@ -394,9 +459,17 @@
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide1-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-3" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-1" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">5/50</span>
+          <a href="#slide1-3" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -442,9 +515,17 @@
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide1-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-4" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-2" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">6/50</span>
+          <a href="#slide1-4" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -484,9 +565,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide1-3" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-5" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-3" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">7/50</span>
+          <a href="#slide1-5" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -548,9 +637,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide1-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-6" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-4" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">8/50</span>
+          <a href="#slide1-6" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -586,9 +683,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide1-5" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-7" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-5" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">9/50</span>
+          <a href="#slide1-7" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -621,9 +726,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide1-6" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide1-8" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-6" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">10/50</span>
+          <a href="#slide1-8" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -661,9 +774,17 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide1-7" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide1-toc" class="navi-up">^</a>
-	<a href="#slide2-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-7" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide1-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">11/50</span>
+          <a href="#slide2-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -684,6 +805,7 @@
 		  <a href="#slide2-6">(3)</a>,
 		  <a href="#slide2-7">(4)</a></li>
 	      <li><a href="#slide2-8">特徴と特長</a></li>
+	      <li><a href="#slide2-9">プレゼンテーション層の構成</a></li>
 	    </ul>
 	  </li>
 	  <li>高度なトピック <a href="#slide3-toc">_</a>
@@ -695,9 +817,17 @@
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide1-8" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide2-1" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide1-8" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">12/50</span>
+          <a href="#slide2-1" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -713,9 +843,9 @@
 	      <li>HTMLテンプレートからプレゼンテーションロジックを分離・独立</li>
 	      <li>マーキングにid属性を使うため、テンプレートのHTMLデザインが崩れない</li>
 	      <li>高速・軽量</li>
-	      <li>マルチ言語対応（Ruby, PHP, Java, Perl）</li>
+	      <li>複数のプログラミング言語に対応(Ruby, PHP, Java, Perl)</li>
 	      <li>自動サニタイズ・部分サニタイズ</li>
-	      <li>テキスト一般で利用可能</li>
+	      <li>テキスト汎用型</li>
 	      <li>Ruby on Railsサポート</li>
 	    </ul>
 	  </li>
@@ -723,84 +853,19 @@
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide2-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-2" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">13/50</span>
+          <a href="#slide2-2" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
-
-
-<!--
-    <div id="slide2-2" class="slide">
-      <h2>サンプル：プレゼンテーションデータ</h2>
-      <div class="slide-body">
-	<span class="caption">ex1.html</span>
-	<pre class="code">
-&lt;table&gt;
-  &lt;tr <strong>id="mark:list"</strong>&gt;
-    &lt;td <strong>id="mark:item"</strong>&gt;foo&lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/table&gt;
-</pre>
-	<ul class="descr">
-	  <li>通常のHTMLファイルやテキストファイルが利用可能</li>
-	  <li>マーキングにはid属性（またはkw:d属性）を使用
-	    <ul>
-	      <li>「id="mark:xxx"」がついた要素がプレゼンテーションロジックでの操作対象</li>
-	      <li>「id="mark:xxx"」は出力時に消える（「id="xxx"」なら残る）</li>
-	    </ul>
-	  </li>
-	</ul>
-      </div>
-      <div class="footer">
-	<a href="#slide2-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-3" class="navi-next">&gt;&gt;</a>
-      </div>
-    </div>
--->
-
-
-<!--
-    <div id="slide2-3" class="slide">
-      <h2>サンプル：プレゼンテーションロジック</h2>
-      <div class="slide-body">
-	<span class="caption">ex1.plogic</span>
-	<pre class="code">
-<strong>#list</strong> {           // <span class="small">「</span>id="mark:list"<span class="small">」に対応</span>
-  logic: {
-    for user in @users
-      <strong>_stag</strong>       # <span class="small">開始タグ</span>
-      <strong>_cont</strong>       # <span class="small">内容</span>
-      <strong>_etag</strong>       # <span class="small">終了タグ</span>
-    end
-  }
-}
-<strong>#item</strong> {           // <span class="small">「</span>id="mark:item"<span class="small">」に対応</span>
-  value: user;
-}
-</pre>
-	<ul class="descr">
-	  <li>CSSによく似た形式
-	    <ul>
-	      <li>セレクタで要素を指定</li>
-	      <li>プロパティで要素を操作</li>
-	    </ul>
-	  </li>
-	  <li>ロジックはターゲット言語(Ruby, PHP, ...)で記述
-	    <ul>
-	      <li>ターゲット言語の機能をすべて利用可能</li>
-	    </ul>
-	  </li>
-	</ul>
-      </div>
-      <div class="footer">
-	<a href="#slide2-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-4" class="navi-next">&gt;&gt;</a>
-      </div>
-    </div>
--->
 
 
     <div id="slide2-2" class="slide">
@@ -865,9 +930,17 @@
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide2-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-3" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-1" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">14/50</span>
+          <a href="#slide2-3" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -907,9 +980,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide2-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-4" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-2" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">15/50</span>
+          <a href="#slide2-4" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -951,9 +1032,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide2-3" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-5" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-3" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">16/50</span>
+          <a href="#slide2-5" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -997,9 +1086,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide2-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-6" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-4" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">17/50</span>
+          <a href="#slide2-6" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1056,9 +1153,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide2-5" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-7" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-5" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">18/50</span>
+          <a href="#slide2-7" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1099,7 +1204,7 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 }
 </pre>
 	      <div class="note">
-		<p>!!重要!!</p>
+		<p><em>!!重要!!</em></p>
 		<p>プレゼンテーションロジックを変更しても、プレゼンテーションデータは変更する必要がない</p>
 		<p class="centerize">▼</p>
 		<p><em>プレゼンテーションデータからプレゼンテーションロジックが完全に分離・独立</em></p>
@@ -1109,9 +1214,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide2-6" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide2-8" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-6" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">19/50</span>
+          <a href="#slide2-8" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1172,9 +1285,63 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide2-7" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide2-toc" class="navi-up">^</a>
-	<a href="#slide3-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-7" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">20/50</span>
+          <a href="#slide2-9" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="slide2-9" class="slide">
+      <h2>プレゼンテーション層の構成</h2>
+      <div class="slide-body">
+	<table class="n-up2">
+	  <tr>
+	    <td class="n-up2">
+	      <ul>
+		<li>役割分担
+		  <ul>
+		    <li>HTML … ドキュメント構造</li>
+		    <li>CSS … ドキュメントデザイン</li>
+		    <li>JavaScript … クライアント側ロジック</li>
+		    <li>Kwartz … サーバ側ロジック
+		      <sup><a href="#" onclick="return false;" title="Kwartzが担当するのはサーバ側のプレゼンテーションロジックだけであり、ビジネスロジックは担当しないことに注意。">*</a></sup>
+		    </li>
+		  </ul>
+		</li>
+		<li>1つのファイルが1つの役割だけを担当
+		</li>
+	    </td>
+	    <td class="n-up2">
+	      <div style="text-align:center">
+		<img src="img/fig05.png" alt="position of Kwartz in presentation layer"
+		     style="border: solid 2px #999"/>
+		<br />
+	      </div>
+	    </td>
+	  </tr>
+	</table>
+      </div>
+      <div class="footer">
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-8" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide2-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">21/50</span>
+          <a href="#slide3-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1203,9 +1370,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide2-9" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide3-1" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide2-9" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">22/50</span>
+          <a href="#slide3-1" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1234,9 +1409,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 </pre>
       </div>
       <div class="footer">
-	<a href="#slide3-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide3-toc" class="navi-up">^</a>
-	<a href="#slide3-2" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide3-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">23/50</span>
+          <a href="#slide3-2" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1288,9 +1471,17 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide3-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide3-toc" class="navi-up">^</a>
-	<a href="#slide3-3" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-1" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide3-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">24/50</span>
+          <a href="#slide3-3" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1354,9 +1545,17 @@ Hello &lt;span id="name"&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide3-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide3-toc" class="navi-up">^</a>
-	<a href="#slide3-4" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-2" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide3-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">25/50</span>
+          <a href="#slide3-4" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1367,7 +1566,7 @@ Hello &lt;span id="name"&gt;
 	<ul>
 	  <li>HTML/XMLパーサを使用しないため、任意のテキストファイルで利用可能
 	    <ul>
-	      <li>例：メール、CSVファイル、プログラム、LaTeX、PostScript、...</li>
+	      <li>例：メール、CSVファイル、ソースコード、LaTeX、PostScript、...</li>
 	      <li>Well-formedでないXMLファイルでもOK</li>
 	    </ul>
 	  </li>
@@ -1410,9 +1609,17 @@ Hello &lt;span id="name"&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide3-3" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide3-toc" class="navi-up">^</a>
-	<a href="#slide3-5" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-3" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide3-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">26/50</span>
+          <a href="#slide3-5" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1477,9 +1684,17 @@ Hello &lt;span id="name"&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide3-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide3-toc" class="navi-up">^</a>
-	<a href="#slide4-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-4" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide3-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">27/50</span>
+          <a href="#slide4-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1518,9 +1733,17 @@ Hello &lt;span id="name"&gt;
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide3-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide4-1" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide3-5" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">28/50</span>
+          <a href="#slide4-1" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1550,9 +1773,17 @@ Hello &lt;span id="name"&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-2" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">29/50</span>
+          <a href="#slide4-2" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1590,9 +1821,17 @@ Hello &lt;span id="name"&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-3" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-1" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">30/50</span>
+          <a href="#slide4-3" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1626,9 +1865,17 @@ Hello &lt;span&gt;<strong>&lt;%= name %&gt;</strong>&lt;/span&gt;!
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-4" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-2" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">31/50</span>
+          <a href="#slide4-4" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1672,9 +1919,17 @@ Hello &lt;span&gt;<strong>&lt;%= name %&gt;</strong>&lt;/span&gt;!
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-3" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-5" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-3" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">32/50</span>
+          <a href="#slide4-5" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1704,9 +1959,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-6" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-4" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">33/50</span>
+          <a href="#slide4-6" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1752,9 +2015,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide4-5" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-7" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-5" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">34/50</span>
+          <a href="#slide4-7" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1804,9 +2075,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide4-6" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-8" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-6" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">35/50</span>
+          <a href="#slide4-8" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1842,9 +2121,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide4-7" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-9" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-7" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">36/50</span>
+          <a href="#slide4-9" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1892,9 +2179,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-8" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-10" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-8" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">37/50</span>
+          <a href="#slide4-10" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1946,9 +2241,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-9" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-11" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-9" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">38/50</span>
+          <a href="#slide4-11" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -1995,9 +2298,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-10" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-12" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-10" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">39/50</span>
+          <a href="#slide4-12" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2041,9 +2352,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-11" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-13" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-11" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">40/50</span>
+          <a href="#slide4-13" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2078,9 +2397,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-12" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-14" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-12" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">41/50</span>
+          <a href="#slide4-14" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2110,9 +2437,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-13" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide4-15" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-13" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">42/50</span>
+          <a href="#slide4-15" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2160,9 +2495,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide4-14" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide4-toc" class="navi-up">^</a>
-	<a href="#slide5-toc" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-14" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide4-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">43/50</span>
+          <a href="#slide5-toc" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2191,9 +2534,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ol>
       </div>
       <div class="footer">
-	<a href="#slide4-15" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide5-1" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide4-15" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">44/50</span>
+          <a href="#slide5-1" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2221,9 +2572,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</ul>
       </div>
       <div class="footer">
-	<a href="#slide5-toc" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide5-toc" class="navi-up">^</a>
-	<a href="#slide5-2" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-toc" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide5-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">45/50</span>
+          <a href="#slide5-2" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2278,9 +2637,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide5-1" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide5-toc" class="navi-up">^</a>
-	<a href="#slide5-3" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-1" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide5-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">46/50</span>
+          <a href="#slide5-3" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2335,9 +2702,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide5-2" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide5-toc" class="navi-up">^</a>
-	<a href="#slide5-4" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-2" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide5-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">47/50</span>
+          <a href="#slide5-4" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2395,9 +2770,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide5-3" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide5-toc" class="navi-up">^</a>
-	<a href="#slide5-5" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-3" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide5-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">48/50</span>
+          <a href="#slide5-5" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2454,9 +2837,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	</table>
       </div>
       <div class="footer">
-	<a href="#slide5-4" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide5-toc" class="navi-up">^</a>
-	<a href="#slide-last" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-4" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide5-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">49/50</span>
+          <a href="#slide-last" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
@@ -2464,15 +2855,23 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide-last" class="slide">
       <div class="slide-body">
 	<div style="text-align:center; margin-top:150px; font-size:38pt">
-	  Get Kwartz Now<br />
+	  Get Kwartz at<br />
 	  <a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a><br />
 	  Thank You
 	</div>
       </div>
       <div class="footer">
-	<a href="#slide5-5" class="navi-prev">&lt;&lt;</a>
-	<a href="#slide-toc" class="navi-up">^</a>
-	<a href="#slide-title" class="navi-next">&gt;&gt;</a>
+        <div class="footer-left">
+          &nbsp;<a href="#slide5-5" class="navi-prev">&lt;&lt;</a>
+          <a href="#slide-toc" class="navi-toc">^</a>
+        </div>
+        <div class="footer-right">
+          <span class="pagenum">50/50</span>
+          <a href="#slide-title" class="navi-next">&gt;&gt;</a>&nbsp;
+        </div>
+        <div class="footer-center">
+          <span class="copyright">copyright&copy;2006 kuwata-lab.com all rights reserved</span>
+        </div>
       </div>
     </div>
 
