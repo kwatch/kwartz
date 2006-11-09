@@ -18,6 +18,32 @@
 	body {
 	}
 
+	div.slide {
+	    display: none;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    color: #000;
+	    font-size: 18pt;
+	    background-color: #F3F3F3;
+	}
+
+	#slide-title {
+	    display: block;
+	}
+
+	div.slide:target {
+	    display: block;
+	    /*z-index: 1;*/
+	}
+
+	.slide-body {
+	    padding: 20px;
+	    line-height: 130%;
+	}
+
 	ul, ol {
 	   padding: 5px 0px;
 	}
@@ -38,41 +64,16 @@
 	}
 
 	li li li {
-	    font-size: 14pt;
+	    font-size: 15pt;
 	}
 
 	ul.descr {
 	    margin-top: 15px;
+	    font-size: 16pt;
 	}
 
 	a:link, a:visited {
 	    color: #00F;
-	}
-
-	div.slide {
-	    display: none;
-	    color: #090909;
-	    font-size: 16pt;
-	    background-color: #F3F3F3;
-	    width: 100%;
-	    height: 100%;
-	}
-
-	#slide-title {
-	    display: block;
-	}
-
-	div.slide:target {
-	    display: block;
-	    top: 0;
-	    left: 0;
-	    z-index: 1;
-	    position: absolute;
-	}
-
-
-	.slide-body {
-	    padding: 20px;
 	}
 
 	h1 {
@@ -95,13 +96,16 @@
 	    border-bottom: solid 3px #99C;
 	}
 
+	pre {
+	    line-height: 110%;
+	}
 	pre.code, pre.code2 {
 	    background-color: #CCF;
 	    border: solid 1px #66F;
 	    padding: 5px 15px;
 	}
 	pre.code {
-	    font-size: 18pt;
+	    font-size: 17pt;
 	}
 	pre.code2 {
 	    font-size: 16pt;
@@ -112,11 +116,11 @@
 	    background-color: #CCC;
 	    border: solid 1px #666;
 	    padding: 5px 15px;
-	    font-size: 18pt;
+	    font-size: 17pt;
 	}
 
 	pre .small {
-	    font-size: 16pt;
+	    font-size: 15pt;
 	}
 
 	
@@ -149,13 +153,20 @@
 
 	table.matrix {
 	    border: solid 1px #999;
+	    margin: 10px 10px 15px 10px;
+	    border-collapse: collapse;
+	    font-size: 16pt;
 	}
 	.matrix th {
 	    background-color: #CCC;
 	    font-weight: normal;
+	    border: solid 1px;
+	    padding: 3px;
 	}
 	.matrix td {
 	    text-align: center;
+	    border: solid 1px;
+	    padding: 3px;
 	}
 
 	table.n-up2 {
@@ -175,9 +186,9 @@
 	    height: 1em;
 	    */
 	    bottom: 0;
-	    font-size:11pt;
-	    padding:5px 0;
-	    color:#FFF
+	    font-size: 11pt;
+	    padding: 5px 0;
+	    color: #FFF
 	}
 
 	.footer-left {
@@ -219,7 +230,7 @@
 	.pagenum:before {
 	    padding-right: 20px;
 	    counter-increment: pagenum;
-	    content: '1/25';
+	    content: '1/50';
 	}
 	*/
 
@@ -506,7 +517,7 @@
 2. id<span class="small">属性をつけた要素を操作</span>
   2-1. id="item"<span class="small">の要素にテキストを設定</span>
   2-2. id="list"<span class="small">の要素をコピー</span>
-  2-3. id属性を削除
+  2-3. <span class="small">コピーした要素から</span>id<span class="small">属性を削除</span>
   2-4. <span class="small">リスト中のデータごとに繰り返す</span>
 3. <span class="small">DOMツリーをHTMLファイルに変換して出力</span>
 </pre>
@@ -909,7 +920,7 @@
 }
 </pre>
 	      <ul class="descr">
-		<li>CSSと同じ形式（セレクタ、プロパティ）
+		<li>CSSと同じ形式<!--（セレクタ、プロパティ）-->
 		  <!--
 		  <ul>
 		    <li>セレクタで要素を指定</li>
@@ -1303,7 +1314,7 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-9" class="slide">
       <h2>プレゼンテーション層の構成</h2>
       <div class="slide-body">
-	<table class="n-up2">
+	<table class="n-up2" summary="">
 	  <tr>
 	    <td class="n-up2">
 	      <ul>
@@ -1319,6 +1330,7 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 		</li>
 		<li>1つのファイルが1つの役割だけを担当
 		</li>
+	      </ul>
 	    </td>
 	    <td class="n-up2">
 	      <div style="text-align:center">
@@ -2013,6 +2025,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	    </td>
 	  </tr>
 	</table>
+	<ul class="descr">
+	  <li>要素全体または内容だけを繰り返す</li>
+	</ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2073,6 +2088,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	    </td>
 	  </tr>
 	</table>
+	<ul class="descr">
+	  <li>ループカウンタを自動的に作成して繰り返す</li>
+	</ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2098,8 +2116,7 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	    <td class="n-up2">
 	      <span class="caption">プレゼンテーションデータ</span>
 	      <pre class="code">
- &lt;tr class="@!{item_tgl}@"
-     <strong>kw:d="FOR item in list"</strong>&gt;
+ &lt;tr class="@!{item_tgl}@" <strong>kw:d="FOR item in list"</strong>&gt;
   &lt;td&gt;@{item}@&lt;/td&gt;
  &lt;/tr&gt;
 </pre>
@@ -2119,6 +2136,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	    </td>
 	  </tr>
 	</table>
+	<ul class="descr">
+	  <li>ループカウンタとトグル変数を自動的に作成して繰り返す</li>
+	</ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2176,6 +2196,7 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 	  </tr>
 	</table>
 	<ul class="descr">
+	  <li>要素全体または内容だけを繰り返す</li>
 	</ul>
       </div>
       <div class="footer">
@@ -2220,7 +2241,7 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 &lt;p&gt;
   val is positive.
 &lt;/p&gt;
-<strong>&lt;% elsif val > 0 %&gt;</strong>
+<strong>&lt;% elsif val < 0 %&gt;</strong>
 &lt;p&gt;
   val is negative.
 &lt;/p&gt;
@@ -2854,10 +2875,12 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 
     <div id="slide-last" class="slide">
       <div class="slide-body">
-	<div style="text-align:center; margin-top:150px; font-size:38pt">
-	  Get Kwartz at<br />
-	  <a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a><br />
-	  Thank You
+	<div style="text-align:center; font-size:38pt; margin-top:130px; line-height:140%;">
+	  <p>
+	    Get Kwartz at<br />
+	    <a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a><br />
+	  </p>
+	  <p style="margin-top:50px">Thank You</p>
 	</div>
       </div>
       <div class="footer">
