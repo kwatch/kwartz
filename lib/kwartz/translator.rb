@@ -152,20 +152,28 @@ module Kwartz
 
     def parse_embedded_expr(text)
       pos = 0
-      text.scan(/@(!*)\{(.*?)\}@/) do |indicator, expr_code|
+      text.scan(/@(!*)\{(.*?)\}@/) do |indicator, expr_str|
         m = Regexp.last_match
         s = text[pos, m.begin(0) - pos]
         pos = m.end(0)
         translate_string(s) unless s.empty?
+        expr_str = parse_expr_str!(expr_str)
         case indicator
-        when nil, ''  ;  add_escaped_expr(expr_code)
-        when '!'      ;  add_plain_expr(expr_code)
-        when '!!'     ;  add_debug_expr(expr_code)
+        when nil, ''  ;  add_escaped_expr(expr_str)
+        when '!'      ;  add_plain_expr(expr_str)
+        when '!!'     ;  add_debug_expr(expr_str)
         else          ;  # do nothing
         end
       end
       rest = pos == 0 ? text : $'
       translate_string(rest) unless rest.empty?
+    end
+
+
+    ## (abstract) convert expression to native expression string.
+    ## ex. 'item.name' => '$item->name', '$item->name' => '$item->name'
+    def parse_expr_str!(expr_str)
+      not_implemented
     end
 
 

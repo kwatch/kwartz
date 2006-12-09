@@ -12,11 +12,45 @@ require 'kwartz/translator'
 module Kwartz
 
 
+  module RubyExpressionParser
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = expr_str
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = expr_str
+      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
+        expr = expr_str
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        expr = expr_str
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
+
+
+    def parse_expr_str!(expr_str)
+      begin
+        return parse_expr_str!(expr_str, -1)
+      rescue
+        return expr_str
+      end
+    end
+
+
+  end
+
+
+
 
   ##
   ## directive handler for Ruby
   ##
   class RubyHandler < Handler
+    include RubyExpressionParser
 
 
     RUBY_DIRECTIVE_PATTERN = /\A(\w+)(?:[:\s]\s*(.*))?\z/
@@ -142,23 +176,6 @@ module Kwartz
     end #def
 
 
-    def parse_expr_str(expr_str, linenum)
-      case expr_str
-      when /\A(\w+)\z/             # variable
-        expr = expr_str
-      when /\A(\w+)\.(\w+)\z/      # object.property
-        expr = expr_str
-      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
-        expr = expr_str
-      when /\A(\w+)\[(\w+)\]\z/    # array or hash
-        expr = expr_str
-      else
-        raise convert_error("'#{expr_str}': invalid expression.", linenum)
-      end
-      return expr
-    end
-
-
   end #class
   Handler.register_class('ruby', RubyHandler)
 
@@ -168,6 +185,7 @@ module Kwartz
   ## translator for eRuby
   ##
   class RubyTranslator < BaseTranslator
+    include RubyExpressionParser
 
 
     def initialize(properties={})

@@ -14,10 +14,45 @@ module Kwartz
 
 
 
+  module JstlExpressionParser
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = expr_str
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = expr_str
+      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
+        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
+        expr = "#{$1}[#{key}]"
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        expr = "#{$1}[#{$2}]"
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
+
+
+    def parse_expr_str!(expr_str)
+      begin
+        return parse_expr_str(expr_str, 0)
+      rescue
+        return expr_str
+      end
+    end
+
+
+  end
+
+
+
   ##
   ## directive handler for JSTL
   ##
   class JstlHandler < Handler
+    include JstlExpressionParser
 
 
     def initialize(elem_rulesets=[], properties={})
@@ -190,24 +225,6 @@ module Kwartz
     protected
 
 
-    def parse_expr_str(expr_str, linenum)
-      case expr_str
-      when /\A(\w+)\z/             # variable
-        expr = expr_str
-      when /\A(\w+)\.(\w+)\z/      # object.property
-        expr = expr_str
-      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
-        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
-        expr = "#{$1}[#{key}]"
-      when /\A(\w+)\[(\w+)\]\z/    # array or hash
-        expr = "#{$1}[#{$2}]"
-      else
-        raise convert_error("'#{expr_str}': invalid expression.", linenum)
-      end
-      return expr
-    end
-
-
     def handle_jstl_redirect(options)
       return _handle_jstl_params('redirect', %w[url context], options)
     end
@@ -306,6 +323,7 @@ module Kwartz
   ## translator for php
   ##
   class JstlTranslator < BaseTranslator
+    include JstlExpressionParser
 
 
     JSTL11_EMBED_PATTERNS = [

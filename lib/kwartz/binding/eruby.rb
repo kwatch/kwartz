@@ -27,6 +27,7 @@ module Kwartz
   ## translator for eRuby
   ##
   class ErubyTranslator < BaseTranslator
+    include RubyExpressionParser
 
 
     ERUBY_EMBED_PATTERNS = [

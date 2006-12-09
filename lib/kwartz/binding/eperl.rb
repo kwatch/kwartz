@@ -14,10 +14,49 @@ module Kwartz
 
 
 
+  module EperlExpressionParser
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = '$'+$1
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = "$#{$1}->{#{$2}}"
+      when /\A(\w+)\[(.*?'|".*?"|:\w+)\]\z/   # hash
+        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
+        expr = "$#{$1}{#{key}}"
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        begin
+          expr = "$#{$1}[#{Integer($2)}]"
+        rescue ArgumentError
+          expr = "$#{$1}[$#{$2}]"
+        end
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
+
+
+    def parse_expr_str!(expr_str)
+      begin
+        return parse_expr_str(expr_str, -1)
+      rescue
+        return expr_str
+      end
+    end
+
+
+  end
+
+
+
   ##
   ## directive handler for ePerl
   ##
   class EperlHandler < Handler
+    include EperlExpressionParser
 
 
     PERL_DIRECTIVE_PATTERN = /\A(\w+)(?:\s*\(\s*(.*)\))?\z/
@@ -159,31 +198,6 @@ module Kwartz
     end #def
 
 
-    protected
-
-
-    def parse_expr_str(expr_str, linenum)
-      case expr_str
-      when /\A(\w+)\z/             # variable
-        expr = '$'+$1
-      when /\A(\w+)\.(\w+)\z/      # object.property
-        expr = "$#{$1}->{#{$2}}"
-      when /\A(\w+)\[(.*?'|".*?"|:\w+)\]\z/   # hash
-        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
-        expr = "$#{$1}{#{key}}"
-      when /\A(\w+)\[(\w+)\]\z/    # array or hash
-        begin
-          expr = "$#{$1}[#{Integer($2)}]"
-        rescue ArgumentError
-          expr = "$#{$1}[$#{$2}]"
-        end
-      else
-        raise convert_error("'#{expr_str}': invalid expression.", linenum)
-      end
-      return expr
-    end
-
-
   end #class
   Handler.register_class('eperl', EperlHandler)
 
@@ -193,6 +207,7 @@ module Kwartz
   ## translator for ePerl
   ##
   class EperlTranslator < BaseTranslator
+    include EperlExpressionParser
 
 
     EPERL_EMBED_PATTERNS = [

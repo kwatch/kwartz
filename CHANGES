@@ -152,6 +152,50 @@ $ Release 3.2.0
 	====================
 
 
+    * Embedded expression '@{...}@' and '@!{...}@' now represents both
+      language-independent expression and language-depend expression.
+      If expression matches the following pattern then it is recognized
+      as language-independent expression, else as language-depend
+      expression.
+      - variable
+      - object.property
+      - hash['key'], hash["key"], hash[:key]
+      - array[123], array[index]
+
+      ex. expr.html
+	--------------------
+	@{variable}@
+	@{object.property}@
+	@{hash['key']}@
+	@{hash[:key]}@
+	@{array[0]}@
+	@{array[index]}@
+	@{$unknown->style}@
+	--------------------
+
+      compile:
+	====================
+	$ kwarz -l eruby expr.html
+	<%=h variable %>
+	<%=h object.property %>
+	<%=h hash['key'] %>
+	<%=h hash["key"] %>
+	<%=h hash[:key] %>
+	<%=h array[0] %>
+	<%=h array[index] %>
+	<%=h $unknown->style %>
+	$ kwartz -l php expr.html
+	<?php echo htmlspecialchars($variable); ?>
+	<?php echo htmlspecialchars($object->property); ?>
+	<?php echo htmlspecialchars($hash['key']); ?>
+	<?php echo htmlspecialchars($hash["key"]); ?>
+	<?php echo htmlspecialchars($hash['key']); ?>
+	<?php echo htmlspecialchars($array[0]); ?>
+	<?php echo htmlspecialchars($array[$index]); ?>
+	<?php echo htmlspecialchars($unknown->style); ?>
+	====================
+
+
     * Directive 'value', 'elem', 'stag', 'cont', 'etag', and 'default'
       can be language-independent if their argument is one of the
       following format.

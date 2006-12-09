@@ -306,3 +306,84 @@
     eperl: |
       <a href="mailto:<?= $email !>"><?= encode_entities($name) !></a>
       <a href="mailto:<?= $email !>"><?= encode_entities($name) !></a>
+
+###
+- name:   embedded_expr2
+  desc:   common expression string
+  pdata: |
+	@{variable}@
+	@{object.property}@
+	@{hash['key']}@
+	@{hash["key"]}@
+	@{hash[:key]}@
+	@{array[0]}@
+	@{array[index]}@
+	@{$unknown->style}@
+  plogic: |
+  expected*:
+    ruby: |
+	_buf = ""; _buf << ERB::Util.h(variable); _buf << "\n";
+	_buf << ERB::Util.h(object.property); _buf << "\n";
+	_buf << ERB::Util.h(hash['key']); _buf << "\n";
+	_buf << ERB::Util.h(hash["key"]); _buf << "\n";
+	_buf << ERB::Util.h(hash[:key]); _buf << "\n";
+	_buf << ERB::Util.h(array[0]); _buf << "\n";
+	_buf << ERB::Util.h(array[index]); _buf << "\n";
+	_buf << ERB::Util.h($unknown->style); _buf << "\n";
+	; _buf
+    eruby: |
+	<%=h variable %>
+	<%=h object.property %>
+	<%=h hash['key'] %>
+	<%=h hash["key"] %>
+	<%=h hash[:key] %>
+	<%=h array[0] %>
+	<%=h array[index] %>
+	<%=h $unknown->style %>
+    erubis: |
+	<%== variable %>
+	<%== object.property %>
+	<%== hash['key'] %>
+	<%== hash["key"] %>
+	<%== hash[:key] %>
+	<%== array[0] %>
+	<%== array[index] %>
+	<%== $unknown->style %>
+    pierubis: |
+	@{variable}@
+	@{object.property}@
+	@{hash['key']}@
+	@{hash["key"]}@
+	@{hash[:key]}@
+	@{array[0]}@
+	@{array[index]}@
+	@{$unknown->style}@
+    php: |
+	<?php echo htmlspecialchars($variable); ?>
+	<?php echo htmlspecialchars($object->property); ?>
+	<?php echo htmlspecialchars($hash['key']); ?>
+	<?php echo htmlspecialchars($hash["key"]); ?>
+	<?php echo htmlspecialchars($hash['key']); ?>
+	<?php echo htmlspecialchars($array[0]); ?>
+	<?php echo htmlspecialchars($array[$index]); ?>
+	<?php echo htmlspecialchars($unknown->style); ?>
+    jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+	${variable}
+	${object.property}
+	${hash['key']}
+	${hash["key"]}
+	${hash['key']}
+	${array[0]}
+	${array[index]}
+	${$unknown->style}
+    eperl: |
+	<?= encode_entities($variable) !>
+	<?= encode_entities($object->{property}) !>
+	<?= encode_entities($hash{'key'}) !>
+	<?= encode_entities($hash{"key"}) !>
+	<?= encode_entities($hash{'key'}) !>
+	<?= encode_entities($array[0]) !>
+	<?= encode_entities($array[$index]) !>
+	<?= encode_entities($unknown->style) !>

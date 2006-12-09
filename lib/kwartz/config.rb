@@ -20,10 +20,10 @@ module Kwartz
     PROPERTY_JSTL       = 1.2       # jstl version (1.2 or 1.1)
     #
     NO_ETAGS            = [ 'input', 'img' ,'br', 'hr', 'meta', 'link' ]
-    #ALLOW_DUPLICATE_ID  = false
+    ALLOW_DUPLICATE_ID  = false     # if true then enables to use duplicated id name.
 
 
   end
 
-  
+
 end

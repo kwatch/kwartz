@@ -275,6 +275,7 @@ module Kwartz
   ## translator for rails
   ##
   class RailsTranslator < BaseTranslator
+    include RubyExpressionParser
 
 
     RAILS_EMBED_PATTERNS = [

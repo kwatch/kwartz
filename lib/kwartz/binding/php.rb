@@ -14,10 +14,49 @@ module Kwartz
 
 
 
+  module PhpExpressionParser
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = '$' + $1
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = "$#{$1}->#{$2}"
+      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
+        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
+        expr = "$#{$1}[#{key}]"
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        begin
+          expr = "$#{$1}[#{Integer($2)}]"
+        rescue
+          expr = "$#{$1}[$#{$2}]"
+        end
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
+
+
+    def parse_expr_str!(expr_str)
+      begin
+        return parse_expr_str(expr_str, 0)
+      rescue
+        return expr_str
+      end
+    end
+
+
+  end
+
+
+
   ##
   ## directive handler for PHP
   ##
   class PhpHandler < Handler
+    include PhpExpressionParser
 
 
     PHP_DIRECTIVE_PATTERN = /\A(\w+)(?:\s*\(\s*(.*)\))?\z/
@@ -149,31 +188,6 @@ module Kwartz
     end #def
 
 
-    protected
-
-
-    def parse_expr_str(expr_str, linenum)
-      case expr_str
-      when /\A(\w+)\z/             # variable
-        expr = '$' + $1
-      when /\A(\w+)\.(\w+)\z/      # object.property
-        expr = "$#{$1}->#{$2}"
-      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
-        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
-        expr = "$#{$1}[#{key}]"
-      when /\A(\w+)\[(\w+)\]\z/    # array or hash
-        begin
-          expr = "$#{$1}[#{Integer($2)}]"
-        rescue
-          expr = "$#{$1}[$#{$2}]"
-        end
-      else
-        raise convert_error("'#{expr_str}': invalid expression.", linenum)
-      end
-      return expr
-    end
-
-
   end #class
   Handler.register_class('php', PhpHandler)
 
@@ -183,6 +197,7 @@ module Kwartz
   ## translator for php
   ##
   class PhpTranslator < BaseTranslator
+    include PhpExpressionParser
 
 
     PHP_EMBED_PATTERNS = [

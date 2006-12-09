@@ -719,11 +719,16 @@ module Kwartz
         end
         name = $1
         if get_element_info(name)
-          #unless Config::ALLOW_DUPLICATE_ID
+          unless Config::ALLOW_DUPLICATE_ID
             previous_linenum = get_element_info(name).stag_info.linenum
             msg = "'#{d_str}': id '#{name}' is already used at line #{previous_linenum}."
             raise convert_error(msg, linenum)
-          #end
+          else
+            elem_info.name = name
+            register_element_info(name, elem_info)
+            #e = get_element_info(name)
+            #register_element_info(name, e.to_a << elem_info)
+          end
         else
           elem_info.name = name
           register_element_info(name, elem_info)
