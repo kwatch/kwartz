@@ -95,7 +95,7 @@ module Kwartz
       table[word.capitalize] = sym
       table[word.upcase]     = sym
     end
-    %w[element remove tagname logic document global local fixture before after].each do |word|
+    %w[remove tagname logic before after begin end global local].each do |word|
       table[word] = word.intern
     end
     PLOGIC_KEYWORDS = table
@@ -218,12 +218,14 @@ module Kwartz
       #not_implemented
     end
 
+
     ## .[abstract] detect parser-specific keywords
     ##
     ## return symbol if keyword is token, else return nil
     def keywords(keyword)
       not_implemented
     end
+
 
     ## scan token
     def scan
@@ -437,7 +439,7 @@ module Kwartz
     def keywords(keyword)
       return RUBYSTYLE_KEYWORDS[keyword]
     end
-    RUBYSTYLE_KEYWORDS = { 'BEGIN' => :BEGIN, 'END' => :END }
+    RUBYSTYLE_KEYWORDS = { 'BEGIN'=>:BEGIN, 'END'=>:END, 'element'=>:element, 'document'=>:document }
 
 
     def parse_document_ruleset
@@ -446,7 +448,7 @@ module Kwartz
       unless @token == :'{'
         raise parse_error("'#{@value}': document requires '{'.")
       end
-      ruleset = DocumentRuleset.new
+      ruleset = Ruleset.new
       while @token
         scan()
         case @token
@@ -583,8 +585,8 @@ module Kwartz
   ##
   ## example of presentation logic in css style:
   ##
-  ##   // comment
-  ##   #list {
+  ##   /* comment */
+  ##   #idname, .classname, tagname {
   ##     value:   @var;
   ##     attrs:   "class" @classname, "bgcolro" color;
   ##     append:  @value==item['list'] ? ' checked' : '';
@@ -600,32 +602,50 @@ module Kwartz
   class CssStyleParser < PresentationLogicParser
 
 
+    def initialize(*args)
+      super
+      @mode = :selector           # :selector or :declaration
+    end
+
+    attr_accessor :mode
+
+
     def parse(input, filename='')
       reset(input, filename)
       scan()
       rulesets = []
-      while @token == ?@
-        c = getch();
-        scan_ident()
-        name = @value
-        if name == 'import'
+      while @token == :command     # '@import'
+        command = @value
+        case command
+        when '@import'
           imported_rulesets = parse_import_command()
           rulesets += imported_rulesets
+        when '@from'
+          # TODO
+        when '@import_pdata'
+          # TODO
         else
-          raise parse_error("@#{name}: unsupported command.")
+          raise parse_error("#{command}: unsupported command.")
         end
       end
-      while @token == ?#
-        scan_ident()
-        name = @value
-        if name == 'DOCUMENT'
-          rulesets << parse_document_ruleset()
-        else
-          rulesets += parse_element_ruleset()
+      while @token == :selector
+        selectors = parse_selectors()
+        unless @token == :'{'
+          raise parse_error("'#{@value}': '{' is expected.")  #'
         end
+        @mode = :declaration
+        _linenum, _column = @linenum, @column
+        ruleset = Ruleset.new(selectors)
+        parse_declaration(ruleset)
+        unless @token
+          raise parse_error("'#{selectors.first}': is not closed by '}'.", _linenum, _column)
+        end
+        @mode = :selector
+        rulesets << ruleset
+        scan()
       end
       unless @token == nil
-        raise parse_error("'#{@value}': '#name' is expected.")
+        raise parse_error("'#{@value}': selector is expected.")
       end
       return rulesets
     end
@@ -665,22 +685,46 @@ module Kwartz
         end #if
       end #if
 
-      ## '#mark'
-      if c == ?#
-        c = getch()
-        unless is_alpha(c)
-          @error = :invalid_char
-          @value = '#'
-          return @token = :error
+      ##
+      if @mode == :selector
+        # '#name' or '.name'
+        if c == ?# || c == ?.
+          start_char = c
+          name = ''
+          while is_identchar(c = getch()) || c == ?-
+            name << c
+          end
+          if name.empty?
+            @error = :invalid_char
+            @value = start_char.chr
+            return @token = :error
+          end
+          @value = start_char.chr + name
+          return @token = :selector
         end
-        @value = '#'
-        return @token = ?#
-      end #if
-
-      ## '@import "foo.plogic"'
-      if c == ?@
-        @value = '@'
-        return @token = ?@
+        # 'tagname'
+        if is_identchar(c) || c == ?-
+          name = c.chr
+          while is_identchar(c = getch()) || c == ?- || c == ?:
+            name << c
+          end
+          @value = name
+          return @token = :selector
+        end
+        # '@import'
+        if c == ?@
+          name = ''
+          while is_identchar(c = getch())
+            name << c
+          end
+          if name.empty?
+            @error = :invalid_char
+            @value = '@'
+            return @token = :error
+          end
+          @value = '@' + name
+          return @token = :command
+        end
       end
 
       return false
@@ -694,39 +738,6 @@ module Kwartz
     CSSSTYLE_KEYWORDS = { 'begin'=>:begin, 'end'=>:end }
 
 
-    def parse_document_ruleset
-      assert unless @value == 'DOCUMENT'
-      start_linenum = @linenum
-      scan()
-      unless @token == :'{'
-        raise parse_error("'#{@value}': '{' is expected.")
-      end
-      ruleset = DocumentRuleset.new
-      while @token
-        scan()
-        case @token
-        when :'}'      ;  break
-        when :global   ;  has_colon?();  ruleset.set_global   _parse_words()
-        when :local    ;  has_colon?();  ruleset.set_local    _parse_words()
-        when :fixture  ;  has_colon?();  ruleset.set_fixture  _parse_block()
-        when :begin    ;  has_colon?();  ruleset.set_begin    _parse_block()
-        when :end      ;  has_colon?();  ruleset.set_end      _parse_block()
-        #when :before   ;  has_colon?();  ruleset.set_before   _parse_block()
-        #when :after    ;  has_colon?();  ruleset.set_after    _parse_block()
-        else
-          unless @token
-            raise parse_error("'#DOCUMENT': is not closed by '}'.", start_linenum)
-          else
-            raise parse_error("'#{@value}': unexpected token.")
-          end
-        end
-      end
-      assert unless @token == :'}'
-      scan()
-      return ruleset
-    end
-
-
     def has_colon?
       unless @ch == ?:
         raise parse_error("'#{@value}': ':' is required.")
@@ -735,57 +746,50 @@ module Kwartz
     end
 
 
-    def parse_element_ruleset
-      assert unless @token == :ident
+    def parse_selectors
+      assert unless @token == :selector
       start_linenum = @linenum
-      name = @value
-      #names = [name]
-      names = []
+      selectors = [ @value ]
       scan()
       while @token == :','
         scan()
-        unless @token == ?#
-          raise parse_error("'#{@value}': '#name' is expected.")
+        unless @token == :selector
+          raise parse_error("'#{@value}': selector is expected (or additional comma exists).") #'
         end
-        scan_ident()
-        names << @value
+        selectors << @value
         scan()
       end
-      unless @token == :'{'
-        raise parse_error("'#{@value}': '{' is expected.")
-      end
+      return selectors
+    end
 
-      ruleset = ElementRuleset.new(name)
+
+    def parse_declaration(ruleset)
+      assert unless @token == :'{'
       while true
         scan()
         flag_escape = escape?(@value)
         case @token
         when nil     ;  break
         when :'}'    ;  break
-        when :stag   ;  has_colon?();  ruleset.set_stag   _parse_expr() , flag_escape
-        when :cont   ;  has_colon?();  ruleset.set_cont   _parse_expr() , flag_escape
-        when :etag   ;  has_colon?();  ruleset.set_etag   _parse_expr() , flag_escape
-        when :elem   ;  has_colon?();  ruleset.set_elem   _parse_expr() , flag_escape
-        when :value  ;  has_colon?();  ruleset.set_value  _parse_expr() , flag_escape
-        when :attrs  ;  has_colon?();  ruleset.set_attrs  _parse_pairs(), flag_escape
-        when :append ;  has_colon?();  ruleset.set_append _parse_exprs(), flag_escape
-        when :remove ;  has_colon?();  ruleset.set_remove _parse_strs()
+        when :stag   ;  has_colon?();  ruleset.set_stag    _parse_expr() , flag_escape
+        when :cont   ;  has_colon?();  ruleset.set_cont    _parse_expr() , flag_escape
+        when :etag   ;  has_colon?();  ruleset.set_etag    _parse_expr() , flag_escape
+        when :elem   ;  has_colon?();  ruleset.set_elem    _parse_expr() , flag_escape
+        when :value  ;  has_colon?();  ruleset.set_value   _parse_expr() , flag_escape
+        when :attrs  ;  has_colon?();  ruleset.set_attrs   _parse_pairs(), flag_escape
+        when :append ;  has_colon?();  ruleset.set_append  _parse_exprs(), flag_escape
+        when :remove ;  has_colon?();  ruleset.set_remove  _parse_strs()
         when :tagname;  has_colon?();  ruleset.set_tagname _parse_str()
-        when :logic  ;  has_colon?();  ruleset.set_logic  _parse_block()
+        when :logic  ;  has_colon?();  ruleset.set_logic   _parse_block()
+        when :before ;  has_colon?();  ruleset.set_before  _parse_block()
+        when :after  ;  has_colon?();  ruleset.set_after   _parse_block()
+        when :begin  ;  has_colon?();  ruleset.set_before  _parse_block()
+        when :end    ;  has_colon?();  ruleset.set_after   _parse_block()
         else
-          raise parse_error("'#{@value}': unexpected token.")
+          raise parse_error("'#{@value}': unexpected token.")  #'
         end
       end
-      ## build rulesets
-      rulesets = [ruleset]
-      names.each do |name| rulesets << ruleset.duplicate(name) end
-
-      unless @token
-        raise parse_error("'##{name}': is not closed by '}'.", start_linenum)
-      end
-      assert "@token=#{@token.inspect}" unless @token == :'}'
-      scan()
-      return rulesets
+      return ruleset
     end
 
 
@@ -800,13 +804,18 @@ module Kwartz
         filename = dir + '/' + filename if dir != '.'
       end
       test(?f, filename)  or raise parse_error("'#{filename}': import file not found.")
+      _linenum, _column = @linenum, @column
       c = @ch
       c = getch() while is_whitespace(c)
       c == ?; or raise parse_error("';' required.")
       c = getch()
       scan()
       parser = self.class.new(@properties)
-      ruleset_list = parser.parse(File.read(filename), filename)
+      begin
+        ruleset_list = parser.parse(File.read(filename), filename)
+      rescue => ex
+        parse_error(ex.message, _linenum, _column)
+      end
       return ruleset_list
     end
 

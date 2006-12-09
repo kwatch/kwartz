@@ -653,13 +653,302 @@
         </ul>
 
 ###
+- name:   before
+  title:  before, after
+  desc: |
+        {{,before:,}} and {{,after:,}} property represents the prework and postwork
+	of each element's presentation logics.
+	These properties enables to share or reuse presentation logics.
+	.#These properties takes target code block and are available only with
+	.#'#DOCUMENT' selector.
+
+  pdata: |
+        <!-- Groups -->
+	<ul id="mark:groups">
+	  <li class="item"></li>
+	</ul>
+	
+        <!-- Members -->
+	<ol id="mark:members">
+	  <li class="item"></li>
+	</ol>
+	
+  plogic*:
+    eruby: |
+        #groups {
+	  {{*before:*}} {
+	    {{*list = @groups*}}
+	  }
+	  {{*after:*}} {
+	    {{*group_count = count*}}
+	  }
+	}
+        #members {
+	  {{*before:*}} {
+	    {{*list = @members*}}
+	  }
+	  {{*after:*}} {
+	    {{*member_count = count*}}
+	  }
+	}
+	
+	/* common 'logic:' part */
+	#groups, #members {
+	  logic: {
+	    count = 0
+	    _stag
+	    for item in list
+	      unless item.obsolete?
+	        count += 1
+	        _cont
+	      end
+	    end
+	    _etag
+	  }
+	}
+	
+	.item {
+	  value: item.name;
+	}
+
+    php: |
+        #groups {
+	  {{*before:*}} {
+	    {{*$list = $groups;*}}
+	  }
+	  {{*after:*}} {
+	    {{*$group_count = $count;*}}
+	  }
+	}
+        #members {
+	  {{*before:*}} {
+	    {{*$list = $members;*}}
+	  }
+	  {{*after:*}} {
+	    {{*$member_count = $count;*}}
+	  }
+	}
+	
+	/* common 'logic:' part */
+	#groups, #members {
+	  logic: {
+	    $count = 0;
+	    _stag();
+	    foreach ($list as $item) {
+	      if (! $item->obsolete) {
+	        $count++;
+	        _cont();
+	      }
+	    }
+	    _etag();
+	  }
+	}
+	
+	.item {
+	  value: $item->name;
+	}
+
+    jstl: |
+        #groups {
+	  {{*before:*}} {
+	    {{*<c:set var="list" value="${groups}" />*}}
+	  }
+	  {{*after:*}} {
+	    {{*<c:set var="group_count" value="${count}" />*}}
+	  }
+	}
+        #members {
+	  {{*before:*}} {
+	    {{*<c:set var="list" value="${members}" />*}}
+	  }
+	  {{*after:*}} {
+	    {{*<c:set var="members_count" value="${count}" />*}}
+	  }
+	}
+	
+	/* common 'logic:' part */
+	#groups, #members {
+	  logic: {
+	    <c:set var="count" value="${0}" />
+	    _stag()
+	    <c:forEach var="item" items="${list}" />
+	      <c:if test="${not item.obsolete}" />
+	        <c:set var="count" value="${count+1}" />
+	        _cont()
+	      </c:if>
+	    </c:forEach>
+	    _etag()
+	  }
+	}
+	
+	.item {
+	  value: item.name;
+	}
+
+    eperl: |
+        #groups {
+	  {{*before:*}} {
+	    {{*@list = @groups;*}}
+	  }
+	  {{*after:*}} {
+	    {{*$group_count = $count;*}}
+	  }
+	}
+        #members {
+	  {{*before:*}} {
+	    {{*@list = @members;*}}
+	  }
+	  {{*after:*}} {
+	    {{*$member_count = $count;*}}
+	  }
+	}
+	
+	/* common 'logic:' part */
+	#groups, #members {
+	  logic: {
+	    $count = 0;
+	    _stag();
+	    foreach $item (@list) {
+	      if (! $item['obsolete']) {
+	        $count++;
+	        _cont();
+	      }
+	    }
+	    _etag();
+	  }
+	}
+	
+	.item {
+	  value: $item['name'];
+	}
+
+  expected*:
+    eruby: |
+        <!-- Groups -->
+	<%     {{*list = @groups*}} %>
+	<%     count = 0 %>
+	<ul>
+	<%     for item in list %>
+	<%       unless item.obsolete? %>
+	<%         count += 1 %>
+	  <li class="item"><%= item.name %></li>
+	<%       end %>
+	<%     end %>
+	</ul>
+	<%     {{*group_count = count*}} %>
+	
+        <!-- Members -->
+	<%     {{*list = @members*}} %>
+	<%     count = 0 %>
+	<ol>
+	<%     for item in list %>
+	<%       unless item.obsolete? %>
+	<%         count += 1 %>
+	  <li class="item"><%= item.name %></li>
+	<%       end %>
+	<%     end %>
+	</ol>
+	<%     {{*member_count = count*}} %>
+
+    php: |
+        <!-- Groups -->
+	<?php     {{*$list = $groups;*}} ?>
+	<?php     $count = 0; ?>
+	<ul>
+	<?php     foreach ($list as $item) { ?>
+	<?php       if (! $item->obsolete) { ?>
+	<?php         $count++; ?>
+	  <li class="item"><?php echo $item->name; ?></li>
+	<?php       } ?>
+	<?php     } ?>
+	</ul>
+	<?php     {{*$group_count = $count;*}} ?>
+	
+        <!-- Members -->
+	<?php     {{*$list = $members;*}} ?>
+	<?php     $count = 0; ?>
+	<ol>
+	<?php     foreach ($list as $item) { ?>
+	<?php       if (! $item->obsolete) { ?>
+	<?php         $count++; ?>
+	  <li class="item"><?php echo $item->name; ?></li>
+	<?php       } ?>
+	<?php     } ?>
+	</ol>
+	<?php     {{*$member_count = $count;*}} ?>
+
+    jstl: |
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        <!-- Groups -->
+	    {{*<c:set var="list" value="${groups}" />*}}
+	    <c:set var="count" value="${0}" />
+	<ul>
+	    <c:forEach var="item" items="${list}" />
+	      <c:if test="${not item.obsolete}" />
+	        <c:set var="count" value="${count+1}" />
+	  <li class="item">${item.name}</li>
+	      </c:if>
+	    </c:forEach>
+	</ul>
+	    {{*<c:set var="group_count" value="${count}" />*}}
+	
+        <!-- Members -->
+	    {{*<c:set var="list" value="${members}" />*}}
+	    <c:set var="count" value="${0}" />
+	<ol>
+	    <c:forEach var="item" items="${list}" />
+	      <c:if test="${not item.obsolete}" />
+	        <c:set var="count" value="${count+1}" />
+	  <li class="item">${item.name}</li>
+	      </c:if>
+	    </c:forEach>
+	</ol>
+	    {{*<c:set var="members_count" value="${count}" />*}}
+
+    eperl: |
+        <!-- Groups -->
+	<?     {{*@list = @groups;*}} !>
+	<?     $count = 0; !>
+	<ul>
+	<?     foreach $item (@list) { !>
+	<?       if (! $item['obsolete']) { !>
+	<?         $count++; !>
+	  <li class="item"><?= $item['name'] !></li>
+	<?       } !>
+	<?     } !>
+	</ul>
+	<?     {{*$group_count = $count;*}} !>
+	
+        <!-- Members -->
+	<?     {{*@list = @members;*}} !>
+	<?     $count = 0; !>
+	<ol>
+	<?     foreach $item (@list) { !>
+	<?       if (! $item['obsolete']) { !>
+	<?         $count++; !>
+	  <li class="item"><?= $item['name'] !></li>
+	<?       } !>
+	<?     } !>
+	</ol>
+	<?     {{*$member_count = $count;*}} !>
+
+
+###
 - name:   begin
   title:  begin, end
   desc: |
-        {{,begin:,}} and {{,end:,}} property represents the prework and postwork
-	of document respectively.
-	These properties takes target code block and are available only with
-	'#DOCUMENT' selector.
+	{{,begin:,}} and {{,end:,}} properties are equal to {{,before:,}} and {{,after:,}}.
+	{{*These are obsolete and leaved for compatibility*}}.
+	
+	{{,begin:,}} and {{,end:,}} were aimed to add prework and postwork of document,
+	and restricted to be available only with '#DOCUMENT' selector.
+	Currently {{,before:,}} and {{,after:,}} are available with '#DOCUMENT' selector,
+	so you should use these properties instead of {{,begin:,}} and {{,end:,}}.
+        .#{{,begin:,}} and {{,end:,}} property represents the prework and postwork
+	.#of document respectively.
+	.#These properties takes target code block and are available only with
+	.#'#DOCUMENT' selector.
 
   pdata: |
         <p>Hello <span id="mark:username">world</span>!</p>

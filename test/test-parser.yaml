@@ -16,8 +16,7 @@
 	}
   expected*:
     ruby: |
-	2:2: token=35, value="#"
-	2:6: token=:ident, value="list"
+	2:6: token=:selector, value="#list"
 	2:8: token=:"{", value="{"
 	3:8: token=:value, value="value"
 	4:8: token=:attrs, value="attrs"
@@ -26,6 +25,16 @@
 	6:10: token=:"{", value="{"
 	7:4: token=:"}", value="}"
 	8:2: token=:"}", value="}"
+#	2:2: token=35, value="#"
+#	2:6: token=:ident, value="list"
+#	2:8: token=:"{", value="{"
+#	3:8: token=:value, value="value"
+#	4:8: token=:attrs, value="attrs"
+#	5:9: token=:append, value="append"
+#	6:8: token=:logic, value="logic"
+#	6:10: token=:"{", value="{"
+#	7:4: token=:"}", value="}"
+#	8:2: token=:"}", value="}"
     php: |
 	2:2: token=#, value="#"
 	2:6: token=:ident, value="list"
@@ -68,7 +77,7 @@
 	#list {
 	}
   expected: &elem1|
-	- name: list
+	- selectors: ["#list"]
 
 - name:  parse_elem1_ruby
   style: ruby
@@ -86,7 +95,7 @@
 	  value:  @user['name'];
 	}
   expected: &value1|
-	- name: list
+	- selectors: ["#list"]
 	  cont: @user['name']
 
 - name:  parse_value_part1_ruby
@@ -107,7 +116,7 @@
 	          'color' @prop[:color];
 	}
   expected: &attrs1|
-	- name: list
+	- selectors: ["#list"]
 	  attrs:
 	    - name:  class
 	      value: @class
@@ -134,11 +143,11 @@
 	  append:  aaa, bbb,ccc;
 	}
   expected: &append1|
-	- name: list1
+	- selectors: ["#list1"]
 	  append:
 	    - @name==item['name'] ? " checked='checked'" : ''
 	    - chk(@name)
-	- name: list2
+	- selectors: ["#list2"]
 	  append:
 	    - aaa, bbb,ccc
 
@@ -152,11 +161,11 @@
 	  append aaa, bbb,ccc
 	}
   expected: |
-	- name: list1
+	- selectors: ["#list1"]
 	  append:
 	    - @name==item['name'] ? " checked='checked'" : ''
 	    - chk(@name)
-	- name: list2
+	- selectors: ["#list2"]
 	  append:
 	    - aaa
 	    - bbb,ccc
@@ -169,7 +178,7 @@
 	  remove: "foo", "bar", 'baz';
 	}
   expected: &remove1|
-	- name: list
+	- selectors: ["#list"]
 	  remove:
 	    - foo
 	    - bar
@@ -191,7 +200,7 @@
 	  tagname:   'html:html';
 	}
   expected: &tagname1|
-	- name: list
+	- selectors: ["#list"]
 	  tagname: html:html
 
 - name:  parse_tagname_part1_ruby
@@ -216,7 +225,7 @@
 	  }
 	}
   expected: &logic1|
-	- name: list
+	- selectors: ["#list"]
 	  logic:
 	    - <%    @list.each { |item|%>
 	    - _stag
@@ -254,7 +263,7 @@
 	  }
 	}
   expected: &logic2|
-	- name: list
+	- selectors: ["#list"]
 	  logic:
 	    - <%    @list.each_with_index { |item, i|%>
 	    - <%      if i % 2 == 0%>
@@ -281,6 +290,25 @@
   expected: *logic2
 
 ###
+- name:  parse_beforeafter_css
+  style: css
+  plogic: |
+	#list {
+	  before: {
+	    print "-- start --\n"
+	  }
+	  after: {
+	    print "-- end --\n"
+	  }
+	}
+  expected: |
+	- selectors: ["#list"]
+	  before:
+	    - print(<%="-- start --\n"%>)
+	  after:
+	    - print(<%="-- end --\n"%>)
+
+###
 - name:   parse_import_command1_css
   style: css
   plogic: |
@@ -289,7 +317,7 @@
 	  value: item;
 	}
   expected: |
-	- name: page_link
+	- selectors: ["#page_link"]
 	  cont: page.label
 	  attrs:
 	    - name:  href
@@ -298,7 +326,7 @@
 	    - <%    if page%>
 	    - _elem
 	    - <%    end%>
-	- name: item
+	- selectors: ["#item"]
 	  cont: item
   setup*:
     ruby: |
@@ -339,7 +367,7 @@
 - name:   parse_multi_selector_css
   style: css
   plogic: |
-	#item1, #item2, #item3 {
+	#id, .class, tag::name {
 	  value:  $item;
 	    logic: {
 	      foreach ($list as $item) {
@@ -350,23 +378,7 @@
 	    }
 	}
   expected: |
-	- name: item1
-	  cont: $item
-	  logic:
-	    - <%      foreach ($list as $item) {%>
-	    - _stag
-	    - _cont
-	    - _etag
-	    - <%      }%>
-	- name: item2
-	  cont: $item
-	  logic:
-	    - <%      foreach ($list as $item) {%>
-	    - _stag
-	    - _cont
-	    - _etag
-	    - <%      }%>
-	- name: item3
+	- selectors: ["#id", ".class", "tag::name"]
 	  cont: $item
 	  logic:
 	    - <%      foreach ($list as $item) {%>
@@ -380,8 +392,6 @@
   style: css
   plogic: |
 	#DOCUMENT {
-	  local:  i, item, title, list;
-	  global: _context;
 	  begin: {
 	    title = _context[:title]
 	    list = _context[:list]
@@ -393,23 +403,26 @@
 	    end
 	  }
 	}
+#	  local:  i, item, title, list;
+#	  global: _context;
   expected: |
-	- name: DOCUMENT
-	  global:
-	    - _context
-	  local:
-	    - i
-	    - item
-	    - title
-	    - list
-	  begin:
+	- selectors: ["#DOCUMENT"]
+	  before:
 	    - <%    title = _context[:title]%>
 	    - <%    list = _context[:list]%>
-	  end:
+	  after:
 	    - print(<%="*** debug:\n"%>)
 	    - <%    _context.each do |key, value|%>
 	    - print(<%="*** key=#{key}, value=#{value.inspect}"%>)
 	    - <%    end%>
+#	  global:
+#	    - _context
+#	  local:
+#	    - i
+#	    - item
+#	    - title
+#	    - list
+
 ###
 - name:  parse_comment1_css
   style:  css
@@ -423,7 +436,7 @@
 	}
 	/* tail comment may cause parse error! */
   expected: |
-	- name: foo
+	- selectors: ["#foo"]
 	  cont: foo
 
 - name:  parse_comment2_css
@@ -444,7 +457,7 @@
 	  }
 	}
   expected: |
-	- name: foo
+	- selectors: ["#foo"]
 	  cont: item
 	  logic:
 	    - _elem
@@ -475,7 +488,7 @@
 	  }
 	}
   expected: &all1 |
-	- name: item
+	- selectors: ["#item"]
 	  stag: start_link_tag('user', 'name')
 	  cont: $item
 	  etag: end_link()
@@ -524,7 +537,7 @@
 	  }
 	}
   expected: |
-	- name: item
+	- selectors: ["#item"]
 	  stag: start_link_tag('user', 'name')
 	  cont: item
 	  etag: end_link()

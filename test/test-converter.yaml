@@ -119,7 +119,7 @@
 
 ###
 - name:    convert11
-  desc:    pdata and plogic
+  desc:    selectr - marking
   pdata: |
 	<ul id="mark:list">
 	  <li id="mark:item">foo</li>
@@ -149,6 +149,101 @@
 
 ###
 - name:    convert12
+  desc:    selectr - class name
+  pdata: |
+	<ul class="list">
+	  <li class="item">foo</li>
+	</ul>
+  plogic: |
+	.list {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	.item {
+	  value: item;
+	}
+  expected: |
+  	print("<ul class=\"list\">\n")
+	<%    foreach (item in list) {%>
+	print("  <li class=\"item\">")
+	print(<%=item%>)
+	print("</li>\n")
+	<%    }%>
+  	print("</ul>\n")
+
+
+###
+- name:    convert13
+  desc:    selectr - tag name
+  pdata: |
+	<ul>
+	  <html:li>foo</html:li>
+	</ul>
+  plogic: |
+	ul {
+	  logic: {
+	    _stag;
+	    foreach (item in list) {
+	      _cont;
+	    }
+	    _etag;
+	  }
+	}
+	html:li {
+	  value: item;
+	}
+  expected: |
+  	print("<ul>\n")
+	<%    foreach (item in list) {%>
+	print("  <html:li>")
+	print(<%=item%>)
+	print("</html:li>\n")
+	<%    }%>
+  	print("</ul>\n")
+
+
+###
+- name:    convert14
+  desc:    selectr - combination of marking, classname, and tagname
+  pdata: |
+	<ul id="mark:list">
+	  <ol>
+	    <li class="item">foo</li>
+	  </ol>
+	</ul>
+  plogic: |
+	#list, ol, .item {
+	  logic: {
+	    foreach (item in list) {
+	      _elem
+	    }
+	  }
+	}
+	li {
+	  value: item;
+	}
+  expected: |
+	<%    foreach (item in list) {%>
+  	print("<ul>\n")
+	<%    foreach (item in list) {%>
+	print("  <ol>\n")
+	<%    foreach (item in list) {%>
+	print("    <li class=\"item\">")
+	print(<%=item%>)
+	print("</li>\n")
+	<%    }%>
+	print("  </ol>\n")
+	<%    }%>
+	print("</ul>\n")
+	<%    }%>
+
+###
+- name:    convert15
   desc:    empty logic
   pdata: |
         <div>

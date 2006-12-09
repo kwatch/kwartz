@@ -63,6 +63,8 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
     </li>
     <li><a href="#property-logic">logic</a>
     </li>
+    <li><a href="#property-before">before, after</a>
+    </li>
     <li><a href="#property-begin">begin, end</a>
     </li>
   </ul>
@@ -1288,12 +1290,358 @@ compile</div>
 <br>
 
 
+<a name="property-before"></a>
+<h3 class="section2">before, after</h3>
+<p><code>before:</code> and <code>after:</code> property represents the prework and postwork
+of each element's presentation logics.
+These properties enables to share or reuse presentation logics.
+</p>
+<a name="property-before-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-before.pdata)</div>
+<pre class="program">&lt;!-- Groups --&gt;
+&lt;ul id="mark:groups"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Members --&gt;
+&lt;ol id="mark:members"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-before.plogic)</div>
+<pre class="program">#groups {
+  <strong>before:</strong> {
+    <strong>list = @groups</strong>
+  }
+  <strong>after:</strong> {
+    <strong>group_count = count</strong>
+  }
+}
+#members {
+  <strong>before:</strong> {
+    <strong>list = @members</strong>
+  }
+  <strong>after:</strong> {
+    <strong>member_count = count</strong>
+  }
+}
+
+/* common 'logic:' part */
+#groups, #members {
+  logic: {
+    count = 0
+    _stag
+    for item in list
+      unless item.obsolete?
+        count += 1
+        _cont
+      end
+    end
+    _etag
+  }
+}
+
+.item {
+  value: item.name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-before.plogic ex-before.pdata
+&lt;!-- Groups --&gt;
+&lt;%     <strong>list = @groups</strong> %&gt;
+&lt;%     count = 0 %&gt;
+&lt;ul&gt;
+&lt;%     for item in list %&gt;
+&lt;%       unless item.obsolete? %&gt;
+&lt;%         count += 1 %&gt;
+  &lt;li class="item"&gt;&lt;%= item.name %&gt;&lt;/li&gt;
+&lt;%       end %&gt;
+&lt;%     end %&gt;
+&lt;/ul&gt;
+&lt;%     <strong>group_count = count</strong> %&gt;
+
+&lt;!-- Members --&gt;
+&lt;%     <strong>list = @members</strong> %&gt;
+&lt;%     count = 0 %&gt;
+&lt;ol&gt;
+&lt;%     for item in list %&gt;
+&lt;%       unless item.obsolete? %&gt;
+&lt;%         count += 1 %&gt;
+  &lt;li class="item"&gt;&lt;%= item.name %&gt;&lt;/li&gt;
+&lt;%       end %&gt;
+&lt;%     end %&gt;
+&lt;/ol&gt;
+&lt;%     <strong>member_count = count</strong> %&gt;
+</pre>
+<br>
+
+<a name="property-before-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-before.pdata)</div>
+<pre class="program">&lt;!-- Groups --&gt;
+&lt;ul id="mark:groups"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Members --&gt;
+&lt;ol id="mark:members"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-before.plogic)</div>
+<pre class="program">#groups {
+  <strong>before:</strong> {
+    <strong>$list = $groups;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>$group_count = $count;</strong>
+  }
+}
+#members {
+  <strong>before:</strong> {
+    <strong>$list = $members;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>$member_count = $count;</strong>
+  }
+}
+
+/* common 'logic:' part */
+#groups, #members {
+  logic: {
+    $count = 0;
+    _stag();
+    foreach ($list as $item) {
+      if (! $item-&gt;obsolete) {
+        $count++;
+        _cont();
+      }
+    }
+    _etag();
+  }
+}
+
+.item {
+  value: $item-&gt;name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-before.plogic ex-before.pdata
+&lt;!-- Groups --&gt;
+&lt;?php     <strong>$list = $groups;</strong> ?&gt;
+&lt;?php     $count = 0; ?&gt;
+&lt;ul&gt;
+&lt;?php     foreach ($list as $item) { ?&gt;
+&lt;?php       if (! $item-&gt;obsolete) { ?&gt;
+&lt;?php         $count++; ?&gt;
+  &lt;li class="item"&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/li&gt;
+&lt;?php       } ?&gt;
+&lt;?php     } ?&gt;
+&lt;/ul&gt;
+&lt;?php     <strong>$group_count = $count;</strong> ?&gt;
+
+&lt;!-- Members --&gt;
+&lt;?php     <strong>$list = $members;</strong> ?&gt;
+&lt;?php     $count = 0; ?&gt;
+&lt;ol&gt;
+&lt;?php     foreach ($list as $item) { ?&gt;
+&lt;?php       if (! $item-&gt;obsolete) { ?&gt;
+&lt;?php         $count++; ?&gt;
+  &lt;li class="item"&gt;&lt;?php echo $item-&gt;name; ?&gt;&lt;/li&gt;
+&lt;?php       } ?&gt;
+&lt;?php     } ?&gt;
+&lt;/ol&gt;
+&lt;?php     <strong>$member_count = $count;</strong> ?&gt;
+</pre>
+<br>
+
+<a name="property-before-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-before.pdata)</div>
+<pre class="program">&lt;!-- Groups --&gt;
+&lt;ul id="mark:groups"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Members --&gt;
+&lt;ol id="mark:members"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-before.plogic)</div>
+<pre class="program">#groups {
+  <strong>before:</strong> {
+    <strong>&lt;c:set var="list" value="${groups}" /&gt;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>&lt;c:set var="group_count" value="${count}" /&gt;</strong>
+  }
+}
+#members {
+  <strong>before:</strong> {
+    <strong>&lt;c:set var="list" value="${members}" /&gt;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>&lt;c:set var="members_count" value="${count}" /&gt;</strong>
+  }
+}
+
+/* common 'logic:' part */
+#groups, #members {
+  logic: {
+    &lt;c:set var="count" value="${0}" /&gt;
+    _stag()
+    &lt;c:forEach var="item" items="${list}" /&gt;
+      &lt;c:if test="${not item.obsolete}" /&gt;
+        &lt;c:set var="count" value="${count+1}" /&gt;
+        _cont()
+      &lt;/c:if&gt;
+    &lt;/c:forEach&gt;
+    _etag()
+  }
+}
+
+.item {
+  value: item.name;
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-before.plogic ex-before.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+&lt;!-- Groups --&gt;
+    <strong>&lt;c:set var="list" value="${groups}" /&gt;</strong>
+    &lt;c:set var="count" value="${0}" /&gt;
+&lt;ul&gt;
+    &lt;c:forEach var="item" items="${list}" /&gt;
+      &lt;c:if test="${not item.obsolete}" /&gt;
+        &lt;c:set var="count" value="${count+1}" /&gt;
+  &lt;li class="item"&gt;${item.name}&lt;/li&gt;
+      &lt;/c:if&gt;
+    &lt;/c:forEach&gt;
+&lt;/ul&gt;
+    <strong>&lt;c:set var="group_count" value="${count}" /&gt;</strong>
+
+&lt;!-- Members --&gt;
+    <strong>&lt;c:set var="list" value="${members}" /&gt;</strong>
+    &lt;c:set var="count" value="${0}" /&gt;
+&lt;ol&gt;
+    &lt;c:forEach var="item" items="${list}" /&gt;
+      &lt;c:if test="${not item.obsolete}" /&gt;
+        &lt;c:set var="count" value="${count+1}" /&gt;
+  &lt;li class="item"&gt;${item.name}&lt;/li&gt;
+      &lt;/c:if&gt;
+    &lt;/c:forEach&gt;
+&lt;/ol&gt;
+    <strong>&lt;c:set var="members_count" value="${count}" /&gt;</strong>
+</pre>
+<br>
+
+<a name="property-before-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-before.pdata)</div>
+<pre class="program">&lt;!-- Groups --&gt;
+&lt;ul id="mark:groups"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- Members --&gt;
+&lt;ol id="mark:members"&gt;
+  &lt;li class="item"&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-before.plogic)</div>
+<pre class="program">#groups {
+  <strong>before:</strong> {
+    <strong>@list = @groups;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>$group_count = $count;</strong>
+  }
+}
+#members {
+  <strong>before:</strong> {
+    <strong>@list = @members;</strong>
+  }
+  <strong>after:</strong> {
+    <strong>$member_count = $count;</strong>
+  }
+}
+
+/* common 'logic:' part */
+#groups, #members {
+  logic: {
+    $count = 0;
+    _stag();
+    foreach $item (@list) {
+      if (! $item['obsolete']) {
+        $count++;
+        _cont();
+      }
+    }
+    _etag();
+  }
+}
+
+.item {
+  value: $item['name'];
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-before.plogic ex-before.pdata
+&lt;!-- Groups --&gt;
+&lt;?     <strong>@list = @groups;</strong> !&gt;
+&lt;?     $count = 0; !&gt;
+&lt;ul&gt;
+&lt;?     foreach $item (@list) { !&gt;
+&lt;?       if (! $item['obsolete']) { !&gt;
+&lt;?         $count++; !&gt;
+  &lt;li class="item"&gt;&lt;?= $item['name'] !&gt;&lt;/li&gt;
+&lt;?       } !&gt;
+&lt;?     } !&gt;
+&lt;/ul&gt;
+&lt;?     <strong>$group_count = $count;</strong> !&gt;
+
+&lt;!-- Members --&gt;
+&lt;?     <strong>@list = @members;</strong> !&gt;
+&lt;?     $count = 0; !&gt;
+&lt;ol&gt;
+&lt;?     foreach $item (@list) { !&gt;
+&lt;?       if (! $item['obsolete']) { !&gt;
+&lt;?         $count++; !&gt;
+  &lt;li class="item"&gt;&lt;?= $item['name'] !&gt;&lt;/li&gt;
+&lt;?       } !&gt;
+&lt;?     } !&gt;
+&lt;/ol&gt;
+&lt;?     <strong>$member_count = $count;</strong> !&gt;
+</pre>
+<br>
+
+<br>
+
+
 <a name="property-begin"></a>
 <h3 class="section2">begin, end</h3>
-<p><code>begin:</code> and <code>end:</code> property represents the prework and postwork
-of document respectively.
-These properties takes target code block and are available only with
-'#DOCUMENT' selector.
+<p><code>begin:</code> and <code>end:</code> properties are equal to <code>before:</code> and <code>after:</code>.
+<strong>These are obsolete and leaved for compatibility</strong>.
+</p>
+<p><code>begin:</code> and <code>end:</code> were aimed to add prework and postwork of document,
+and restricted to be available only with '#DOCUMENT' selector.
+Currently <code>before:</code> and <code>after:</code> are available with '#DOCUMENT' selector,
+so you should use these properties instead of <code>begin:</code> and <code>end:</code>.
 </p>
 <a name="property-begin-eruby"></a>
 <h4 class="section3">Ruby</h4>

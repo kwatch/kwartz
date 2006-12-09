@@ -93,15 +93,15 @@ module Kwartz
     ##
     ## everytime return true whenever directive name is unknown.
     ##
-    def handle(stmt_list, handler_arg)
+    def handle(directive_name, directive_arg, directive_str, elem_info, stmt_list)
       ret = super
       return ret if ret
 
-      arg = handler_arg
-      d_name = arg.directive_name
-      d_arg  = arg.directive_arg
-      d_str  = arg.directive_str
-      attr_info = arg.attr_info
+      d_name = directive_name
+      d_arg  = directive_arg
+      d_str  = directive_str
+      e = elem_info
+      attr_info = e.attr_info
 
       ## parse 'name="user[name]"' or 'id="user_name"'
       case d_name.to_s
@@ -126,13 +126,13 @@ module Kwartz
         add_directive_integer_option(d_arg, 'size', attr_info['size'])
 
       when :link_to, :link_to_remote, :link_to_unless_current
-        add_directive_content_as_arg(d_arg, arg.cont_stmts)
+        add_directive_content_as_arg(d_arg, elem_info.cont_stmts)
 
       when :anchor, :anchor_remote
         replace_elem = false
 
       when :mail_to
-        add_directive_content_as_arg(d_arg, arg.cont_stmts)
+        add_directive_content_as_arg(d_arg, elem_info.cont_stmts)
         add_directive_attr_as_arg(d_arg, attr_info, 'href')
         d_arg.sub!(/\A\'mailto:/, "'")
 
@@ -170,7 +170,7 @@ module Kwartz
       end #case
 
       ##
-      print_directive(stmt_list, arg, replace_elem)
+      print_directive(elem_info, stmt_list, d_name, d_arg, replace_elem)
 
       return true      # everytime return true
 
@@ -251,18 +251,17 @@ module Kwartz
     end
 
 
-    def print_directive(stmt_list, handler_arg, replace_elem=true)
-      arg = handler_arg
-      head_space = arg.stag_info.head_space
-      tail_space = (arg.etag_info || arg.stag_info).tail_space
+    def print_directive(elem_info, stmt_list, directive_name, directive_arg, replace_elem=true)
+      head_space = elem_info.stag_info.head_space
+      tail_space = (elem_info.etag_info || elem_info.stag_info).tail_space
       pargs = []
       pargs << head_space if head_space
-      pargs << NativeExpression.new("#{arg.directive_name} #{arg.directive_arg}")
+      pargs << NativeExpression.new("#{directive_name} #{directive_arg}")
       pargs << tail_space if tail_space
       stmt_list << PrintStatement.new(pargs)
       unless replace_elem
-        stmt_list.concat(arg.cont_stmts)
-        stmt_list << PrintStatement.new([arg.etag_info.tag_text])
+        stmt_list.concat(elem_info.cont_stmts)
+        stmt_list << PrintStatement.new([elem_info.etag_info.tag_text])
       end
     end
 

@@ -10,246 +10,246 @@
     <style type="text/css">
       <!--
 
-	* {
-	    margin: 0;
-	    padding: 0;
-	}
+        * {
+            margin: 0;
+            padding: 0;
+        }
 
-	body {
-	}
+        body {
+        }
 
-	div.slide {
-	    display: none;
-	    position: absolute;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 100%;
-	    color: #000;
-	    font-size: 18pt;
-	    background-color: #F3F3F3;
-	}
+        div.slide {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #000;
+            font-size: 18pt;
+            background-color: #F3F3F3;
+        }
 
-	#slide-title {
-	    display: block;
-	}
+        #slide-title {
+            display: block;
+        }
 
-	div.slide:target {
-	    display: block;
-	    /*z-index: 1;*/
-	}
+        div.slide:target {
+            display: block;
+            /*z-index: 1;*/
+        }
 
-	.slide-body {
-	    padding: 20px;
-	    line-height: 130%;
-	}
+        .slide-body {
+            padding: 20px;
+            line-height: 130%;
+        }
 
-	ul, ol {
-	   padding: 5px 0px;
-	}
-	ul li {
-	    margin-left: 1em;
-	}
-	ol li {
-	    margin-left: 1em;
-	}
-	ul.author {
-	    list-style-type: none;
-	    text-align: right;
-	    padding-top: 70px;
-	}
+        ul, ol {
+           padding: 5px 0px;
+        }
+        ul li {
+            margin-left: 1em;
+        }
+        ol li {
+            margin-left: 1em;
+        }
+        ul.author {
+            list-style-type: none;
+            text-align: right;
+            padding-top: 70px;
+        }
 
-	li li {
-	    font-size: 16pt;
-	}
+        li li {
+            font-size: 16pt;
+        }
 
-	li li li {
-	    font-size: 15pt;
-	}
+        li li li {
+            font-size: 15pt;
+        }
 
-	ul.descr {
-	    margin-top: 15px;
-	    font-size: 16pt;
-	}
+        ul.descr {
+            margin-top: 15px;
+            font-size: 16pt;
+        }
 
-	a:link, a:visited {
-	    color: #00F;
-	}
+        a:link, a:visited {
+            color: #00F;
+        }
 
-	h1 {
-	    font-size: 36pt;
-	    text-align: center;
-	    padding: 150px 0 10px 0;
-	}
+        h1 {
+            font-size: 36pt;
+            text-align: center;
+            padding: 150px 0 10px 0;
+        }
 
-	h2 {
-	    color: #333;
-	    font-size: 30pt;
-	    padding: 10px 10px 5px 20px;
-	    border-bottom: solid 3px #99C;
-	}
+        h2 {
+            color: #333;
+            font-size: 30pt;
+            padding: 10px 10px 5px 20px;
+            border-bottom: solid 3px #99C;
+        }
 
-	h4 {
-	    font-size: 20pt;
-	    text-align: center;
-	    padding: 0 0 30px 0;
-	    border-bottom: solid 3px #99C;
-	}
+        h4 {
+            font-size: 20pt;
+            text-align: center;
+            padding: 0 0 30px 0;
+            border-bottom: solid 3px #99C;
+        }
 
-	pre {
-	    line-height: 110%;
-	}
-	pre.code, pre.code2 {
-	    background-color: #CCF;
-	    border: solid 1px #66F;
-	    padding: 5px 15px;
-	}
-	pre.code {
-	    font-size: 17pt;
-	}
-	pre.code2 {
-	    font-size: 16pt;
-	    line-height: 115%;
-	}
+        pre {
+            line-height: 110%;
+        }
+        pre.code, pre.code2 {
+            background-color: #CCF;
+            border: solid 1px #66F;
+            padding: 5px 15px;
+        }
+        pre.code {
+            font-size: 17pt;
+        }
+        pre.code2 {
+            font-size: 16pt;
+            line-height: 115%;
+        }
 
-	pre.console {
-	    background-color: #CCC;
-	    border: solid 1px #666;
-	    padding: 5px 15px;
-	    font-size: 17pt;
-	}
+        pre.console {
+            background-color: #CCC;
+            border: solid 1px #666;
+            padding: 5px 15px;
+            font-size: 17pt;
+        }
 
-	pre .small {
-	    font-size: 15pt;
-	}
+        pre .small {
+            font-size: 15pt;
+        }
 
-	
-	ol.toc {
-	    color: #666;
-	}
+        
+        ol.toc {
+            color: #666;
+        }
 
-	.toc .current {
-	    color: #000;
-	    font-weight: bold;
-	}
+        .toc .current {
+            color: #000;
+            font-weight: bold;
+        }
 
-	.toc ul {
-	    font-weight: normal;
-	}
-	
+        .toc ul {
+            font-weight: normal;
+        }
+        
 
-	strong {
-	    font-weight: bold;
-	    color: #660000;
-	}
+        strong {
+            font-weight: bold;
+            color: #660000;
+        }
 
-	.caption {
-	    display: block;
-	    /*border: solid 1px;*/
-	    margin-top: 10px;
-	    padding: 0px;
-	    font-size: 16pt;
-	}
+        .caption {
+            display: block;
+            /*border: solid 1px;*/
+            margin-top: 10px;
+            padding: 0px;
+            font-size: 16pt;
+        }
 
-	table.matrix {
-	    border: solid 1px #999;
-	    margin: 10px 10px 15px 10px;
-	    border-collapse: collapse;
-	    font-size: 16pt;
-	}
-	.matrix th {
-	    background-color: #CCC;
-	    font-weight: normal;
-	    border: solid 1px;
-	    padding: 3px;
-	}
-	.matrix td {
-	    text-align: center;
-	    border: solid 1px;
-	    padding: 3px;
-	}
+        table.matrix {
+            border: solid 1px #999;
+            margin: 10px 10px 15px 10px;
+            border-collapse: collapse;
+            font-size: 16pt;
+        }
+        .matrix th {
+            background-color: #CCC;
+            font-weight: normal;
+            border: solid 1px;
+            padding: 3px;
+        }
+        .matrix td {
+            text-align: center;
+            border: solid 1px;
+            padding: 3px;
+        }
 
-	table.n-up2 {
-	    /*width: 100%;*/
-	}
-	.n-up2 td {
-	    padding: 5px;
-	    width: 45%;
-	    vertical-align: top;
-	}
+        table.n-up2 {
+            /*width: 100%;*/
+        }
+        .n-up2 td {
+            padding: 5px;
+            width: 45%;
+            vertical-align: top;
+        }
 
-	.footer {
-	    background: #99C;
-	    position: absolute;
-	    width: 100%;
-	    /*
-	    height: 1em;
-	    */
-	    bottom: 0;
-	    font-size: 11pt;
-	    padding: 5px 0;
-	    color: #FFF
-	}
+        .footer {
+            background: #99C;
+            position: fixed;
+            width: 100%;
+            /*
+            height: 1em;
+            */
+            bottom: 0;
+            font-size: 11pt;
+            padding: 5px 0;
+            color: #FFF
+        }
 
-	.footer-left {
-	    float: left;
-	    /*
-	    position: absolute;
-	    left: 0%;
-	    bottom: 0;
-	    */
-	    width: 10%;
-	    text-align: left;
-	}
+        .footer-left {
+            float: left;
+            /*
+            position: absolute;
+            left: 0%;
+            bottom: 0;
+            */
+            width: 10%;
+            text-align: left;
+        }
 
-	.footer-right {
-	    float: right;
-	    /*
-	    position: absolute;
-	    left: 90%;
-	    bottom: 0;
-	    */
-	    width: 10%;
-	    text-align: right;
-	}
+        .footer-right {
+            float: right;
+            /*
+            position: absolute;
+            left: 90%;
+            bottom: 0;
+            */
+            width: 10%;
+            text-align: right;
+        }
 
-	.footer-center {
-	    /*
-	    position: absolute;
-	    left: 10%;
-	    bottom: 0;
-	    width:80%;
-	    */
-	    text-align:center;
-	}
+        .footer-center {
+            /*
+            position: absolute;
+            left: 10%;
+            bottom: 0;
+            width:80%;
+            */
+            text-align:center;
+        }
 
-	.pagenum {
-	    padding-right: 20px;
-	}
-	/*
-	.pagenum:before {
-	    padding-right: 20px;
-	    counter-increment: pagenum;
-	    content: '1/50';
-	}
-	*/
+        .pagenum {
+            padding-right: 20px;
+        }
+        /*
+        .pagenum:before {
+            padding-right: 20px;
+            counter-increment: pagenum;
+            content: '1/50';
+        }
+        */
 
-	/*
-	.copyright:before {
-	    content: 'copyright(c)2006 kuwata-lab.com all rights reserved';
-	}
-	*/
+        /*
+        .copyright:before {
+            content: 'copyright(c)2006 kuwata-lab.com all rights reserved';
+        }
+        */
 
-	div.note {
-	    margin: 20px 0 0 0;
-	    padding: 5px;
-	    background-color: #FC9;
-	    /*font-size: 14pt;*/
-	}
+        div.note {
+            margin: 20px 0 0 0;
+            padding: 5px;
+            background-color: #FC9;
+            /*font-size: 14pt;*/
+        }
 
-	.centerize {
-	    text-align: center;
-	}
+        .centerize {
+            text-align: center;
+        }
       -->
     </style>
     <script type="text/javascript">//<!--
@@ -397,11 +397,11 @@
       <h1>Kwartzテンプレートシステム入門</h1>
       <h4>― デザイナーとプログラマーが真に協業する方法 ―</h4>
       <div class="slide-body">
-	<ul class="author">
-	  <li>Makoto Kuwata</li>
-	  <li>kwa@kuwata-lab.com</li>
-	  <li><a href="http://www.kuwata-lab.com">http://www.kuwata-lab.com</a></li>
-	</ul>
+        <ul class="author">
+          <li>Makoto Kuwata</li>
+          <li>kwa@kuwata-lab.com</li>
+          <li><a href="http://www.kuwata-lab.com">http://www.kuwata-lab.com</a></li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -422,18 +422,18 @@
     <div id="slide-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol>
-	  <li>はじめに <a href="#slide1-toc">_</a>
-	  </li>
-	  <li>Kwartz概要 <a href="#slide2-toc">_</a>
-	  </li>
-	  <li>高度なトピック <a href="#slide3-toc">_</a>
-	  </li>
-	  <li>ディレクティブ <a href="#slide4-toc">_</a>
-	  </li>
-	  <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
-	  </li>
-	</ol>
+        <ol>
+          <li>はじめに <a href="#slide1-toc">_</a>
+          </li>
+          <li>Kwartz概要 <a href="#slide2-toc">_</a>
+          </li>
+          <li>高度なトピック <a href="#slide3-toc">_</a>
+          </li>
+          <li>ディレクティブ <a href="#slide4-toc">_</a>
+          </li>
+          <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -454,28 +454,28 @@
     <div id="slide1-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol class="toc">
-	  <li class="current">はじめに
-	    <ul class="subtoc">
-	      <li><a href="#slide1-1">テンプレートシステムとは？</a></li>
-	      <li><a href="#slide1-2">テンプレートシステムの種類(1)</a>,
-	          <a href="#slide1-3">(2)</a></li>
-	      <li><a href="#slide1-4">ビジネス層とプレゼンテーション層(1)</a>,
-	          <a href="#slide1-5">(2)</a></li>
-	      <li><a href="#slide1-6">問題点と解決策(1)</a>,
-	          <a href="#slide1-7">(2)</a>,
-	          <a href="#slide1-8">(3)</a></li>
-	    </ul>
-	  </li>
-	  <li>Kwartz概要 <a href="#slide2-toc">_</a>
-	  </li>
-	  <li>高度なトピック <a href="#slide3-toc">_</a>
-	  </li>
-	  <li>ディレクティブ <a href="#slide4-toc">_</a>
-	  </li>
-	  <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
-	  </li>
-	</ol>
+        <ol class="toc">
+          <li class="current">はじめに
+            <ul class="subtoc">
+              <li><a href="#slide1-1">テンプレートシステムとは？</a></li>
+              <li><a href="#slide1-2">テンプレートシステムの種類(1)</a>,
+                  <a href="#slide1-3">(2)</a></li>
+              <li><a href="#slide1-4">ビジネス層とプレゼンテーション層(1)</a>,
+                  <a href="#slide1-5">(2)</a></li>
+              <li><a href="#slide1-6">問題点と解決策(1)</a>,
+                  <a href="#slide1-7">(2)</a>,
+                  <a href="#slide1-8">(3)</a></li>
+            </ul>
+          </li>
+          <li>Kwartz概要 <a href="#slide2-toc">_</a>
+          </li>
+          <li>高度なトピック <a href="#slide3-toc">_</a>
+          </li>
+          <li>ディレクティブ <a href="#slide4-toc">_</a>
+          </li>
+          <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -496,44 +496,44 @@
     <div id="slide1-1" class="slide">
       <h2>テンプレートシステムとは？</h2>
       <div class="slide-body">
-	<ul>
-	  <li>動的にWebページを生成する仕組みのひとつ
-	    <ul>
-	      <li>テンプレートとなるHTMLファイルを読み込み、必要な箇所を書き換えて出力</li>
-	      <li>書き換える箇所に何らかの「目印」が必要（<strong>マーキング</strong>）</li>
-	    </ul>
-	  </li>
-	  <li>利点：
-	    <ul>
-	      <li>HTMLデザインの変更がやりやすい</li>
-	      <li>デザイナーとプログラマーとが協業しやすい</li>
-	    </ul>
-	  </li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">テンプレート：</span>
-	      <pre class="code">
+        <ul>
+          <li>動的にWebページを生成する仕組みのひとつ
+            <ul>
+              <li>テンプレートとなるHTMLファイルを読み込み、必要な箇所を書き換えて出力</li>
+              <li>書き換える箇所に何らかの「目印」が必要（<strong>マーキング</strong>）</li>
+            </ul>
+          </li>
+          <li>利点：
+            <ul>
+              <li>HTMLデザインの変更がやりやすい</li>
+              <li>デザイナーとプログラマーとが協業しやすい</li>
+            </ul>
+          </li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">テンプレート：</span>
+              <pre class="code">
 &lt;ul&gt;
 <strong>#foreach(item in list)</strong>
   &lt;li&gt;<strong>${item}</strong>&lt;/li&gt;
 <strong>#end</strong>
 &lt;/ul&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">出力結果：</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">出力結果：</span>
+              <pre class="code">
 &lt;ul&gt;
   &lt;li&gt;foo&lt;/li&gt;
   &lt;li&gt;bar&lt;/li&gt;
   &lt;li&gt;baz&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -554,22 +554,22 @@
     <div id="slide1-2" class="slide">
       <h2>テンプレートシステムの種類(1)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>テキスト汎用型
-	    <ul>
-	      <li>独自パーサを使用 ⇒ 任意のテキストファイルが利用可能</li>
-	      <li>マーキングは独自方式 ⇒ HTMLデザインが崩れる、HTMLバリデータが使えない
-		<sup><a href="#" onclick="return false;" title="マーキングの書式をHTMLと同じにすればHTMLデザインを崩さずに済むが、そのようなテンプレートシステムはなぜか少ない。">*</a></sup></li>
-	      <li>ロジック（繰り返しや条件分岐）はテンプレート中に記述</li>
-	      <li>代表例：Velocity(Java), Smarty(PHP), HTML::Template(Perl)</li>
-	    </ul>
-	  </li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">例：Velocityテンプレート</span>
-	      <pre class="code">
+        <ul>
+          <li>テキスト汎用型
+            <ul>
+              <li>独自パーサを使用 ⇒ 任意のテキストファイルが利用可能</li>
+              <li>マーキングは独自方式 ⇒ HTMLデザインが崩れる、HTMLバリデータが使えない
+                <sup><a href="#" onclick="return false;" title="マーキングの書式をHTMLと同じにすればHTMLデザインを崩さずに済むが、そのようなテンプレートシステムはなぜか少ない。">*</a></sup></li>
+              <li>ロジック（繰り返しや条件分岐）はテンプレート中に記述</li>
+              <li>代表例：Velocity(Java), Smarty(PHP), HTML::Template(Perl)</li>
+            </ul>
+          </li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">例：Velocityテンプレート</span>
+              <pre class="code">
 &lt;table&gt;
 <strong>#foreach(item in list)</strong>
   &lt;tr&gt;
@@ -578,11 +578,11 @@
 <strong>#end</strong>
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td class="n-up2" style="width: 45%">
-	      <!--
-	      <span class="caption">例：Template-Toolkitテンプレート</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2" style="width: 45%">
+              <!--
+              <span class="caption">例：Template-Toolkitテンプレート</span>
+              <pre class="code">
 &lt;table&gt;
 <strong>[% FOREACH item = list %]</strong>
   &lt;tr&gt;
@@ -591,9 +591,9 @@
 <strong>[% END %]</strong>
 &lt;/table&gt;
 </pre>
-	      -->
-	      <span class="caption">例：HTML::Templateテンプレート</span>
-	      <pre class="code">
+              -->
+              <span class="caption">例：HTML::Templateテンプレート</span>
+              <pre class="code">
 &lt;table&gt;
 <strong>&lt;TMPL_LOOP NAME=list&gt;</strong>
   &lt;tr&gt;
@@ -602,9 +602,9 @@
 <strong>&lt;/TMPL_LOOP&gt;</strong>
 &lt;/table&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -625,31 +625,31 @@
     <div id="slide1-3" class="slide">
       <h2>テンプレートシステムの種類(2)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>HTML特化型
-	    <ul>
-	      <li>HTML/XMLパーサを使用 ⇒ HTML/XMLでしか利用できない</li>
-	      <li>マーキングにタグや属性を使用 ⇒ HTMLデザインが崩れない</li>
-	      <li>ロジック（繰り返しや条件分岐）はメインプログラムや別ファイルに記述</li>
-	      <li>代表例：XMLC(Java), Amrita(Ruby), Tapestry(Java)</li>
-	    </ul>
-	  </li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">例：XMLCテンプレート</span>
-	      <pre class="code">
+        <ul>
+          <li>HTML特化型
+            <ul>
+              <li>HTML/XMLパーサを使用 ⇒ HTML/XMLでしか利用できない</li>
+              <li>マーキングにタグや属性を使用 ⇒ HTMLデザインが崩れない</li>
+              <li>ロジック（繰り返しや条件分岐）はメインプログラムや別ファイルに記述</li>
+              <li>代表例：XMLC(Java), Amrita(Ruby), Tapestry(Java)</li>
+            </ul>
+          </li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">例：XMLCテンプレート</span>
+              <pre class="code">
 &lt;table&gt;
   &lt;tr <strong>id="list"</strong>&gt;
     &lt;td <strong>id="item"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td class="n-up2" style="width: 45%">
-	      <span class="caption">例：XMLCメインプログラム（概要）</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2" style="width: 45%">
+              <span class="caption">例：XMLCメインプログラム（概要）</span>
+              <pre class="code">
 1. <span class="small">テンプレートを読んでDOMツリーを作成</span>
 2. id<span class="small">属性をつけた要素を操作</span>
   2-1. id="item"<span class="small">の要素にテキストを設定</span>
@@ -658,9 +658,9 @@
   2-4. <span class="small">リスト中のデータごとに繰り返す</span>
 3. <span class="small">DOMツリーをHTMLファイルに変換して出力</span>
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -681,36 +681,36 @@
     <div id="slide1-4" class="slide">
       <h2>ビジネス層とプレゼンテーション層(1)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>アプリケーションは大きく2つの層に分類できる
-	    <sup><a href="#" onclick="return false;" title="分類方法は他にもMVCなど様々な方式があるが、ここではテンプレートシステムから見た分類方法ということでこの方式を説明する。">*</a></sup>
-	    <ul>
-	      <li>ビジネス層 … 「何を表示するか(What)」を担当</li>
-	      <li>プレゼンテーション層 … 「どのように表示するか(How)」を担当</li>
-	    </ul>
-	  </li>
-	  <li>各層それぞれに、データとロジックが存在する
-	    <table class="matrix" summary="">
-	      <tr>
-		<th></th><th>データ</th><th>ロジック</th>
-	      </tr>
-	      <tr>
-		<th>ビジネス層</th><td>ビジネスデータ</td><td>ビジネスロジック</td>
-	      </tr>
-	      <tr>
-		<th>プレゼンテーション層</th><td>プレゼンテーションデータ</td><td>プレゼンテーションロジック</td>
-	      </tr>
-	    </table>
-	  </li>
-	  <li>例：
-	    <ul>
-	      <li>営業部門の従業員データから、（ビジネスデータ）</li>
-	      <li>営業成績上位10名を取り出し、（ビジネスロジック）</li>
-	      <li>背景色に薄い青と赤を使って、（プレゼンテーションデータ）</li>
-	      <li>奇数行と偶数行で色分けして表示する。（プレゼンテーションロジック）</li>
-	    </ul>
-	  </li>
-	</ul>
+        <ul>
+          <li>アプリケーションは大きく2つの層に分類できる
+            <sup><a href="#" onclick="return false;" title="分類方法は他にもMVCなど様々な方式があるが、ここではテンプレートシステムから見た分類方法ということでこの方式を説明する。">*</a></sup>
+            <ul>
+              <li>ビジネス層 … 「何を表示するか(What)」を担当</li>
+              <li>プレゼンテーション層 … 「どのように表示するか(How)」を担当</li>
+            </ul>
+          </li>
+          <li>各層それぞれに、データとロジックが存在する
+            <table class="matrix" summary="">
+              <tr>
+                <th></th><th>データ</th><th>ロジック</th>
+              </tr>
+              <tr>
+                <th>ビジネス層</th><td>ビジネスデータ</td><td>ビジネスロジック</td>
+              </tr>
+              <tr>
+                <th>プレゼンテーション層</th><td>プレゼンテーションデータ</td><td>プレゼンテーションロジック</td>
+              </tr>
+            </table>
+          </li>
+          <li>例：
+            <ul>
+              <li>営業部門の従業員データから、（ビジネスデータ）</li>
+              <li>営業成績上位10名を取り出し、（ビジネスロジック）</li>
+              <li>背景色に薄い青と赤を使って、（プレゼンテーションデータ）</li>
+              <li>奇数行と偶数行で色分けして表示する。（プレゼンテーションロジック）</li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -731,58 +731,58 @@
     <div id="slide1-5" class="slide">
       <h2>ビジネス層とプレゼンテーション層(2)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>ビジネス層とプレゼンテーション層の担当
-	    <ul>
-	      <li>モジュールの観点（何が担当するのか？(What)）
-		<!--
-		<ul>
-		  <li>ビジネス層 … メインプログラム</li>
-		  <li>プレゼンテーション層 … テンプレート</li>
-		</ul>
-		-->
-	      </li>
-	      <li>担当者の観点（誰が担当するのか？(Who)）
-		<!--
-		<ul>
-		  <li>ビジネス層 … プログラマー</li>
-		  <li>プレゼンテーション層 … デザイナー</li>
-		</ul>
-		-->
-	      </li>
-	    </ul>
-	    <!--div align="center"-->
-	      <table class="matrix" summary="">
-		<tr>
-		  <th></th><th>モジュール</th><th>担当者</th>
-		</tr>
-		<tr>
-		  <th>ビジネス層</th><td>メインプログラム</td><td>プログラマー</td>
-		</tr>
-		<tr>
-		  <th>プレゼンテーション層</th><td>テンプレート</td><td>デザイナー</td>
-		</tr>
-	      </table>
-	    <!--/div-->
-	  </li>
-	  <li>してはいけないこと
-	    <ul>
-	      <li>ビジネス層にプレゼンテーション層の要素が混じる（またはその逆）
-		<ul>
-		  <li>例：メインプログラム中にHTMLタグや属性名が記述されている</li>
-		</ul>
-	      </li>
-	      <li>自分の担当以外のモジュールを触る
-		<ul>
-		  <li>例：HTMLデザインが変更されるたびにプログラマーがテンプレートを更新する</li>
-		  <!--
-		  <li>例：プレゼンテーションロジックが複雑になるとプログラマーがカスタムタグを作成する</li>
-		  -->
-		</ul>
-	      </li>
-	    </ul>
-	  </li>
-	</ul>
+        <ul>
+          <li>ビジネス層とプレゼンテーション層の担当
+            <ul>
+              <li>モジュールの観点（何が担当するのか？(What)）
+                <!--
+                <ul>
+                  <li>ビジネス層 … メインプログラム</li>
+                  <li>プレゼンテーション層 … テンプレート</li>
+                </ul>
+                -->
+              </li>
+              <li>担当者の観点（誰が担当するのか？(Who)）
+                <!--
+                <ul>
+                  <li>ビジネス層 … プログラマー</li>
+                  <li>プレゼンテーション層 … デザイナー</li>
+                </ul>
+                -->
+              </li>
+            </ul>
+            <!--div align="center"-->
+              <table class="matrix" summary="">
+                <tr>
+                  <th></th><th>モジュール</th><th>担当者</th>
+                </tr>
+                <tr>
+                  <th>ビジネス層</th><td>メインプログラム</td><td>プログラマー</td>
+                </tr>
+                <tr>
+                  <th>プレゼンテーション層</th><td>テンプレート</td><td>デザイナー</td>
+                </tr>
+              </table>
+            <!--/div-->
+          </li>
+          <li>してはいけないこと
+            <ul>
+              <li>ビジネス層にプレゼンテーション層の要素が混じる（またはその逆）
+                <ul>
+                  <li>例：メインプログラム中にHTMLタグや属性名が記述されている</li>
+                </ul>
+              </li>
+              <li>自分の担当以外のモジュールを触る
+                <ul>
+                  <li>例：HTMLデザインが変更されるたびにプログラマーがテンプレートを更新する</li>
+                  <!--
+                  <li>例：プレゼンテーションロジックが複雑になるとプログラマーがカスタムタグを作成する</li>
+                  -->
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -803,32 +803,32 @@
     <div id="slide1-6" class="slide">
       <h2>問題点と解決策(1)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>問題点：
-	    <ul>
-	      <li>テンプレートのHTMLデザインが崩れる（テキスト汎用型）
-		<ul>
-		  <li>原因：マーキングの書式がHTMLとは異なる</li>
-		</ul>
-	      </li>
-	      <!--
-	      <li>HTMLデザインが修正されるたびにプログラマーがテンプレートを更新しなければならない（テキスト汎用型）
-		-->
-	      <li>デザイナーが作成した素のHTMLファイルをテンプレートとして利用できないので、<br />
-		プログラマーがテンプレートを更新しなければならない（テキスト汎用型）
-		<ul>
-		  <li>原因：マーキングの書式がHTMLとは異なる</li>
-		  <li>原因：HTMLテンプレートの中にプレゼンテーションロジックを埋め込んでいる</li>
-		</ul>
-	      </li>
-	      <li>ビジネス層とプレゼンテーション層が分離できていない（HTML特化型）
-		<ul>
-		  <li>原因：メインプログラムの中にプレゼンテーションロジックを埋め込んでいる</li>
-		</ul>
-	      </li>
-	    </ul>
-	  </li>
-	</ul>
+        <ul>
+          <li>問題点：
+            <ul>
+              <li>テンプレートのHTMLデザインが崩れる（テキスト汎用型）
+                <ul>
+                  <li>原因：マーキングの書式がHTMLとは異なる</li>
+                </ul>
+              </li>
+              <!--
+              <li>HTMLデザインが修正されるたびにプログラマーがテンプレートを更新しなければならない（テキスト汎用型）
+                -->
+              <li>デザイナーが作成した素のHTMLファイルをテンプレートとして利用できないので、<br />
+                プログラマーがテンプレートを更新しなければならない（テキスト汎用型）
+                <ul>
+                  <li>原因：マーキングの書式がHTMLとは異なる</li>
+                  <li>原因：HTMLテンプレートの中にプレゼンテーションロジックを埋め込んでいる</li>
+                </ul>
+              </li>
+              <li>ビジネス層とプレゼンテーション層が分離できていない（HTML特化型）
+                <ul>
+                  <li>原因：メインプログラムの中にプレゼンテーションロジックを埋め込んでいる</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -849,29 +849,29 @@
     <div id="slide1-7" class="slide">
       <h2>問題点と解決策(2)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>解決策：
-	    <ul>
-	      <li>マーキングの書式をHTMLと同じにする
-		<ul>
-		  <li>効果： テンプレートのHTMLデザインが崩れない <br />
-		      　　　（マーキングとしてタグや属性やコメントや処理命令を使うため）
-		  </li>
-		</ul>
-	      </li>
-	      <li>プレゼンテーションロジックだけを独立させる
-		<ul>
-		  <li>効果： プログラマーがテンプレートを更新しなくて済む <br />
-		      　　　 （素のHTMLファイルをテンプレートとして利用できるため）
-		  </li>
-		  <li>効果： ビジネス層とプレゼンテーション層を完全に分離できる <br />
-		      　　　 （メインプログラム中にプレゼンテーションロジックを記述しなくて済むため）
-		  </li>
-		</ul>
-	      </li>
-	    </ul>
-	  </li>
-	</ul>
+        <ul>
+          <li>解決策：
+            <ul>
+              <li>マーキングの書式をHTMLと同じにする
+                <ul>
+                  <li>効果： テンプレートのHTMLデザインが崩れない <br />
+                      　　　（マーキングとしてタグや属性やコメントや処理命令を使うため）
+                  </li>
+                </ul>
+              </li>
+              <li>プレゼンテーションロジックだけを独立させる
+                <ul>
+                  <li>効果： プログラマーがテンプレートを更新しなくて済む <br />
+                      　　　 （素のHTMLファイルをテンプレートとして利用できるため）
+                  </li>
+                  <li>効果： ビジネス層とプレゼンテーション層を完全に分離できる <br />
+                      　　　 （メインプログラム中にプレゼンテーションロジックを記述しなくて済むため）
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -892,34 +892,34 @@
     <div id="slide1-8" class="slide">
       <h2>問題点と解決策(3)</h2>
       <div class="slide-body">
-	<ul>
-	  <li>間違った方法：
-	    <ul>
-	      <li>テンプレートの更新をデザイナーに押し付ける
-		<ul>
-		  <li>プロジェクトが異なれば、ツールも開発言語も異なる。
-		    なぜデザイナーが複数のテンプレートシステムを勉強しなければならないのか。
-		  </li>
-		  <!--
-		  <li>デザイナーは忙しい。テンプレートシステムを習得するコストなんか払えない。</li>
-		  -->
-		</ul>
-	      </li>
-	      <li>特定のツールを使うようデザイナーに押し付ける
-		<ul>
-		  <li>プロにはプロの道具がある。
-		    デザイナーが使うのはDreamweaverであり、SunやIBMのおもちゃツールではない。
-		  </li>
-		</ul>
-	      </li>
-	    </ul>
-	    <p>
-	      <br />
-	      <strong>プログラマーの都合をデザイナーに押し付けるべきではない</strong>
-	      <sup><a href="#" onclick="return false;" title="プログラマーがHTMLデザインも担当するならこの限りではない。">*</a></sup>
-	    </p>
-	  </li>
-	</ul>
+        <ul>
+          <li>間違った方法：
+            <ul>
+              <li>テンプレートの更新をデザイナーに押し付ける
+                <ul>
+                  <li>プロジェクトが異なれば、ツールも開発言語も異なる。
+                    なぜデザイナーが複数のテンプレートシステムを勉強しなければならないのか。
+                  </li>
+                  <!--
+                  <li>デザイナーは忙しい。テンプレートシステムを習得するコストなんか払えない。</li>
+                  -->
+                </ul>
+              </li>
+              <li>特定のツールを使うようデザイナーに押し付ける
+                <ul>
+                  <li>プロにはプロの道具がある。
+                    デザイナーが使うのはDreamweaverであり、SunやIBMのおもちゃツールではない。
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <p>
+              <br />
+              <strong>プログラマーの都合をデザイナーに押し付けるべきではない</strong>
+              <sup><a href="#" onclick="return false;" title="プログラマーがHTMLデザインも担当するならこの限りではない。">*</a></sup>
+            </p>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -940,29 +940,29 @@
     <div id="slide2-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol class="toc">
-	  <li>はじめに <a href="#slide1-toc">_</a>
-	  </li>
-	  <li class="current">Kwartz概要
-	    <ul class="subtoc">
-	      <li><a href="#slide2-1">Kwartzとは？</a></li>
-	      <li><a href="#slide2-2">サンプル：テンプレート</a></li>
-	      <li><a href="#slide2-3">サンプル：コンパイル＆出力用スクリプト</a></li>
-	      <li><a href="#slide2-4">応用例(1)</a>,
-		  <a href="#slide2-5">(2)</a>,
-		  <a href="#slide2-6">(3)</a>,
-		  <a href="#slide2-7">(4)</a></li>
-	      <li><a href="#slide2-8">特徴と特長</a></li>
-	      <li><a href="#slide2-9">プレゼンテーション層の構成</a></li>
-	    </ul>
-	  </li>
-	  <li>高度なトピック <a href="#slide3-toc">_</a>
-	  </li>
-	  <li>ディレクティブ <a href="#slide4-toc">_</a>
-	  </li>
-	  <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
-	  </li>
-	</ol>
+        <ol class="toc">
+          <li>はじめに <a href="#slide1-toc">_</a>
+          </li>
+          <li class="current">Kwartz概要
+            <ul class="subtoc">
+              <li><a href="#slide2-1">Kwartzとは？</a></li>
+              <li><a href="#slide2-2">サンプル：テンプレート</a></li>
+              <li><a href="#slide2-3">サンプル：コンパイル＆出力用スクリプト</a></li>
+              <li><a href="#slide2-4">応用例(1)</a>,
+                  <a href="#slide2-5">(2)</a>,
+                  <a href="#slide2-6">(3)</a>,
+                  <a href="#slide2-7">(4)</a></li>
+              <li><a href="#slide2-8">特徴と特長</a></li>
+              <li><a href="#slide2-9">プレゼンテーション層の構成</a></li>
+            </ul>
+          </li>
+          <li>高度なトピック <a href="#slide3-toc">_</a>
+          </li>
+          <li>ディレクティブ <a href="#slide4-toc">_</a>
+          </li>
+          <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -983,22 +983,22 @@
     <div id="slide2-1" class="slide">
       <h2>Kwartzとは？</h2>
       <div class="slide-body">
-	<ul>
-	  <li>デザイナーに優しいテンプレートシステム</li>
-	  <li><a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a></li>
-	  <li>特徴：
-	    <ul>
-	      <li>HTMLテンプレートからプレゼンテーションロジックを分離・独立</li>
-	      <li>マーキングにid属性を使うため、テンプレートのHTMLデザインが崩れない</li>
-	      <li>高速・軽量</li>
-	      <li>複数のプログラミング言語に対応(Ruby, PHP, Java, Perl)</li>
-	      <li>自動サニタイズ・部分サニタイズ</li>
-	      <li>テキスト汎用型</li>
-	      <li>Ruby on Railsサポート</li>
-	    </ul>
-	  </li>
-	  <li>2004年度未踏ソフトウエア事業採択プロジェクト</li>
-	</ul>
+        <ul>
+          <li>デザイナーに優しいテンプレートシステム</li>
+          <li><a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a></li>
+          <li>特徴：
+            <ul>
+              <li>HTMLテンプレートからプレゼンテーションロジックを分離・独立</li>
+              <li>マーキングにid属性を使うため、テンプレートのHTMLデザインが崩れない</li>
+              <li>高速・軽量</li>
+              <li>複数のプログラミング言語に対応(Ruby, PHP, Java, Perl)</li>
+              <li>自動サニタイズ・部分サニタイズ</li>
+              <li>テキスト汎用型</li>
+              <li>Ruby on Railsサポート</li>
+            </ul>
+          </li>
+          <li>2004年度未踏ソフトウエア事業採択プロジェクト</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1019,30 +1019,30 @@
     <div id="slide2-2" class="slide">
       <h2>サンプル：テンプレート</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ(ex1.html)</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ(ex1.html)</span>
+              <pre class="code">
 &lt;table&gt;
   &lt;tr <strong>id="mark:list"</strong>&gt;
     &lt;td <strong>id="mark:item"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	      <ul class="descr">
-		<li>マーキングにはid属性を使用
-		  <ul>
-		    <li>「id="<em>xxx</em>"」または「id="mark:<em>xxx</em>"」</li>
-		    <li>マーキングされた要素がプレゼンテーションロジックでの操作対象</li>
-		    <li>「id="mark:<em>xxx</em>"」は自動的に消える（「id="<em>xxx</em>"」なら残る）</li>
-		  </ul>
-		</li>
-	      </ul>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションロジック(ex1.plogic)</span>
-	      <pre class="code">
+              <ul class="descr">
+                <li>マーキングにはid属性を使用
+                  <ul>
+                    <li>「id="<em>xxx</em>"」または「id="mark:<em>xxx</em>"」</li>
+                    <li>マーキングされた要素がプレゼンテーションロジックでの操作対象</li>
+                    <li>「id="mark:<em>xxx</em>"」は自動的に消える（「id="<em>xxx</em>"」なら残る）</li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションロジック(ex1.plogic)</span>
+              <pre class="code">
 <strong>#list</strong> {
   logic: {
     for user in @users
@@ -1056,26 +1056,26 @@
   value: user;
 }
 </pre>
-	      <ul class="descr">
-		<li>CSSと同じ形式<!--（セレクタ、プロパティ）-->
-		  <!--
-		  <ul>
-		    <li>セレクタで要素を指定</li>
-		    <li>プロパティで要素を操作</li>
-		  </ul>
-		  -->
-		</li>
-		<li>式や文はターゲット言語(Ruby, PHP, ...)で記述
-		  <!--
-		  <ul>
-		    <li>ターゲット言語の機能をすべて利用可能</li>
-		  </ul>
-		  -->
-		</li>
-	      </ul>
-	    </td>
-	  </tr>
-	</table>
+              <ul class="descr">
+                <li>CSSと同じ形式<!--（セレクタ、プロパティ）-->
+                  <!--
+                  <ul>
+                    <li>セレクタで要素を指定</li>
+                    <li>プロパティで要素を操作</li>
+                  </ul>
+                  -->
+                </li>
+                <li>式や文はターゲット言語(Ruby, PHP, ...)で記述
+                  <!--
+                  <ul>
+                    <li>ターゲット言語の機能をすべて利用可能</li>
+                  </ul>
+                  -->
+                </li>
+              </ul>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1096,15 +1096,15 @@
     <div id="slide2-3" class="slide">
       <h2>サンプル：コンパイル＆出力用スクリプト</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">コンパイル</span>
-	      <pre class="console">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">コンパイル</span>
+              <pre class="console">
 $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 </pre>
-	<span class="caption">出力用スクリプト(ex1.rhtml)</span>
-	<pre class="code">
+        <span class="caption">出力用スクリプト(ex1.rhtml)</span>
+        <pre class="code">
 &lt;table&gt;
 <strong>&lt;%     for user in @users %&gt;</strong>
   &lt;tr&gt;
@@ -1113,19 +1113,19 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
 <strong>&lt;%     end %&gt;</strong>
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>コンパイルして出力用スクリプト（eRuby, PHP, JSPなど）を生成</li>
-	  <li>実行時はメインプログラムから出力用スクリプトを呼びだすだけ
-	    <ul>
-	      <li>高速、軽量</li>
-	    </ul>
-	  </li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>コンパイルして出力用スクリプト（eRuby, PHP, JSPなど）を生成</li>
+          <li>実行時はメインプログラムから出力用スクリプトを呼びだすだけ
+            <ul>
+              <li>高速、軽量</li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1146,11 +1146,11 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-4" class="slide">
       <h2>応用例(1)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">要素全体を繰り返す</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">要素全体を繰り返す</span>
+              <pre class="code">
 #list {
   logic: {
     <strong>for user in @users</strong>
@@ -1161,10 +1161,10 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">内容だけを繰り返す</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">内容だけを繰り返す</span>
+              <pre class="code">
 #list {
   logic: {
     _stag
@@ -1175,9 +1175,9 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1198,11 +1198,11 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-5" class="slide">
       <h2>応用例(2)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">ある条件のときだけ要素を表示</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">ある条件のときだけ要素を表示</span>
+              <pre class="code">
 #list {
   logic: {
     <strong>if condition</strong>
@@ -1213,10 +1213,10 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">ある条件のときはタグを外す</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">ある条件のときはタグを外す</span>
+              <pre class="code">
 #list {
   logic: {
     <strong>if condition</strong>
@@ -1229,9 +1229,9 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1252,13 +1252,13 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-6" class="slide">
       <h2>応用例(3)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">内容のかわりに式の値を出力
-		<sup><a href="#" onclick="return false;" title="この例なら'value:'プロパティのほうが適切。">*</a></sup>
-	      </span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">内容のかわりに式の値を出力
+                <sup><a href="#" onclick="return false;" title="この例なら'value:'プロパティのほうが適切。">*</a></sup>
+              </span>
+              <pre class="code">
 #list {
   logic: {
     _stag
@@ -1267,23 +1267,23 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	      <span class="caption">要素のかわりに式の値を出力
-		<sup><a href="#" onclick="return false;" title="この例なら'elem:'プロパティのほうが適切。">*</a></sup>
-	      </span>
-	      <pre class="code">
+              <span class="caption">要素のかわりに式の値を出力
+                <sup><a href="#" onclick="return false;" title="この例なら'elem:'プロパティのほうが適切。">*</a></sup>
+              </span>
+              <pre class="code">
 #list {
   logic: {
     <strong>print value</strong>
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">値が設定されているときだけ出力
-		<sup><a href="#" onclick="return false;" title="defaultディレクティブでもよい。詳細は後述。">*</a></sup>
+            </td>
+            <td class="n-up2">
+              <span class="caption">値が設定されているときだけ出力
+                <sup><a href="#" onclick="return false;" title="defaultディレクティブでもよい。詳細は後述。">*</a></sup>
 
-	      </span>
-	      <pre class="code">
+              </span>
+              <pre class="code">
 #list {
   logic: {
     _stag
@@ -1296,9 +1296,9 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1319,13 +1319,13 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-7" class="slide">
       <h2>応用例(4)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">奇数行と偶数行で背景色を変える
-		<sup><a href="#" onclick="return false;" title="「色」の情報はプレゼンテーションデータに分類されるため、できればCSSを使ってプレゼンテーションロジックに「色」の情報を含めないようにすることが望ましい。">*</a></sup>
-	      </span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">奇数行と偶数行で背景色を変える
+                <sup><a href="#" onclick="return false;" title="「色」の情報はプレゼンテーションデータに分類されるため、できればCSSを使ってプレゼンテーションロジックに「色」の情報を含めないようにすることが望ましい。">*</a></sup>
+              </span>
+              <pre class="code">
 #list {
   <strong>attrs: 'bgcolor' color;</strong>
   logic: {
@@ -1340,26 +1340,26 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">ダミーの要素を削除
-		<sup><a href="#" onclick="return false;" title="dummyディレクティブでもよい。詳細は後述。">*</a></sup>
+            </td>
+            <td class="n-up2">
+              <span class="caption">ダミーの要素を削除
+                <sup><a href="#" onclick="return false;" title="dummyディレクティブでもよい。詳細は後述。">*</a></sup>
 
-	      </span>
-	      <pre class="code">
+              </span>
+              <pre class="code">
 #list {
   logic: { }
 }
 </pre>
-	      <div class="note">
-		<p><em>!!重要!!</em></p>
-		<p>プレゼンテーションロジックを変更しても、プレゼンテーションデータは変更する必要がない</p>
-		<p class="centerize">▼</p>
-		<p><em>プレゼンテーションデータからプレゼンテーションロジックが完全に分離・独立</em></p>
-	      </div>
-	    </td>
-	  </tr>
-	</table>
+              <div class="note">
+                <p><em>!!重要!!</em></p>
+                <p>プレゼンテーションロジックを変更しても、プレゼンテーションデータは変更する必要がない</p>
+                <p class="centerize">▼</p>
+                <p><em>プレゼンテーションデータからプレゼンテーションロジックが完全に分離・独立</em></p>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1380,57 +1380,57 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-8" class="slide">
       <h2>特徴と特長</h2>
       <div class="slide-body">
-	<ul>
-	  <li>マーキングにid属性を使用
-	    <ul>
-	      <li>⇒ テンプレートのHTMLデザインが崩れない</li>
-	    </ul>
-	  </li>
-	  <li>プレゼンテーションロジックを別ファイルに分離・独立
-	    <ul>
-	      <!--
-	      <li>プレゼンテーションロジックが複雑になってもHTMLテンプレートには影響しない</li>
-	      -->
-	      <li>⇒ プログラマーがテンプレートを修正する必要がない<br />
-		（デザイナーが作成した素のHTMLファイルをテンプレートとして利用できるため）
-	      </li>
-	      <li>⇒ ビジネス層とプレゼンテーション層がきれいに分離できる<br />
-		（メインプログラムにプレゼンテーションデータ/ロジックが混じることがないため）
-	      </li>
-	    </ul>
-	  </li>
-	  <li>式や文はターゲット言語で記述
-	    <sup><a href="#" onclick="return false;" title="KwartzのJava実装では、JavaScriptに似た独自言語を使用し、それを各言語に翻訳する仕組みになっている。この理由はJavaやJSTLがとても書きにくいため。">*</a></sup>
-	    <ul>
-	      <li>⇒ ターゲット言語の機能をまるごと利用できる（余計な制限がない）</li>
-	    </ul>
-	  </li>
-	  <li>コンパイルして出力用スクリプトを生成
-	    <sup><a href="#" onclick="return false;" title="KwartzのJava実装では、独自のインタプリタ実行エンジンを内蔵し、出力用スクリプトを生成せず直接実行する。この理由はJSTLやVelocityの機能が低いため。">*</a></sup>
-	    <ul>
-	      <li>⇒ 実行が高速かつ軽量</li>
-	      <li>⇒ 仕組みが単純で理解しやすい</li>
-	      <li>⇒ 様々な言語に対応しやすい</li>
-	    </ul>
-	  </li>
-	  <!--
-	  <li>デザイナーから見た利点
-	    <ul>
-	      <li>素のHTMLファイルをテンプレートとして使用できる</li>
-	      <li>HTMLデザインが崩れない</li>
-	      <li>CSSによく似た形式でプレゼンテーションロジックを記述できる</li>
-	    </ul>
-	  </li>
-	  <li>プログラマーから見た利点
-	    <ul>
-	      <li>HTMLデザイン変更のたびにテンプレートを修正する必要がない</li>
-	      <li>ターゲット言語の機能をまるごと使用できる（余計な制限がない）</li>
-	      <li>仕組みが単純で理解しやすい</li>
-	      <li>カスタムタグなどを新たに勉強する必要がない</li>
-	    </ul>
-	  </li>
-	  -->
-	</ul>
+        <ul>
+          <li>マーキングにid属性を使用
+            <ul>
+              <li>⇒ テンプレートのHTMLデザインが崩れない</li>
+            </ul>
+          </li>
+          <li>プレゼンテーションロジックを別ファイルに分離・独立
+            <ul>
+              <!--
+              <li>プレゼンテーションロジックが複雑になってもHTMLテンプレートには影響しない</li>
+              -->
+              <li>⇒ プログラマーがテンプレートを修正する必要がない<br />
+                （デザイナーが作成した素のHTMLファイルをテンプレートとして利用できるため）
+              </li>
+              <li>⇒ ビジネス層とプレゼンテーション層がきれいに分離できる<br />
+                （メインプログラムにプレゼンテーションデータ/ロジックが混じることがないため）
+              </li>
+            </ul>
+          </li>
+          <li>式や文はターゲット言語で記述
+            <sup><a href="#" onclick="return false;" title="KwartzのJava実装では、JavaScriptに似た独自言語を使用し、それを各言語に翻訳する仕組みになっている。この理由はJavaやJSTLがとても書きにくいため。">*</a></sup>
+            <ul>
+              <li>⇒ ターゲット言語の機能をまるごと利用できる（余計な制限がない）</li>
+            </ul>
+          </li>
+          <li>コンパイルして出力用スクリプトを生成
+            <sup><a href="#" onclick="return false;" title="KwartzのJava実装では、独自のインタプリタ実行エンジンを内蔵し、出力用スクリプトを生成せず直接実行する。この理由はJSTLやVelocityの機能が低いため。">*</a></sup>
+            <ul>
+              <li>⇒ 実行が高速かつ軽量</li>
+              <li>⇒ 仕組みが単純で理解しやすい</li>
+              <li>⇒ 様々な言語に対応しやすい</li>
+            </ul>
+          </li>
+          <!--
+          <li>デザイナーから見た利点
+            <ul>
+              <li>素のHTMLファイルをテンプレートとして使用できる</li>
+              <li>HTMLデザインが崩れない</li>
+              <li>CSSによく似た形式でプレゼンテーションロジックを記述できる</li>
+            </ul>
+          </li>
+          <li>プログラマーから見た利点
+            <ul>
+              <li>HTMLデザイン変更のたびにテンプレートを修正する必要がない</li>
+              <li>ターゲット言語の機能をまるごと使用できる（余計な制限がない）</li>
+              <li>仕組みが単純で理解しやすい</li>
+              <li>カスタムタグなどを新たに勉強する必要がない</li>
+            </ul>
+          </li>
+          -->
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1451,33 +1451,33 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide2-9" class="slide">
       <h2>プレゼンテーション層の構成</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <ul>
-		<li>役割分担
-		  <ul>
-		    <li>HTML … ドキュメント構造</li>
-		    <li>CSS … ドキュメントデザイン</li>
-		    <li>JavaScript … クライアント側ロジック</li>
-		    <li>Kwartz … サーバ側ロジック
-		      <sup><a href="#" onclick="return false;" title="Kwartzが担当するのはサーバ側のプレゼンテーションロジックだけであり、ビジネスロジックは担当しないことに注意。">*</a></sup>
-		    </li>
-		  </ul>
-		</li>
-		<li>1つのファイルが1つの役割だけを担当
-		</li>
-	      </ul>
-	    </td>
-	    <td class="n-up2">
-	      <div style="text-align:center">
-		<img src="img/fig05.png" alt="position of Kwartz in presentation layer"
-		     style="border: solid 2px #999"/>
-		<br />
-	      </div>
-	    </td>
-	  </tr>
-	</table>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <ul>
+                <li>役割分担
+                  <ul>
+                    <li>HTML … ドキュメント構造</li>
+                    <li>CSS … ドキュメントデザイン</li>
+                    <li>JavaScript … クライアント側ロジック</li>
+                    <li>Kwartz … サーバ側ロジック
+                      <sup><a href="#" onclick="return false;" title="Kwartzが担当するのはサーバ側のプレゼンテーションロジックだけであり、ビジネスロジックは担当しないことに注意。">*</a></sup>
+                    </li>
+                  </ul>
+                </li>
+                <li>1つのファイルが1つの役割だけを担当
+                </li>
+              </ul>
+            </td>
+            <td class="n-up2">
+              <div style="text-align:center">
+                <img src="img/fig05.png" alt="position of Kwartz in presentation layer"
+                     style="border: solid 2px #999"/>
+                <br />
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1498,25 +1498,25 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide3-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol class="toc">
-	  <li>はじめに <a href="#slide1-toc">_</a>
-	  </li>
-	  <li>Kwartz概要 <a href="#slide2-toc">_</a>
-	  </li>
-	  <li class="current">高度なトピック
-	    <ul class="subtoc">
-	      <li><a href="#slide3-1">プロパティ</a></li>
-	      <li><a href="#slide3-2">自動エスケープ</a></li>
-	      <li><a href="#slide3-3">マルチ言語サポート</a></li>
-	      <li><a href="#slide3-4">テキスト汎用</a></li>
-	      <li><a href="#slide3-5">Ruby on Railsサポート</a></li>
-	    </ul>
-	  </li>
-	  <li>ディレクティブ <a href="#slide4-toc">_</a>
-	  </li>
-	  <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
-	  </li>
-	</ol>
+        <ol class="toc">
+          <li>はじめに <a href="#slide1-toc">_</a>
+          </li>
+          <li>Kwartz概要 <a href="#slide2-toc">_</a>
+          </li>
+          <li class="current">高度なトピック
+            <ul class="subtoc">
+              <li><a href="#slide3-1">プロパティ</a></li>
+              <li><a href="#slide3-2">自動エスケープ</a></li>
+              <li><a href="#slide3-3">マルチ言語サポート</a></li>
+              <li><a href="#slide3-4">テキスト汎用</a></li>
+              <li><a href="#slide3-5">Ruby on Railsサポート</a></li>
+            </ul>
+          </li>
+          <li>ディレクティブ <a href="#slide4-toc">_</a>
+          </li>
+          <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1537,8 +1537,8 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide3-1" class="slide">
       <h2>プロパティ</h2>
       <div class="slide-body">
-	<span class="caption">プロパティの一覧</span>
-	<pre class="code">
+        <span class="caption">プロパティの一覧</span>
+        <pre class="code">
 #id {
   <strong>value:</strong> username;           // <span class="small">要素の内容</span>('cont:'<span class="small">と同じ</span>)
   <strong>attrs:</strong> 'class' klass,      // <span class="small">属性値の変更</span>
@@ -1576,21 +1576,21 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide3-2" class="slide">
       <h2>自動エスケープ</h2>
       <div class="slide-body">
-	<ul>
-	  <li>コマンドオプション「-e」で自動エスケープ（設定ファイルでも指定可）</li>
-	  <li>「-e」オプションに関係なく、エスケープする・しないが指定可能</li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <ul>
+          <li>コマンドオプション「-e」で自動エスケープ（設定ファイルでも指定可）</li>
+          <li>「-e」オプションに関係なく、エスケープする・しないが指定可能</li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;p id="mark:p1"&gt;foo&lt;/p&gt;
 &lt;p id="mark:p2"&gt;bar&lt;/p&gt;
 &lt;p id="mark:p3"&gt;baz&lt;/p&gt;
 </pre>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code">
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code">
 #p1 {
   value: text;
 }
@@ -1601,23 +1601,23 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   <strong>VALUE:</strong> text;
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">コンパイル結果（-eオプションなし）</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">コンパイル結果（-eオプションなし）</span>
+              <pre class="code">
 &lt;p&gt;&lt;%= text %&gt;&lt;/p&gt;
 &lt;p&gt;&lt;%=<strong>h</strong> text %&gt;&lt;/p&gt;
 &lt;p&gt;&lt;%= text %&gt;&lt;/p&gt;
 </pre>
-	      <span class="caption">コンパイル結果（-eオプションあり）</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果（-eオプションあり）</span>
+              <pre class="code">
 &lt;p&gt;&lt;%=<strong>h</strong> text %&gt;&lt;/p&gt;
 &lt;p&gt;&lt;%=<strong>h</strong> text %&gt;&lt;/p&gt;
 &lt;p&gt;&lt;%= text %&gt;&lt;/p&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1638,30 +1638,30 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
     <div id="slide3-3" class="slide">
       <h2>マルチ言語サポート</h2>
       <div class="slide-body">
-	<ul>
-	  <li>Ruby, eRuby, PHP, JSP, ePerlに対応
-	    <sup><a href="#" title="外部ツールを使うことで、JavaScriptやCやSchemeにも対応可能。">*</a></sup>
-	    <!--
-	    <ul>
-	      <li>外部ツールを使えばJavaScript, C, Schemeにも対応</li>
-	    </ul>
-	    -->
-	  </li>
-	  <li>Ruby, PHP, Javaの実装があり、かつ各実装が複数言語に対応
-	    <ul>
-	      <li>Java実装では、JavaScriptに似た独自言語でプレゼンテーションロジックを記述すれば、それを各言語に翻訳してくれる</li>
-	    </ul>
-	  </li>
-	  <!--
-	  <li>プレゼンテーションロジックをターゲット言語で記述し、<br />
-	      コマンドオプション「-l <em>lang</em>」を指定してコンパイル</li>
-	  -->
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code">
+        <ul>
+          <li>Ruby, eRuby, PHP, JSP, ePerlに対応
+            <sup><a href="#" title="外部ツールを使うことで、JavaScriptやCやSchemeにも対応可能。">*</a></sup>
+            <!--
+            <ul>
+              <li>外部ツールを使えばJavaScript, C, Schemeにも対応</li>
+            </ul>
+            -->
+          </li>
+          <li>Ruby, PHP, Javaの実装があり、かつ各実装が複数言語に対応
+            <ul>
+              <li>Java実装では、JavaScriptに似た独自言語でプレゼンテーションロジックを記述すれば、それを各言語に翻訳してくれる</li>
+            </ul>
+          </li>
+          <!--
+          <li>プレゼンテーションロジックをターゲット言語で記述し、<br />
+              コマンドオプション「-l <em>lang</em>」を指定してコンパイル</li>
+          -->
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code">
 #name {
   logic: {
     _stag;
@@ -1674,14 +1674,14 @@ $ kwartz -l eruby -p ex1.plogic ex1.html > ex1.rhtml
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 Hello &lt;span id="name"&gt;guest&lt;/span&gt;!
 </pre>
-	      <span class="caption">Java実装でJSPへコンパイル</span>
-	      <pre class="code">
+              <span class="caption">Java実装でJSPへコンパイル</span>
+              <pre class="code">
 Hello &lt;span id="name"&gt;
 <strong>&lt;c:choose&gt;&lt;c:when test="${user ne null}"&gt;</strong>
 <strong>&lt;c:out value="${user}"/&gt;</strong>
@@ -1689,9 +1689,9 @@ Hello &lt;span id="name"&gt;
 <strong>guest&lt;/c:otherwise&gt;&lt;/c:choose&gt;</strong>
 &lt;/span&gt;!
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1712,25 +1712,25 @@ Hello &lt;span id="name"&gt;
     <div id="slide3-4" class="slide">
       <h2>テキスト汎用</h2>
       <div class="slide-body">
-	<ul>
-	  <li>HTML/XMLパーサを使用しないため、任意のテキストファイルで利用可能
-	    <ul>
-	      <li>例：メール、CSVファイル、ソースコード、LaTeX、PostScript、...</li>
-	      <li>Well-formedでないXMLファイルでもOK</li>
-	    </ul>
-	  </li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <ul>
+          <li>HTML/XMLパーサを使用しないため、任意のテキストファイルで利用可能
+            <ul>
+              <li>例：メール、CSVファイル、ソースコード、LaTeX、PostScript、...</li>
+              <li>Well-formedでないXMLファイルでもOK</li>
+            </ul>
+          </li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;span id="mark:m1"&gt;
   <strong>&lt;foo&gt; &amp; &lt;bar&gt;</strong>
 &lt;/span&gt;
 </pre>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code">
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code">
 #m1 {
   logic: {
     for i in 0..3 do
@@ -1739,23 +1739,23 @@ Hello &lt;span id="name"&gt;
   }
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">コンパイル</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">コンパイル</span>
+              <pre class="code">
 &lt;%     for i in 1..3 do %&gt;
   <strong>&lt;foo&gt; &amp; &lt;bar&gt;</strong>
 &lt;%     end %&gt;
 </pre>
-	      <span class="caption">実行結果</span>
-	      <pre class="code">
+              <span class="caption">実行結果</span>
+              <pre class="code">
   <strong>&lt;foo&gt; &amp; &lt;bar&gt;</strong>
   <strong>&lt;foo&gt; &amp; &lt;bar&gt;</strong>
   <strong>&lt;foo&gt; &amp; &lt;bar&gt;</strong>
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1776,32 +1776,32 @@ Hello &lt;span id="name"&gt;
     <div id="slide3-5" class="slide">
       <h2>Ruby on Railsサポート</h2>
       <div class="slide-body">
-	<ul>
-	  <li>Kwartz用テンプレートハンドラ
-	    <ul>
-	      <li>自動コンパイル</li>
-	      <li>ファイルキャッシュ、メモリキャッシュ</li>
-	    </ul>
-	  </li>
-	  <li>layoutsやrender :partialと同等の機能を提供
-	    <sup><a href="#" onclick="return false;" title="scaffoldは未サポート">*</a></sup>
-	    <!--
-	    <ul>
-	      <li>scaffoldは未サポート</li>
-	    </ul>
-	    -->
-	  </li>
-	  <!--
-	  <li>
-	    詳細はサンプルとユーザーズガイドを参照
-	  </li>
-	  -->
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code" style="font-size: 15pt; line-height: 120%;">
+        <ul>
+          <li>Kwartz用テンプレートハンドラ
+            <ul>
+              <li>自動コンパイル</li>
+              <li>ファイルキャッシュ、メモリキャッシュ</li>
+            </ul>
+          </li>
+          <li>layoutsやrender :partialと同等の機能を提供
+            <sup><a href="#" onclick="return false;" title="scaffoldは未サポート">*</a></sup>
+            <!--
+            <ul>
+              <li>scaffoldは未サポート</li>
+            </ul>
+            -->
+          </li>
+          <!--
+          <li>
+            詳細はサンプルとユーザーズガイドを参照
+          </li>
+          -->
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code" style="font-size: 15pt; line-height: 120%;">
 #form {
  stag: <strong>start_form_tag :action=>'create'</strong>;
 }
@@ -1812,25 +1812,25 @@ Hello &lt;span id="name"&gt;
  elem: <strong>submit_tag 'Create'</strong>;
 }
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code"  style="font-size: 15pt; line-height: 120%;">
+            </td>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code"  style="font-size: 15pt; line-height: 120%;">
 <strong>&lt;form id="mark:form"&gt;</strong>
   Name: <strong>&lt;input type="text" id="user_name"&gt;</strong>
   <strong>&lt;input type="submit" id="submit"&gt;</strong>
 &lt;/form&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code"  style="font-size: 15pt; line-height: 120%;">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code"  style="font-size: 15pt; line-height: 120%;">
 <strong>&lt;%= start_form_tag :action=&gt;'create' %&gt;</strong>
   Name: <strong>&lt;%= text_field 'user', 'name' %&gt;</strong>
   <strong>&lt;%= submit_tag 'Create' %&gt;</strong>
 &lt;/form&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1851,35 +1851,35 @@ Hello &lt;span id="name"&gt;
     <div id="slide4-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol class="toc">
-	  <li>はじめに <a href="#slide1-toc">_</a>
-	  </li>
-	  <li>Kwartz概要 <a href="#slide2-toc">_</a>
-	  </li>
-	  <li>高度なトピック <a href="#slide3-toc">_</a>
-	  </li>
-	  <li class="current">ディレクティブ
-	    <ul class="subtoc">
-	      <li><a href="#slide4-1">ディレクティブについて</a></li>
-	      <li><a href="#slide4-2">マーキング</a></li>
-	      <li><a href="#slide4-3">値の出力(1)</a>,
-	          <a href="#slide4-4">(2)</a>,
-	          <a href="#slide4-5">(3)</a></li>
-	      <li><a href="#slide4-6">繰り返し(1)</a>,
-	          <a href="#slide4-7">(2)</a>,
-	          <a href="#slide4-8">(3)</a>,
-	          <a href="#slide4-9">(4)</a></li>
-	      <li><a href="#slide4-10">条件分岐</a></li>
-	      <li><a href="#slide4-11">ダミー要素</a></li>
-	      <li><a href="#slide4-12">属性値</a></li>
-	      <li><a href="#slide4-13">属性の追加</a></li>
-	      <li><a href="#slide4-14">デフォルト値</a></li>
-	      <li><a href="#slide4-15">内容や要素の置換</a></li>
-	    </ul>
-	  </li>
-	  <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
-	  </li>
-	</ol>
+        <ol class="toc">
+          <li>はじめに <a href="#slide1-toc">_</a>
+          </li>
+          <li>Kwartz概要 <a href="#slide2-toc">_</a>
+          </li>
+          <li>高度なトピック <a href="#slide3-toc">_</a>
+          </li>
+          <li class="current">ディレクティブ
+            <ul class="subtoc">
+              <li><a href="#slide4-1">ディレクティブについて</a></li>
+              <li><a href="#slide4-2">マーキング</a></li>
+              <li><a href="#slide4-3">値の出力(1)</a>,
+                  <a href="#slide4-4">(2)</a>,
+                  <a href="#slide4-5">(3)</a></li>
+              <li><a href="#slide4-6">繰り返し(1)</a>,
+                  <a href="#slide4-7">(2)</a>,
+                  <a href="#slide4-8">(3)</a>,
+                  <a href="#slide4-9">(4)</a></li>
+              <li><a href="#slide4-10">条件分岐</a></li>
+              <li><a href="#slide4-11">ダミー要素</a></li>
+              <li><a href="#slide4-12">属性値</a></li>
+              <li><a href="#slide4-13">属性の追加</a></li>
+              <li><a href="#slide4-14">デフォルト値</a></li>
+              <li><a href="#slide4-15">内容や要素の置換</a></li>
+            </ul>
+          </li>
+          <li>プレゼンテーションパターン <a href="#slide5-toc">_</a>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1900,26 +1900,26 @@ Hello &lt;span id="name"&gt;
     <div id="slide4-1" class="slide">
       <h2>ディレクティブについて</h2>
       <div class="slide-body">
-	<ul>
-	  <li>ディレクティブとは？
-	    <ul>
-	      <li>プレゼンテーションデータ（HTMLファイル）の中にプレゼンテーションロジックを埋め込むための命令</li>
-	      <li>値の表示、繰り返し、条件分岐などが利用可能</li>
-	      <li>id属性またはkw:d属性を使用（前者はターゲット言語非依存の機能のみ）</li>
-	    </ul>
-	  </li>
-	  <li>なぜこんな機能が？
-	    <ul>
-	      <li>利用者の選択肢を増やすため（<strong>Choosability</strong>）
-		<ul>
-		  <li>プレゼンテーションロジックを分離したい人もいれば、分離したくない人もいる。<br />
-		    どちらを選ぶかはツールの利用者が決めるべきであり、ツールの提供者が決めるべきではない。
-		  </li>
-		</ul>
-	      </li>
-	    </ul>
-	  </li>
-	</ul>
+        <ul>
+          <li>ディレクティブとは？
+            <ul>
+              <li>プレゼンテーションデータ（HTMLファイル）の中にプレゼンテーションロジックを埋め込むための命令</li>
+              <li>値の表示、繰り返し、条件分岐などが利用可能</li>
+              <li>id属性またはkw:d属性を使用（前者はターゲット言語非依存の機能のみ）</li>
+            </ul>
+          </li>
+          <li>なぜこんな機能が？
+            <ul>
+              <li>利用者の選択肢を増やすため（<strong>Choosability</strong>）
+                <ul>
+                  <li>プレゼンテーションロジックを分離したい人もいれば、分離したくない人もいる。<br />
+                    どちらを選ぶかはツールの利用者が決めるべきであり、ツールの提供者が決めるべきではない。
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1940,34 +1940,34 @@ Hello &lt;span id="name"&gt;
     <div id="slide4-2" class="slide">
       <h2>マーキング</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	<span class="caption">プレゼンテーションデータ</span>
-	<pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+        <span class="caption">プレゼンテーションデータ</span>
+        <pre class="code">
 &lt;table <strong>id="table"</strong>&gt;
   &lt;tr <strong>id="mark:list"</strong>&gt;
     &lt;td <strong>kw:d="mark list"</strong>&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	<span class="caption">コンパイル結果</span>
-	<pre class="code">
+        <span class="caption">コンパイル結果</span>
+        <pre class="code">
 &lt;table <strong>id="table"</strong>&gt;
   &lt;tr&gt;
     &lt;td&gt;foo&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>id属性で指定可能（ターゲット言語非依存な機能のため）</li>
-	  <li>「id="<em>xxx</em>"」もマーキングとして扱われるが、出力時に削除されない</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>id属性で指定可能（ターゲット言語非依存な機能のため）</li>
+          <li>「id="<em>xxx</em>"」もマーキングとして扱われるが、出力時に削除されない</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -1988,30 +1988,30 @@ Hello &lt;span id="name"&gt;
     <div id="slide4-3" class="slide">
       <h2>値の出力(1)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 Hello &lt;span <strong>kw:d="value name"</strong>&gt;world&lt;/span&gt;!
 
 &lt;a href="mailto:<strong>@!{user.email}@</strong>"&gt;<strong>@{user.name}@</strong>&lt;/a&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 Hello &lt;span&gt;<strong>&lt;%= name %&gt;</strong>&lt;/span&gt;!
 
 &lt;a href="mailto:<strong>&lt;%= user.email %&gt;</strong>"&gt;<strong>&lt;%=h user.name %&gt;</strong>&lt;/a&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>「kw:d="value <em>expr</em>"」は、コマンドオプション「-e」でエスケープする・しないが指定できる</li>
-	  <li>「-e」に関わらず、「kw:d="Value <em>expr</em>"」と「@{<em>expr</em>}@」は必ずエスケープし、「kw:d="VALUE <em>expr</em>"」と「@!{<em>expr</em>}@」は必ずエスケープしない</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>「kw:d="value <em>expr</em>"」は、コマンドオプション「-e」でエスケープする・しないが指定できる</li>
+          <li>「-e」に関わらず、「kw:d="Value <em>expr</em>"」と「@{<em>expr</em>}@」は必ずエスケープし、「kw:d="VALUE <em>expr</em>"」と「@!{<em>expr</em>}@」は必ずエスケープしない</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2032,40 +2032,40 @@ Hello &lt;span&gt;<strong>&lt;%= name %&gt;</strong>&lt;/span&gt;!
     <div id="slide4-4" class="slide">
       <h2>値の出力(2)</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;form <strong>kw:d="stag start_form_tag :action=&gt;'create'"</strong>&gt;
   &lt;a href="#" <strong>kw:d="elem link_to 'List' :action=&gt;'list'"</strong>&gt;List&lt;/a&gt;
 &lt;/form&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;%= start_form_tag :action=&gt;'create' %&gt;</strong>
   <strong>&lt;%= link_to 'List' :action=&gt;'list' %&gt;</strong>
 &lt;/form&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>「stag」「cont」「etag」「elem」が使用可能
-	    <!--
-	    <ul>
-	      <li>kw:d="stag <em>expr</em>" … 開始タグを式の値で置き換え</li>
-	      <li>kw:d="cont <em>expr</em>" … 内容を式の値で置き換え</li>
-	      <li>kw:d="etag <em>expr</em>" … 終了タグを式の値で置き換え</li>
-	      <li>kw:d="elem <em>expr</em>" … 要素を式の値で置き換え</li>
-	    </ul>
-	    -->
-	  </li>
-	  <li>「Stag」（必ずエスケープする）や「STAG」（必ずエスケープしない）も利用可能
-	  </li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>「stag」「cont」「etag」「elem」が使用可能
+            <!--
+            <ul>
+              <li>kw:d="stag <em>expr</em>" … 開始タグを式の値で置き換え</li>
+              <li>kw:d="cont <em>expr</em>" … 内容を式の値で置き換え</li>
+              <li>kw:d="etag <em>expr</em>" … 終了タグを式の値で置き換え</li>
+              <li>kw:d="elem <em>expr</em>" … 要素を式の値で置き換え</li>
+            </ul>
+            -->
+          </li>
+          <li>「Stag」（必ずエスケープする）や「STAG」（必ずエスケープしない）も利用可能
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2086,26 +2086,26 @@ Hello &lt;span&gt;<strong>&lt;%= name %&gt;</strong>&lt;/span&gt;!
     <div id="slide4-5" class="slide">
       <h2>値の出力(3) デフォルト値</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 Hello &lt;span <strong>kw:d="default user"</strong>&gt;guest&lt;/span&gt;
 </pre>
-	      <span class="caption">コンパイル結果（実際には1行）</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果（実際には1行）</span>
+              <pre class="code">
 Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 &lt;%= user %&gt;&lt;% else %&gt;</strong>guest<strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>「Default」（必ずエスケープする）と「DEFAULT」（必ずエスケープしない）も利用可能</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>「Default」（必ずエスケープする）と「DEFAULT」（必ずエスケープしない）も利用可能</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2126,45 +2126,45 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-6" class="slide">
       <h2>繰り返し(1) foreach, list</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="for item in list"</strong>&gt;
   &lt;li&gt;@{item}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;% for item in list do %&gt;</strong>
 &lt;ul&gt;
   &lt;li&gt;&lt;%=h item %&gt;&lt;/li&gt;
 &lt;/ul&gt;
 <strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="list item in list"</strong>&gt;
   &lt;li&gt;@{item}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;ul&gt;
 <strong>&lt;% for item in list do %&gt;</strong>
   &lt;li&gt;&lt;%=h item %&gt;&lt;/li&gt;
 <strong>&lt;% end %&gt;</strong>
 &lt;/ul&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>要素全体または内容だけを繰り返す</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>要素全体または内容だけを繰り返す</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2185,17 +2185,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-7" class="slide">
       <h2>繰り返し(2) Foreach, List</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="For item in list"</strong>&gt;
   &lt;li&gt;@{item}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;% item_ctr = 0 %&gt;</strong>
 <strong>&lt;% for item in list do %&gt;</strong>
 <strong>&lt;%   item_ctr += 1 %&gt;</strong>
@@ -2204,16 +2204,16 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 &lt;/ul&gt;
 <strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="List item in list"</strong>&gt;
   &lt;li&gt;@{item}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;ul&gt;
 <strong>&lt;% item_ctr = 0 %&gt;</strong>
 <strong>&lt;% for item in list do %&gt;</strong>
@@ -2222,12 +2222,12 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 <strong>&lt;% end %&gt;</strong>
 &lt;/ul&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>ループカウンタを自動的に作成して繰り返す</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>ループカウンタを自動的に作成して繰り返す</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2248,17 +2248,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-8" class="slide">
       <h2>繰り返し(3) FOREACH, LIST</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
  &lt;tr class="@!{item_tgl}@" <strong>kw:d="FOR item in list"</strong>&gt;
   &lt;td&gt;@{item}@&lt;/td&gt;
  &lt;/tr&gt;
 </pre>
-	<span class="caption">コンパイル結果</span>
-	<pre class="code">
+        <span class="caption">コンパイル結果</span>
+        <pre class="code">
 <strong>&lt;% item_ctr = 0 %&gt;</strong>
 <strong>&lt;% for item in list do %&gt;</strong>
 <strong>&lt;%   item_ctr += 1 %&gt;</strong>
@@ -2268,14 +2268,14 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;/tr&gt;
 <strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>ループカウンタとトグル変数を自動的に作成して繰り返す</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>ループカウンタとトグル変数を自動的に作成して繰り返す</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2296,45 +2296,45 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-9" class="slide">
       <h2>繰り返し(4) while, loop</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="while r = h.fetch()"</strong>&gt;
   &lt;li&gt;@{r['name']}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;% while r = h.fetch() do %&gt;</strong>
 &lt;ul&gt;
   &lt;li&gt;&lt;%=h r['name'] %&gt;&lt;/li&gt;
 &lt;/ul&gt;
 <strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;ul <strong>kw:d="loop r = h.fetch()"</strong>&gt;
   &lt;li&gt;@{r['name']}@&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;ul&gt;
 <strong>&lt;% while r = h.fetch() do %&gt;</strong>
   &lt;li&gt;&lt;%=h r['name'] %&gt;&lt;/li&gt;
 <strong>&lt;% end %&gt;</strong>
 &lt;/ul&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>要素全体または内容だけを繰り返す</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>要素全体または内容だけを繰り返す</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2355,11 +2355,11 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-10" class="slide">
       <h2>条件分岐</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;p <strong>kw:d="if val > 0"</strong>&gt;
   val is positive.
 &lt;/p&gt;
@@ -2370,10 +2370,10 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
   val is zero.
 &lt;/p&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;% if val > 0 %&gt;</strong>
 &lt;p&gt;
   val is positive.
@@ -2388,15 +2388,15 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 &lt;/p&gt;
 <strong>&lt;% end %&gt;</strong>
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <!--
-	  <li>ifだけでなくelsifやelseも使用可能</li>
-	  -->
-	  <li>ifやelsifやelseが指定されたタグは隣接している必要がある（間に空行が入ってはいけない）</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <!--
+          <li>ifだけでなくelsifやelseも使用可能</li>
+          -->
+          <li>ifやelsifやelseが指定されたタグは隣接している必要がある（間に空行が入ってはいけない）</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2417,11 +2417,11 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-11" class="slide">
       <h2>代入</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;table <strong>kw:d="set i=0"</strong>&gt;
  &lt;tbody kw:d="list item in items"&gt;
   &lt;tr <strong>kw:d="set i+=1"</strong>&gt;
@@ -2431,10 +2431,10 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;/tbody&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+            </td>
+            <td class="n-up2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 <strong>&lt;% i=0 %&gt;</strong>
 &lt;table&gt;
  &lt;tbody&gt;
@@ -2448,12 +2448,12 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;/tbody&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>そのタグのすぐ前に挿入される</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>そのタグのすぐ前に挿入される</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2474,11 +2474,11 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-12" class="slide">
       <h2>ダミー要素</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td>
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td>
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;table&gt;
  &lt;tr bgcolor="#FCC"&gt;
   &lt;td&gt;foo&lt;/td&gt;
@@ -2491,23 +2491,23 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+            </td>
+            <td>
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;table&gt;
  &lt;tr bgcolor="#FCC"&gt;
   &lt;td&gt;foo&lt;/td&gt;
  &lt;/tr&gt;
 &lt;/table&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>id属性で指定可能（ターゲット言語非依存な機能のため）</li>
-	  <li>id属性の値が重ならないよう、「id="dummy:<strong><em>xxx</em></strong>"」には適当な文字列を指定</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>id属性で指定可能（ターゲット言語非依存な機能のため）</li>
+          <li>id属性の値が重ならないよう、「id="dummy:<strong><em>xxx</em></strong>"」には適当な文字列を指定</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2528,31 +2528,31 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-13" class="slide">
       <h2>属性値</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;p bgcolor="#FCC"
    <strong>kw:d="attr 'bgcolor' color; attr 'class' klass"</strong>&gt;
   Hello world
 &lt;/p&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;p bgcolor="<strong>&lt;%= color %&gt;</strong>" <strong>class="&lt;%= klass %&gt;"</strong>&gt;
   Hello world
 &lt;/p&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>セミコロンで区切って複数指定可能</li>
-	  <li>「Attr」（必ずエスケープする）と「ATTR」（必ずエスケープしない）も利用可能</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>セミコロンで区切って複数指定可能</li>
+          <li>「Attr」（必ずエスケープする）と「ATTR」（必ずエスケープしない）も利用可能</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2573,26 +2573,26 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-14" class="slide">
       <h2>属性の追加</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;input type="checkbox" <strong>kw:d="append cond ? ' checked' : ''"</strong>&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;input type="checkbox"<strong>&lt;%= cond ? ' checked' : '' %&gt;</strong>&gt;
 </pre>
-	    </td>
-	    <td class="n-up2">
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>セミコロンで区切って複数指定可能</li>
-	  <li>「Append」（必ずエスケープする）と「APPEND」（必ずエスケープしない）も利用可能</li>
-	</ul>
+            </td>
+            <td class="n-up2">
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>セミコロンで区切って複数指定可能</li>
+          <li>「Append」（必ずエスケープする）と「APPEND」（必ずエスケープしない）も利用可能</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2613,11 +2613,11 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide4-15" class="slide">
       <h2>要素や内容の置換</h2>
       <div class="slide-body">
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code">
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code">
 &lt;div id="nav"&gt;
  &lt;a href="/"&gt;Top&lt;/a&gt; &amp;lt;
  Documents
@@ -2628,10 +2628,10 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  Top &amp;lt; Documents
 &lt;/div&gt;
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code">
+            </td>
+            <td>
+              <span class="caption">コンパイル結果</span>
+              <pre class="code">
 &lt;div id="nav"&gt;
  &lt;a href="/"&gt;Top&lt;/a&gt; &amp;lt;
  Documents
@@ -2642,15 +2642,15 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  Documents
 &lt;/div&gt;</strong>
 </pre>
-	    </td>
-	  </tr>
-	</table>
-	<ul class="descr">
-	  <li>escape_element_with_element … 要素全体を他の要素で置換</li>
-	  <li>escape_element_with_content … 要素全体を他の要素の内容で置換</li>
-	  <li>escape_content_with_element … 要素の内容を他の要素で置換</li>
-	  <li>escape_content_with_content … 要素の内容を他の要素の内容で置換</li>
-	</ul>
+            </td>
+          </tr>
+        </table>
+        <ul class="descr">
+          <li>escape_element_with_element … 要素全体を他の要素で置換</li>
+          <li>escape_element_with_content … 要素全体を他の要素の内容で置換</li>
+          <li>escape_content_with_element … 要素の内容を他の要素で置換</li>
+          <li>escape_content_with_content … 要素の内容を他の要素の内容で置換</li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2671,25 +2671,25 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-toc" class="slide">
       <h2>目次</h2>
       <div class="slide-body">
-	<ol class="toc">
-	  <li>はじめに <a href="#slide1-toc">_</a>
-	  </li>
-	  <li>Kwartz概要 <a href="#slide2-toc">_</a>
-	  </li>
-	  <li>高度なトピック <a href="#slide3-toc">_</a>
-	  </li>
-	  <li>ディレクティブ <a href="#slide4-toc">_</a>
-	  </li>
-	  <li class="current">プレゼンテーションパターン
-	    <ul class="subtoc">
-	      <li><a href="#slide5-1">プレゼンテーションパターンとは？</a></li>
-	      <li><a href="#slide5-2">Replace Element/Content with Element/Content Pattern</a></li>
-	      <li><a href="#slide5-3">Select Element/Content Pattern</a></li>
-	      <li><a href="#slide5-4">Pick-up Element/Content Pattern</a></li>
-	      <li><a href="#slide5-5">Extract Element/Content Pattern</a></li>
-	    </ul>
-	  </li>
-	</ol>
+        <ol class="toc">
+          <li>はじめに <a href="#slide1-toc">_</a>
+          </li>
+          <li>Kwartz概要 <a href="#slide2-toc">_</a>
+          </li>
+          <li>高度なトピック <a href="#slide3-toc">_</a>
+          </li>
+          <li>ディレクティブ <a href="#slide4-toc">_</a>
+          </li>
+          <li class="current">プレゼンテーションパターン
+            <ul class="subtoc">
+              <li><a href="#slide5-1">プレゼンテーションパターンとは？</a></li>
+              <li><a href="#slide5-2">Replace Element/Content with Element/Content Pattern</a></li>
+              <li><a href="#slide5-3">Select Element/Content Pattern</a></li>
+              <li><a href="#slide5-4">Pick-up Element/Content Pattern</a></li>
+              <li><a href="#slide5-5">Extract Element/Content Pattern</a></li>
+            </ul>
+          </li>
+        </ol>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2710,24 +2710,24 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-1" class="slide">
       <h2>プレゼンテーションパターンとは？</h2>
       <div class="slide-body">
-	<ul>
-	  <li>プレゼンテーションロジックにおける「定石」</li>
-	  <li>一覧
-	    <ul style="font-size: 14pt">
-	      <li>Replace Element/Content with Value/Element/Content Pattern</li>
-	      <li>Default Content Pattern</li>
-	      <li>Delete Element/Content/Tag Pattern</li>
-	      <li>Iterate Element/Content Pattern</li>
-	      <li>Select Element/Content Pattern</li>
-	      <li>Pick-up Element/Content Pattern</li>
-	      <li>Extract Element/Content Pattern</li>
-	    </ul>
-	  </li>
-	  <li>詳細は
-	    『<a href="http://www.kuwata-lab.com/kwartz/kwartz3ruby-pattern-catalog.html">Presentation Pattern Catalog</a>』
-	    を参照のこと
-	  </li>
-	</ul>
+        <ul>
+          <li>プレゼンテーションロジックにおける「定石」</li>
+          <li>一覧
+            <ul style="font-size: 14pt">
+              <li>Replace Element/Content with Value/Element/Content Pattern</li>
+              <li>Default Content Pattern</li>
+              <li>Delete Element/Content/Tag Pattern</li>
+              <li>Iterate Element/Content Pattern</li>
+              <li>Select Element/Content Pattern</li>
+              <li>Pick-up Element/Content Pattern</li>
+              <li>Extract Element/Content Pattern</li>
+            </ul>
+          </li>
+          <li>詳細は
+            『<a href="http://www.kuwata-lab.com/kwartz/kwartz3ruby-pattern-catalog.html">Presentation Pattern Catalog</a>』
+            を参照のこと
+          </li>
+        </ul>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2748,40 +2748,40 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-2" class="slide">
       <h2>Replace Elem/Cont with Elem/Cont Pattern</h2>
       <div class="slide-body">
-	<ul>
-	  <li>マーキングした要素や内容を、別の要素や内容で置き換える（別ファイル中でも可）</li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ（レイアウト）</span>
-	      <pre class="code2">
+        <ul>
+          <li>マーキングした要素や内容を、別の要素や内容で置き換える（別ファイル中でも可）</li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ（レイアウト）</span>
+              <pre class="code2">
 &lt;html lang="en"&gt;
  &lt;body onload="init()"&gt;
   &lt;div <strong>id="placeholder"</strong>&gt;...&lt;/div&gt;
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-	      <span class="caption">プレゼンテーションデータ（コンテンツ）</span>
-	      <pre class="code2">
+              <span class="caption">プレゼンテーションデータ（コンテンツ）</span>
+              <pre class="code2">
 &lt;html&gt;&lt;body&gt;
   &lt;div <strong>id="mark:pagecontent"</strong>&gt;
     Hello Kwartz!
   &lt;/div&gt;
 &lt;/body&gt;&lt;/html&gt;
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code2">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code2">
 <strong>#placeholder</strong> {
   logic: {
     <strong>_element(pagecontent)</strong>
   }
 }
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code2">
 &lt;html lang="en"&gt;
  &lt;body onload="init()"&gt;
   <strong>&lt;div&gt;</strong>
@@ -2790,9 +2790,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2813,14 +2813,14 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-3" class="slide">
       <h2>Select Element/Content Pattern</h2>
       <div class="slide-body">
-	<ul>
-	  <li>マーキングされた複数の要素からひとつだけ選ぶ</li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code2">
+        <ul>
+          <li>マーキングされた複数の要素からひとつだけ選ぶ</li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code2">
 &lt;div id="mark:message"&gt;
  &lt;p style="color:red"
     <strong>id="mark:error"</strong>&gt;ERROR!&lt;/p&gt;
@@ -2829,8 +2829,8 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  &lt;p <strong>id="mark:good"</strong>&gt;No error.&lt;/p&gt;
 &lt;/div&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code2">
 &lt;%     if status == 'error' %&gt;
  <strong>&lt;p style="color:red"&gt;ERROR!&lt;/p&gt;</strong>
 &lt;%     else if status == 'warning' %&gt;
@@ -2839,10 +2839,10 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
  <strong>&lt;p&gt;No error.&lt;/p&gt;</strong>
 &lt;%     end %&gt;
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code2">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code2">
 #message {
   logic: {
     if status == 'error'
@@ -2855,9 +2855,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
   }
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2878,14 +2878,14 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-4" class="slide">
       <h2>Pick-up Element/Content Pattern</h2>
       <div class="slide-body">
-	<ul>
-	  <li>「_stag」や「_cont」を使わず、マーキングした要素/内容だけを使う</li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code2">
+        <ul>
+          <li>「_stag」や「_cont」を使わず、マーキングした要素/内容だけを使う</li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code2">
 &lt;div <strong>id="breadcrumbs"</strong>&gt;
   &lt;a href="/" <strong>id="mark:crumb"</strong>&gt;Home&lt;/a&gt;
   &lt;span <strong>id="mark:separator"</strong>&gt;&amp;gt;&lt;/span&gt;
@@ -2895,17 +2895,17 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
   &lt;strong <strong>id="mark:title"</strong>&gt;title&lt;/strong&gt;
 &lt;/div&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code2">
 &lt;%     for item in list %&gt;
   <strong>&lt;a href="&lt;%=e.path%&gt;"&gt;&lt;%=e.name%&gt;&lt;/a&gt;</strong>
 <strong>&amp;gt;</strong>&lt;%     end %&gt;
   <strong>&lt;strong&gt;&lt;%= doctitle %&gt;&lt;/strong&gt;</strong>
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code2">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code2">
 <strong>#breadcrumbs</strong> {
   logic: {
     for e in items
@@ -2923,9 +2923,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
   value: doctitle;
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -2946,14 +2946,14 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     <div id="slide5-5" class="slide">
       <h2>Extract Element/Content Pattern</h2>
       <div class="slide-body">
-	<ul>
-	  <li>マーキングした要素だけを取り出す（HTML要素の部品化）</li>
-	</ul>
-	<table class="n-up2" summary="">
-	  <tr>
-	    <td class="n-up2">
-	      <span class="caption">プレゼンテーションデータ</span>
-	      <pre class="code2">
+        <ul>
+          <li>マーキングした要素だけを取り出す（HTML要素の部品化）</li>
+        </ul>
+        <table class="n-up2" summary="">
+          <tr>
+            <td class="n-up2">
+              <span class="caption">プレゼンテーションデータ</span>
+              <pre class="code2">
 &lt;html <strong>id="mark:document"</strong>&gt;
   &lt;body&gt;
     &lt;div class="tabs" <strong>id="mark:tabs"</strong>&gt;
@@ -2963,18 +2963,18 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
     &lt;/div&gt;
 &lt;/body&gt;&lt;/html&gt;
 </pre>
-	      <span class="caption">コンパイル結果</span>
-	      <pre class="code2">
+              <span class="caption">コンパイル結果</span>
+              <pre class="code2">
     <strong>&lt;div class="tabs"&gt;</strong>
 &lt;%     for tab in tablist %&gt;
       &lt;a href="/"&gt;Home&lt;/a&gt;
 &lt;%     end %&gt;
     <strong>&lt;/div&gt;</strong>
 </pre>
-	    </td>
-	    <td>
-	      <span class="caption">プレゼンテーションロジック</span>
-	      <pre class="code2">
+            </td>
+            <td>
+              <span class="caption">プレゼンテーションロジック</span>
+              <pre class="code2">
 <strong>#document</strong> {
   logic: {
     <strong>_element(tabs)</strong>
@@ -2990,9 +2990,9 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
   }
 }
 </pre>
-	    </td>
-	  </tr>
-	</table>
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="footer">
         <div class="footer-left">
@@ -3012,13 +3012,13 @@ Hello <strong>&lt;% if (user) &amp;&amp; !(user).to_s.empty? then %&gt;
 
     <div id="slide-last" class="slide">
       <div class="slide-body">
-	<div style="text-align:center; font-size:38pt; margin-top:130px; line-height:140%;">
-	  <p>
-	    Get Kwartz at<br />
-	    <a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a><br />
-	  </p>
-	  <p style="margin-top:50px">Thank You</p>
-	</div>
+        <div style="text-align:center; font-size:38pt; margin-top:130px; line-height:140%;">
+          <p>
+            Get Kwartz at<br />
+            <a href="http://www.kuwata-lab.com/kwartz">http://www.kuwata-lab.com/kwartz</a><br />
+          </p>
+          <p style="margin-top:50px">Thank You</p>
+        </div>
       </div>
       <div class="footer">
         <div class="footer-left">

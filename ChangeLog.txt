@@ -2,6 +2,14 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.155 (2006-12-09)
+	- [enhance] class selector support
+	- [enhance] tag name selector support
+	- [enhance] 'before:' and 'after:' properties support
+	- [change] class HandlerArg removed
+	- [change] class DocumentRuleset removed
+	- [change] class ElementRuleset is renamed to Ruleset
+
 : rev.154 (2006-11-09)
 	- [enhance] introduction-to-kwartz.html: IE6 support with JavaScript
 
