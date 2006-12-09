@@ -22,16 +22,16 @@ module Kwartz
 
 
 
-    def handle(directive_name, directive_arg, directive_str, elem_info, stmt_list)
+    def handle(directive, elem_info, stmt_list)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      d_name = directive.name
+      d_arg  = directive.arg
+      d_str  = directive.str
       e = elem_info
 
-      case directive_name
+      case d_name
 
       when :struts
         case tag = e.stag_info.tagname
@@ -40,7 +40,8 @@ module Kwartz
         when 'script' ;  tag = 'javascript'
         end
         tag == :struts   and raise convert_error("#{d_str}: unknown directive.", e.stag_info.linenum)
-        return self.handle(tag.intern, d_arg, directive_str, elem_info, stmt_list)
+        directive.name = tag.intern
+        return self.handle(directive, elem_info, stmt_list)
 
       else
         convert_mapping = {

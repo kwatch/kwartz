@@ -93,13 +93,13 @@ module Kwartz
     ##
     ## everytime return true whenever directive name is unknown.
     ##
-    def handle(directive_name, directive_arg, directive_str, elem_info, stmt_list)
+    def handle(directive, elem_info, stmt_list)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      d_name = directive.name
+      d_arg  = directive.arg
+      d_str  = directive.str
       e = elem_info
       attr_info = e.attr_info
 

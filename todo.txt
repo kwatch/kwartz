@@ -19,3 +19,5 @@
 .* [v] 'before:' and 'after:' property
 .* [v] class selector
 .* [v] tag selector
+.* [_] 'id="value:var"', 'id="value:obj.prop"', 'id="value:hash['key']"', 'id="value:list[123]"' support
+.* [_] $(attr), $(CONTENT), $(ELEMENT) support

@@ -118,7 +118,7 @@
 # --------------------------------------------------------------------------------
 
 ###
-- name:    convert11
+- name:    selector1
   desc:    selectr - marking
   pdata: |
 	<ul id="mark:list">
@@ -148,7 +148,7 @@
 
 
 ###
-- name:    convert12
+- name:    selector2
   desc:    selectr - class name
   pdata: |
 	<ul class="list">
@@ -178,7 +178,7 @@
 
 
 ###
-- name:    convert13
+- name:    selector3
   desc:    selectr - tag name
   pdata: |
 	<ul>
@@ -208,7 +208,7 @@
 
 
 ###
-- name:    convert14
+- name:    selector4
   desc:    selectr - combination of marking, classname, and tagname
   pdata: |
 	<ul id="mark:list">
@@ -242,8 +242,11 @@
 	print("</ul>\n")
 	<%    }%>
 
+
+# --------------------------------------------------------------------------------
+
 ###
-- name:    convert15
+- name:    convert11
   desc:    empty logic
   pdata: |
         <div>
@@ -262,6 +265,57 @@
   expected: |
   	print("<div>\n")
   	print("</div>\n")
+
+###
+- name:    convert12
+  desc:    "'#DOCUMENT' and 'logic:'"
+  pdata: |
+	<html>
+	  <body>
+	    <h1 id="mark:title">...title...</h1>
+	    <p>...</p>
+	    <div id="mark:content">
+	      <table>
+	        <tr id="mark:list">
+		  <td id="mark:item"></td>
+		</tr>
+	      </table>
+	    </div>
+	  </body>
+	</html>
+  plogic: |
+	#DOCUMENT {
+	  logic: {
+	    _element(title)
+	    _content(content)
+	  }
+	}
+	#title {
+	  value: title;
+	}
+	#list {
+	  logic: {
+	    for item in list
+	      _elem
+	    end
+	  }
+	}
+	#item {
+	  value: item;
+	}
+  expected: |
+	print("    <h1>")
+	print(<%=title%>)
+	print("</h1>\n")
+	print("      <table>\n")
+	<%    for item in list%>
+	print("        <tr>\n")
+	print("	         <td>")
+	print(<%=item%>)
+	print("</td>\n")
+	print("	       </tr>\n")
+	<%    end%>
+	print("      </table>\n")
 
 
 # --------------------------------------------------------------------------------

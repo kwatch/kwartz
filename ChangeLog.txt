@@ -2,6 +2,11 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.156 (2006-12-09)
+	- [enhance] Directive 'value', 'elem', 'stag', 'cont', 'etag', and 'default' can be language-independent
+	- [change] add new class Directive
+	- [change] file 'ChangeLog' is renamed to 'CHANGES'
+
 : rev.155 (2006-12-09)
 	- [enhance] class selector support
 	- [enhance] tag name selector support

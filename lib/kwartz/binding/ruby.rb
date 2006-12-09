@@ -40,13 +40,13 @@ module Kwartz
     end
 
 
-    def handle(directive_name, directive_arg, directive_str, elem_info, stmt_list)
+    def handle(directive, elem_info, stmt_list)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      d_name = directive.name
+      d_arg  = directive.arg
+      d_str  = directive.str
       e = elem_info
 
       case d_name
@@ -106,7 +106,7 @@ module Kwartz
         #stmt_list << NativeStatement.new("end", :if)
 
       when :elsif, :else
-        error_when_last_stmt_is_not_if(elem_info, directive_str, stmt_list)
+        error_when_last_stmt_is_not_if(elem_info, d_str, stmt_list)
         stmt_list.pop    # delete 'end'
         kind = d_name == :else ? :else : :elseif
         code = d_name == :else ? "else" : "elsif #{d_arg} then"
@@ -119,10 +119,10 @@ module Kwartz
 
       when :default, :Default, :DEFAULT
         error_if_empty_tag(elem_info, d_str)
-        expr_code = d_arg
+        expr_str = directive.format == :common ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
         flag_escape = d_name == :default ? nil : (d_name == :Default)
-        add_native_expr_with_default(elem_info, stmt_list, expr_code, flag_escape,
-                                     "if (#{d_arg}) && !(#{d_arg}).to_s.empty? then",
+        add_native_expr_with_default(elem_info, stmt_list, expr_str, flag_escape,
+                                     "if (#{expr_str}) && !(#{d_arg}).to_s.empty? then",
                                      "else", "end")
         #stmt_list << stag_stmt(elem_info)
         #stmt_list << NativeStatement.new_without_newline("if (#{d_arg}) && !(#{d_arg}).to_s.empty? then", :if)
@@ -140,6 +140,23 @@ module Kwartz
       return true
 
     end #def
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = expr_str
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = expr_str
+      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
+        expr = expr_str
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        expr = expr_str
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
 
 
   end #class

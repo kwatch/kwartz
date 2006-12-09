@@ -47,13 +47,13 @@ module Kwartz
     end
 
 
-    def handle(directive_name, directive_arg, directive_str, elem_info, stmt_list)
+    def handle(directive, elem_info, stmt_list)
       ret = super
       return ret if ret
 
-      d_name = directive_name
-      d_arg  = directive_arg
-      d_str  = directive_str
+      d_name = directive.name
+      d_arg  = directive.arg
+      d_str  = directive.str
       e = elem_info
 
       case d_name
@@ -120,7 +120,7 @@ module Kwartz
         #stmt_list << NativeStatement.new(end, :if)
 
       when :elseif, :else
-        error_when_last_stmt_is_not_if(elem_info, directive_str, stmt_list)
+        error_when_last_stmt_is_not_if(elem_info, d_str, stmt_list)
         stmt_list.pop    # delete '</c:when></c:choose>'
         if d_name == :else
           kind = :else
@@ -143,7 +143,8 @@ module Kwartz
         stmt_list << stag_stmt(elem_info)
         flag_escape = d_name == :default ? nil : (d_name == :Default)
         argstr = elem_info.cont_stmts[0].args[0]
-        code =  "<c:out value=\"${#{d_arg}}\""
+        expr_str = directive.format == :common ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
+        code =  "<c:out value=\"${#{expr_str}}\""
         code << " escapeXml=\"#{flag_escape}\"" unless flag_escape == nil
         code << " default=\"#{argstr}\"/>"
         stmt_list << NativeStatement.new_without_newline(code)
@@ -187,6 +188,24 @@ module Kwartz
 
 
     protected
+
+
+    def parse_expr_str(expr_str, linenum)
+      case expr_str
+      when /\A(\w+)\z/             # variable
+        expr = expr_str
+      when /\A(\w+)\.(\w+)\z/      # object.property
+        expr = expr_str
+      when /\A(\w+)\[('.*?'|".*?"|:\w+)\]\z/   # hash
+        key = $2[0] == ?: ? "'#{$2[1..-1]}'" : $2
+        expr = "#{$1}[#{key}]"
+      when /\A(\w+)\[(\w+)\]\z/    # array or hash
+        expr = "#{$1}[#{$2}]"
+      else
+        raise convert_error("'#{expr_str}': invalid expression.", linenum)
+      end
+      return expr
+    end
 
 
     def handle_jstl_redirect(options)
