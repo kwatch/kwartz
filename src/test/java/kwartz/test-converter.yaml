@@ -2736,7 +2736,7 @@
 	}
 	#item { value: item; }
   expected*:
-    java: &converter11_expected |
+    java: |
 	:PRINT
 	  "<ul id=\"list\">\n"
 	:FOREACH
@@ -3018,6 +3018,84 @@
 	  value
 	:PRINT
 	  "</span>\n"
+
+
+###
+- name:		converter_selector_priority1
+  desc:		'kw:d="mark:foo" is prior to id="bar"'
+  pdata: |
+	<b id="mark:bar" kw:d="mark:foo">baz</b>
+  plogic: |
+	#bar {
+	  value: var_bar;
+	}
+	#foo {
+	  value: var_foo;
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<b id=\"mark:bar\">"
+	:PRINT
+	  var_foo
+	:PRINT
+	  "</b>\n"
+
+
+###
+- name:		converter_selector_priority2
+  desc:		sequence of 'append:' properties
+  pdata: |
+	<b id="mark:foo" class="bar">foo</b>
+  plogic: |
+	#foo {
+	  append: ' checked';
+	}
+	.bar {
+	  append: ' selected';
+	}
+	b {
+	  append: ' disabled';
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<b class=\"bar\""
+	  " disabled"
+	  " selected"
+	  " checked"
+	  ">"
+	:BLOCK
+	  :PRINT
+	    "foo"
+	:PRINT
+	  "</b>\n"
+
+
+###
+- name:		converter_selector_priority3
+  desc:		applied even when 'attr:' directive
+  pdata: |
+	<b id="attr:bgcolor:color" class="foo">foo</b>
+  plogic: |
+	.foo {
+	  attrs: 'title' title;
+	}
+	b {
+	  value: value;
+	}
+  expected*:
+    java: |
+	:PRINT
+	  "<b class=\"foo\" title=\""
+	  title
+	  "\" bgcolor=\""
+	  color
+	  "\">"
+	:PRINT
+	  value
+	:PRINT
+	  "</b>\n"
 
 
 ### ----------------------------------------

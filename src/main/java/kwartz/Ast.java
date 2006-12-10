@@ -1162,6 +1162,22 @@ public class Ast {
 			return new Ast.FuncallExpression(funcname, new Expression[] { expr });
 		}
 		
+		
+		public static void addBlockStatement(List stmt_list, Ast.BlockStatement block_stmt) {
+			Ast.Statement[] stmts = block_stmt.getStatements();
+			for (int i = 0, n = stmts.length; i < n; i++)
+				stmt_list.add(stmts[i]);
+		}
+
+		
+		public static void addStatement(List stmt_list, Ast.Statement stmt) {
+			if (stmt.getToken() == Token.BLOCK)
+				addBlockStatement(stmt_list, (Ast.BlockStatement)stmt);
+			else
+				stmt_list.add(stmt);
+		}
+
+		
 	}
 
 

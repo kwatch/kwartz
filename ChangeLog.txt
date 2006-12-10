@@ -2,6 +2,31 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.42 (2006-12-10)
+	- [refactor] add Ast.Helper.addStatement() and Ast.Helper.addBlockStatement()
+	- [refactor] add Handler#expandElementInfo() (for TextConverter class)
+	- [refacotr] change Handler#applyRuleset(ElementInfo, List stmt_list) to applyRuleset(ElementInfo)
+	- [bugfix] '#name' selector ruleset was applied two times when 'id="name"'
+	- [change] Handler#applyRuleset() now ignore id attribute
+	- [bugfix] previous append_exprs were ignored in ElementInfo#apply()
+	- [refactor] calling applyRuleset() in BaseHandler#handleDirectives() is moved to TextConverter#_convert() 
+
+: rev.41 (2006-12-10)
+	- [refactor] add Expander class
+	- [refactor] add Handler#getElementInfo() (for Expander class)
+
+: rev.40 (2006-12-10)
+	- [refactor] handleDirectives() takes 'directive_str' argument
+	- [refacotr] hasDirective() is renamed to getDirective()
+	- [refactor] BaseHandler#getHander() is moved to TextConverter class
+	- [refacotr] TagInfo#getDirectiveAttrName(), TagInfo#getDirectiveStr(), and TagInfo#setDirective() removed
+	- [refacotr] AttrInfo#getValue(), getValueIfString() is renamed to get(), getIfString()
+	- [refactor] add AttrInfo#has()
+	- [refactor] add AttrInfo#set(String name, String value)
+	- [refacotr] TagInfo#setAsDummyTag() is renamed to clearAsDummyTag()
+	- [refactor] ElementInfo#merge() is renamed to apply()
+	- [refacotr] remove ElementInfo(List cont_stmts) constructor
+
 : rev.39 (2006-10-17)
 	- [enhance] JstlTranslator support
 

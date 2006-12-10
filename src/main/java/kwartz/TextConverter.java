@@ -221,6 +221,7 @@ class ElementInfo {
 	List     _append_exprs;            // List<Ast.Expression>
 	List     _logic, _before, _after;  // List<Ast.Statement>
 	String   _directive_text;
+	String   _name;
 	boolean  _is_applied = false;
 	//
 	Ast.Expression _stag_expr, _etag_expr, _cont_expr, _elem_expr;
@@ -264,6 +265,8 @@ class ElementInfo {
 	//
 	boolean  isApplied() { return _is_applied; }
 	void     setApplied(boolean flag) { _is_applied = flag; }
+	String   getName() { return _name; }
+	void     setName(String name) { _name = name; }
 	//
 	Ast.Expression getStagExpr() { return _stag_expr; }
 	Ast.Expression getContExpr() { return _cont_expr; }
@@ -329,7 +332,7 @@ class ElementInfo {
 		Map attrs;
 		if ((attrs = ruleset.getAttrs()) != null) _attr_info.merge(attrs);
 		List exprs, names, stmts;
-		if ((exprs= ruleset.getAppend()) != null) _append_exprs = exprs;
+		if ((exprs= ruleset.getAppend()) != null) _append_exprs = _append(_append_exprs, exprs);
 		if ((names = ruleset.getRemove()) != null)
 			for (Iterator it = names.iterator(); it.hasNext(); )
 				_attr_info.remove((String)it.next());
@@ -516,8 +519,10 @@ public class TextConverter implements Converter {
 				List cont_stmts = new ArrayList();
 				_convert(cont_stmts, null);
 				ElementInfo elem_info = new ElementInfo(new TagInfo(), new TagInfo(), cont_stmts, new AttrInfo(), new ArrayList());
-				elem_info.setAttribute("id", "DOCUMENT");
-				_handler.applyRuleset(elem_info, stmt_list);
+				//elem_info.setAttribute("id", "DOCUMENT");
+				//_handler.applyRulesets(elem_info);
+				elem_info.apply(docruleset);
+				_handler.expandElementInfo(elem_info, stmt_list);
 			}
 			return stmt_list;
 		}
@@ -593,7 +598,8 @@ public class TextConverter implements Converter {
 					TagInfo etag_info = null;
 					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
-					handleDirectives(directive_str, elem_info, stmt_list);
+					_handler.applyRulesets(elem_info);
+					_handler.handleDirectives(directive_str, elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else {
@@ -610,7 +616,8 @@ public class TextConverter implements Converter {
 					etag_info = _convert(cont_stmts, stag_info);
 					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
-					handleDirectives(directive_str, elem_info, stmt_list);
+					_handler.applyRulesets(elem_info);
+					_handler.handleDirectives(directive_str, elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else if (matchesRuleset(taginfo, attr_info)) {
@@ -619,7 +626,8 @@ public class TextConverter implements Converter {
 					etag_info = _convert(cont_stmts, stag_info);
 					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
-					_handler.applyRuleset(elem_info, stmt_list);
+					_handler.applyRulesets(elem_info);
+					_handler.expandElementInfo(elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else if (taginfo.getTagName().equals(start_tagname)) {
@@ -658,11 +666,6 @@ public class TextConverter implements Converter {
 	}
 	
 	
-	protected void handleDirectives(String directive_str, ElementInfo elem_info, List stmt_list) throws ConvertException {
-		_handler.handleDirectives(directive_str, elem_info, stmt_list);
-	}
-	
-
 	public String getDirective(AttrInfo attr_info, TagInfo tag_info) throws ConvertException {
 		// kw:d attribute
 		String dattr_name = _dattr;         // ex. _dattr == 'kw:d'
@@ -722,12 +725,6 @@ public class TextConverter implements Converter {
 	}
 
 
-	protected void applyRuleset(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List stmt_list) throws ConvertException {
-		ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
-		_handler.applyRuleset(elem_info, stmt_list);
-	}
-
-	
 	static Pattern __embed_pattern = Pattern.compile("@(!*)\\{(.*?)\\}@");
 	
 	private static Ast.PrintStatement _createPrintStatement(String text, int linenum) throws ConvertException {

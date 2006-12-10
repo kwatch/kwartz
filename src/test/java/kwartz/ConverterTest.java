@@ -160,6 +160,9 @@ public class ConverterTest extends TestCase {
 	public void test_converter_selector_mixed1() throws Exception { _test("converter_selector_mixed1"); }
 	public void test_converter_selector_mixed2() throws Exception { _test("converter_selector_mixed2"); }
 	public void test_converter_selector_mixed3() throws Exception { _test("converter_selector_mixed3"); }
+	public void test_converter_selector_priority1() throws Exception { _test("converter_selector_priority1"); }
+	public void test_converter_selector_priority2() throws Exception { _test("converter_selector_priority2"); }
+	public void test_converter_selector_priority3() throws Exception { _test("converter_selector_priority3"); }
 	
 	public void test_converter_embedexpr1() throws Exception { _test("converter_embedexpr1"); }
 	public void test_converter_embedexpr2() throws Exception { _test("converter_embedexpr2"); }

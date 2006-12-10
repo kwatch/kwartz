@@ -1,0 +1,1396 @@
+###
+- name:      elem
+  subject:   elem, Elem, ELEM
+  desc:  |
+	'elem', 'Elem', and 'ELEM' directive replaces element by expression.
+	
+	'Elem' directive escapes expression automatically, while 'ELEM' never escape it.
+	'elem' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+  pdata*:
+    eruby: |
+	<b {{*kw:d="elem: expr"*}}>foo</b>
+	<b {{*kw:d="Elem: expr"*}}>foo</b>
+	<b {{*kw:d="ELEM: expr"*}}>foo</b>
+
+    php: |
+	<b {{*kw:d="elem($expr)"*}}>foo</b>
+	<b {{*kw:d="Elem($expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM($expr)"*}}>foo</b>
+
+    eperl: |
+	<b {{*kw:d="elem($expr)"*}}>foo</b>
+	<b {{*kw:d="Elem($expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM($expr)"*}}>foo</b>
+
+    jstl: |
+	<b {{*kw:d="elem(expr)"*}}>foo</b>
+	<b {{*kw:d="Elem(expr)"*}}>foo</b>
+	<b {{*kw:d="ELEM(expr)"*}}>foo</b>
+
+  expected*:
+    eruby: |
+	{{*<%= expr %>*}}
+	{{*<%=h expr %>*}}
+	{{*<%= expr %>*}}
+
+    php: |
+	{{*<?php echo $expr; ?>*}}
+	{{*<?php echo htmlspecialchars($expr); ?>*}}
+	{{*<?php echo $expr; ?>*}}
+
+    eperl: |
+	{{*<?= $expr !>*}}
+	{{*<?= encode_entities($expr) !>*}}
+	{{*<?= $expr !>*}}
+
+    jstl: |
+	{{*${expr}*}}
+	{{*${expr}*}}
+	{{*<c:out value="${expr}" escapeXml="false"/>*}}
+
+###
+- name:      stag
+  subject:   stag, Stag, STAG
+  desc:  |
+	'stag', 'Stag', and 'STAG' directive replaces start-tag by expression.
+
+	'Stag' directive escapes expression automatically, while 'STAG' never escape it.
+	'stag' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+  pdata*:
+    eruby: |
+	<b {{*kw:d="stag: expr"*}}>foo</b>
+	<b {{*kw:d="Stag: expr"*}}>foo</b>
+	<b {{*kw:d="STAG: expr"*}}>foo</b>
+
+    php: |
+	<b {{*kw:d="stag($expr)"*}}>foo</b>
+	<b {{*kw:d="Stag($expr)"*}}>foo</b>
+	<b {{*kw:d="STAG($expr)"*}}>foo</b>
+
+    eperl: |
+	<b {{*kw:d="stag($expr)"*}}>foo</b>
+	<b {{*kw:d="Stag($expr)"*}}>foo</b>
+	<b {{*kw:d="STAG($expr)"*}}>foo</b>
+
+    jstl: |
+	<b {{*kw:d="stag(expr)"*}}>foo</b>
+	<b {{*kw:d="Stag(expr)"*}}>foo</b>
+	<b {{*kw:d="STAG(expr)"*}}>foo</b>
+
+  expected*:
+    eruby: |
+	{{*<%= expr %>*}}foo</b>
+	{{*<%=h expr %>*}}foo</b>
+	{{*<%= expr %>*}}foo</b>
+
+    php: |
+	{{*<?php echo $expr; ?>*}}foo</b>
+	{{*<?php echo htmlspecialchars($expr); ?>*}}foo</b>
+	{{*<?php echo $expr; ?>*}}foo</b>
+
+    eperl: |
+	{{*<?= $expr !>*}}foo</b>
+	{{*<?= encode_entities($expr) !>*}}foo</b>
+	{{*<?= $expr !>*}}foo</b>
+
+    jstl: |
+	{{*${expr}*}}foo</b>
+	{{*${expr}*}}foo</b>
+	{{*<c:out value="${expr}" escapeXml="false"/>*}}foo</b>
+
+- name:      etag
+  subject:   etag, Etag, ETAG
+  desc:  |
+	'etag', 'Etag', and 'ETAG' directive replaces start-tag by expression.
+
+	'Etag' directive escapes expression automatically, while 'ETAG' never escape it.
+	'etag' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+  pdata*:
+    eruby: |
+	<b {{*kw:d="etag: expr"*}}>foo</b>
+	<b {{*kw:d="Etag: expr"*}}>foo</b>
+	<b {{*kw:d="ETAG: expr"*}}>foo</b>
+
+    php: |
+	<b {{*kw:d="etag($expr)"*}}>foo</b>
+	<b {{*kw:d="Etag($expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG($expr)"*}}>foo</b>
+
+    eperl: |
+	<b {{*kw:d="etag($expr)"*}}>foo</b>
+	<b {{*kw:d="Etag($expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG($expr)"*}}>foo</b>
+
+    jstl: |
+	<b {{*kw:d="etag(expr)"*}}>foo</b>
+	<b {{*kw:d="Etag(expr)"*}}>foo</b>
+	<b {{*kw:d="ETAG(expr)"*}}>foo</b>
+
+  expected*:
+    eruby: |
+	<b>foo{{*<%= expr %>*}}
+	<b>foo{{*<%=h expr %>*}}
+	<b>foo{{*<%= expr %>*}}
+
+    php: |
+	<b>foo{{*<?php echo $expr; ?>*}}
+	<b>foo{{*<?php echo htmlspecialchars($expr); ?>*}}
+	<b>foo{{*<?php echo $expr; ?>*}}
+
+    eperl: |
+	<b>foo{{*<?= $expr !>*}}
+	<b>foo{{*<?= encode_entities($expr) !>*}}
+	<b>foo{{*<?= $expr !>*}}
+
+    jstl: |
+	<b>foo{{*${expr}*}}
+	<b>foo{{*${expr}*}}
+	<b>foo{{*<c:out value="${expr}" escapeXml="false"/>*}}
+
+###
+- name:      cont
+  subject:   cont, Cont, CONT
+  desc:  |
+	'cont', 'Cont', and 'CONT' directives replace content by expression.
+
+	'Cont' directive escapes expression automatically, while 'CONT' never escape it.
+	'cont' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+  pdata*:
+    eruby: |
+	<b {{*kw:d="cont: expr"*}}>foo</b>
+	<b {{*kw:d="Cont: expr"*}}>foo</b>
+	<b {{*kw:d="CONT: expr"*}}>foo</b>
+
+    php: |
+	<b {{*kw:d="cont($expr)"*}}>foo</b>
+	<b {{*kw:d="Cont($expr)"*}}>foo</b>
+	<b {{*kw:d="CONT($expr)"*}}>foo</b>
+
+    eperl: |
+	<b {{*kw:d="cont($expr)"*}}>foo</b>
+	<b {{*kw:d="Cont($expr)"*}}>foo</b>
+	<b {{*kw:d="CONT($expr)"*}}>foo</b>
+
+    jstl: |
+	<b {{*kw:d="cont(expr)"*}}>foo</b>
+	<b {{*kw:d="Cont(expr)"*}}>foo</b>
+	<b {{*kw:d="CONT(expr)"*}}>foo</b>
+
+  expected*:
+    eruby: |
+	<b>{{*<%= expr %>*}}</b>
+	<b>{{*<%=h expr %>*}}</b>
+	<b>{{*<%= expr %>*}}</b>
+
+    php: |
+	<b>{{*<?php echo $expr; ?>*}}</b>
+	<b>{{*<?php echo htmlspecialchars($expr); ?>*}}</b>
+	<b>{{*<?php echo $expr; ?>*}}</b>
+
+    eperl: |
+	<b>{{*<?= $expr !>*}}</b>
+	<b>{{*<?= encode_entities($expr) !>*}}</b>
+	<b>{{*<?= $expr !>*}}</b>
+
+    jstl: |
+	<b>{{*${expr}*}}</b>
+	<b>{{*${expr}*}}</b>
+	<b>{{*<c:out value="${expr}" escapeXml="false"/>*}}</b>
+
+###
+- name:      value
+  subject:   value, Value, VALUE
+  desc:  |
+	'value', 'Value', and 'VALUE' directives are equivalent to
+	'cont', 'Cont', and 'CONT' directives respectively.
+
+  pdata*:
+    eruby: |
+	<b {{*kw:d="value: expr"*}}>foo</b>
+	<b {{*kw:d="Value: expr"*}}>foo</b>
+	<b {{*kw:d="VALUE: expr"*}}>foo</b>
+
+    php: |
+	<b {{*kw:d="value($expr)"*}}>foo</b>
+	<b {{*kw:d="Value($expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE($expr)"*}}>foo</b>
+
+    eperl: |
+	<b {{*kw:d="value($expr)"*}}>foo</b>
+	<b {{*kw:d="Value($expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE($expr)"*}}>foo</b>
+
+    jstl: |
+	<b {{*kw:d="value(expr)"*}}>foo</b>
+	<b {{*kw:d="Value(expr)"*}}>foo</b>
+	<b {{*kw:d="VALUE(expr)"*}}>foo</b>
+
+  expected*:
+    eruby: |
+	<b>{{*<%= expr %>*}}</b>
+	<b>{{*<%=h expr %>*}}</b>
+	<b>{{*<%= expr %>*}}</b>
+
+    php: |
+	<b>{{*<?php echo $expr; ?>*}}</b>
+	<b>{{*<?php echo htmlspecialchars($expr); ?>*}}</b>
+	<b>{{*<?php echo $expr; ?>*}}</b>
+
+    eperl: |
+	<b>{{*<?= $expr !>*}}</b>
+	<b>{{*<?= encode_entities($expr) !>*}}</b>
+	<b>{{*<?= $expr !>*}}</b>
+
+    jstl: |
+	<b>{{*${expr}*}}</b>
+	<b>{{*${expr}*}}</b>
+	<b>{{*<c:out value="${expr}" escapeXml="false"/>*}}</b>
+
+###
+- name:      foreach
+  subject:   foreach
+  desc:  |
+	'foreach' directive interates element, while 'loop' directive iterates content.
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="for item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+	<tr {{*kw:d="for key,value in hash"*}}>
+	  <td kw:d="cont key">key</td>
+	  <td kw:d="cont value">value</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="foreach($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="foreach($hash as $key=>$value)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="foreach($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="foreach($key,$value in %hash)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
+	</tr>
+
+    jstl: |
+	<tr {{*kw:d="for(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="forEach('var'=>'v', 'items'=>'${params.list}', 'varStatus'=>'status')"*}}>
+	  <td kw:d="cont(status.index)">1</td>
+	  <td kw:d="cont(v)"></td>
+	</tr>
+
+	<tr {{*kw:d="forEach('var'=>'n', 'begin'=>1, 'end'=>10, 'step'=>2)"*}}>
+	  <td kw:d="cont(n)">key</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	{{*<% for item in list do %>*}}
+	<tr>
+	  <td><%= item %></td>
+	</tr>
+	{{*<% end %>*}}
+
+	{{*<% hash.each do |key, value| %>*}}
+	<tr>
+	  <td><%= key %></td>
+	  <td><%= value %></td>
+	</tr>
+	{{*<% end %>*}}
+
+    php: |
+	{{*<?php foreach ($list as $item) { ?>*}}
+	<tr>
+	  <td><?php echo $item; ?></td>
+	</tr>
+	{{*<?php } ?>*}}
+
+	{{*<?php foreach ($hash as $key=>$value) { ?>*}}
+	<tr>
+	  <td><?php echo $key; ?></td>
+	  <td><?php echo $value; ?></td>
+	</tr>
+	{{*<?php } ?>*}}
+
+    eperl: |
+	{{*<? foreach my $item (@list) { !>*}}
+	<tr>
+	  <td><?= $item !></td>
+	</tr>
+	{{*<? } !>*}}
+
+	{{*<? foreach my $key (keys %hash) { !>*}}
+	{{*<?   my $value = $hash{$key}; !>*}}
+	<tr>
+	  <td><?= $key !></td>
+	  <td><?= $value !></td>
+	</tr>
+	{{*<? } !>*}}
+
+    jstl: |
+	{{*<c:forEach var="item" items="${list}">*}}
+	<tr>
+	  <td>${item}</td>
+	</tr>
+	{{*</c:forEach>*}}
+
+	{{*<c:forEach var="v" items="${params.list}" varStatus="status">*}}
+	<tr>
+	  <td>${status.index}</td>
+	  <td>${v}</td>
+	</tr>
+	{{*</c:forEach>*}}
+
+	{{*<c:forEach var="n" begin="1" end="10" step="2">*}}
+	<tr>
+	  <td>${n}</td>
+	</tr>
+	{{*</c:forEach>*}}
+
+###
+- name:      list
+  subject:   list
+  desc:  |
+	'list' directive interates content, while 'foreach' directive iterates element.
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="list item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+	<tr {{*kw:d="list key,value in hash"*}}>
+	  <td kw:d="cont key">key</td>
+	  <td kw:d="cont value">value</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="list($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="list($hash as $key=>$value)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="list($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="list($key,$value in %hash)"*}}>
+	  <td kw:d="cont($key)">key</td>
+	  <td kw:d="cont($value)">value</td>
+	</tr>
+
+    jstl: |
+	<tr {{*kw:d="list(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	<tr>
+	{{*<% for item in list do %>*}}
+	  <td><%= item %></td>
+	{{*<% end %>*}}
+	</tr>
+
+	<tr>
+	{{*<% hash.each do |key, value| %>*}}
+	  <td><%= key %></td>
+	  <td><%= value %></td>
+	{{*<% end %>*}}
+	</tr>
+
+    php: |
+	<tr>
+	{{*<?php foreach ($list as $item) { ?>*}}
+	  <td><?php echo $item; ?></td>
+	{{*<?php } ?>*}}
+	</tr>
+
+	<tr>
+	{{*<?php foreach ($hash as $key=>$value) { ?>*}}
+	  <td><?php echo $key; ?></td>
+	  <td><?php echo $value; ?></td>
+	{{*<?php } ?>*}}
+	</tr>
+
+    eperl: |
+	<tr>
+	{{*<? foreach my $item (@list) { !>*}}
+	  <td><?= $item !></td>
+	{{*<? } !>*}}
+	</tr>
+
+	<tr>
+	{{*<? foreach my $key (keys %hash) { !>*}}
+	{{*<?   my $value = $hash{$key}; !>*}}
+	  <td><?= $key !></td>
+	  <td><?= $value !></td>
+	{{*<? } !>*}}
+	</tr>
+
+    jstl: |
+	<tr>
+	{{*<c:forEach var="item" items="${list}">*}}
+	  <td>${item}</td>
+	{{*</c:forEach>*}}
+	</tr>
+
+###
+- name:      foreach_ctr
+  subject:   Foreach, List
+  desc:  |
+	'Foreach' and 'List' directives iterate element or content with loop counter
+	(starting with 1).
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="For item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+	<tr {{*kw:d="List item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="Foreach($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="List($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="Foreach($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="List($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+    jstl: |
+	<tr {{*kw:d="For(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="List(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	{{*<% item_ctr = 0 %>*}}
+	{{*<% for item in list do %>*}}
+	{{*<%   item_ctr += 1 %>*}}
+	<tr>
+	  <td><%= item %></td>
+	</tr>
+	{{*<% end %>*}}
+
+	<tr>
+	{{*<% item_ctr = 0 %>*}}
+	{{*<% for item in list do %>*}}
+	{{*<%   item_ctr += 1 %>*}}
+	  <td><%= item %></td>
+	{{*<% end %>*}}
+	</tr>
+
+    php: |
+	{{*<?php $item_ctr = 0; ?>*}}
+	{{*<?php foreach ($list as $item) { ?>*}}
+	{{*<?php   $item_ctr++; ?>*}}
+	<tr>
+	  <td><?php echo $item; ?></td>
+	</tr>
+	{{*<?php } ?>*}}
+
+	<tr>
+	{{*<?php $item_ctr = 0; ?>*}}
+	{{*<?php foreach ($list as $item) { ?>*}}
+	{{*<?php   $item_ctr++; ?>*}}
+	  <td><?php echo $item; ?></td>
+	{{*<?php } ?>*}}
+	</tr>
+
+    eperl: |
+	{{*<? my $item_ctr = 0; !>*}}
+	{{*<? foreach my $item (@list) { !>*}}
+	{{*<?   $item_ctr++; !>*}}
+	<tr>
+	  <td><?= $item !></td>
+	</tr>
+	{{*<? } !>*}}
+
+	<tr>
+	{{*<? my $item_ctr = 0; !>*}}
+	{{*<? foreach my $item (@list) { !>*}}
+	{{*<?   $item_ctr++; !>*}}
+	  <td><?= $item !></td>
+	{{*<? } !>*}}
+	</tr>
+
+    jstl: |
+	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	<tr>
+	  <td>${item}</td>
+	</tr>
+	{{*</c:forEach>*}}
+
+	<tr>
+	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	  <td>${item}</td>
+	{{*</c:forEach>*}}
+	</tr>
+
+###
+- name:      foreach_tgl
+  subject:   FOREACH, LIST
+  desc: |
+	'FOREACH' and 'LIST' directives iterate element or content with loop counter
+	and toggle variable.
+	Toggle values are "'odd'" and "'even'" in default.
+	You can change them by command-line option '--odd' and '--even'
+	or by properties(PROPERTY_ODD, PROPERTY_EVEN) in configuration file.
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="FOR item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+	<tr {{*kw:d="LIST item in list"*}}>
+	  <td kw:d="cont item">foo</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="FOREACH($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="LIST($list as $item)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="FOREACH($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="LIST($item in @list)"*}}>
+	  <td kw:d="cont($item)">foo</td>
+	</tr>
+
+    jstl: |
+	<tr {{*kw:d="FOR(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="LIST(item: list)"*}}>
+	  <td kw:d="cont(item)">foo</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	{{*<% item_ctr = 0 %>*}}
+	{{*<% for item in list do %>*}}
+	{{*<%   item_ctr += 1 %>*}}
+	{{*<%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>*}}
+	<tr>
+	  <td><%= item %></td>
+	</tr>
+	{{*<% end %>*}}
+
+	<tr>
+	{{*<% item_ctr = 0 %>*}}
+	{{*<% for item in list do %>*}}
+	{{*<%   item_ctr += 1 %>*}}
+	{{*<%   item_tgl = item_ctr%2==0 ? 'even' : 'odd' %>*}}
+	  <td><%= item %></td>
+	{{*<% end %>*}}
+	</tr>
+
+    php: |
+	{{*<?php $item_ctr = 0; ?>*}}
+	{{*<?php foreach ($list as $item) { ?>*}}
+	{{*<?php   $item_ctr++; ?>*}}
+	{{*<?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>*}}
+	<tr>
+	  <td><?php echo $item; ?></td>
+	</tr>
+	{{*<?php } ?>*}}
+
+	<tr>
+	{{*<?php $item_ctr = 0; ?>*}}
+	{{*<?php foreach ($list as $item) { ?>*}}
+	{{*<?php   $item_ctr++; ?>*}}
+	{{*<?php   $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; ?>*}}
+	  <td><?php echo $item; ?></td>
+	{{*<?php } ?>*}}
+	</tr>
+
+    eperl: |
+	{{*<? my $item_ctr = 0; !>*}}
+	{{*<? foreach my $item (@list) { !>*}}
+	{{*<?   $item_ctr++; !>*}}
+	{{*<?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>*}}
+	<tr>
+	  <td><?= $item !></td>
+	</tr>
+	{{*<? } !>*}}
+
+	<tr>
+	{{*<? my $item_ctr = 0; !>*}}
+	{{*<? foreach my $item (@list) { !>*}}
+	{{*<?   $item_ctr++; !>*}}
+	{{*<?   my $item_tgl = $item_ctr%2==0 ? 'even' : 'odd'; !>*}}
+	  <td><?= $item !></td>
+	{{*<? } !>*}}
+	</tr>
+
+    jstl: |
+	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
+	<tr>
+	  <td>${item}</td>
+	</tr>
+	{{*</c:forEach>*}}
+
+	<tr>
+	{{*<c:forEach var="item" items="${list}" varStatus="item_status">*}}
+	{{*<c:set var="item_ctr" value="${item_status.count}"/>*}}
+	{{*<c:set var="item_tgl" value="${item_status.count%2==0 ? 'even' : 'odd'}"/>*}}
+	  <td>${item}</td>
+	{{*</c:forEach>*}}
+	</tr>
+
+###
+- name:      while
+  subject:   while, loop
+  desc: |
+	'while' and 'loop' directive iterates element or content
+	until conditional expression is false.
+
+	JSTL doesn't support these directives because JSTL doesn't have
+	'while' custom tag.
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="while (item = dbh.fetch) != nil"*}}>
+	  <td kw:d="cont item.name">foo</td>
+	</tr>
+
+	<tr {{*kw:d="loop (item = dbh.fetch) != nil"*}}>
+	  <td kw:d="cont item.name">foo</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="while(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
+	</tr>
+
+	<tr {{*kw:d="loop(($item = $dbh->fetch()) != null)"*}}>
+	  <td kw:d="cont($item->name)">foo</td>
+	</tr>
+
+    jstl: |
+	*** not supported ***
+
+  expected*:
+    eruby: |
+	{{*<% while (item = dbh.fetch) != nil do %>*}}
+	<tr>
+	  <td><%= item.name %></td>
+	</tr>
+	{{*<% end %>*}}
+
+	<tr>
+	{{*<% while (item = dbh.fetch) != nil do %>*}}
+	  <td><%= item.name %></td>
+	{{*<% end %>*}}
+	</tr>
+
+    php: |
+	{{*<?php while (($item = $dbh->fetch()) != null) { ?>*}}
+	<tr>
+	  <td><?php echo $item->name; ?></td>
+	</tr>
+	{{*<?php } ?>*}}
+
+	<tr>
+	{{*<?php while (($item = $dbh->fetch()) != null) { ?>*}}
+	  <td><?php echo $item->name; ?></td>
+	{{*<?php } ?>*}}
+	</tr>
+
+    eperl: |
+	{{*<? while (($item = $dbh->fetch()) != null) { !>*}}
+	<tr>
+	  <td><?= $item->name !></td>
+	</tr>
+	{{*<? } !>*}}
+
+	<tr>
+	{{*<? while (($item = $dbh->fetch()) != null) { !>*}}
+	  <td><?= $item->name !></td>
+	{{*<? } !>*}}
+	</tr>
+
+    jstl: |
+	*** not supported ***
+
+###
+- name:      if
+  subject:   if-then-else
+  desc: |
+     'if', 'elsif'(or 'elseif'), and 'else' directives represent conditional branch.
+
+     Don't separate with empty lines between end-tag of 'if'/'elseif' directive and
+     start-tag of 'elseif'/'else' directive.
+
+  pdata*:
+    eruby: |
+	<div {{*kw:d="if status=='error'"*}}>
+	  <p class="error" kw:d="cont mesg">error</p>
+	</div>
+	<div {{*kw:d="elsif status=='warning'"*}}>
+	  <p class="warning" kw:d="cont mesg">waring</p>
+	</div>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont mesg">mesg</p>
+	</div>
+
+    php: |
+	<div {{*kw:d="if($status=='error')"*}}>
+	  <p class="error" kw:d="cont($mesg)">error</p>
+	</div>
+	<div {{*kw:d="elseif($status=='warning')"*}}>
+	  <p class="warning" kw:d="cont($mesg)">waring</p>
+	</div>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont($mesg)">mesg</p>
+	</div>
+
+    eperl: |
+	<div {{*kw:d="if($status=='error')"*}}>
+	  <p class="error" kw:d="cont($mesg)">error</p>
+	</div>
+	<div {{*kw:d="elsif($status=='warning')"*}}>
+	  <p class="warning" kw:d="cont($mesg)">waring</p>
+	</div>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont($mesg)">mesg</p>
+	</div>
+
+    jstl: |
+	<div {{*kw:d="if(status=='error')"*}}>
+	  <p class="error" kw:d="cont(mesg)">error</p>
+	</div>
+	<div {{*kw:d="elseif(status=='warning')"*}}>
+	  <p class="warning" kw:d="cont(mesg)">waring</p>
+	</div>
+	<div {{*kw:d="else"*}}>
+	  <p kw:d="cont(mesg)">mesg</p>
+	</div>
+
+  expected*:
+    eruby: |
+	{{*<% if status=='error' then %>*}}
+	<div>
+	  <p class="error"><%= mesg %></p>
+	</div>
+	{{*<% elsif status=='warning' then %>*}}
+	<div>
+	  <p class="warning"><%= mesg %></p>
+	</div>
+	{{*<% else %>*}}
+	<div>
+	  <p><%= mesg %></p>
+	</div>
+	{{*<% end %>*}}
+
+    php: |
+	{{*<?php if ($status=='error') { ?>*}}
+	<div>
+	  <p class="error"><?php echo $mesg; ?></p>
+	</div>
+	{{*<?php } elseif ($status=='warning') { ?>*}}
+	<div>
+	  <p class="warning"><?php echo $mesg; ?></p>
+	</div>
+	{{*<?php } else { ?>*}}
+	<div>
+	  <p><?php echo $mesg; ?></p>
+	</div>
+	{{*<?php } ?>*}}
+
+    eperl: |
+	{{*<? if ($status=='error') { !>*}}
+	<div>
+	  <p class="error"><?= $mesg !></p>
+	</div>
+	{{*<? } elsif ($status=='warning') { !>*}}
+	<div>
+	  <p class="warning"><?= $mesg !></p>
+	</div>
+	{{*<? } else { !>*}}
+	<div>
+	  <p><?= $mesg !></p>
+	</div>
+	{{*<? } !>*}}
+
+    jstl: |
+	{{*<c:choose><c:when test="${status=='error'}">*}}
+	<div>
+	  <p class="error">${mesg}</p>
+	</div>
+	{{*</c:when><c:when test="${status=='warning'}">*}}
+	<div>
+	  <p class="warning">${mesg}</p>
+	</div>
+	{{*</c:when><c:otherwise>*}}
+	<div>
+	  <p>${mesg}</p>
+	</div>
+	{{*</c:otherwise></c:choose>*}}
+
+###
+- name:      set
+  subject:   set
+  desc:  |
+	'set' directive executes any expression.
+
+  pdata*:
+    eruby: |
+	<tr {{*kw:d="set color=i%2==0 ? 'red' : 'blue'"*}}>
+	 <td kw:d="cont: color">red</td>
+	</tr>
+
+    php: |
+	<tr {{*kw:d="set($color=$i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont($color)">red</td>
+	</tr>
+
+    eperl: |
+	<tr {{*kw:d="set($color=i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont($color)">red</td>
+	</tr>
+
+    jstl: |
+	<tr {{*kw:d="set(color=i%2==0 ? 'red' : 'blue')"*}}>
+	 <td kw:d="cont(color)">red</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	{{*<% color=i%2==0 ? 'red' : 'blue' %>*}}
+	<tr>
+	 <td><%= color %></td>
+	</tr>
+
+    php: |
+	{{*<?php $color=$i%2==0 ? 'red' : 'blue'; ?>*}}
+	<tr>
+	 <td><?php echo $color; ?></td>
+	</tr>
+
+    eperl: |
+	{{*<? $color=i%2==0 ? 'red' : 'blue'; !>*}}
+	<tr>
+	 <td><?= $color !></td>
+	</tr>
+
+    jstl: |
+	{{*<c:set var="color=i%2=" value="${0 ? 'red' : 'blue'}"/>*}}
+	<tr>
+	 <td>${color}</td>
+	</tr>
+
+###
+- name:      mark
+  subject:   mark
+  desc:  |
+	'mark' directive marks the element by name.
+	Name is used as selector of ruleset in presentation logic file.
+	Id attribute is equivalent to 'mark' directive if other direcitve is not specified.
+
+	'mark' directive is language-independent when used with id attribute.
+
+  pdata*:
+    eruby: |
+	<ul {{*id="mark:list"*}}>
+	 <li {{*kw:d="id: item"*}}>foo</li>
+	</ul>
+
+    php: |
+	<ul {{*id="mark:list"*}}>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
+	</ul>
+
+    eperl: |
+	<ul {{*id="mark:list"*}}>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
+	</ul>
+
+    jstl: |
+	<ul {{*id="mark:list"*}}>
+	 <li {{*kw:d="id(item)"*}}>foo</li>
+	</ul>
+
+  expected*:
+    eruby: |
+	<ul>
+	 <li>foo</li>
+	</ul>
+
+    php: |
+	<ul>
+	 <li>foo</li>
+	</ul>
+
+    eperl: |
+	<ul>
+	 <li>foo</li>
+	</ul>
+
+    jstl: |
+	<ul>
+	 <li>foo</li>
+	</ul>
+
+###
+- name:      attr
+  subject:   attr, Attr, ATTR
+  desc:  |
+	'attr', 'Attr', and 'ATTR' directives replace attribute value with expression.
+	'Attr' directive escapes expression automatically, while 'ATTR' never escape it.
+	'attr' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+	More than one directives are available in an element with separating by ';',
+	and available with other directive.
+
+  pdata*:
+    eruby: |
+	<tr class="odd"
+	    kw:d="FOR v in list; {{*attr: 'class' v_tgl; attr: 'style' style*}}">
+	 <td kw:d="cont v.name">foo</td>
+	</tr>
+
+    php: |
+	<tr class="odd"
+	    kw:d="FOREACH($list as $v); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+	 <td kw:d="cont($v->name)">foo</td>
+	</tr>
+
+    eperl: |
+	<tr class="odd"
+	    kw:d="FOREACH($v in @list); {{*attr('class',$v_tgl); attr('style',$style)*}}">
+	 <td kw:d="cont($v->name)">foo</td>
+	</tr>
+
+    jstl: |
+	<tr class="odd"
+	    kw:d="FOR(v: list); {{*attr('class',v_tgl); attr('style',style)*}}">
+	 <td kw:d="cont(v.name)">foo</td>
+	</tr>
+
+  expected*:
+    eruby: |
+	<% v_ctr = 0 %>
+	<% for v in list do %>
+	<%   v_ctr += 1 %>
+	<%   v_tgl = v_ctr%2==0 ? 'even' : 'odd' %>
+	<tr {{*class="<%= v_tgl %>"*}} {{*style="<%= style %>">*}}
+	 <td><%= v.name %></td>
+	</tr>
+	<% end %>
+
+    php: |
+	<?php $v_ctr = 0; ?>
+	<?php foreach ($list as $v) { ?>
+	<?php   $v_ctr++; ?>
+	<?php   $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; ?>
+	<tr {{*class="<?php echo $v_tgl; ?>"*}} {{*style="<?php echo $style; ?>"*}}>
+	 <td><?php echo $v->name; ?></td>
+	</tr>
+	<?php } ?>
+
+    eperl: |
+	<? my $v_ctr = 0; !>
+	<? foreach my $v (@list) { !>
+	<?   $v_ctr++; !>
+	<?   my $v_tgl = $v_ctr%2==0 ? 'even' : 'odd'; !>
+	<tr {{*class="<?= $v_tgl !>"*}} {{*style="<?= $style !>"*}}>
+	 <td><?= $v->name !></td>
+	</tr>
+	<? } !>
+
+    jstl: |
+	<c:forEach var="v" items="${list}" varStatus="v_status">
+	<c:set var="v_ctr" value="${v_status.count}"/>
+	<c:set var="v_tgl" value="${v_status.count%2==0 ? 'even' : 'odd'}"/>
+	<tr {{*class="${v_tgl}"*}} {{*style="${style}"*}}>
+	 <td>${v.name}</td>
+	</tr>
+	</c:forEach>
+
+###
+- name:      append
+  subject:   append, Append, APPEND
+  desc:  |
+	'append', 'Append', and 'APPEND' directives append expression at the end of start-tag.
+	'Append' directive escapes expression automatically, while 'APPEND' never escape it.
+	'append' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+	More than one directives are available in an element with separating by ';',
+	and available with other directive.
+
+  pdata*:
+    eruby: |
+	<input type="checkbox"
+	   {{*kw:d="append: flag1 ? ' checked=\'checked\'' : ''"*}}>
+  #    <input type="checkbox" name="flag" value="y"
+  #        kw:d="append: flag1 ? ' checked=\'checked\'' : ''">
+
+    php: |
+	<input type="checkbox"
+	   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+  #    <input type="checkbox" name="flag" value="y"
+  #       kw:d="append($flag1 ? ' checked=\'checked\'' : '')">
+
+    eperl: |
+	<input type="checkbox"
+	   {{*kw:d="append($flag1 ? ' checked=\'checked\'' : '')"*}}>
+  #    <input type="checkbox" name="flag" value="y"
+  #       kw:d="append($flag1 ? ' checked=\'checked\'' : '')">
+
+    jstl: |
+	<input type="checkbox"
+	   {{*kw:d="append(flag1 ? ' checked=\'checked\'' : '')"*}}>
+  #    <input type="checkbox" name="flag" value="y"
+  #       kw:d="append(flag1 ? ' checked=\'checked\'' : '')">
+
+  expected*:
+    eruby: |
+	<input type="checkbox"{{*<%= flag1 ? ' checked=\'checked\'' : '' %>*}}>
+  #    <input type="checkbox" name="flag" value="y"<%= flag1 ? ' checked=\'checked\'' : '' %>>
+
+    php: |
+	<input type="checkbox"{{*<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>*}}>
+  #    <input type="checkbox" name="flag" value="y"<?php echo $flag1 ? ' checked=\'checked\'' : ''; ?>>
+
+    eperl: |
+	<input type="checkbox"{{*<?= $flag1 ? ' checked=\'checked\'' : '' !>*}}>
+  #    <input type="checkbox" name="flag" value="y"<?= $flag1 ? ' checked=\'checked\'' : '' !>>
+
+    jstl: |
+	<input type="checkbox"{{*${flag1 ? ' checked=\'checked\'' : ''}*}}>
+  #    <input type="checkbox" name="flag" value="y"${flag1 ? ' checked=\'checked\'' : ''}>
+
+###
+- name:      dummy
+  subject:   dummy
+  desc:  |
+	'dummy' directive removes the element.
+	It is very useful when preview the HTML design in browser.
+
+	'dummy' directive is language-independent when used with id attribute.
+
+  pdata*:
+    eruby: |
+	<ul>
+	  <li>foo</li>
+	  <li {{*id="dummy:d1"*}}>bar</li>
+	  <li {{*kw:d="dummy:"*}}>baz</li>
+	</ul>
+
+    php: |
+	<ul>
+	  <li>foo</li>
+	  <li {{*id="dummy:d1"*}}>bar</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
+	</ul>
+
+    eperl: |
+	<ul>
+	  <li>foo</li>
+	  <li {{*id="dummy:d1"*}}>bar</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
+	</ul>
+
+    jstl: |
+	<ul>
+	  <li>foo</li>
+	  <li {{*id="dummy:d1"*}}>bar</li>
+	  <li {{*kw:d="dummy()"*}}>baz</li>
+	</ul>
+
+  expected*:
+    eruby: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+
+    php: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+
+    eperl: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+
+    jstl: |
+	<ul>
+	  <li>foo</li>
+	</ul>
+
+###
+- name:      default
+  subject:   default, Default, DEFAULT
+  desc:  |
+	'default', 'Default', and 'DEFAULT' directive replaces content by expression
+	only if expression is not nil, false, nor empty string.
+	
+	'Default' directive escapes expression automatically, while 'DEFAULT' never escape it.
+	'default' directive escapes expression when command-line option '-e' is specified
+	or PROPERTY_ESCAPE is true in configuration file.
+
+  pdata*:
+    eruby: |
+	name: <em {{*kw:d="default: user"*}}>Guest</em>
+
+    php: |
+	name: <em {{*kw:d="default($user)"*}}>Guest</em>
+
+    eperl: |
+	name: <em {{*kw:d="default($user)"*}}>Guest</em>
+
+    jstl: |
+	name: <em {{*kw:d="default(user)"*}}>Guest</em>
+
+  expected*:
+    eruby: |
+	name: <em>{{*<% if (user) && !(user).to_s.empty? then %><%= user %><% else %>Guest<% end %>*}}</em>
+
+    php: |
+	name: <em>{{*<?php if ($user) { ?><?php echo $user; ?><?php } else { ?>Guest<?php } ?>*}}</em>
+
+    eperl: |
+	name: <em>{{*<? if ($user) { !><?= $user !><? } else { !>Guest<? } !>*}}</em>
+
+    jstl: |
+	name: <em>{{*<c:out value="${user}" default="Guest"/>*}}</em>
+
+###
+- name:     replace
+  common:   yes
+  subject:  replace_element/content_with_element/content
+  desc:  |
+	'replace_element_with_element', 'replace_element_with_content',
+	'replace_content_with_element', and 'replace_content_with_content'
+	directives replace element or content with other element or content.
+	
+	These directives are language-independent when used with id attribute.
+
+  pdata*:
+    eruby: &replace1_pdata|
+	<div {{*id="mark:link"*}}>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other element -->
+	<p {{*id="replace_element_with_element:link"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace element with other content-->
+	<p {{*id="replace_element_with_content:link"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace content with other element -->
+	<p {{*id="replace_content_with_element:link"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace content with other content -->
+	<p {{*id="replace_content_with_content:link"*}}>
+	  back to home
+	</p>
+
+    php: *replace1_pdata
+
+    eperl: *replace1_pdata
+
+    jstl: *replace1_pdata
+
+  expected*:
+    eruby: &replace1_expected |
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other element -->
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other content-->
+	  back to <a href="/">home</a>.
+	
+	<!-- replace content with other element -->
+	<p>
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	</p>
+	
+	<!-- replace content with other content -->
+	<p>
+	  back to <a href="/">home</a>.
+	</p>
+
+    php: *replace1_expected
+
+    eperl: *replace1_expected
+
+    jstl: *replace1_expected
+
+###
+- name:     replace2
+  hide:     yes
+  subject:  replace_element_with, replace_content_with
+  desc:  |
+	'replace_element_with' and 'replace_content_with' directives replace element
+	or content with other element or content.
+
+  pdata*:
+    eruby: |
+	<div {{*id="mark:link"*}}>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other element -->
+	<p {{*kw:d="replace_element_with: element(link)"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace element with other content-->
+	<p {{*kw:d="replace_element_with: content(link)"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace content with other element -->
+	<p {{*kw:d="replace_content_with: element(link)"*}}>
+	  back to home
+	</p>
+	
+	<!-- replace content with other content -->
+	<p {{*kw:d="replace_content_with: content(link)"*}}>
+	  back to home
+	</p>
+
+    php: &replace_pdata |
+	<div kw:d="id(link)">
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other element -->
+	<p kw:d="replace_element_with(element(link))">
+	  back to home
+	</p>
+	
+	<!-- replace element with other content-->
+	<p kw:d="replace_element_with(content(link))">
+	  back to home
+	</p>
+	
+	<!-- replace content with other element -->
+	<p kw:d="replace_content_with(element(link))">
+	  back to home
+	</p>
+	
+	<!-- replace content with other content -->
+	<p kw:d="replace_content_with(content(link))">
+	  back to home
+	</p>
+
+    eperl: *replace_pdata
+
+    jstl: *replace_pdata
+
+  expected*:
+    eruby: &expected1 |
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other element -->
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	
+	<!-- replace element with other content-->
+	  back to <a href="/">home</a>.
+	
+	<!-- replace content with other element -->
+	<p>
+	<div>
+	  back to <a href="/">home</a>.
+	</div>
+	</p>
+	
+	<!-- replace content with other content -->
+	<p>
+	  back to <a href="/">home</a>.
+	</p>
+
+    php: *expected1
+
+    eperl: *expected1
+
+    jstl: *expected1

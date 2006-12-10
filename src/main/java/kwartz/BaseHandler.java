@@ -290,13 +290,14 @@ public class BaseHandler implements Handler {
 	}
 	
 
-	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info, boolean content_only) throws ConvertException {
-		return _expander.expandElementInfo(elem_info, content_only);
+	public void expandElementInfo(ElementInfo elem_info, List stmt_list, boolean content_only) throws ConvertException {
+		Ast.BlockStatement block_stmt = _expander.expandElementInfo(elem_info, content_only);
+		Ast.Helper.addBlockStatement(stmt_list, block_stmt);
 	}
 
 	
-	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info) throws ConvertException {
-		return _expander.expandElementInfo(elem_info);
+	public void expandElementInfo(ElementInfo elem_info, List stmt_list) throws ConvertException {
+		expandElementInfo(elem_info, stmt_list, false);
 	}
 	
 	
@@ -310,8 +311,6 @@ public class BaseHandler implements Handler {
 	
 	public void handleDirectives(String directive_str, ElementInfo elem_info, List stmt_list) throws ConvertException {
 		
-		_findAndMergeRuleset(elem_info, true, true, false);
-
 		TagInfo stag_info = elem_info.getStagInfo(), etag_info = elem_info.getEtagInfo();
 
 		String directive_name = null, directive_arg = null;
@@ -354,11 +353,7 @@ public class BaseHandler implements Handler {
 		}
 
 		// expand elem_info and append to stmt_list
-		Ast.BlockStatement block_stmt = expandElementInfo(elem_info);
-		Ast.Statement[] stmts = block_stmt.getStatements();
-		for (int i = 0, n = stmts.length; i < n; i++) {
-			stmt_list.add(stmts[i]);
-		}
+		expandElementInfo(elem_info, stmt_list);
 		
 	}
 	
@@ -389,14 +384,15 @@ public class BaseHandler implements Handler {
 			if (! Pattern.matches("\\A\\w+\\z", d_arg))
 				throw _convertError("'"+d_str+"': invalid marking name.", stag_linenum);
 			String name = d_arg;
-			Ast.Ruleset ruleset = (Ast.Ruleset)_ruleset_table.get("#"+name); 
-			if (ruleset != null)
-				elem_info.apply(ruleset);
-			if (_elem_info_table.containsKey(name)) {
-				int previous_linenum = ((ElementInfo)_elem_info_table.get(name)).getStagInfo().getLinenum();
+			if (getElementInfo(name) != null) {
+				int previous_linenum = getElementInfo(name).getStagInfo().getLinenum();
 				String msg = "'"+d_str+"': id '"+name+"' is already used at line "+previous_linenum+".";
 				throw _convertError(msg, stag_linenum);
 			}
+			//applyRulesets(elem_info);
+			Ast.Ruleset ruleset = getRuleset("#"+name); 
+			if (ruleset != null)
+				elem_info.apply(ruleset);
 			_elem_info_table.put(name, elem_info);
 			return true;
 		case D_STAG:
@@ -434,10 +430,10 @@ public class BaseHandler implements Handler {
 			expr = HandlerHelper.parseAndEscapeExpression(d_name, d_arg, stag_linenum);
 			elem_info.getAppendExprs().add(expr);
 			return true;
-		case D_REPLACE1:
-		case D_REPLACE2:
-		case D_REPLACE3:
-		case D_REPLACE4:
+		case D_REPLACE1:   // replace_element_with_element
+		case D_REPLACE2:   // replace_element_with_content
+		case D_REPLACE3:   // replace_content_with_element
+		case D_REPLACE4:   // replace_contetn_with_content
 			stmts = new ArrayList();
 			name = d_arg;
 			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
@@ -649,7 +645,7 @@ public class BaseHandler implements Handler {
 
 
 	/**
-	 * return 0 if 'name', return 1 if 'Name', or return -1 if 'NAME'
+	 * @return 0 if 'name', return 1 if 'Name', or return -1 if 'NAME'
 	 */
 	private int _detectKind(String name) {
 		char ch = name.charAt(0);
@@ -659,60 +655,32 @@ public class BaseHandler implements Handler {
 	}
 
 
-	private void _addBlockStatement(List stmt_list, Ast.BlockStatement block_stmt) {
-		Ast.Statement[] stmts = block_stmt.getStatements();
-		for (int i = 0, n = stmts.length; i < n; i++)
-			stmt_list.add(stmts[i]);
-	}
-	
-	
-//	private void _addStatement(List stmt_list, Ast.Statement stmt) {
-//		if (stmt.getToken() == Token.BLOCK)
-//			_addBlockStatement(stmt_list, (Ast.BlockStatement)stmt);
-//		else
-//			stmt_list.add(stmt);
-//	}
-	
-
-
-	private void _findAndMergeRuleset(ElementInfo elem_info, boolean flag_tagname, boolean flag_classname, boolean flag_idname) {
+	public void applyRulesets(ElementInfo elem_info) {
+		assert !elem_info.isApplied();
+		elem_info.setApplied(true);
 		Ast.Ruleset ruleset;
 		TagInfo stag_info = elem_info.getStagInfo();
-		if (flag_tagname) {
-			String tagname = stag_info.getTagName();
-			if ((ruleset = (Ast.Ruleset)_ruleset_table.get(tagname)) != null)
-				elem_info.apply(ruleset);
-		}
+		String tagname = stag_info.getTagName();
+		if ((ruleset = (Ast.Ruleset)_ruleset_table.get(tagname)) != null)
+			elem_info.apply(ruleset);
 		AttrInfo attr_info = elem_info.getAttrInfo();
-		if (flag_classname) {
-			String classname = attr_info.getIfString("class");
-			if (classname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("."+classname)) != null)
-				elem_info.apply(ruleset);
-		}
-		if (flag_idname) {
-			String idname = attr_info.getIfString("id");
-			if (idname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("#"+idname)) != null)
-				elem_info.apply(ruleset);
-		}
+		String classname = attr_info.getIfString("class");
+		if (classname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("."+classname)) != null)
+			elem_info.apply(ruleset);
+		//String idname = attr_info.getIfString("id");
+		//if (idname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("#"+idname)) != null)
+		//	elem_info.apply(ruleset);
 	}
 
 
-	public void applyRuleset(ElementInfo elem_info, List stmt_list) throws ConvertException {
-		_findAndMergeRuleset(elem_info, true, true, true);
-		Ast.Statement stmt = expandElementInfo(elem_info, false);
-		assert stmt != null;
-		//stmt_list.add(stmt);
-		assert stmt.getToken() == Token.BLOCK;
-		_addBlockStatement(stmt_list, (Ast.BlockStatement)stmt);
-	}
-
-		
-	public Ast.Statement extract(String elem_name, boolean content_only) throws ConvertException {
+	public List extract(String elem_name, boolean content_only) throws ConvertException {
 		ElementInfo elem_info = (ElementInfo)_elem_info_table.get(elem_name);
 		if (elem_info == null) {
 			throw _convertError("element '"+elem_name+"' not found.", elem_info.getStagInfo().getLinenum());
 		}
-		return expandElementInfo(elem_info, content_only);
+		List stmt_list = new ArrayList();
+		expandElementInfo(elem_info, stmt_list, content_only);
+		return stmt_list;
 	}
 
 	
@@ -784,6 +752,22 @@ public class BaseHandler implements Handler {
 			+   "  }\n"
 			+   "}\n"
 			;
+		
+		pdata = ""
+			+ "<ul>\n"
+			+ "  <li id=\"item\" class=\"gray\">foo</li>\n"
+			+ "</ul>\n"
+			;
+		plogic = ""
+			+ "#item {\n"
+			+ "  value: item;\n"
+			+ "  append: checked;\n"
+			+ "}\n"
+			+ ".gray {\n"
+			+ "  attrs: 'bgcolor' graycolor;\n"
+			+ "  append: selected;\n"
+			+ "}\n"
+			;
 
 		Parser parser = new PresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
@@ -792,7 +776,7 @@ public class BaseHandler implements Handler {
 		List stmt_list = converter.convert(pdata);
 		for (Iterator it = stmt_list.iterator(); it.hasNext(); ) {
 			Ast.Statement stmt = (Ast.Statement)it.next();
-			System.out.println(stmt.inspect());
+			System.out.print(stmt.inspect());
 		}
 		
 	}
