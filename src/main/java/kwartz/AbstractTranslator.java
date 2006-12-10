@@ -26,17 +26,8 @@ abstract class AbstractTranslator extends Visitor implements Translator {
 	
 	public AbstractTranslator(Map properties) {
 		initialize();
-		if (properties != null) {
-			Object val;
-			if ((val = properties.get("nl")) != null)
-				_nl = val.toString();
-			if ((val = properties.get("escape")) != null) {
-				if (val.toString().equals("true"))
-					_escape = true;
-				else if (val.toString().equals("false"))
-					_escape = false;
-			}
-		}
+		if (properties != null)
+			setProperties(properties);
 	}
 	
 	
@@ -44,6 +35,21 @@ abstract class AbstractTranslator extends Visitor implements Translator {
 		_buf    = new StringBuffer();
 		_nl     = "\n";
 		_escape = false;
+	}
+		
+
+	public void setProperties(Map properties) {
+		if (properties == null)
+			return;
+		Object val;
+		if ((val = properties.get("nl")) != null)
+			_nl = val.toString();
+		if ((val = properties.get("escape")) != null) {
+			if (val.toString().equals("true"))
+				_escape = true;
+			else if (val.toString().equals("false"))
+				_escape = false;
+		}
 	}
 
 	

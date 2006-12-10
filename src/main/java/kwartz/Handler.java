@@ -23,5 +23,7 @@ public interface Handler {
 	
 	public ElementInfo getElementInfo(String name);  // for Expander class
 	
+	public List extract(String elem_name, boolean content_only) throws ConvertException; // for Main class
+	
 }
 

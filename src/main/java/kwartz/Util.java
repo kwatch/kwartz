@@ -62,8 +62,29 @@ public class Util {
 			sb.append(obj.toString());
 		else if (obj instanceof Character)
 			sb.append('\'').append(((Character)obj).charValue()).append('\'');
+		else if (obj.getClass().isArray())
+			inspect((Object[])obj, sb);
 		else
 			sb.append('<').append(obj.getClass().getName()).append('>');
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void inspect(Object[] arr, StringBuffer sb) {
+		String signature = arr.getClass().getName();
+		String classname = signature.substring(2, signature.length()-1);
+		if (classname.startsWith("java.lang.")) {
+			classname = classname.substring("java.lang.".length());
+		}
+		sb.append("(").append(classname).append("[])[");
+		for (int i = 0, n = arr.length; i < n; i++) {
+			if (i > 0)
+				sb.append(", ");
+			inspect(arr[i], sb);
+		}
+		sb.append("]");
 	}
 	
 	
@@ -479,6 +500,26 @@ public class Util {
 		list.toArray(lines);
 		return lines;
 	}
+	
+	
+	/**
+	 * string to Integer, Boolean, etc
+	 */
+	public static Object stringToValue(String str) {
+		if (str == null)
+			return null;
+		if (Util.matches("^\\d+$", str))
+			return new Integer(Integer.parseInt(str));
+		if (Util.matches("^\\d+\\.\\d+$", str))
+			return new Double(Double.parseDouble(str));
+		if (str.equals("true") || str.equals("yes"))
+			return Boolean.TRUE;
+		if (str.equals("false") || str.equals("no"))
+			return Boolean.FALSE;
+		if (str.equals("null"))
+			return null;
+		return null;
+	}
 
 
 	/**
@@ -566,6 +607,14 @@ public class Util {
 			map2.put(entry.getKey(), entry.getValue());
 		}
 		return map2;
+	}
+	
+	
+	/**
+	 * return default value if key is not found
+	 */
+	public static Object fetch(Map map, Object key, Object defaultval) {
+		return map.containsKey(key) ? map.get(key) : defaultval;
 	}
 
 
@@ -666,4 +715,54 @@ public class Util {
 	
 	
 
+	/**
+	 * array slice
+	 */
+	public static String[] slice(String[] array, int start, int end) {
+		if (end < 0) {
+			end = array.length + end;
+		}
+		int len = end - start;
+		String[] newarray = new String[len];
+		for (int i = 0, j = start; i < len; i++, j++) {
+			assert j < end;
+			newarray[i] = array[j];
+		}
+		return newarray;
+	}
+	
+	
+	/**
+	 * array slice
+	 */
+	public static String[] slice(String[] array, int start) {
+		return slice(array, start, array.length);
+	}
+	
+	
+	/**
+	 * list slice
+	 */
+	public static List slice(List list, int start, int end) {
+		if (end < 0) {
+			end = list.size() + end;
+		}
+		int len = end - start;
+		List newlist = new ArrayList(len);
+		for (int i = start; i < end; i++) {
+			newlist.add(list.get(i));
+		}
+		return newlist;
+	}
+	
+	
+	/**
+	 * list slice
+	 */
+	public static List slice(List list, int start) {
+		return slice(list, start, list.size());
+	}
+	
+	
+	
 }

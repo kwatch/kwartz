@@ -28,29 +28,38 @@ public class JstlTranslator extends AbstractTranslator {
 	}
 	
 	public JstlTranslator(Map properties) {
-		if (properties != null) {
-			Object val;
-			if ((val = properties.get("jstl")) != null) {
-				if (JSTL11.equals(val.toString())) {
-					_jstl = JSTL11;
-					_word_table = __jstl11_translation_table;
-				}
-				else if (JSTL10.equals(val.toString())) {
-					_jstl = JSTL10;
-					_word_table = __jstl10_translation_table;
-				}
-			}
-			if ((val = properties.get("loopctr")) != null && val.toString().equals("true")) {
-				_loopctr = true;
-			}
-		}
+		initialize();
+		if (properties != null)
+			setProperties(properties);
 	}
+	
 	
 	protected void initialize() {
 		super.initialize();
 		_escape = true;
 	}
 	
+	
+	public void setProperties(Map properties) {
+		if (properties == null)
+			return;
+		super.setProperties(properties);
+		Object val;
+		if ((val = properties.get("jstl")) != null) {
+			if (JSTL11.equals(val.toString())) {
+				_jstl = JSTL11;
+				_word_table = __jstl11_translation_table;
+			}
+			else if (JSTL10.equals(val.toString())) {
+				_jstl = JSTL10;
+				_word_table = __jstl10_translation_table;
+			}
+		}
+		if ((val = properties.get("loopctr")) != null && val.toString().equals("true")) {
+			_loopctr = true;
+		}
+	}
+
 	
 	protected static Map __jstl10_translation_table, __jstl11_translation_table;
 	static {

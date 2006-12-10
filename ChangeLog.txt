@@ -2,6 +2,15 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.44 (2006-12-10)
+	- [enhance] add kwartz.Main class
+	- [enhance] add Translator#setProperties()
+	- [enhance] add Handler#extract()
+	- [enhance] add Util.inspect(Object[] array)
+	- [enhance] add Util.stringToValue(String str)
+	- [enhance] add Util.fetch(Map map, Object key, Object defaultval)
+	- [enhance] add Util.slice()
+
 : rev.43 (2006-12-10)
 	- [change] remove test/test-directives.yaml and test/ruleset.yaml (wrong commit)
 
