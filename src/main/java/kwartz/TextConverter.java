@@ -50,13 +50,6 @@ class TagInfo {
 	String getAttrStr() { return _attr_str; }
 	int    getLinenum() { return _linenum; }
 	
-	String getDirectiveAttrName() { return _dattr_name; }    // "kw:d" or "id"
-	String getDirectiveStr() { return _directive_str; }
-	void   setDirective(String dattr_name, String d_str) {
-		_dattr_name = dattr_name;
-		_directive_str = d_str;
-	}
-	
 	void setTagName(String tagname) { _tagname = tagname; }
 	void deleteHeadSpace() { _head_space = ""; rebuildTagText(null); }
 	void deleteTailSpace() { _tail_space = ""; rebuildTagText(null); }
@@ -68,7 +61,7 @@ class TagInfo {
 			AttrInfo a = attr_info;
 			for (Iterator it = names.iterator(); it.hasNext(); ) {
 				String name = (String)it.next();
-				sb.append(a.getSpace(name)).append(name).append("=\"").append(a.getValue(name)).append('"');
+				sb.append(a.getSpace(name)).append(name).append("=\"").append(a.get(name)).append('"');
 			}
 			_attr_str = sb.toString();
 		}
@@ -85,7 +78,7 @@ class TagInfo {
 		_tag_text = sb.toString();
 	}
 
-	void setAsDummyTag() {
+	void clearAsDummyTag() {
 		_tagname = null;
 		if (_head_space != null && _tail_space != null)
 			_head_space = _tail_space = null;
@@ -148,17 +141,28 @@ class AttrInfo {
 		return expr;
 	}
 	
+	
+	boolean has(String name) {
+		return _values.containsKey(name);
+	}
+	
+	
 	void set(String name, String value, String space) throws ConvertException {
 		set(name, _parseAttrValue(value, -999), space);
 	}
 
+	void set(String name, String value) throws ConvertException {
+		set(name, value, null);
+	}
+
 	void set(String name, Ast.Expression value, String space) {
-		if (! _names.contains(name))
+		boolean has_name = has(name);
+		if (! has_name)
 			_names.add(name);
 		_values.put(name, value);
 		if (space != null)
 			_spaces.put(name, space);
-		else if (! _spaces.containsKey(name))
+		else if (! has_name)
 			_spaces.put(name, " ");
 	}
 	
@@ -182,11 +186,11 @@ class AttrInfo {
 		return _names;
 	}
 	
-	Ast.Expression getValue(String name) {
+	Ast.Expression get(String name) {
 		return (Ast.Expression)_values.get(name);
 	}
 	
-	String getValueIfString(String name) {
+	String getIfString(String name) {
 		Object val = _values.get(name);
 		if (val == null) return null;
 		if (val instanceof String)
@@ -211,14 +215,13 @@ class AttrInfo {
 
 class ElementInfo {
 	
-	//String   _name;
 	TagInfo  _stag_info, _etag_info;
 	List     _cont_stmts;              // List<Ast.Statement>
 	AttrInfo _attr_info;
 	List     _append_exprs;            // List<Ast.Expression>
 	List     _logic, _before, _after;  // List<Ast.Statement>
 	String   _directive_text;
-	boolean  _is_merged = false;
+	boolean  _is_applied = false;
 	//
 	Ast.Expression _stag_expr, _etag_expr, _cont_expr, _elem_expr;
 	
@@ -226,9 +229,9 @@ class ElementInfo {
 		this(stag_info, etag_info, cont_stmts, attr_info, new ArrayList());
 	}
 	
-	ElementInfo(List cont_stmts) {
-		this(new TagInfo(), new TagInfo(), cont_stmts, new AttrInfo(), new ArrayList());
-	}
+	//ElementInfo(List cont_stmts) {
+	//	this(new TagInfo(), new TagInfo(), cont_stmts, new AttrInfo(), new ArrayList());
+	//}
 	
 	ElementInfo(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List append_exprs) {
 		_stag_info  = stag_info;
@@ -259,10 +262,8 @@ class ElementInfo {
 	void     setBefore(Ast.Statement stmt) { (_before = new ArrayList()).add(stmt); }
 	void     setAfter(Ast.Statement stmt) { (_after = new ArrayList()).add(stmt); }
 	//
-	boolean  isMerged() { return _is_merged; }
-	void     setMerged(boolean flag) { _is_merged = flag; }
-	String   getDirectiveText() { return _directive_text; }
-	void     setDirectiveText(String s) { _directive_text = s; }
+	boolean  isApplied() { return _is_applied; }
+	void     setApplied(boolean flag) { _is_applied = flag; }
 	//
 	Ast.Expression getStagExpr() { return _stag_expr; }
 	Ast.Expression getContExpr() { return _cont_expr; }
@@ -318,7 +319,7 @@ class ElementInfo {
 		_append_exprs.add(expr);
 	}
 
-	void merge(Ast.Ruleset ruleset) {
+	void apply(Ast.Ruleset ruleset) {
 		//if (! ruleset.match("#"+_name)) return;
 		Ast.Expression expr;
 		if ((expr = ruleset.getStag()) != null)  _stag_expr = expr;
@@ -333,10 +334,17 @@ class ElementInfo {
 			for (Iterator it = names.iterator(); it.hasNext(); )
 				_attr_info.remove((String)it.next());
 		if ((stmts = ruleset.getLogic())  != null) _logic = stmts;
-		if ((stmts = ruleset.getBefore()) != null) _before = stmts;
-		if ((stmts = ruleset.getAfter())  != null) _after = stmts;
-	}	
-
+		if ((stmts = ruleset.getBefore()) != null) _before = _append(_before, stmts);
+		if ((stmts = ruleset.getAfter())  != null) _after = _append(_after, stmts);
+	}
+	
+	private List _append(List list1, List list2) {
+		if (list2 == null) return list1;
+		if (list1 == null) list1 = new ArrayList();
+		list1.addAll(list2);
+		return list1;
+	}
+	
 
 	static final List EMPTY_LOGIC = new ArrayList(); 
 
@@ -389,7 +397,7 @@ class ElementInfo {
 			List names = _attr_info.getNames();
 			for (Iterator it = names.iterator(); it.hasNext(); ) {
 				String name = (String) it.next();
-				Object value = _attr_info.getValue(name);
+				Object value = _attr_info.get(name);
 				String space = _attr_info.getSpace(name);
 				sb.append(indent).append("  - name: ").append(name).append('\n');
 				sb.append(indent).append("    space: ").append(Util.inspect(space)).append('\n');
@@ -442,6 +450,7 @@ public class TextConverter implements Converter {
 	private int _linenum, _linenum_delta;
 	private int _index;
 	private HashMap _no_etag_table;
+	String  _dattr = "kw:d";
 
 	private Handler _handler;
 
@@ -456,6 +465,8 @@ public class TextConverter implements Converter {
 		_handler = handler;
 		if (properties != null) {
 			Object val;
+			if ((val = properties.get("dattr")) != null)
+				_dattr = val.toString();		
 			if ((val = properties.get("no-etags")) != null) {
 				String[] arr = val.toString().split("[ ,]");
 				_no_etag_table = (HashMap)Util.convertArrayToMap(arr);
@@ -504,7 +515,7 @@ public class TextConverter implements Converter {
 			else {
 				List cont_stmts = new ArrayList();
 				_convert(cont_stmts, null);
-				ElementInfo elem_info = new ElementInfo(cont_stmts);
+				ElementInfo elem_info = new ElementInfo(new TagInfo(), new TagInfo(), cont_stmts, new AttrInfo(), new ArrayList());
 				elem_info.setAttribute("id", "DOCUMENT");
 				_handler.applyRuleset(elem_info, stmt_list);
 			}
@@ -565,7 +576,7 @@ public class TextConverter implements Converter {
 			/// end-tag, empty-tag, or start-tag
 			if (taginfo.isEtag()) {                                     // end-tag
 				if (taginfo.getTagName().equals(start_tagname)) {
-					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					linenum = _linenum + _linenum_delta;
 					return taginfo;  // end-tag info
 				}
@@ -575,12 +586,14 @@ public class TextConverter implements Converter {
 			}
 			else if (taginfo.isEmpty() || _shouldSkipEtag(taginfo)) {   // empty-tag
 				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr(), _linenum);
-				if (hasDirective(attr_info, taginfo)) {
+				String directive_str = getDirective(attr_info, taginfo);
+				if (directive_str != null) {
 					TagInfo stag_info = taginfo;
-					TagInfo etag_info = null;
 					List cont_stmts = new ArrayList();   // List<Ast.Statement>
-					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
-					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					TagInfo etag_info = null;
+					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
+					handleDirectives(directive_str, elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else {
@@ -589,27 +602,30 @@ public class TextConverter implements Converter {
 			}
 			else {                                                      // start-tag
 				AttrInfo attr_info = new AttrInfo(taginfo.getAttrStr(), _linenum);
-				TagInfo stag_info = null, etag_info = null;
-				if (hasDirective(attr_info, taginfo)) {
+				TagInfo stag_info, etag_info;
+				String directive_str = getDirective(attr_info, taginfo);
+				if (directive_str != null) {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
-					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
-					handleDirectives(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
+					handleDirectives(directive_str, elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else if (matchesRuleset(taginfo, attr_info)) {
 					stag_info = taginfo;
 					List cont_stmts = new ArrayList();
 					etag_info = _convert(cont_stmts, stag_info);
-					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
-					applyRuleset(stag_info, etag_info, cont_stmts, attr_info, stmt_list);
+					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
+					_handler.applyRuleset(elem_info, stmt_list);
 					linenum = _linenum + _linenum_delta;
 				}
 				else if (taginfo.getTagName().equals(start_tagname)) {
 					stag_info = taginfo;
 					textbuf.append(stag_info.getTagText());
-					_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+					_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 					etag_info = _convert(stmt_list, stag_info);
 					textbuf.append(etag_info.getTagText());
 					linenum = _linenum + _linenum_delta;
@@ -624,39 +640,79 @@ public class TextConverter implements Converter {
 			throw _convertError("'<"+start_tagname+">' is not closed.", start_tag_info.getLinenum());
 		if (_rest != null)
 			textbuf.append(_rest);
-		_AddTextbufAsPrintStatement(stmt_list, textbuf, linenum);
+		_addTextbufAsPrintStatement(stmt_list, textbuf, linenum);
 		return null;
 	}
 
 
-	private void _AddTextbufAsPrintStatement(List stmt_list, StringBuffer textbuf, int linenum) throws ConvertException {
+	private void _addTextbufAsPrintStatement(List stmt_list, StringBuffer textbuf, int linenum) throws ConvertException {
 		if (textbuf.length() > 0) {
 			stmt_list.add(_createPrintStatement(textbuf.toString(), linenum));
 			textbuf.setLength(0);
 		}
 	}
-		
+
+	
 	private boolean _shouldSkipEtag(TagInfo tag_info) {
 		return _no_etag_table.containsKey(tag_info.getTagName());
 	}
 	
 	
-	protected void handleDirectives(TagInfo stag_info, TagInfo etag_info, List cont_stmts, AttrInfo attr_info, List stmt_list) throws ConvertException {
-		ElementInfo elem_info = new ElementInfo(stag_info, etag_info, cont_stmts, attr_info);
-		_handler.handleDirectives(elem_info, stmt_list);
+	protected void handleDirectives(String directive_str, ElementInfo elem_info, List stmt_list) throws ConvertException {
+		_handler.handleDirectives(directive_str, elem_info, stmt_list);
 	}
 	
 
-	protected boolean hasDirective(AttrInfo attr_info, TagInfo taginfo) throws ConvertException {
-		return _handler.hasDirective(attr_info, taginfo);
+	public String getDirective(AttrInfo attr_info, TagInfo tag_info) throws ConvertException {
+		// kw:d attribute
+		String dattr_name = _dattr;         // ex. _dattr == 'kw:d'
+		String dattr_value = null;
+		Ast.Expression dattr_value_expr = attr_info.get(dattr_name);
+		if (dattr_value_expr != null) {
+			//if (! (dattr_value_expr instanceof Ast.StringLiteral))
+			//	throw _convertError(_dattr+"=\"...\": directive cannot contain '@{...}@'.", tag_info.getLinenum());
+			if (dattr_value_expr instanceof Ast.StringLiteral)
+				dattr_value = ((Ast.StringLiteral)dattr_value_expr).getValue();
+		}
+		if (dattr_value != null && dattr_value.length() > 0) {
+			if (dattr_value.charAt(0) == ' ') {
+				String value = dattr_value.substring(1, dattr_value.length()-1);
+				attr_info.set(dattr_name, value);
+				tag_info.rebuildTagText(attr_info);
+			}
+			else {
+				if (! Pattern.matches("\\A\\w+:.*", dattr_value))
+					throw _convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
+				attr_info.remove(dattr_name);
+				tag_info.rebuildTagText(attr_info);
+				String directive_str = dattr_value;
+				return directive_str;
+			}
+		}
+		// id attribute
+		dattr_name = "id";
+		dattr_value = attr_info.getIfString(dattr_name);
+		if (dattr_value != null) {
+			if (Pattern.matches("\\A[-\\w]+\\z", dattr_value)) {
+				String directive_str = "mark:" + dattr_value;
+				return directive_str;
+			}
+			else if (Pattern.matches("\\A\\w+:.*", dattr_value)) {
+				attr_info.remove("id");
+				tag_info.rebuildTagText(attr_info);
+				String directive_str = dattr_value;
+				return directive_str;
+			}
+		}
+		return null;
 	}
 
-	
+
 	protected boolean matchesRuleset(TagInfo tag_info, AttrInfo attr_info) {
-		String idname = attr_info.getValueIfString("id");
+		String idname = attr_info.getIfString("id");
 		if (idname != null && _handler.getRuleset("#"+idname) != null)
 			return true;
-		String classname = attr_info.getValueIfString("class");
+		String classname = attr_info.getIfString("class");
 		if (classname != null && _handler.getRuleset("."+classname) != null)
 			return true;
 		String tagname = tag_info.getTagName();

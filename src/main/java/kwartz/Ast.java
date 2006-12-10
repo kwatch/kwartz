@@ -853,7 +853,7 @@ public class Ast {
 	 *  declaration ::= property_name ':' value
 	 *  value       ::= expression | attrs | exprs
 	 *  attrs       ::= attr | attrs ',' attr
-	 *  attr        ::= string expression
+	 *  attr        ::= string expr
 	 *  exprs       ::= expr | exprs expr
 	 * </pre>
 	 */

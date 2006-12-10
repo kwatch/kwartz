@@ -85,7 +85,7 @@ class HandlerHelper {
 		List names = attr_info.getNames();
 		for (Iterator it = names.iterator(); it.hasNext(); ) {
 			String name = (String)it.next();
-			Object value = attr_info.getValue(name);
+			Object value = attr_info.get(name);
 			String space = attr_info.getSpace(name);
 			sb.append(space).append(name).append("=\"");
 			if (value instanceof Ast.StringLiteral) {
@@ -229,31 +229,23 @@ class HandlerHelper {
 
 public class BaseHandler implements Handler {
 	
-	String  _filename;
-	List    _rulesets;
 	Map     _ruleset_table = new HashMap();
 	Map     _elem_info_table = new HashMap();
 	boolean _delspan = false;
-	String  _dattr = "kw:d";
-	String  _even = "'even'";
 	String  _odd  = "'odd'";
+	String  _even = "'even'";
+	String  _filename;
 
 	public BaseHandler(List rulesets, String filename, Map properties) {
 		_filename = filename;
-		_rulesets = rulesets;
 		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
 			Ast.Ruleset ruleset = (Ast.Ruleset)it.next();
-			String[] selector_names = ruleset.selectorNames();
-			for (int i = 0, n = selector_names.length; i < n; i++) {
-				_registerRuleset(selector_names[i], ruleset);
-			}
+			_registerRuleset(ruleset);
 		}
 		if (properties != null) {
 			Object val = properties.get("delspan");
 			if (val != null && val instanceof Boolean)
 				_delspan = ((Boolean)val).booleanValue();
-			if ((val = properties.get("dattr")) != null)
-				_dattr = val.toString();		
 			if ((val = properties.get("even")) != null)
 				_even = val.toString();
 			if ((val = properties.get("odd")) != null)
@@ -273,78 +265,33 @@ public class BaseHandler implements Handler {
 		this(rulesets, null, null);
 	}
 
-	private void _registerRuleset(String key, Ast.Ruleset ruleset) {
-		Ast.Ruleset ruleset2 = (Ast.Ruleset)_ruleset_table.get(key);
-		if (ruleset2 != null)
-			ruleset = Ast.Ruleset.merged(ruleset2, ruleset);
-		_ruleset_table.put(key, ruleset);
+
+	private void _registerRuleset(Ast.Ruleset ruleset) {
+		String[] selector_names = ruleset.selectorNames();
+		for (int i = 0, n = selector_names.length; i < n; i++) {
+			String selector = selector_names[i];
+			Ast.Ruleset r1 = (Ast.Ruleset)_ruleset_table.get(selector);
+			Ast.Ruleset r2 = r1 == null ? ruleset : Ast.Ruleset.merged(r1, ruleset);
+			_ruleset_table.put(selector, r2);
+		}
 	}
-	
+
 	public Ast.Ruleset getRuleset(String selector_name) {
 		return (Ast.Ruleset)_ruleset_table.get(selector_name);
 	}
 
 	
-	public boolean hasDirective(AttrInfo attr_info, TagInfo tag_info) throws ConvertException {
-		// kw:d attribute
-		String dattr_name = _dattr;         // ex. _dattr == 'kw:d'
-		String dattr_value = null;
-		Ast.Expression dattr_value_expr = attr_info.getValue(dattr_name);
-		if (dattr_value_expr != null) {
-			//if (! (dattr_value_expr instanceof Ast.StringLiteral))
-			//	throw _convertError(_dattr+"=\"...\": directive cannot contain '@{...}@'.", tag_info.getLinenum());
-			if (dattr_value_expr instanceof Ast.StringLiteral)
-				dattr_value = ((Ast.StringLiteral)dattr_value_expr).getValue();
-		}
-		if (dattr_value != null && dattr_value.length() > 0) {
-			if (dattr_value.charAt(0) == ' ') {
-				String value = dattr_value.substring(1, dattr_value.length()-1);
-				String space = null;
-				attr_info.set(dattr_name, value, space);
-				dattr_value = null;
-			}
-			else {
-				if (! Pattern.matches("\\A\\w+:.*", dattr_value))
-					throw _convertError("'"+dattr_name+"=\""+dattr_value+"\"': invalid directive pattern.", tag_info.getLinenum());
-				attr_info.remove(dattr_name);
-			}
-			tag_info.rebuildTagText(attr_info);
-		}
-		if (dattr_value == null) {
-			dattr_name = "id";
-			dattr_value = attr_info.getValueIfString(dattr_name);
-			if (dattr_value != null) {
-				if (Pattern.matches("\\A\\w+\\z", dattr_value)) {
-					dattr_value = "mark:" + dattr_value;
-				}
-				else if (Pattern.matches("\\A\\w+:.*", dattr_value)) {
-					attr_info.remove("id");
-					tag_info.rebuildTagText(attr_info);
-				}
-				else {
-					dattr_value = null;
-				}
-			}	
-		}
-		if (dattr_value == null)
-			return false;
-		tag_info.setDirective(dattr_name, dattr_value);
-		return true;
-	}
-
-	
-	
 	private static Pattern __directive_pattern = Pattern.compile("\\A(\\w+):\\s*(.*)");
 
 	
-	public void handleDirectives(ElementInfo elem_info, List stmt_list) throws ConvertException {
+	public void handleDirectives(String directive_str, ElementInfo elem_info, List stmt_list) throws ConvertException {
 		
 		_findAndMergeRuleset(elem_info, true, true, false);
 
 		TagInfo stag_info = elem_info.getStagInfo(), etag_info = elem_info.getEtagInfo();
 
-		String directive_name = null, directive_arg = null, directive_str = null;
-		String[] strs = stag_info.getDirectiveStr().split(";");
+		String directive_name = null, directive_arg = null;
+		String[] strs = directive_str.split(";");
 		Pattern pattern = __directive_pattern;   //  /\A(\w+):\s*(.*)/
 		for (int i = 0, n = strs.length; i < n; i++) {
 			String d_str = strs[i].trim();
@@ -371,8 +318,8 @@ public class BaseHandler implements Handler {
 
 		/// remove dummy <span> tag
 		if (_delspan && elem_info.isDummySpanTag("span")) {
-			stag_info.setAsDummyTag();
-			etag_info.setAsDummyTag();
+			stag_info.clearAsDummyTag();
+			etag_info.clearAsDummyTag();
 		}
 		
 		/// handle directives
@@ -390,7 +337,6 @@ public class BaseHandler implements Handler {
 		}
 		
 	}
-
 	
 
 	public boolean handle(String directive_name, String directive_arg, String directive_str, ElementInfo elem_info, List stmt_list) throws ConvertException {
@@ -421,7 +367,7 @@ public class BaseHandler implements Handler {
 			String name = d_arg;
 			Ast.Ruleset ruleset = (Ast.Ruleset)_ruleset_table.get("#"+name); 
 			if (ruleset != null)
-				elem_info.merge(ruleset);
+				elem_info.apply(ruleset);
 			if (_elem_info_table.containsKey(name)) {
 				int previous_linenum = ((ElementInfo)_elem_info_table.get(name)).getStagInfo().getLinenum();
 				String msg = "'"+d_str+"': id '"+name+"' is already used at line "+previous_linenum+".";
@@ -711,18 +657,18 @@ public class BaseHandler implements Handler {
 		if (flag_tagname) {
 			String tagname = stag_info.getTagName();
 			if ((ruleset = (Ast.Ruleset)_ruleset_table.get(tagname)) != null)
-				elem_info.merge(ruleset);
+				elem_info.apply(ruleset);
 		}
 		AttrInfo attr_info = elem_info.getAttrInfo();
 		if (flag_classname) {
-			String classname = attr_info.getValueIfString("class");
+			String classname = attr_info.getIfString("class");
 			if (classname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("."+classname)) != null)
-				elem_info.merge(ruleset);
+				elem_info.apply(ruleset);
 		}
 		if (flag_idname) {
-			String idname = attr_info.getValueIfString("id");
+			String idname = attr_info.getIfString("id");
 			if (idname != null && (ruleset = (Ast.Ruleset)_ruleset_table.get("#"+idname)) != null)
-				elem_info.merge(ruleset);
+				elem_info.apply(ruleset);
 		}
 	}
 
@@ -750,12 +696,12 @@ public class BaseHandler implements Handler {
 			elem_info.clearEtag();
 		}
 		// before
-		Ast.Statement stmt;
 		List stmt_list = new ArrayList();
 		if (elem_info.getBefore() != null) {
 			stmt_list.addAll(elem_info.getBefore());
 		}
 		// logic
+		Ast.Statement stmt;
 		if (elem_info.getElemExpr() != null) {
 			ElementInfo e = elem_info;
 			stmt = HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
