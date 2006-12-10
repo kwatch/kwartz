@@ -24,7 +24,7 @@ class HandlerHelper {
 	}
 	
 	
-	////
+	//// HandlerHelper
 	
 	public static void errorIfEmptyTag(ElementInfo elem_info, String directive_str) throws ConvertException {
 		if (elem_info.getEtagInfo() == null) {
@@ -49,7 +49,6 @@ class HandlerHelper {
 	}
 	
 	//// statement heldper
-	
 	
 	public static Ast.PrintStatement createPrintStatement(String text) {
 		Ast.Expression expr = new Ast.StringLiteral(text);
@@ -235,7 +234,9 @@ public class BaseHandler implements Handler {
 	String  _odd  = "'odd'";
 	String  _even = "'even'";
 	String  _filename;
+	Expander _expander;
 
+	
 	public BaseHandler(List rulesets, String filename, Map properties) {
 		_filename = filename;
 		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
@@ -251,6 +252,8 @@ public class BaseHandler implements Handler {
 			if ((val = properties.get("odd")) != null)
 				_odd = val.toString();
 		}
+		_expander = new Expander(this);
+		_expander.setFilename(_filename);
 	}
 	
 	public BaseHandler(List ruleset, String filename) {
@@ -276,11 +279,32 @@ public class BaseHandler implements Handler {
 		}
 	}
 
+	
 	public Ast.Ruleset getRuleset(String selector_name) {
 		return (Ast.Ruleset)_ruleset_table.get(selector_name);
 	}
+	
+	
+	public ElementInfo getElementInfo(String name) {
+		return (ElementInfo)_elem_info_table.get(name);
+	}
+	
+
+	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info, boolean content_only) throws ConvertException {
+		return _expander.expandElementInfo(elem_info, content_only);
+	}
 
 	
+	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info) throws ConvertException {
+		return _expander.expandElementInfo(elem_info);
+	}
+	
+	
+	public void expandStatement(Ast.Statement stmt, ElementInfo elem_info) throws ConvertException {
+		_expander.expandStatement(stmt, elem_info);
+	}
+
+
 	private static Pattern __directive_pattern = Pattern.compile("\\A(\\w+):\\s*(.*)");
 
 	
@@ -464,7 +488,7 @@ public class BaseHandler implements Handler {
 				expr = HandlerHelper.parseExpression(d_arg, stag_linenum);  // condition
 				stmt = new Ast.IfStatement(expr, stmt, else_stmt);
 			}
-			_expandStatement(stmt, elem_info);
+			expandStatement(stmt, elem_info);
 			if_stmt.setElseStatement(stmt);
 			elem_info.setLogic(ElementInfo.EMPTY_LOGIC);
 			return true;
@@ -683,159 +707,6 @@ public class BaseHandler implements Handler {
 	}
 
 		
-	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info) throws ConvertException {
-		return expandElementInfo(elem_info, false);
-	}
-
-
-	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info, boolean content_only) throws ConvertException {
-		// clear stag and etag if content_only is true (= '_content(name)' )
-		if (content_only) {
-			elem_info = elem_info.duplicate();
-			elem_info.clearStag();
-			elem_info.clearEtag();
-		}
-		// before
-		List stmt_list = new ArrayList();
-		if (elem_info.getBefore() != null) {
-			stmt_list.addAll(elem_info.getBefore());
-		}
-		// logic
-		Ast.Statement stmt;
-		if (elem_info.getElemExpr() != null) {
-			ElementInfo e = elem_info;
-			stmt = HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
-			stmt_list.add(stmt);
-		}
-		else {
-			for (Iterator it = elem_info.getLogic().iterator(); it.hasNext(); ) {
-				stmt = (Ast.Statement)it.next();
-				Ast.Statement stmt2 = _expandStatement(stmt, elem_info);
-				stmt_list.add(stmt2 != null ? stmt2 : stmt);
-				//_addStatement(stmt_list, stmt2 != null ? stmt2 : stmt);
-			}
-		}
-		// after
-		if (elem_info.getAfter() != null) {
-			stmt_list.addAll(elem_info.getAfter());
-		}
-		//
-		Ast.BlockStatement block_stmt = new Ast.BlockStatement(stmt_list);   
-		return block_stmt;
-	}
-
-
-
-	/**
-	 * expand _stag, _cont, _etag, _elem, _element(), and _content().
-	 * 
-	 * @return Statement if stmt is one of the _stag, _cont, _etag, _elem, _elemen(), or _content(). Otherwise, Null. 
-	 */
-	private Ast.Statement _expandStatement(Ast.Statement stmt, ElementInfo elem_info) throws ConvertException {
-		//
-		int t = stmt.getToken();
-		switch (t) {
-		case Token.PRINT:
-			return null;
-		case Token.EXPR:
-			return null;
-		case Token.IF:
-			Ast.IfStatement if_stmt = (Ast.IfStatement)stmt; 
-			_expandStatement(if_stmt.getThenStatement(), elem_info);
-			if (if_stmt.getElseStatement() != null) {
-				_expandStatement(if_stmt.getElseStatement(), elem_info);
-			}
-			return null;
-		case Token.ELSEIF:
-		case Token.ELSE:
-			assert false; /* unreachable */
-			return null;
-		case Token.WHILE:
-			_expandStatement(((Ast.WhileStatement)stmt).getBodyStatement(), elem_info);
-			return null;
-		case Token.FOREACH:
-			_expandStatement(((Ast.ForeachStatement)stmt).getBodyStatement(), elem_info);
-			return null;
-		case Token.BREAK:
-			return null;
-		case Token.CONTINUE:
-			return null;
-		case Token.BLOCK:
-			Ast.Statement[] stmts = ((Ast.BlockStatement)stmt).getStatements();
-			for (int i = 0, n = stmts.length; i < n; i++) {
-				Ast.Statement st = _expandStatement(stmts[i], elem_info);
-				if (st != null) stmts[i] = st;
-			}
-			return null;
-		case Token.NATIVE_STMT:
-			return null;
-		case Token.NATIVE_EXPR:
-			assert false; /* unreachable */
-			return null;
-		case Token.STAG:
-			assert elem_info != null;
-			return _expandStagStatement(elem_info);
-		case Token.CONT:
-			assert elem_info != null;
-			return _expandContStatement(elem_info);
-		case Token.ETAG:
-			assert elem_info != null;
-			return _expandEtagStatement(elem_info);
-		case Token.ELEM:
-			ElementInfo e = elem_info;
-			if (e.getElemExpr() != null) {
-				return HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
-			}
-			else {
-				List list = new ArrayList();
-				Ast.Statement st;
-				st = _expandStagStatement(elem_info);  if (st != null) list.add(st);
-				st = _expandContStatement(elem_info);  if (st != null) list.add(st);  //_addStatement(list, st);
-				st = _expandEtagStatement(elem_info);  if (st != null) list.add(st);
-				return new Ast.BlockStatement(list);
-			}
-		case Token.ELEMENT:
-		case Token.CONTENT:
-			String name = ((Ast.ExpandStatement)stmt).getName();
-			ElementInfo elem_info2 = (ElementInfo)_elem_info_table.get(name);
-			if (elem_info2 == null)
-				throw _convertError("element '"+name+"' is not found.", stmt.getLinenum());
-			boolean content_only2 = t == Token.CONTENT;
-			return expandElementInfo(elem_info2, content_only2);
-		default:
-			assert false;
-		}
-		return null;	
-	}
-	
-	private Ast.Statement _expandStagStatement(ElementInfo e) {
-		if (e.getStagExpr() != null)
-			return HandlerHelper.buildPrintStatementForExpression(e.getStagExpr(), e.getStagInfo(), null);
-		else
-			return HandlerHelper.buildPrintStatement(e.getStagInfo(), e.getAttrInfo(), e.getAppendExprs());
-	}
-
-	private Ast.Statement _expandEtagStatement(ElementInfo e) {
-		if (e.getEtagExpr() != null)
-			return HandlerHelper.buildPrintStatementForExpression(e.getEtagExpr(), null, e.getEtagInfo());
-		else if (e.getEtagInfo() == null)  // e.getEtagInfo() is null when <br>, <input>, <hr>, <img>, and <meta>
-			return HandlerHelper.createPrintStatement("");
-		else
-			return HandlerHelper.buildPrintStatement(e.getEtagInfo(), null, null);
-	}
-	
-	private Ast.Statement _expandContStatement(ElementInfo e) throws ConvertException {
-		if (e.getContExpr() != null) {
-			return new Ast.PrintStatement(new Ast.Expression[] { e.getContExpr() });
-		}
-		else {
-			Ast.BlockStatement block_stmt = new Ast.BlockStatement(e.getContStmts());
-			_expandStatement(block_stmt, e);
-			return block_stmt;
-		}
-	}
-	
-	
 	public Ast.Statement extract(String elem_name, boolean content_only) throws ConvertException {
 		ElementInfo elem_info = (ElementInfo)_elem_info_table.get(elem_name);
 		if (elem_info == null) {
@@ -924,6 +795,190 @@ public class BaseHandler implements Handler {
 			System.out.println(stmt.inspect());
 		}
 		
+	}
+
+
+}
+
+
+
+class Expander {
+
+	
+	Handler _handler;
+	String _filename;
+	
+	
+	public Expander(Handler handler) {
+		_handler = handler;
+	}
+	
+	
+	private ElementInfo getElementInfo(String name) {
+		return _handler.getElementInfo(name);
+	}
+	
+	
+	public void setFilename(String filename) {
+		_filename = filename;
+	}
+	
+	
+	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info) throws ConvertException {
+		return expandElementInfo(elem_info, false);
+	}
+
+
+	public Ast.BlockStatement expandElementInfo(ElementInfo elem_info, boolean content_only) throws ConvertException {
+		// clear stag and etag if content_only is true (= '_content(name)' )
+		if (content_only) {
+			elem_info = elem_info.duplicate();
+			elem_info.clearStag();
+			elem_info.clearEtag();
+		}
+		// before
+		List stmt_list = new ArrayList();
+		if (elem_info.getBefore() != null) {
+			stmt_list.addAll(elem_info.getBefore());
+		}
+		// logic
+		Ast.Statement stmt;
+		if (elem_info.getElemExpr() != null) {
+			ElementInfo e = elem_info;
+			stmt = HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
+			stmt_list.add(stmt);
+		}
+		else {
+			for (Iterator it = elem_info.getLogic().iterator(); it.hasNext(); ) {
+				stmt = (Ast.Statement)it.next();
+				Ast.Statement stmt2 = expandStatement(stmt, elem_info);
+				stmt_list.add(stmt2 != null ? stmt2 : stmt);
+				//_addStatement(stmt_list, stmt2 != null ? stmt2 : stmt);
+			}
+		}
+		// after
+		if (elem_info.getAfter() != null) {
+			stmt_list.addAll(elem_info.getAfter());
+		}
+		//
+		Ast.BlockStatement block_stmt = new Ast.BlockStatement(stmt_list);   
+		return block_stmt;
+	}
+
+
+
+	/**
+	 * expand _stag, _cont, _etag, _elem, _element(), and _content().
+	 * 
+	 * @return Statement if stmt is one of the _stag, _cont, _etag, _elem, _elemen(), or _content(). Otherwise, Null. 
+	 */
+	public Ast.Statement expandStatement(Ast.Statement stmt, ElementInfo elem_info) throws ConvertException {
+		//
+		int t = stmt.getToken();
+		switch (t) {
+		case Token.PRINT:
+			return null;
+		case Token.EXPR:
+			return null;
+		case Token.IF:
+			Ast.IfStatement if_stmt = (Ast.IfStatement)stmt; 
+			expandStatement(if_stmt.getThenStatement(), elem_info);
+			if (if_stmt.getElseStatement() != null) {
+				expandStatement(if_stmt.getElseStatement(), elem_info);
+			}
+			return null;
+		case Token.ELSEIF:
+		case Token.ELSE:
+			assert false; /* unreachable */
+			return null;
+		case Token.WHILE:
+			expandStatement(((Ast.WhileStatement)stmt).getBodyStatement(), elem_info);
+			return null;
+		case Token.FOREACH:
+			expandStatement(((Ast.ForeachStatement)stmt).getBodyStatement(), elem_info);
+			return null;
+		case Token.BREAK:
+			return null;
+		case Token.CONTINUE:
+			return null;
+		case Token.BLOCK:
+			Ast.Statement[] stmts = ((Ast.BlockStatement)stmt).getStatements();
+			for (int i = 0, n = stmts.length; i < n; i++) {
+				Ast.Statement st = expandStatement(stmts[i], elem_info);
+				if (st != null) stmts[i] = st;
+			}
+			return null;
+		case Token.NATIVE_STMT:
+			return null;
+		case Token.NATIVE_EXPR:
+			assert false; /* unreachable */
+			return null;
+		case Token.STAG:
+			assert elem_info != null;
+			return _expandStagStatement(elem_info);
+		case Token.CONT:
+			assert elem_info != null;
+			return _expandContStatement(elem_info);
+		case Token.ETAG:
+			assert elem_info != null;
+			return _expandEtagStatement(elem_info);
+		case Token.ELEM:
+			ElementInfo e = elem_info;
+			if (e.getElemExpr() != null) {
+				return HandlerHelper.buildPrintStatementForExpression(e.getElemExpr(), e.getStagInfo(), e.getEtagInfo());
+			}
+			else {
+				List list = new ArrayList();
+				Ast.Statement st;
+				st = _expandStagStatement(elem_info);  if (st != null) list.add(st);
+				st = _expandContStatement(elem_info);  if (st != null) list.add(st);  //_addStatement(list, st);
+				st = _expandEtagStatement(elem_info);  if (st != null) list.add(st);
+				return new Ast.BlockStatement(list);
+			}
+		case Token.ELEMENT:
+		case Token.CONTENT:
+			String name = ((Ast.ExpandStatement)stmt).getName();
+			ElementInfo elem_info2 = getElementInfo(name);
+			if (elem_info2 == null)
+				throw _convertError("element '"+name+"' is not found.", stmt.getLinenum());
+			boolean content_only2 = t == Token.CONTENT;
+			return expandElementInfo(elem_info2, content_only2);
+		default:
+			assert false;
+		}
+		return null;	
+	}
+	
+	private Ast.Statement _expandStagStatement(ElementInfo e) {
+		if (e.getStagExpr() != null)
+			return HandlerHelper.buildPrintStatementForExpression(e.getStagExpr(), e.getStagInfo(), null);
+		else
+			return HandlerHelper.buildPrintStatement(e.getStagInfo(), e.getAttrInfo(), e.getAppendExprs());
+	}
+
+	private Ast.Statement _expandEtagStatement(ElementInfo e) {
+		if (e.getEtagExpr() != null)
+			return HandlerHelper.buildPrintStatementForExpression(e.getEtagExpr(), null, e.getEtagInfo());
+		else if (e.getEtagInfo() == null)  // e.getEtagInfo() is null when <br>, <input>, <hr>, <img>, and <meta>
+			return HandlerHelper.createPrintStatement("");
+		else
+			return HandlerHelper.buildPrintStatement(e.getEtagInfo(), null, null);
+	}
+	
+	private Ast.Statement _expandContStatement(ElementInfo e) throws ConvertException {
+		if (e.getContExpr() != null) {
+			return new Ast.PrintStatement(new Ast.Expression[] { e.getContExpr() });
+		}
+		else {
+			Ast.BlockStatement block_stmt = new Ast.BlockStatement(e.getContStmts());
+			expandStatement(block_stmt, e);
+			return block_stmt;
+		}
+	}
+
+
+	private ConvertException _convertError(String message, int linenum) {
+		return new ConvertException(message, _filename, linenum);
 	}
 
 

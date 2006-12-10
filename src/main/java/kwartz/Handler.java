@@ -16,6 +16,8 @@ public interface Handler {
 	public void applyRuleset(ElementInfo elem_info, List stmt_list) throws ConvertException;
 	
 	public Ast.Ruleset getRuleset(String selector_name);
-
+	
+	public ElementInfo getElementInfo(String name);  // for Expander class
+	
 }
 
