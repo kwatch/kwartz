@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Kwartz-ruby 3.0 Reference Guide</title>
+  <title>Kwartz-ruby 3.2 Reference Guide</title>
   <meta name="generator" content="kwaser">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" href="docstyle.css" type="text/css">
@@ -12,8 +12,8 @@
   <blockquote>
    <div class="mainbody">
 
-    <div align="left"><h1>Kwartz-ruby 3.0 Reference Guide</h1></div>
-<p>$Release$<br>
+    <div align="left"><h1>Kwartz-ruby 3.2 Reference Guide</h1></div>
+<p>Release: $Release$<br>
 $Date$
 </p>
 <a name="preface"></a>
@@ -43,7 +43,7 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
     </li>
   </ul>
   </li>
-  <li><a href="#plogic">Pesentation Logic</a>
+  <li><a href="#plogic">Properties in Pesentation Logic</a>
   <ul>
     <li><a href="#property-elem">elem, Elem, ELEM</a>
     </li>
@@ -67,9 +67,11 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
     </li>
     <li><a href="#property-begin">begin, end</a>
     </li>
+    <li><a href="#property-attrvar">Attribute Variable</a>
+    </li>
   </ul>
   </li>
-  <li><a href="#directives">Directives</a>
+  <li><a href="#directives">Directives in Presentation Data</a>
   <ul>
     <li><a href="#directive-elem">elem, Elem, ELEM</a>
     </li>
@@ -107,6 +109,8 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
     </li>
     <li><a href="#directive-replace">replace_element/content_with_element/content</a>
     </li>
+    <li><a href="#directive-expr">Language-independent Directive</a>
+    </li>
   </ul>
   </li>
   <li><a href="#cmdline">Command-Line Options</a>
@@ -119,7 +123,7 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
 
 
 <a name="plogic"></a>
-<h2 class="section1">Pesentation Logic</h2>
+<h2 class="section1">Properties in Pesentation Logic</h2>
 <p>Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 </p>
 <ul type="disc">
@@ -132,19 +136,31 @@ Kwartz-ruby is an implementation of Kwartz in Ruby.
 </ul>
 <div class="output_caption">
 Pseudo-EBNF syntax of presentation logic</div>
-<pre class="output">plogic       ::=  ruleset*
-ruleset      ::=  selector '{' [ declaration ';' ]* '}'
-selector     ::=  '#' name
-declaration  ::=  property ':' value
-property     ::=  'elem'   | 'Elem'   | 'ELEM'
-               |  'stag'   | 'Stag'   | 'STAG'
-	       |  'etag'   | 'Etag'   | 'ETAG'
-	       |  'cont'   | 'Cont'   | 'CONT'
-	       |  'value'  | 'Value'  | 'VALUE'
-	       |  'attrs'  | 'Attrs'  | 'ATTRS'
-	       |  'append' | 'Append' | 'APPEND'
-	       |  'remove'
-	       |  'logic'
+<pre class="output">plogic        ::=  rulesets
+rulesets      ::=  rulesets ruleset
+                |  ruleset
+ruleset       ::=  selectors '{' declarations '}'
+                |  selectors '{' '}'
+selectors     ::=  selectors ',' selector
+                |  selector
+desclarations ::=  declarations declaration
+                |  declaration
+selector      ::=  '#' name
+                |  '.' name
+		|  name
+declaration   ::=  property ':' value ';'
+                |  property ':' '{' value '}'
+property      ::=  'elem'   | 'Elem'   | 'ELEM'
+                |  'stag'   | 'Stag'   | 'STAG'
+	        |  'etag'   | 'Etag'   | 'ETAG'
+	        |  'cont'   | 'Cont'   | 'CONT'
+	        |  'value'  | 'Value'  | 'VALUE'
+	        |  'attrs'  | 'Attrs'  | 'ATTRS'
+	        |  'append' | 'Append' | 'APPEND'
+	        |  'remove'
+	        |  'logic'
+	        |  'before'
+	        |  'after'
 </pre>
 <p>Notice that the tail semicolon of declaration is not omittable.
 </p>
@@ -1836,11 +1852,177 @@ compile</div>
 <br>
 
 
+<a name="property-attrvar"></a>
+<h3 class="section2">Attribute Variable</h3>
+<p>Attribute variable is a notation such as '$(attrname)' which represents attribute value.
+Attribute variable allows presentation logic to refer attribute value in presentation data.
+</p>
+<a name="property-attrvar-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-attrvar.pdata)</div>
+<pre class="program">&lt;form action="create" <strong>method="post"</strong>&gt;
+  Username: &lt;input type="text" id="comment_username" <strong>size="30"</strong>&gt;&lt;br&gt;
+  Comment: &lt;textarea id="comment_text" <strong>rows="3"</strong> <strong>cols="50"</strong>&gt;&lt;/textarea&gt;&lt;br&gt;
+  &lt;input id="mark:submit" type="submit" <strong>value="Send comment"</strong>&gt;
+&lt;/form&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrvar.plogic)</div>
+<pre class="program">form {
+  stag:  start_form_tag :action=&gt;'<strong>$(action)</strong>';
+}
+#comment_username {
+  elem:  text_field 'comment', 'username', :size=&gt;<strong>$(size)</strong>;
+}
+#comment_text {
+  elem:  text_area 'comment', 'text', :rows=&gt;<strong>$(rows)</strong>, :cols=&gt;<strong>$(cols)</strong>;
+}
+#submit {
+  elem:  submit_tag '<strong>$(value)</strong>';
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby -p ex-attrvar.plogic ex-attrvar.pdata
+&lt;%= start_form_tag :action=&gt;'<strong>create</strong>' %&gt;
+  Username: &lt;%= text_field 'comment', 'username', :size=&gt;<strong>30</strong> %&gt;&lt;br&gt;
+  Comment: &lt;%= text_area 'comment', 'text', :rows=&gt;<strong>3</strong>, :cols=&gt;<strong>50</strong> %&gt;&lt;br&gt;
+  &lt;%= submit_tag '<strong>Send comment</strong>' %&gt;
+&lt;/form&gt;
+</pre>
+<br>
+
+<a name="property-attrvar-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-attrvar.pdata)</div>
+<pre class="program">&lt;form action="create" <strong>method="post"</strong>&gt;
+  Username: &lt;input type="text" id="comment_username" <strong>size="30"</strong>&gt;&lt;br&gt;
+  Comment: &lt;textarea id="comment_text" <strong>rows="3"</strong> <strong>cols="50"</strong>&gt;&lt;/textarea&gt;&lt;br&gt;
+  &lt;input id="mark:submit" type="submit" <strong>value="Send comment"</strong>&gt;
+&lt;/form&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrvar.plogic)</div>
+<pre class="program">form {
+  stag:  form_tag('comment/<strong>$(action)</strong>');
+}
+#comment_username {
+  elem:  text_field('comment', 'username', array('size'=&gt;<strong>$(size)</strong>));
+}
+#comment_text {
+  elem:  text_area('comment', 'text', array('rows'=&gt;<strong>$(rows)</strong>, 'cols'=&gt;<strong>$(cols)</strong>));
+}
+#submit {
+  elem:  submit_tag('<strong>$(value)</strong>');
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php -p ex-attrvar.plogic ex-attrvar.pdata
+&lt;?php echo form_tag('comment/<strong>create</strong>'); ?&gt;
+  Username: &lt;?php echo text_field('comment', 'username', array('size'=&gt;<strong>30</strong>)); ?&gt;&lt;br&gt;
+  Comment: &lt;?php echo text_area('comment', 'text', array('rows'=&gt;<strong>3</strong>, 'cols'=&gt;<strong>50</strong>)); ?&gt;&lt;br&gt;
+  &lt;?php echo submit_tag('<strong>Send comment</strong>'); ?&gt;
+&lt;/form&gt;
+</pre>
+<br>
+
+<a name="property-attrvar-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-attrvar.pdata)</div>
+<pre class="program">&lt;form action="create" <strong>method="post"</strong>&gt;
+  Username: &lt;input type="text" id="comment_username" <strong>size="30"</strong>&gt;&lt;br&gt;
+  Comment: &lt;textarea id="comment_text" <strong>rows="3"</strong> <strong>cols="50"</strong>&gt;&lt;/textarea&gt;&lt;br&gt;
+  &lt;input id="mark:submit" type="submit" <strong>value="Send comment"</strong>&gt;
+&lt;/form&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrvar.plogic)</div>
+<pre class="program">form {
+  logic: {
+    &lt;form:form action="<strong>$(action)</strong>.do"&gt;
+    _cont
+    &lt;/form:form&gt;
+  }
+}
+#comment_username {
+  logic: {
+    &lt;form:textfield name="username" size="<strong>$(size)</strong>"/&gt;
+  }
+}
+#comment_text {
+  logic: {
+    &lt;form:textarea name="text", rows="<strong>$(rows)</strong>" cols="<strong>$(cols)</strong>"/&gt;
+  }
+}
+#submit {
+  logic: {
+    &lt;form:submit value="<strong>$(value)</strong>"/&gt;
+  }
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl -p ex-attrvar.plogic ex-attrvar.pdata
+&lt;%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+    &lt;form:form action="<strong>create</strong>.do"&gt;
+  Username:     &lt;form:textfield name="username" size="<strong>30</strong>"/&gt;
+&lt;br&gt;
+  Comment:     &lt;form:textarea name="text", rows="<strong>3</strong>" cols="<strong>50</strong>"/&gt;
+&lt;br&gt;
+    &lt;form:submit value="<strong>Send comment</strong>"/&gt;
+    &lt;/form:form&gt;
+</pre>
+<br>
+
+<a name="property-attrvar-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-attrvar.pdata)</div>
+<pre class="program">&lt;form action="create" <strong>method="post"</strong>&gt;
+  Username: &lt;input type="text" id="comment_username" <strong>size="30"</strong>&gt;&lt;br&gt;
+  Comment: &lt;textarea id="comment_text" <strong>rows="3"</strong> <strong>cols="50"</strong>&gt;&lt;/textarea&gt;&lt;br&gt;
+  &lt;input id="mark:submit" type="submit" <strong>value="Send comment"</strong>&gt;
+&lt;/form&gt;
+</pre>
+<div class="program_caption">
+presentation logic (ex-attrvar.plogic)</div>
+<pre class="program">form {
+  stag:  &amp;form_tag({'action'=&gt;'<strong>$(action)</strong>'});
+}
+#comment_username {
+  elem:  &amp;text_field('comment', 'username', {'size'=&gt;<strong>$(size)</strong>});
+}
+#comment_text {
+  elem:  &amp;text_area('comment', 'text', {'rows'=&gt;<strong>$(rows)</strong>, 'cols'=&gt;<strong>$(cols)</strong>});
+}
+#submit {
+  elem:  &amp;submit_tag('<strong>$(value)</strong>');
+}
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl -p ex-attrvar.plogic ex-attrvar.pdata
+&lt;?= &amp;form_tag({'action'=&gt;'<strong>create</strong>'}) !&gt;
+  Username: &lt;?= &amp;text_field('comment', 'username', {'size'=&gt;<strong>30</strong>}) !&gt;&lt;br&gt;
+  Comment: &lt;?= &amp;text_area('comment', 'text', {'rows'=&gt;<strong>3</strong>, 'cols'=&gt;<strong>50</strong>}) !&gt;&lt;br&gt;
+  &lt;?= &amp;submit_tag('<strong>Send comment</strong>') !&gt;
+&lt;/form&gt;
+</pre>
+<br>
+
+<br>
+
+
 <br>
 
 
 <a name="directives"></a>
-<h2 class="section1">Directives</h2>
+<h2 class="section1">Directives in Presentation Data</h2>
 <p>Directives are commands to embed presentation logics into presentation data.
 For example, <code>title="for item in @list"</code> directive represents iteration of the element.
 </p>
@@ -3592,6 +3774,128 @@ compile</div>
 &lt;p&gt;
   back to &lt;a href="/"&gt;home&lt;/a&gt;.
 &lt;/p&gt;
+</pre>
+<br>
+
+<br>
+
+
+<a name="directive-expr"></a>
+<h3 class="section2">Language-independent Directive</h3>
+<p>Some directives can be language-independent.
+</p>
+<ul type="disc">
+<li>'mark' and 'replace_(element|content)_with_(element|content)' directives can be
+   language-independent because their argument is element name which is
+   language-independent.
+</li>
+<li>'dummy' directive can be language-independent because it takes dummy argument.
+</li>
+<li>'value', 'elem', 'stag', 'etag', 'cont', and 'default' directives can be
+   language-independent if their expression argument is one of the following format.
+   <ul type="circle">
+   <li><code>variable</code>
+   </li>
+   <li><code>object.property</code>
+   </li>
+   <li><code>hash['key']</code>, <code>hash["key"]</code>, <code>hash[:key]</code>
+   </li>
+   <li><code>array[123]</code>, <code>array[var]</code>
+   </li>
+   </ul>
+</li>
+</ul>
+<p>Language-independent directives are always described with id attribute.
+</p>
+<a name="directive-expr-eruby"></a>
+<h4 class="section3">Ruby</h4>
+<div class="program_caption">
+presentation data (ex-expr.pdata)</div>
+<pre class="program">&lt;p id="value:user"&gt;foo&lt;/p&gt;
+&lt;p id="value:user.name"&gt;foo&lt;/p&gt;
+&lt;p id="value:user['name']"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[:name]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[0]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[index]"&gt;foo&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eruby ex-expr.pdata
+&lt;p&gt;&lt;%= user %&gt;&lt;/p&gt;
+&lt;p&gt;&lt;%= user.name %&gt;&lt;/p&gt;
+&lt;p&gt;&lt;%= user['name'] %&gt;&lt;/p&gt;
+&lt;p&gt;&lt;%= user[:name] %&gt;&lt;/p&gt;
+&lt;p&gt;&lt;%= user[0] %&gt;&lt;/p&gt;
+&lt;p&gt;&lt;%= user[index] %&gt;&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-expr-php"></a>
+<h4 class="section3">PHP</h4>
+<div class="program_caption">
+presentation data (ex-expr.pdata)</div>
+<pre class="program">&lt;p id="value:user"&gt;foo&lt;/p&gt;
+&lt;p id="value:user.name"&gt;foo&lt;/p&gt;
+&lt;p id="value:user['name']"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[:name]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[0]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[index]"&gt;foo&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l php ex-expr.pdata
+&lt;p&gt;&lt;?php echo $user; ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?php echo $user-&gt;name; ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?php echo $user['name']; ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?php echo $user['name']; ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?php echo $user[0]; ?&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?php echo $user[$index]; ?&gt;&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-expr-jstl"></a>
+<h4 class="section3">JSP</h4>
+<div class="program_caption">
+presentation data (ex-expr.pdata)</div>
+<pre class="program">&lt;p id="value:user"&gt;foo&lt;/p&gt;
+&lt;p id="value:user.name"&gt;foo&lt;/p&gt;
+&lt;p id="value:user['name']"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[:name]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[0]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[index]"&gt;foo&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l jstl ex-expr.pdata
+&lt;p&gt;${user}&lt;/p&gt;
+&lt;p&gt;${user.name}&lt;/p&gt;
+&lt;p&gt;${user['name']}&lt;/p&gt;
+&lt;p&gt;${user['name']}&lt;/p&gt;
+&lt;p&gt;${user[0]}&lt;/p&gt;
+&lt;p&gt;${user[index]}&lt;/p&gt;
+</pre>
+<br>
+
+<a name="directive-expr-eperl"></a>
+<h4 class="section3">Perl</h4>
+<div class="program_caption">
+presentation data (ex-expr.pdata)</div>
+<pre class="program">&lt;p id="value:user"&gt;foo&lt;/p&gt;
+&lt;p id="value:user.name"&gt;foo&lt;/p&gt;
+&lt;p id="value:user['name']"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[:name]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[0]"&gt;foo&lt;/p&gt;
+&lt;p id="value:user[index]"&gt;foo&lt;/p&gt;
+</pre>
+<div class="terminal_caption">
+compile</div>
+<pre class="terminal">$ kwartz -l eperl ex-expr.pdata
+&lt;p&gt;&lt;?= $user !&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= $user-&gt;{name} !&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= $user{'name'} !&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= $user{'name'} !&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= $user[0] !&gt;&lt;/p&gt;
+&lt;p&gt;&lt;?= $user[$index] !&gt;&lt;/p&gt;
 </pre>
 <br>
 

@@ -1432,13 +1432,19 @@
 	   .- {{,hash['key'],}}, {{,hash["key"],}}, {{,hash[:key],}}
 	   .- {{,array[123],}}, {{,array[var],}}
 
-  pdata: |
+	Language-independent directives are always described with id attribute.
+
+  pdata*:
+    eruby: &expr_pdata|
 	<p id="value:user">foo</p>
 	<p id="value:user.name">foo</p>
 	<p id="value:user['name']">foo</p>
 	<p id="value:user[:name]">foo</p>
 	<p id="value:user[0]">foo</p>
-	<p id="value:user[i]">foo</p>
+	<p id="value:user[index]">foo</p>
+    php:   *expr_pdata
+    jstl:  *expr_pdata
+    eperl: *expr_pdata
 
   expected*:
     eruby: |
@@ -1447,7 +1453,7 @@
 	<p><%= user['name'] %></p>
 	<p><%= user[:name] %></p>
 	<p><%= user[0] %></p>
-	<p><%= user[i] %></p>
+	<p><%= user[index] %></p>
 
     php: |
 	<p><?php echo $user; ?></p>
@@ -1455,7 +1461,7 @@
 	<p><?php echo $user['name']; ?></p>
 	<p><?php echo $user['name']; ?></p>
 	<p><?php echo $user[0]; ?></p>
-	<p><?php echo $user[$i]; ?></p>
+	<p><?php echo $user[$index]; ?></p>
 
     eperl: |
 	<p><?= $user !></p>
@@ -1463,7 +1469,7 @@
 	<p><?= $user{'name'} !></p>
 	<p><?= $user{'name'} !></p>
 	<p><?= $user[0] !></p>
-	<p><?= $user[$i] !></p>
+	<p><?= $user[$index] !></p>
 
     jstl: |
 	<p>${user}</p>
@@ -1471,7 +1477,7 @@
 	<p>${user['name']}</p>
 	<p>${user['name']}</p>
 	<p>${user[0]}</p>
-	<p>${user[i]}</p>
+	<p>${user[index]}</p>
 
 
 ###
@@ -1480,7 +1486,8 @@
   subject:   Language-independent Directive
   desc:  |
 
-  pdata: |
+  pdata*:
+    eruby: &expr2_pdata |
 	<p id="value:user.name">foo</p>
 	<p id="Value:user['name']">foo</p>
 	<p id="VALUE:user[:name]">foo</p>
@@ -1504,29 +1511,32 @@
 	<p id="default:user.name">foo</p>
 	<p id="Default:user['name']">foo</p>
 	<p id="DEFAULT:user[:name]">foo</p>
+    php:   *expr2_pdata
+    jstl:  *expr2_pdata
+    eperl: *expr2_pdata
 
   expected*:
     eruby: |
 	<p><%= user.name %></p>
 	<p><%=h user['name'] %></p>
 	<p><%= user[:name] %></p>
-
+	
 	<%= user.name %>
 	<%=h user['name'] %>
 	<%= user[:name] %>
-
+	
 	<p><%= user.name %></p>
 	<p><%=h user['name'] %></p>
 	<p><%= user[:name] %></p>
-
+	
 	<%= user.name %>foo</p>
 	<%=h user['name'] %>foo</p>
 	<%= user[:name] %>foo</p>
-
+	
 	<p>foo<%= user.name %>
 	<p>foo<%=h user['name'] %>
 	<p>foo<%= user[:name] %>
-
+	
 	<p><% if (user.name) && !(user.name).to_s.empty? then %><%= user.name %><% else %>foo<% end %></p>
 	<p><% if (user['name']) && !(user['name']).to_s.empty? then %><%=h user['name'] %><% else %>foo<% end %></p>
 	<p><% if (user[:name]) && !(user[:name]).to_s.empty? then %><%= user[:name] %><% else %>foo<% end %></p>
@@ -1535,23 +1545,23 @@
 	<p><?php echo $user->name; ?></p>
 	<p><?php echo htmlspecialchars($user['name']); ?></p>
 	<p><?php echo $user['name']; ?></p>
-
+	
 	<?php echo $user->name; ?>
 	<?php echo htmlspecialchars($user['name']); ?>
 	<?php echo $user['name']; ?>
-
+	
 	<p><?php echo $user->name; ?></p>
 	<p><?php echo htmlspecialchars($user['name']); ?></p>
 	<p><?php echo $user['name']; ?></p>
-
+	
 	<?php echo $user->name; ?>foo</p>
 	<?php echo htmlspecialchars($user['name']); ?>foo</p>
 	<?php echo $user['name']; ?>foo</p>
-
+	
 	<p>foo<?php echo $user->name; ?>
 	<p>foo<?php echo htmlspecialchars($user['name']); ?>
 	<p>foo<?php echo $user['name']; ?>
-
+	
 	<p><?php if ($user->name) { ?><?php echo $user->name; ?><?php } else { ?>foo<?php } ?></p>
 	<p><?php if ($user['name']) { ?><?php echo htmlspecialchars($user['name']); ?><?php } else { ?>foo<?php } ?></p>
 	<p><?php if ($user['name']) { ?><?php echo $user['name']; ?><?php } else { ?>foo<?php } ?></p>
@@ -1560,23 +1570,23 @@
 	<p><?= $user->{name} !></p>
 	<p><?= encode_entities($user{'name'}) !></p>
 	<p><?= $user{'name'} !></p>
-
+	
 	<?= $user->{name} !>
 	<?= encode_entities($user{'name'}) !>
 	<?= $user{'name'} !>
-
+	
 	<p><?= $user->{name} !></p>
 	<p><?= encode_entities($user{'name'}) !></p>
 	<p><?= $user{'name'} !></p>
-
+	
 	<?= $user->{name} !>foo</p>
 	<?= encode_entities($user{'name'}) !>foo</p>
 	<?= $user{'name'} !>foo</p>
-
+	
 	<p>foo<?= $user->{name} !>
 	<p>foo<?= encode_entities($user{'name'}) !>
 	<p>foo<?= $user{'name'} !>
-
+	
 	<p><? if ($user->{name}) { !><?= $user->{name} !><? } else { !>foo<? } !></p>
 	<p><? if ($user{'name'}) { !><?= encode_entities($user{'name'}) !><? } else { !>foo<? } !></p>
 	<p><? if ($user{'name'}) { !><?= $user{'name'} !><? } else { !>foo<? } !></p>
@@ -1585,23 +1595,23 @@
 	<p>${user.name}</p>
 	<p>${user['name']}</p>
 	<p><c:out value="${user['name']}" escapeXml="false"/></p>
-
+	
 	${user.name}
 	${user['name']}
 	<c:out value="${user['name']}" escapeXml="false"/>
-
+	
 	<p>${user.name}</p>
 	<p>${user['name']}</p>
 	<p><c:out value="${user['name']}" escapeXml="false"/></p>
-
+	
 	${user.name}foo</p>
 	${user['name']}foo</p>
 	<c:out value="${user['name']}" escapeXml="false"/>foo</p>
-
+	
 	<p>foo${user.name}
 	<p>foo${user['name']}
 	<p>foo<c:out value="${user['name']}" escapeXml="false"/>
-
+	
 	<p><c:out value="${user.name}" default="foo"/></p>
 	<p><c:out value="${user['name']}" escapeXml="true" default="foo"/></p>
 	<p><c:out value="${user['name']}" escapeXml="false" default="foo"/></p>

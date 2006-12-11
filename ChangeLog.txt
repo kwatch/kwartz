@@ -2,6 +2,9 @@
 .?lastupdate:	$Date$
 .?revision:	$Rev$
 
+: rev.159 (2006-12-11)
+	- [enhance] attribute variable '$(name)' support
+
 : rev.158 (2006-12-10)
 	- [refactor] TextConverter#handle_directive() is moved to Handler class
 	- [refactor] add TextConverter#_create_text_print_stmt()

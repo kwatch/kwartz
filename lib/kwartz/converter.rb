@@ -304,8 +304,9 @@ module Kwartz
       attr_info.each do |space, aname, avalue|
         sb << "#{space}#{aname}=\""
         if avalue.is_a?(NativeExpression)
+          native_expr = expand_attr_vars_in_native_expr(avalue, attr_info)
           args << sb     # TextExpression.new(sb)
-          args << avalue
+          args << native_expr
           sb = ''
         else
           sb << avalue
@@ -317,7 +318,10 @@ module Kwartz
           args << sb     # TextExpression.new(sb)
           sb = ''
         end
-        args.concat(append_exprs)
+        append_exprs.each do |append_expr|
+          native_expr = expand_attr_vars_in_native_expr(append_expr, attr_info)
+          args << native_expr
+        end
       end
       sb << "#{t.extra_space}#{t.is_empty ? '/' : ''}>#{t.tail_space}"
       args << sb         # TextExpression.new(sb)
@@ -333,14 +337,54 @@ module Kwartz
 
 
     ## create PrintStatement for NativeExpression
-    def build_print_expr_stmt(native_expr, stag_info, etag_info)
+    def build_print_expr_stmt(native_expr, stag_info, etag_info, attr_info=nil)
       head_space = (stag_info || etag_info).head_space
       tail_space = (etag_info || stag_info).tail_space
+      native_expr = expand_attr_vars_in_native_expr(native_expr, attr_info) if attr_info
       args = []
-      args << head_space if head_space    # TexExpression.new(head_space)
+      args << head_space if head_space    # TextExpression.new(head_space)
       args << native_expr
       args << tail_space if tail_space    # TextExpression.new(tail_space)
       return PrintStatement.new(args)
+    end
+
+
+    ## expand attribute variables (such as '$(rows)' or '$(value)') and return new code
+    def expand_attr_vars(code, attr_info)
+      new_code = code.gsub(/\$\((\w+(?::\w+)?)\)/) do |m|
+        aname = $1
+        #unless attrs.key?(aname)
+        #  raise "#{m}: attribute '#{aname}' expected but not found."
+        #end
+        avalue = attr_info[aname]
+        if avalue.is_a?(NativeExpression)
+          raise "#{m}: attribute value of '#{aname}' is NativeExpression object."
+        end
+        avalue
+      end
+      return new_code
+    end
+
+
+    ## expand attribute variables and return new NativeExpression
+    def expand_attr_vars_in_native_expr(native_expr, attr_info)
+      code = expand_attr_vars(native_expr.code, attr_info)
+      if code != native_expr.code
+        native_expr = NativeExpression.new(code, native_expr.escape)
+      end
+      return native_expr
+    end
+
+
+    ## expand attribute variables and return new NativeExpression
+    def expand_attr_vars_in_native_stmt(native_stmt, attr_info)
+      code = expand_attr_vars(native_stmt.code, attr_info)
+      if code != native_stmt.code
+        no_newline = native_stmt.no_newline
+        native_stmt = NativeStatement.new(code, native_stmt.kind)
+        native_stmt.no_newline = no_newline unless no_newline.nil?
+      end
+      return native_stmt
     end
 
 
@@ -460,6 +504,16 @@ module Kwartz
     ## expand ExpandStatement
     def expand_statement(stmt, stmt_list, elem_info)
 
+      if stmt.is_a?(NativeStatement)
+        if elem_info
+          native_stmt = expand_attr_vars_in_native_stmt(stmt, elem_info.attr_info)
+        else
+          native_stmt = stmt
+        end
+        stmt_list << native_stmt
+        return
+      end
+
       if ! stmt.is_a?(ExpandStatement)
         stmt_list << stmt
         return
@@ -480,7 +534,7 @@ module Kwartz
         assert unless elem_info
         if e.stag_expr
           assert unless e.stag_expr.is_a?(NativeExpression)
-          stmt_list << build_print_expr_stmt(e.stag_expr, e.stag_info, nil)
+          stmt_list << build_print_expr_stmt(e.stag_expr, e.stag_info, nil, e.attr_info)
         else
           stmt_list << build_print_stmt(e.stag_info, e.attr_info, e.append_exprs)
         end
@@ -489,7 +543,7 @@ module Kwartz
         assert unless elem_info
         if e.etag_expr
           assert unless e.etag_expr.is_a?(NativeExpression)
-          stmt_list << build_print_expr_stmt(e.etag_expr, nil, e.etag_info)
+          stmt_list << build_print_expr_stmt(e.etag_expr, nil, e.etag_info, e.attr_info)
         elsif e.etag_info    # e.etag_info is nil when <br>, <input>, <hr>, <img>, <meta>
           stmt_list << build_print_stmt(e.etag_info, nil, nil)
         end
@@ -497,7 +551,9 @@ module Kwartz
       when :cont
         if e.cont_expr
           assert unless e.cont_expr.is_a?(NativeExpression)
-          stmt_list << PrintStatement.new([e.cont_expr])
+          #stmt_list << PrintStatement.new([e.cont_expr])
+          native_expr = expand_attr_vars_in_native_expr(e.cont_expr, e.attr_info)
+          stmt_list << PrintStatement.new([native_expr])
         else
           elem_info.cont_stmts.each do |cont_stmt|
             expand_statement(cont_stmt, stmt_list, nil)
@@ -508,7 +564,7 @@ module Kwartz
         assert unless elem_info
         if e.elem_expr
           assert unless e.elem_expr.is_a?(NativeExpression)
-          stmt_list << build_print_expr_stmt(e.elem_expr, e.stag_info, e.etag_info)
+          stmt_list << build_print_expr_stmt(e.elem_expr, e.stag_info, e.etag_info, e.attr_info)
         else
           stmt.kind = :stag
           expand_statement(stmt, stmt_list, elem_info)

@@ -1,4 +1,4 @@
-.* [_] filename on ConvertError
+.* [v] filename on ConvertError
 .* [v] delete <span> tag which has only 'title' attribute
 .* [v] 'default' directive with if-then-else statement
 .* [v] NativeStatement#newline = false
@@ -15,9 +15,11 @@
 .* [v] '-a defun' (action 'define function') support
 .* [_] #XMLDECL support
 .* [v] rename 'plogic:' to 'logic:'
-.* [_] #DOCUMENT
+.* [v] #DOCUMENT
 .* [v] 'before:' and 'after:' property
 .* [v] class selector
 .* [v] tag selector
-.* [_] 'id="value:var"', 'id="value:obj.prop"', 'id="value:hash['key']"', 'id="value:list[123]"' support
-.* [_] $(attr), $(CONTENT), $(ELEMENT) support
+.* [v] 'id="value:var"', 'id="value:obj.prop"', 'id="value:hash['key']"', 'id="value:list[123]"' support
+.* [v] $(attr) support
+.* [_] $(CONTENT) support
+.* [_] id="mark:name:d1" support

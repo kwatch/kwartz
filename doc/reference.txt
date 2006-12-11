@@ -1,9 +1,9 @@
-.=title:	Kwartz-ruby 3.0 Reference Guide
+.=title:	Kwartz-ruby 3.2 Reference Guide
 .#.?lastupdate:	$Date$
 .#.?version:	$Release$
 .?stylesheet:	docstyle.css
 
-$Release$.^
+Release: $Release$.^
 $Date$
 
 
@@ -28,7 +28,7 @@ If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
 .# --------------------------------------------------------------------------------
 
 
-.$ Pesentation Logic	| plogic
+.$ Properties in Pesentation Logic	| plogic
 
 Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 .* Presentation logic file is a set of ruleset.
@@ -37,19 +37,31 @@ Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 
 .? Pseudo-EBNF syntax of presentation logic
 .____________________
-plogic       ::=  ruleset*
-ruleset      ::=  selector '{' [ declaration ';' ]* '}'
-selector     ::=  '#' name
-declaration  ::=  property ':' value
-property     ::=  'elem'   | 'Elem'   | 'ELEM'
-               |  'stag'   | 'Stag'   | 'STAG'
-	       |  'etag'   | 'Etag'   | 'ETAG'
-	       |  'cont'   | 'Cont'   | 'CONT'
-	       |  'value'  | 'Value'  | 'VALUE'
-	       |  'attrs'  | 'Attrs'  | 'ATTRS'
-	       |  'append' | 'Append' | 'APPEND'
-	       |  'remove'
-	       |  'logic'
+plogic        ::=  rulesets
+rulesets      ::=  rulesets ruleset
+                |  ruleset
+ruleset       ::=  selectors '{' declarations '}'
+                |  selectors '{' '}'
+selectors     ::=  selectors ',' selector
+                |  selector
+desclarations ::=  declarations declaration
+                |  declaration
+selector      ::=  '#' name
+                |  '.' name
+		|  name
+declaration   ::=  property ':' value ';'
+                |  property ':' '{' value '}'
+property      ::=  'elem'   | 'Elem'   | 'ELEM'
+                |  'stag'   | 'Stag'   | 'STAG'
+	        |  'etag'   | 'Etag'   | 'ETAG'
+	        |  'cont'   | 'Cont'   | 'CONT'
+	        |  'value'  | 'Value'  | 'VALUE'
+	        |  'attrs'  | 'Attrs'  | 'ATTRS'
+	        |  'append' | 'Append' | 'APPEND'
+	        |  'remove'
+	        |  'logic'
+	        |  'before'
+	        |  'after'
 .____________________
 
 Notice that the tail semicolon of declaration is not omittable.
@@ -1800,6 +1812,178 @@ $ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
 
 
 
+.$$ Attribute Variable	| property-attrvar
+
+Attribute variable is a notation such as '$(attrname)' which represents attribute value.
+Attribute variable allows presentation logic to refer attribute value in presentation data.
+
+
+
+
+.$$$ Ruby	| property-attrvar-eruby
+
+.? presentation data (ex-attrvar.pdata)
+.--------------------
+<form action="create" {{*method="post"*}}>
+  Username: <input type="text" id="comment_username" {{*size="30"*}}><br>
+  Comment: <textarea id="comment_text" {{*rows="3"*}} {{*cols="50"*}}></textarea><br>
+  <input id="mark:submit" type="submit" {{*value="Send comment"*}}>
+</form>
+.--------------------
+
+.? presentation logic (ex-attrvar.plogic)
+.--------------------
+form {
+  stag:  start_form_tag :action=>'{{*$(action)*}}';
+}
+#comment_username {
+  elem:  text_field 'comment', 'username', :size=>{{*$(size)*}};
+}
+#comment_text {
+  elem:  text_area 'comment', 'text', :rows=>{{*$(rows)*}}, :cols=>{{*$(cols)*}};
+}
+#submit {
+  elem:  submit_tag '{{*$(value)*}}';
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby -p ex-attrvar.plogic ex-attrvar.pdata
+<%= start_form_tag :action=>'{{*create*}}' %>
+  Username: <%= text_field 'comment', 'username', :size=>{{*30*}} %><br>
+  Comment: <%= text_area 'comment', 'text', :rows=>{{*3*}}, :cols=>{{*50*}} %><br>
+  <%= submit_tag '{{*Send comment*}}' %>
+</form>
+.====================
+
+.$$$ PHP	| property-attrvar-php
+
+.? presentation data (ex-attrvar.pdata)
+.--------------------
+<form action="create" {{*method="post"*}}>
+  Username: <input type="text" id="comment_username" {{*size="30"*}}><br>
+  Comment: <textarea id="comment_text" {{*rows="3"*}} {{*cols="50"*}}></textarea><br>
+  <input id="mark:submit" type="submit" {{*value="Send comment"*}}>
+</form>
+.--------------------
+
+.? presentation logic (ex-attrvar.plogic)
+.--------------------
+form {
+  stag:  form_tag('comment/{{*$(action)*}}');
+}
+#comment_username {
+  elem:  text_field('comment', 'username', array('size'=>{{*$(size)*}}));
+}
+#comment_text {
+  elem:  text_area('comment', 'text', array('rows'=>{{*$(rows)*}}, 'cols'=>{{*$(cols)*}}));
+}
+#submit {
+  elem:  submit_tag('{{*$(value)*}}');
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php -p ex-attrvar.plogic ex-attrvar.pdata
+<?php echo form_tag('comment/{{*create*}}'); ?>
+  Username: <?php echo text_field('comment', 'username', array('size'=>{{*30*}})); ?><br>
+  Comment: <?php echo text_area('comment', 'text', array('rows'=>{{*3*}}, 'cols'=>{{*50*}})); ?><br>
+  <?php echo submit_tag('{{*Send comment*}}'); ?>
+</form>
+.====================
+
+.$$$ JSP	| property-attrvar-jstl
+
+.? presentation data (ex-attrvar.pdata)
+.--------------------
+<form action="create" {{*method="post"*}}>
+  Username: <input type="text" id="comment_username" {{*size="30"*}}><br>
+  Comment: <textarea id="comment_text" {{*rows="3"*}} {{*cols="50"*}}></textarea><br>
+  <input id="mark:submit" type="submit" {{*value="Send comment"*}}>
+</form>
+.--------------------
+
+.? presentation logic (ex-attrvar.plogic)
+.--------------------
+form {
+  logic: {
+    <form:form action="{{*$(action)*}}.do">
+    _cont
+    </form:form>
+  }
+}
+#comment_username {
+  logic: {
+    <form:textfield name="username" size="{{*$(size)*}}"/>
+  }
+}
+#comment_text {
+  logic: {
+    <form:textarea name="text", rows="{{*$(rows)*}}" cols="{{*$(cols)*}}"/>
+  }
+}
+#submit {
+  logic: {
+    <form:submit value="{{*$(value)*}}"/>
+  }
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl -p ex-attrvar.plogic ex-attrvar.pdata
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    <form:form action="{{*create*}}.do">
+  Username:     <form:textfield name="username" size="{{*30*}}"/>
+<br>
+  Comment:     <form:textarea name="text", rows="{{*3*}}" cols="{{*50*}}"/>
+<br>
+    <form:submit value="{{*Send comment*}}"/>
+    </form:form>
+.====================
+
+.$$$ Perl	| property-attrvar-eperl
+
+.? presentation data (ex-attrvar.pdata)
+.--------------------
+<form action="create" {{*method="post"*}}>
+  Username: <input type="text" id="comment_username" {{*size="30"*}}><br>
+  Comment: <textarea id="comment_text" {{*rows="3"*}} {{*cols="50"*}}></textarea><br>
+  <input id="mark:submit" type="submit" {{*value="Send comment"*}}>
+</form>
+.--------------------
+
+.? presentation logic (ex-attrvar.plogic)
+.--------------------
+form {
+  stag:  &form_tag({'action'=>'{{*$(action)*}}'});
+}
+#comment_username {
+  elem:  &text_field('comment', 'username', {'size'=>{{*$(size)*}}});
+}
+#comment_text {
+  elem:  &text_area('comment', 'text', {'rows'=>{{*$(rows)*}}, 'cols'=>{{*$(cols)*}}});
+}
+#submit {
+  elem:  &submit_tag('{{*$(value)*}}');
+}
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl -p ex-attrvar.plogic ex-attrvar.pdata
+<?= &form_tag({'action'=>'{{*create*}}'}) !>
+  Username: <?= &text_field('comment', 'username', {'size'=>{{*30*}}}) !><br>
+  Comment: <?= &text_area('comment', 'text', {'rows'=>{{*3*}}, 'cols'=>{{*50*}}}) !><br>
+  <?= &submit_tag('{{*Send comment*}}') !>
+</form>
+.====================
+
+
+
 
 .#.$$ {{,#DOCUMENT,}} selector and {{,begin:,}}, {{,end:,}} properties
 .#
@@ -1811,7 +1995,7 @@ $ kwartz -l eperl -p ex-begin.plogic ex-begin.pdata
 .# --------------------------------------------------------------------------------
 
 
-.$ Directives		| directives
+.$ Directives in Presentation Data	| directives
 
 Directives are commands to embed presentation logics into presentation data.
 For example, {{,title="for item in @list",}} directive represents iteration of the element.
@@ -3656,6 +3840,123 @@ $ kwartz -l eruby ex-replace.pdata
 <p>
   back to <a href="/">home</a>.
 </p>
+.====================
+
+
+
+
+.$$ Language-independent Directive	| directive-expr
+
+Some directives can be language-independent.
+
+.* 'mark' and 'replace_(element|content)_with_(element|content)' directives can be
+   language-independent because their argument is element name which is
+   language-independent.
+.* 'dummy' directive can be language-independent because it takes dummy argument.
+.* 'value', 'elem', 'stag', 'etag', 'cont', and 'default' directives can be
+   language-independent if their expression argument is one of the following format.
+   .- {{,variable,}}
+   .- {{,object.property,}}
+   .- {{,hash['key'],}}, {{,hash["key"],}}, {{,hash[:key],}}
+   .- {{,array[123],}}, {{,array[var],}}
+
+Language-independent directives are always described with id attribute.
+
+
+
+.$$$ Ruby	| directive-expr-eruby
+
+.? presentation data (ex-expr.pdata)
+.--------------------
+<p id="value:user">foo</p>
+<p id="value:user.name">foo</p>
+<p id="value:user['name']">foo</p>
+<p id="value:user[:name]">foo</p>
+<p id="value:user[0]">foo</p>
+<p id="value:user[index]">foo</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eruby ex-expr.pdata
+<p><%= user %></p>
+<p><%= user.name %></p>
+<p><%= user['name'] %></p>
+<p><%= user[:name] %></p>
+<p><%= user[0] %></p>
+<p><%= user[index] %></p>
+.====================
+
+
+.$$$ PHP	| directive-expr-php
+
+.? presentation data (ex-expr.pdata)
+.--------------------
+<p id="value:user">foo</p>
+<p id="value:user.name">foo</p>
+<p id="value:user['name']">foo</p>
+<p id="value:user[:name]">foo</p>
+<p id="value:user[0]">foo</p>
+<p id="value:user[index]">foo</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l php ex-expr.pdata
+<p><?php echo $user; ?></p>
+<p><?php echo $user->name; ?></p>
+<p><?php echo $user['name']; ?></p>
+<p><?php echo $user['name']; ?></p>
+<p><?php echo $user[0]; ?></p>
+<p><?php echo $user[$index]; ?></p>
+.====================
+
+
+.$$$ JSP	| directive-expr-jstl
+
+.? presentation data (ex-expr.pdata)
+.--------------------
+<p id="value:user">foo</p>
+<p id="value:user.name">foo</p>
+<p id="value:user['name']">foo</p>
+<p id="value:user[:name]">foo</p>
+<p id="value:user[0]">foo</p>
+<p id="value:user[index]">foo</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l jstl ex-expr.pdata
+<p>${user}</p>
+<p>${user.name}</p>
+<p>${user['name']}</p>
+<p>${user['name']}</p>
+<p>${user[0]}</p>
+<p>${user[index]}</p>
+.====================
+
+
+.$$$ Perl	| directive-expr-eperl
+
+.? presentation data (ex-expr.pdata)
+.--------------------
+<p id="value:user">foo</p>
+<p id="value:user.name">foo</p>
+<p id="value:user['name']">foo</p>
+<p id="value:user[:name]">foo</p>
+<p id="value:user[0]">foo</p>
+<p id="value:user[index]">foo</p>
+.--------------------
+
+.? compile
+.====================
+$ kwartz -l eperl ex-expr.pdata
+<p><?= $user !></p>
+<p><?= $user->{name} !></p>
+<p><?= $user{'name'} !></p>
+<p><?= $user{'name'} !></p>
+<p><?= $user[0] !></p>
+<p><?= $user[$index] !></p>
 .====================
 
 

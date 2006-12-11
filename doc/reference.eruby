@@ -16,12 +16,12 @@
   require 'yaml'
 
  %]
-.=title:	Kwartz-[%= @lang %] 3.0 Reference Guide
+.=title:	Kwartz-[%= @lang %] 3.2 Reference Guide
 .#.?lastupdate:	$Date$
 .#.?version:	$Release$
 .?stylesheet:	docstyle.css
 
-$Release$.^
+Release: $Release$.^
 $Date$
 
 
@@ -46,7 +46,7 @@ If you are new to Kwartz, see {{<Users' Guide|users-guide.html>}} at first.
 .# --------------------------------------------------------------------------------
 
 
-.$ Pesentation Logic	| plogic
+.$ Properties in Pesentation Logic	| plogic
 
 Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 .* Presentation logic file is a set of ruleset.
@@ -55,19 +55,31 @@ Presentation logic format in Kwartz is similar to Cascading Style Sheet (CSS).
 
 .? Pseudo-EBNF syntax of presentation logic
 .____________________
-plogic       ::=  ruleset*
-ruleset      ::=  selector '{' [ declaration ';' ]* '}'
-selector     ::=  '#' name
-declaration  ::=  property ':' value
-property     ::=  'elem'   | 'Elem'   | 'ELEM'
-               |  'stag'   | 'Stag'   | 'STAG'
-	       |  'etag'   | 'Etag'   | 'ETAG'
-	       |  'cont'   | 'Cont'   | 'CONT'
-	       |  'value'  | 'Value'  | 'VALUE'
-	       |  'attrs'  | 'Attrs'  | 'ATTRS'
-	       |  'append' | 'Append' | 'APPEND'
-	       |  'remove'
-	       |  'logic'
+plogic        ::=  rulesets
+rulesets      ::=  rulesets ruleset
+                |  ruleset
+ruleset       ::=  selectors '{' declarations '}'
+                |  selectors '{' '}'
+selectors     ::=  selectors ',' selector
+                |  selector
+desclarations ::=  declarations declaration
+                |  declaration
+selector      ::=  '#' name
+                |  '.' name
+		|  name
+declaration   ::=  property ':' value ';'
+                |  property ':' '{' value '}'
+property      ::=  'elem'   | 'Elem'   | 'ELEM'
+                |  'stag'   | 'Stag'   | 'STAG'
+	        |  'etag'   | 'Etag'   | 'ETAG'
+	        |  'cont'   | 'Cont'   | 'CONT'
+	        |  'value'  | 'Value'  | 'VALUE'
+	        |  'attrs'  | 'Attrs'  | 'ATTRS'
+	        |  'append' | 'Append' | 'APPEND'
+	        |  'remove'
+	        |  'logic'
+	        |  'before'
+	        |  'after'
 .____________________
 
 Notice that the tail semicolon of declaration is not omittable.
@@ -86,6 +98,7 @@ Notice that the tail semicolon of declaration is not omittable.
   context = YAML.load(str)
 
   for data in context do
+    next if data['hide']
     name     = data['name']
     title    = data['title']
     desc     = data['desc']
@@ -148,7 +161,7 @@ $ [%= @command %] -l [%= lang %] -p ex-[%= name %].plogic ex-[%= name %].pdata
 .# --------------------------------------------------------------------------------
 
 
-.$ Directives		| directives
+.$ Directives in Presentation Data	| directives
 
 Directives are commands to embed presentation logics into presentation data.
 For example, {{,title="for item in @list",}} directive represents iteration of the element.
