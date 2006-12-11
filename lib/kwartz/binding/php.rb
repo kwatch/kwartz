@@ -166,7 +166,7 @@ module Kwartz
 
       when :default, :Default, :DEFAULT
         error_if_empty_tag(elem_info, d_str)
-        expr_str = directive.format == :common ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
+        expr_str = directive.dattr == 'id' ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
         flag_escape = d_name == :default ? nil : (d_name == :Default)
         add_native_expr_with_default(elem_info, stmt_list, expr_str, flag_escape,
                                      "if (#{expr_str}) {", "} else {", "}")

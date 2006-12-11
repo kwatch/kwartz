@@ -178,7 +178,7 @@ module Kwartz
         stmt_list << stag_stmt(elem_info)
         flag_escape = d_name == :default ? nil : (d_name == :Default)
         argstr = elem_info.cont_stmts[0].args[0]
-        expr_str = directive.format == :common ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
+        expr_str = directive.dattr == 'id' ? parse_expr_str(d_arg, e.stag_info.linenum) : d_arg
         code =  "<c:out value=\"${#{expr_str}}\""
         code << " escapeXml=\"#{flag_escape}\"" unless flag_escape == nil
         code << " default=\"#{argstr}\"/>"
