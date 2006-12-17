@@ -31,7 +31,7 @@ public class ExpressionParserTest extends TestCase {
 			inputs.add(input);
 		}
 		//
-		Parser parser = new ExpressionParser();
+		Parser parser = new UniversalExpressionParser();
 		Ast.Expression expr;
 		String filename = "test-expr-parser.plogic";
 		for (Iterator it = inputs.iterator(); it.hasNext(); ) {

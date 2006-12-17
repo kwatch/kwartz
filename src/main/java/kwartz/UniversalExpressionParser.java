@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-public class ExpressionParser extends Parser {
+public class UniversalExpressionParser extends Parser {
 
 
 /* S|tokenval */

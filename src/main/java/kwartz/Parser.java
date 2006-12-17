@@ -290,7 +290,7 @@ abstract public class Parser implements Token {
   			String filename = arg;
   			try {
   				String str = Util.readFile(filename);
-  				Parser parser = new PresentationLogicParser();
+  				Parser parser = new UniversalPresentationLogicParser();
   				List rulesets = (List)parser.parse(str);
   				return rulesets;
   			}
@@ -314,12 +314,12 @@ abstract public class Parser implements Token {
 	
   	public static void main(String[] args) throws ParseException {
   		//String input = "3 + 1";
-  		//Parser parser = new ExpressionParser();
+  		//Parser parser = new UniversalExpressionParser();
   		//Expression.Binary expr = (Expression.Binary)parser.parse(input);
   		//debug(expr, "expr");
   		//
   		//String input = "break; continue;";
-  		//Parser parser = new StatementParser();
+  		//Parser parser = new UniversalStatementParser();
   		//Statement stmt = (Statement)parser.parse(input);
   		//System.out.println(stmt.inspect());
   		//
@@ -331,7 +331,7 @@ abstract public class Parser implements Token {
   		String input = "" 
   		    + "@import 'foobar.plogic';\n"
   		    ;
-  		Parser parser = new PresentationLogicParser();
+  		Parser parser = new UniversalPresentationLogicParser();
   		System.err.println("*** debug: parser created.");
   		List rulesets = null;
   		try {

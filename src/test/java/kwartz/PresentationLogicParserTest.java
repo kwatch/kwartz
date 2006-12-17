@@ -46,7 +46,7 @@ public class PresentationLogicParserTest extends TestCase {
 			}
 		}
 		//
-		Parser parser = new PresentationLogicParser();
+		Parser parser = new UniversalPresentationLogicParser();
 		String filename = "test-plogic-parser.plogic";
 		if (exception == null) {
 			List rulesets = (List)parser.parse(input, filename);

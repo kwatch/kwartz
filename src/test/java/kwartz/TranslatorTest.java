@@ -82,12 +82,12 @@ public class TranslatorTest extends TestCase {
 		boolean thrown = false;
 		try {
 			if (Util.matches("expr_.*", name) || Util.matches("literal_.*", name)) {
-				ExpressionParser parser = new ExpressionParser();
+				UniversalExpressionParser parser = new UniversalExpressionParser();
 				Ast.Expression expr = (Ast.Expression)parser.parse(input, filename);
 				result = translator.translate(expr);
 			}
 			else if (Util.matches("stmt_.*", name)) {
-				StatementParser parser = new StatementParser();
+				UniversalStatementParser parser = new UniversalStatementParser();
 				List stmts = (List)parser.parse(input, filename);
 				result = translator.translate(stmts);
 			}

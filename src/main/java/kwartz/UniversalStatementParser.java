@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-public class StatementParser extends Parser {
+public class UniversalStatementParser extends Parser {
 
 
 /* S|tokenval */

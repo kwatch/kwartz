@@ -163,7 +163,7 @@ class HandlerHelper {
 	}
 	
 	public static Ast.Expression _parseExpression(String expr_str, int linenum) throws ParseException {
-		Parser parser = new ExpressionParser();
+		Parser parser = new UniversalExpressionParser();
 		Ast.Expression expr = (Ast.Expression)parser.parse(expr_str);
 		return expr;
 	}
@@ -769,7 +769,7 @@ public class BaseHandler implements Handler {
 			+ "}\n"
 			;
 
-		Parser parser = new PresentationLogicParser();
+		Parser parser = new UniversalPresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
 		Handler handler = new BaseHandler(rulesets);
 		TextConverter converter = new TextConverter(handler);

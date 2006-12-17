@@ -82,7 +82,7 @@ public class CompileTest extends TestCase {
 		boolean thrown = false;
 		try {
 			/// parse plogic
-			Parser parser = new PresentationLogicParser();
+			Parser parser = new UniversalPresentationLogicParser();
 			List rulesets = (List)parser.parse(plogic, "test-compile.html");
 			/// convert pdata
 			Handler handler = new BaseHandler(rulesets, properties);

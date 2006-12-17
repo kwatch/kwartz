@@ -41,7 +41,7 @@ public class ConverterTest extends TestCase {
 		Map properties = (Map)data.get("properties");
 		//
 		String filename = "test-converter.plogic";
-		Parser parser = new PresentationLogicParser();
+		Parser parser = new UniversalPresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic, filename);
 		Handler handler = new BaseHandler(rulesets, properties);
 		Converter converter = new TextConverter(handler, properties);

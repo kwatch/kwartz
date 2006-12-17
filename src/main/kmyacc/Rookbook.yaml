@@ -1,8 +1,8 @@
 parameters:
   - javadir:	../java/kwartz
-  - parsers:	[ $(javadir)/ExpressionParser.java,
-                  $(javadir)/StatementParser.java,
-		  $(javadir)/PresentationLogicParser.java,
+  - parsers:	[ $(javadir)/UniversalExpressionParser.java,
+                  $(javadir)/UniversalStatementParser.java,
+		  $(javadir)/UniversalPresentationLogicParser.java,
 		  $(javadir)/Token.java ]
   - javac:	'javac -J-Duser.language -source 1.4 -cp .. '
 

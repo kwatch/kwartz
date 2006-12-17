@@ -96,7 +96,7 @@ public class Main {
 			for (int i = 0, n = pdata_filenames.length; i < n; i++) {
 				String filename = pdata_filenames[i];
 				String pdata = Util.readFile(filename);
-				Parser parser = new PresentationLogicParser();
+				Parser parser = new UniversalPresentationLogicParser();
 				List rulesets = (List)parser.parse(pdata, filename);
 				ruleset_list.addAll(rulesets);
 			}
@@ -163,16 +163,22 @@ public class Main {
 	static String help(String command) {
 		String s = ""
 			+ "Usage: " + command + " [..options..] file1 [file2...]\n"
-			+ "  -h, --help     :  help\n"
-			+ "  -v             :  version\n"
-			+ "  -e             :  escape\n"
-			+ "  -a action      :  compile/convert\n"
-			+ "  -l lang        :  lang\n"
-			+ "  -p plogic,...  :  presentation logic filenames\n"
-			+ "  -i pdata,...   :  import presentation data filenames\n"
-			+ "  -x elem-id     :  extract content of element marked by elem-id\n"
-			+ "  -X elem-id     :  extract element marked by elem-id\n"
-			+ "  -L layout      :  layout filename\n"
+			+ "  -h, --help      :  help\n"
+			+ "  -v              :  version\n"
+			+ "  -e              :  escape\n"
+			+ "  -a action       :  compile/convert\n"
+			+ "  -l lang         :  lang\n"
+			+ "  -p plogic,...   :  presentation logic filenames\n"
+			+ "  -i pdata,...    :  import presentation data filenames\n"
+			+ "  -x elem-id      :  extract content of element marked by elem-id\n"
+			+ "  -X elem-id      :  extract element marked by elem-id\n"
+			+ "  -L layout       :  layout filename\n"
+			+ "  --escape=false  :  don't escape\n"
+			+ "  --dattr=kw:d    :  directive attribute name\n"
+			+ "  --delspan=true  :  delete dummy span tag\n"
+			+ "  --odd=\"'odd'\"   :  odd value\n"
+			+ "  --even=\"'even'\" :  even value\n"
+			+ "  --loopctr       :  detect loop counter\n"
 			;
 		return s;
 	}

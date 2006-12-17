@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-public class PresentationLogicParser extends Parser {
+public class UniversalPresentationLogicParser extends Parser {
 
 
 /* S|tokenval */

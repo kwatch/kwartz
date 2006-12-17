@@ -369,7 +369,7 @@ public class JstlTranslator extends AbstractTranslator {
 					Ast.Statement count_stmt = null;
 					try {
 						String s = ""+counter+"="+itemvar+"_loop.count;";
-						count_stmt = (Ast.Statement)((List)new StatementParser().parse(s)).get(0);
+						count_stmt = (Ast.Statement)((List)new UniversalStatementParser().parse(s)).get(0);
 					}
 					catch (ParseException neverthrown) {
 						assert false;
@@ -459,7 +459,7 @@ public class JstlTranslator extends AbstractTranslator {
 		Map properties = new HashMap();
 		properties.put("jstl", "1.0");
 		properties.put("varstatus", Boolean.TRUE);
-		PresentationLogicParser parser = new PresentationLogicParser();
+		UniversalPresentationLogicParser parser = new UniversalPresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
 		Handler handler = new BaseHandler(rulesets, properties);
 		Converter converter = new TextConverter(handler, properties);

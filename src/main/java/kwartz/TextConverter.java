@@ -789,7 +789,7 @@ public class TextConverter implements Converter {
 			;
 
 
-		Parser parser = new PresentationLogicParser();
+		Parser parser = new UniversalPresentationLogicParser();
 		List rulesets = (List)parser.parse(plogic);
 //		for (Iterator it = rulesets.iterator(); it.hasNext(); ) {
 //			Ast.Ruleset ruleset = (Ast.Ruleset)it.next();

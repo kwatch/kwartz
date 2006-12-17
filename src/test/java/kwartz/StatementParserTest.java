@@ -34,7 +34,7 @@ public class StatementParserTest extends TestCase {
 		String exception = (String)data.get("exception");
 		String errormsg = (String)data.get("errormsg");
 		//
-		Parser parser = new StatementParser();
+		Parser parser = new UniversalStatementParser();
 		String filename = "test-stmt-parser.plogic";
 		if (exception == null) {
 			List stmts = (List)parser.parse(input, filename);
